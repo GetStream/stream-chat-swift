@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		617764128BA14B4B7D114ED0 /* Pods_GetStreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 020F21522E6ADD92E3B5416C /* Pods_GetStreamChat.framework */; };
 		8A04675B224E7F1800493D74 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04675A224E7F1800493D74 /* AppDelegate.swift */; };
-		8A04675D224E7F1800493D74 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04675C224E7F1800493D74 /* ViewController.swift */; };
 		8A046760224E7F1800493D74 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A04675E224E7F1800493D74 /* Main.storyboard */; };
 		8A046762224E7F1800493D74 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A046761224E7F1800493D74 /* Assets.xcassets */; };
 		8A046765224E7F1800493D74 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A046763224E7F1800493D74 /* LaunchScreen.storyboard */; };
@@ -30,6 +29,8 @@
 		8A8891642253A86600DD6539 /* Codable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8891632253A86600DD6539 /* Codable+Extensions.swift */; };
 		8A8891682253D3A500DD6539 /* ClientLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8891672253D3A500DD6539 /* ClientLogger.swift */; };
 		8A88916C2254A6B300DD6539 /* CustomChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88916B2254A6B300DD6539 /* CustomChannel.swift */; };
+		8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */; };
+		8A8891712254F73B00DD6539 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8891702254F73B00DD6539 /* ChatViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,7 +38,6 @@
 		6096B0855B2D558344DC1272 /* Pods-GetStreamChat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.debug.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.debug.xcconfig"; sourceTree = "<group>"; };
 		8A046757224E7F1800493D74 /* GetStreamChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GetStreamChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A04675A224E7F1800493D74 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		8A04675C224E7F1800493D74 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		8A04675F224E7F1800493D74 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8A046761224E7F1800493D74 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8A046764224E7F1800493D74 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -59,6 +59,8 @@
 		8A8891632253A86600DD6539 /* Codable+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Codable+Extensions.swift"; sourceTree = "<group>"; };
 		8A8891672253D3A500DD6539 /* ClientLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientLogger.swift; sourceTree = "<group>"; };
 		8A88916B2254A6B300DD6539 /* CustomChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChannel.swift; sourceTree = "<group>"; };
+		8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelPresenter.swift; sourceTree = "<group>"; };
+		8A8891702254F73B00DD6539 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.release.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -97,7 +99,6 @@
 			isa = PBXGroup;
 			children = (
 				8A04675A224E7F1800493D74 /* AppDelegate.swift */,
-				8A04675C224E7F1800493D74 /* ViewController.swift */,
 				8A04675E224E7F1800493D74 /* Main.storyboard */,
 				8A046761224E7F1800493D74 /* Assets.xcassets */,
 				8A046763224E7F1800493D74 /* LaunchScreen.storyboard */,
@@ -111,6 +112,7 @@
 			children = (
 				8A88915122523FB800DD6539 /* Client */,
 				8A8891692253D3D200DD6539 /* Model */,
+				8A88916D2254F58500DD6539 /* View */,
 				8A8891582252828300DD6539 /* Extensions */,
 				8A88916A2254A69D00DD6539 /* Customization Examples */,
 				8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */,
@@ -160,6 +162,15 @@
 				8A88916B2254A6B300DD6539 /* CustomChannel.swift */,
 			);
 			path = "Customization Examples";
+			sourceTree = "<group>";
+		};
+		8A88916D2254F58500DD6539 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */,
+				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		E4BFB61CCC31ACB2AD7AAA5D /* Pods */ = {
@@ -306,12 +317,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A04675D224E7F1800493D74 /* ViewController.swift in Sources */,
 				8A8891682253D3A500DD6539 /* ClientLogger.swift in Sources */,
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
 				8A8891552252502900DD6539 /* EndpointProtocol.swift in Sources */,
 				8A889153225240F700DD6539 /* Event.swift in Sources */,
 				8A88915A2252830C00DD6539 /* UIImage+Extensions.swift in Sources */,
+				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
 				8A8891502252379700DD6539 /* Channel.swift in Sources */,
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8A88914822521E4800DD6539 /* ClientError.swift in Sources */,
@@ -323,6 +334,7 @@
 				8A88914A2252309900DD6539 /* BaseURL.swift in Sources */,
 				8A04675B224E7F1800493D74 /* AppDelegate.swift in Sources */,
 				8A889144225219E500DD6539 /* Client.swift in Sources */,
+				8A8891712254F73B00DD6539 /* ChatViewController.swift in Sources */,
 				8A88915E22535FEC00DD6539 /* Message.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
