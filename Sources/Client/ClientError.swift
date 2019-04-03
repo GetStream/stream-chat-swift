@@ -9,6 +9,7 @@
 import Foundation
 
 public enum ClientError: Error {
+    case emptyToken
     case invalidURL(_ string: String?)
     case requestFailed(_ error: Error?)
     case emptyBody

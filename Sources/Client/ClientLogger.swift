@@ -17,38 +17,44 @@ struct ClientLogger {
         return dateFormatter
     }()
     
+    func log(_ sessionConfiguration: URLSessionConfiguration) {
+        if let httpAdditionalHeaders = sessionConfiguration.httpAdditionalHeaders as? [String: String] {
+            log("URL Session Headers", httpAdditionalHeaders.description)
+        }
+    }
+    
     func log(_ request: URLRequest) {
-        log(request.httpMethod ?? "Request", message: request.description)
+        log(request.httpMethod ?? "Request", request.description)
         
-        if let headers = request.allHTTPHeaderFields {
-            log("Request Headers", message: headers.description)
+        if let headers = request.allHTTPHeaderFields, !headers.isEmpty {
+            log("Request Headers", headers.description)
         }
         
         if let bodyStream = request.httpBodyStream {
-            log("Request Body Stream", message: bodyStream.description)
+            log("Request Body Stream", bodyStream.description)
         }
         
-        if let body = request.httpBody {
+        if let body = request.httpBody, !body.isEmpty {
             do {
-                log("Request Body", message: try body.prettyPrintedJSONString())
+                log("Request Body", try body.prettyPrintedJSONString())
             } catch {
-                log("Request Body", message: error.localizedDescription)
+                log("Request Body", error.localizedDescription)
             }
         }
     }
     
     func log(_ response: URLResponse?, data: Data?) {
         if let response = response {
-            log("Response", message: response.description)
+            log("Response", response.description)
         }
         
         if let data = data{
             if let jsonString = try? data.prettyPrintedJSONString() {
-                log("JSON", message: jsonString)
+                log("JSON", jsonString)
             } else if let dataString = String(data: data, encoding: .utf8) {
-                log("JSON", message: dataString)
+                log("JSON", dataString)
             } else {
-                log("JSON", message: data.description)
+                log("JSON", data.description)
             }
         }
     }
@@ -59,7 +65,7 @@ struct ClientLogger {
         }
     }
     
-    func log(_ identifier: String, message: String) {
+    func log(_ identifier: String, _ message: String) {
         print("[\(logDateFormatter.string(from: Date()))] \(identifier): \(message)")
     }
 }

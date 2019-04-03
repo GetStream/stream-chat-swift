@@ -29,6 +29,18 @@ public final class Client {
     private let uuid = UUID()
     private let logger: ClientLogger?
     
+    private lazy var urlSession: URLSession = {
+        let config = URLSessionConfiguration.default
+        
+        if let token = token {
+            config.httpAdditionalHeaders = ["Authorization": token,
+                                            "Content-Type": "application/json",
+                                            "stream-auth-type": "jwt"]
+        }
+        
+        return URLSession(configuration: config)
+    }()
+    
     public init(apiKey: String = Client.config.apiKey,
                 baseURL: BaseURL = Client.config.baseURL,
                 callbackQueue: DispatchQueue? = Client.config.callbackQueue,
@@ -66,12 +78,17 @@ extension Client {
     }
 }
 
-// MARK: - Request
+// MARK: - REST
 
 extension Client {
     
     func request<T: Decodable>(endpoint: EndpointProtocol, _ completion: @escaping Completion<T>) {
-        guard let baseURL = baseURL.url(.https), let token = token else {
+        if token == nil {
+            completion(.failure(.emptyToken))
+            return
+        }
+        
+        guard let baseURL = baseURL.url(.https) else {
             completion(.failure(.invalidURL(self.baseURL.description)))
             return
         }
@@ -104,10 +121,6 @@ extension Client {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = endpoint.method.rawValue
         
-        urlRequest.allHTTPHeaderFields = ["Authorization": token,
-                                          "Content-Type": "application/json",
-                                          "stream-auth-type": "jwt"]
-        
         if let body = endpoint.body {
             do {
                 urlRequest.httpBody = try endpoint.bodyEncoder.encode(AnyEncodable(body))
@@ -116,10 +129,11 @@ extension Client {
             }
         }
         
-        let task = URLSession.shared.dataTask(with: urlRequest) { [weak self] in
+        let task = urlSession.dataTask(with: urlRequest) { [weak self] in
             self?.parse(data: $0, response: $1, error: $2, completion: completion)
         }
         
+        logger?.log(urlSession.configuration)
         logger?.log(urlRequest)
         task.resume()
     }
