@@ -13,7 +13,6 @@ protocol EndpointProtocol {
     var path: String { get }
     var parameters: [String: String]? { get }
     var body: Encodable? { get }
-    var bodyEncoder: JSONEncoder { get }
 }
 
 extension EndpointProtocol {
@@ -24,9 +23,5 @@ extension EndpointProtocol {
     
     var body: Encodable? {
         return nil
-    }
-    
-    var bodyEncoder: JSONEncoder {
-        return JSONEncoder()
     }
 }

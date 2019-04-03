@@ -123,7 +123,7 @@ extension Client {
         
         if let body = endpoint.body {
             do {
-                urlRequest.httpBody = try endpoint.bodyEncoder.encode(AnyEncodable(body))
+                urlRequest.httpBody = try JSONEncoder.stream.encode(AnyEncodable(body))
             } catch {
                 completion(.failure(.encodingFailure(error, object: body)))
             }
