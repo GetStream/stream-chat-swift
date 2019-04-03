@@ -15,25 +15,27 @@ public final class Client {
     
     public static var config = Config(apiKey: "")
     public static let shared = Client()
-    
+
     let apiKey: String
     let baseURL: BaseURL
-    let workingQueue = DispatchQueue(label: "io.getstream.chat.Client", qos: .userInitiated)
     var token: Token?
-    var user: User?
-    private let uuid = UUID()
-
-    fileprivate let logger: ClientLogger?
-
-    var clientId: String? {
-        return user != nil ? "\(user?.id ?? "")--\(uuid.uuidString.lowercased())" : nil
+    var clientId: String?
+    let callbackQueue: DispatchQueue?
+    
+    var user: User? {
+        didSet { clientId = user != nil ? "\(user?.id ?? "")--\(uuid.uuidString.lowercased())" : nil }
     }
+    
+    private let uuid = UUID()
+    private let logger: ClientLogger?
     
     public init(apiKey: String = Client.config.apiKey,
                 baseURL: BaseURL = Client.config.baseURL,
+                callbackQueue: DispatchQueue? = Client.config.callbackQueue,
                 logsEnabled: Bool = Client.config.logsEnabled) {
         self.apiKey = apiKey
         self.baseURL = baseURL
+        self.callbackQueue = callbackQueue
         logger = logsEnabled ? ClientLogger() : nil
     }
     
@@ -47,11 +49,13 @@ extension Client {
     public struct Config {
         public let apiKey: String
         public let baseURL: BaseURL
+        public let callbackQueue: DispatchQueue?
         public let logsEnabled: Bool
         
-        public init(apiKey: String, baseURL: BaseURL = BaseURL(), logsEnabled: Bool = false) {
+        public init(apiKey: String, baseURL: BaseURL = BaseURL(), callbackQueue: DispatchQueue? = nil, logsEnabled: Bool = false) {
             self.apiKey = apiKey
             self.baseURL = baseURL
+            self.callbackQueue = callbackQueue
             self.logsEnabled = logsEnabled
         }
     }
@@ -124,23 +128,23 @@ extension Client {
         logger?.log(response, data: data)
         
         if let error = error {
-            completion(.failure(.requestFailed(error)))
+            performInCallbackQueue { completion(.failure(.requestFailed(error))) }
             return
         }
         
         logger?.log(error)
         
         guard let data = data else {
-            completion(.failure(.emptyBody))
+            performInCallbackQueue { completion(.failure(.emptyBody)) }
             return
         }
         
         do {
             let response = try JSONDecoder.stream.decode(T.self, from: data)
-            completion(.success(response))
+            performInCallbackQueue { completion(.success(response)) }
         } catch {
             if let errorResponse = try? JSONDecoder.stream.decode(ClientErrorResponse.self, from: data) {
-                completion(.failure(.responseError(errorResponse)))
+                performInCallbackQueue { completion(.failure(.responseError(errorResponse))) }
             } else {
                 let rawBody: String
                 
@@ -152,8 +156,16 @@ extension Client {
                     rawBody = data.description
                 }
                 
-                completion(.failure(.decodingFailure(error, rawBody: rawBody)))
+                performInCallbackQueue { completion(.failure(.decodingFailure(error, rawBody: rawBody))) }
             }
+        }
+    }
+    
+    private func performInCallbackQueue(execute block: @escaping () -> Void) {
+        if let callbackQueue = callbackQueue {
+            callbackQueue.async(execute: block)
+        } else {
+            block()
         }
     }
 }

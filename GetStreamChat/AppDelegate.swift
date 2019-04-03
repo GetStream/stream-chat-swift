@@ -17,7 +17,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        Client.config = .init(apiKey: "qk4nn7rpcn75", logsEnabled: true)
+        Client.config = .init(apiKey: "qk4nn7rpcn75", callbackQueue: .main, logsEnabled: true)
         
         let user = User(id: "broken-waterfall-5", name: "Jon Snow", imageURL: URL(string: "https://bit.ly/2u9Vc0r"))
         
