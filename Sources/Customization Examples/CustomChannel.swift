@@ -6,10 +6,10 @@
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
-
-/// This is an example of a custom Channel with custom properties.
-
+//import Foundation
+//
+///// This is an example of a custom Channel with custom properties.
+//
 //final class CustomChannel: Channel {
 //    public enum CodingKeys: String, CodingKey {
 //        case customProperty = "custom_property"

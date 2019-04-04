@@ -6,4 +6,6 @@ target 'GetStreamChat' do
   pod 'RxSwift'
   pod 'Starscream'
   pod 'SnapKit'
+  pod 'Reusable'
+  pod 'Nuke'
 end

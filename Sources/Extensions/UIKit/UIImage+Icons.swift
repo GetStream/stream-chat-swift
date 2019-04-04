@@ -1,5 +1,5 @@
 //
-//  UIImages+Icons.swift
+//  UIImage+Icons.swift
 //  GetStreamChat
 //
 //  Created by Alexey Bukhtin on 01/04/2019.

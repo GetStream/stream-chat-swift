@@ -8,10 +8,10 @@
 
 import Foundation
 
-final class ChannelPresenter {
+public final class ChannelPresenter {
     public private(set) var channel: Channel
-    private var members: [User] = []
-    private var messages: [Message] = []
+    var members: [User] = []
+    var messages: [Message] = []
     
     init(channel: Channel) {
         self.channel = channel
