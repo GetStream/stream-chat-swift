@@ -53,7 +53,7 @@ public struct MessageAttachment: Codable {
     public let title: String
     public let type: MessageAttachmentType
     public let url: URL?
-    public let image: URL?
+    public let imageURL: URL?
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -64,7 +64,7 @@ public struct MessageAttachment: Codable {
             type = .unknown
         }
         
-        image = try container.decodeIfPresent(URL.self, forKey: .image)
+        imageURL = try container.decodeIfPresent(URL.self, forKey: .image)
             ?? container.decodeIfPresent(URL.self, forKey: .imageURL)
             ?? container.decodeIfPresent(URL.self, forKey: .thumbURL)
         
