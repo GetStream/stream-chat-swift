@@ -12,6 +12,8 @@ import Reusable
 
 public final class ChatViewController: UIViewController, UITableViewDataSource {
     
+    var style = ChatViewStyle()
+    
     public private(set) lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.separatorStyle = .none
@@ -33,12 +35,16 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
     }
     
     func setupTableView() {
+        tableView.backgroundColor = style.backgroundColor
         tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return channelPresenter?.messages.count ?? 0
     }
+    
+    var lastUserName: String = ""
+    var lastMessageIsIncoming: Bool = false
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let presenter = channelPresenter,
@@ -50,9 +56,17 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(for: indexPath) as MessageTableViewCell
         cell.update(name: message.user.name, date: message.created)
         cell.update(message: message.text)
-        cell.update(avatarURL: message.user.avatarURL, name: message.user.name)
-        cell.isIncomeMessage = Int.random(in: 0...10) > 5
         
+        if lastUserName != message.user.name {
+            lastUserName = message.user.name
+            lastMessageIsIncoming = !lastMessageIsIncoming
+        }
+        
+        cell.isIncomingMessage = lastMessageIsIncoming
+        cell.backgroundColor = tableView.backgroundColor
+        cell.update(style: cell.isIncomingMessage ? style.incomingMessage : style.outgoingMessage)
+        cell.update(avatarURL: message.user.avatarURL, name: message.user.name)
+
         return cell
     }
 }

@@ -37,6 +37,9 @@
 		8A88917922550E8D00DD6539 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917822550E8D00DD6539 /* UIFont+Extensions.swift */; };
 		8A88917B22550ECC00DD6539 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917A22550ECC00DD6539 /* CGFloat+Extensions.swift */; };
 		8A88917E22560EC100DD6539 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917D22560EC100DD6539 /* Date+Extensions.swift */; };
+		8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917F225755D500DD6539 /* ChatViewStyle.swift */; };
+		8A88918222576F9400DD6539 /* MessageLayerMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88918122576F9400DD6539 /* MessageLayerMask.swift */; };
+		8A88918422577E3600DD6539 /* MessageContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88918322577E3600DD6539 /* MessageContainerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +76,9 @@
 		8A88917822550E8D00DD6539 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		8A88917A22550ECC00DD6539 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		8A88917D22560EC100DD6539 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
+		8A88917F225755D500DD6539 /* ChatViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewStyle.swift; sourceTree = "<group>"; };
+		8A88918122576F9400DD6539 /* MessageLayerMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLayerMask.swift; sourceTree = "<group>"; };
+		8A88918322577E3600DD6539 /* MessageContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageContainerView.swift; sourceTree = "<group>"; };
 		E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.release.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -181,7 +187,10 @@
 			children = (
 				8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */,
 				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
+				8A88917F225755D500DD6539 /* ChatViewStyle.swift */,
 				8A88917422550B2800DD6539 /* MessageTableViewCell.swift */,
+				8A88918122576F9400DD6539 /* MessageLayerMask.swift */,
+				8A88918322577E3600DD6539 /* MessageContainerView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -363,6 +372,9 @@
 				8A88914C2252337500DD6539 /* User.swift in Sources */,
 				8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */,
 				8A8891622253A73000DD6539 /* Query.swift in Sources */,
+				8A88918422577E3600DD6539 /* MessageContainerView.swift in Sources */,
+				8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */,
+				8A88918222576F9400DD6539 /* MessageLayerMask.swift in Sources */,
 				8A88917522550B2800DD6539 /* MessageTableViewCell.swift in Sources */,
 				8A88914A2252309900DD6539 /* BaseURL.swift in Sources */,
 				8A88917E22560EC100DD6539 /* Date+Extensions.swift in Sources */,
