@@ -48,11 +48,10 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
         
         let message = presenter.messages[indexPath.row]
         let cell = tableView.dequeueReusableCell(for: indexPath) as MessageTableViewCell
-        
-        cell.messageLabel.text = message.text
-        cell.nameLabel.text = message.user.name
-        cell.dateLabel.text = message.created.relative
-        cell.updateAvatar(with: message.user.avatarURL, name: message.user.name)
+        cell.update(name: message.user.name, date: message.created)
+        cell.update(message: message.text)
+        cell.update(avatarURL: message.user.avatarURL, name: message.user.name)
+        cell.isIncomeMessage = Int.random(in: 0...10) > 5
         
         return cell
     }

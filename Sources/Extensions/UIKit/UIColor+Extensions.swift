@@ -14,6 +14,10 @@ extension UIColor {
 }
 
 extension UIColor {
+    static var random: UIColor {
+        return transparent(hue: CGFloat.random(in: 0...10) / 10)
+    }
+        
     /// Create a transparent color with a given hue.
     static func transparent(hue: CGFloat) -> UIColor {
         return UIColor(hue: hue, saturation: 1, brightness: 0.5, alpha: 0.2)
