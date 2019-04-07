@@ -155,11 +155,6 @@ extension UIImage {
         
         let rect = CGRect(origin: .zero, size: CGSize(width: 1, height: 1))
         UIGraphicsBeginImageContextWithOptions(rect.size, alpha == 1, 0.0)
-        
-        if let context = UIGraphicsGetCurrentContext() {
-            context.interpolationQuality = .none
-        }
-        
         color.setFill()
         UIRectFill(rect)
         let image = UIGraphicsGetImageFromCurrentImageContext()

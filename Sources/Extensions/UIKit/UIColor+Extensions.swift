@@ -10,7 +10,7 @@ import UIKit.UIColor
 
 extension UIColor {
     public static let chatGray = UIColor(white: 0.5, alpha: 1)
-    public static let messageBorder = UIColor(white: 0.9, alpha: 1)
+    public static let messageBorder = UIColor(white: 0.92, alpha: 1)
     public static let messageErrorBackground = UIColor(red: 0.91, green: 0.85, blue: 0.87, alpha: 1)
     public static let messageErrorBorder = UIColor(red: 0.9, green: 0.80, blue: 0.83, alpha: 1)
 }

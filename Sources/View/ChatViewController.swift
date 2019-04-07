@@ -24,12 +24,12 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
     }()
     
     public var channelPresenter: ChannelPresenter?
-
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+        DispatchQueue.main.async { [weak self] in
             self?.tableView.reloadData()
         }
     }
@@ -43,30 +43,61 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
         return channelPresenter?.messages.count ?? 0
     }
     
-    var lastUserName: String = ""
-    var lastMessageIsIncoming: Bool = false
+    var lastMessageIsIncoming: Bool = true
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let presenter = channelPresenter,
             indexPath.row < presenter.messages.count else {
-            return .unused
+                return .unused
         }
         
         let message = presenter.messages[indexPath.row]
         let cell = tableView.dequeueReusableCell(for: indexPath) as MessageTableViewCell
-        cell.update(name: message.user.name, date: message.created)
         cell.update(message: message.text)
         
-        if lastUserName != message.user.name {
-            lastUserName = message.user.name
-            lastMessageIsIncoming = !lastMessageIsIncoming
+        let prevMessage: Message? = indexPath.row > 0 ? presenter.messages[indexPath.row - 1] : nil
+        
+//        if let prevMessage = prevMessage, prevMessage.user != message.user {
+//            lastMessageIsIncoming = !lastMessageIsIncoming
+//        }
+
+        var showAvatar = true
+        
+        if indexPath.row < (presenter.messages.count - 1) {
+            let nextMessage = presenter.messages[indexPath.row + 1]
+            showAvatar = nextMessage.user != message.user
+            
+            if !showAvatar {
+                cell.paddingType = .small
+            }
         }
         
         cell.isIncomingMessage = lastMessageIsIncoming
-        cell.backgroundColor = tableView.backgroundColor
-        cell.update(style: cell.isIncomingMessage ? style.incomingMessage : style.outgoingMessage)
-        cell.update(avatarURL: message.user.avatarURL, name: message.user.name)
-
+        
+        let cellStyle = lastMessageIsIncoming ? style.incomingMessage : style.outgoingMessage
+        let messageBackgroundImage: UIImage?
+        
+        if lastMessageIsIncoming {
+            messageBackgroundImage = prevMessage?.user == message.user
+                ? cellStyle.leftCornersBackgroundImage
+                : cellStyle.leftBottomCornerBackgroundImage
+        } else  {
+            messageBackgroundImage = prevMessage?.user == message.user
+                ? cellStyle.rightCornersBackgroundImage
+                : cellStyle.rightBottomCornerBackgroundImage
+        }
+        
+        if let attachment = message.attachments.first, let imageURL = attachment.imageURL {
+            cell.update(name: message.user.name, attachmentImageURL: imageURL)
+        }
+        
+        cell.update(style: cellStyle, messageBackgroundImage: messageBackgroundImage)
+        
+        if showAvatar {
+            cell.update(name: message.user.name, date: message.created)
+            cell.update(avatarURL: message.user.avatarURL, name: message.user.name)
+        }
+        
         return cell
     }
 }

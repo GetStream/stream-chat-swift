@@ -12,11 +12,12 @@ import Reusable
 import Nuke
 
 final class MessageTableViewCell: UITableViewCell, Reusable {
+    private static let imagePreviewHeight: CGFloat = 100
     
     private var avatarViewLeftConstraint: Constraint?
     private var avatarViewRightConstraint: Constraint?
-    private var messageStackViewLeftConstraint: Constraint?
-    private var messageStackViewRightConstraint: Constraint?
+//    private var messageStackViewLeftConstraint: Constraint?
+//    private var messageStackViewRightConstraint: Constraint?
     private var bottomConstraint: Constraint?
     
     private lazy var avatarView: UIImageView = {
@@ -29,65 +30,71 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return view
     }()
     
-    private lazy var avatarLabel: UILabel = {
+    private let avatarLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatAvatar
         label.textAlignment = .center
         label.isHidden = true
-        label.isUserInteractionEnabled = false
         return label
     }()
     
-    private lazy var bottomStackView: UIStackView = {
+    private lazy var nameAndDateStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, dateLabel])
         stackView.axis = .horizontal
-        stackView.spacing = .messageBottomSmallPadding
-        stackView.isUserInteractionEnabled = false
+        stackView.spacing = .messageSpacing
         stackView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageAvatarRadius) }
         return stackView
     }()
     
-    private lazy var nameLabel: UILabel = {
+    private let nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatMediumSmall
         label.textColor = .chatGray
-        label.backgroundColor = backgroundColor
         return label
     }()
 
-    private lazy var dateLabel: UILabel = {
+    private let dateLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatSmall
         label.textColor = .chatGray
-        label.backgroundColor = backgroundColor
         return label
     }()
     
     private lazy var messageStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [messageContainerView, bottomStackView])
+        let stackView = UIStackView(arrangedSubviews: [attachmentImageView, messageContainerView, nameAndDateStackView])
         stackView.axis = .vertical
         stackView.alignment = .leading
-        stackView.spacing = .messageBottomSmallPadding
+        stackView.spacing = .messageSpacing
         return stackView
     }()
     
-    private lazy var messageContainerView: MessageContainerView = {
-        let view = MessageContainerView(frame: .zero)
-        view.backgroundColor = .white
-        view.isUserInteractionEnabled = false
-        return view
-    }()
+    private let messageContainerView = UIImageView(frame: .zero)
     
-    public private(set) lazy var messageLabel: UILabel = {
+    private let messageLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.backgroundColor = messageContainerView.backgroundColor
         label.font = .chatRegular
         label.textColor = .black
         label.numberOfLines = 0
         return label
     }()
     
-    private lazy var errorLabel: UILabel = {
+    private var attachmentImageWidthConstraint: Constraint?
+    
+    private lazy var attachmentImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage.Icons.image)
+        imageView.contentMode = .center
+        imageView.isHidden = true
+        imageView.clipsToBounds = true
+        
+        imageView.snp.makeConstraints {
+            $0.height.equalTo(100)
+            attachmentImageWidthConstraint = $0.width.equalTo(MessageTableViewCell.imagePreviewHeight).constraint
+        }
+        
+        return imageView
+    }()
+    
+    private let errorLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatSmall
         label.textColor = .chatGray
@@ -96,17 +103,24 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    private lazy var bottomPaddingView: UIView = {
+    private let bottomPaddingView: UIView = {
         let view = UIView(frame: .zero)
         view.isUserInteractionEnabled = false
-        view.backgroundColor = backgroundColor
         return view
     }()
     
+    private var messagePadding: CGFloat {
+        return .messageEdgePadding + .messageAvatarSize + .messageInnerPadding
+    }
+    
+    private var maxMessageWidth: CGFloat {
+        return UIScreen.main.bounds.width - 2 * messagePadding
+    }
+
     public var paddingType: MessageTableViewCellPaddingType = .regular {
         didSet {
             if let bottomPadding = bottomConstraint {
-                let offset: CGFloat = paddingType == paddingType ? .messageBottomRegularPadding : .messageBottomSmallPadding
+                let offset: CGFloat = paddingType == .regular ? .messageBottomPadding : 0
                 bottomPadding.update(offset: offset)
             }
         }
@@ -114,6 +128,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     
     public var isIncomingMessage: Bool = true {
         didSet {
+            return
             if avatarViewRightConstraint == nil {
                 avatarViewRightConstraint?.deactivate()
                 
@@ -122,33 +137,32 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
                 }
             }
             
-            if messageStackViewRightConstraint == nil {
-                messageStackView.alignment = .trailing
-                messageStackViewLeftConstraint?.deactivate()
-                let messageLeft = messageStackViewLeftConstraint?.layoutConstraints.first?.constant ?? 0
-                
-                messageStackView.snp.makeConstraints { make in
-                    messageStackViewRightConstraint = make.right.equalToSuperview().offset(-messageLeft).constraint
-                }
-            }
+//            if messageStackViewRightConstraint == nil {
+//                messageStackView.alignment = .trailing
+//                messageStackViewLeftConstraint?.deactivate()
+//                let messageLeft = messageStackViewLeftConstraint?.layoutConstraints.first?.constant ?? 0
+//
+//                messageStackView.snp.makeConstraints { make in
+//                    messageStackViewRightConstraint = make.right.equalToSuperview().offset(-messageLeft).constraint
+//                }
+//            }
             
             nameLabel.isHidden = !isIncomingMessage || (nameLabel.text == nil)
-            messageContainerView.layerMask?.type = isIncomingMessage ? .leftCornerZero : .rightCornerZero
             
             if let avatarViewRightConstraint = avatarViewRightConstraint, let avatarViewLeftConstraint = avatarViewLeftConstraint {
                 if isIncomingMessage {
                     if avatarViewRightConstraint.isActive {
                         avatarViewRightConstraint.deactivate()
                         avatarViewLeftConstraint.activate()
-                        messageStackViewRightConstraint?.deactivate()
-                        messageStackViewLeftConstraint?.activate()
+//                        messageStackViewRightConstraint?.deactivate()
+//                        messageStackViewLeftConstraint?.activate()
                         messageStackView.alignment = .leading
                     }
                 } else if avatarViewLeftConstraint.isActive {
                     avatarViewLeftConstraint.deactivate()
                     avatarViewRightConstraint.activate()
-                    messageStackViewLeftConstraint?.deactivate()
-                    messageStackViewRightConstraint?.activate()
+//                    messageStackViewLeftConstraint?.deactivate()
+//                    messageStackViewRightConstraint?.activate()
                     messageStackView.alignment = .trailing
                 }
             }
@@ -180,7 +194,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         
         bottomPaddingView.snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
-            bottomConstraint = make.height.equalTo(CGFloat.messageBottomRegularPadding).constraint
+            bottomConstraint = make.height.equalTo(CGFloat.messageBottomPadding).constraint
         }
         
         // Avatar
@@ -192,15 +206,14 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
         
         // Message Stack View
-        let messageLeft: CGFloat = .messageEdgePadding + .messageAvatarSize + .messageInnerPadding
-
-        messageContainerView.snp.makeConstraints { make in
-            let minHeight: CGFloat = 2 * .messageCornerRadius
-            make.height.greaterThanOrEqualTo(minHeight)
-            let maxWidth = UIScreen.main.bounds.width - 2 * messageLeft
-            make.width.lessThanOrEqualTo(maxWidth)
-            make.width.greaterThanOrEqualTo(minHeight)
-        }
+        
+//        messageContainerView.snp.makeConstraints { make in
+//            let minHeight: CGFloat = 2 * .messageCornerRadius
+//            make.height.greaterThanOrEqualTo(minHeight)
+//            let maxWidth = UIScreen.main.bounds.width - 2 * messageLeft
+//            make.width.lessThanOrEqualTo(maxWidth)
+//            make.width.greaterThanOrEqualTo(minHeight)
+//        }
         
         messageContainerView.addSubview(messageLabel)
         
@@ -214,28 +227,37 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         addSubview(messageStackView)
         
         messageStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(CGFloat.messageBottomSmallPadding)
+            make.top.equalToSuperview().offset(2)
             make.bottom.equalTo(bottomPaddingView.snp.top)
-            messageStackViewLeftConstraint = make.left.equalToSuperview().offset(messageLeft).constraint
+            make.left.equalToSuperview().offset(messagePadding)
+            make.right.equalToSuperview().offset(-messagePadding)
         }
     }
     
     public func reset() {
+        avatarView.isHidden = true
         avatarView.image = nil
         avatarView.backgroundColor = .white
         avatarLabel.text = nil
         avatarLabel.isHidden = true
-        bottomStackView.isHidden = true
+        attachmentImageView.isHidden = true
+        attachmentImageView.contentMode = .center
+        attachmentImageView.image = UIImage.Icons.image
+        attachmentImageWidthConstraint?.update(offset: 100)
+        nameAndDateStackView.isHidden = true
         messageContainerView.isHidden = true
+        messageContainerView.image = nil
+        messageContainerView.isOpaque = true
+        messageContainerView.layer.borderWidth = 0
         nameLabel.text = nil
         nameLabel.isHidden = true
         dateLabel.text = nil
         messageLabel.text = nil
         paddingType = .regular
-        isIncomingMessage = true
     }
     
-    public func update(style: ChatViewStyle.Message) {
+    public func update(style: ChatViewStyle.Message, messageBackgroundImage: UIImage?) {
+        backgroundColor = style.chatBackgroundColor
         nameLabel.font = style.infoFont
         nameLabel.textColor = style.infoColor
         nameLabel.backgroundColor = backgroundColor
@@ -243,17 +265,30 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         dateLabel.textColor = style.infoColor
         dateLabel.backgroundColor = backgroundColor
         bottomPaddingView.backgroundColor = backgroundColor
+        
         messageLabel.font = style.font
         messageLabel.textColor = style.textColor
         messageLabel.backgroundColor = style.backgroundColor
-        messageContainerView.backgroundColor = style.backgroundColor
-        let cornerType: MessageLayerMaskType = isIncomingMessage ? .leftCornerZero : .rightCornerZero
-        messageContainerView.update(cornerRadius: style.cornerRadius, type: cornerType)
-        messageContainerView.update(borderWidth: style.borderWidth, color: style.borderColor)
+        
+        attachmentImageView.tintColor = style.textColor
+        attachmentImageView.mask = nil
+        attachmentImageView.layer.cornerRadius = style.cornerRadius
+        
+        if let messageBackgroundImage = messageBackgroundImage {
+            messageContainerView.backgroundColor = style.chatBackgroundColor
+            messageContainerView.image = messageBackgroundImage
+        } else {
+            messageContainerView.backgroundColor = style.backgroundColor
+            
+            if style.borderWidth > 0 {
+                messageContainerView.layer.borderWidth = style.borderWidth
+                messageContainerView.layer.borderColor = style.borderColor.cgColor
+            }
+        }
     }
     
     public func update(name: String?, date: Date) {
-        bottomStackView.isHidden = false
+        nameAndDateStackView.isHidden = false
         dateLabel.text = date.relative
         
         if let name = name, !name.isEmpty {
@@ -270,6 +305,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     }
     
     public func update(avatarURL: URL?, name: String) {
+        avatarView.isHidden = false
+        
         guard let avatarURL = avatarURL else {
             showAvatarLabel(with: name)
             return
@@ -280,6 +317,38 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         
         ImagePipeline.shared.loadImage(with: request) { [weak self] response, error in
             self?.avatarView.image = response?.image
+        }
+    }
+    
+    public func update(name: String, attachmentImageURL url: URL) {
+        attachmentImageView.backgroundColor = colorByName(name: name)
+        attachmentImageView.isHidden = false
+        
+        Nuke.loadImage(with: url, into: attachmentImageView) { [weak self] in
+            self?.parseAttachmentImageResponse(response: $0, error: $1)
+        }
+    }
+    
+    private func parseAttachmentImageResponse(response: ImageResponse?, error: Error?) {
+        var width = MessageTableViewCell.imagePreviewHeight
+        
+        if let image = response?.image, image.size.height > 0 {
+            attachmentImageView.contentMode = .scaleAspectFit
+            width = min(image.size.width / image.size.height * MessageTableViewCell.imagePreviewHeight, maxMessageWidth)
+            attachmentImageWidthConstraint?.update(offset: width)
+        } else {
+            attachmentImageView.image = UIImage.Icons.close
+            
+            if let error = error {
+                print("⚠️", error)
+            }
+        }
+        
+        if let maskImage = messageContainerView.image {
+            let maskView = UIImageView(frame: CGRect(width: width, height: MessageTableViewCell.imagePreviewHeight))
+            maskView.image = maskImage
+            attachmentImageView.mask = maskView
+            attachmentImageView.layer.cornerRadius = 0
         }
     }
     
@@ -294,6 +363,12 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             avatarLabel.text = name.first?.uppercased()
         }
         
+        avatarView.backgroundColor = colorByName(name: name)
+        avatarLabel.isHidden = false
+        avatarLabel.textColor = avatarView.backgroundColor?.withAlphaComponent(0.3)
+    }
+    
+    private func colorByName(name: String) -> UIColor {
         var brightness: CGFloat = 0.5
         
         if let backgroundColor = backgroundColor {
@@ -301,9 +376,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
         
         let hue: CGFloat = abs(((CGFloat(name.hashValue) / CGFloat(Int.max)) * 15) / 15)
-        avatarView.backgroundColor = .transparent(hue: hue, brightness: brightness)
-        avatarLabel.isHidden = false
-        avatarLabel.textColor = avatarView.backgroundColor?.withAlphaComponent(0.3)
+        return .transparent(hue: hue, brightness: brightness)
     }
 }
 

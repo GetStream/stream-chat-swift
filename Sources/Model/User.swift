@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct User: Codable {
+public struct User: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -26,7 +26,7 @@ public struct User: Codable {
     public let updated: Date
     public let lastActiveDate: Date?
     public let online: Bool
-
+    
     init(id: String, name: String, avatarURL: URL?) {
         self.id = id
         self.name = name
@@ -57,5 +57,9 @@ public struct User: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(id)
+    }
+    
+    public static func == (lhs: User, rhs: User) -> Bool {
+        return lhs.id == rhs.id
     }
 }

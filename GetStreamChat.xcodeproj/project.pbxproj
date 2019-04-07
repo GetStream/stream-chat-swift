@@ -12,6 +12,8 @@
 		8A046760224E7F1800493D74 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A04675E224E7F1800493D74 /* Main.storyboard */; };
 		8A046762224E7F1800493D74 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A046761224E7F1800493D74 /* Assets.xcassets */; };
 		8A046765224E7F1800493D74 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A046763224E7F1800493D74 /* LaunchScreen.storyboard */; };
+		8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */; };
+		8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9401225A436800060ACC /* CGRect+Extensions.swift */; };
 		8A889144225219E500DD6539 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889143225219E500DD6539 /* Client.swift */; };
 		8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */; };
 		8A88914822521E4800DD6539 /* ClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88914722521E4800DD6539 /* ClientError.swift */; };
@@ -38,8 +40,6 @@
 		8A88917B22550ECC00DD6539 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917A22550ECC00DD6539 /* CGFloat+Extensions.swift */; };
 		8A88917E22560EC100DD6539 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917D22560EC100DD6539 /* Date+Extensions.swift */; };
 		8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917F225755D500DD6539 /* ChatViewStyle.swift */; };
-		8A88918222576F9400DD6539 /* MessageLayerMask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88918122576F9400DD6539 /* MessageLayerMask.swift */; };
-		8A88918422577E3600DD6539 /* MessageContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88918322577E3600DD6539 /* MessageContainerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +51,8 @@
 		8A046761224E7F1800493D74 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8A046764224E7F1800493D74 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8A046766224E7F1800493D74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEdgeInsets.swift; sourceTree = "<group>"; };
+		8A1A9401225A436800060ACC /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
 		8A889143225219E500DD6539 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GetStreamChat.xcassets; sourceTree = "<group>"; };
 		8A88914722521E4800DD6539 /* ClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientError.swift; sourceTree = "<group>"; };
@@ -77,8 +79,6 @@
 		8A88917A22550ECC00DD6539 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		8A88917D22560EC100DD6539 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		8A88917F225755D500DD6539 /* ChatViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewStyle.swift; sourceTree = "<group>"; };
-		8A88918122576F9400DD6539 /* MessageLayerMask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLayerMask.swift; sourceTree = "<group>"; };
-		8A88918322577E3600DD6539 /* MessageContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageContainerView.swift; sourceTree = "<group>"; };
 		E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.release.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -189,8 +189,6 @@
 				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
 				8A88917F225755D500DD6539 /* ChatViewStyle.swift */,
 				8A88917422550B2800DD6539 /* MessageTableViewCell.swift */,
-				8A88918122576F9400DD6539 /* MessageLayerMask.swift */,
-				8A88918322577E3600DD6539 /* MessageContainerView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -204,6 +202,8 @@
 				8A8891562252827E00DD6539 /* UIImage+Icons.swift */,
 				8A8891592252830C00DD6539 /* UIImage+Extensions.swift */,
 				8A8891722255000A00DD6539 /* UITableViewCell+Extensions.swift */,
+				8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */,
+				8A1A9401225A436800060ACC /* CGRect+Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -364,6 +364,7 @@
 				8A88915A2252830C00DD6539 /* UIImage+Extensions.swift in Sources */,
 				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
 				8A8891502252379700DD6539 /* Channel.swift in Sources */,
+				8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */,
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8A88914822521E4800DD6539 /* ClientError.swift in Sources */,
 				8A88917922550E8D00DD6539 /* UIFont+Extensions.swift in Sources */,
@@ -372,9 +373,7 @@
 				8A88914C2252337500DD6539 /* User.swift in Sources */,
 				8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */,
 				8A8891622253A73000DD6539 /* Query.swift in Sources */,
-				8A88918422577E3600DD6539 /* MessageContainerView.swift in Sources */,
 				8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */,
-				8A88918222576F9400DD6539 /* MessageLayerMask.swift in Sources */,
 				8A88917522550B2800DD6539 /* MessageTableViewCell.swift in Sources */,
 				8A88914A2252309900DD6539 /* BaseURL.swift in Sources */,
 				8A88917E22560EC100DD6539 /* Date+Extensions.swift in Sources */,
@@ -382,6 +381,7 @@
 				8A889144225219E500DD6539 /* Client.swift in Sources */,
 				8A8891712254F73B00DD6539 /* ChatViewController.swift in Sources */,
 				8A88917722550E0C00DD6539 /* UIColor+Extensions.swift in Sources */,
+				8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */,
 				8A8891732255000A00DD6539 /* UITableViewCell+Extensions.swift in Sources */,
 				8A88915E22535FEC00DD6539 /* Message.swift in Sources */,
 			);

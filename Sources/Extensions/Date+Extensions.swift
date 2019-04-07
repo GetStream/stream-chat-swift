@@ -30,6 +30,9 @@ extension Date {
         return DateFormatter.short.string(from: self)
     }
     
+    public func isLessThan(timeInterval: TimeInterval, with date: Date) -> Bool {
+        return abs(timeIntervalSinceNow - date.timeIntervalSinceNow) < timeInterval
+    }
 }
 
 extension DateFormatter {
