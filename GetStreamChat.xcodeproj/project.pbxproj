@@ -14,6 +14,9 @@
 		8A046765224E7F1800493D74 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A046763224E7F1800493D74 /* LaunchScreen.storyboard */; };
 		8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */; };
 		8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9401225A436800060ACC /* CGRect+Extensions.swift */; };
+		8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */; };
+		8A1A9407225B4E7F00060ACC /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9406225B4E7F00060ACC /* Reusable.swift */; };
+		8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */; };
 		8A889144225219E500DD6539 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889143225219E500DD6539 /* Client.swift */; };
 		8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */; };
 		8A88914822521E4800DD6539 /* ClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88914722521E4800DD6539 /* ClientError.swift */; };
@@ -53,6 +56,9 @@
 		8A046766224E7F1800493D74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEdgeInsets.swift; sourceTree = "<group>"; };
 		8A1A9401225A436800060ACC /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
+		8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewStyle.swift; sourceTree = "<group>"; };
+		8A1A9406225B4E7F00060ACC /* Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
+		8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Reusable.swift"; sourceTree = "<group>"; };
 		8A889143225219E500DD6539 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GetStreamChat.xcassets; sourceTree = "<group>"; };
 		8A88914722521E4800DD6539 /* ClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientError.swift; sourceTree = "<group>"; };
@@ -125,6 +131,15 @@
 			path = GetStreamChat;
 			sourceTree = "<group>";
 		};
+		8A1A9405225B4E6900060ACC /* Reusable */ = {
+			isa = PBXGroup;
+			children = (
+				8A1A9406225B4E7F00060ACC /* Reusable.swift */,
+				8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */,
+			);
+			path = Reusable;
+			sourceTree = "<group>";
+		};
 		8A889141225219B100DD6539 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,8 +202,9 @@
 			children = (
 				8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */,
 				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
-				8A88917F225755D500DD6539 /* ChatViewStyle.swift */,
 				8A88917422550B2800DD6539 /* MessageTableViewCell.swift */,
+				8A88917F225755D500DD6539 /* ChatViewStyle.swift */,
+				8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -196,6 +212,7 @@
 		8A88917C22560E8E00DD6539 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				8A1A9405225B4E6900060ACC /* Reusable */,
 				8A88917A22550ECC00DD6539 /* CGFloat+Extensions.swift */,
 				8A88917622550E0C00DD6539 /* UIColor+Extensions.swift */,
 				8A88917822550E8D00DD6539 /* UIFont+Extensions.swift */,
@@ -327,7 +344,6 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Nuke/Nuke.framework",
-				"${BUILT_PRODUCTS_DIR}/Reusable/Reusable.framework",
 				"${BUILT_PRODUCTS_DIR}/RxAtomic/RxAtomic.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
@@ -338,7 +354,6 @@
 			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nuke.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reusable.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAtomic.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
@@ -380,10 +395,13 @@
 				8A04675B224E7F1800493D74 /* AppDelegate.swift in Sources */,
 				8A889144225219E500DD6539 /* Client.swift in Sources */,
 				8A8891712254F73B00DD6539 /* ChatViewController.swift in Sources */,
+				8A1A9407225B4E7F00060ACC /* Reusable.swift in Sources */,
 				8A88917722550E0C00DD6539 /* UIColor+Extensions.swift in Sources */,
 				8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */,
+				8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */,
 				8A8891732255000A00DD6539 /* UITableViewCell+Extensions.swift in Sources */,
 				8A88915E22535FEC00DD6539 /* Message.swift in Sources */,
+				8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,7 +14,7 @@ extension CGFloat {
     public static let messageInnerPadding: CGFloat = 8
     public static let messageEdgePadding: CGFloat = 10
     public static let messageBottomPadding: CGFloat = 10
-    public static let messageSpacing: CGFloat = 5
+    public static let messageSpacing: CGFloat = 3
     public static let messageCornerRadius: CGFloat = 16
     public static let messageHorizontalInset: CGFloat = 10
     public static let messageVerticalInset: CGFloat = 5

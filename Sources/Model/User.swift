@@ -40,13 +40,18 @@ public struct User: Codable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        name = try container.decode(String.self, forKey: .name)
         created = try container.decode(Date.self, forKey: .created)
         updated = try container.decode(Date.self, forKey: .updated)
         lastActiveDate = try container.decodeIfPresent(Date.self, forKey: .lastActiveDate)
         online = try container.decode(Bool.self, forKey: .online)
         
-        if let avatarURL = try container.decodeIfPresent(URL.self, forKey: .avatarURL),
+        if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
+            self.name = name
+        } else {
+            name = id
+        }
+        
+        if let avatarURL = try? container.decodeIfPresent(URL.self, forKey: .avatarURL),
            !avatarURL.absoluteString.contains("random_svg") {
             self.avatarURL = avatarURL
         } else {

@@ -160,17 +160,7 @@ extension Client {
             if let errorResponse = try? JSONDecoder.stream.decode(ClientErrorResponse.self, from: data) {
                 performInCallbackQueue { completion(.failure(.responseError(errorResponse))) }
             } else {
-                let rawBody: String
-                
-                if data.isEmpty {
-                    rawBody = "<Empty>"
-                } else if let string = try? data.prettyPrintedJSONString() {
-                    rawBody = string
-                } else {
-                    rawBody = data.description
-                }
-                
-                performInCallbackQueue { completion(.failure(.decodingFailure(error, rawBody: rawBody))) }
+                performInCallbackQueue { completion(.failure(.decodingFailure(error))) }
             }
         }
     }

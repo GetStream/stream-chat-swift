@@ -15,29 +15,32 @@ public final class ChannelPresenter {
     
     init(channel: Channel) {
         self.channel = channel
-        load()
     }
 }
 
 // MARK: - Update Channel
 
 extension ChannelPresenter {
-    func load() {
+    func load(_ completion: @escaping () -> Void) {
         guard let user = Client.shared.user else {
             return
         }
         
-        channel.create(members: [user]) { [weak self] in self?.parseQuery($0) }
+        channel.create(members: [user]) { [weak self] in self?.parseQuery($0, completion) }
     }
     
-    private func parseQuery(_ result: Result<Query, ClientError>) {
+    private func parseQuery(_ result: Result<Query, ClientError>, _ completion: @escaping () -> Void) {
         do {
             let query = try result.get()
             channel = query.channel
             members = query.members
             messages = query.messages
+        } catch let clientError as ClientError {
+            print(clientError)
         } catch {
-            print(result)
+            print(error)
         }
+        
+        completion()
     }
 }

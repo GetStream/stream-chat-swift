@@ -15,7 +15,7 @@ public enum ClientError: Error {
     case emptyBody
     case responseError(_ responseError: ClientErrorResponse)
     case encodingFailure(_ error: Error, object: Encodable)
-    case decodingFailure(_ error: Error, rawBody: String)
+    case decodingFailure(_ error: Error)
 }
 
 public struct ClientErrorResponse: Decodable {

@@ -8,7 +8,6 @@
 
 import UIKit
 import SnapKit
-import Reusable
 
 public final class ChatViewController: UIViewController, UITableViewDataSource {
     
@@ -18,7 +17,9 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.separatorStyle = .none
         tableView.dataSource = self
-        tableView.register(cellType: MessageTableViewCell.self)
+        tableView.registerMessageCell(style: style.incomingMessage)
+        tableView.registerMessageCell(style: style.outgoingMessage)
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 30, right: 0)
         view.addSubview(tableView)
         return tableView
     }()
@@ -29,7 +30,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
         super.viewDidLoad()
         setupTableView()
         
-        DispatchQueue.main.async { [weak self] in
+        channelPresenter?.load { [weak self] in
             self?.tableView.reloadData()
         }
     }
@@ -43,8 +44,6 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
         return channelPresenter?.messages.count ?? 0
     }
     
-    var lastMessageIsIncoming: Bool = true
-    
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let presenter = channelPresenter,
             indexPath.row < presenter.messages.count else {
@@ -52,15 +51,13 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
         }
         
         let message = presenter.messages[indexPath.row]
-        let cell = tableView.dequeueReusableCell(for: indexPath) as MessageTableViewCell
+        
+        let isIncoming = message.user.id.hashValue % 2 == 0
+        
+        let cell = tableView.dequeueMessageCell(for: indexPath,
+                                                style: isIncoming ? style.incomingMessage : style.outgoingMessage)
         cell.update(message: message.text)
         
-        let prevMessage: Message? = indexPath.row > 0 ? presenter.messages[indexPath.row - 1] : nil
-        
-//        if let prevMessage = prevMessage, prevMessage.user != message.user {
-//            lastMessageIsIncoming = !lastMessageIsIncoming
-//        }
-
         var showAvatar = true
         
         if indexPath.row < (presenter.messages.count - 1) {
@@ -72,26 +69,13 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
             }
         }
         
-        cell.isIncomingMessage = lastMessageIsIncoming
-        
-        let cellStyle = lastMessageIsIncoming ? style.incomingMessage : style.outgoingMessage
-        let messageBackgroundImage: UIImage?
-        
-        if lastMessageIsIncoming {
-            messageBackgroundImage = prevMessage?.user == message.user
-                ? cellStyle.leftCornersBackgroundImage
-                : cellStyle.leftBottomCornerBackgroundImage
-        } else  {
-            messageBackgroundImage = prevMessage?.user == message.user
-                ? cellStyle.rightCornersBackgroundImage
-                : cellStyle.rightBottomCornerBackgroundImage
+        if indexPath.row > 0, presenter.messages[indexPath.row - 1].user == message.user {
+            cell.update(isContinueMessage: true)
         }
         
         if let attachment = message.attachments.first, let imageURL = attachment.imageURL {
             cell.update(name: message.user.name, attachmentImageURL: imageURL)
         }
-        
-        cell.update(style: cellStyle, messageBackgroundImage: messageBackgroundImage)
         
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)

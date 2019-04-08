@@ -1,10 +1,5 @@
 PODS:
   - Nuke (7.5.2)
-  - Reusable (4.0.5):
-    - Reusable/Storyboard (= 4.0.5)
-    - Reusable/View (= 4.0.5)
-  - Reusable/Storyboard (4.0.5)
-  - Reusable/View (4.0.5)
   - RxAtomic (4.4.2)
   - RxSwift (4.4.2):
     - RxAtomic (>= 4.4.2, ~> 4.4)
@@ -13,7 +8,6 @@ PODS:
 
 DEPENDENCIES:
   - Nuke
-  - Reusable
   - RxSwift
   - SnapKit
   - Starscream
@@ -21,7 +15,6 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Nuke
-    - Reusable
     - RxAtomic
     - RxSwift
     - SnapKit
@@ -29,12 +22,11 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Nuke: 0350d346a688426e8f2331253ef28dc2fc4f6178
-  Reusable: 188be1a54ac0691bc66e5bb24ec6eb91971b315b
   RxAtomic: d00e97c10db88c6f08540e0bf2752fc5a2404167
   RxSwift: 74c29b693c8e42b0f64400e8b06564575742d649
   SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
 
-PODFILE CHECKSUM: 092ab566ec40090018f528b6d260e34a45c16553
+PODFILE CHECKSUM: 1d0cb42b70698d3e61680cad373f4fb6a36fb4cf
 
 COCOAPODS: 1.6.1
