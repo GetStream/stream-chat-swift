@@ -30,6 +30,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         label.font = .chatAvatar
         label.textAlignment = .center
         label.isHidden = true
+        label.preferredMaxLayoutWidth = .messageAvatarSize
         return label
     }()
     
@@ -37,7 +38,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, dateLabel])
         stackView.axis = .horizontal
         stackView.spacing = .messageSpacing
-        stackView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageAvatarRadius) }
+        stackView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageAvatarRadius).priority(999) }
         stackView.isHidden = true
         return stackView
     }()
@@ -72,10 +73,11 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return imageView
     }()
     
-    private let messageLabel: UILabel = {
+    private lazy var messageLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatRegular
         label.textColor = .black
+        label.preferredMaxLayoutWidth = maxMessageWidth
         label.numberOfLines = 0
         return label
     }()
@@ -86,7 +88,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         let imageView = UIImageView(image: UIImage.Icons.image)
         
         imageView.snp.makeConstraints {
-            $0.height.equalTo(MessageTableViewCell.imagePreviewHeight)
+            $0.height.equalTo(MessageTableViewCell.imagePreviewHeight).priority(999)
             attachmentImageWidthConstraint = $0.width.equalTo(MessageTableViewCell.imagePreviewHeight).constraint
         }
         
@@ -96,6 +98,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     private let bottomPaddingView: UIView = {
         let view = UIView(frame: .zero)
         view.isUserInteractionEnabled = false
+        view.snp.makeConstraints { $0.height.equalTo(CGFloat.messageBottomPadding).priority(999) }
         return view
     }()
     
@@ -147,15 +150,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             nameLabel.isHidden = true
         }
 
-        // Bottom Padding View
-        addSubview(bottomPaddingView)
-        
-        bottomPaddingView.snp.makeConstraints { make in
-            make.height.equalTo(CGFloat.messageBottomPadding)
-        }
-        
         // Avatar
-        addSubview(avatarView)
+        contentView.addSubview(avatarView)
         
         avatarView.snp.makeConstraints { make in
             make.bottom.equalToSuperview().offset(-CGFloat.messageBottomPadding)
@@ -174,11 +170,11 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageLabel.snp.makeConstraints { make in
             make.left.equalTo(CGFloat.messageHorizontalInset)
             make.right.equalTo(-CGFloat.messageHorizontalInset)
-            make.top.equalTo(CGFloat.messageVerticalInset)
-            make.bottom.equalTo(-CGFloat.messageVerticalInset)
+            make.top.equalTo(CGFloat.messageVerticalInset).priority(999)
+            make.bottom.equalTo(-CGFloat.messageVerticalInset).priority(999)
         }
         
-        addSubview(messageStackView)
+        contentView.addSubview(messageStackView)
         messageStackView.alignment = style.alignment == .left ? .leading : .trailing
         
         messageStackView.snp.makeConstraints { make in
