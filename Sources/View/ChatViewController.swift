@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-public final class ChatViewController: UIViewController, UITableViewDataSource {
+public final class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     var style = ChatViewStyle()
     
@@ -17,6 +17,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.separatorStyle = .none
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.registerMessageCell(style: style.incomingMessage)
         tableView.registerMessageCell(style: style.outgoingMessage)
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 30, right: 0)
@@ -73,8 +74,8 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
             cell.update(isContinueMessage: true)
         }
         
-        if let attachment = message.attachments.first, let imageURL = attachment.imageURL {
-            cell.update(name: message.user.name, attachmentImageURL: imageURL)
+        if !message.attachments.isEmpty {
+            cell.add(attachments: message.attachments, userName: message.user.name)
         }
         
         if showAvatar {
@@ -83,5 +84,11 @@ public final class ChatViewController: UIViewController, UITableViewDataSource {
         }
         
         return cell
+    }
+    
+    public func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let cell = cell as? MessageTableViewCell {
+            cell.free()
+        }
     }
 }

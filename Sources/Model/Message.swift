@@ -87,4 +87,8 @@ public enum MessageAttachmentType: String, Codable {
     case video
     case imgur
     case product
+    
+    var isImage: Bool {
+        return self == .image || self == .imgur
+    }
 }

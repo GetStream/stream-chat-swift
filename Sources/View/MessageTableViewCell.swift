@@ -12,8 +12,6 @@ import Nuke
 
 final class MessageTableViewCell: UITableViewCell, Reusable {
     
-    private static let imagePreviewHeight: CGFloat = 150
-    
     private lazy var avatarView: UIImageView = {
         let view = UIImageView(frame: .zero)
         view.layer.cornerRadius = .messageAvatarRadius
@@ -58,10 +56,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     }()
     
     private lazy var messageStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [attachmentImageView,
-                                                       messageContainerView,
-                                                       nameAndDateStackView,
-                                                       bottomPaddingView])
+        let stackView = UIStackView(arrangedSubviews: [messageContainerView, nameAndDateStackView, bottomPaddingView])
         stackView.axis = .vertical
         stackView.spacing = .messageSpacing
         return stackView
@@ -82,18 +77,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    private var attachmentImageWidthConstraint: Constraint?
-    
-    private lazy var attachmentImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage.Icons.image)
-        
-        imageView.snp.makeConstraints {
-            $0.height.equalTo(MessageTableViewCell.imagePreviewHeight).priority(999)
-            attachmentImageWidthConstraint = $0.width.equalTo(MessageTableViewCell.imagePreviewHeight).constraint
-        }
-        
-        return imageView
-    }()
+    private lazy var attachmentPreviewViews: [MessageAttachmentPreview] = []
     
     private let bottomPaddingView: UIView = {
         let view = UIView(frame: .zero)
@@ -138,9 +122,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageLabel.font = style.font
         messageLabel.textColor = style.textColor
         messageLabel.backgroundColor = style.backgroundColor
-        
-        attachmentImageView.tintColor = style.textColor
-        reset(attachmentImageView: attachmentImageView)
         
         if style.alignment == .left {
             nameLabel.font = style.nameFont
@@ -204,8 +185,12 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
 
         paddingType = .regular
         
-        reset(attachmentImageView: attachmentImageView)
-        attachmentImageWidthConstraint?.update(offset: MessageTableViewCell.imagePreviewHeight)
+        free()
+    }
+    
+    public func free() {
+        attachmentPreviewViews.forEach { $0.removeFromSuperview() }
+        attachmentPreviewViews = []
     }
     
     public func update(isContinueMessage: Bool) {
@@ -239,15 +224,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             : (isContinueMessage ? style.rightCornersBackgroundImage : style.rightBottomCornerBackgroundImage)
     }
     
-    private func reset(attachmentImageView: UIImageView) {
-        attachmentImageView.isHidden = true
-        attachmentImageView.contentMode = .center
-        attachmentImageView.image = UIImage.Icons.image
-        attachmentImageView.clipsToBounds = true
-        attachmentImageView.mask = nil
-        attachmentImageView.layer.cornerRadius = style?.cornerRadius ?? 0
-    }
-    
     public func update(name: String?, date: Date) {
         nameAndDateStackView.isHidden = false
         
@@ -279,38 +255,34 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
     }
     
-    public func update(name: String, attachmentImageURL url: URL) {
-        attachmentImageView.backgroundColor = color(by: name)
-        attachmentImageView.isHidden = false
-        
-        Nuke.loadImage(with: url,
-                       options: .init(placeholder: UIImage.Icons.image,
-                                      failureImage: UIImage.Icons.close,
-                                      contentModes: .init(success: .scaleAspectFit, failure: .center, placeholder: .center)),
-                       into: attachmentImageView) { [weak self] in
-                        self?.parseAttachmentImageResponse(response: $0, error: $1)
+    public func add(attachments: [MessageAttachment], userName: String) {
+        guard let style = style else {
+            return
         }
-    }
-    
-    private func parseAttachmentImageResponse(response: ImageResponse?, error: Error?) {
-        var width = MessageTableViewCell.imagePreviewHeight
         
-        if let image = response?.image, image.size.height > 0 {
-            width = min(image.size.width / image.size.height * MessageTableViewCell.imagePreviewHeight, maxMessageWidth)
-            attachmentImageWidthConstraint?.update(offset: width)
-        } else {
-            if let error = error, let url = response?.urlResponse?.url {
-                print("⚠️", url, error)
+        attachments.enumerated().forEach { offset, attachment in
+            let preview = MessageAttachmentPreview(frame: .zero)
+            preview.maxWidth = maxMessageWidth
+            preview.tintColor = style.textColor
+            preview.backgroundColor = style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray
+            preview.imageView.backgroundColor = color(by: userName)
+            preview.layer.cornerRadius = style.cornerRadius
+            preview.type = attachment.type
+            messageStackView.insertArrangedSubview(preview, at: offset)
+            attachmentPreviewViews.append(preview)
+            
+            let maskImage: UIImage?
+            
+            if style.alignment == .left {
+                maskImage = offset == 0 ? messageContainerView.image : style.leftCornersBackgroundImage
+            } else {
+                maskImage = offset == 0 ? messageContainerView.image : style.rightCornersBackgroundImage
             }
+            
+            preview.update(attachment: attachment, maskImage: maskImage)
         }
         
-        if let maskImage = messageContainerView.image {
-            let maskView = UIImageView(frame: CGRect(width: width, height: MessageTableViewCell.imagePreviewHeight))
-            maskView.image = maskImage
-            attachmentImageView.mask = maskView
-            attachmentImageView.layer.cornerRadius = 0
-            update(isContinueMessage: true)
-        }
+        update(isContinueMessage: true)
     }
     
     private func showAvatarLabel(with name: String) {

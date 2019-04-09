@@ -17,6 +17,7 @@
 		8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */; };
 		8A1A9407225B4E7F00060ACC /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9406225B4E7F00060ACC /* Reusable.swift */; };
 		8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */; };
+		8A1A940E225CC88200060ACC /* MessageAttachmentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A940D225CC88200060ACC /* MessageAttachmentPreview.swift */; };
 		8A889144225219E500DD6539 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889143225219E500DD6539 /* Client.swift */; };
 		8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */; };
 		8A88914822521E4800DD6539 /* ClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88914722521E4800DD6539 /* ClientError.swift */; };
@@ -59,6 +60,7 @@
 		8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewStyle.swift; sourceTree = "<group>"; };
 		8A1A9406225B4E7F00060ACC /* Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
 		8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Reusable.swift"; sourceTree = "<group>"; };
+		8A1A940D225CC88200060ACC /* MessageAttachmentPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageAttachmentPreview.swift; sourceTree = "<group>"; };
 		8A889143225219E500DD6539 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GetStreamChat.xcassets; sourceTree = "<group>"; };
 		8A88914722521E4800DD6539 /* ClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientError.swift; sourceTree = "<group>"; };
@@ -140,6 +142,15 @@
 			path = Reusable;
 			sourceTree = "<group>";
 		};
+		8A1A940A225C8F6000060ACC /* Style */ = {
+			isa = PBXGroup;
+			children = (
+				8A88917F225755D500DD6539 /* ChatViewStyle.swift */,
+				8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */,
+			);
+			path = Style;
+			sourceTree = "<group>";
+		};
 		8A889141225219B100DD6539 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -202,9 +213,9 @@
 			children = (
 				8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */,
 				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
+				8A1A940A225C8F6000060ACC /* Style */,
 				8A88917422550B2800DD6539 /* MessageTableViewCell.swift */,
-				8A88917F225755D500DD6539 /* ChatViewStyle.swift */,
-				8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */,
+				8A1A940D225CC88200060ACC /* MessageAttachmentPreview.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -380,6 +391,7 @@
 				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
 				8A8891502252379700DD6539 /* Channel.swift in Sources */,
 				8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */,
+				8A1A940E225CC88200060ACC /* MessageAttachmentPreview.swift in Sources */,
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8A88914822521E4800DD6539 /* ClientError.swift in Sources */,
 				8A88917922550E8D00DD6539 /* UIFont+Extensions.swift in Sources */,
