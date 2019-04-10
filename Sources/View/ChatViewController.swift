@@ -13,15 +13,22 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     
     var style = ChatViewStyle()
     
+    public private(set) lazy var composerView: ComposerView = {
+        let composerView = ComposerView(frame: .zero)
+        composerView.style = style.composer
+        return composerView
+    }()
+    
     public private(set) lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.keyboardDismissMode = .interactive
         tableView.separatorStyle = .none
         tableView.dataSource = self
         tableView.delegate = self
         tableView.registerMessageCell(style: style.incomingMessage)
         tableView.registerMessageCell(style: style.outgoingMessage)
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 30, right: 0)
-        view.addSubview(tableView)
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: CGFloat.messagesBottomMargin, right: 0)
+        view.insertSubview(tableView, at: 0)
         return tableView
     }()
     
@@ -29,11 +36,13 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setupComposerView()
         setupTableView()
-        
-        channelPresenter?.load { [weak self] in
-            self?.tableView.reloadData()
-        }
+        channelPresenter?.load { [weak self] in self?.tableView.reloadData() }
+    }
+    
+    func setupComposerView() {
+        composerView.addToSuperview(view)
     }
     
     func setupTableView() {

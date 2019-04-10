@@ -11,11 +11,13 @@ import UIKit
 public struct ChatViewStyle: Hashable {
     
     public var backgroundColor: UIColor = .white
+    public var composer = ComposerViewStyle()
     public var incomingMessage = MessageViewStyle()
     public var outgoingMessage = MessageViewStyle(alignment: .right, backgroundColor: .chatSuperLightGray, borderWidth: 0)
     
     public static let dark =
         ChatViewStyle(backgroundColor: .chatSuperDarkGray,
+                      composer: ComposerViewStyle(textColor: .white, backgroundColor: .chatDarkGray),
                       incomingMessage: MessageViewStyle(chatBackgroundColor: .chatSuperDarkGray,
                                                         textColor: .white,
                                                         backgroundColor: .chatSuperDarkGray,
@@ -31,6 +33,7 @@ public struct ChatViewStyle: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(backgroundColor)
+        hasher.combine(composer)
         hasher.combine(incomingMessage)
         hasher.combine(outgoingMessage)
     }

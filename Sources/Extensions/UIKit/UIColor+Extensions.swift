@@ -9,11 +9,13 @@
 import UIKit.UIColor
 
 extension UIColor {
+    public static let chatBlue = UIColor(red: 0.15, green: 0.44, blue: 0.96, alpha: 1)
     public static let chatGray = UIColor(white: 0.5, alpha: 1)
+    public static let chatGray60 = UIColor(white: 0.6, alpha: 1)
+    public static let chatGray80 = UIColor(white: 0.8, alpha: 1)
     public static let chatSuperLightGray = UIColor(white: 0.92, alpha: 1)
     public static let chatSuperDarkGray = UIColor(white: 0.1, alpha: 1)
     public static let chatDarkGray = UIColor(white: 0.2, alpha: 1)
-    public static let attachmentTitle = UIColor(red: 0, green: 108 / 255, blue: 1, alpha: 1)
     public static let messageErrorBackground = UIColor(red: 0.91, green: 0.85, blue: 0.87, alpha: 1)
     public static let messageErrorBorder = UIColor(red: 0.9, green: 0.80, blue: 0.83, alpha: 1)
 }

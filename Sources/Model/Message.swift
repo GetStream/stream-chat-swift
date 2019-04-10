@@ -84,11 +84,12 @@ public struct MessageAttachment: Codable {
 public enum MessageAttachmentType: String, Codable {
     case unknown
     case image
-    case video
     case imgur
+    case giphy
+    case video
     case product
     
     var isImage: Bool {
-        return self == .image || self == .imgur
+        return self == .image || self == .imgur || self == .giphy
     }
 }

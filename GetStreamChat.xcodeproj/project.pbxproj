@@ -19,6 +19,11 @@
 		8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */; };
 		8A1A940E225CC88200060ACC /* MessageAttachmentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A940D225CC88200060ACC /* MessageAttachmentPreview.swift */; };
 		8A1A9410225CD17300060ACC /* ReactionViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A940F225CD17300060ACC /* ReactionViewStyle.swift */; };
+		8A1A9412225DFDA100060ACC /* ComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9411225DFDA100060ACC /* ComposerView.swift */; };
+		8A1A9414225E01F100060ACC /* ComposerViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9413225E01F100060ACC /* ComposerViewStyle.swift */; };
+		8A1A9416225E2EB200060ACC /* DataDetectorWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9415225E2EB200060ACC /* DataDetectorWorker.swift */; };
+		8A1A9418225E2FE000060ACC /* AttachmentCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9417225E2FE000060ACC /* AttachmentCollectionViewCell.swift */; };
+		8A1A941A225E321100060ACC /* UICollectionView+Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9419225E321100060ACC /* UICollectionView+Reusable.swift */; };
 		8A889144225219E500DD6539 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889143225219E500DD6539 /* Client.swift */; };
 		8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */; };
 		8A88914822521E4800DD6539 /* ClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88914722521E4800DD6539 /* ClientError.swift */; };
@@ -63,6 +68,11 @@
 		8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Reusable.swift"; sourceTree = "<group>"; };
 		8A1A940D225CC88200060ACC /* MessageAttachmentPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageAttachmentPreview.swift; sourceTree = "<group>"; };
 		8A1A940F225CD17300060ACC /* ReactionViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionViewStyle.swift; sourceTree = "<group>"; };
+		8A1A9411225DFDA100060ACC /* ComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerView.swift; sourceTree = "<group>"; };
+		8A1A9413225E01F100060ACC /* ComposerViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerViewStyle.swift; sourceTree = "<group>"; };
+		8A1A9415225E2EB200060ACC /* DataDetectorWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDetectorWorker.swift; sourceTree = "<group>"; };
+		8A1A9417225E2FE000060ACC /* AttachmentCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentCollectionViewCell.swift; sourceTree = "<group>"; };
+		8A1A9419225E321100060ACC /* UICollectionView+Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Reusable.swift"; sourceTree = "<group>"; };
 		8A889143225219E500DD6539 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GetStreamChat.xcassets; sourceTree = "<group>"; };
 		8A88914722521E4800DD6539 /* ClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientError.swift; sourceTree = "<group>"; };
@@ -140,6 +150,7 @@
 			children = (
 				8A1A9406225B4E7F00060ACC /* Reusable.swift */,
 				8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */,
+				8A1A9419225E321100060ACC /* UICollectionView+Reusable.swift */,
 			);
 			path = Reusable;
 			sourceTree = "<group>";
@@ -150,6 +161,7 @@
 				8A88917F225755D500DD6539 /* ChatViewStyle.swift */,
 				8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */,
 				8A1A940F225CD17300060ACC /* ReactionViewStyle.swift */,
+				8A1A9413225E01F100060ACC /* ComposerViewStyle.swift */,
 			);
 			path = Style;
 			sourceTree = "<group>";
@@ -214,11 +226,14 @@
 		8A88916D2254F58500DD6539 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				8A1A940A225C8F6000060ACC /* Style */,
 				8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */,
 				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
-				8A1A940A225C8F6000060ACC /* Style */,
+				8A1A9411225DFDA100060ACC /* ComposerView.swift */,
+				8A1A9417225E2FE000060ACC /* AttachmentCollectionViewCell.swift */,
 				8A88917422550B2800DD6539 /* MessageTableViewCell.swift */,
 				8A1A940D225CC88200060ACC /* MessageAttachmentPreview.swift */,
+				8A1A9415225E2EB200060ACC /* DataDetectorWorker.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -390,11 +405,13 @@
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
 				8A8891552252502900DD6539 /* EndpointProtocol.swift in Sources */,
 				8A889153225240F700DD6539 /* Event.swift in Sources */,
+				8A1A9416225E2EB200060ACC /* DataDetectorWorker.swift in Sources */,
 				8A88915A2252830C00DD6539 /* UIImage+Extensions.swift in Sources */,
 				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
 				8A8891502252379700DD6539 /* Channel.swift in Sources */,
 				8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */,
 				8A1A940E225CC88200060ACC /* MessageAttachmentPreview.swift in Sources */,
+				8A1A941A225E321100060ACC /* UICollectionView+Reusable.swift in Sources */,
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8A88914822521E4800DD6539 /* ClientError.swift in Sources */,
 				8A88917922550E8D00DD6539 /* UIFont+Extensions.swift in Sources */,
@@ -411,12 +428,15 @@
 				8A889144225219E500DD6539 /* Client.swift in Sources */,
 				8A8891712254F73B00DD6539 /* ChatViewController.swift in Sources */,
 				8A1A9407225B4E7F00060ACC /* Reusable.swift in Sources */,
+				8A1A9414225E01F100060ACC /* ComposerViewStyle.swift in Sources */,
 				8A88917722550E0C00DD6539 /* UIColor+Extensions.swift in Sources */,
 				8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */,
+				8A1A9412225DFDA100060ACC /* ComposerView.swift in Sources */,
 				8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */,
 				8A8891732255000A00DD6539 /* UITableViewCell+Extensions.swift in Sources */,
 				8A88915E22535FEC00DD6539 /* Message.swift in Sources */,
 				8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */,
+				8A1A9418225E2FE000060ACC /* AttachmentCollectionViewCell.swift in Sources */,
 				8A1A9410225CD17300060ACC /* ReactionViewStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -9,6 +9,18 @@
 import UIKit
 
 extension CGFloat {
+    public static let safeAreaBottom: CGFloat = (UIApplication.shared.delegate?.window as? UIWindow)?.safeAreaInsets.bottom ?? 0
+    
+    public static let composerCornerRadius: CGFloat = 10
+    public static let composerHeight: CGFloat = 60
+    public static let composerMaxHeight: CGFloat = 200
+    public static let composerInnerPadding: CGFloat = 16
+    public static let composerButtonWidth: CGFloat = 44
+    public static let composerAttachmentsHeight: CGFloat = 80
+    public static let composerAttachmentWidth: CGFloat = 50
+    public static let composerAttachmentHeight: CGFloat = 60
+    
+    public static let messagesBottomMargin: CGFloat = .composerHeight + 30
     public static let messageAvatarRadius: CGFloat = 16
     public static let messageAvatarSize: CGFloat = 2 * .messageAvatarRadius
     public static let messageInnerPadding: CGFloat = 8
@@ -18,6 +30,7 @@ extension CGFloat {
     public static let messageCornerRadius: CGFloat = 16
     public static let messageHorizontalInset: CGFloat = 10
     public static let messageVerticalInset: CGFloat = 5
+    
     public static let reactionsTextPagging: CGFloat = 5
     public static let reactionsHeight: CGFloat = 24
     public static let reactionsTailHeight: CGFloat = 12

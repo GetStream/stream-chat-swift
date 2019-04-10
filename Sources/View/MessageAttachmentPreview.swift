@@ -40,7 +40,7 @@ final class MessageAttachmentPreview: UIView {
         let label = UILabel(frame: .zero)
         label.numberOfLines = 3
         label.font = .chatBoldMedium
-        label.textColor = .attachmentTitle
+        label.textColor = .chatBlue
         addSubview(label)
         imageViewBottomConstraint?.deactivate()
         
