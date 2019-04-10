@@ -263,13 +263,17 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     }
     
     private func messageBackgroundImage(isContinueMessage: Bool) -> UIImage? {
-        guard let style = style, style.leftBottomCornerBackgroundImage != nil else {
+        guard let style = style, style.hasBackgroundImage else {
             return nil
         }
         
         return style.alignment == .left
-            ? (isContinueMessage ? style.leftCornersBackgroundImage : style.leftBottomCornerBackgroundImage)
-            : (isContinueMessage ? style.rightCornersBackgroundImage : style.rightBottomCornerBackgroundImage)
+            ? (isContinueMessage
+                ? style.backgroundImages[.leftSide(transparent: false)]
+                : style.backgroundImages[.leftBottomCorner(transparent: false)])
+            : (isContinueMessage
+                ? style.backgroundImages[.rightSide(transparent: false)]
+                : style.backgroundImages[.rightBottomCorner(transparent: false)])
     }
     
     public func update(name: String?, date: Date) {
@@ -304,7 +308,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     }
     
     public func add(attachments: [MessageAttachment], userName: String) {
-        guard let style = style else {
+        guard let style = style, style.hasBackgroundImage, let messageContainerViewImage = messageContainerView.image else {
             return
         }
         
@@ -326,9 +330,13 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             let maskImage: UIImage?
             
             if style.alignment == .left {
-                maskImage = offset == 0 ? messageContainerView.image : style.leftCornersBackgroundImage
+                maskImage = offset == 0 || messageContainerViewImage == style.backgroundImages[.leftBottomCorner(transparent: false)]
+                    ? style.backgroundImages[.leftBottomCorner(transparent: true)]
+                    : style.backgroundImages[.leftSide(transparent: true)]
             } else {
-                maskImage = offset == 0 ? messageContainerView.image : style.rightCornersBackgroundImage
+                maskImage = offset == 0 || messageContainerViewImage == style.backgroundImages[.rightBottomCorner(transparent: false)]
+                    ? style.backgroundImages[.rightBottomCorner(transparent: true)]
+                    : style.backgroundImages[.rightSide(transparent: true)]
             }
             
             preview.update(attachment: attachment, maskImage: maskImage)

@@ -21,10 +21,11 @@ public struct MessageViewStyle: Hashable {
     public let borderWidth: CGFloat
     public let cornerRadius: CGFloat
     public let reactionViewStyle: ReactionViewStyle
-    public private(set) var leftBottomCornerBackgroundImage: UIImage?
-    public private(set) var rightBottomCornerBackgroundImage: UIImage?
-    public private(set) var leftCornersBackgroundImage: UIImage?
-    public private(set) var rightCornersBackgroundImage: UIImage?
+    public private(set) var backgroundImages: [BackgroundImageType: UIImage] = [:]
+    
+    public var hasBackgroundImage: Bool {
+        return cornerRadius > 1 && (chatBackgroundColor != backgroundColor || borderWidth > 0)
+    }
     
     init(alignment: Alignment = .left,
          chatBackgroundColor: UIColor = .white,
@@ -50,10 +51,18 @@ public struct MessageViewStyle: Hashable {
         self.borderWidth = borderWidth
         self.cornerRadius = cornerRadius
         self.reactionViewStyle = reactionViewStyle
-        leftBottomCornerBackgroundImage = renderBackgroundImage(corners: [.topLeft, .topRight, .bottomRight])
-        rightBottomCornerBackgroundImage = renderBackgroundImage(corners: [.topLeft, .topRight, .bottomLeft])
-        leftCornersBackgroundImage = renderBackgroundImage(corners: [.topRight, .bottomRight])
-        rightCornersBackgroundImage = renderBackgroundImage(corners: [.topLeft, .bottomLeft])
+        
+        if hasBackgroundImage {
+            backgroundImages =
+                [.leftBottomCorner(transparent: false): renderBackgroundImage(.leftBottomCorner(transparent: false)),
+                 .leftSide(transparent: false): renderBackgroundImage(.leftSide(transparent: false)),
+                 .rightBottomCorner(transparent: false): renderBackgroundImage(.rightBottomCorner(transparent: false)),
+                 .rightSide(transparent: false): renderBackgroundImage(.rightSide(transparent: false)),
+                 .leftBottomCorner(transparent: true): renderBackgroundImage(.leftBottomCorner(transparent: true)),
+                 .leftSide(transparent: true): renderBackgroundImage(.leftSide(transparent: true)),
+                 .rightBottomCorner(transparent: true): renderBackgroundImage(.rightBottomCorner(transparent: true)),
+                 .rightSide(transparent: true): renderBackgroundImage(.rightSide(transparent: true))]
+        }
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -70,30 +79,32 @@ public struct MessageViewStyle: Hashable {
         hasher.combine(reactionViewStyle)
     }
     
-    private func renderBackgroundImage(corners: UIRectCorner) -> UIImage? {
-        guard cornerRadius > 1 else {
-            return nil
-        }
-        
+    private func renderBackgroundImage(_ type: BackgroundImageType) -> UIImage {
         let width = 2 * cornerRadius + 1
         let rect = CGRect(width: width, height: width)
         let cornerRadii = CGSize(width: cornerRadius, height: cornerRadius)
-        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+        UIGraphicsBeginImageContextWithOptions(rect.size, !type.isTransparent, 0.0)
         defer { UIGraphicsEndImageContext() }
         
         if let context = UIGraphicsGetCurrentContext() {
             context.interpolationQuality = .high
         }
         
-        UIColor.clear.setFill()
+        if type.isTransparent {
+            UIColor.clear.setFill()
+        } else {
+            chatBackgroundColor.setFill()
+        }
+        
         UIRectFill(rect)
+        
         backgroundColor.setFill()
-        UIBezierPath(roundedRect: rect, byRoundingCorners: corners, cornerRadii: cornerRadii).fill()
+        UIBezierPath(roundedRect: rect, byRoundingCorners: type.corners, cornerRadii: cornerRadii).fill()
         
         if borderWidth > 0 {
             borderColor.setStroke()
             let path = UIBezierPath(roundedRect: rect.inset(by: .init(allEdgeInsets: borderWidth / 2)),
-                                    byRoundingCorners: corners,
+                                    byRoundingCorners: type.corners,
                                     cornerRadii: cornerRadii)
             path.lineWidth = borderWidth
             path.close()
@@ -104,7 +115,7 @@ public struct MessageViewStyle: Hashable {
             return image.resizableImage(withCapInsets: UIEdgeInsets(allEdgeInsets: cornerRadius), resizingMode: .stretch)
         }
         
-        return nil
+        return UIImage(color: .black)
     }
 }
 
@@ -112,5 +123,32 @@ extension MessageViewStyle {
     public enum Alignment: String {
         case left
         case right
+    }
+}
+
+extension MessageViewStyle {
+    public enum BackgroundImageType: Hashable {
+        case leftBottomCorner(transparent: Bool)
+        case leftSide(transparent: Bool)
+        case rightBottomCorner(transparent: Bool)
+        case rightSide(transparent: Bool)
+        
+        fileprivate var corners: UIRectCorner {
+            switch self {
+            case .leftBottomCorner: return [.topLeft, .topRight, .bottomRight]
+            case .leftSide: return [.topRight, .bottomRight]
+            case .rightBottomCorner: return [.topLeft, .topRight, .bottomLeft]
+            case .rightSide: return [.topLeft, .bottomLeft]
+            }
+        }
+        
+        fileprivate var isTransparent: Bool {
+            switch self {
+            case .leftBottomCorner(let transparent): return transparent
+            case .leftSide(let transparent): return transparent
+            case .rightBottomCorner(let transparent): return transparent
+            case .rightSide(let transparent): return transparent
+            }
+        }
     }
 }

@@ -115,7 +115,9 @@ final class MessageAttachmentPreview: UIView {
         
         if !type.isImage {
             titleLabel.text = attachment.title
+            titleLabel.backgroundColor = backgroundColor
             urlLabel.text = attachment.url?.host
+            urlLabel.backgroundColor = backgroundColor
             widthConstraint?.update(offset: maxWidth)
         }
         
