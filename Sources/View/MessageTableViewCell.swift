@@ -32,6 +32,21 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
+//    private let reactionsContainer = UIImageView(frame: .zero)
+//
+//    private let reactionsLabel: UILabel = {
+//        let label = UILabel(frame: .zero)
+//        label.textAlignment = .center
+//        return label
+//    }()
+//
+//    private(set) lazy var reactionButton: UIButton = {
+//        let button = UIButton(type: .custom)
+//        button.setImage(UIImage.Icons.happy, for: .normal)
+//        button.tintColor = .chatGray
+//        return button
+//    }()
+    
     private lazy var nameAndDateStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, dateLabel])
         stackView.axis = .horizontal
@@ -159,13 +174,46 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageStackView.alignment = style.alignment == .left ? .leading : .trailing
         
         messageStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
+            make.top.equalToSuperview().offset(CGFloat.messageSpacing) //  + .reactionsHeight + .messageSpacing
             make.bottom.equalToSuperview()
             make.left.equalToSuperview().offset(messagePadding)
             make.right.equalToSuperview().offset(-messagePadding)
         }
         
         update(isContinueMessage: false)
+
+        // Reactions.
+//        reactionsContainer.addSubview(reactionsLabel)
+//        reactionsContainer.image = style.reactionViewStyle.backgroundImage
+//        contentView.addSubview(reactionsContainer)
+//
+//        reactionsContainer.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
+//            make.right.equalTo(messageLabel.snp.right).offset(CGFloat.reactionsHeight - 4)
+//            make.height.equalTo(CGFloat.reactionsFullHeight).priority(999)
+//        }
+//
+//        reactionsLabel.font = style.reactionViewStyle.font
+//        reactionsLabel.textColor = style.reactionViewStyle.textColor
+//
+//        reactionsLabel.snp.makeConstraints { make in
+//            make.left.equalToSuperview().offset(CGFloat.reactionsTextPagging)
+//            make.right.equalToSuperview().offset(-CGFloat.reactionsTextPagging)
+//            make.top.equalToSuperview()
+//            make.height.equalTo(CGFloat.reactionsHeight)
+//        }
+//
+//        if style.alignment == .left {
+//            reactionButton.backgroundColor = style.chatBackgroundColor
+//            contentView.insertSubview(reactionButton, at: 0)
+//
+//            reactionButton.snp.makeConstraints { make in
+//                make.top.equalTo(messageLabel.snp.top).offset(-15)
+//                make.centerX.equalTo(reactionsContainer.snp.right).offset(1)
+//                make.width.equalTo(30)
+//                make.height.equalTo(30)
+//            }
+//        }
     }
     
     public func reset() {
@@ -264,10 +312,14 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             let preview = MessageAttachmentPreview(frame: .zero)
             preview.maxWidth = maxMessageWidth
             preview.tintColor = style.textColor
-            preview.backgroundColor = style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray
             preview.imageView.backgroundColor = color(by: userName)
             preview.layer.cornerRadius = style.cornerRadius
             preview.type = attachment.type
+            
+            preview.backgroundColor = attachment.type.isImage
+                ? style.chatBackgroundColor
+                : (style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray)
+            
             messageStackView.insertArrangedSubview(preview, at: offset)
             attachmentPreviewViews.append(preview)
             

@@ -15,16 +15,19 @@ public struct ChatViewStyle: Hashable {
     public var outgoingMessage = MessageViewStyle(alignment: .right, backgroundColor: .chatSuperLightGray, borderWidth: 0)
     
     public static let dark =
-        ChatViewStyle(backgroundColor: .init(white: 0.1, alpha: 1),
+        ChatViewStyle(backgroundColor: .chatSuperDarkGray,
                       incomingMessage: MessageViewStyle(chatBackgroundColor: .chatSuperDarkGray,
                                                         textColor: .white,
                                                         backgroundColor: .chatSuperDarkGray,
-                                                        borderColor: .chatGray),
+                                                        borderColor: .chatGray,
+                                                        reactionViewStyle: ReactionViewStyle(backgroundColor: .darkGray)),
                       outgoingMessage: MessageViewStyle(alignment: .right,
                                                         chatBackgroundColor: .chatSuperDarkGray,
                                                         textColor: .white,
                                                         backgroundColor: .chatDarkGray,
-                                                        borderWidth: 0))
+                                                        borderWidth: 0,
+                                                        reactionViewStyle: ReactionViewStyle(alignment: .right,
+                                                                                             backgroundColor: .darkGray)))
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(backgroundColor)

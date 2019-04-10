@@ -20,6 +20,7 @@ public struct MessageViewStyle: Hashable {
     public let borderColor: UIColor
     public let borderWidth: CGFloat
     public let cornerRadius: CGFloat
+    public let reactionViewStyle: ReactionViewStyle
     public private(set) var leftBottomCornerBackgroundImage: UIImage?
     public private(set) var rightBottomCornerBackgroundImage: UIImage?
     public private(set) var leftCornersBackgroundImage: UIImage?
@@ -35,7 +36,8 @@ public struct MessageViewStyle: Hashable {
          backgroundColor: UIColor = .white,
          borderColor: UIColor = .chatSuperLightGray,
          borderWidth: CGFloat = 1,
-         cornerRadius: CGFloat = .messageCornerRadius) {
+         cornerRadius: CGFloat = .messageCornerRadius,
+         reactionViewStyle: ReactionViewStyle = ReactionViewStyle()) {
         self.alignment = alignment
         self.chatBackgroundColor = chatBackgroundColor
         self.font = font
@@ -47,6 +49,7 @@ public struct MessageViewStyle: Hashable {
         self.borderColor = borderColor
         self.borderWidth = borderWidth
         self.cornerRadius = cornerRadius
+        self.reactionViewStyle = reactionViewStyle
         leftBottomCornerBackgroundImage = renderBackgroundImage(corners: [.topLeft, .topRight, .bottomRight])
         rightBottomCornerBackgroundImage = renderBackgroundImage(corners: [.topLeft, .topRight, .bottomLeft])
         leftCornersBackgroundImage = renderBackgroundImage(corners: [.topRight, .bottomRight])
@@ -64,6 +67,7 @@ public struct MessageViewStyle: Hashable {
         hasher.combine(borderColor)
         hasher.combine(borderWidth)
         hasher.combine(cornerRadius)
+        hasher.combine(reactionViewStyle)
     }
     
     private func renderBackgroundImage(corners: UIRectCorner) -> UIImage? {
