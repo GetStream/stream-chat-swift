@@ -20,7 +20,7 @@ extension CGFloat {
     public static let composerAttachmentWidth: CGFloat = 50
     public static let composerAttachmentHeight: CGFloat = 60
     
-    public static let messagesBottomMargin: CGFloat = .composerHeight + 30
+    public static let messagesBottomMargin: CGFloat = .composerHeight + (CGFloat.safeAreaBottom > 0 ? 0 : 30)
     public static let messageAvatarRadius: CGFloat = 16
     public static let messageAvatarSize: CGFloat = 2 * .messageAvatarRadius
     public static let messageInnerPadding: CGFloat = 8

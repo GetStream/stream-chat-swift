@@ -195,6 +195,7 @@
 		8A8891582252828300DD6539 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				8AABC28D225F42BB0064CB20 /* Rx */,
 				8A88917C22560E8E00DD6539 /* UIKit */,
 				8A88915F22538CCE00DD6539 /* Data+Extensions.swift */,
 				8A88917D22560EC100DD6539 /* Date+Extensions.swift */,
@@ -252,6 +253,13 @@
 				8A1A9401225A436800060ACC /* CGRect+Extensions.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		8AABC28D225F42BB0064CB20 /* Rx */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Rx;
 			sourceTree = "<group>";
 		};
 		E4BFB61CCC31ACB2AD7AAA5D /* Pods */ = {
@@ -374,6 +382,8 @@
 				"${PODS_ROOT}/Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Nuke/Nuke.framework",
 				"${BUILT_PRODUCTS_DIR}/RxAtomic/RxAtomic.framework",
+				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
+				"${BUILT_PRODUCTS_DIR}/RxKeyboard/RxKeyboard.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
@@ -384,6 +394,8 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nuke.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAtomic.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxKeyboard.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",

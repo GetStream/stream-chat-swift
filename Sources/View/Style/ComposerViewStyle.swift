@@ -19,7 +19,7 @@ public struct ComposerViewStyle: Hashable {
     init(font: UIFont = .chatRegular,
         textColor: UIColor = .black,
         tintColor: UIColor = .chatGray,
-        backgroundColor: UIColor = .chatSuperLightGray,
+        backgroundColor: UIColor = .chatComposer,
         cornerRadius: CGFloat = .composerCornerRadius,
         states: [State: Style] = [:]) {
         self.font = font

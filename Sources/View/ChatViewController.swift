@@ -8,10 +8,13 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxKeyboard
 
 public final class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    var style = ChatViewStyle()
+    public var style = ChatViewStyle()
+    private let disposeBag = DisposeBag()
     
     public private(set) lazy var composerView: ComposerView = {
         let composerView = ComposerView(frame: .zero)
@@ -38,11 +41,38 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         super.viewDidLoad()
         setupComposerView()
         setupTableView()
-        channelPresenter?.load { [weak self] in self?.tableView.reloadData() }
+        
+        channelPresenter?.load { [weak self] in
+            if let self = self, let presenter = self.channelPresenter {
+                self.tableView.reloadData()
+                self.tableView.scrollToRow(at: IndexPath(row: presenter.count - 1, section: 0), at: .bottom, animated: false)
+            }
+        }
+    }
+    
+    public override var preferredStatusBarStyle: UIStatusBarStyle {
+        return style.backgroundColor.isDark ? .lightContent : .default
     }
     
     func setupComposerView() {
         composerView.addToSuperview(view)
+        
+        RxKeyboard.instance.visibleHeight
+            .drive(onNext: { [weak self] height in
+                let bottom: CGFloat = height + .messagesBottomMargin + (height > 0 ? 0 : .safeAreaBottom)
+                self?.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottom, right: 0)
+            })
+            .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.willShowVisibleHeight
+            .drive(onNext: { [weak self] height in
+                if let self = self {
+                    var contentOffset = self.tableView.contentOffset
+                    contentOffset.y += height - .safeAreaBottom
+                    self.tableView.contentOffset = contentOffset
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     func setupTableView() {

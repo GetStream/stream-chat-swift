@@ -12,6 +12,7 @@ public final class ChannelPresenter {
     public private(set) var channel: Channel
     var members: [User] = []
     var messages: [Message] = []
+    var count: Int = 0
     
     init(channel: Channel) {
         self.channel = channel
@@ -35,6 +36,7 @@ extension ChannelPresenter {
             channel = query.channel
             members = query.members
             messages = query.messages
+            count = messages.count
         } catch let clientError as ClientError {
             print(clientError)
         } catch {

@@ -8,6 +8,9 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
+import RxKeyboard
 
 public final class ComposerView: UIView {
     
@@ -37,25 +40,22 @@ public final class ComposerView: UIView {
         textView.autocorrectionType = .no
         textView.delegate = self
         textView.backgroundColor = style?.backgroundColor
-        
-        if let style = style {
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.lineHeightMultiple = 1.1
-            textView.attributedText = NSAttributedString(string: "",
-                                                         attributes: [.foregroundColor: style.textColor,
-                                                                      .font: style.font,
-                                                                      .paragraphStyle: paragraphStyle])
-        }
-        
+        textView.attributedText = attributedText()
         return textView
     }()
     
-    /// The default text view attributes.
-    public var textViewTextAttributes: [NSAttributedString.Key: Any] = {
+    private func attributedText(text: String = "", textColor: UIColor? = nil) -> NSAttributedString {
+        guard let style = style else {
+            return NSAttributedString(string: text)
+        }
+        
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.1
-        return [.font: UIFont.systemFont(ofSize: 15), .paragraphStyle: paragraphStyle]
-    }()
+        
+        return NSAttributedString(string: text, attributes: [.foregroundColor: textColor ?? style.textColor,
+                                                             .font: style.font,
+                                                             .paragraphStyle: paragraphStyle])
+    }
     
     /// A placeholder label.
     /// You have to use the `placeholderText` property to change the value of the placeholder label.
@@ -94,11 +94,11 @@ public final class ComposerView: UIView {
     
     /// The text of the text view.
     public var text: String {
-        get { return
-            textView.attributedText.string
+        get {
+            return textView.attributedText.string
         }
         set {
-            textView.attributedText = NSAttributedString(string: newValue)
+            textView.attributedText = attributedText(text: newValue)
             updatePlaceholder()
         }
     }
@@ -106,9 +106,10 @@ public final class ComposerView: UIView {
     /// The placeholder text.
     public var placeholderText: String {
         get { return placeholderLabel.attributedText?.string ?? "" }
-        set { placeholderLabel.attributedText = NSAttributedString(string: newValue, attributes: textViewTextAttributes) }
+        set { placeholderLabel.attributedText = attributedText(text: newValue, textColor: style?.tintColor) }
     }
     
+    private let disposeBag = DisposeBag()
     private weak var heightConstraint: Constraint?
     private weak var bottomConstraint: Constraint?
     private var baseTextHeight = CGFloat.greatestFiniteMagnitude
@@ -116,10 +117,6 @@ public final class ComposerView: UIView {
     /// Enables the detector of links in the text.
     public var linksDetectorEnabled = false
     var detectedURL: URL?
-    
-    private lazy var dataDetectorWorker: DataDetectorWorker? = linksDetectorEnabled
-        ? (try? DataDetectorWorker(types: .link) { [weak self] _ in /*self?.updateOpenGraph($0)*/ })
-        : nil
     
     // MARK: - Images Collection View
     
@@ -180,6 +177,7 @@ public final class ComposerView: UIView {
         updateTextHeightIfNeeded()
         let textTopPadding: CGFloat = (CGFloat.composerHeight - baseTextHeight) / 2
         textView.contentInset = UIEdgeInsets(top: textTopPadding, left: 0, bottom: textTopPadding, right: 0)
+        textView.keyboardAppearance = style.backgroundColor.isDark ? .dark : .default
         
         textView.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(CGFloat.composerInnerPadding)
@@ -191,25 +189,23 @@ public final class ComposerView: UIView {
         self.placeholderText = placeholderText
         filePickerButton.tintColor = style.tintColor
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardUpdated(_:)),
-                                               name: UIResponder.keyboardWillChangeFrameNotification,
-                                               object: nil)
-
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardUpdated(_:)),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
+        // Observe the keyboard moving.
+        RxKeyboard.instance.visibleHeight
+            .drive(onNext: { [weak self] height in
+                let bottom: CGFloat = height + .messageEdgePadding + (height > 0 ? 0 : .safeAreaBottom)
+                self?.bottomConstraint?.update(offset: -bottom)
+            })
+            .disposed(by: disposeBag)
     }
     
     /// Check if the content is valid: text is not empty or at least one image was added.
     public var isValidContent: Bool {
-        return !textView.attributedText.string.isEmpty || !images.isEmpty
+        return textView.attributedText.length != 0 || !images.isEmpty
     }
     
     /// Reset states of all child views and clear all added/generated data.
     public func reset() {
-        textView.attributedText = NSAttributedString(string: "")
+        textView.attributedText = attributedText()
         images = []
         attachmentsCollectionView.reloadData()
         attachmentsCollectionView.isHidden = true
@@ -247,23 +243,16 @@ public final class ComposerView: UIView {
 extension ComposerView {
     /// Update the height of the text view for a big text length.
     func updateTextHeightIfNeeded() {
-        guard heightConstraint != nil  else {
-            return
-        }
-        
         if baseTextHeight == .greatestFiniteMagnitude {
             let text = textView.attributedText
-            textView.attributedText = NSAttributedString(string: "T", attributes: textViewTextAttributes)
+            textView.attributedText = attributedText(text: "T")
             baseTextHeight = textViewContentSize.height.rounded()
             textView.attributedText = text
         }
         
-        guard textView.attributedText.length > 0 else {
-            updateTextHeight(baseTextHeight)
-            return
-        }
-        
-        updateTextHeight(textViewContentSize.height.rounded())
+        updateTextHeight(textView.attributedText.length > placeholderText.count
+            ? textViewContentSize.height.rounded()
+            : baseTextHeight)
     }
     
     private var textViewContentSize: CGSize {
@@ -271,18 +260,20 @@ extension ComposerView {
     }
     
     private func updateTextHeight(_ height: CGFloat) {
+        guard let heightConstraint = heightConstraint else {
+            return
+        }
+        
         var height = min(max(height + (CGFloat.composerHeight - baseTextHeight), CGFloat.composerHeight),
                          CGFloat.composerMaxHeight)
 
-        height += textView.isFirstResponder ? 0 : CGFloat.safeAreaBottom
-        
         attachmentsCollectionView.isHidden = images.count == 0
         
         if !attachmentsCollectionView.isHidden {
             height += CGFloat.composerAttachmentsHeight
         }
         
-        if let heightConstraint = heightConstraint, heightConstraint.layoutConstraints.first?.constant != height {
+        if heightConstraint.layoutConstraints.first?.constant != height {
             heightConstraint.update(offset: height)
             layoutIfNeeded()
         }
@@ -306,28 +297,6 @@ extension ComposerView: UITextViewDelegate {
     public func textViewDidChange(_ textView: UITextView) {
         updatePlaceholder()
         updateTextHeightIfNeeded()
-        
-        if !text.isEmpty {
-            dataDetectorWorker?.match(text)
-        }
-    }
-}
-
-// MARK: - Keyboard Events
-
-extension ComposerView {
-    @objc func keyboardUpdated(_ notification: NSNotification) {
-        guard let userInfo = notification.userInfo,
-            let value = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue,
-            superview != nil else {
-                return
-        }
-        
-        let willHide = notification.name == UIResponder.keyboardWillHideNotification
-        let offset: CGFloat = willHide ? 0 : -value.cgRectValue.height
-        bottomConstraint?.update(offset: offset - CGFloat.messageEdgePadding)
-        
-        layoutIfNeeded()
     }
 }
 

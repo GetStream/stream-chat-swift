@@ -14,6 +14,7 @@ extension UIColor {
     public static let chatGray60 = UIColor(white: 0.6, alpha: 1)
     public static let chatGray80 = UIColor(white: 0.8, alpha: 1)
     public static let chatSuperLightGray = UIColor(white: 0.92, alpha: 1)
+    public static let chatComposer = UIColor(white: 0.95, alpha: 1)
     public static let chatSuperDarkGray = UIColor(white: 0.1, alpha: 1)
     public static let chatDarkGray = UIColor(white: 0.2, alpha: 1)
     public static let messageErrorBackground = UIColor(red: 0.91, green: 0.85, blue: 0.87, alpha: 1)
