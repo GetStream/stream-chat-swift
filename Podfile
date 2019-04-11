@@ -9,4 +9,5 @@ target 'GetStreamChat' do
   pod 'Starscream'
   pod 'SnapKit'
   pod 'Nuke'
+  pod 'SwiftyGif'
 end

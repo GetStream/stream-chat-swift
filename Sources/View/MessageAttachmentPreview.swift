@@ -7,10 +7,14 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 import SnapKit
 import Nuke
+import SwiftyGif
 
 final class MessageAttachmentPreview: UIView {
+    
     private static let height: CGFloat = 150
     private static let maxHeight: CGFloat = 200
     private var defaultHeight: CGFloat = MessageAttachmentPreview.maxHeight
@@ -18,6 +22,8 @@ final class MessageAttachmentPreview: UIView {
     private var widthConstraint: Constraint?
     private var imageViewBottomConstraint: Constraint?
     private var imageTask: ImageTask?
+    private var isGifImage = false
+    private let disposeBag = DisposeBag()
     
     private(set) lazy var imageView: UIImageView = {
         let imageView = UIImageView(image: UIImage.Icons.image)
@@ -88,6 +94,22 @@ final class MessageAttachmentPreview: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         clipsToBounds = true
+        
+        NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
+            .subscribe(onNext: { [weak self] _ in
+                if let self = self, self.isGifImage, self.imageView.isAnimatingGif() {
+                    self.imageView.stopAnimatingGif()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        NotificationCenter.default.rx.notification(UIApplication.willEnterForegroundNotification)
+            .subscribe(onNext: { [weak self] _ in
+                if let self = self, self.isGifImage {
+                    self.imageView.startAnimatingGif()
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -142,13 +164,13 @@ final class MessageAttachmentPreview: UIView {
             imageView.backgroundColor = backgroundColor
             
             if type.isImage {
-                if image.size.width < width, image.size.height < width {
-                    width = image.size.width
-                } else {
-                    width = min(image.size.width / image.size.height * defaultHeight, maxWidth)
-                }
-                
+                width = min(image.size.width / image.size.height * defaultHeight, maxWidth)
                 widthConstraint?.update(offset: width)
+            }
+            
+            if let url = response?.urlResponse?.url, url.absoluteString.lowercased().contains(".gif") || type == .giphy {
+                isGifImage = true
+                imageView.setGifFromURL(url)
             }
         } else {
             if let error = error, let url = response?.urlResponse?.url {

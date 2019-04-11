@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxKeyboard
+import Nuke
 
 public final class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
