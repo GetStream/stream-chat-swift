@@ -185,6 +185,7 @@ public final class ComposerView: UIView {
         updateTextHeightIfNeeded()
         textView.keyboardAppearance = style.backgroundColor.isDark ? .dark : .default
         textView.backgroundColor = backgroundColor
+        textView.tintColor = style.cursorColor
         
         textView.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(CGFloat.composerInnerPadding)

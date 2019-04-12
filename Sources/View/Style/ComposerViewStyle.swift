@@ -12,20 +12,23 @@ public struct ComposerViewStyle: Hashable {
     public let font: UIFont
     public let textColor: UIColor
     public let tintColor: UIColor
+    public let cursorColor: UIColor
     public let backgroundColor: UIColor
     public let cornerRadius: CGFloat
     private let states: [State: Style]
     
     init(font: UIFont = .chatRegular,
-        textColor: UIColor = .black,
-        tintColor: UIColor = .chatGray,
-        backgroundColor: UIColor = .chatComposer,
-        cornerRadius: CGFloat = .composerCornerRadius,
-        states: [State: Style] = [.active: Style(borderWidth: 2),
-                                  .disabled: Style(borderWidth: 2, borderColor: .chatGray)]) {
+         textColor: UIColor = .black,
+         tintColor: UIColor = .chatGray,
+         cursorColor: UIColor = .chatLightBlue,
+         backgroundColor: UIColor = .chatComposer,
+         cornerRadius: CGFloat = .composerCornerRadius,
+         states: [State: Style] = [.active: Style(borderWidth: 2),
+                                   .disabled: Style(borderWidth: 2, borderColor: .chatGray)]) {
         self.font = font
         self.textColor = textColor
         self.tintColor = tintColor
+        self.cursorColor = cursorColor
         self.backgroundColor = backgroundColor
         self.cornerRadius = cornerRadius
         self.states = states
@@ -61,7 +64,7 @@ extension ComposerViewStyle {
         public let borderColor: UIColor
         
         init(borderWidth: CGFloat = 0,
-             borderColor: UIColor = .chatBlue) {
+             borderColor: UIColor = .chatLightBlue) {
             self.borderWidth = borderWidth
             self.borderColor = borderColor
         }
