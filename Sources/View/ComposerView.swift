@@ -39,8 +39,10 @@ public final class ComposerView: UIView {
         let textView = UITextView(frame: .zero)
         textView.autocorrectionType = .no
         textView.delegate = self
-        textView.backgroundColor = style?.backgroundColor
         textView.attributedText = attributedText()
+        textView.showsVerticalScrollIndicator = false
+        textView.showsHorizontalScrollIndicator = false
+        textView.isScrollEnabled = false
         return textView
     }()
     
@@ -79,6 +81,7 @@ public final class ComposerView: UIView {
         button.setImage(UIImage.Icons.send, for: .normal)
         button.snp.makeConstraints { $0.width.equalTo(CGFloat.composerButtonWidth).priority(999) }
         button.isHidden = true
+        button.backgroundColor = backgroundColor
         return button
     }()
     
@@ -86,6 +89,7 @@ public final class ComposerView: UIView {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.Icons.image, for: .normal)
         button.snp.makeConstraints { $0.width.equalTo(CGFloat.composerButtonWidth).priority(999) }
+        button.backgroundColor = backgroundColor
         return button
     }()
 
@@ -170,18 +174,22 @@ public final class ComposerView: UIView {
         
         // Add buttons.
         addSubview(buttonsStackView)
-        buttonsStackView.snp.makeConstraints { $0.top.right.bottom.equalToSuperview() }
+        
+        buttonsStackView.snp.makeConstraints { make in
+            make.height.equalTo(CGFloat.composerHeight)
+            make.right.bottom.equalToSuperview()
+        }
         
         // Add text view.
         addSubview(textView)
         updateTextHeightIfNeeded()
-        let textTopPadding: CGFloat = (CGFloat.composerHeight - baseTextHeight) / 2
-        textView.contentInset = UIEdgeInsets(top: textTopPadding, left: 0, bottom: textTopPadding, right: 0)
         textView.keyboardAppearance = style.backgroundColor.isDark ? .dark : .default
+        textView.backgroundColor = backgroundColor
         
         textView.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(CGFloat.composerInnerPadding)
-            make.top.bottom.equalToSuperview()
+            make.top.equalToSuperview().offset(textViewPadding)
+            make.bottom.equalToSuperview().offset(-textViewPadding)
             make.right.equalTo(buttonsStackView.snp.left)
         }
         
@@ -192,10 +200,23 @@ public final class ComposerView: UIView {
         // Observe the keyboard moving.
         RxKeyboard.instance.visibleHeight
             .drive(onNext: { [weak self] height in
+                guard let self = self else {
+                    return
+                }
+                
                 let bottom: CGFloat = height + .messageEdgePadding + (height > 0 ? 0 : .safeAreaBottom)
-                self?.bottomConstraint?.update(offset: -bottom)
+                self.bottomConstraint?.update(offset: -bottom)
+                self.updateStyle(with: height != 0 ? .active : .normal)
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func updateStyle(with state: ComposerViewStyle.State) {
+        if let style = style {
+            let stateStyle = style.style(with: state)
+            layer.borderWidth = stateStyle.borderWidth
+            layer.borderColor = stateStyle.borderColor.cgColor
+        }
     }
     
     /// Check if the content is valid: text is not empty or at least one image was added.
@@ -224,6 +245,7 @@ public final class ComposerView: UIView {
             filePickerButton.isEnabled = isEnabled
             attachmentsCollectionView.isUserInteractionEnabled = isEnabled
             attachmentsCollectionView.alpha = isEnabled ? 1 : 0.5
+            updateStyle(with: isEnabled ? .normal : .disabled)
         }
     }
     
@@ -241,6 +263,15 @@ public final class ComposerView: UIView {
 // MARK: - Text View Height
 
 extension ComposerView {
+    
+    private var textViewPadding: CGFloat {
+        return (CGFloat.composerHeight - baseTextHeight) / 2
+    }
+    
+    private var textViewContentSize: CGSize {
+        return textView.sizeThatFits(CGSize(width: textView.frame.width, height: .greatestFiniteMagnitude))
+    }
+    
     /// Update the height of the text view for a big text length.
     func updateTextHeightIfNeeded() {
         if baseTextHeight == .greatestFiniteMagnitude {
@@ -250,13 +281,7 @@ extension ComposerView {
             textView.attributedText = text
         }
         
-        updateTextHeight(textView.attributedText.length > placeholderText.count
-            ? textViewContentSize.height.rounded()
-            : baseTextHeight)
-    }
-    
-    private var textViewContentSize: CGSize {
-        return textView.sizeThatFits(CGSize(width: textView.frame.width, height: .greatestFiniteMagnitude))
+        updateTextHeight(textView.attributedText.length > 0 ? textViewContentSize.height.rounded() : baseTextHeight)
     }
     
     private func updateTextHeight(_ height: CGFloat) {
@@ -264,9 +289,8 @@ extension ComposerView {
             return
         }
         
-        var height = min(max(height + (CGFloat.composerHeight - baseTextHeight), CGFloat.composerHeight),
-                         CGFloat.composerMaxHeight)
-
+        var height = min(max(height + 2 * textViewPadding, CGFloat.composerHeight), CGFloat.composerMaxHeight)
+        textView.isScrollEnabled = height == CGFloat.composerMaxHeight
         attachmentsCollectionView.isHidden = images.count == 0
         
         if !attachmentsCollectionView.isHidden {
@@ -275,6 +299,7 @@ extension ComposerView {
         
         if heightConstraint.layoutConstraints.first?.constant != height {
             heightConstraint.update(offset: height)
+            setNeedsLayout()
             layoutIfNeeded()
         }
     }

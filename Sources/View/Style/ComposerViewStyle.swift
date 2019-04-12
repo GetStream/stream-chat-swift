@@ -21,7 +21,8 @@ public struct ComposerViewStyle: Hashable {
         tintColor: UIColor = .chatGray,
         backgroundColor: UIColor = .chatComposer,
         cornerRadius: CGFloat = .composerCornerRadius,
-        states: [State: Style] = [:]) {
+        states: [State: Style] = [.active: Style(borderWidth: 2),
+                                  .disabled: Style(borderWidth: 2, borderColor: .chatGray)]) {
         self.font = font
         self.textColor = textColor
         self.tintColor = tintColor
