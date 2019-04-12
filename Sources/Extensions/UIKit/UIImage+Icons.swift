@@ -32,7 +32,7 @@ extension UIImage {
         public static let startThread: UIImage = UIImage.chat(named: "startThreadIcon")
     }
     
-    private static func chat(named name: String) -> UIImage {
+    static func chat(named name: String) -> UIImage {
         let bundle = Bundle(for: Client.self)
         return UIImage(named: name, in: bundle, compatibleWith: nil) ?? .init(color: .black)
     }

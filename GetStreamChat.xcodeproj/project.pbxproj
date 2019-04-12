@@ -17,7 +17,7 @@
 		8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */; };
 		8A1A9407225B4E7F00060ACC /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9406225B4E7F00060ACC /* Reusable.swift */; };
 		8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */; };
-		8A1A940E225CC88200060ACC /* MessageAttachmentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A940D225CC88200060ACC /* MessageAttachmentPreview.swift */; };
+		8A1A940E225CC88200060ACC /* AttachmentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A940D225CC88200060ACC /* AttachmentPreview.swift */; };
 		8A1A9410225CD17300060ACC /* ReactionViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A940F225CD17300060ACC /* ReactionViewStyle.swift */; };
 		8A1A9412225DFDA100060ACC /* ComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9411225DFDA100060ACC /* ComposerView.swift */; };
 		8A1A9414225E01F100060ACC /* ComposerViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9413225E01F100060ACC /* ComposerViewStyle.swift */; };
@@ -50,6 +50,9 @@
 		8A88917B22550ECC00DD6539 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917A22550ECC00DD6539 /* CGFloat+Extensions.swift */; };
 		8A88917E22560EC100DD6539 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917D22560EC100DD6539 /* Date+Extensions.swift */; };
 		8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917F225755D500DD6539 /* ChatViewStyle.swift */; };
+		8AABC291226086ED0064CB20 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC290226086ED0064CB20 /* Attachment.swift */; };
+		8AABC29322608FB90064CB20 /* AttachmentFilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */; };
+		8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29522608FE10064CB20 /* AttachmentPreviewProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,7 +69,7 @@
 		8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewStyle.swift; sourceTree = "<group>"; };
 		8A1A9406225B4E7F00060ACC /* Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
 		8A1A9408225B4EC900060ACC /* UITableView+Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Reusable.swift"; sourceTree = "<group>"; };
-		8A1A940D225CC88200060ACC /* MessageAttachmentPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageAttachmentPreview.swift; sourceTree = "<group>"; };
+		8A1A940D225CC88200060ACC /* AttachmentPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentPreview.swift; sourceTree = "<group>"; };
 		8A1A940F225CD17300060ACC /* ReactionViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionViewStyle.swift; sourceTree = "<group>"; };
 		8A1A9411225DFDA100060ACC /* ComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerView.swift; sourceTree = "<group>"; };
 		8A1A9413225E01F100060ACC /* ComposerViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerViewStyle.swift; sourceTree = "<group>"; };
@@ -99,6 +102,9 @@
 		8A88917A22550ECC00DD6539 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		8A88917D22560EC100DD6539 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		8A88917F225755D500DD6539 /* ChatViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewStyle.swift; sourceTree = "<group>"; };
+		8AABC290226086ED0064CB20 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
+		8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFilePreview.swift; sourceTree = "<group>"; };
+		8AABC29522608FE10064CB20 /* AttachmentPreviewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProtocol.swift; sourceTree = "<group>"; };
 		E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.release.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -212,6 +218,7 @@
 				8A88914B2252337500DD6539 /* User.swift */,
 				8A889152225240F700DD6539 /* Event.swift */,
 				8A88915D22535FEC00DD6539 /* Message.swift */,
+				8AABC290226086ED0064CB20 /* Attachment.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -233,7 +240,7 @@
 				8A1A9411225DFDA100060ACC /* ComposerView.swift */,
 				8A1A9417225E2FE000060ACC /* AttachmentCollectionViewCell.swift */,
 				8A88917422550B2800DD6539 /* MessageTableViewCell.swift */,
-				8A1A940D225CC88200060ACC /* MessageAttachmentPreview.swift */,
+				8AABC29422608FCA0064CB20 /* Attachments */,
 				8A1A9415225E2EB200060ACC /* DataDetectorWorker.swift */,
 			);
 			path = View;
@@ -260,6 +267,16 @@
 			children = (
 			);
 			path = Rx;
+			sourceTree = "<group>";
+		};
+		8AABC29422608FCA0064CB20 /* Attachments */ = {
+			isa = PBXGroup;
+			children = (
+				8AABC29522608FE10064CB20 /* AttachmentPreviewProtocol.swift */,
+				8A1A940D225CC88200060ACC /* AttachmentPreview.swift */,
+				8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */,
+			);
+			path = Attachments;
 			sourceTree = "<group>";
 		};
 		E4BFB61CCC31ACB2AD7AAA5D /* Pods */ = {
@@ -422,7 +439,7 @@
 				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
 				8A8891502252379700DD6539 /* Channel.swift in Sources */,
 				8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */,
-				8A1A940E225CC88200060ACC /* MessageAttachmentPreview.swift in Sources */,
+				8A1A940E225CC88200060ACC /* AttachmentPreview.swift in Sources */,
 				8A1A941A225E321100060ACC /* UICollectionView+Reusable.swift in Sources */,
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8A88914822521E4800DD6539 /* ClientError.swift in Sources */,
@@ -434,6 +451,7 @@
 				8A8891622253A73000DD6539 /* Query.swift in Sources */,
 				8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */,
 				8A88917522550B2800DD6539 /* MessageTableViewCell.swift in Sources */,
+				8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */,
 				8A88914A2252309900DD6539 /* BaseURL.swift in Sources */,
 				8A88917E22560EC100DD6539 /* Date+Extensions.swift in Sources */,
 				8A04675B224E7F1800493D74 /* AppDelegate.swift in Sources */,
@@ -445,10 +463,12 @@
 				8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */,
 				8A1A9412225DFDA100060ACC /* ComposerView.swift in Sources */,
 				8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */,
+				8AABC29322608FB90064CB20 /* AttachmentFilePreview.swift in Sources */,
 				8A8891732255000A00DD6539 /* UITableViewCell+Extensions.swift in Sources */,
 				8A88915E22535FEC00DD6539 /* Message.swift in Sources */,
 				8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */,
 				8A1A9418225E2FE000060ACC /* AttachmentCollectionViewCell.swift in Sources */,
+				8AABC291226086ED0064CB20 /* Attachment.swift in Sources */,
 				8A1A9410225CD17300060ACC /* ReactionViewStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

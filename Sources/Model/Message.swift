@@ -27,7 +27,7 @@ public struct Message: Codable {
     public let created: Date
     public let updated: Date
     public let text: String
-    public let attachments: [MessageAttachment]
+    public let attachments: [Attachment]
     public let replyCount: Int
     public let reactionCounts: [String: Int]?
 }
@@ -35,61 +35,4 @@ public struct Message: Codable {
 
 public enum MessageType: String, Codable {
     case regular
-}
-
-public struct MessageAttachment: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case title
-        case type
-        case image
-        case url
-        case name
-        case titleLink = "title_link"
-        case thumbURL = "thumb_url"
-        case fallback
-        case imageURL = "image_url"
-    }
-    
-    public let title: String
-    public let type: MessageAttachmentType
-    public let url: URL?
-    public let imageURL: URL?
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        
-        if let existsType = try MessageAttachmentType(rawValue: container.decode(String.self, forKey: .type)) {
-            type = existsType
-        } else {
-            type = .unknown
-        }
-        
-        imageURL = try container.decodeIfPresent(URL.self, forKey: .image)
-            ?? container.decodeIfPresent(URL.self, forKey: .imageURL)
-            ?? container.decodeIfPresent(URL.self, forKey: .thumbURL)
-        
-        url = try container.decodeIfPresent(URL.self, forKey: .url)
-            ?? container.decodeIfPresent(URL.self, forKey: .imageURL)
-            ?? container.decodeIfPresent(URL.self, forKey: .titleLink)
-        
-        title = try container.decodeIfPresent(String.self, forKey: .title)
-            ?? container.decodeIfPresent(String.self, forKey: .fallback)
-            ?? container.decodeIfPresent(String.self, forKey: .name)
-            ?? ""
-    }
-    
-    public func encode(to encoder: Encoder) throws {}
-}
-
-public enum MessageAttachmentType: String, Codable {
-    case unknown
-    case image
-    case imgur
-    case giphy
-    case video
-    case product
-    
-    var isImage: Bool {
-        return self == .image || self == .imgur || self == .giphy
-    }
 }

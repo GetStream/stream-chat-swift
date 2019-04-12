@@ -114,13 +114,13 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
             cell.update(isContinueMessage: true)
         }
         
-        if !message.attachments.isEmpty {
-            cell.add(attachments: message.attachments, userName: message.user.name)
-        }
-        
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
             cell.update(avatarURL: message.user.avatarURL, name: message.user.name)
+        }
+        
+        if !message.attachments.isEmpty {
+            cell.add(attachments: message.attachments, userName: message.user.name)
         }
         
         return cell

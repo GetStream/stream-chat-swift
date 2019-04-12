@@ -92,7 +92,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    private lazy var attachmentPreviewViews: [MessageAttachmentPreview] = []
+    private lazy var attachmentPreviews: [AttachmentPreviewProtocol] = []
     
     private let bottomPaddingView: UIView = {
         let view = UIView(frame: .zero)
@@ -237,8 +237,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     }
     
     public func free() {
-        attachmentPreviewViews.forEach { $0.removeFromSuperview() }
-        attachmentPreviewViews = []
+        attachmentPreviews.forEach { $0.removeFromSuperview() }
+        attachmentPreviews = []
     }
     
     public func update(isContinueMessage: Bool) {
@@ -307,44 +307,86 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
     }
     
-    public func add(attachments: [MessageAttachment], userName: String) {
-        guard let style = style, style.hasBackgroundImage, let messageContainerViewImage = messageContainerView.image else {
+    public func add(attachments: [Attachment], userName: String) {
+        guard let style = style else {
             return
         }
         
         attachments.enumerated().forEach { offset, attachment in
-            let preview = MessageAttachmentPreview(frame: .zero)
-            preview.maxWidth = maxMessageWidth
-            preview.tintColor = style.textColor
-            preview.imageView.backgroundColor = color(by: userName)
-            preview.layer.cornerRadius = style.cornerRadius
-            preview.type = attachment.type
+            let preview: AttachmentPreviewProtocol
             
-            preview.backgroundColor = attachment.type.isImage
-                ? style.chatBackgroundColor
-                : (style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray)
-            
-            messageStackView.insertArrangedSubview(preview, at: offset)
-            attachmentPreviewViews.append(preview)
-            
-            let maskImage: UIImage?
-            
-            if style.alignment == .left {
-                maskImage = offset == 0 || messageContainerViewImage == style.backgroundImages[.leftBottomCorner(transparent: false)]
-                    ? style.backgroundImages[.leftBottomCorner(transparent: true)]
-                    : style.backgroundImages[.leftSide(transparent: true)]
+            if attachment.type == .file {
+                preview = createAttachmentFilePreview(with: attachment, style: style)
             } else {
-                maskImage = offset == 0 || messageContainerViewImage == style.backgroundImages[.rightBottomCorner(transparent: false)]
-                    ? style.backgroundImages[.rightBottomCorner(transparent: true)]
-                    : style.backgroundImages[.rightSide(transparent: true)]
+                preview = createAttachmentPreview(with: attachment, style: style, imageBackgroundColor: color(by: userName))
             }
             
-            preview.update(attachment: attachment, maskImage: maskImage)
+            messageStackView.insertArrangedSubview(preview, at: offset)
+            attachmentPreviews.append(preview)
+            
+            if attachment.type == .file {
+                preview.update(attachment: attachment, maskImage: backgroundImageForAttachment(at: offset))
+            } else {
+                preview.update(attachment: attachment, maskImage: maskImageForAttachment(at: offset))
+            }
         }
         
         update(isContinueMessage: true)
     }
     
+    private func createAttachmentPreview(with attachment: Attachment,
+                                         style: MessageViewStyle,
+                                         imageBackgroundColor: UIColor) -> AttachmentPreviewProtocol {
+        let preview = AttachmentPreview(frame: .zero)
+        preview.maxWidth = maxMessageWidth
+        preview.tintColor = style.textColor
+        preview.imageView.backgroundColor = imageBackgroundColor
+        preview.layer.cornerRadius = style.cornerRadius
+        preview.type = attachment.type
+        
+        preview.backgroundColor = attachment.type.isImage
+            ? style.chatBackgroundColor
+            : (style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray)
+        
+        return preview
+    }
+    
+    private func createAttachmentFilePreview(with attachment: Attachment,
+                                             style: MessageViewStyle) -> AttachmentPreviewProtocol {
+        let preview = AttachmentFilePreview(frame: .zero)
+        preview.backgroundColor = style.chatBackgroundColor
+        preview.snp.makeConstraints { $0.height.equalTo(CGFloat.attachmentFilePreviewHeight).priority(999) }
+        return preview
+    }
+    
+    private func backgroundImageForAttachment(at offset: Int) -> UIImage? {
+        guard let style = style, style.hasBackgroundImage else {
+            return nil
+        }
+        
+        if style.alignment == .left {
+            return offset == 0 ? messageContainerView.image : style.backgroundImages[.leftSide(transparent: false)]
+        }
+        
+        return offset == 0 ? messageContainerView.image : style.backgroundImages[.rightSide(transparent: false)]
+    }
+    
+    private func maskImageForAttachment(at offset: Int) -> UIImage? {
+        guard let style = style, style.hasBackgroundImage, let messageContainerViewImage = messageContainerView.image else {
+            return nil
+        }
+        
+        if style.alignment == .left {
+            return offset == 0 || messageContainerViewImage == style.backgroundImages[.leftBottomCorner(transparent: false)]
+                ? style.backgroundImages[.leftBottomCorner(transparent: true)]
+                : style.backgroundImages[.leftSide(transparent: true)]
+        }
+        
+        return offset == 0 || messageContainerViewImage == style.backgroundImages[.rightBottomCorner(transparent: false)]
+            ? style.backgroundImages[.rightBottomCorner(transparent: true)]
+            : style.backgroundImages[.rightSide(transparent: true)]
+    }
+
     private func showAvatarLabel(with name: String) {
         if name.contains(" ") {
             let words = name.split(separator: " ")
