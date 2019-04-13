@@ -53,6 +53,7 @@
 		8AABC291226086ED0064CB20 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC290226086ED0064CB20 /* Attachment.swift */; };
 		8AABC29322608FB90064CB20 /* AttachmentFilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */; };
 		8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29522608FE10064CB20 /* AttachmentPreviewProtocol.swift */; };
+		8AABC2982260D9450064CB20 /* StatusTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC2972260D9450064CB20 /* StatusTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -105,6 +106,7 @@
 		8AABC290226086ED0064CB20 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFilePreview.swift; sourceTree = "<group>"; };
 		8AABC29522608FE10064CB20 /* AttachmentPreviewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProtocol.swift; sourceTree = "<group>"; };
+		8AABC2972260D9450064CB20 /* StatusTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusTableViewCell.swift; sourceTree = "<group>"; };
 		E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.release.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -239,6 +241,7 @@
 				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
 				8A1A9411225DFDA100060ACC /* ComposerView.swift */,
 				8A1A9417225E2FE000060ACC /* AttachmentCollectionViewCell.swift */,
+				8AABC2972260D9450064CB20 /* StatusTableViewCell.swift */,
 				8A88917422550B2800DD6539 /* MessageTableViewCell.swift */,
 				8AABC29422608FCA0064CB20 /* Attachments */,
 				8A1A9415225E2EB200060ACC /* DataDetectorWorker.swift */,
@@ -432,6 +435,7 @@
 				8A88917B22550ECC00DD6539 /* CGFloat+Extensions.swift in Sources */,
 				8A8891682253D3A500DD6539 /* ClientLogger.swift in Sources */,
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
+				8AABC2982260D9450064CB20 /* StatusTableViewCell.swift in Sources */,
 				8A8891552252502900DD6539 /* EndpointProtocol.swift in Sources */,
 				8A889153225240F700DD6539 /* Event.swift in Sources */,
 				8A1A9416225E2EB200060ACC /* DataDetectorWorker.swift in Sources */,

@@ -31,6 +31,9 @@ extension CGFloat {
     public static let messageHorizontalInset: CGFloat = 10
     public static let messageVerticalInset: CGFloat = 5
     
+    public static let messageStatusLineWidth: CGFloat = 1
+    public static let messageStatusSpacing: CGFloat = 20
+    
     public static let attachmentPreviewHeight: CGFloat = 150
     public static let attachmentPreviewMaxHeight: CGFloat = 200
     public static let attachmentFilePreviewHeight: CGFloat = 50
