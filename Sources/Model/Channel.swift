@@ -23,6 +23,7 @@ open class Channel: Codable {
         case name
         case imageURL = "image"
         case members
+        case messages
     }
     
     private(set) var id: String = UUID().uuidString
@@ -65,8 +66,9 @@ open class Channel: Codable {
 
 extension Channel {
     
-    public func create(members: [User], _ completion: @escaping Client.Completion<Query>) {
-        Client.shared.request(endpoint: ChatEndpoint.query(Query(channel: self, members: members)), completion)
+    public func query(members: [User], pagination: Pagination = .none, _ completion: @escaping Client.Completion<Query>) {
+        let query = Query(channel: self, members: members, pagination: pagination)
+        Client.shared.request(endpoint: ChatEndpoint.query(query), completion)
     }
     
     public func send(_ message: Message, _ completion: @escaping Client.Completion<Channel>) {

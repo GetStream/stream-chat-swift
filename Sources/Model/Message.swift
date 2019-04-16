@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Message: Codable {
+public struct Message: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case id
         case type
@@ -30,8 +30,13 @@ public struct Message: Codable {
     public let attachments: [Attachment]
     public let replyCount: Int
     public let reactionCounts: [String: Int]?
+    
+    public static func == (lhs: Message, rhs: Message) -> Bool {
+        return lhs.id == rhs.id
+            && lhs.type == rhs.type
+            && lhs.user == rhs.user
+    }
 }
-
 
 public enum MessageType: String, Codable {
     case regular

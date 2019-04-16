@@ -9,6 +9,16 @@
 import Foundation
 
 extension Date {
+    var isToday: Bool {
+        return timeIntervalSinceNow > -43_200
+    }
+    
+    var isYesterday: Bool {
+        return timeIntervalSinceNow < -43_200 && timeIntervalSinceNow > -129_600
+    }
+}
+
+extension Date {
     
     public static var today = "Today"
     public static var yesterday = "Yesterday"

@@ -9,6 +9,7 @@
 import UIKit
 
 extension CGFloat {
+    public static let safeAreaTop: CGFloat = (UIApplication.shared.delegate?.window as? UIWindow)?.safeAreaInsets.top ?? 0
     public static let safeAreaBottom: CGFloat = (UIApplication.shared.delegate?.window as? UIWindow)?.safeAreaInsets.bottom ?? 0
     
     public static let composerCornerRadius: CGFloat = 10
@@ -32,7 +33,7 @@ extension CGFloat {
     public static let messageVerticalInset: CGFloat = 5
     
     public static let messageStatusLineWidth: CGFloat = 1
-    public static let messageStatusSpacing: CGFloat = 20
+    public static let messageStatusSpacing: CGFloat = 26
     
     public static let attachmentPreviewHeight: CGFloat = 150
     public static let attachmentPreviewMaxHeight: CGFloat = 200

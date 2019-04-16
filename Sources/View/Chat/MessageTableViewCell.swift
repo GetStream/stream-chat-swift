@@ -1,0 +1,422 @@
+//
+//  MessageTableViewCell.swift
+//  GetStreamChat
+//
+//  Created by Alexey Bukhtin on 03/04/2019.
+//  Copyright © 2019 Stream.io Inc. All rights reserved.
+//
+
+import UIKit
+import SnapKit
+import Nuke
+
+final class MessageTableViewCell: UITableViewCell, Reusable {
+    
+    private lazy var avatarView: UIImageView = {
+        let view = UIImageView(frame: .zero)
+        view.layer.cornerRadius = .messageAvatarRadius
+        view.clipsToBounds = true
+        view.contentMode = .scaleAspectFill
+        view.snp.makeConstraints { $0.width.height.equalTo(CGFloat.messageAvatarSize) }
+        view.addSubview(avatarLabel)
+        avatarLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
+        view.isHidden = true
+        return view
+    }()
+    
+    private let avatarLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = .chatAvatar
+        label.textAlignment = .center
+        label.isHidden = true
+        label.preferredMaxLayoutWidth = .messageAvatarSize
+        return label
+    }()
+    
+//    private let reactionsContainer = UIImageView(frame: .zero)
+//
+//    private let reactionsLabel: UILabel = {
+//        let label = UILabel(frame: .zero)
+//        label.textAlignment = .center
+//        return label
+//    }()
+//
+//    private(set) lazy var reactionButton: UIButton = {
+//        let button = UIButton(type: .custom)
+//        button.setImage(UIImage.Icons.happy, for: .normal)
+//        button.tintColor = .chatGray
+//        return button
+//    }()
+    
+    private lazy var nameAndDateStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [nameLabel, dateLabel])
+        stackView.axis = .horizontal
+        stackView.spacing = .messageSpacing
+        stackView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageAvatarRadius).priority(999) }
+        stackView.isHidden = true
+        return stackView
+    }()
+    
+    private let nameLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = .chatBoldSmall
+        label.textColor = .chatGray
+        return label
+    }()
+
+    private let dateLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = .chatSmall
+        label.textColor = .chatGray
+        return label
+    }()
+    
+    private lazy var messageStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [messageContainerView, nameAndDateStackView, bottomPaddingView])
+        stackView.axis = .vertical
+        stackView.spacing = .messageSpacing
+        return stackView
+    }()
+    
+    private let messageContainerView: UIImageView = {
+        let imageView = UIImageView(frame: .zero)
+        imageView.isHidden = true
+        return imageView
+    }()
+    
+    private lazy var messageLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = .chatRegular
+        label.textColor = .black
+        label.preferredMaxLayoutWidth = maxMessageWidth
+        label.numberOfLines = 0
+        return label
+    }()
+    
+    private lazy var attachmentPreviews: [AttachmentPreviewProtocol] = []
+    
+    private let bottomPaddingView: UIView = {
+        let view = UIView(frame: .zero)
+        view.isUserInteractionEnabled = false
+        view.snp.makeConstraints { $0.height.equalTo(CGFloat.messageBottomPadding).priority(999) }
+        return view
+    }()
+    
+    private var messagePadding: CGFloat {
+        return .messageEdgePadding + .messageAvatarSize + .messageInnerPadding
+    }
+    
+    private var maxMessageWidth: CGFloat {
+        return UIScreen.main.bounds.width - 2 * messagePadding
+    }
+
+    public var paddingType: MessageTableViewCellPaddingType = .regular {
+        didSet { bottomPaddingView.isHidden = paddingType == .small }
+    }
+    
+    public var style: MessageViewStyle? {
+        didSet { setup() }
+    }
+    
+    override func prepareForReuse() {
+        reset()
+        super.prepareForReuse()
+    }
+    
+    private func setup() {
+        guard let style = style else {
+            return
+        }
+        
+        selectionStyle = .none
+        backgroundColor = style.chatBackgroundColor
+        dateLabel.font = style.infoFont
+        dateLabel.textColor = style.infoColor
+        dateLabel.backgroundColor = backgroundColor
+        bottomPaddingView.backgroundColor = backgroundColor
+        
+        messageLabel.font = style.font
+        messageLabel.textColor = style.textColor
+        messageLabel.backgroundColor = style.backgroundColor
+        
+        if style.alignment == .left {
+            nameLabel.font = style.nameFont
+            nameLabel.textColor = style.infoColor
+            nameLabel.backgroundColor = backgroundColor
+        } else {
+            nameLabel.isHidden = true
+        }
+
+        // Avatar
+        contentView.addSubview(avatarView)
+        
+        avatarView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().offset(-CGFloat.messageBottomPadding)
+            
+            if style.alignment == .left {
+                make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
+            } else {
+                make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            }
+        }
+        
+        // Message Stack View
+        
+        messageContainerView.addSubview(messageLabel)
+        
+        messageLabel.snp.makeConstraints { make in
+            make.left.equalTo(CGFloat.messageHorizontalInset)
+            make.right.equalTo(-CGFloat.messageHorizontalInset)
+            make.top.equalTo(CGFloat.messageVerticalInset).priority(999)
+            make.bottom.equalTo(-CGFloat.messageVerticalInset).priority(999)
+        }
+        
+        contentView.addSubview(messageStackView)
+        messageStackView.alignment = style.alignment == .left ? .leading : .trailing
+        
+        messageStackView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(CGFloat.messageSpacing) //  + .reactionsHeight + .messageSpacing
+            make.bottom.equalToSuperview()
+            make.left.equalToSuperview().offset(messagePadding)
+            make.right.equalToSuperview().offset(-messagePadding)
+        }
+        
+        update(isContinueMessage: false)
+
+        // Reactions.
+//        reactionsContainer.addSubview(reactionsLabel)
+//        reactionsContainer.image = style.reactionViewStyle.backgroundImage
+//        contentView.addSubview(reactionsContainer)
+//
+//        reactionsContainer.snp.makeConstraints { make in
+//            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
+//            make.right.equalTo(messageLabel.snp.right).offset(CGFloat.reactionsHeight - 4)
+//            make.height.equalTo(CGFloat.reactionsFullHeight).priority(999)
+//        }
+//
+//        reactionsLabel.font = style.reactionViewStyle.font
+//        reactionsLabel.textColor = style.reactionViewStyle.textColor
+//
+//        reactionsLabel.snp.makeConstraints { make in
+//            make.left.equalToSuperview().offset(CGFloat.reactionsTextPagging)
+//            make.right.equalToSuperview().offset(-CGFloat.reactionsTextPagging)
+//            make.top.equalToSuperview()
+//            make.height.equalTo(CGFloat.reactionsHeight)
+//        }
+//
+//        if style.alignment == .left {
+//            reactionButton.backgroundColor = style.chatBackgroundColor
+//            contentView.insertSubview(reactionButton, at: 0)
+//
+//            reactionButton.snp.makeConstraints { make in
+//                make.top.equalTo(messageLabel.snp.top).offset(-15)
+//                make.centerX.equalTo(reactionsContainer.snp.right).offset(1)
+//                make.width.equalTo(30)
+//                make.height.equalTo(30)
+//            }
+//        }
+    }
+    
+    public func reset() {
+        avatarView.isHidden = true
+        avatarView.image = nil
+        avatarView.backgroundColor = .white
+        avatarLabel.text = nil
+        avatarLabel.isHidden = true
+        
+        nameAndDateStackView.isHidden = true
+        nameLabel.text = nil
+        dateLabel.text = nil
+
+        messageContainerView.isHidden = true
+        update(isContinueMessage: false)
+        messageLabel.text = nil
+
+        paddingType = .regular
+        
+        free()
+    }
+    
+    public func free() {
+        attachmentPreviews.forEach { $0.removeFromSuperview() }
+        attachmentPreviews = []
+    }
+    
+    public func update(isContinueMessage: Bool) {
+        guard let style = style else {
+            return
+        }
+        
+        messageContainerView.image = nil
+        messageContainerView.layer.borderWidth = 0
+        
+        if let messageBackgroundImage = messageBackgroundImage(isContinueMessage: isContinueMessage) {
+            messageContainerView.backgroundColor = style.chatBackgroundColor
+            messageContainerView.image = messageBackgroundImage
+        } else {
+            messageContainerView.backgroundColor = style.backgroundColor
+            
+            if style.borderWidth > 0 {
+                messageContainerView.layer.borderWidth = style.borderWidth
+                messageContainerView.layer.borderColor = style.borderColor.cgColor
+            }
+        }
+    }
+    
+    private func messageBackgroundImage(isContinueMessage: Bool) -> UIImage? {
+        guard let style = style, style.hasBackgroundImage else {
+            return nil
+        }
+        
+        return style.alignment == .left
+            ? (isContinueMessage
+                ? style.backgroundImages[.leftSide(transparent: false)]
+                : style.backgroundImages[.leftBottomCorner(transparent: false)])
+            : (isContinueMessage
+                ? style.backgroundImages[.rightSide(transparent: false)]
+                : style.backgroundImages[.rightBottomCorner(transparent: false)])
+    }
+    
+    public func update(name: String?, date: Date) {
+        nameAndDateStackView.isHidden = false
+        
+        if !nameLabel.isHidden, let name = name, !name.isEmpty {
+            nameLabel.text = name
+        }
+        
+        dateLabel.text = date.relative
+    }
+    
+    public func update(message: String) {
+        messageContainerView.isHidden = message.isEmpty
+        messageLabel.text = message
+    }
+    
+    public func update(avatarURL: URL?, name: String) {
+        avatarView.isHidden = false
+        
+        guard let avatarURL = avatarURL else {
+            showAvatarLabel(with: name)
+            return
+        }
+        
+        let imageSize = avatarView.bounds.width * UIScreen.main.scale
+        let request = ImageRequest(url: avatarURL, targetSize: CGSize(width: imageSize, height: imageSize), contentMode: .aspectFill)
+        
+        ImagePipeline.shared.loadImage(with: request) { [weak self] response, error in
+            self?.avatarView.image = response?.image
+        }
+    }
+    
+    public func add(attachments: [Attachment], userName: String) {
+        guard let style = style else {
+            return
+        }
+        
+        attachments.enumerated().forEach { offset, attachment in
+            let preview: AttachmentPreviewProtocol
+            
+            if attachment.type == .file {
+                preview = createAttachmentFilePreview(with: attachment, style: style)
+            } else {
+                preview = createAttachmentPreview(with: attachment, style: style, imageBackgroundColor: color(by: userName))
+            }
+            
+            messageStackView.insertArrangedSubview(preview, at: offset)
+            attachmentPreviews.append(preview)
+            
+            if attachment.type == .file {
+                preview.update(attachment: attachment, maskImage: backgroundImageForAttachment(at: offset))
+            } else {
+                preview.update(attachment: attachment, maskImage: maskImageForAttachment(at: offset))
+            }
+        }
+        
+        update(isContinueMessage: true)
+    }
+    
+    private func createAttachmentPreview(with attachment: Attachment,
+                                         style: MessageViewStyle,
+                                         imageBackgroundColor: UIColor) -> AttachmentPreviewProtocol {
+        let preview = AttachmentPreview(frame: .zero)
+        preview.maxWidth = maxMessageWidth
+        preview.tintColor = style.textColor
+        preview.imageView.backgroundColor = imageBackgroundColor
+        preview.layer.cornerRadius = style.cornerRadius
+        preview.type = attachment.type
+        
+        preview.backgroundColor = attachment.type.isImage
+            ? style.chatBackgroundColor
+            : (style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray)
+        
+        return preview
+    }
+    
+    private func createAttachmentFilePreview(with attachment: Attachment,
+                                             style: MessageViewStyle) -> AttachmentPreviewProtocol {
+        let preview = AttachmentFilePreview(frame: .zero)
+        preview.backgroundColor = style.chatBackgroundColor
+        preview.snp.makeConstraints { $0.height.equalTo(CGFloat.attachmentFilePreviewHeight).priority(999) }
+        return preview
+    }
+    
+    private func backgroundImageForAttachment(at offset: Int) -> UIImage? {
+        guard let style = style, style.hasBackgroundImage else {
+            return nil
+        }
+        
+        if style.alignment == .left {
+            return offset == 0 ? messageContainerView.image : style.backgroundImages[.leftSide(transparent: false)]
+        }
+        
+        return offset == 0 ? messageContainerView.image : style.backgroundImages[.rightSide(transparent: false)]
+    }
+    
+    private func maskImageForAttachment(at offset: Int) -> UIImage? {
+        guard let style = style, style.hasBackgroundImage, let messageContainerViewImage = messageContainerView.image else {
+            return nil
+        }
+        
+        if style.alignment == .left {
+            return offset == 0 || messageContainerViewImage == style.backgroundImages[.leftBottomCorner(transparent: false)]
+                ? style.backgroundImages[.leftBottomCorner(transparent: true)]
+                : style.backgroundImages[.leftSide(transparent: true)]
+        }
+        
+        return offset == 0 || messageContainerViewImage == style.backgroundImages[.rightBottomCorner(transparent: false)]
+            ? style.backgroundImages[.rightBottomCorner(transparent: true)]
+            : style.backgroundImages[.rightSide(transparent: true)]
+    }
+
+    private func showAvatarLabel(with name: String) {
+        if name.contains(" ") {
+            let words = name.split(separator: " ")
+            
+            if let a = String(describing: words[0]).first, let b = String(describing: words[1]).first {
+                avatarLabel.text = String(a).appending(String(b)).uppercased()
+            }
+        } else {
+            avatarLabel.text = name.first?.uppercased()
+        }
+        
+        avatarView.backgroundColor = color(by: name)
+        avatarLabel.isHidden = false
+        avatarLabel.textColor = avatarView.backgroundColor?.withAlphaComponent(0.3)
+    }
+    
+    private func color(by name: String) -> UIColor {
+        var brightness: CGFloat = 0.5
+        
+        if let backgroundColor = backgroundColor {
+            brightness = backgroundColor.isDark ? 1 : 0.5
+        }
+        
+        let hue: CGFloat = abs(((CGFloat(name.hashValue) / CGFloat(Int.max)) * 15) / 15)
+        return .transparent(hue: hue, brightness: brightness)
+    }
+}
+
+public enum MessageTableViewCellPaddingType: String {
+    case regular
+    case small
+}

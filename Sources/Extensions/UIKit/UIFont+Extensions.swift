@@ -14,6 +14,7 @@ extension UIFont {
     public static let chatBoldMedium = UIFont.systemFont(ofSize: 13, weight: .bold)
     public static let chatSmall = UIFont.systemFont(ofSize: 11)
     public static let chatXSmall = UIFont.systemFont(ofSize: 10)
+    public static let chatXXSmall = UIFont.systemFont(ofSize: 9)
     public static let chatBoldXSmall = UIFont.systemFont(ofSize: 10, weight: .bold)
     public static let chatMediumSmall = UIFont.systemFont(ofSize: 11, weight: .medium)
     public static let chatBoldSmall = UIFont.systemFont(ofSize: 11, weight: .bold)
