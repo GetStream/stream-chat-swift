@@ -214,6 +214,11 @@ extension ChatViewController {
                 return
         }
         
+        if let first = message.attachments.first, !first.type.isImage {
+            showWebView(url: first.url, title: first.title)
+            return
+        }
+        
         showImageGallery(with: message.attachments.compactMap { $0.imageURL })
     }
 }

@@ -60,6 +60,8 @@
 		8AABC29E22627AA20064CB20 /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29D22627AA20064CB20 /* Dictionary+Extensions.swift */; };
 		8AB1B8ED22675B98002C65BD /* MessageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8EC22675B98002C65BD /* MessageResponse.swift */; };
 		8AB1B8EF22675CCD002C65BD /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */; };
+		8AB1B8F2226772C1002C65BD /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8F1226772C1002C65BD /* WebViewController.swift */; };
+		8AB1B8F422677EEA002C65BD /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8F322677EEA002C65BD /* String+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -119,6 +121,8 @@
 		8AABC29D22627AA20064CB20 /* Dictionary+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extensions.swift"; sourceTree = "<group>"; };
 		8AB1B8EC22675B98002C65BD /* MessageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageResponse.swift; sourceTree = "<group>"; };
 		8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
+		8AB1B8F1226772C1002C65BD /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		8AB1B8F322677EEA002C65BD /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.release.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -245,6 +249,7 @@
 				8A8891632253A86600DD6539 /* Codable+Extensions.swift */,
 				8AABC29D22627AA20064CB20 /* Dictionary+Extensions.swift */,
 				8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */,
+				8AB1B8F322677EEA002C65BD /* String+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -278,6 +283,7 @@
 			children = (
 				8A210D7E2264C3C700D51FFC /* Chat */,
 				8A210D7B2264A1FC00D51FFC /* Image Gallery */,
+				8AB1B8F0226772AC002C65BD /* Web View */,
 				8A1A9415225E2EB200060ACC /* DataDetectorWorker.swift */,
 			);
 			path = View;
@@ -314,6 +320,14 @@
 				8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */,
 			);
 			path = Attachments;
+			sourceTree = "<group>";
+		};
+		8AB1B8F0226772AC002C65BD /* Web View */ = {
+			isa = PBXGroup;
+			children = (
+				8AB1B8F1226772C1002C65BD /* WebViewController.swift */,
+			);
+			path = "Web View";
 			sourceTree = "<group>";
 		};
 		E4BFB61CCC31ACB2AD7AAA5D /* Pods */ = {
@@ -506,12 +520,14 @@
 				8A88917722550E0C00DD6539 /* UIColor+Extensions.swift in Sources */,
 				8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */,
 				8A1A9412225DFDA100060ACC /* ComposerView.swift in Sources */,
+				8AB1B8F422677EEA002C65BD /* String+Extensions.swift in Sources */,
 				8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */,
 				8AABC29322608FB90064CB20 /* AttachmentFilePreview.swift in Sources */,
 				8A8891732255000A00DD6539 /* UITableViewCell+Extensions.swift in Sources */,
 				8A88915E22535FEC00DD6539 /* Message.swift in Sources */,
 				8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */,
 				8A1A9418225E2FE000060ACC /* AttachmentCollectionViewCell.swift in Sources */,
+				8AB1B8F2226772C1002C65BD /* WebViewController.swift in Sources */,
 				8AABC291226086ED0064CB20 /* Attachment.swift in Sources */,
 				8A1A9410225CD17300060ACC /* ReactionViewStyle.swift in Sources */,
 			);

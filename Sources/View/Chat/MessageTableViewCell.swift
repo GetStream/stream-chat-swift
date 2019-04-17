@@ -33,20 +33,20 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-//    private let reactionsContainer = UIImageView(frame: .zero)
-//
-//    private let reactionsLabel: UILabel = {
-//        let label = UILabel(frame: .zero)
-//        label.textAlignment = .center
-//        return label
-//    }()
-//
-//    private(set) lazy var reactionButton: UIButton = {
-//        let button = UIButton(type: .custom)
-//        button.setImage(UIImage.Icons.happy, for: .normal)
-//        button.tintColor = .chatGray
-//        return button
-//    }()
+    //    private let reactionsContainer = UIImageView(frame: .zero)
+    //
+    //    private let reactionsLabel: UILabel = {
+    //        let label = UILabel(frame: .zero)
+    //        label.textAlignment = .center
+    //        return label
+    //    }()
+    //
+    //    private(set) lazy var reactionButton: UIButton = {
+    //        let button = UIButton(type: .custom)
+    //        button.setImage(UIImage.Icons.happy, for: .normal)
+    //        button.tintColor = .chatGray
+    //        return button
+    //    }()
     
     private lazy var nameAndDateStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, dateLabel])
@@ -63,7 +63,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         label.textColor = .chatGray
         return label
     }()
-
+    
     private let dateLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatSmall
@@ -109,7 +109,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     private var maxMessageWidth: CGFloat {
         return UIScreen.main.bounds.width - 2 * messagePadding
     }
-
+    
     public var paddingType: MessageTableViewCellPaddingType = .regular {
         didSet { bottomPaddingView.isHidden = paddingType == .small }
     }
@@ -146,7 +146,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         } else {
             nameLabel.isHidden = true
         }
-
+        
         // Avatar
         contentView.addSubview(avatarView)
         
@@ -182,39 +182,39 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
         
         update(isContinueMessage: false)
-
+        
         // Reactions.
-//        reactionsContainer.addSubview(reactionsLabel)
-//        reactionsContainer.image = style.reactionViewStyle.backgroundImage
-//        contentView.addSubview(reactionsContainer)
-//
-//        reactionsContainer.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
-//            make.right.equalTo(messageLabel.snp.right).offset(CGFloat.reactionsHeight - 4)
-//            make.height.equalTo(CGFloat.reactionsFullHeight).priority(999)
-//        }
-//
-//        reactionsLabel.font = style.reactionViewStyle.font
-//        reactionsLabel.textColor = style.reactionViewStyle.textColor
-//
-//        reactionsLabel.snp.makeConstraints { make in
-//            make.left.equalToSuperview().offset(CGFloat.reactionsTextPagging)
-//            make.right.equalToSuperview().offset(-CGFloat.reactionsTextPagging)
-//            make.top.equalToSuperview()
-//            make.height.equalTo(CGFloat.reactionsHeight)
-//        }
-//
-//        if style.alignment == .left {
-//            reactionButton.backgroundColor = style.chatBackgroundColor
-//            contentView.insertSubview(reactionButton, at: 0)
-//
-//            reactionButton.snp.makeConstraints { make in
-//                make.top.equalTo(messageLabel.snp.top).offset(-15)
-//                make.centerX.equalTo(reactionsContainer.snp.right).offset(1)
-//                make.width.equalTo(30)
-//                make.height.equalTo(30)
-//            }
-//        }
+        //        reactionsContainer.addSubview(reactionsLabel)
+        //        reactionsContainer.image = style.reactionViewStyle.backgroundImage
+        //        contentView.addSubview(reactionsContainer)
+        //
+        //        reactionsContainer.snp.makeConstraints { make in
+        //            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
+        //            make.right.equalTo(messageLabel.snp.right).offset(CGFloat.reactionsHeight - 4)
+        //            make.height.equalTo(CGFloat.reactionsFullHeight).priority(999)
+        //        }
+        //
+        //        reactionsLabel.font = style.reactionViewStyle.font
+        //        reactionsLabel.textColor = style.reactionViewStyle.textColor
+        //
+        //        reactionsLabel.snp.makeConstraints { make in
+        //            make.left.equalToSuperview().offset(CGFloat.reactionsTextPagging)
+        //            make.right.equalToSuperview().offset(-CGFloat.reactionsTextPagging)
+        //            make.top.equalToSuperview()
+        //            make.height.equalTo(CGFloat.reactionsHeight)
+        //        }
+        //
+        //        if style.alignment == .left {
+        //            reactionButton.backgroundColor = style.chatBackgroundColor
+        //            contentView.insertSubview(reactionButton, at: 0)
+        //
+        //            reactionButton.snp.makeConstraints { make in
+        //                make.top.equalTo(messageLabel.snp.top).offset(-15)
+        //                make.centerX.equalTo(reactionsContainer.snp.right).offset(1)
+        //                make.width.equalTo(30)
+        //                make.height.equalTo(30)
+        //            }
+        //        }
     }
     
     public func reset() {
@@ -227,11 +227,12 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         nameAndDateStackView.isHidden = true
         nameLabel.text = nil
         dateLabel.text = nil
-
+        
         messageContainerView.isHidden = true
         update(isContinueMessage: false)
         messageLabel.text = nil
-
+        messageLabel.font = style?.font
+        
         paddingType = .regular
         
         free()
@@ -290,6 +291,15 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     public func update(message: String) {
         messageContainerView.isHidden = message.isEmpty
         messageLabel.text = message
+        
+        if !message.isEmpty, message.count < 9 {
+            let message = message.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if message.containsOnlyEmoji {
+                messageLabel.text = message
+                messageLabel.font = .systemFont(ofSize: 26)
+            }
+        }
     }
     
     public func update(avatarURL: URL?, name: String) {
@@ -387,7 +397,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             ? style.backgroundImages[.rightBottomCorner(transparent: true)]
             : style.backgroundImages[.rightSide(transparent: true)]
     }
-
+    
     private func showAvatarLabel(with name: String) {
         if name.contains(" ") {
             let words = name.split(separator: " ")
