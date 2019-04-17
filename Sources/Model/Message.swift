@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Message: Codable, Equatable {
+public struct Message: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
         case type
@@ -31,6 +31,29 @@ public struct Message: Codable, Equatable {
     public let replyCount: Int
     public let reactionCounts: [String: Int]?
     
+    init?(text: String) {
+        guard let user = Client.shared.user else {
+            return nil
+        }
+        
+        id = ""
+        type = .regular
+        self.user = user
+        created = Date()
+        updated = Date()
+        self.text = text
+        attachments = []
+        replyCount = 0
+        reactionCounts = nil
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(text, forKey: .text)
+    }
+}
+
+extension Message: Equatable {
     public static func == (lhs: Message, rhs: Message) -> Bool {
         return lhs.id == rhs.id
             && lhs.type == rhs.type
@@ -39,5 +62,5 @@ public struct Message: Codable, Equatable {
 }
 
 public enum MessageType: String, Codable {
-    case regular
+    case regular, ephemeral, error, reply, system
 }

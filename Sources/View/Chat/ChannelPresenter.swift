@@ -38,6 +38,10 @@ extension ChannelPresenter {
             return
         }
         
+        if pagination == ChannelPresenter.limitPagination {
+            next = .none
+        }
+        
         channel.query(members: [user], pagination: pagination) { [weak self] in
             self?.parseQuery($0, completion)
         }
@@ -45,7 +49,7 @@ extension ChannelPresenter {
     
     private func parseQuery(_ result: Result<Query, ClientError>, _ completion: @escaping Completion) {
         do {
-            var items = self.items
+            var items = next == .none ? [ChatItem]() : self.items
             let query = try result.get()
             
             if let first = items.first, case .loading = first {
@@ -77,11 +81,11 @@ extension ChannelPresenter {
             
             if next != .none {
                 if yesterdayStatusAdded {
-                    removeDuplicatedStatus(statusTitle: ChannelPresenter.statusYesterdayTitle)
+                    removeDuplicatedStatus(statusTitle: ChannelPresenter.statusYesterdayTitle, items: &items)
                 }
                 
                 if todayStatusAdded {
-                    removeDuplicatedStatus(statusTitle: ChannelPresenter.statusTodayTitle)
+                    removeDuplicatedStatus(statusTitle: ChannelPresenter.statusTodayTitle, items: &items)
                 }
             }
             
@@ -103,18 +107,23 @@ extension ChannelPresenter {
             }
         } catch {
             print("⚠️", error)
-            completion(error)
+            DispatchQueue.main.async { completion(error) }
         }
     }
     
-    private func removeDuplicatedStatus(statusTitle: String) {
-        if let index = items.lastIndex(where: {
-            if case .status(let title, _) = $0 {
+    private func removeDuplicatedStatus(statusTitle: String, items: inout [ChatItem]) {
+        let searchBlock = { (item: ChatItem) -> Bool in
+            if case .status(let title, _) = item {
                 return title == statusTitle
             }
+            
             return false
-        }) {
-            items.remove(at: index)
+        }
+        
+        if let firstIndex = items.firstIndex(where: searchBlock),
+            let lastIndex = items.lastIndex(where: searchBlock),
+            firstIndex != lastIndex {
+            items.remove(at: lastIndex)
         }
     }
 }
@@ -122,4 +131,18 @@ extension ChannelPresenter {
 extension ChannelPresenter {
     public static var statusYesterdayTitle = "Yesterday"
     public static var statusTodayTitle = "Today"
+}
+
+// MARK: - Send Message
+
+extension ChannelPresenter {
+    public func send(text: String, completion: @escaping Completion) {
+        guard let message = Message(text: text) else {
+            return
+        }
+        
+        channel.send(message) { result in
+            DispatchQueue.main.async { completion(result.error) }
+        }
+    }
 }

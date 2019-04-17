@@ -99,7 +99,7 @@ public final class ComposerView: UIView {
     /// The text of the text view.
     public var text: String {
         get {
-            return textView.attributedText.string
+            return textView.attributedText.string.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         set {
             textView.attributedText = attributedText(text: newValue)
@@ -227,14 +227,15 @@ public final class ComposerView: UIView {
     
     /// Reset states of all child views and clear all added/generated data.
     public func reset() {
+        isEnabled = true
         textView.attributedText = attributedText()
         images = []
-        attachmentsCollectionView.reloadData()
         attachmentsCollectionView.isHidden = true
-        isEnabled = true
+        attachmentsCollectionView.reloadData()
         activityIndicatorView.stopAnimating()
         updatePlaceholder()
         updateTextHeightIfNeeded()
+        updateStyle(with: .normal)
     }
     
     /// Toggle `isUserInteractionEnabled` states for all child views.
@@ -257,7 +258,7 @@ public final class ComposerView: UIView {
     }
     
     private func updateSendButton() {
-        sendButton.isHidden = textView.attributedText.length == 0
+        sendButton.isHidden = text.count == 0
     }
 }
 

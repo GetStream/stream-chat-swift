@@ -10,6 +10,7 @@ import Foundation
 
 enum ChatEndpoint: EndpointProtocol {
     case query(_ query: Query)
+    case send(_ message: Message, channel: Channel)
 }
 
 extension ChatEndpoint {
@@ -20,7 +21,9 @@ extension ChatEndpoint {
     var path: String {
         switch self {
         case .query(let query):
-            return "channels/\(query.channel.type.rawValue)/\(query.channel.id)/query"
+            return path(with: query.channel).appending("query")
+        case .send(_, let channel):
+            return path(with: channel).appending("message")
         }
     }
     
@@ -28,6 +31,12 @@ extension ChatEndpoint {
         switch self {
         case .query(let query):
             return query
+        case .send(let message, _):
+            return ["message": message]
         }
+    }
+    
+    func path(with channel: Channel) -> String {
+        return "channels/\(channel.type.rawValue)/\(channel.id)/"
     }
 }

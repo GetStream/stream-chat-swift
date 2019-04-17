@@ -58,6 +58,8 @@
 		8AABC29A2262426A0064CB20 /* ChatItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC2992262426A0064CB20 /* ChatItem.swift */; };
 		8AABC29C22627A1D0064CB20 /* Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29B22627A1D0064CB20 /* Pagination.swift */; };
 		8AABC29E22627AA20064CB20 /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29D22627AA20064CB20 /* Dictionary+Extensions.swift */; };
+		8AB1B8ED22675B98002C65BD /* MessageResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8EC22675B98002C65BD /* MessageResponse.swift */; };
+		8AB1B8EF22675CCD002C65BD /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -115,6 +117,8 @@
 		8AABC2992262426A0064CB20 /* ChatItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatItem.swift; sourceTree = "<group>"; };
 		8AABC29B22627A1D0064CB20 /* Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pagination.swift; sourceTree = "<group>"; };
 		8AABC29D22627AA20064CB20 /* Dictionary+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extensions.swift"; sourceTree = "<group>"; };
+		8AB1B8EC22675B98002C65BD /* MessageResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageResponse.swift; sourceTree = "<group>"; };
+		8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
 		E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.release.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -240,6 +244,7 @@
 				8A88917D22560EC100DD6539 /* Date+Extensions.swift */,
 				8A8891632253A86600DD6539 /* Codable+Extensions.swift */,
 				8AABC29D22627AA20064CB20 /* Dictionary+Extensions.swift */,
+				8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -255,6 +260,7 @@
 				8AABC290226086ED0064CB20 /* Attachment.swift */,
 				8AABC2992262426A0064CB20 /* ChatItem.swift */,
 				8AABC29B22627A1D0064CB20 /* Pagination.swift */,
+				8AB1B8EC22675B98002C65BD /* MessageResponse.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -461,6 +467,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A88917B22550ECC00DD6539 /* CGFloat+Extensions.swift in Sources */,
+				8AB1B8ED22675B98002C65BD /* MessageResponse.swift in Sources */,
 				8A8891682253D3A500DD6539 /* ClientLogger.swift in Sources */,
 				8AABC29E22627AA20064CB20 /* Dictionary+Extensions.swift in Sources */,
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
@@ -471,6 +478,7 @@
 				8A1A9416225E2EB200060ACC /* DataDetectorWorker.swift in Sources */,
 				8A88915A2252830C00DD6539 /* UIImage+Extensions.swift in Sources */,
 				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
+				8AB1B8EF22675CCD002C65BD /* Result+Extensions.swift in Sources */,
 				8A8891502252379700DD6539 /* Channel.swift in Sources */,
 				8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */,
 				8A1A940E225CC88200060ACC /* AttachmentPreview.swift in Sources */,

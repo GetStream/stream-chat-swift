@@ -71,7 +71,8 @@ extension Channel {
         Client.shared.request(endpoint: ChatEndpoint.query(query), completion)
     }
     
-    public func send(_ message: Message, _ completion: @escaping Client.Completion<Channel>) {
+    public func send(_ message: Message, _ completion: @escaping Client.Completion<MessageResponse>) {
+        Client.shared.request(endpoint: ChatEndpoint.send(message, channel: self), completion)
     }
 }
 

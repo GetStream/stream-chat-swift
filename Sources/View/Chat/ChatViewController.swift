@@ -43,7 +43,14 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         super.viewDidLoad()
         setupComposerView()
         setupTableView()
-        
+        reloadData()
+    }
+    
+    public override var preferredStatusBarStyle: UIStatusBarStyle {
+        return style.backgroundColor.isDark ? .lightContent : .default
+    }
+    
+    public func reloadData() {
         channelPresenter?.load { [weak self] error in
             /// TODO: Parse error.
             if error == nil, let self = self, let presenter = self.channelPresenter {
@@ -52,13 +59,15 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
             }
         }
     }
-    
-    public override var preferredStatusBarStyle: UIStatusBarStyle {
-        return style.backgroundColor.isDark ? .lightContent : .default
-    }
+}
+
+// MARK: - Composer
+
+extension ChatViewController {
     
     private func setupComposerView() {
         composerView.addToSuperview(view)
+        composerView.sendButton.addTarget(self, action: #selector(send), for: .touchUpInside)
         
         RxKeyboard.instance.visibleHeight
             .drive(onNext: { [weak self] height in
@@ -76,6 +85,16 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
                 }
             })
             .disposed(by: disposeBag)
+    }
+    
+    @objc func send() {
+        composerView.isEnabled = false
+        channelPresenter?.send(text: composerView.text) { [weak self] error in
+            if error == nil {
+                self?.composerView.reset()
+                self?.reloadData()
+            }
+        }
     }
 }
 
@@ -135,7 +154,7 @@ extension ChatViewController {
             return .unused
         }
         
-        let isIncoming = true
+        let isIncoming = message.user != Client.shared.user
         let cell = tableView.dequeueMessageCell(for: indexPath, style: isIncoming ? style.incomingMessage : style.outgoingMessage)
         cell.update(message: message.text)
         var showAvatar = true
