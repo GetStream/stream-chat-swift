@@ -149,14 +149,14 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                                           contentModes: .init(success: .scaleAspectFill, failure: .center, placeholder: .center))
         
         imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] in
-            self?.parseAttachmentImageResponse(response: $0, error: $1, maskImage: maskImage)
+            self?.parse(imageResponse: $0, error: $1, attachment: attachment, maskImage: maskImage)
         }
     }
     
-    private func parseAttachmentImageResponse(response: ImageResponse?, error: Error?, maskImage: UIImage?) {
+    private func parse(imageResponse: ImageResponse?, error: Error?, attachment: Attachment, maskImage: UIImage?) {
         var width = type.isImage ? defaultHeight : maxWidth
         
-        if let image = response?.image, image.size.height > 0 {
+        if let image = imageResponse?.image, image.size.height > 0 {
             imageView.backgroundColor = backgroundColor
             
             if type.isImage {
@@ -164,12 +164,13 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                 widthConstraint?.update(offset: width)
             }
             
-            if let url = response?.urlResponse?.url, url.absoluteString.lowercased().contains(".gif") || type == .giphy {
-                isGifImage = true
-                imageView.setGifFromURL(url)
+            if attachment.type == .giphy {
+                loadGiphy(with: attachment)
+            } else {
+                loadGif(with: attachment.imageURL)
             }
         } else {
-            if let error = error, let url = response?.urlResponse?.url {
+            if let error = error, let url = imageResponse?.urlResponse?.url {
                 print("⚠️", url, error)
             }
         }
@@ -180,5 +181,23 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             mask = maskView
             layer.cornerRadius = 0
         }
+    }
+    
+    private func loadGiphy(with attachment: Attachment) {
+        guard let pathComponents = attachment.imageURL?.pathComponents, pathComponents.count > 2 else {
+            return
+        }
+        
+        let giphyId = pathComponents[pathComponents.count - 2]
+        loadGif(with: URL(string: "https://i.giphy.com/\(giphyId).gif"))
+    }
+    
+    private func loadGif(with url: URL?) {
+        guard let url = url, url.absoluteString.lowercased().contains(".gif") else {
+            return
+        }
+        
+        isGifImage = true
+        imageView.setGifFromURL(url)
     }
 }

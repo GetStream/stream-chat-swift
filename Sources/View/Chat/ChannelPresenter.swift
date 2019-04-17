@@ -9,7 +9,8 @@
 import Foundation
 
 public final class ChannelPresenter {
-    static let loadingStatus = "Loading..."
+    public typealias Completion = (_ error: Error?) -> Void
+    
     static let limitPagination: Pagination = .limit(50)
     
     public private(set) var channel: Channel
@@ -26,25 +27,26 @@ public final class ChannelPresenter {
 
 extension ChannelPresenter {
     
-    func load(pagination: Pagination = ChannelPresenter.limitPagination, _ completion: @escaping () -> Void) {
-        guard let user = Client.shared.user else {
-            return
-        }
-        
-        channel.query(members: [user], pagination: pagination) { [weak self] in self?.parseQuery($0, completion) }
-    }
-    
-    func loadNext(_ completion: @escaping () -> Void) {
+    func loadNext(_ completion: @escaping Completion) {
         if next != .none {
             load(pagination: next, completion)
         }
     }
     
-    private func parseQuery(_ result: Result<Query, ClientError>, _ completion: @escaping () -> Void) {
+    func load(pagination: Pagination = ChannelPresenter.limitPagination, _ completion: @escaping Completion) {
+        guard let user = Client.shared.user else {
+            return
+        }
+        
+        channel.query(members: [user], pagination: pagination) { [weak self] in
+            self?.parseQuery($0, completion)
+        }
+    }
+    
+    private func parseQuery(_ result: Result<Query, ClientError>, _ completion: @escaping Completion) {
         do {
+            var items = self.items
             let query = try result.get()
-            channel = query.channel
-            members = query.members
             
             if let first = items.first, case .loading = first {
                 items.remove(at: 0)
@@ -83,19 +85,26 @@ extension ChannelPresenter {
                 }
             }
             
-            if query.messages.count >= 25, let first = query.messages.first {
+            if case .limit(let limitValue) = ChannelPresenter.limitPagination,
+                limitValue > 0,
+                query.messages.count == limitValue,
+                let first = query.messages.first {
                 next = ChannelPresenter.limitPagination + .lessThan(first.id)
                 items.insert(.loading, at: 0)
             } else {
                 next = .none
             }
-        } catch let clientError as ClientError {
-            print(clientError)
+            
+            DispatchQueue.main.async {
+                self.channel = query.channel
+                self.members = query.members
+                self.items = items
+                completion(nil)
+            }
         } catch {
-            print(error)
+            print("⚠️", error)
+            completion(error)
         }
-        
-        completion()
     }
     
     private func removeDuplicatedStatus(statusTitle: String) {

@@ -44,8 +44,9 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         setupComposerView()
         setupTableView()
         
-        channelPresenter?.load { [weak self] in
-            if let self = self, let presenter = self.channelPresenter {
+        channelPresenter?.load { [weak self] error in
+            /// TODO: Parse error.
+            if error == nil, let self = self, let presenter = self.channelPresenter {
                 self.tableView.reloadData()
                 self.tableView.scrollToRow(at: IndexPath(row: presenter.items.count - 1, section: 0), at: .bottom, animated: false)
             }
@@ -56,7 +57,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         return style.backgroundColor.isDark ? .lightContent : .default
     }
     
-    func setupComposerView() {
+    private func setupComposerView() {
         composerView.addToSuperview(view)
         
         RxKeyboard.instance.visibleHeight
@@ -76,8 +77,13 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
             })
             .disposed(by: disposeBag)
     }
+}
+
+// MARK: - Table View
+
+extension ChatViewController {
     
-    func setupTableView() {
+    private func setupTableView() {
         tableView.backgroundColor = style.backgroundColor
         tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
@@ -92,31 +98,46 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         }
         
         if case .loading = presenter.items[indexPath.row] {
-            let currentCount  = presenter.items.count
-            
-            presenter.loadNext { [weak self] in
-                self?.tableView.reloadData()
-                let row: Int = max(presenter.items.count - currentCount, 0)
-                self?.tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .top, animated: false)
-            }
-            
-            return statusCell(at: indexPath, title: "Loading...")
+            return loadingCell(at: indexPath)
         }
-
+        
         if case let .status(title, subtitle) = presenter.items[indexPath.row] {
             return statusCell(at: indexPath, title: title, subtitle: subtitle)
         }
         
-        guard case .message(let message) = presenter.items[indexPath.row] else {
+        if case .message(let message) = presenter.items[indexPath.row] {
+            return messageCell(at: indexPath, message: message)
+        }
+        
+        return .unused
+    }
+    
+    private func loadingCell(at indexPath: IndexPath) -> UITableViewCell {
+        guard let presenter = channelPresenter else {
             return .unused
         }
         
-        let isIncoming = message.user.id.hashValue % 2 == 0
+        let currentCount  = presenter.items.count
         
-        let cell = tableView.dequeueMessageCell(for: indexPath,
-                                                style: isIncoming ? style.incomingMessage : style.outgoingMessage)
+        presenter.loadNext { [weak self] error in
+            if error == nil, let self = self {
+                let row: Int = max(presenter.items.count - currentCount, 0)
+                self.tableView.reloadData()
+                self.tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .top, animated: false)
+            }
+        }
+        
+        return statusCell(at: indexPath, title: "Loading...")
+    }
+    
+    private func messageCell(at indexPath: IndexPath, message: Message) -> UITableViewCell {
+        guard let presenter = channelPresenter else {
+            return .unused
+        }
+        
+        let isIncoming = true
+        let cell = tableView.dequeueMessageCell(for: indexPath, style: isIncoming ? style.incomingMessage : style.outgoingMessage)
         cell.update(message: message.text)
-        
         var showAvatar = true
         
         if indexPath.row < (presenter.items.count - 1), case .message(let nextMessage) = presenter.items[indexPath.row + 1] {
@@ -162,7 +183,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         guard  let presenter = channelPresenter,
             case .message(let message) = presenter.items[indexPath.row],
             !message.attachments.isEmpty else {
-            return false
+                return false
         }
         
         return true

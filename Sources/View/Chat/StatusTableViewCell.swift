@@ -58,7 +58,7 @@ final class StatusTableViewCell: UITableViewCell, Reusable {
             make.left.equalToSuperview().offset(CGFloat.messageStatusSpacing)
             make.top.equalToSuperview().offset(2 * CGFloat.messageEdgePadding)
             make.right.equalToSuperview().offset(-CGFloat.messageStatusSpacing)
-            make.bottom.equalToSuperview().offset(-2 * CGFloat.messageEdgePadding)
+            make.bottom.equalToSuperview().offset(-3 * CGFloat.messageEdgePadding)
         }
     }
     
