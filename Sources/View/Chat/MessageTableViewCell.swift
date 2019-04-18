@@ -336,9 +336,9 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             attachmentPreviews.append(preview)
             
             if attachment.type == .file {
-                preview.update(attachment: attachment, maskImage: backgroundImageForAttachment(at: offset))
+                preview.update(maskImage: backgroundImageForAttachment(at: offset))
             } else {
-                preview.update(attachment: attachment, maskImage: maskImageForAttachment(at: offset))
+                preview.update(maskImage: maskImageForAttachment(at: offset))
             }
         }
         
@@ -353,9 +353,9 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         preview.tintColor = style.textColor
         preview.imageView.backgroundColor = imageBackgroundColor
         preview.layer.cornerRadius = style.cornerRadius
-        preview.type = attachment.type
+        preview.attachment = attachment
         
-        preview.backgroundColor = attachment.type.isImage
+        preview.backgroundColor = attachment.isImage
             ? style.chatBackgroundColor
             : (style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray)
         

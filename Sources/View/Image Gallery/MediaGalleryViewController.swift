@@ -22,6 +22,7 @@ class MediaGalleryViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
         view.backgroundColor = .chatSuperDarkGray
         setupScrollView()
         setupCollectionView()
@@ -165,27 +166,22 @@ public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, Re
     /// Loads the image by a given URL.
     public func loadImage(_ url: URL, completion: @escaping (_ error: Error?) -> Void) {
         imageTask?.cancel()
-        activityIndicatorView.stopAnimating()
-
-        if url.absoluteString.lowercased().contains(".gif") {
-            imageView.setGifFromURL(url)
-            return
-        }
-        
         activityIndicatorView.startAnimating()
-
-        imageTask = ImagePipeline.shared.loadImage(with: url) { [weak self] response, error in
-            guard let self = self else {
-                return
-            }
-            
-            self.activityIndicatorView.stopAnimating()
-            
-            if let image = response?.image {
-                self.imageView.image = image
-            } else {
-                self.imageView.contentMode = .center
-                self.imageView.image = UIImage.Icons.image
+        
+        let imageRequest = ImageRequest(url: url, targetSize: UIScreen.main.bounds.size, contentMode: .aspectFit)
+        let modes = ImageLoadingOptions.ContentModes(success: .scaleAspectFit, failure: .center, placeholder: .center)
+        let options = ImageLoadingOptions(failureImage: UIImage.Icons.close, contentModes: modes)
+        
+        imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] imageResponse, error in
+            if let self = self {
+                self.activityIndicatorView.stopAnimating()
+                
+                if let image = imageResponse?.image,
+                    image.size.height > 0,
+                    let animatedImageData = image.animatedImageData,
+                    let animatedImage = try? UIImage(gifData: animatedImageData) {
+                    self.imageView.setGifImage(animatedImage)
+                }
             }
             
             completion(error)

@@ -214,7 +214,7 @@ extension ChatViewController {
                 return
         }
         
-        if let first = message.attachments.first, !first.type.isImage {
+        if let first = message.attachments.first, !first.isImage {
             showWebView(url: first.url, title: first.title)
             return
         }

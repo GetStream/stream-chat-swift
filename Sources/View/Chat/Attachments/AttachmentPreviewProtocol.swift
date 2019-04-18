@@ -9,6 +9,9 @@
 import UIKit
 
 public protocol AttachmentPreviewProtocol where Self: UIView {
+    /// An attachment.
+    var attachment: Attachment? { get set }
+    
     /// Update attachment preview with a given attachment and image mask.
-    func update(attachment: Attachment, maskImage: UIImage?)
+    func update(maskImage: UIImage?)
 }

@@ -11,6 +11,8 @@ import SnapKit
 
 final class AttachmentFilePreview: UIImageView, AttachmentPreviewProtocol {
     
+    public var attachment: Attachment?
+    
     private lazy var iconImageView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         addSubview(imageView)
@@ -54,8 +56,8 @@ final class AttachmentFilePreview: UIImageView, AttachmentPreviewProtocol {
         return label
     }()
 
-    func update(attachment: Attachment, maskImage: UIImage?) {
-        guard let file = attachment.file else {
+    func update(maskImage: UIImage?) {
+        guard let attachment = attachment, let file = attachment.file else {
             return
         }
         

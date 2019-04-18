@@ -11,6 +11,8 @@ import Foundation
 public struct Attachment: Codable {
     private enum CodingKeys: String, CodingKey {
         case title
+        case author = "author_name"
+        case text
         case type
         case image
         case url
@@ -20,17 +22,26 @@ public struct Attachment: Codable {
         case fallback
         case imageURL = "image_url"
         case assetURL = "asset_url"
+        case ogURL = "og_scrape_url"
     }
     
     public let title: String
+    public let author: String?
+    public let text: String?
     public let type: AttachmentType
     public let url: URL?
     public let imageURL: URL?
     public let file: AttachmentFile?
     
+    public var isImage: Bool {
+        return type.isImage && text == nil
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+        author = try container.decodeIfPresent(String.self, forKey: .author)
+        text = try container.decodeIfPresent(String.self, forKey: .text)
+
         title = try container.decodeIfPresent(String.self, forKey: .title)
             ?? container.decodeIfPresent(String.self, forKey: .fallback)
             ?? container.decodeIfPresent(String.self, forKey: .name)
@@ -38,23 +49,45 @@ public struct Attachment: Codable {
         
         if let existsType = try? AttachmentType(rawValue: container.decode(String.self, forKey: .type)) {
             type = existsType
+        } else if let _ = try? container.decodeIfPresent(String.self, forKey: .ogURL) {
+            type = .link
         } else {
             type = .unknown
         }
         
-        url = try container.decodeIfPresent(URL.self, forKey: .url)
-            ?? container.decodeIfPresent(URL.self, forKey: .imageURL)
-            ?? container.decodeIfPresent(URL.self, forKey: .titleLink)
-            ?? container.decodeIfPresent(URL.self, forKey: .assetURL)
-        
-        imageURL = try container.decodeIfPresent(URL.self, forKey: .image)
-            ?? container.decodeIfPresent(URL.self, forKey: .imageURL)
-            ?? container.decodeIfPresent(URL.self, forKey: .thumbURL)
-        
         file = type == .file ? try AttachmentFile(from: decoder) : nil
+        
+        // Parse Image URL.
+        imageURL = Attachment.fixedURL(try container.decodeIfPresent(String.self, forKey: .image)
+            ?? container.decodeIfPresent(String.self, forKey: .imageURL)
+            ?? container.decodeIfPresent(String.self, forKey: .thumbURL))
+        
+        // Parse URL.
+        url = Attachment.fixedURL(try container.decodeIfPresent(String.self, forKey: .url)
+            ?? container.decodeIfPresent(String.self, forKey: .titleLink)
+            ?? container.decodeIfPresent(String.self, forKey: .assetURL)
+            ?? container.decodeIfPresent(String.self, forKey: .ogURL))
     }
     
     public func encode(to encoder: Encoder) throws {}
+    
+    private static func fixedURL(_ urlString: String?) -> URL? {
+        guard let string = urlString else {
+            return nil
+        }
+        
+        var urlString = string
+        
+        if urlString.hasPrefix("//") {
+            urlString = "https:\(urlString)"
+        }
+        
+        if !urlString.lowercased().hasPrefix("http") {
+            urlString = "https://\(urlString)"
+        }
+        
+        return URL(string: urlString)
+    }
 }
 
 public enum AttachmentType: String, Codable {
@@ -65,8 +98,9 @@ public enum AttachmentType: String, Codable {
     case video
     case product
     case file
-    
-    var isImage: Bool {
+    case link
+
+    fileprivate var isImage: Bool {
         return self == .image || self == .imgur || self == .giphy
     }
 }

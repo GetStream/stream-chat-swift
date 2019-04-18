@@ -17,7 +17,9 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     
     private var defaultHeight: CGFloat = .attachmentPreviewMaxHeight
     
+    private var heightConstraint: Constraint?
     private var widthConstraint: Constraint?
+    private var imageViewTopConstraint: Constraint?
     private var imageViewBottomConstraint: Constraint?
     private var imageTask: ImageTask?
     private var isGifImage = false
@@ -30,9 +32,9 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         addSubview(imageView)
         
         imageView.snp.makeConstraints {
-            $0.top.equalToSuperview().priority(999)
-            $0.left.right.equalToSuperview()
+            imageViewTopConstraint = $0.top.equalToSuperview().priority(999).constraint
             imageViewBottomConstraint = $0.bottom.equalToSuperview().priority(999).constraint
+            $0.left.right.equalToSuperview()
         }
         
         imageView.setContentHuggingPriority(.defaultLow, for: .vertical)
@@ -42,7 +44,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.numberOfLines = 3
+        label.numberOfLines = 2
         label.font = .chatBoldMedium
         label.textColor = .chatBlue
         addSubview(label)
@@ -50,9 +52,9 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         
         label.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(CGFloat.messageEdgePadding).priority(999)
+            make.top.equalToSuperview().offset(CGFloat.messageEdgePadding).priority(750)
             make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
             make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
-            make.bottom.equalTo(urlLabel.snp.top).priority(999)
         }
         
         label.setContentCompressionResistancePriority(.defaultHigh + 20, for: .vertical)
@@ -60,16 +62,18 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         return label
     }()
     
-    private lazy var urlLabel: UILabel = {
+    private lazy var textLabel: UILabel = {
         let label = UILabel(frame: .zero)
+        label.numberOfLines = 4
         label.font = .chatSmall
         label.textColor = .chatGray
         addSubview(label)
         
-        label.snp.makeConstraints {
-            $0.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
-            $0.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
-            $0.bottom.equalToSuperview().offset(-CGFloat.messageEdgePadding).priority(999)
+        label.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).priority(999)
+            make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
+            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            make.bottom.equalToSuperview().offset(-CGFloat.messageEdgePadding).priority(999)
         }
         
         label.setContentCompressionResistancePriority(.defaultHigh + 10, for: .vertical)
@@ -79,8 +83,12 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     
     public var maxWidth: CGFloat = 0
     
-    public var type: AttachmentType = .image {
-        didSet { defaultHeight = type.isImage ? .attachmentPreviewHeight : .attachmentPreviewMaxHeight }
+    public var attachment: Attachment? {
+        didSet {
+            if let attachment = attachment {
+                defaultHeight = attachment.isImage ? .attachmentPreviewHeight : .attachmentPreviewMaxHeight
+            }
+        }
     }
     
     override var tintColor: UIColor! {
@@ -118,56 +126,63 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     }
     
     override func didMoveToSuperview() {
-        if superview != nil, widthConstraint == nil {
+        if superview != nil, widthConstraint == nil, let attachment = attachment {
             snp.makeConstraints {
-                $0.height.equalTo(defaultHeight).priority(999)
-                widthConstraint = $0.width.equalTo(type.isImage ? defaultHeight : maxWidth).constraint
+                heightConstraint = $0.height.equalTo(defaultHeight).priority(999).constraint
+                widthConstraint = $0.width.equalTo(attachment.isImage ? defaultHeight : maxWidth).constraint
             }
         }
     }
 
-    func update(attachment: Attachment, maskImage: UIImage? = nil) {
-        guard let imageURL = attachment.imageURL else {
+    func update(maskImage: UIImage? = nil) {
+        guard let attachment = attachment else {
             return
         }
         
-        if !type.isImage {
+        if !attachment.isImage {
             titleLabel.text = attachment.title
             titleLabel.backgroundColor = backgroundColor
-            urlLabel.text = attachment.url?.host
-            urlLabel.backgroundColor = backgroundColor
+            textLabel.text = attachment.text ?? attachment.url?.host
+            textLabel.backgroundColor = backgroundColor
             widthConstraint?.update(offset: maxWidth)
+            imageViewTopConstraint?.update(offset: CGFloat.messageEdgePadding)
         }
         
-        let imageRequest = ImageRequest(url: imageURL,
-                                        targetSize: CGSize(width: UIScreen.main.scale * maxWidth,
-                                                           height: UIScreen.main.scale * .attachmentPreviewHeight),
-                                        contentMode: .aspectFit)
+        guard let imageURL = attachment.imageURL else {
+            imageView.isHidden = true
+            heightConstraint?.deactivate()
+            return
+        }
         
-        let options = ImageLoadingOptions(placeholder: UIImage.Icons.image,
-                                          failureImage: UIImage.Icons.close,
-                                          contentModes: .init(success: .scaleAspectFill, failure: .center, placeholder: .center))
+        ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
+        let targetSize = CGSize(width: UIScreen.main.scale * maxWidth, height: UIScreen.main.scale * .attachmentPreviewHeight)
+        let imageRequest = ImageRequest(url: imageURL, targetSize: targetSize, contentMode: .aspectFit)
+        let modes = ImageLoadingOptions.ContentModes(success: .scaleAspectFit, failure: .center, placeholder: .center)
+        let options = ImageLoadingOptions(placeholder: UIImage.Icons.image, failureImage: UIImage.Icons.close, contentModes: modes)
         
         imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] in
-            self?.parse(imageResponse: $0, error: $1, attachment: attachment, maskImage: maskImage)
+            self?.parse(imageResponse: $0, error: $1, maskImage: maskImage)
         }
     }
     
-    private func parse(imageResponse: ImageResponse?, error: Error?, attachment: Attachment, maskImage: UIImage?) {
-        var width = type.isImage ? defaultHeight : maxWidth
+    private func parse(imageResponse: ImageResponse?, error: Error?, maskImage: UIImage?) {
+        guard let attachment = attachment else {
+            return
+        }
+        
+        var width = attachment.isImage ? defaultHeight : maxWidth
         
         if let image = imageResponse?.image, image.size.height > 0 {
             imageView.backgroundColor = backgroundColor
             
-            if type.isImage {
+            if attachment.isImage {
                 width = min(image.size.width / image.size.height * defaultHeight, maxWidth)
                 widthConstraint?.update(offset: width)
             }
             
-            if attachment.type == .giphy {
-                loadGiphy(with: attachment)
-            } else {
-                loadGif(with: attachment.imageURL)
+            if let animatedImageData = image.animatedImageData, let animatedImage = try? UIImage(gifData: animatedImageData) {
+                isGifImage = true
+                imageView.setGifImage(animatedImage)
             }
         } else {
             if let error = error, let url = imageResponse?.urlResponse?.url {
@@ -181,23 +196,5 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             mask = maskView
             layer.cornerRadius = 0
         }
-    }
-    
-    private func loadGiphy(with attachment: Attachment) {
-        guard let pathComponents = attachment.imageURL?.pathComponents, pathComponents.count > 2 else {
-            return
-        }
-        
-        let giphyId = pathComponents[pathComponents.count - 2]
-        loadGif(with: URL(string: "https://i.giphy.com/\(giphyId).gif"))
-    }
-    
-    private func loadGif(with url: URL?) {
-        guard let url = url, url.absoluteString.lowercased().contains(".gif") else {
-            return
-        }
-        
-        isGifImage = true
-        imageView.setGifFromURL(url)
     }
 }
