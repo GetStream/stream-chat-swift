@@ -62,6 +62,9 @@
 		8AB1B8EF22675CCD002C65BD /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */; };
 		8AB1B8F2226772C1002C65BD /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8F1226772C1002C65BD /* WebViewController.swift */; };
 		8AB1B8F422677EEA002C65BD /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8F322677EEA002C65BD /* String+Extensions.swift */; };
+		8AFC2A2722688299006278D4 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2622688299006278D4 /* Member.swift */; };
+		8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A282268933A006278D4 /* WebSocket.swift */; };
+		8AFC2A2B226893FF006278D4 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -123,6 +126,9 @@
 		8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
 		8AB1B8F1226772C1002C65BD /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		8AB1B8F322677EEA002C65BD /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		8AFC2A2622688299006278D4 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
+		8AFC2A282268933A006278D4 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
+		8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
 		E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.release.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -235,6 +241,8 @@
 				8A8891492252309900DD6539 /* BaseURL.swift */,
 				8A8891542252502900DD6539 /* EndpointProtocol.swift */,
 				8A88915B2252997200DD6539 /* ChatEndpoint.swift */,
+				8AFC2A282268933A006278D4 /* WebSocket.swift */,
+				8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -260,6 +268,7 @@
 				8A88914F2252379700DD6539 /* Channel.swift */,
 				8A8891612253A73000DD6539 /* Query.swift */,
 				8A88914B2252337500DD6539 /* User.swift */,
+				8AFC2A2622688299006278D4 /* Member.swift */,
 				8A889152225240F700DD6539 /* Event.swift */,
 				8A88915D22535FEC00DD6539 /* Message.swift */,
 				8AABC290226086ED0064CB20 /* Attachment.swift */,
@@ -451,6 +460,7 @@
 				"${BUILT_PRODUCTS_DIR}/Nuke/Nuke.framework",
 				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxKeyboard/RxKeyboard.framework",
+				"${BUILT_PRODUCTS_DIR}/RxStarscream/RxStarscream.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
@@ -463,6 +473,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Nuke.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxKeyboard.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxStarscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
@@ -487,7 +498,9 @@
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
 				8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */,
 				8AABC2982260D9450064CB20 /* StatusTableViewCell.swift in Sources */,
+				8AFC2A2722688299006278D4 /* Member.swift in Sources */,
 				8A8891552252502900DD6539 /* EndpointProtocol.swift in Sources */,
+				8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */,
 				8A889153225240F700DD6539 /* Event.swift in Sources */,
 				8A1A9416225E2EB200060ACC /* DataDetectorWorker.swift in Sources */,
 				8A88915A2252830C00DD6539 /* UIImage+Extensions.swift in Sources */,
@@ -510,6 +523,7 @@
 				8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */,
 				8AABC29A2262426A0064CB20 /* ChatItem.swift in Sources */,
 				8A88914A2252309900DD6539 /* BaseURL.swift in Sources */,
+				8AFC2A2B226893FF006278D4 /* RepeatingTimer.swift in Sources */,
 				8A88917E22560EC100DD6539 /* Date+Extensions.swift in Sources */,
 				8A04675B224E7F1800493D74 /* AppDelegate.swift in Sources */,
 				8A889144225219E500DD6539 /* Client.swift in Sources */,

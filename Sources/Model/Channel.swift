@@ -66,7 +66,7 @@ open class Channel: Codable {
 
 extension Channel {
     
-    public func query(members: [User], pagination: Pagination = .none, _ completion: @escaping Client.Completion<Query>) {
+    public func query(members: [Member], pagination: Pagination = .none, _ completion: @escaping Client.Completion<Query>) {
         let query = Query(channel: self, members: members, pagination: pagination)
         Client.shared.request(endpoint: ChatEndpoint.query(query), completion)
     }

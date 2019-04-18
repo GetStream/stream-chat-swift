@@ -53,7 +53,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     public func reloadData() {
         channelPresenter?.load { [weak self] error in
             /// TODO: Parse error.
-            if error == nil, let self = self, let presenter = self.channelPresenter {
+            if error == nil, let self = self, let presenter = self.channelPresenter, presenter.items.count > 0 {
                 self.tableView.reloadData()
                 self.tableView.scrollToRow(at: IndexPath(row: presenter.items.count - 1, section: 0), at: .bottom, animated: false)
             }

@@ -132,20 +132,46 @@ extension MediaGalleryViewController: UICollectionViewDataSource {
 // MARK: - Cell
 
 /// An image gallery collection view cell.
-public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, Reusable {
+public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, UIScrollViewDelegate, Reusable {
+    /// A scroll view for image view.
+    public let scrollView = UIScrollView(frame: .zero)
     /// An image view.
     public let imageView = UIImageView(frame: .zero)
     /// An activity indicator.
     public let activityIndicatorView = UIActivityIndicatorView(style: .white)
+    
     private var imageTask: ImageTask?
+    
+    private lazy var doubleTap: UITapGestureRecognizer = {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(zoomByTap))
+        tap.numberOfTapsRequired = 2
+        tap.numberOfTouchesRequired = 1
+        return tap
+    }()
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.alwaysBounceVertical = false
+        scrollView.alwaysBounceHorizontal = false
+        scrollView.flashScrollIndicators()
+        scrollView.minimumZoomScale = 1
+        scrollView.maximumZoomScale = 1
+        scrollView.delegate = self
+        scrollView.decelerationRate = .fast
+        addSubview(scrollView)
+        scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        scrollView.addGestureRecognizer(doubleTap)
         
-        addSubview(imageView)
+        scrollView.addSubview(imageView)
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .white
-        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        
+        imageView.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalToSuperview()
+        }
         
         addSubview(activityIndicatorView)
         activityIndicatorView.snp.makeConstraints { $0.center.equalToSuperview() }
@@ -156,6 +182,7 @@ public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, Re
     }
     
     public override func prepareForReuse() {
+        scrollView.maximumZoomScale = 1
         imageView.image = nil
         imageView.contentMode = .scaleAspectFit
         activityIndicatorView.stopAnimating()
@@ -168,23 +195,39 @@ public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, Re
         imageTask?.cancel()
         activityIndicatorView.startAnimating()
         
-        let imageRequest = ImageRequest(url: url, targetSize: UIScreen.main.bounds.size, contentMode: .aspectFit)
         let modes = ImageLoadingOptions.ContentModes(success: .scaleAspectFit, failure: .center, placeholder: .center)
         let options = ImageLoadingOptions(failureImage: UIImage.Icons.close, contentModes: modes)
         
-        imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] imageResponse, error in
+        imageTask = Nuke.loadImage(with: url, options: options, into: imageView) { [weak self] imageResponse, error in
             if let self = self {
                 self.activityIndicatorView.stopAnimating()
                 
-                if let image = imageResponse?.image,
-                    image.size.height > 0,
-                    let animatedImageData = image.animatedImageData,
-                    let animatedImage = try? UIImage(gifData: animatedImageData) {
-                    self.imageView.setGifImage(animatedImage)
+                if let image = imageResponse?.image, image.size.width > 0 {
+                    self.scrollView.maximumZoomScale = min(5, max(1, max(image.size.width / self.imageView.frame.width,
+                                                                         image.size.height / self.imageView.frame.height)))
+                    
+                    if let animatedImageData = image.animatedImageData,
+                        let animatedImage = try? UIImage(gifData: animatedImageData) {
+                        self.imageView.setGifImage(animatedImage)
+                    }
                 }
             }
             
             completion(error)
+        }
+    }
+    
+    public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return imageView
+    }
+    
+    @objc func zoomByTap() {
+        if scrollView.maximumZoomScale > 1 {
+            if scrollView.zoomScale == 1 {
+                scrollView.setZoomScale(scrollView.maximumZoomScale, animated: true)
+            } else {
+                scrollView.setZoomScale(1, animated: true)
+            }
         }
     }
 }

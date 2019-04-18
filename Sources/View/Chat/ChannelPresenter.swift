@@ -14,7 +14,7 @@ public final class ChannelPresenter {
     static let limitPagination: Pagination = .limit(50)
     
     public private(set) var channel: Channel
-    var members: [User] = []
+    var members: [Member] = []
     var items: [ChatItem] = []
     private var next: Pagination = .none
     
@@ -42,7 +42,7 @@ extension ChannelPresenter {
             next = .none
         }
         
-        channel.query(members: [user], pagination: pagination) { [weak self] in
+        channel.query(members: [Member(user: user)], pagination: pagination) { [weak self] in
             self?.parseQuery($0, completion)
         }
     }

@@ -18,12 +18,12 @@ public struct Query: Codable {
     }
     
     public let channel: Channel
-    public let members: [User]
+    public let members: [Member]
     public let messages: [Message]
     public let state: Bool = true
     public let pagination: Pagination
     
-    public init(channel: Channel, members: [User], pagination: Pagination) {
+    public init(channel: Channel, members: [Member], pagination: Pagination) {
         self.channel = channel
         self.members = members
         self.pagination = pagination
@@ -33,7 +33,7 @@ public struct Query: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(Channel.self, forKey: .channel)
-        members = try container.decode([User].self, forKey: .members)
+        members = try container.decode([Member].self, forKey: .members)
         messages = try container.decode([Message].self, forKey: .messages)
         pagination = .none
     }
@@ -41,7 +41,7 @@ public struct Query: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(state, forKey: .state)
-        channel.members = members
+        channel.members = members.map { $0.user }
         try container.encode(channel, forKey: .data)
         channel.members = []
         try container.encode(pagination, forKey: .messages)
