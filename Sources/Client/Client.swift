@@ -20,40 +20,37 @@ public final class Client {
     let baseURL: BaseURL
     var token: Token?
     var clientId: String?
+    private(set) lazy var webSocket: WebSocket? = setupWebSocket()
+    private(set) lazy var urlSession: URLSession = setupURLSession()
     let callbackQueue: DispatchQueue?
-    
+    private let uuid = UUID()
+    let logOptions: LogOptions
+    let logger: ClientLogger?
+
     var user: User? {
         didSet { clientId = user != nil ? "\(user?.id ?? "")--\(uuid.uuidString.lowercased())" : nil }
     }
     
-    private let uuid = UUID()
-    private let logger: ClientLogger?
-    
-    private lazy var urlSession: URLSession = {
-        let config = URLSessionConfiguration.default
-        
-        if let token = token {
-            config.httpAdditionalHeaders = ["Authorization": token,
-                                            "Content-Type": "application/json",
-                                            "stream-auth-type": "jwt"]
-        }
-        
-        return URLSession(configuration: config)
-    }()
-    
     public init(apiKey: String = Client.config.apiKey,
                 baseURL: BaseURL = Client.config.baseURL,
                 callbackQueue: DispatchQueue? = Client.config.callbackQueue,
-                logsEnabled: Bool = Client.config.logsEnabled) {
+                logOptions: LogOptions = Client.config.logOptions) {
         self.apiKey = apiKey
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue
-        logger = logsEnabled ? ClientLogger() : nil
+        self.logOptions = logOptions
+        
+        if logOptions == .all || logOptions == .requests {
+            logger = ClientLogger(icon: "🐴")
+        } else {
+            logger = nil
+        }
     }
     
     public func set(user: User, token: Token) {
         self.user = user
         self.token = token
+        webSocket?.connect()
     }
 }
 
@@ -62,13 +59,16 @@ extension Client {
         public let apiKey: String
         public let baseURL: BaseURL
         public let callbackQueue: DispatchQueue?
-        public let logsEnabled: Bool
+        public let logOptions: LogOptions
         
-        public init(apiKey: String, baseURL: BaseURL = BaseURL(), callbackQueue: DispatchQueue? = nil, logsEnabled: Bool = false) {
+        public init(apiKey: String,
+                    baseURL: BaseURL = BaseURL(),
+                    callbackQueue: DispatchQueue? = nil,
+                    logOptions: LogOptions = .none) {
             self.apiKey = apiKey
             self.baseURL = baseURL
             self.callbackQueue = callbackQueue
-            self.logsEnabled = logsEnabled
+            self.logOptions = logOptions
         }
     }
     
@@ -78,98 +78,11 @@ extension Client {
     }
 }
 
-// MARK: - REST
-
 extension Client {
-    
-    func request<T: Decodable>(endpoint: EndpointProtocol, _ completion: @escaping Completion<T>) {
-        if token == nil {
-            completion(.failure(.emptyToken))
-            return
-        }
-        
-        guard let baseURL = baseURL.url(.https) else {
-            completion(.failure(.invalidURL(self.baseURL.description)))
-            return
-        }
-        
-        guard let user = user, let clientId = clientId else {
-            completion(.failure(.invalidURL(nil)))
-            return
-        }
-
-        var urlComponents = URLComponents()
-        urlComponents.scheme = baseURL.scheme
-        urlComponents.host = baseURL.host
-        urlComponents.path = baseURL.path
-        
-        var queryItems: [URLQueryItem] = [URLQueryItem(name: "api_key", value: apiKey),
-                                          URLQueryItem(name: "user_id", value: user.id),
-                                          URLQueryItem(name: "client_id", value: clientId)]
-        
-        if let parameters = endpoint.parameters {
-            queryItems.append(contentsOf: parameters.map { URLQueryItem(name: $0, value: $1) })
-        }
-        
-        urlComponents.queryItems = queryItems
-        
-        guard let url = urlComponents.url?.appendingPathComponent(endpoint.path) else {
-            completion(.failure(.invalidURL(endpoint.path)))
-            return
-        }
-        
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = endpoint.method.rawValue
-        
-        if let body = endpoint.body {
-            do {
-                urlRequest.httpBody = try JSONEncoder.stream.encode(AnyEncodable(body))
-            } catch {
-                completion(.failure(.encodingFailure(error, object: body)))
-            }
-        }
-        
-        let task = urlSession.dataTask(with: urlRequest) { [weak self] in
-            self?.parse(data: $0, response: $1, error: $2, completion: completion)
-        }
-        
-        logger?.log(urlSession.configuration)
-        logger?.log(urlRequest)
-        task.resume()
-    }
-    
-    private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
-        logger?.log(response, data: data)
-        
-        if let error = error {
-            performInCallbackQueue { completion(.failure(.requestFailed(error))) }
-            return
-        }
-        
-        logger?.log(error)
-        
-        guard let data = data else {
-            performInCallbackQueue { completion(.failure(.emptyBody)) }
-            return
-        }
-        
-        do {
-            let response = try JSONDecoder.stream.decode(T.self, from: data)
-            performInCallbackQueue { completion(.success(response)) }
-        } catch {
-            if let errorResponse = try? JSONDecoder.stream.decode(ClientErrorResponse.self, from: data) {
-                performInCallbackQueue { completion(.failure(.responseError(errorResponse))) }
-            } else {
-                performInCallbackQueue { completion(.failure(.decodingFailure(error))) }
-            }
-        }
-    }
-    
-    private func performInCallbackQueue(execute block: @escaping () -> Void) {
-        if let callbackQueue = callbackQueue {
-            callbackQueue.async(execute: block)
-        } else {
-            block()
-        }
+    public enum LogOptions {
+        case none
+        case requests
+        case webSocket
+        case all
     }
 }

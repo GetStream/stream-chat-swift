@@ -1,10 +1,14 @@
 PODS:
-  - Nuke (7.6)
+  - Nuke (7.6.1)
   - RxCocoa (4.5.0):
     - RxSwift (>= 4.4.2, ~> 4.4)
   - RxKeyboard (0.9.0):
     - RxCocoa (>= 4.3.1)
     - RxSwift (>= 4.3.1)
+  - RxStarscream (0.10):
+    - RxCocoa (~> 4.3)
+    - RxSwift (~> 4.3)
+    - Starscream (~> 3)
   - RxSwift (4.5.0)
   - SnapKit (4.2.0)
   - Starscream (3.1.0)
@@ -14,9 +18,9 @@ DEPENDENCIES:
   - Nuke
   - RxCocoa
   - RxKeyboard
+  - RxStarscream
   - RxSwift
   - SnapKit
-  - Starscream
   - SwiftyGif
 
 SPEC REPOS:
@@ -24,20 +28,22 @@ SPEC REPOS:
     - Nuke
     - RxCocoa
     - RxKeyboard
+    - RxStarscream
     - RxSwift
     - SnapKit
     - Starscream
     - SwiftyGif
 
 SPEC CHECKSUMS:
-  Nuke: aa1c6a5919b543debe814530881f2fccb58c26d4
+  Nuke: d0782693c570cb4f79e2a187859ef7f06f19365d
   RxCocoa: cbf70265dc65a981d4ac982e513c10cf23df24a0
   RxKeyboard: 4f782303f499f41577b41c96c6a9a5d7acd51a47
+  RxStarscream: aa79e742c87e9bcdff218a1ebb59638f5174589e
   RxSwift: f172070dfd1a93d70a9ab97a5a01166206e1c575
   SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
   SwiftyGif: 67490485c3b1fa19013d9613fab31de4629450fb
 
-PODFILE CHECKSUM: f241fc8ff2d1d87f2fd350a743c005b638c6e395
+PODFILE CHECKSUM: 49b5a0b547c7339dabe27cf6e1ddb5a0d9e6993d
 
 COCOAPODS: 1.6.1

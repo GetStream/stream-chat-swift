@@ -9,6 +9,7 @@
 import Foundation
 
 struct ClientLogger {
+    let icon: String
     
     private let logDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -59,13 +60,17 @@ struct ClientLogger {
         }
     }
     
-    func log(_ error: Error?) {
+    func log(_ error: Error?, message: String? = nil) {
         if let error = error {
-            print("[\(logDateFormatter.string(from: Date()))] \(error)")
+            log("\(error)")
         }
     }
     
     func log(_ identifier: String, _ message: String) {
-        print("[\(logDateFormatter.string(from: Date()))] \(identifier): \(message)")
+        log("\(identifier): \(message)")
+    }
+    
+    func log(_ message: String) {
+        print(icon, "[\(logDateFormatter.string(from: Date()))] \(message)")
     }
 }

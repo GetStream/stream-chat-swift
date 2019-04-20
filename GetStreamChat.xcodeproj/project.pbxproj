@@ -65,6 +65,8 @@
 		8AFC2A2722688299006278D4 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2622688299006278D4 /* Member.swift */; };
 		8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A282268933A006278D4 /* WebSocket.swift */; };
 		8AFC2A2B226893FF006278D4 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */; };
+		8AFC2A2E226B5B37006278D4 /* Client+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2D226B5B37006278D4 /* Client+Request.swift */; };
+		8AFC2A30226B5C87006278D4 /* Client+WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2F226B5C87006278D4 /* Client+WebSocket.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -129,6 +131,8 @@
 		8AFC2A2622688299006278D4 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		8AFC2A282268933A006278D4 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
+		8AFC2A2D226B5B37006278D4 /* Client+Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Request.swift"; sourceTree = "<group>"; };
+		8AFC2A2F226B5C87006278D4 /* Client+WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+WebSocket.swift"; sourceTree = "<group>"; };
 		E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GetStreamChat.release.xcconfig"; path = "Target Support Files/Pods-GetStreamChat/Pods-GetStreamChat.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -236,13 +240,14 @@
 			isa = PBXGroup;
 			children = (
 				8A889143225219E500DD6539 /* Client.swift */,
+				8AFC2A2D226B5B37006278D4 /* Client+Request.swift */,
+				8AFC2A2F226B5C87006278D4 /* Client+WebSocket.swift */,
 				8A88914722521E4800DD6539 /* ClientError.swift */,
 				8A8891672253D3A500DD6539 /* ClientLogger.swift */,
 				8A8891492252309900DD6539 /* BaseURL.swift */,
 				8A8891542252502900DD6539 /* EndpointProtocol.swift */,
 				8A88915B2252997200DD6539 /* ChatEndpoint.swift */,
-				8AFC2A282268933A006278D4 /* WebSocket.swift */,
-				8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */,
+				8AFC2A2C2268B124006278D4 /* WebSocket */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -337,6 +342,15 @@
 				8AB1B8F1226772C1002C65BD /* WebViewController.swift */,
 			);
 			path = "Web View";
+			sourceTree = "<group>";
+		};
+		8AFC2A2C2268B124006278D4 /* WebSocket */ = {
+			isa = PBXGroup;
+			children = (
+				8AFC2A282268933A006278D4 /* WebSocket.swift */,
+				8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */,
+			);
+			path = WebSocket;
 			sourceTree = "<group>";
 		};
 		E4BFB61CCC31ACB2AD7AAA5D /* Pods */ = {
@@ -494,6 +508,7 @@
 				8A88917B22550ECC00DD6539 /* CGFloat+Extensions.swift in Sources */,
 				8AB1B8ED22675B98002C65BD /* MessageResponse.swift in Sources */,
 				8A8891682253D3A500DD6539 /* ClientLogger.swift in Sources */,
+				8AFC2A30226B5C87006278D4 /* Client+WebSocket.swift in Sources */,
 				8AABC29E22627AA20064CB20 /* Dictionary+Extensions.swift in Sources */,
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
 				8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */,
@@ -503,6 +518,7 @@
 				8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */,
 				8A889153225240F700DD6539 /* Event.swift in Sources */,
 				8A1A9416225E2EB200060ACC /* DataDetectorWorker.swift in Sources */,
+				8AFC2A2E226B5B37006278D4 /* Client+Request.swift in Sources */,
 				8A88915A2252830C00DD6539 /* UIImage+Extensions.swift in Sources */,
 				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
 				8AB1B8EF22675CCD002C65BD /* Result+Extensions.swift in Sources */,
