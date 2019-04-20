@@ -12,13 +12,14 @@ import SwiftyGif
 import Nuke
 
 class MediaGalleryViewController: UIViewController {
+    fileprivate static let closeButtonWidth: CGFloat = 44
     
     /// A scroll view to dismiss the gellary by pull down.
     public let scrollView = UIScrollView(frame: .zero)
     /// A horizontal collection view with images.
     public let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     /// An image URL's.
-    public var imageURLs: [URL] = []
+    public var items: [MediaGalleryItem] = []
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,8 +30,8 @@ class MediaGalleryViewController: UIViewController {
         addCloseButton()
     }
     
-    public override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
+    override var prefersStatusBarHidden: Bool {
+        return true
     }
     
     private func addCloseButton() {
@@ -39,12 +40,14 @@ class MediaGalleryViewController: UIViewController {
         closeButton.tintColor = .white
         closeButton.contentMode = .center
         closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
+        closeButton.backgroundColor = UIColor.chatSuperDarkGray.withAlphaComponent(0.5)
+        closeButton.layer.cornerRadius = CGFloat.messageCornerRadius
         view.addSubview(closeButton)
         
         closeButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(CGFloat.safeAreaTop)
-            make.right.equalToSuperview()
-            make.width.height.equalTo(44)
+            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
+            make.right.equalToSuperview().offset(-CGFloat.messageSpacing)
+            make.width.height.equalTo(MediaGalleryViewController.closeButtonWidth)
         }
     }
     
@@ -56,6 +59,7 @@ class MediaGalleryViewController: UIViewController {
 // MARK: - Scroll View
 
 extension MediaGalleryViewController: UIScrollViewDelegate {
+    
     private func setupScrollView() {
         view.addSubview(scrollView)
         scrollView.delegate = self
@@ -86,17 +90,19 @@ extension MediaGalleryViewController: UICollectionViewDataSource {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.dataSource = self
-        collectionView.register(cellType: MediaGalleryImageCollectionViewCell.self)
+        collectionView.register(cellType: MediaGalleryCollectionViewCell.self)
         scrollView.addSubview(collectionView)
         
-        collectionView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.size.equalToSuperview()
+        let itemSize = UIScreen.main.bounds.size
+        
+        collectionView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.size.equalTo(itemSize)
         }
         
         if let flow = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
             flow.scrollDirection = .horizontal
-            flow.itemSize = UIScreen.main.bounds.size
+            flow.itemSize = itemSize
             flow.minimumLineSpacing = 0
             flow.minimumInteritemSpacing = 0
         }
@@ -105,21 +111,22 @@ extension MediaGalleryViewController: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return imageURLs.count
+        return items.count
     }
     
     public func collectionView(_ collectionView: UICollectionView,
                                cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(for: indexPath) as MediaGalleryImageCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(for: indexPath) as MediaGalleryCollectionViewCell
         
         cell.activityIndicatorView.startAnimating()
         
-        if indexPath.item < imageURLs.count {
-            let url = imageURLs[indexPath.item]
+        if indexPath.item < items.count {
+            let item = items[indexPath.item]
+            cell.titleLabel.text = item.title
             
-            cell.loadImage(url) { [weak self] in
-                if $0 != nil, let badIndex = self?.imageURLs.firstIndex(of: url) {
-                    self?.imageURLs.remove(at: badIndex)
+            cell.loadImage(item.url) { [weak self] in
+                if $0 != nil, let badIndex = self?.items.firstIndex(of: item) {
+                    self?.items.remove(at: badIndex)
                     self?.collectionView.reloadData()
                 }
             }
@@ -131,14 +138,48 @@ extension MediaGalleryViewController: UICollectionViewDataSource {
 
 // MARK: - Cell
 
+public struct MediaGalleryItem: Equatable {
+    public let title: String?
+    public let url: URL
+    
+    init?(title: String?, url: URL?) {
+        guard let url = url else {
+            return nil
+        }
+        
+        self.title = title
+        self.url = url
+    }
+}
+
+// MARK: - Cell
+
 /// An image gallery collection view cell.
-public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, UIScrollViewDelegate, Reusable {
+fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UIScrollViewDelegate, Reusable {
     /// A scroll view for image view.
-    public let scrollView = UIScrollView(frame: .zero)
+    fileprivate let scrollView = UIScrollView(frame: .zero)
     /// An image view.
-    public let imageView = UIImageView(frame: .zero)
+    fileprivate let imageView = UIImageView(frame: .zero)
     /// An activity indicator.
-    public let activityIndicatorView = UIActivityIndicatorView(style: .white)
+    fileprivate let activityIndicatorView = UIActivityIndicatorView(style: .white)
+    
+    fileprivate lazy var titleLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.textColor = .chatGray
+        label.textAlignment = .center
+        label.font = .chatSmall
+        addSubview(label)
+        
+        label.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
+            let offset: CGFloat = MediaGalleryViewController.closeButtonWidth + 2 * .messageSpacing
+            make.left.equalToSuperview().offset(offset)
+            make.right.equalToSuperview().offset(-offset)
+            make.height.equalTo(MediaGalleryViewController.closeButtonWidth)
+        }
+        
+        return label
+    }()
     
     private var imageTask: ImageTask?
     
@@ -149,7 +190,7 @@ public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, UI
         return tap
     }()
     
-    public override init(frame: CGRect) {
+    fileprivate override init(frame: CGRect) {
         super.init(frame: frame)
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
@@ -168,9 +209,9 @@ public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, UI
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .white
         
-        imageView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.size.equalToSuperview()
+        imageView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.size.equalToSuperview()
         }
         
         addSubview(activityIndicatorView)
@@ -181,17 +222,19 @@ public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, UI
         super.init(coder: aDecoder)
     }
     
-    public override func prepareForReuse() {
+    fileprivate override func prepareForReuse() {
         scrollView.maximumZoomScale = 1
         imageView.image = nil
+        imageView.gifImage = nil
         imageView.contentMode = .scaleAspectFit
         activityIndicatorView.stopAnimating()
         imageTask?.cancel()
         imageTask = nil
+        titleLabel.text = nil
     }
     
     /// Loads the image by a given URL.
-    public func loadImage(_ url: URL, completion: @escaping (_ error: Error?) -> Void) {
+    fileprivate func loadImage(_ url: URL, completion: @escaping (_ error: Error?) -> Void) {
         imageTask?.cancel()
         activityIndicatorView.startAnimating()
         
@@ -200,24 +243,39 @@ public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, UI
         
         imageTask = Nuke.loadImage(with: url, options: options, into: imageView) { [weak self] imageResponse, error in
             if let self = self {
-                self.activityIndicatorView.stopAnimating()
-                
-                if let image = imageResponse?.image, image.size.width > 0 {
-                    self.scrollView.maximumZoomScale = min(5, max(1, max(image.size.width / self.imageView.frame.width,
-                                                                         image.size.height / self.imageView.frame.height)))
-                    
-                    if let animatedImageData = image.animatedImageData,
-                        let animatedImage = try? UIImage(gifData: animatedImageData) {
-                        self.imageView.setGifImage(animatedImage)
-                    }
+                if self.imageView.frame.width > 0, self.imageView.frame.height > 0 {
+                    self.parse(imageResponse, error: error, completion: completion)
+                } else {
+                    DispatchQueue.main.async { self.parse(imageResponse, error: error, completion: completion) }
                 }
             }
-            
-            completion(error)
         }
     }
     
-    public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+    private func parse(_ imageResponse: ImageResponse?, error: Error?, completion: @escaping (_ error: Error?) -> Void) {
+        activityIndicatorView.stopAnimating()
+        
+        guard let image = imageResponse?.image, image.size.width > 0 else {
+            completion(error)
+            return
+        }
+        
+        let scale = max(image.size.width / imageView.frame.width, image.size.height / imageView.frame.height)
+        scrollView.maximumZoomScale = min(5, max(1, scale))
+        
+        if let animatedImageData = image.animatedImageData,
+            let animatedImage = try? UIImage(gifData: animatedImageData) {
+            imageView.setGifImage(animatedImage)
+            
+        } else if scale < 1 {
+            imageView.contentMode = .center
+            scrollView.maximumZoomScale = 1 / scale
+        }
+        
+        completion(error)
+    }
+    
+    fileprivate func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
     
@@ -237,13 +295,13 @@ public final class MediaGalleryImageCollectionViewCell: UICollectionViewCell, UI
 extension UIViewController {
     
     /// Presents the image gallery with a given image URL's.
-    public func showImageGallery(with imageURLs: [URL]?, animated: Bool = true) {
-        guard let imageURLs = imageURLs, !imageURLs.isEmpty else {
+    public func showMediaGallery(with items: [MediaGalleryItem]?, animated: Bool = true) {
+        guard let items = items, !items.isEmpty else {
             return
         }
         
         let imageGalleryViewController = MediaGalleryViewController()
-        imageGalleryViewController.imageURLs = imageURLs
+        imageGalleryViewController.items = items
         present(imageGalleryViewController, animated: animated)
     }
 }

@@ -219,6 +219,6 @@ extension ChatViewController {
             return
         }
         
-        showImageGallery(with: message.attachments.compactMap { $0.imageURL })
+        showMediaGallery(with: message.attachments.compactMap { MediaGalleryItem(title: $0.title, url: $0.imageURL) })
     }
 }

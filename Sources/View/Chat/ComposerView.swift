@@ -37,7 +37,6 @@ public final class ComposerView: UIView {
     /// You have to use the `text` property to change the value of the text view.
     public private(set) lazy var textView: UITextView = {
         let textView = UITextView(frame: .zero)
-        textView.autocorrectionType = .no
         textView.delegate = self
         textView.attributedText = attributedText()
         textView.showsVerticalScrollIndicator = false
