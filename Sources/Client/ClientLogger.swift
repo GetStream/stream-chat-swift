@@ -8,7 +8,12 @@
 
 import Foundation
 
-struct ClientLogger {
+/// A Client logger.
+public struct ClientLogger {
+    
+    /// A customizable logger block.
+    public static var logger: (_ icon: String, _ dateAndTime: String, _ message: String) -> Void = { print($0, "[\($1)]", $2) }
+    
     let icon: String
     
     private let logDateFormatter: DateFormatter = {
@@ -82,8 +87,8 @@ struct ClientLogger {
     func log(_ identifier: String, _ message: String) {
         log("\(identifier) \(message)")
     }
-
+    
     func log(_ message: String) {
-        print(icon, "[\(logDateFormatter.string(from: Date()))] \(message)")
+        ClientLogger.logger(icon, logDateFormatter.string(from: Date()), message)
     }
 }
