@@ -69,6 +69,21 @@ public struct Attachment: Codable {
             ?? container.decodeIfPresent(String.self, forKey: .ogURL))
     }
     
+    /// Image upload:
+    ///    {
+    ///        type: 'image',
+    ///        image_url: image.url,
+    ///        fallback: image.file.name,
+    ///    }
+    ///
+    /// File upload:
+    ///    {
+    ///         type: 'file',
+    ///         asset_url: upload.url,
+    ///         title: upload.file.name,
+    ///         mime_type: upload.file.type,
+    ///         file_size: upload.file.size,
+    ///    }
     public func encode(to encoder: Encoder) throws {}
     
     private static func fixedURL(_ urlString: String?) -> URL? {

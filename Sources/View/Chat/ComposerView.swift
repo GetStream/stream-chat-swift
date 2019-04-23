@@ -45,6 +45,8 @@ public final class ComposerView: UIView {
         return textView
     }()
     
+    private var previousTextBeforeReset: NSAttributedString?
+    
     private func attributedText(text: String = "", textColor: UIColor? = nil) -> NSAttributedString {
         guard let style = style else {
             return NSAttributedString(string: text)
@@ -227,6 +229,7 @@ public final class ComposerView: UIView {
     /// Reset states of all child views and clear all added/generated data.
     public func reset() {
         isEnabled = true
+        previousTextBeforeReset = textView.attributedText
         textView.attributedText = attributedText()
         images = []
         attachmentsCollectionView.isHidden = true
@@ -240,7 +243,6 @@ public final class ComposerView: UIView {
     /// Toggle `isUserInteractionEnabled` states for all child views.
     public var isEnabled: Bool = true {
         didSet {
-            textView.resignFirstResponder()
             textView.isUserInteractionEnabled = isEnabled
             sendButton.isEnabled = isEnabled
             filePickerButton.isEnabled = isEnabled

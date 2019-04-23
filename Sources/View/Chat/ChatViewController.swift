@@ -67,7 +67,10 @@ extension ChatViewController {
     
     private func setupComposerView() {
         composerView.addToSuperview(view)
-        composerView.sendButton.addTarget(self, action: #selector(send), for: .touchUpInside)
+        
+        composerView.sendButton.rx.tap
+            .subscribe(onNext: { [weak self] in self?.send() })
+            .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
             .drive(onNext: { [weak self] height in
@@ -87,14 +90,10 @@ extension ChatViewController {
             .disposed(by: disposeBag)
     }
     
-    @objc func send() {
-        composerView.isEnabled = false
-        channelPresenter?.send(text: composerView.text) { [weak self] error in
-            if error == nil {
-                self?.composerView.reset()
-                self?.reloadData()
-            }
-        }
+    private func send() {
+        let text = composerView.text
+        composerView.reset()
+        channelPresenter?.send(text: text) { [weak self] error in self?.reloadData() }
     }
 }
 
