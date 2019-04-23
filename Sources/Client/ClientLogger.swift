@@ -35,12 +35,8 @@ struct ClientLogger {
             log("Request Body Stream", bodyStream.description)
         }
         
-        if let body = request.httpBody, !body.isEmpty {
-            do {
-                log("Request Body", try body.prettyPrintedJSONString())
-            } catch {
-                log("Request Body", error.localizedDescription)
-            }
+        if let body = request.httpBody {
+            log("Request Body", body)
         }
     }
     
@@ -62,14 +58,31 @@ struct ClientLogger {
     
     func log(_ error: Error?, message: String? = nil) {
         if let error = error {
+            if let message = message {
+                log(message)
+            }
+            
             log("\(error)")
         }
     }
     
-    func log(_ identifier: String, _ message: String) {
-        log("\(identifier): \(message)")
+    func log(_ identifier: String, _ data: Data?) {
+        guard let data = data, !data.isEmpty else {
+            log(identifier, "Data is empty")
+            return
+        }
+        
+        do {
+            log(identifier, try data.prettyPrintedJSONString())
+        } catch {
+            log(identifier, error.localizedDescription)
+        }
     }
     
+    func log(_ identifier: String, _ message: String) {
+        log("\(identifier) \(message)")
+    }
+
     func log(_ message: String) {
         print(icon, "[\(logDateFormatter.string(from: Date()))] \(message)")
     }

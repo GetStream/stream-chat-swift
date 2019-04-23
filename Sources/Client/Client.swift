@@ -19,17 +19,13 @@ public final class Client {
     let apiKey: String
     let baseURL: BaseURL
     var token: Token?
-    var clientId: String?
     private(set) lazy var webSocket: WebSocket? = setupWebSocket()
     private(set) lazy var urlSession: URLSession = setupURLSession()
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
     let logOptions: LogOptions
     let logger: ClientLogger?
-
-    var user: User? {
-        didSet { clientId = user != nil ? "\(user?.id ?? "")--\(uuid.uuidString.lowercased())" : nil }
-    }
+    var user: User?
     
     public init(apiKey: String = Client.config.apiKey,
                 baseURL: BaseURL = Client.config.baseURL,

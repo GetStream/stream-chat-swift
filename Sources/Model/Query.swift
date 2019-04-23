@@ -15,12 +15,14 @@ public struct Query: Codable {
         case members
         case messages
         case state
+        case watch
     }
     
     public let channel: Channel
     public let members: [Member]
     public let messages: [Message]
     public let state: Bool = true
+    public let watch: Bool = true
     public let pagination: Pagination
     
     public init(channel: Channel, members: [Member], pagination: Pagination) {
@@ -41,6 +43,7 @@ public struct Query: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(state, forKey: .state)
+        try container.encode(watch, forKey: .watch)
         channel.userIds = members.map { $0.user.id }
         try container.encode(channel, forKey: .data)
         channel.userIds = []

@@ -31,7 +31,13 @@ extension Client {
             return
         }
         
-        guard let user = user, let clientId = clientId else {
+        guard let user = user else {
+            completion(.failure(.emptyUser))
+            return
+        }
+        
+        guard let clientId = webSocket?.connectionId else {
+            completion(.failure(.emptyClientId))
             return
         }
         

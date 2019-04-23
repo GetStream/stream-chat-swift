@@ -22,9 +22,12 @@ final class WebSocket {
 //    private var clientId: String?
 //
     private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(30), queue: webSocket.callbackQueue) { [weak self] in
-        self?.logger?.log("🏓", "🆙")
+        self?.logger?.log("🏓")
         self?.webSocket.write(ping: Data())
     }
+    
+    var connectionId: String?
+    let response = PublishSubject<Response>()
     
     public var isConnected: Bool {
         return webSocket.isConnected
@@ -60,24 +63,47 @@ final class WebSocket {
             webSocket.disconnect()
         }
     }
-
+    
     private func parse(_ response: WebSocketEvent) {
         switch response {
         case .connected:
-            logger?.log("Connected")
+            logger?.log("😊 Connected")
             handshakeTimer.resume()
             
         case .disconnected(let error):
-            logger?.log("Disconnected")
+            logger?.log("🙃 Disconnected")
             handshakeTimer.suspend()
             
             if let error = error {
-                logger?.log(error, message: "Disconnected")
+                logger?.log(error, message: "😢 Disconnected")
             }
         case .message(let msg):
-            logger?.log("📄", msg)
+            handshakeTimer.restart()
+            
+            guard let data = msg.data(using: .utf8) else {
+                logger?.log("📦", "Can't get a data from the message: \(msg)")
+                return
+            }
+            
+            logger?.log("📦", data)
+            
+            do {
+                let response = try JSONDecoder.stream.decode(Response.self, from: data)
+                
+                if case .healthCheck(let user) = response.type {
+                    connectionId = response.connectionId
+                    
+                    if let user = user {
+                        Client.shared.user = user
+                    }
+                } else {
+                    self.response.onNext(response)
+                }
+            } catch {
+                logger?.log(error, message: "😢 Decode response")
+            }
         case .data(let data):
-            logger?.log("Data", data.debugDescription)
+            logger?.log("🧱", data.debugDescription)
         case .pong:
             logger?.log("🏓","🆗")
         }
