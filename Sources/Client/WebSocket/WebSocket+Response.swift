@@ -11,20 +11,17 @@ import Foundation
 extension WebSocket {
     struct Response: Decodable {
         private enum CodingKeys: String, CodingKey {
-            case connectionId = "connection_id"
             case type
             case channelId = "cid"
             case created = "created_at"
         }
         
-        let connectionId: String?
-        let type: ResponseType
         let channelId: String
+        let type: ResponseType
         let created: Date
         
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            connectionId = try container.decodeIfPresent(String.self, forKey: .connectionId)
             channelId = try container.decode(String.self, forKey: .channelId)
             type = try ResponseType(from: decoder)
             created = try container.decode(Date.self, forKey: .created)
@@ -35,6 +32,7 @@ extension WebSocket {
 extension WebSocket {
     enum ResponseType: Decodable {
         private enum CodingKeys: String, CodingKey {
+            case connectionId = "connection_id"
             case type
             case me
             case user
@@ -50,7 +48,7 @@ extension WebSocket {
         }
         
         case empty
-        case healthCheck(user: User?)
+        case healthCheck(connectionId: String, user: User?)
         case messageRead(user: User)
         case messageNew(message: Message, user: User, watcherCount: Int, unreadCount: Int, totalUnreadCount: Int)
         case userStartWatching(user: User, watcherCount: Int)
@@ -64,8 +62,9 @@ extension WebSocket {
             let type = try container.decode(String.self, forKey: .type)
             
             if type == "health.check" {
+                let connectionId = try container.decode(String.self, forKey: .connectionId)
                 let user = try container.decodeIfPresent(User.self, forKey: .me)
-                self = .healthCheck(user: user)
+                self = .healthCheck(connectionId: connectionId, user: user)
                 return
             }
             

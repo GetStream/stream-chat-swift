@@ -71,11 +71,11 @@ final class WebSocket {
             handshakeTimer.resume()
             
         case .disconnected(let error):
-            logger?.log("🙃 Disconnected")
+            logger?.log("🤔 Disconnected")
             handshakeTimer.suspend()
             
             if let error = error {
-                logger?.log(error, message: "😢 Disconnected")
+                logger?.log(error, message: "😡 Disconnected")
             }
         case .message(let msg):
             handshakeTimer.restart()
@@ -90,8 +90,8 @@ final class WebSocket {
             do {
                 let response = try JSONDecoder.stream.decode(Response.self, from: data)
                 
-                if case .healthCheck(let user) = response.type {
-                    connectionId = response.connectionId
+                if case let .healthCheck(connectionId, user) = response.type {
+                    self.connectionId = connectionId
                     
                     if let user = user {
                         Client.shared.user = user
@@ -100,7 +100,7 @@ final class WebSocket {
                     self.response.onNext(response)
                 }
             } catch {
-                logger?.log(error, message: "😢 Decode response")
+                logger?.log(error, message: "😡 Decode response")
             }
         case .data(let data):
             logger?.log("🧱", data.debugDescription)
