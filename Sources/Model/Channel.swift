@@ -34,7 +34,7 @@ open class Channel: Codable {
     
     public let name: String
     public var imageURL: URL?
-    var members: [User] = []
+    var userIds: [String] = []
     
     public init(type: ChannelType = .messaging, id: String, name: String, imageURL: URL?) {
         self.id = id
@@ -58,7 +58,7 @@ open class Channel: Codable {
         var container = encoder.container(keyedBy: DataCodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encode(imageURL, forKey: .imageURL)
-        try container.encode(members, forKey: .members)
+        try container.encode(userIds, forKey: .members)
     }
 }
 

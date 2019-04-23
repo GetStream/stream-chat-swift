@@ -27,6 +27,12 @@ public struct Member: Codable, Equatable {
         created = Date()
         updated = Date()
     }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(user.id, forKey: .user)
+        try container.encode(role, forKey: .role)
+    }
 }
 
 public extension Member {

@@ -60,8 +60,10 @@ public struct User: Codable, Equatable {
     }
     
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(id)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(name, forKey: .name)
+        try container.encode(avatarURL, forKey: .avatarURL)
     }
     
     public static func == (lhs: User, rhs: User) -> Bool {

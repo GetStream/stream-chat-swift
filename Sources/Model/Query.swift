@@ -41,9 +41,9 @@ public struct Query: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(state, forKey: .state)
-        channel.members = members.map { $0.user }
+        channel.userIds = members.map { $0.user.id }
         try container.encode(channel, forKey: .data)
-        channel.members = []
+        channel.userIds = []
         try container.encode(pagination, forKey: .messages)
     }
 }

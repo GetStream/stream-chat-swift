@@ -36,5 +36,5 @@ extension BaseURL: CustomStringConvertible {
 
 public enum ClientScheme: String {
     case https = "https"
-    case webSocket = "ws"
+    case webSocket = "wss"
 }
