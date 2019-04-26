@@ -71,8 +71,16 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
+    private let infoLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = UIFont.chatMedium.withTraits([.traitItalic])
+        label.textColor = .chatGray
+        label.isHidden = true
+        return label
+    }()
+
     private lazy var messageStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [messageContainerView, nameAndDateStackView, bottomPaddingView])
+        let stackView = UIStackView(arrangedSubviews: [messageContainerView, infoLabel, nameAndDateStackView, bottomPaddingView])
         stackView.axis = .vertical
         stackView.spacing = .messageSpacing
         return stackView
@@ -228,6 +236,9 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         nameLabel.text = nil
         dateLabel.text = nil
         
+        infoLabel.isHidden = true
+        infoLabel.text = nil
+        
         messageContainerView.isHidden = true
         update(isContinueMessage: false)
         messageLabel.text = nil
@@ -288,6 +299,15 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         dateLabel.text = date.relative
     }
     
+    public func update(info: String?, date: Date?) {
+        guard let info = info else {
+            return
+        }
+        
+        infoLabel.text = info
+        infoLabel.isHidden = false
+    }
+
     public func update(message: String) {
         messageContainerView.isHidden = message.isEmpty
         messageLabel.text = message

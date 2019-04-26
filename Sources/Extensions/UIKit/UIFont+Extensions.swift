@@ -20,3 +20,13 @@ extension UIFont {
     public static let chatBoldSmall = UIFont.systemFont(ofSize: 11, weight: .bold)
     public static let chatAvatar = UIFont(name: "GillSans-UltraBold", size: 11)
 }
+
+extension UIFont {
+    public func withTraits(_ traits: UIFontDescriptor.SymbolicTraits) -> UIFont {
+        if let descriptor = fontDescriptor.withSymbolicTraits(traits) {
+            return UIFont(descriptor: descriptor, size: 0) // size 0 means keep the size as it is
+        }
+        
+        return self
+    }
+}

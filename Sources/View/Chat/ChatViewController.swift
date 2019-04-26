@@ -165,7 +165,13 @@ extension ChatViewController {
         
         let isIncoming = message.user != Client.shared.user
         let cell = tableView.dequeueMessageCell(for: indexPath, style: isIncoming ? style.incomingMessage : style.outgoingMessage)
-        cell.update(message: message.text)
+        
+        if message.isDeleted {
+            cell.update(info: message.text, date: message.deleted)
+        } else {
+            cell.update(message: message.text)
+        }
+        
         var showAvatar = true
         
         if indexPath.row < (presenter.items.count - 1), case .message(let nextMessage) = presenter.items[indexPath.row + 1] {

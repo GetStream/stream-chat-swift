@@ -15,6 +15,7 @@ public struct Message: Codable {
         case user
         case created = "created_at"
         case updated = "updated_at"
+        case deleted = "deleted_at"
         case text
         case attachments
         case replyCount = "reply_count"
@@ -26,10 +27,15 @@ public struct Message: Codable {
     public let user: User
     public let created: Date
     public let updated: Date
+    public let deleted: Date?
     public let text: String
     public let attachments: [Attachment]
     public let replyCount: Int
     public let reactionCounts: [String: Int]?
+    
+    public var isDeleted: Bool {
+        return deleted != nil
+    }
     
     init?(text: String) {
         guard let user = Client.shared.user else {
@@ -41,6 +47,7 @@ public struct Message: Codable {
         self.user = user
         created = Date()
         updated = Date()
+        deleted = nil
         self.text = text
         attachments = []
         replyCount = 0
@@ -58,6 +65,10 @@ extension Message: Equatable {
         return lhs.id == rhs.id
             && lhs.type == rhs.type
             && lhs.user == rhs.user
+            && lhs.text == rhs.text
+            && lhs.created == rhs.created
+            && lhs.updated == rhs.updated
+            && lhs.deleted == rhs.deleted
     }
 }
 
