@@ -12,6 +12,8 @@ public enum ChatItem: Equatable {
     case loading
     case status(_ title: String, _ subtitle: String?)
     case message(Message)
+    case joined(User)
+    case left(User)
     case error(Error)
     
     public static func == (lhs: ChatItem, rhs: ChatItem) -> Bool {
@@ -24,6 +26,10 @@ public enum ChatItem: Equatable {
             return title1 == title2 && subtitle1 == subtitle2
         case (.error, .error):
             return true
+        case let (.joined(user1), .joined(user2)):
+            return user1 == user2
+        case let (.left(user1), .left(user2)):
+            return user1 == user2
         default:
             return false
         }

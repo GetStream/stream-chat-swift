@@ -114,6 +114,7 @@ extension ChatViewController {
         
         if case let .itemAdded(row, reloadRow, forceToScroll) = changes {
             let indexPath = IndexPath(row: row, section: 0)
+            let needsToScroll = tableView.bottomContentOffset < .messageAvatarSize
             
             tableView.update {
                 tableView.insertRows(at: [indexPath], with: .none)
@@ -123,7 +124,7 @@ extension ChatViewController {
                 }
             }
             
-            if forceToScroll || tableView.bottomContentOffset < .messageAvatarSize {
+            if forceToScroll || needsToScroll {
                 tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         }
@@ -138,19 +139,20 @@ extension ChatViewController {
             return .unused
         }
         
-        if case .loading = presenter.items[indexPath.row] {
+        switch presenter.items[indexPath.row] {
+        case .loading:
             return loadingCell(at: indexPath)
-        }
-        
-        if case let .status(title, subtitle) = presenter.items[indexPath.row] {
+        case let .status(title, subtitle):
             return statusCell(at: indexPath, title: title, subtitle: subtitle)
-        }
-        
-        if case .message(let message) = presenter.items[indexPath.row] {
+        case .message(let message):
             return messageCell(at: indexPath, message: message)
+        case .joined(let user):
+            return userActivityCell(at: indexPath, user: user, "\(user.name) joined the chat.")
+        case .left(let user):
+            return userActivityCell(at: indexPath, user: user, "\(user.name) left the chat.")
+        case .error:
+            return .unused
         }
-        
-        return .unused
     }
     
     private func loadingCell(at indexPath: IndexPath) -> UITableViewCell {
@@ -197,6 +199,14 @@ extension ChatViewController {
             cell.add(attachments: message.attachments, userName: message.user.name)
         }
         
+        return cell
+    }
+    
+    private func userActivityCell(at indexPath: IndexPath, user: User, _ text: String) -> UITableViewCell {
+        let cell = tableView.dequeueMessageCell(for: indexPath, style: style.incomingMessage)
+        cell.update(info: text)
+        cell.update(date: Date())
+        cell.update(avatarURL: user.avatarURL, name: user.name)
         return cell
     }
     

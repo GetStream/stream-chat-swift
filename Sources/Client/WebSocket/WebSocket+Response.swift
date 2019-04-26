@@ -86,10 +86,10 @@ extension WebSocket {
         case messageRead(user: User)
         case messageNew(Message, User, _ watcherCount: Int, _ unreadCount: Int, _ totalUnreadCount: Int)
         
-        case userUpdated(user: User)
-        case userStatusChanged(user: User)
-        case userStartWatching(user: User, watcherCount: Int)
-        case userStopWatching(user: User, watcherCount: Int)
+        case userUpdated(User)
+        case userStatusChanged(User)
+        case userStartWatching(User, _ watcherCount: Int)
+        case userStopWatching(User, _ watcherCount: Int)
         
         case reactionNew(reaction: Reaction, to: Message, user: User)
         case reactionDeleted(reaction: Reaction, from: Message, user: User)
@@ -123,15 +123,15 @@ extension WebSocket {
                 
             // User
             case "user.updated":
-                self = .userUpdated(user: user)
+                self = .userUpdated(user)
             case "user.status.changed":
-                self = .userStatusChanged(user: user)
+                self = .userStatusChanged(user)
             case "user.watching.start":
                 let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
-                self = .userStartWatching(user: user, watcherCount: watcherCount)
+                self = .userStartWatching(user, watcherCount)
             case "user.watching.stop":
                 let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
-                self = .userStopWatching(user: user, watcherCount: watcherCount)
+                self = .userStopWatching(user, watcherCount)
                 
             // Reaction
             case "reaction.new":

@@ -289,17 +289,20 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
                 : style.backgroundImages[.rightBottomCorner(transparent: false)])
     }
     
-    public func update(name: String?, date: Date) {
+    public func update(name: String? = nil, date: Date) {
         nameAndDateStackView.isHidden = false
         
-        if !nameLabel.isHidden, let name = name, !name.isEmpty {
+        if style?.alignment == .left, let name = name, !name.isEmpty {
+            nameLabel.isHidden = false
             nameLabel.text = name
+        } else {
+            nameLabel.isHidden = true
         }
         
         dateLabel.text = date.relative
     }
     
-    public func update(info: String?, date: Date?) {
+    public func update(info: String?, date: Date? = nil) {
         guard let info = info else {
             return
         }

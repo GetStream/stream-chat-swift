@@ -62,9 +62,18 @@ extension ChannelPresenter {
             return .none
         }
         
+        let row = items.count
+
         switch response.event {
+        case .userStartWatching(let user, _):
+            items.append(.joined(user))
+            return .itemAdded(row, nil, false)
+            
+        case .userStopWatching(let user, _):
+            items.append(.left(user))
+            return .itemAdded(row, nil, false)
+            
         case .messageNew(let message, let user, _, _, _):
-            let row = items.count
             var reloadRow: Int? = nil
             
             if let lastItem = items.last, case .message(let lastMessage) = lastItem, lastMessage.user == user {
