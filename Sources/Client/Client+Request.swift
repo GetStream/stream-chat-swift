@@ -10,50 +10,38 @@ import Foundation
 
 extension Client {
     
-    func setupURLSession() -> URLSession {
+    func setupURLSession(token: Token) -> URLSession {
         let config = URLSessionConfiguration.default
         
-        config.httpAdditionalHeaders = ["Authorization": token ?? "",
+        config.httpAdditionalHeaders = ["Authorization": token,
                                         "Content-Type": "application/json",
                                         "stream-auth-type": "jwt"]
         
         return URLSession(configuration: config)
     }
     
-    func request<T: Decodable>(endpoint: EndpointProtocol, _ completion: @escaping Completion<T>) {
-        if token == nil {
-            completion(.failure(.emptyToken))
-            return
-        }
-        
-        guard let baseURL = baseURL.url(.https) else {
-            completion(.failure(.invalidURL(self.baseURL.description)))
-            return
-        }
-        
+    func request<T: Decodable>(endpoint: EndpointProtocol,
+                               connectionId: String,
+                               _ completion: @escaping Completion<T>) -> URLSessionDataTask {
         guard let user = user else {
             completion(.failure(.emptyUser))
-            return
-        }
-        
-        guard let clientId = webSocket?.connectionId else {
-            completion(.failure(.emptyClientId))
-            return
+            return URLSessionDataTask()
         }
         
         var queryItems = [URLQueryItem(name: "api_key", value: apiKey),
                           URLQueryItem(name: "user_id", value: user.id),
-                          URLQueryItem(name: "client_id", value: clientId)]
+                          URLQueryItem(name: "client_id", value: connectionId)]
         
         guard !queryItems.isEmpty else {
             completion(.failure(.invalidURL(nil)))
-            return
+            return URLSessionDataTask()
         }
         
         if let parameters = endpoint.parameters {
             queryItems.append(contentsOf: parameters.map { URLQueryItem(name: $0, value: $1) })
         }
         
+        let baseURL = self.baseURL.url(.https)
         var urlComponents = URLComponents()
         urlComponents.scheme = baseURL.scheme
         urlComponents.host = baseURL.host
@@ -62,7 +50,7 @@ extension Client {
         
         guard let url = urlComponents.url?.appendingPathComponent(endpoint.path) else {
             completion(.failure(.invalidURL(endpoint.path)))
-            return
+            return URLSessionDataTask()
         }
         
         var urlRequest = URLRequest(url: url)
@@ -83,6 +71,8 @@ extension Client {
         logger?.log(urlSession.configuration)
         logger?.log(urlRequest)
         task.resume()
+        
+        return task
     }
     
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {

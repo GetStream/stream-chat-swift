@@ -17,8 +17,8 @@ public struct BaseURL {
         urlString = "//chat\(location.rawValue.isEmpty ? "" : "-")\(location.rawValue).stream-io-api.com/"
     }
     
-    func url(_ scheme: ClientScheme) -> URL? {
-        return URL(string: scheme.rawValue.appending(":").appending(urlString))
+    func url(_ scheme: ClientScheme) -> URL {
+        return URL(string: scheme.rawValue.appending(":").appending(urlString)) ?? URL(fileURLWithPath: "/")
     }
 }
 

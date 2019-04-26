@@ -9,18 +9,23 @@
 import Foundation
 
 extension Client {
-    func setupWebSocket() -> WebSocket? {
-        guard let wsURL = baseURL.url(.webSocket), let user = user, let token = token else {
-            return nil
-        }
-        
+    func setupWebSocket(user: User, token: Token) -> WebSocket {
+        let logger: ClientLogger? = (logOptions == .all || logOptions == .webSocket ? ClientLogger(icon: "🦄") : nil)
         let jsonParameter = WebSocketPayload(user: user, token: token)
+        var jsonString = ""
         
-        guard let jsonData = try? JSONEncoder.stream.encode(jsonParameter),
-            let jsonString = String(data: jsonData, encoding: .utf8) else {
-                return nil
+        do {
+            let jsonData = try JSONEncoder.stream.encode(jsonParameter)
+            jsonString = String(data: jsonData, encoding: .utf8) ?? ""
+        } catch {
+            logger?.log(error)
         }
         
+        if jsonString.isEmpty {
+            logger?.log("⚠️", "JSON payload URL is empty")
+        }
+        
+        let wsURL = baseURL.url(.webSocket)
         var urlComponents = URLComponents()
         urlComponents.scheme = wsURL.scheme
         urlComponents.host = wsURL.host
@@ -31,12 +36,13 @@ extension Client {
                                     URLQueryItem(name: "authorization", value: token),
                                     URLQueryItem(name: "stream-auth-type", value: "jwt")]
         
-        guard let url = urlComponents.url else {
-            return nil
+        let url = urlComponents.url
+        
+        if url == nil {
+            logger?.log("⚠️", "Bad URL")
         }
         
-        return WebSocket(URLRequest(url: url),
-                         logger: (logOptions == .all || logOptions == .webSocket ? ClientLogger(icon: "🦄") : nil))
+        return WebSocket(URLRequest(url: url ?? wsURL), logger: logger)
     }
 }
 

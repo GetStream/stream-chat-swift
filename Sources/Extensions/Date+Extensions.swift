@@ -10,11 +10,11 @@ import Foundation
 
 extension Date {
     var isToday: Bool {
-        return timeIntervalSinceNow > -43_200
+        return Calendar.current.isDateInToday(self)
     }
     
     var isYesterday: Bool {
-        return timeIntervalSinceNow < -43_200 && timeIntervalSinceNow > -129_600
+        return Calendar.current.isDateInYesterday(self)
     }
 }
 
@@ -26,14 +26,13 @@ extension Date {
     
     /// A relative date from the current time in string.
     public var relative: String {
-        let timeInterval = -self.timeIntervalSinceNow
         let timeString = DateFormatter.time.string(from: self)
         
-        if timeInterval < 43_200 {
+        if isToday {
             return Date.today.appending(Date.wordsSeparator).appending(timeString)
-        } else if timeInterval < 129_600 {
+        } else if isYesterday {
             return Date.yesterday.appending(Date.wordsSeparator).appending(timeString)
-        } else if timeInterval < 518_400 {
+        } else if timeIntervalSinceNow > -518_400 {
             return DateFormatter.weekDay.string(from: self).appending(Date.wordsSeparator).appending(timeString)
         }
         

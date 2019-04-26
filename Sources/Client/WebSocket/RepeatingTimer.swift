@@ -60,9 +60,4 @@ final class RepeatingTimer {
         state = .suspended
         timer.suspend()
     }
-    
-    func restart() {
-        suspend()
-        resume()
-    }
 }

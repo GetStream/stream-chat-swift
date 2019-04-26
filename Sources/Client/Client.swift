@@ -19,8 +19,8 @@ public final class Client {
     let apiKey: String
     let baseURL: BaseURL
     var token: Token?
-    private(set) lazy var webSocket: WebSocket? = setupWebSocket()
-    private(set) lazy var urlSession: URLSession = setupURLSession()
+    private(set) lazy var webSocket = WebSocket(URLRequest(url: baseURL.url(.webSocket)))
+    private(set) lazy var urlSession = URLSession.shared
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
     let logOptions: LogOptions
@@ -46,7 +46,8 @@ public final class Client {
     public func set(user: User, token: Token) {
         self.user = user
         self.token = token
-        webSocket?.connect()
+        urlSession = setupURLSession(token: token)
+        webSocket = setupWebSocket(user: user, token: token)
     }
 }
 

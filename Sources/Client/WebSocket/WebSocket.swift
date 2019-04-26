@@ -12,42 +12,44 @@ import RxSwift
 import RxStarscream
 
 final class WebSocket {
-//    private static let maxAttemptsToReconnect = 5
-
+    
     private let logger: ClientLogger?
     private let webSocket: Starscream.WebSocket
-    private let disposeBag = DisposeBag()
-//    private var weakChannels = [WeakChannel]()
-//    private var attemptsToReconnect: Int = 0
-//    private var clientId: String?
-//
+    
     private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(30), queue: webSocket.callbackQueue) { [weak self] in
         self?.logger?.log("🏓")
         self?.webSocket.write(ping: Data())
     }
     
-    var connectionId: String?
-    let response = PublishSubject<Response>()
+    private(set) lazy var connection: Observable<WebSocket.Connection> = webSocket.rx.response
+        .startWith(.pong)
+        .filter { [weak self] in
+            if case .pong = $0 {
+                self?.connect()
+                return false
+            }
+            
+            return true
+        }
+        .map { [weak self] in self?.parseConnection($0) }
+        .unwrap()
+        .distinctUntilChanged()
+        .share(replay: 1, scope: .forever)
     
-    public var isConnected: Bool {
-        return webSocket.isConnected
-    }
+    private(set) lazy var response: Observable<WebSocket.Response> =
+        Observable.combineLatest(connection.connected(), webSocket.rx.response)
+            .map { [weak self] _, event in self?.parseResponse(event) }
+            .unwrap()
+            .share(replay: 1, scope: .whileConnected)
     
-    /// Create a Faye client with a given `URL`.
-    ///
-    /// - Parameters:
-    ///     - url: an `URL` of your websocket server.
-    ///     - headers: custom headers.
-    public init(_ urlRequest: URLRequest, logger: ClientLogger? = nil) {
+    init(_ urlRequest: URLRequest, logger: ClientLogger? = nil) {
         self.logger = logger
         webSocket = Starscream.WebSocket(request: urlRequest)
         webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat", qos: .userInitiated)
-        logger?.log(urlRequest)
-        
-        webSocket.rx.response
-            .subscribe(onNext: { [weak self] in self?.parse($0) },
-                       onError: { [weak self] in self?.logger?.log($0) })
-            .disposed(by: disposeBag)
+    }
+    
+    deinit {
+        disconnect()
     }
     
     func connect() {
@@ -55,6 +57,7 @@ final class WebSocket {
            webSocket.disconnect()
         }
         
+        logger?.log(webSocket.request)
         DispatchQueue.main.async(execute: webSocket.connect)
     }
     
@@ -63,12 +66,18 @@ final class WebSocket {
             webSocket.disconnect()
         }
     }
+}
+
+// MARK: - Parsing
+
+extension WebSocket {
     
-    private func parse(_ response: WebSocketEvent) {
-        switch response {
+    private func parseConnection(_ event: WebSocketEvent) -> Connection? {
+        switch event {
         case .connected:
             logger?.log("😊 Connected")
             handshakeTimer.resume()
+            return .connecting
             
         case .disconnected(let error):
             logger?.log("🤔 Disconnected")
@@ -77,248 +86,55 @@ final class WebSocket {
             if let error = error {
                 logger?.log(error, message: "😡 Disconnected")
             }
-        case .message(let msg):
-            handshakeTimer.restart()
             
-            guard let data = msg.data(using: .utf8) else {
-                logger?.log("📦", "Can't get a data from the message: \(msg)")
-                return
+            return .disconnected(error)
+            
+        case .message:
+            if let response = parseResponse(event),
+                case let .healthCheck(connectionId, healthCheckUser) = response.event,
+                let user = healthCheckUser {
+                return .connected(connectionId, user)
             }
             
-            logger?.log("📦", data)
-            
-            do {
-                let response = try JSONDecoder.stream.decode(Response.self, from: data)
-                
-                if case let .healthCheck(connectionId, user) = response.type {
-                    self.connectionId = connectionId
-                    
-                    if let user = user {
-                        Client.shared.user = user
-                    }
-                } else {
-                    self.response.onNext(response)
-                }
-            } catch {
-                logger?.log(error, message: "😡 Decode response")
-            }
-        case .data(let data):
-            logger?.log("🧱", data.debugDescription)
-        case .pong:
-            logger?.log("🏓","🆗")
+        default:
+            break
         }
+        
+        return nil
     }
     
-    deinit {
-        disconnect()
+    private func parseResponse(_ event: WebSocketEvent) -> Response? {
+        guard case .message(let message) = event else {
+            return nil
+        }
+        
+        guard let data = message.data(using: .utf8) else {
+            logger?.log("📦", "Can't get a data from the message: \(message)")
+            return nil
+        }
+        
+        logger?.log("📦", data)
+        
+        do {
+            return try JSONDecoder.stream.decode(Response.self, from: data)
+        } catch {
+            logger?.log(error, message: "😡 Decode response")
+        }
+        
+        return nil
     }
 }
 
-//// MARK: - Channel
+// MARK: - Rx
 
-//extension Client {
-//
-//    public func subscribe(to channel: Channel) throws {
-//        if !weakChannels.contains(where: { $0.channel == channel }) {
-//            weakChannels.append(WeakChannel(channel))
-//        }
-//
-//        guard isConnected else {
-//            throw Error.notConnected
-//        }
-//        
-//        try webSocketWrite(.subscribe, channel)
-//    }
-//    
-//    func unsubscribe(channel: Channel) throws {
-//        guard isConnected else {
-//            return
-//        }
-//
-//        try webSocketWrite(.unsubscribe, channel)
-//    }
-//
-//    func remove(channel: Channel) {
-//        weakChannels = weakChannels.filter { $0.channel != channel }
-//        try? unsubscribe(channel: channel)
-//    }
-//}
-//
-//// MARK: - Connection
-//
-//extension Client: WebSocketDelegate {
-//
-//    public func websocketDidConnect(socket: WebSocketClient) {
-//        do {
-//            try webSocketWrite(.handshake)
-//            attemptsToReconnect = 0
-//            handshakeTimer.resume()
-//        } catch {
-//            log("❌", error)
-//            applyAdvice()
-//        }
-//    }
-//
-//    public func websocketDidDisconnect(socket: WebSocketClient, error: Swift.Error?) {
-//        log()
-//        handshakeTimer.suspend()
-//        clientId = nil
-//        
-//        if let error = error {
-//            log("❌", error)
-//        }
-//
-//        applyAdvice()
-//    }
-//    
-//    private func retryReconnect(after timeInterval: DispatchTimeInterval = .seconds(2)) {
-//        guard attemptsToReconnect < Client.maxAttemptsToReconnect else {
-//            attemptsToReconnect = 0
-//            return
-//        }
-//
-//        log()
-//        webSocket.callbackQueue.asyncAfter(deadline: .now() + timeInterval) { [weak self] in self?.connect() }
-//    }
-//}
-//
-//// MARK: - Sending
-//
-//extension Client {
-//    private func webSocketWrite(_ bayeuxChannel: BayeuxChannel,
-//                                _ channel: Channel? = nil,
-//                                completion: ClientWriteDataCompletion? = nil) throws {
-//        guard webSocket.isConnected else {
-//            throw Error.notConnected
-//        }
-//        
-//        guard clientId != nil || bayeuxChannel == BayeuxChannel.handshake else {
-//            throw Error.clientIdIsEmpty
-//        }
-//        
-//        let message = Message(bayeuxChannel, channel, clientId: self.clientId)
-//        let data = try JSONEncoder().encode([message])
-//        webSocket.write(data: data, completion: completion)
-//        log("--->", message.channel, message.clientId ?? "", message.ext ?? [:])
-//    }
-//}
-//
-//// MARK: - Receiving
-//
-//extension Client {
-//    public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
-//        guard let data = text.data(using: .utf8) else {
-//            log("❌", "Bad data encoding")
-//            return
-//        }
-//        
-//        log("<---", text)
-//        websocketDidReceiveData(socket: socket, data: data)
-//    }
-//
-//    public func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
-//        do {
-//            guard let json = try JSONSerialization.jsonObject(with: data) as? [JSON] else {
-//                return
-//            }
-//
-//            let messages = try JSONDecoder().decode([Message].self, from: data)
-//            
-//            messages.forEach { message in
-//                if !dispatchBayeuxChannel(with: message) {
-//                    json.forEach {
-//                        if let subscriptionJSON = $0["data"] as? JSON,
-//                            let jsonData = try? JSONSerialization.data(withJSONObject: subscriptionJSON) {
-//                            dispatchData(with: message, in: jsonData)
-//                        }
-//                    }
-//                }
-//            }
-//        } catch {
-//            log("❌", error)
-//        }
-//    }
-//    
-//    private func dispatchBayeuxChannel(with message: Message) -> Bool {
-//        guard let bayeuxChannel = BayeuxChannel(rawValue: message.channel) else {
-//            return false
-//        }
-//
-//        if case .handshake = bayeuxChannel {
-//            dispatchHandshake(with: message)
-//        }
-//
-//        return true
-//    }
-//    
-//    private func dispatchData(with message: Message, in jsonData: Data) {
-//        log("<---", message.channel)
-//
-//        weakChannels.forEach { weakChannel in
-//            if let channel = weakChannel.channel, channel.name.match(with: message.channel) {
-//                channel.subscription(jsonData)
-//            }
-//        }
-//    }
-//    
-//    private func dispatchHandshake(with message: Message) {
-//        clientId = message.clientId
-//        advice = message.advice
-//
-//        for weakChannel in weakChannels {
-//            if let channel = weakChannel.channel {
-//                do {
-//                    try subscribe(to: channel)
-//                } catch {
-//                    log("❌ subscribe to channel", channel, error)
-//                    break
-//                }
-//            }
-//        }
-//    }
-//}
-
-//// MARK: - Advice
-//
-//extension WebSocket {
-//    private func applyAdvice() {
-//        clientId = nil
-//
-//        guard let advice = advice else {
-//            retryReconnect()
-//            return
-//        }
-//
-//        log("<-->", advice)
-//
-//        switch advice.reconnect {
-//        case .none:
-//            return
-//        case .handshake:
-//            try? webSocketWrite(.handshake)
-//        case .retry:
-//            retryReconnect()
-//        }
-//        
-//        self.advice = nil
-//    }
-//}
-//
-//// MARK: - Error
-//
-//extension WebSocket {
-//    public enum Error: String, Swift.Error {
-//        case notConnected
-//        case clientIdIsEmpty
-//    }
-//}
-//
-//// MARK: - Helpers
-//
-//private final class WeakChannel {
-//    weak var channel: Channel?
-//    
-//    init(_ channel: Channel) {
-//        self.channel = channel
-//    }
-//}
+extension ObservableType where E == WebSocket.Connection {
+    func connected() -> Observable<E> {
+        return filter {
+            if case .connected = $0 {
+                return true
+            }
+            
+            return false
+        }
+    }
+}

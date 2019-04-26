@@ -9,6 +9,7 @@
 import UIKit
 import SnapKit
 import RxSwift
+import RxCocoa
 import RxKeyboard
 import Nuke
 
@@ -37,27 +38,26 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         return tableView
     }()
     
-    public var channelPresenter: ChannelPresenter?
+    public var channelPresenter: ChannelPresenter? {
+        didSet {
+            if let channelPresenter = channelPresenter {
+                Driver.merge(channelPresenter.changes,
+                             channelPresenter.loading)
+                    .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
+                    .disposed(by: disposeBag)
+            }
+        }
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupComposerView()
         setupTableView()
-        reloadData()
+        channelPresenter?.load()
     }
     
     public override var preferredStatusBarStyle: UIStatusBarStyle {
         return style.backgroundColor.isDark ? .lightContent : .default
-    }
-    
-    public func reloadData() {
-        channelPresenter?.load { [weak self] error in
-            /// TODO: Parse error.
-            if error == nil, let self = self, let presenter = self.channelPresenter, presenter.items.count > 0 {
-                self.tableView.reloadData()
-                self.tableView.scrollToRow(at: IndexPath(row: presenter.items.count - 1, section: 0), at: .bottom, animated: false)
-            }
-        }
     }
 }
 
@@ -93,7 +93,7 @@ extension ChatViewController {
     private func send() {
         let text = composerView.text
         composerView.reset()
-        channelPresenter?.send(text: text) { [weak self] error in self?.reloadData() }
+        channelPresenter?.send(text: text)
     }
 }
 
@@ -104,6 +104,29 @@ extension ChatViewController {
     private func setupTableView() {
         tableView.backgroundColor = style.backgroundColor
         tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
+    }
+    
+    private func updateTableView(with changes: ChannelChanges) {
+        if case let .updated(row, position, animated) = changes {
+            tableView.reloadData()
+            tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: position, animated: animated)
+        }
+        
+        if case let .itemAdded(row, reloadRow, forceToScroll) = changes {
+            let indexPath = IndexPath(row: row, section: 0)
+            
+            tableView.update {
+                tableView.insertRows(at: [indexPath], with: .none)
+                
+                if let reloadRow = reloadRow {
+                    tableView.reloadRows(at: [IndexPath(row: reloadRow, section: 0)], with: .none)
+                }
+            }
+            
+            if forceToScroll || tableView.bottomContentOffset < .messageAvatarSize {
+                tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+            }
+        }
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -131,20 +154,7 @@ extension ChatViewController {
     }
     
     private func loadingCell(at indexPath: IndexPath) -> UITableViewCell {
-        guard let presenter = channelPresenter else {
-            return .unused
-        }
-        
-        let currentCount  = presenter.items.count
-        
-        presenter.loadNext { [weak self] error in
-            if error == nil, let self = self {
-                let row: Int = max(presenter.items.count - currentCount, 0)
-                self.tableView.reloadData()
-                self.tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .top, animated: false)
-            }
-        }
-        
+        channelPresenter?.loadNext()
         return statusCell(at: indexPath, title: "Loading...")
     }
     

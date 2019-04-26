@@ -64,6 +64,9 @@
 		8AB1B8F422677EEA002C65BD /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8F322677EEA002C65BD /* String+Extensions.swift */; };
 		8ABF8260226F4A4600A966D9 /* WebSocket+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF825F226F4A4600A966D9 /* WebSocket+Response.swift */; };
 		8ABF8262226F643E00A966D9 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF8261226F643E00A966D9 /* Reaction.swift */; };
+		8ABF82642270668700A966D9 /* unwrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF82632270668700A966D9 /* unwrap.swift */; };
+		8ABF82662270A72900A966D9 /* Client+RxRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF82652270A72900A966D9 /* Client+RxRequest.swift */; };
+		8ABF826A2273064600A966D9 /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF82692273064600A966D9 /* UITableView+Extensions.swift */; };
 		8AFC2A2722688299006278D4 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2622688299006278D4 /* Member.swift */; };
 		8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A282268933A006278D4 /* WebSocket.swift */; };
 		8AFC2A2B226893FF006278D4 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */; };
@@ -132,6 +135,9 @@
 		8AB1B8F322677EEA002C65BD /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		8ABF825F226F4A4600A966D9 /* WebSocket+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Response.swift"; sourceTree = "<group>"; };
 		8ABF8261226F643E00A966D9 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
+		8ABF82632270668700A966D9 /* unwrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = unwrap.swift; sourceTree = "<group>"; };
+		8ABF82652270A72900A966D9 /* Client+RxRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxRequest.swift"; sourceTree = "<group>"; };
+		8ABF82692273064600A966D9 /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
 		8AFC2A2622688299006278D4 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		8AFC2A282268933A006278D4 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
@@ -244,8 +250,9 @@
 			isa = PBXGroup;
 			children = (
 				8A889143225219E500DD6539 /* Client.swift */,
-				8AFC2A2D226B5B37006278D4 /* Client+Request.swift */,
 				8AFC2A2F226B5C87006278D4 /* Client+WebSocket.swift */,
+				8AFC2A2D226B5B37006278D4 /* Client+Request.swift */,
+				8ABF82652270A72900A966D9 /* Client+RxRequest.swift */,
 				8A88914722521E4800DD6539 /* ClientError.swift */,
 				8A8891672253D3A500DD6539 /* ClientLogger.swift */,
 				8A8891492252309900DD6539 /* BaseURL.swift */,
@@ -317,6 +324,7 @@
 				8A88917822550E8D00DD6539 /* UIFont+Extensions.swift */,
 				8A8891562252827E00DD6539 /* UIImage+Icons.swift */,
 				8A8891592252830C00DD6539 /* UIImage+Extensions.swift */,
+				8ABF82692273064600A966D9 /* UITableView+Extensions.swift */,
 				8A8891722255000A00DD6539 /* UITableViewCell+Extensions.swift */,
 				8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */,
 				8A1A9401225A436800060ACC /* CGRect+Extensions.swift */,
@@ -327,6 +335,7 @@
 		8AABC28D225F42BB0064CB20 /* Rx */ = {
 			isa = PBXGroup;
 			children = (
+				8ABF82632270668700A966D9 /* unwrap.swift */,
 			);
 			path = Rx;
 			sourceTree = "<group>";
@@ -526,11 +535,13 @@
 				8A1A9416225E2EB200060ACC /* DataDetectorWorker.swift in Sources */,
 				8AFC2A2E226B5B37006278D4 /* Client+Request.swift in Sources */,
 				8A88915A2252830C00DD6539 /* UIImage+Extensions.swift in Sources */,
+				8ABF826A2273064600A966D9 /* UITableView+Extensions.swift in Sources */,
 				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
 				8AB1B8EF22675CCD002C65BD /* Result+Extensions.swift in Sources */,
 				8A8891502252379700DD6539 /* Channel.swift in Sources */,
 				8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */,
 				8A1A940E225CC88200060ACC /* AttachmentPreview.swift in Sources */,
+				8ABF82662270A72900A966D9 /* Client+RxRequest.swift in Sources */,
 				8A1A941A225E321100060ACC /* UICollectionView+Reusable.swift in Sources */,
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8A88914822521E4800DD6539 /* ClientError.swift in Sources */,
@@ -539,6 +550,7 @@
 				8ABF8262226F643E00A966D9 /* Reaction.swift in Sources */,
 				8A88916C2254A6B300DD6539 /* CustomChannel.swift in Sources */,
 				8A88914C2252337500DD6539 /* User.swift in Sources */,
+				8ABF82642270668700A966D9 /* unwrap.swift in Sources */,
 				8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */,
 				8A8891622253A73000DD6539 /* Query.swift in Sources */,
 				8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */,

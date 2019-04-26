@@ -66,19 +66,22 @@ open class Channel: Codable {
 
 extension Channel {
     
-    public func query(members: [Member], pagination: Pagination = .none, _ completion: @escaping Client.Completion<Query>) {
-        let query = Query(channel: self, members: members, pagination: pagination)
-        Client.shared.request(endpoint: ChatEndpoint.query(query), completion)
+    public func send(_ message: Message) {
+        let completion: Client.Completion<MessageResponse> = { print($0) }
+        _ = Client.shared.request(endpoint: ChatEndpoint.send(message, channel: self), connectionId: "", completion)
     }
+}
+
+// MARK: - Updates
+
+extension Channel {
     
-    public func send(_ message: Message, _ completion: @escaping Client.Completion<MessageResponse>) {
-        Client.shared.request(endpoint: ChatEndpoint.send(message, channel: self), completion)
-    }
 }
 
 // MARK: - Channel Type
 
 public enum ChannelType: String, Codable {
+    case unknown
     case livestream
     case messaging
     case team
