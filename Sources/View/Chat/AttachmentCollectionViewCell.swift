@@ -51,7 +51,7 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
         }
     }
     
-    private func reset() {
+    func reset() {
         imageView.image = nil
     }
 }

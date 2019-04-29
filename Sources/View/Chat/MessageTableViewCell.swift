@@ -12,26 +12,7 @@ import Nuke
 
 final class MessageTableViewCell: UITableViewCell, Reusable {
     
-    private lazy var avatarView: UIImageView = {
-        let view = UIImageView(frame: .zero)
-        view.layer.cornerRadius = .messageAvatarRadius
-        view.clipsToBounds = true
-        view.contentMode = .scaleAspectFill
-        view.snp.makeConstraints { $0.width.height.equalTo(CGFloat.messageAvatarSize) }
-        view.addSubview(avatarLabel)
-        avatarLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
-        view.isHidden = true
-        return view
-    }()
-    
-    private let avatarLabel: UILabel = {
-        let label = UILabel(frame: .zero)
-        label.font = .chatAvatar
-        label.textAlignment = .center
-        label.isHidden = true
-        label.preferredMaxLayoutWidth = .messageAvatarSize
-        return label
-    }()
+    let avatarView = AvatarView(cornerRadius: .messageAvatarRadius)
     
     //    private let reactionsContainer = UIImageView(frame: .zero)
     //
@@ -226,11 +207,9 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     }
     
     public func reset() {
+        avatarView.reset()
         avatarView.isHidden = true
-        avatarView.image = nil
-        avatarView.backgroundColor = .white
-        avatarLabel.text = nil
-        avatarLabel.isHidden = true
+        avatarView.backgroundColor = backgroundColor
         
         nameAndDateStackView.isHidden = true
         nameLabel.text = nil
@@ -325,22 +304,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
     }
     
-    public func update(avatarURL: URL?, name: String) {
-        avatarView.isHidden = false
-        
-        guard let avatarURL = avatarURL else {
-            showAvatarLabel(with: name)
-            return
-        }
-        
-        let imageSize = avatarView.bounds.width * UIScreen.main.scale
-        let request = ImageRequest(url: avatarURL, targetSize: CGSize(width: imageSize, height: imageSize), contentMode: .aspectFill)
-        
-        ImagePipeline.shared.loadImage(with: request) { [weak self] response, error in
-            self?.avatarView.image = response?.image
-        }
-    }
-    
     public func add(attachments: [Attachment], userName: String) {
         guard let style = style else {
             return
@@ -352,7 +315,9 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             if attachment.type == .file {
                 preview = createAttachmentFilePreview(with: attachment, style: style)
             } else {
-                preview = createAttachmentPreview(with: attachment, style: style, imageBackgroundColor: color(by: userName))
+                preview = createAttachmentPreview(with: attachment,
+                                                  style: style,
+                                                  imageBackgroundColor: .color(by: userName, isDark: backgroundColor?.isDark ?? false))
             }
             
             messageStackView.insertArrangedSubview(preview, at: offset)
@@ -419,33 +384,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return offset == 0 || messageContainerViewImage == style.backgroundImages[.rightBottomCorner(transparent: false)]
             ? style.backgroundImages[.rightBottomCorner(transparent: true)]
             : style.backgroundImages[.rightSide(transparent: true)]
-    }
-    
-    private func showAvatarLabel(with name: String) {
-        if name.contains(" ") {
-            let words = name.split(separator: " ")
-            
-            if let a = String(describing: words[0]).first, let b = String(describing: words[1]).first {
-                avatarLabel.text = String(a).appending(String(b)).uppercased()
-            }
-        } else {
-            avatarLabel.text = name.first?.uppercased()
-        }
-        
-        avatarView.backgroundColor = color(by: name)
-        avatarLabel.isHidden = false
-        avatarLabel.textColor = avatarView.backgroundColor?.withAlphaComponent(0.3)
-    }
-    
-    private func color(by name: String) -> UIColor {
-        var brightness: CGFloat = 0.5
-        
-        if let backgroundColor = backgroundColor {
-            brightness = backgroundColor.isDark ? 1 : 0.5
-        }
-        
-        let hue: CGFloat = abs(((CGFloat(name.hashValue) / CGFloat(Int.max)) * 15) / 15)
-        return .transparent(hue: hue, brightness: brightness)
     }
 }
 

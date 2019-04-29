@@ -33,6 +33,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         tableView.registerMessageCell(style: style.incomingMessage)
         tableView.registerMessageCell(style: style.outgoingMessage)
         tableView.register(cellType: StatusTableViewCell.self)
+        tableView.tableFooterView = ChatTableFooterView()
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: CGFloat.messagesBottomMargin, right: 0)
         view.insertSubview(tableView, at: 0)
         return tableView
@@ -128,6 +129,10 @@ extension ChatViewController {
                 tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         }
+        
+        if case let .updateFooter(isUsersTyping, startWatchingUser, stopWatchingUser) = changes {
+            updateFooterView(isUsersTyping, startWatchingUser, stopWatchingUser)
+        }
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -146,10 +151,6 @@ extension ChatViewController {
             return statusCell(at: indexPath, title: title, subtitle: subtitle)
         case .message(let message):
             return messageCell(at: indexPath, message: message)
-        case .joined(let user):
-            return userActivityCell(at: indexPath, user: user, "\(user.name) joined the chat.")
-        case .left(let user):
-            return userActivityCell(at: indexPath, user: user, "\(user.name) left the chat.")
         case .error:
             return .unused
         }
@@ -192,7 +193,7 @@ extension ChatViewController {
         
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
-            cell.update(avatarURL: message.user.avatarURL, name: message.user.name)
+            cell.avatarView.update(with: message.user.avatarURL, name: message.user.name)
         }
         
         if !message.attachments.isEmpty {
@@ -206,7 +207,7 @@ extension ChatViewController {
         let cell = tableView.dequeueMessageCell(for: indexPath, style: style.incomingMessage)
         cell.update(info: text)
         cell.update(date: Date())
-        cell.update(avatarURL: user.avatarURL, name: user.name)
+        cell.avatarView.update(with: user.avatarURL, name: user.name)
         return cell
     }
     
@@ -245,5 +246,73 @@ extension ChatViewController {
         }
         
         showMediaGallery(with: message.attachments.compactMap { MediaGalleryItem(title: $0.title, url: $0.imageURL) })
+    }
+}
+
+// MARK: - Footer
+
+extension ChatViewController {
+    private func updateFooterView(_ isUsersTyping: Bool, _ startWatchingUser: User?, _ stoptWatchingUser: User?) {
+        if isUsersTyping {
+            updateFooterForUsersTyping()
+        }
+        
+        if let startWatchingUser = startWatchingUser {
+            addStartWatchingUser(startWatchingUser)
+        }
+        
+        updateFooterView()
+    }
+    
+    private func updateFooterView() {
+        guard let footerView = tableView.tableFooterView as? ChatTableFooterView else {
+            return
+        }
+        
+        if footerView.isEmpty {
+            UIView.animateSmooth(withDuration: 0.3) { self.tableView.layoutFooterView() }
+        } else {
+            tableView.layoutFooterView()
+            tableView.scrollToBottom()
+        }
+    }
+    
+    private func updateFooterForUsersTyping() {
+        guard let presenter = channelPresenter, let footerView = tableView.tableFooterView as? ChatTableFooterView else {
+            return
+        }
+        
+        if presenter.typingUsers.isEmpty {
+            footerView.removeMessageFooterView(by: 1)
+            
+        } else if let user = presenter.typingUsers.first {
+            let messageFooterView: MessageFooterView
+            
+            if let existsMessageFooterView = footerView.messageFooterView(by: 1) {
+                messageFooterView = existsMessageFooterView
+                existsMessageFooterView.restartHidingTimer()
+            } else {
+                messageFooterView = MessageFooterView(frame: .zero)
+                messageFooterView.tag = 1
+                footerView.add(messageFooterView: messageFooterView, timeout: 30) { [weak self] in self?.updateFooterView() }
+            }
+            
+            messageFooterView.textLabel.text = presenter.typingUsersText()
+            messageFooterView.avatarView.update(with: user.avatarURL, name: user.name)
+        }
+    }
+    
+    private func addStartWatchingUser(_ user: User) {
+        guard let footerView = tableView.tableFooterView as? ChatTableFooterView else {
+            return
+        }
+        
+        let messageFooterView = MessageFooterView(frame: .zero)
+        messageFooterView.textLabel.text = "\(user.name) joined the chat."
+        messageFooterView.avatarView.update(with: user.avatarURL, name: user.name)
+        
+        footerView.add(messageFooterView: messageFooterView, timeout: 3) { [weak self] in
+            self?.updateFooterView()
+        }
     }
 }

@@ -74,6 +74,7 @@ extension WebSocket {
             case message
             case reaction
             case unreadCount = "unread_count"
+            case unreadChannels = "unread_channels"
             case totalUnreadCount = "total_unread_count"
         }
         
@@ -94,8 +95,10 @@ extension WebSocket {
         case reactionNew(reaction: Reaction, to: Message, user: User)
         case reactionDeleted(reaction: Reaction, from: Message, user: User)
         
-        case typingStart(user: User)
-        case typingStop(user: User)
+        case typingStart(User)
+        case typingStop(User)
+        
+        case notificationMarkRead(_ unreadCount: Int, _ totalUnreadCount: Int, _ unreadChannels: Int)
         
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -145,9 +148,17 @@ extension WebSocket {
                 
             // Typing
             case "typing.start":
-                self = .typingStart(user: user)
+                self = .typingStart(user)
             case "typing.stop":
-                self = .typingStop(user: user)
+                self = .typingStop(user)
+                
+            // Notifications
+            case "notification.mark_read":
+                let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
+                let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
+                let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
+                self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels)
+                
             default:
                 throw ResponseTypeError(type: type)
             }

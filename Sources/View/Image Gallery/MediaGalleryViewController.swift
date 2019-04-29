@@ -41,7 +41,7 @@ class MediaGalleryViewController: UIViewController {
         closeButton.contentMode = .center
         closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
         closeButton.backgroundColor = UIColor.chatSuperDarkGray.withAlphaComponent(0.5)
-        closeButton.layer.cornerRadius = CGFloat.messageCornerRadius
+        closeButton.layer.cornerRadius = .messageCornerRadius
         view.addSubview(closeButton)
         
         closeButton.snp.makeConstraints { make in
@@ -223,6 +223,11 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
     }
     
     fileprivate override func prepareForReuse() {
+        reset()
+        super.prepareForReuse()
+    }
+    
+    func reset() {
         scrollView.maximumZoomScale = 1
         imageView.image = nil
         imageView.gifImage = nil

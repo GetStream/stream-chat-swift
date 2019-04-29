@@ -87,6 +87,8 @@ extension WebSocket {
                 logger?.log(error, message: "😡 Disconnected")
             }
             
+            reconnect()
+            
             return .disconnected(error)
             
         case .message:
@@ -101,6 +103,12 @@ extension WebSocket {
         }
         
         return nil
+    }
+    
+    private func reconnect() {
+        webSocket.callbackQueue.asyncAfter(deadline: .now() + 1) { [weak self] in
+            self?.connect()
+        }
     }
     
     private func parseResponse(_ event: WebSocketEvent) -> Response? {

@@ -9,6 +9,7 @@
 import UIKit
 
 extension UITableView {
+    
     var bottomContentOffset: CGFloat {
         return contentSize.height - (contentOffset.y + frame.height - contentInset.bottom - contentInset.top)
     }
@@ -18,5 +19,14 @@ extension UITableView {
         transaction()
         endUpdates()
         layoutIfNeeded()
+    }
+    
+    func scrollToBottom(animated: Bool = true) {
+        let offset = contentSize.height - (frame.height - contentInset.bottom - contentInset.top)
+        setContentOffset(CGPoint(x: 0, y: offset), animated: animated)
+    }
+    
+    func layoutFooterView() {
+        tableFooterView = tableFooterView?.systemLayoutHeightToFit()
     }
 }

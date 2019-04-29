@@ -43,3 +43,10 @@ extension UIColor {
         return UIColor(hue: hue, saturation: 1, brightness: brightness, alpha: 0.2)
     }
 }
+
+extension UIColor {
+    static func color(by string: String, isDark: Bool = false) -> UIColor {
+        let hue: CGFloat = abs(((CGFloat(string.hashValue) / CGFloat(Int.max)) * 15) / 15)
+        return .transparent(hue: hue, brightness: isDark ? 1 : 0.5)
+    }
+}

@@ -32,7 +32,7 @@ public enum Event: String {
 //    case healthCheck = "health.check"
     
     case notificationMessageNew = "notification.message_new"
-    case notificationMarkRead = "notification.mark_read"
+//    case notificationMarkRead = "notification.mark_read"
     case notificationInvited = "notification.invited"
     case notificationInviteAccepted = "notification.invite_accepted"
     case notificationAddedToChannel = "notification.added_to_channel"

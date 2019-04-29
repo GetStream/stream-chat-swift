@@ -13,7 +13,8 @@ import RxCocoa
 public enum ChannelChanges: Equatable {
     case none
     case updated(_ row: Int, UITableView.ScrollPosition, _ animated: Bool)
-    case itemAdded(_ addRow: Int, _ reloadRow: Int?, _ forceToScroll: Bool)
+    case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool)
+    case updateFooter(_ isUsersTyping: Bool, _ startWatching: User?, _ stopWatching: User?)
 }
 
 public final class ChannelPresenter {
@@ -27,6 +28,7 @@ public final class ChannelPresenter {
     private var disposeBag = DisposeBag()
     
     private(set) var items: [ChatItem] = []
+    private(set) var typingUsers: [User] = []
     private let loadPagination = PublishSubject<Pagination>()
 
     private(set) lazy var loading: Driver<ChannelChanges> =
@@ -54,6 +56,26 @@ public final class ChannelPresenter {
     }
 }
 
+// MARK: -
+
+extension ChannelPresenter {
+    func typingUsersText() -> String? {
+        guard !typingUsers.isEmpty else {
+            return nil
+        }
+        
+        if typingUsers.count == 1, let user = typingUsers.first {
+            return "\(user.name) is typing..."
+        } else if typingUsers.count == 2 {
+            return "\(typingUsers[0].name) and \(typingUsers[1].name) are typing..."
+        } else if let user = typingUsers.first {
+            return "\(user.name) and \(String(typingUsers.count - 1)) others are typing..."
+        }
+        
+        return nil
+    }
+}
+
 // MARK: - Changes
 
 extension ChannelPresenter {
@@ -62,22 +84,30 @@ extension ChannelPresenter {
             return .none
         }
         
-        let row = items.count
-
+        let nextRow = items.count
+        
         switch response.event {
         case .userStartWatching(let user, _):
-            items.append(.joined(user))
-            return .itemAdded(row, nil, false)
+            return .updateFooter(false, user, nil)
             
         case .userStopWatching(let user, _):
-            items.append(.left(user))
-            return .itemAdded(row, nil, false)
+            return .updateFooter(false, nil, user)
             
+        case .typingStart(let user):
+            if typingUsers.isEmpty || !typingUsers.contains(user) {
+                typingUsers.append(user)
+                return .updateFooter(true, nil, nil)
+            }
+        case .typingStop(let user):
+            if let index = typingUsers.firstIndex(of: user) {
+                typingUsers.remove(at: index)
+                return .updateFooter(true, nil, nil)
+            }
         case .messageNew(let message, let user, _, _, _):
             var reloadRow: Int? = nil
             
             if let lastItem = items.last, case .message(let lastMessage) = lastItem, lastMessage.user == user {
-                reloadRow = row - 1
+                reloadRow = nextRow - 1
             }
             
             items.append(.message(message))
@@ -87,10 +117,12 @@ extension ChannelPresenter {
                 forceToScroll = user == currentUser
             }
             
-            return .itemAdded(row, reloadRow, forceToScroll)
+            return .itemAdded(nextRow, reloadRow, forceToScroll)
         default:
-            return .none
+            break
         }
+        
+        return .none
     }
 }
 
