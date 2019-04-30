@@ -170,8 +170,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             make.right.equalToSuperview().offset(-messagePadding)
         }
         
-        update(isContinueMessage: false)
-        
         // Reactions.
         //        reactionsContainer.addSubview(reactionsLabel)
         //        reactionsContainer.image = style.reactionViewStyle.backgroundImage
@@ -219,9 +217,12 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         infoLabel.text = nil
         
         messageContainerView.isHidden = true
-        update(isContinueMessage: false)
+        messageContainerView.image = nil
+        messageContainerView.layer.borderWidth = 0
+        messageContainerView.backgroundColor = style?.chatBackgroundColor
         messageLabel.text = nil
         messageLabel.font = style?.font
+        messageLabel.backgroundColor = style?.backgroundColor
         
         paddingType = .regular
         
@@ -233,16 +234,17 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         attachmentPreviews = []
     }
     
-    public func update(isContinueMessage: Bool) {
+    public func updateBackground(isContinueMessage: Bool) {
         guard let style = style else {
             return
         }
         
-        messageContainerView.image = nil
-        messageContainerView.layer.borderWidth = 0
+        if let message = messageLabel.text, !message.isEmpty, message.containsOnlyEmoji {
+            messageLabel.backgroundColor = style.chatBackgroundColor
+            return
+        }
         
         if let messageBackgroundImage = messageBackgroundImage(isContinueMessage: isContinueMessage) {
-            messageContainerView.backgroundColor = style.chatBackgroundColor
             messageContainerView.image = messageBackgroundImage
         } else {
             messageContainerView.backgroundColor = style.backgroundColor
@@ -330,7 +332,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             }
         }
         
-        update(isContinueMessage: true)
+        updateBackground(isContinueMessage: true)
     }
     
     private func createAttachmentPreview(with attachment: Attachment,

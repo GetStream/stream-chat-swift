@@ -21,9 +21,21 @@ extension UITableView {
         layoutIfNeeded()
     }
     
+    /// Scroll to bottom.
     func scrollToBottom(animated: Bool = true) {
-        let offset = contentSize.height - (frame.height - contentInset.bottom - contentInset.top)
-        setContentOffset(CGPoint(x: 0, y: offset), animated: animated)
+        let sectionsCount = numberOfSections
+        
+        guard sectionsCount > 0 else {
+            return
+        }
+        
+        let rowsCount = numberOfRows(inSection: (sectionsCount - 1))
+        
+        guard rowsCount > 0 else {
+            return
+        }
+        
+        scrollToRow(at: IndexPath(row: rowsCount - 1, section: sectionsCount - 1), at: .top, animated: animated)
     }
     
     func layoutFooterView() {

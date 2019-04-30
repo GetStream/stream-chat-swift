@@ -12,6 +12,8 @@ extension CGFloat {
     public static let safeAreaTop: CGFloat = (UIApplication.shared.delegate?.window as? UIWindow)?.safeAreaInsets.top ?? 0
     public static let safeAreaBottom: CGFloat = (UIApplication.shared.delegate?.window as? UIWindow)?.safeAreaInsets.bottom ?? 0
     
+    public static let chatBottomThreshold: CGFloat = .messageAvatarSize + 2 * .messageEdgePadding
+    
     public static let composerCornerRadius: CGFloat = 10
     public static let composerHeight: CGFloat = 60
     public static let composerMaxHeight: CGFloat = 200

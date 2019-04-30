@@ -115,7 +115,7 @@ extension ChatViewController {
         
         if case let .itemAdded(row, reloadRow, forceToScroll) = changes {
             let indexPath = IndexPath(row: row, section: 0)
-            let needsToScroll = tableView.bottomContentOffset < .messageAvatarSize
+            let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
             
             tableView.update {
                 tableView.insertRows(at: [indexPath], with: .none)
@@ -185,11 +185,15 @@ extension ChatViewController {
             }
         }
         
+        var isContinueMessage = false
+        
         if indexPath.row > 0,
             case .message(let prevMessage) = presenter.items[indexPath.row - 1],
             prevMessage.user == message.user {
-            cell.update(isContinueMessage: true)
+            isContinueMessage = true
         }
+        
+        cell.updateBackground(isContinueMessage: isContinueMessage)
         
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
@@ -272,8 +276,12 @@ extension ChatViewController {
         if footerView.isEmpty {
             UIView.animateSmooth(withDuration: 0.3) { self.tableView.layoutFooterView() }
         } else {
+            let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
             tableView.layoutFooterView()
-            tableView.scrollToBottom()
+            
+            if needsToScroll {
+                tableView.scrollToBottom()
+            }
         }
     }
     
