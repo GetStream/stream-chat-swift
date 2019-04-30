@@ -12,7 +12,7 @@ import RxCocoa
 
 public enum ChannelChanges: Equatable {
     case none
-    case updated(_ row: Int, UITableView.ScrollPosition, _ animated: Bool)
+    case updated(_ row: Int, UITableView.ScrollPosition)
     case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool)
     case updateFooter(_ isUsersTyping: Bool, _ startWatching: User?, _ stopWatching: User?)
 }
@@ -202,10 +202,10 @@ extension ChannelPresenter {
         
         if items.count > 0 {
             if isNextPage {
-                return .updated(max(items.count - currentCount, 0), .top, false)
+                return .updated(max(items.count - currentCount, 0), .top)
             }
             
-            return .updated((items.count - 1), .bottom, false)
+            return .updated((items.count - 1), .top)
         }
         
         return .none

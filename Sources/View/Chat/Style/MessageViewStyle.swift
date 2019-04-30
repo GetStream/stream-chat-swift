@@ -14,6 +14,7 @@ public struct MessageViewStyle: Hashable {
     public let font: UIFont
     public let nameFont: UIFont
     public let infoFont: UIFont
+    public let emojiFont: UIFont
     public let textColor: UIColor
     public let infoColor: UIColor
     public let backgroundColor: UIColor
@@ -32,6 +33,7 @@ public struct MessageViewStyle: Hashable {
          font: UIFont = .chatRegular,
          nameFont: UIFont = .chatBoldSmall,
          infoFont: UIFont = .chatSmall,
+         emojiFont: UIFont = .chatEmoji,
          textColor: UIColor = .black,
          infoColor: UIColor = .chatGray,
          backgroundColor: UIColor = .white,
@@ -44,6 +46,7 @@ public struct MessageViewStyle: Hashable {
         self.font = font
         self.nameFont = nameFont
         self.infoFont = infoFont
+        self.emojiFont = emojiFont
         self.textColor = textColor
         self.infoColor = infoColor
         self.backgroundColor = backgroundColor

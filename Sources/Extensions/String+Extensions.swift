@@ -9,6 +9,15 @@
 import Foundation
 
 extension String {
+    public static var messageEmojiCount = 8
+    
+    /// Check the message text is it contains only emoji.
+    var messageContainsOnlyEmoji: Bool {
+        return !isEmpty && count <= String.messageEmojiCount && containsOnlyEmoji
+    }
+}
+
+extension String {
     
     var isSingleEmoji: Bool {
         return count == 1 && containsEmoji

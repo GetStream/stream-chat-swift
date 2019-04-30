@@ -19,6 +19,7 @@ extension UIFont {
     public static let chatMediumSmall = UIFont.systemFont(ofSize: 11, weight: .medium)
     public static let chatBoldSmall = UIFont.systemFont(ofSize: 11, weight: .bold)
     public static let chatAvatar = UIFont(name: "GillSans-UltraBold", size: 11)
+    public static let chatEmoji = UIFont.systemFont(ofSize: 26)
 }
 
 extension UIFont {

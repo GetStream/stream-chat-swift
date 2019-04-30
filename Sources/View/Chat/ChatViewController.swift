@@ -108,9 +108,9 @@ extension ChatViewController {
     }
     
     private func updateTableView(with changes: ChannelChanges) {
-        if case let .updated(row, position, animated) = changes {
+        if case let .updated(row, position) = changes {
             tableView.reloadData()
-            tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: position, animated: animated)
+            tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: position, animated: false)
         }
         
         if case let .itemAdded(row, reloadRow, forceToScroll) = changes {
@@ -189,7 +189,8 @@ extension ChatViewController {
         
         if indexPath.row > 0,
             case .message(let prevMessage) = presenter.items[indexPath.row - 1],
-            prevMessage.user == message.user {
+            prevMessage.user == message.user,
+            !prevMessage.text.messageContainsOnlyEmoji {
             isContinueMessage = true
         }
         

@@ -239,7 +239,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             return
         }
         
-        if let message = messageLabel.text, !message.isEmpty, message.containsOnlyEmoji {
+        if let text = messageLabel.text, text.messageContainsOnlyEmoji {
             messageLabel.backgroundColor = style.chatBackgroundColor
             return
         }
@@ -296,13 +296,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageContainerView.isHidden = message.isEmpty
         messageLabel.text = message
         
-        if !message.isEmpty, message.count < 9 {
-            let message = message.trimmingCharacters(in: .whitespacesAndNewlines)
-            
-            if message.containsOnlyEmoji {
-                messageLabel.text = message
-                messageLabel.font = .systemFont(ofSize: 26)
-            }
+        if let font = style?.emojiFont, message.messageContainsOnlyEmoji {
+            messageLabel.font = font
         }
     }
     
