@@ -32,7 +32,20 @@ public final class ChannelPresenter {
     private let loadPagination = PublishSubject<Pagination>()
 
     private(set) lazy var loading: Driver<ChannelChanges> =
-        Observable.combineLatest(Client.shared.webSocket.connection.connected(), loadPagination.asObserver())
+        Observable.combineLatest(Client.shared.webSocket.connection, loadPagination.asObserver())
+            .filter { [weak self] connection, _ -> Bool in
+                if case .connected = connection {
+                    return true
+                }
+                
+                if let self = self, !self.items.isEmpty {
+                    self.next = .none
+                    self.items = []
+                    self.loadPagination.onNext(ChannelPresenter.limitPagination)
+                }
+                
+                return false
+            }
             .flatMapLatest { [weak self] (connection, pagination) -> Observable<Query> in
                 if let self = self,
                     let user = Client.shared.user,

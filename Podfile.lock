@@ -1,23 +1,33 @@
 PODS:
-  - Nuke (7.6.1)
+  - Nuke (7.6.2)
+  - ReachabilitySwift (4.3.1)
+  - RxAppState (1.5.0):
+    - RxCocoa (~> 4.4)
+    - RxSwift (~> 4.4)
   - RxCocoa (4.5.0):
     - RxSwift (>= 4.4.2, ~> 4.4)
   - RxKeyboard (0.9.0):
     - RxCocoa (>= 4.3.1)
     - RxSwift (>= 4.3.1)
+  - RxReachability (0.1.8):
+    - ReachabilitySwift (~> 4.3.0)
+    - RxCocoa (~> 4)
+    - RxSwift (~> 4)
   - RxStarscream (0.10):
     - RxCocoa (~> 4.3)
     - RxSwift (~> 4.3)
     - Starscream (~> 3)
   - RxSwift (4.5.0)
-  - SnapKit (4.2.0)
+  - SnapKit (5.0.0)
   - Starscream (3.1.0)
-  - SwiftyGif (5.0.0)
+  - SwiftyGif (5.0.1)
 
 DEPENDENCIES:
   - Nuke
+  - RxAppState
   - RxCocoa
   - RxKeyboard
+  - RxReachability
   - RxStarscream
   - RxSwift
   - SnapKit
@@ -26,8 +36,11 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Nuke
+    - ReachabilitySwift
+    - RxAppState
     - RxCocoa
     - RxKeyboard
+    - RxReachability
     - RxStarscream
     - RxSwift
     - SnapKit
@@ -35,15 +48,18 @@ SPEC REPOS:
     - SwiftyGif
 
 SPEC CHECKSUMS:
-  Nuke: d0782693c570cb4f79e2a187859ef7f06f19365d
+  Nuke: 392eff7cb037adbec6699febe9237849ac5dcc47
+  ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
+  RxAppState: 46cae19e582daf7283a8f9ef553e7c049e1565b4
   RxCocoa: cbf70265dc65a981d4ac982e513c10cf23df24a0
   RxKeyboard: 4f782303f499f41577b41c96c6a9a5d7acd51a47
+  RxReachability: 053f2d913db44998242ade488ccaef558f3ce7cb
   RxStarscream: aa79e742c87e9bcdff218a1ebb59638f5174589e
   RxSwift: f172070dfd1a93d70a9ab97a5a01166206e1c575
-  SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
+  SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
-  SwiftyGif: 67490485c3b1fa19013d9613fab31de4629450fb
+  SwiftyGif: 3ca6760b21372f6b1844c0eb3957d7f49e2481ad
 
-PODFILE CHECKSUM: 49b5a0b547c7339dabe27cf6e1ddb5a0d9e6993d
+PODFILE CHECKSUM: 582bca6dabc8a9fd921c9feceac8e0b2c5c4331c
 
 COCOAPODS: 1.6.1

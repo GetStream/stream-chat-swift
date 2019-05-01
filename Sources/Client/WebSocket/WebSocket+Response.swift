@@ -13,7 +13,7 @@ extension WebSocket {
         case notConnected
         case connecting
         case connected(_ connectionId: String, User)
-        case disconnected(Error?)
+        case disconnected(Error)
         
         static func == (lhs: Connection, rhs: Connection) -> Bool {
             switch (lhs, rhs) {
@@ -78,7 +78,7 @@ extension WebSocket {
             case totalUnreadCount = "total_unread_count"
         }
         
-        struct ResponseTypeError: Error {
+        struct ResponseTypeError: Swift.Error {
             let type: String
         }
         

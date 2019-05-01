@@ -109,6 +109,7 @@ extension ChatViewController {
     
     private func updateTableView(with changes: ChannelChanges) {
         if case let .updated(row, position) = changes {
+            tableView.setContentOffset(tableView.contentOffset, animated: false)
             tableView.reloadData()
             tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: position, animated: false)
         }
@@ -126,6 +127,7 @@ extension ChatViewController {
             }
             
             if forceToScroll || needsToScroll {
+                tableView.setContentOffset(tableView.contentOffset, animated: false)
                 tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         }
@@ -170,7 +172,7 @@ extension ChatViewController {
         let cell = tableView.dequeueMessageCell(for: indexPath, style: isIncoming ? style.incomingMessage : style.outgoingMessage)
         
         if message.isDeleted {
-            cell.update(info: message.text, date: message.deleted)
+            cell.update(info: "This message was deleted.", date: message.deleted)
         } else {
             cell.update(message: message.text)
         }
@@ -201,8 +203,12 @@ extension ChatViewController {
             cell.avatarView.update(with: message.user.avatarURL, name: message.user.name)
         }
         
-        if !message.attachments.isEmpty {
-            cell.add(attachments: message.attachments, userName: message.user.name)
+        if !message.isDeleted, !message.attachments.isEmpty {
+            cell.add(attachments: message.attachments, userName: message.user.name) { [weak self] in
+                self?.tableView.update {
+                    self?.tableView.reloadRows(at: [indexPath], with: .none)
+                }
+            }
         }
         
         return cell

@@ -301,7 +301,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
     }
     
-    public func add(attachments: [Attachment], userName: String) {
+    public func add(attachments: [Attachment], userName: String, reload: @escaping () -> Void) {
         guard let style = style else {
             return
         }
@@ -314,7 +314,9 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             } else {
                 preview = createAttachmentPreview(with: attachment,
                                                   style: style,
-                                                  imageBackgroundColor: .color(by: userName, isDark: backgroundColor?.isDark ?? false))
+                                                  imageBackgroundColor: .color(by: userName,
+                                                                               isDark: backgroundColor?.isDark ?? false),
+                                                  reload: reload)
             }
             
             messageStackView.insertArrangedSubview(preview, at: offset)
@@ -332,13 +334,15 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     
     private func createAttachmentPreview(with attachment: Attachment,
                                          style: MessageViewStyle,
-                                         imageBackgroundColor: UIColor) -> AttachmentPreviewProtocol {
+                                         imageBackgroundColor: UIColor,
+                                         reload: @escaping () -> Void) -> AttachmentPreviewProtocol {
         let preview = AttachmentPreview(frame: .zero)
         preview.maxWidth = maxMessageWidth
         preview.tintColor = style.textColor
         preview.imageView.backgroundColor = imageBackgroundColor
         preview.layer.cornerRadius = style.cornerRadius
         preview.attachment = attachment
+        preview.forceToReload = reload
         
         preview.backgroundColor = attachment.isImage
             ? style.chatBackgroundColor

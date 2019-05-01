@@ -35,6 +35,7 @@ extension UITableView {
             return
         }
         
+        setContentOffset(contentOffset, animated: false)
         scrollToRow(at: IndexPath(row: rowsCount - 1, section: sectionsCount - 1), at: .top, animated: animated)
     }
     

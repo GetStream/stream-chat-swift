@@ -12,6 +12,7 @@ extension Client {
     
     func setupURLSession(token: Token) -> URLSession {
         let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true
         
         config.httpAdditionalHeaders = ["Authorization": token,
                                         "Content-Type": "application/json",

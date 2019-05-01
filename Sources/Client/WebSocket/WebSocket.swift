@@ -6,64 +6,99 @@
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import Starscream
+import Reachability
 import RxSwift
 import RxStarscream
+import RxReachability
+import RxAppState
 
 final class WebSocket {
     
-    private let logger: ClientLogger?
-    private let webSocket: Starscream.WebSocket
+    let webSocket: Starscream.WebSocket
+    private(set) lazy var reachability = Reachability()!
+    private(set) var lastError: Error?
+    private(set) var consecutiveFailures: TimeInterval = 0
+    let logger: ClientLogger?
     
     private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(30), queue: webSocket.callbackQueue) { [weak self] in
         self?.logger?.log("🏓")
         self?.webSocket.write(ping: Data())
     }
     
-    private(set) lazy var connection: Observable<WebSocket.Connection> = webSocket.rx.response
-        .startWith(.pong)
-        .filter { [weak self] in
-            if case .pong = $0 {
-                self?.connect()
-                return false
-            }
-            
-            return true
-        }
-        .map { [weak self] in self?.parseConnection($0) }
-        .unwrap()
-        .distinctUntilChanged()
-        .share(replay: 1, scope: .forever)
-    
+    private(set) lazy var connection: Observable<WebSocket.Connection> =
+        Observable.combineLatest(UIApplication.shared.rx.appState.startWith(UIApplication.shared.appState),
+                                 reachability.rx.reachabilityChanged.map { $0.connection }.startWith(reachability.connection),
+                                 webSocket.rx.response)
+            .do(onSubscribe: { [weak self] in self?.connect() },
+                onDispose: { [weak self] in self?.disconnect() })
+            .map { [weak self] in self?.parseConnection(appState: $0, reachability: $1, event: $2) }
+            .unwrap()
+            .distinctUntilChanged()
+            .share(replay: 1)
+
     private(set) lazy var response: Observable<WebSocket.Response> =
         Observable.combineLatest(connection.connected(), webSocket.rx.response)
+            .filter { connection, event -> Bool in
+                if case .connected = connection, case .message = event {
+                    return true
+                }
+                
+                return false
+            }
             .map { [weak self] _, event in self?.parseResponse(event) }
             .unwrap()
-            .share(replay: 1, scope: .whileConnected)
+            .filter { response -> Bool in
+                if case .healthCheck = response.event {
+                    return false
+                }
+                
+                return true
+            }
+            .share(replay: 1)
     
     init(_ urlRequest: URLRequest, logger: ClientLogger? = nil) {
         self.logger = logger
         webSocket = Starscream.WebSocket(request: urlRequest)
         webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat", qos: .userInitiated)
+        
+        if let host = urlRequest.url?.host {
+            reachability = Reachability(hostname: host)!
+            startReachability()
+        }
     }
     
     deinit {
+        reachability.stopNotifier()
         disconnect()
+    }
+    
+    private func startReachability() {
+        do {
+            try reachability.startNotifier()
+        } catch {
+            logger?.log(error, message: "😡 Reachability")
+        }
     }
     
     func connect() {
         if webSocket.isConnected {
-           webSocket.disconnect()
+           return
         }
         
+        logger?.log("❤️", "Connecting...")
         logger?.log(webSocket.request)
+        startReachability()
         DispatchQueue.main.async(execute: webSocket.connect)
     }
     
     func disconnect() {
         if webSocket.isConnected {
+            logger?.log("💔", "Disconnecting...")
+            handshakeTimer.suspend()
             webSocket.disconnect()
+            reachability.stopNotifier()
         }
     }
 }
@@ -72,7 +107,31 @@ final class WebSocket {
 
 extension WebSocket {
     
-    private func parseConnection(_ event: WebSocketEvent) -> Connection? {
+    private func parseConnection(appState: AppState, reachability: Reachability.Connection, event: WebSocketEvent) -> Connection? {
+        guard reachability != .none else {
+            return .notConnected
+        }
+        
+        if appState == .background {
+            disconnect()
+            return .notConnected
+        }
+        
+        if case .message = event {
+            if let response = parseResponse(event),
+                case let .healthCheck(connectionId, healthCheckUser) = response.event,
+                let user = healthCheckUser {
+                return .connected(connectionId, user)
+            } else if lastError != nil {
+                return nil
+            }
+        }
+        
+        if appState == .active, !webSocket.isConnected, lastError == nil {
+            connect()
+            return .connecting
+        }
+        
         switch event {
         case .connected:
             logger?.log("😊 Connected")
@@ -87,28 +146,21 @@ extension WebSocket {
                 logger?.log(error, message: "😡 Disconnected")
             }
             
-            reconnect()
+            let parsedError = parseDisconnect(error)
             
-            return .disconnected(error)
-            
-        case .message:
-            if let response = parseResponse(event),
-                case let .healthCheck(connectionId, healthCheckUser) = response.event,
-                let user = healthCheckUser {
-                return .connected(connectionId, user)
+            if parsedError == nil {
+                consecutiveFailures += 1
+            } else {
+                consecutiveFailures = 0
             }
+            
+            return .notConnected //.disconnected(parsedError)
             
         default:
             break
         }
         
         return nil
-    }
-    
-    private func reconnect() {
-        webSocket.callbackQueue.asyncAfter(deadline: .now() + 1) { [weak self] in
-            self?.connect()
-        }
     }
     
     private func parseResponse(_ event: WebSocketEvent) -> Response? {
@@ -122,9 +174,17 @@ extension WebSocket {
         }
         
         logger?.log("📦", data)
+        lastError = nil
+        
+        if let errorContsainer = try? JSONDecoder.stream.decode(ErrorContainer.self, from: data) {
+            lastError = errorContsainer.error
+            return nil
+        }
         
         do {
-            return try JSONDecoder.stream.decode(Response.self, from: data)
+            let response = try JSONDecoder.stream.decode(Response.self, from: data)
+            consecutiveFailures = 0
+            return response
         } catch {
             logger?.log(error, message: "😡 Decode response")
         }

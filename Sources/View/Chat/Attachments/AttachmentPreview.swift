@@ -82,6 +82,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     }()
     
     public var maxWidth: CGFloat = 0
+    var forceToReload: () -> Void = {}
     
     public var attachment: Attachment? {
         didSet {
@@ -160,17 +161,24 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         let modes = ImageLoadingOptions.ContentModes(success: .scaleAspectFit, failure: .center, placeholder: .center)
         let options = ImageLoadingOptions(placeholder: UIImage.Icons.image, failureImage: UIImage.Icons.close, contentModes: modes)
         
-        imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] in
-            self?.parse(imageResponse: $0, error: $1, maskImage: maskImage)
+        if let imageResponse = Nuke.ImageCache.shared.cachedResponse(for: imageRequest) {
+            imageView.image = imageResponse.image
+            imageView.contentMode = .scaleAspectFit
+            parse(imageResponse: imageResponse, error: nil, maskImage: maskImage, cached: true)
+        } else {
+            imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] in
+                self?.parse(imageResponse: $0, error: $1, maskImage: maskImage, cached: false)
+            }
         }
     }
     
-    private func parse(imageResponse: ImageResponse?, error: Error?, maskImage: UIImage?) {
+    private func parse(imageResponse: ImageResponse?, error: Error?, maskImage: UIImage?, cached: Bool) {
         guard let attachment = attachment else {
             return
         }
         
         var width = attachment.isImage ? defaultHeight : maxWidth
+        var height = defaultHeight
         
         if let image = imageResponse?.image, image.size.height > 0 {
             imageView.backgroundColor = backgroundColor
@@ -178,6 +186,15 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             if attachment.isImage {
                 width = min(image.size.width / image.size.height * defaultHeight, maxWidth)
                 widthConstraint?.update(offset: width)
+            }
+            
+            if width == maxWidth, let heightConstraint = heightConstraint, heightConstraint.isActive {
+                height = (image.size.height / image.size.width * maxWidth).rounded()
+                heightConstraint.update(offset: height)
+                
+                if !cached {
+                    forceToReload()
+                }
             }
             
             if let animatedImageData = image.animatedImageData, let animatedImage = try? UIImage(gifData: animatedImageData) {
@@ -191,7 +208,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         }
         
         if let maskImage = maskImage {
-            let maskView = UIImageView(frame: CGRect(width: width, height: defaultHeight))
+            let maskView = UIImageView(frame: CGRect(width: width, height: height))
             maskView.image = maskImage
             mask = maskView
             layer.cornerRadius = 0
