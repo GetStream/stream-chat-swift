@@ -188,7 +188,10 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                 widthConstraint?.update(offset: width)
             }
             
-            if width == maxWidth, let heightConstraint = heightConstraint, heightConstraint.isActive {
+            if height == .attachmentPreviewHeight,
+                width == maxWidth,
+                let heightConstraint = heightConstraint,
+                heightConstraint.isActive {
                 height = (image.size.height / image.size.width * maxWidth).rounded()
                 heightConstraint.update(offset: height)
                 

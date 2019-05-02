@@ -162,6 +162,8 @@ public enum AttachmentFileType: String, Codable {
     case tar
     case xls
     case zip
+    case mp3
+    case mp4
     
     public init(mimeType: String) {
         switch mimeType {
@@ -172,6 +174,8 @@ public enum AttachmentFileType: String, Codable {
         case "application/x-tar": self = .tar
         case "application/vnd.ms-excel": self = .xls
         case "application/zip": self = .zip
+        case "audio/mp3": self = .mp3
+        case "video/mp4": self = .mp4
         default: self = .unknown
         }
     }

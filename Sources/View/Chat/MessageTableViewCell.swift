@@ -398,6 +398,7 @@ extension MessageTableViewCell {
     private func createAttachmentFilePreview(with attachment: Attachment,
                                              style: MessageViewStyle) -> AttachmentPreviewProtocol {
         let preview = AttachmentFilePreview(frame: .zero)
+        preview.attachment = attachment
         preview.backgroundColor = style.chatBackgroundColor
         preview.snp.makeConstraints { $0.height.equalTo(CGFloat.attachmentFilePreviewHeight).priority(999) }
         return preview
