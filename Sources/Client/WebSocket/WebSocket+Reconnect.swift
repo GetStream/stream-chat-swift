@@ -36,7 +36,7 @@ extension WebSocket {
             return lastError
         }
         
-        if reachability.connection != .none {
+        if reachability?.connection != .none {
             reconnect()
         }
         

@@ -57,6 +57,24 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         channelPresenter?.load()
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        guard let presenter = channelPresenter, presenter.items.count > 0 else {
+            return
+        }
+        
+        tableView.setContentOffset(tableView.contentOffset, animated: false)
+        let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
+        tableView.reloadData()
+        
+        if needsToScroll {
+            tableView.scrollToRow(at: IndexPath(row: presenter.items.count - 1, section: 0),
+                                  at: .top,
+                                  animated: animated)
+        }
+    }
+    
     public override var preferredStatusBarStyle: UIStatusBarStyle {
         return style.backgroundColor.isDark ? .lightContent : .default
     }
@@ -108,6 +126,11 @@ extension ChatViewController {
     }
     
     private func updateTableView(with changes: ChannelChanges) {
+        // Check if view is loaded nad visible.
+        guard isVisible else {
+            return
+        }
+        
         if case let .updated(row, position) = changes {
             tableView.setContentOffset(tableView.contentOffset, animated: false)
             tableView.reloadData()

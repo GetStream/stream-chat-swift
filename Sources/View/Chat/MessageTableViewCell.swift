@@ -166,8 +166,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(CGFloat.messageSpacing) //  + .reactionsHeight + .messageSpacing
             make.bottom.equalToSuperview()
-            make.left.equalToSuperview().offset(messagePadding)
-            make.right.equalToSuperview().offset(-messagePadding)
+            make.left.equalToSuperview().offset(messagePadding).priority(999)
+            make.right.equalToSuperview().offset(-messagePadding).priority(999)
         }
         
         // Reactions.

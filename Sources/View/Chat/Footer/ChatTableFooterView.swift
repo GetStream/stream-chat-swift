@@ -15,7 +15,7 @@ final class ChatTableFooterView: UIView {
         let stackView = UIStackView(arrangedSubviews: [])
         stackView.axis = .vertical
         addSubview(stackView)
-        stackView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        stackView.snp.makeConstraints { $0.edges.equalToSuperview().priority(999) }
         return stackView
     }()
     

@@ -26,8 +26,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                               name: "Talk about Go",
                               imageURL: URL(string: "https://cdn.chrisshort.net/testing-certificate-chains-in-go/GOPHER_MIC_DROP.png"))
         
-        if let chatViewController = window?.rootViewController as? ChatViewController {
-            chatViewController.channelPresenter = ChannelPresenter(channel: channel)
+        if let tabBarController = window?.rootViewController as? UITabBarController {
+            tabBarController.viewControllers?.enumerated().forEach { index, viewController in
+                if let chatViewController = viewController as? ChatViewController {
+                    chatViewController.channelPresenter = ChannelPresenter(channel: channel)
+                    let isDark = index % 2 != 0
+                    chatViewController.title = isDark ? "Dark" : "Light"
+                    chatViewController.style = isDark ? ChatViewStyle.dark : ChatViewStyle()
+                }
+            }
         }
         
         return true

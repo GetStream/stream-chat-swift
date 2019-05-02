@@ -64,6 +64,7 @@
 		8AB1B8F2226772C1002C65BD /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8F1226772C1002C65BD /* WebViewController.swift */; };
 		8AB1B8F422677EEA002C65BD /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB1B8F322677EEA002C65BD /* String+Extensions.swift */; };
 		8AB8FA742279F3F400C14D94 /* UIApplication+AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB8FA732279F3F400C14D94 /* UIApplication+AppState.swift */; };
+		8AB8FA76227AFD8F00C14D94 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB8FA75227AFD8F00C14D94 /* UIViewController+Extensions.swift */; };
 		8ABC551C2276FB9D008F312B /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC551B2276FB9D008F312B /* AvatarView.swift */; };
 		8ABC551E22770286008F312B /* ChatTableFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC551D22770286008F312B /* ChatTableFooterView.swift */; };
 		8ABC5520227730C9008F312B /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC551F227730C9008F312B /* UIView+Extensions.swift */; };
@@ -142,6 +143,7 @@
 		8AB1B8F1226772C1002C65BD /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		8AB1B8F322677EEA002C65BD /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		8AB8FA732279F3F400C14D94 /* UIApplication+AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+AppState.swift"; sourceTree = "<group>"; };
+		8AB8FA75227AFD8F00C14D94 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		8ABC551B2276FB9D008F312B /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		8ABC551D22770286008F312B /* ChatTableFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableFooterView.swift; sourceTree = "<group>"; };
 		8ABC551F227730C9008F312B /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
@@ -347,6 +349,7 @@
 				8A1A9401225A436800060ACC /* CGRect+Extensions.swift */,
 				8ABC552422779C81008F312B /* UIStackView.swift */,
 				8AB8FA732279F3F400C14D94 /* UIApplication+AppState.swift */,
+				8AB8FA75227AFD8F00C14D94 /* UIViewController+Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -611,6 +614,7 @@
 				8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */,
 				8ABF8260226F4A4600A966D9 /* WebSocket+Response.swift in Sources */,
 				8ABC551C2276FB9D008F312B /* AvatarView.swift in Sources */,
+				8AB8FA76227AFD8F00C14D94 /* UIViewController+Extensions.swift in Sources */,
 				8A1A9412225DFDA100060ACC /* ComposerView.swift in Sources */,
 				8AB1B8F422677EEA002C65BD /* String+Extensions.swift in Sources */,
 				8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */,

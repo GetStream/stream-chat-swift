@@ -17,27 +17,35 @@ import RxAppState
 final class WebSocket {
     
     let webSocket: Starscream.WebSocket
-    private(set) lazy var reachability = Reachability()!
+    private(set) lazy var reachability = Reachability()
     private(set) var lastError: Error?
     private(set) var consecutiveFailures: TimeInterval = 0
     let logger: ClientLogger?
+    
+    private var lastMessageHashValue: Int = 0
+    private var lastMessageResponse: Response?
     
     private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(30), queue: webSocket.callbackQueue) { [weak self] in
         self?.logger?.log("🏓")
         self?.webSocket.write(ping: Data())
     }
     
-    private(set) lazy var connection: Observable<WebSocket.Connection> =
-        Observable.combineLatest(UIApplication.shared.rx.appState.startWith(UIApplication.shared.appState),
-                                 reachability.rx.reachabilityChanged.map { $0.connection }.startWith(reachability.connection),
-                                 webSocket.rx.response)
-            .do(onSubscribe: { [weak self] in self?.connect() },
+    private(set) lazy var connection: Observable<WebSocket.Connection> = {
+        let app = UIApplication.shared
+        let connection = reachability?.connection ?? .none
+        let reachabilityObservation = reachability?.rx.reachabilityChanged.map { $0.connection }.startWith(connection) ?? .empty()
+        
+        return Observable.combineLatest(app.rx.appState.startWith(app.appState),
+                                        reachabilityObservation,
+                                        webSocket.rx.response)
+            .do(onSubscribed: { [weak self] in self?.connect() },
                 onDispose: { [weak self] in self?.disconnect() })
             .map { [weak self] in self?.parseConnection(appState: $0, reachability: $1, event: $2) }
             .unwrap()
             .distinctUntilChanged()
             .share(replay: 1)
-
+    }()
+    
     private(set) lazy var response: Observable<WebSocket.Response> =
         Observable.combineLatest(connection.connected(), webSocket.rx.response)
             .filter { connection, event -> Bool in
@@ -47,7 +55,7 @@ final class WebSocket {
                 
                 return false
             }
-            .map { [weak self] _, event in self?.parseResponse(event) }
+            .map { [weak self] _, event in self?.parseMessage(event) }
             .unwrap()
             .filter { response -> Bool in
                 if case .healthCheck = response.event {
@@ -70,13 +78,13 @@ final class WebSocket {
     }
     
     deinit {
-        reachability.stopNotifier()
+        reachability?.stopNotifier()
         disconnect()
     }
     
     private func startReachability() {
         do {
-            try reachability.startNotifier()
+            try reachability?.startNotifier()
         } catch {
             logger?.log(error, message: "😡 Reachability")
         }
@@ -98,7 +106,7 @@ final class WebSocket {
             logger?.log("💔", "Disconnecting...")
             handshakeTimer.suspend()
             webSocket.disconnect()
-            reachability.stopNotifier()
+            reachability?.stopNotifier()
         }
     }
 }
@@ -118,7 +126,7 @@ extension WebSocket {
         }
         
         if case .message = event {
-            if let response = parseResponse(event),
+            if let response = parseMessage(event),
                 case let .healthCheck(connectionId, healthCheckUser) = response.event,
                 let user = healthCheckUser {
                 return .connected(connectionId, user)
@@ -163,13 +171,19 @@ extension WebSocket {
         return nil
     }
     
-    private func parseResponse(_ event: WebSocketEvent) -> Response? {
+    private func parseMessage(_ event: WebSocketEvent) -> Response? {
         guard case .message(let message) = event else {
+            lastMessageResponse = nil
             return nil
+        }
+        
+        if lastMessageHashValue == message.hashValue, let response = lastMessageResponse {
+            return response
         }
         
         guard let data = message.data(using: .utf8) else {
             logger?.log("📦", "Can't get a data from the message: \(message)")
+            lastMessageResponse = nil
             return nil
         }
         
@@ -178,15 +192,18 @@ extension WebSocket {
         
         if let errorContsainer = try? JSONDecoder.stream.decode(ErrorContainer.self, from: data) {
             lastError = errorContsainer.error
+            lastMessageResponse = nil
             return nil
         }
         
         do {
-            let response = try JSONDecoder.stream.decode(Response.self, from: data)
+            lastMessageResponse = try JSONDecoder.stream.decode(Response.self, from: data)
+            lastMessageHashValue = message.hashValue
             consecutiveFailures = 0
-            return response
+            return lastMessageResponse
         } catch {
             logger?.log(error, message: "😡 Decode response")
+            lastMessageResponse = nil
         }
         
         return nil

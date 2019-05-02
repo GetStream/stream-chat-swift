@@ -33,29 +33,9 @@ public final class ChannelPresenter {
 
     private(set) lazy var loading: Driver<ChannelChanges> =
         Observable.combineLatest(Client.shared.webSocket.connection, loadPagination.asObserver())
-            .filter { [weak self] connection, _ -> Bool in
-                if case .connected = connection {
-                    return true
-                }
-                
-                if let self = self, !self.items.isEmpty {
-                    self.next = .none
-                    self.items = []
-                    self.loadPagination.onNext(ChannelPresenter.limitPagination)
-                }
-                
-                return false
-            }
-            .flatMapLatest { [weak self] (connection, pagination) -> Observable<Query> in
-                if let self = self,
-                    let user = Client.shared.user,
-                    case .connected(let connectionId, _) = connection {
-                    let query = Query(channel: self.channel, members: [Member(user: user)], pagination: pagination)
-                    return Client.shared.rx.request(endpoint: ChatEndpoint.query(query), connectionId: connectionId)
-                }
-                
-                return .empty()
-            }
+            .map { [weak self] in self?.parseConnection($0, pagination: $1) }
+            .unwrap()
+            .flatMapLatest { Client.shared.rx.request(endpoint: ChatEndpoint.query($0), connectionId: $1) }
             .map { [weak self] in self?.parseQuery($0) ?? .none }
             .asDriver(onErrorJustReturn: .none)
 
@@ -69,20 +49,18 @@ public final class ChannelPresenter {
     }
 }
 
-// MARK: -
+// MARK: - Connection
 
 extension ChannelPresenter {
-    func typingUsersText() -> String? {
-        guard !typingUsers.isEmpty else {
-            return nil
+    private func parseConnection(_ connection: WebSocket.Connection, pagination: Pagination) -> (Query, String)? {
+        if case .connected(let connectionId, _) = connection, let user = Client.shared.user {
+            return (Query(channel: channel, members: [Member(user: user)], pagination: pagination), connectionId)
         }
         
-        if typingUsers.count == 1, let user = typingUsers.first {
-            return "\(user.name) is typing..."
-        } else if typingUsers.count == 2 {
-            return "\(typingUsers[0].name) and \(typingUsers[1].name) are typing..."
-        } else if let user = typingUsers.first {
-            return "\(user.name) and \(String(typingUsers.count - 1)) others are typing..."
+        if !items.isEmpty {
+            next = .none
+            items = []
+            loadPagination.onNext(ChannelPresenter.limitPagination)
         }
         
         return nil
@@ -241,9 +219,29 @@ extension ChannelPresenter {
     }
 }
 
+// MARK: - Helpers
+
 extension ChannelPresenter {
     public static var statusYesterdayTitle = "Yesterday"
     public static var statusTodayTitle = "Today"
+}
+
+extension ChannelPresenter {
+    func typingUsersText() -> String? {
+        guard !typingUsers.isEmpty else {
+            return nil
+        }
+        
+        if typingUsers.count == 1, let user = typingUsers.first {
+            return "\(user.name) is typing..."
+        } else if typingUsers.count == 2 {
+            return "\(typingUsers[0].name) and \(typingUsers[1].name) are typing..."
+        } else if let user = typingUsers.first {
+            return "\(user.name) and \(String(typingUsers.count - 1)) others are typing..."
+        }
+        
+        return nil
+    }
 }
 
 // MARK: - Send Message
