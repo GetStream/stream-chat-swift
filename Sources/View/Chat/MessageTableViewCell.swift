@@ -75,8 +75,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     
     private lazy var messageLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.font = .chatRegular
-        label.textColor = .black
         label.preferredMaxLayoutWidth = maxMessageWidth
         label.numberOfLines = 0
         return label
@@ -124,9 +122,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         dateLabel.backgroundColor = backgroundColor
         bottomPaddingView.backgroundColor = backgroundColor
         
-        messageLabel.font = style.font
-        messageLabel.textColor = style.textColor
-        messageLabel.backgroundColor = style.backgroundColor
+        messageLabel.attributedText = attributedText()
         
         if style.alignment == .left {
             nameLabel.font = style.nameFont
@@ -220,9 +216,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageContainerView.image = nil
         messageContainerView.layer.borderWidth = 0
         messageContainerView.backgroundColor = style?.chatBackgroundColor
-        messageLabel.text = nil
-        messageLabel.font = style?.font
-        messageLabel.backgroundColor = style?.backgroundColor
+        messageLabel.attributedText = attributedText()
         
         paddingType = .regular
         
@@ -234,13 +228,36 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         attachmentPreviews = []
     }
     
+    private func attributedText(text: String? = nil, font: UIFont? = nil, backgroundColor: UIColor? = nil) -> NSAttributedString {
+        let text = text ?? ""
+        
+        guard let style = style else {
+            return NSAttributedString(string: text)
+        }
+        
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineHeightMultiple = 1.1
+        
+        return NSAttributedString(string: text, attributes: [.foregroundColor: style.textColor,
+                                                             .backgroundColor: backgroundColor ?? style.backgroundColor,
+                                                             .font: font ?? style.font,
+                                                             .paragraphStyle: paragraphStyle])
+    }
+}
+
+// MARK: - Updates
+
+extension MessageTableViewCell {
+    
     public func updateBackground(isContinueMessage: Bool) {
         guard let style = style else {
             return
         }
         
-        if let text = messageLabel.text, text.messageContainsOnlyEmoji {
-            messageLabel.backgroundColor = style.chatBackgroundColor
+        if let text = messageLabel.attributedText?.string, text.messageContainsOnlyEmoji {
+            messageLabel.attributedText = attributedText(text: messageLabel.attributedText?.string,
+                                                         font: style.emojiFont,
+                                                         backgroundColor: style.chatBackgroundColor)
             return
         }
         
@@ -291,15 +308,42 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         infoLabel.text = info
         infoLabel.isHidden = false
     }
-
+    
     public func update(message: String) {
         messageContainerView.isHidden = message.isEmpty
-        messageLabel.text = message
+        messageLabel.attributedText = attributedText(text: message)
+    }
+    
+    public func update(mentionedUsersNames: [String]) {
+        guard let style = style,
+            let currentAttributedText = messageLabel.attributedText,
+            currentAttributedText.length > 0 else {
+                return
+        }
         
-        if let font = style?.emojiFont, message.messageContainsOnlyEmoji {
-            messageLabel.font = font
+        DispatchQueue.global(qos: .background).async { [weak self] in
+            let boldFont = style.font.withTraits(.traitBold)
+            let text = currentAttributedText.string
+            let attributedText = NSMutableAttributedString(attributedString: currentAttributedText)
+            
+            mentionedUsersNames.forEach { name in
+                if let range = text.range(of: name) {
+                    attributedText.addAttribute(.font, value: boldFont, range: text.nsRange(from: range))
+                }
+            }
+            
+            DispatchQueue.main.async {
+                if let currentText = self?.messageLabel.attributedText?.string, currentText == text {
+                    self?.messageLabel.attributedText = attributedText
+                }
+            }
         }
     }
+}
+
+// MARK: - Attachments
+
+extension MessageTableViewCell {
     
     public func add(attachments: [Attachment], userName: String, reload: @escaping () -> Void) {
         guard let style = style else {

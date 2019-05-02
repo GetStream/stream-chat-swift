@@ -8,6 +8,12 @@
 
 import Foundation
 
+extension StringProtocol where Index == String.Index {
+    func nsRange(from range: Range<Index>) -> NSRange {
+        return NSRange(range, in: self)
+    }
+}
+
 extension String {
     public static var messageEmojiCount = 8
     

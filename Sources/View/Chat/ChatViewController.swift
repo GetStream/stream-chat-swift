@@ -199,6 +199,10 @@ extension ChatViewController {
             cell.update(info: "This message was deleted.", date: message.deleted)
         } else {
             cell.update(message: message.text)
+            
+            if !message.mentionedUsers.isEmpty {
+                cell.update(mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
+            }
         }
         
         var showAvatar = true
