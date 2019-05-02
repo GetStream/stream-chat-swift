@@ -203,11 +203,11 @@ public final class ComposerView: UIView {
         // Observe the keyboard moving.
         RxKeyboard.instance.visibleHeight
             .drive(onNext: { [weak self] height in
-                guard let self = self else {
+                guard let self = self, let parentView = self.superview else {
                     return
                 }
                 
-                let bottom: CGFloat = height + .messageEdgePadding + (height > 0 ? 0 : .safeAreaBottom)
+                let bottom: CGFloat = height + .messageEdgePadding - (height > 0 ? parentView.safeAreaBottomOffset : 0)
                 self.bottomConstraint?.update(offset: -bottom)
                 self.updateStyle(with: height != 0 ? .active : .normal)
             })

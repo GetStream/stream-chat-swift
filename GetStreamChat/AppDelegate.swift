@@ -28,7 +28,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         if let tabBarController = window?.rootViewController as? UITabBarController {
             tabBarController.viewControllers?.enumerated().forEach { index, viewController in
-                if let chatViewController = viewController as? ChatViewController {
+                var chatViewController: ChatViewController?
+                
+                if let viewController = viewController as? ChatViewController {
+                    chatViewController = viewController
+                } else if let navigationController = viewController as? UINavigationController {
+                    chatViewController = navigationController.viewControllers.first as? ChatViewController
+                }
+                
+                if let chatViewController = chatViewController {
                     chatViewController.channelPresenter = ChannelPresenter(channel: channel)
                     let isDark = index % 2 != 0
                     chatViewController.title = isDark ? "Dark" : "Light"

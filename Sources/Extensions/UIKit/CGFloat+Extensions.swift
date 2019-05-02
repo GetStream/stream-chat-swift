@@ -12,7 +12,7 @@ extension CGFloat {
     public static let safeAreaTop: CGFloat = (UIApplication.shared.delegate?.window as? UIWindow)?.safeAreaInsets.top ?? 0
     public static let safeAreaBottom: CGFloat = (UIApplication.shared.delegate?.window as? UIWindow)?.safeAreaInsets.bottom ?? 0
     
-    public static let chatBottomThreshold: CGFloat = .messageAvatarSize + 2 * .messageEdgePadding
+    public static let chatBottomThreshold: CGFloat = .messageAvatarSize + 2 * .messageVerticalInset + .messagesToComposerPadding
     
     public static let composerCornerRadius: CGFloat = 10
     public static let composerHeight: CGFloat = 60
@@ -23,7 +23,8 @@ extension CGFloat {
     public static let composerAttachmentWidth: CGFloat = 50
     public static let composerAttachmentHeight: CGFloat = 60
     
-    public static let messagesBottomMargin: CGFloat = .composerHeight + (CGFloat.safeAreaBottom > 0 ? 0 : 30)
+    public static let messagesToComposerPadding: CGFloat = 30
+    public static let messagesBottomMargin: CGFloat = .composerHeight + (CGFloat.safeAreaBottom > 0 ? 0 : .messagesToComposerPadding)
     public static let messageAvatarRadius: CGFloat = 16
     public static let messageAvatarSize: CGFloat = 2 * .messageAvatarRadius
     public static let messageInnerPadding: CGFloat = 8

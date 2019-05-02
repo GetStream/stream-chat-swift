@@ -34,7 +34,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         tableView.registerMessageCell(style: style.outgoingMessage)
         tableView.register(cellType: StatusTableViewCell.self)
         tableView.tableFooterView = ChatTableFooterView()
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: CGFloat.messagesBottomMargin, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: CGFloat.messagesBottomMargin + .safeAreaBottom, right: 0)
         view.insertSubview(tableView, at: 0)
         return tableView
     }()
@@ -92,6 +92,7 @@ extension ChatViewController {
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
+            .skip(1)
             .drive(onNext: { [weak self] height in
                 let bottom: CGFloat = height + .messagesBottomMargin + (height > 0 ? 0 : .safeAreaBottom)
                 self?.tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottom, right: 0)
@@ -102,7 +103,7 @@ extension ChatViewController {
             .drive(onNext: { [weak self] height in
                 if let self = self {
                     var contentOffset = self.tableView.contentOffset
-                    contentOffset.y += height - .safeAreaBottom
+                    contentOffset.y += height - self.view.safeAreaBottomOffset
                     self.tableView.contentOffset = contentOffset
                 }
             })
