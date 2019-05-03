@@ -185,7 +185,7 @@ public final class ComposerView: UIView {
         // Add text view.
         addSubview(textView)
         updateTextHeightIfNeeded()
-        textView.keyboardAppearance = style.backgroundColor.isDark ? .dark : .default
+        textView.keyboardAppearance = style.textColor.isDark ? .default : .dark
         textView.backgroundColor = backgroundColor
         textView.tintColor = style.cursorColor
         
@@ -234,7 +234,7 @@ public final class ComposerView: UIView {
         
         let adjustingView = UIView(frame: .zero)
         adjustingView.isUserInteractionEnabled = false
-        adjustingView.backgroundColor = .init(white: isDark ? 1 : 0, alpha: isDark ? 0.3 : 0.1)
+        adjustingView.backgroundColor = .init(white: isDark ? 1 : 0, alpha: isDark ? 0.25 : 0.1)
         insertSubview(adjustingView, at: 0)
         adjustingView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
