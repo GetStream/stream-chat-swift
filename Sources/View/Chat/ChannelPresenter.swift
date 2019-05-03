@@ -20,8 +20,6 @@ public enum ChannelChanges: Equatable {
 public final class ChannelPresenter {
     public typealias Completion = (_ error: Error?) -> Void
     
-    static let limitPagination: Pagination = .limit(50)
-    
     public private(set) var channel: Channel
     var members: [Member] = []
     private var next: Pagination = .none
@@ -30,7 +28,7 @@ public final class ChannelPresenter {
     private(set) var items: [ChatItem] = []
     private(set) var typingUsers: [User] = []
     private let loadPagination = PublishSubject<Pagination>()
-
+    
     private(set) lazy var loading: Driver<ChannelChanges> =
         Observable.combineLatest(Client.shared.webSocket.connection, loadPagination.asObserver())
             .map { [weak self] in self?.parseConnection($0, pagination: $1) }
@@ -38,7 +36,7 @@ public final class ChannelPresenter {
             .flatMapLatest { Client.shared.rx.request(endpoint: ChatEndpoint.query($0), connectionId: $1) }
             .map { [weak self] in self?.parseQuery($0) ?? .none }
             .asDriver(onErrorJustReturn: .none)
-
+    
     private(set) lazy var changes: Driver<ChannelChanges> = Client.shared.webSocket.response
         .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
         .filter { $0 != .none }
@@ -60,7 +58,7 @@ extension ChannelPresenter {
         if !items.isEmpty {
             next = .none
             items = []
-            loadPagination.onNext(ChannelPresenter.limitPagination)
+            loadPagination.onNext(.pageSize)
         }
         
         return nil
@@ -127,8 +125,8 @@ extension ChannelPresenter {
         }
     }
     
-    func load(pagination: Pagination = ChannelPresenter.limitPagination) {
-        if pagination == ChannelPresenter.limitPagination {
+    func load(pagination: Pagination = .pageSize) {
+        if pagination == .pageSize {
             next = .none
         }
         
@@ -177,11 +175,10 @@ extension ChannelPresenter {
             }
         }
         
-        if case .limit(let limitValue) = ChannelPresenter.limitPagination,
-            limitValue > 0,
+        if case .limit(let limitValue) = (isNextPage ? Pagination.nextPageSize : Pagination.pageSize),
             query.messages.count == limitValue,
             let first = query.messages.first {
-            next = ChannelPresenter.limitPagination + .lessThan(first.id)
+            next = .nextPageSize + .lessThan(first.id)
             items.insert(.loading, at: 0)
         } else {
             next = .none
