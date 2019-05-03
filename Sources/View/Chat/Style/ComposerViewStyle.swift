@@ -9,6 +9,8 @@
 import UIKit
 
 public struct ComposerViewStyle: Hashable {
+    public typealias States = [State: Style]
+    
     public let font: UIFont
     public let textColor: UIColor
     public let tintColor: UIColor
@@ -21,10 +23,9 @@ public struct ComposerViewStyle: Hashable {
          textColor: UIColor = .black,
          tintColor: UIColor = .chatGray,
          cursorColor: UIColor = .chatLightBlue,
-         backgroundColor: UIColor = .chatComposer,
+         backgroundColor: UIColor = .clear,
          cornerRadius: CGFloat = .composerCornerRadius,
-         states: [State: Style] = [.active: Style(borderWidth: 2),
-                                   .disabled: Style(borderWidth: 2, borderColor: .chatGray)]) {
+         states: States = [.active: .init(borderWidth: 2), .disabled: .init(borderWidth: 2, borderColor: .chatGray)]) {
         self.font = font
         self.textColor = textColor
         self.tintColor = tintColor

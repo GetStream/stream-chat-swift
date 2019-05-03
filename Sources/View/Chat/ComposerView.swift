@@ -196,6 +196,10 @@ public final class ComposerView: UIView {
             make.right.equalTo(buttonsStackView.snp.left)
         }
         
+        if style.backgroundColor == .clear {
+            addBlurredBackground(blurEffectStyle: style.textColor.isDark ? .extraLight : .dark)
+        }
+        
         // Add placeholder.
         self.placeholderText = placeholderText
         filePickerButton.tintColor = style.tintColor
@@ -212,6 +216,27 @@ public final class ComposerView: UIView {
                 self.updateStyle(with: height != 0 ? .active : .normal)
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func addBlurredBackground(blurEffectStyle: UIBlurEffect.Style) {
+        let isDark = blurEffectStyle == .dark
+        
+        guard !UIAccessibility.isReduceTransparencyEnabled else {
+            backgroundColor = isDark ? .chatDarkGray : .chatComposer
+            return
+        }
+        
+        let blurEffect = UIBlurEffect(style: blurEffectStyle)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.isUserInteractionEnabled = false
+        insertSubview(blurView, at: 0)
+        blurView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        
+        let adjustingView = UIView(frame: .zero)
+        adjustingView.isUserInteractionEnabled = false
+        adjustingView.backgroundColor = .init(white: isDark ? 1 : 0, alpha: isDark ? 0.3 : 0.1)
+        insertSubview(adjustingView, at: 0)
+        adjustingView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
     
     private func updateStyle(with state: ComposerViewStyle.State) {
