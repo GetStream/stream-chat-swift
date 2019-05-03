@@ -81,7 +81,7 @@ extension WebViewController: WKNavigationDelegate {
         activityIndicatorView.stopAnimating()
         
         webView.evaluateJavaScript("document.title") { data, _ in
-            if let title = data as? String {
+            if let title = data as? String, !title.isEmpty {
                 self.title = title
             }
         }

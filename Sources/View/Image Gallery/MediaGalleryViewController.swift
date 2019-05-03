@@ -20,6 +20,7 @@ class MediaGalleryViewController: UIViewController {
     public let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     /// An image URL's.
     public var items: [MediaGalleryItem] = []
+    public var selected: Int = 0
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +29,10 @@ class MediaGalleryViewController: UIViewController {
         setupScrollView()
         setupCollectionView()
         addCloseButton()
+        
+        if selected > 0, selected < items.count {
+            collectionView.scrollToItem(at: IndexPath(item: selected, section: 0), at: .centeredHorizontally, animated: false)
+        }
     }
     
     override var prefersStatusBarHidden: Bool {
@@ -300,13 +305,14 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
 extension UIViewController {
     
     /// Presents the image gallery with a given image URL's.
-    public func showMediaGallery(with items: [MediaGalleryItem]?, animated: Bool = true) {
+    public func showMediaGallery(with items: [MediaGalleryItem]?, selectedIndex: Int = 0, animated: Bool = true) {
         guard let items = items, !items.isEmpty else {
             return
         }
         
         let imageGalleryViewController = MediaGalleryViewController()
         imageGalleryViewController.items = items
+        imageGalleryViewController.selected = selectedIndex
         present(imageGalleryViewController, animated: animated)
     }
 }

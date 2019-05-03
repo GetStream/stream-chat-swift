@@ -6,6 +6,9 @@ PODS:
     - RxSwift (~> 4.4)
   - RxCocoa (4.5.0):
     - RxSwift (>= 4.4.2, ~> 4.4)
+  - RxGesture (2.2.0):
+    - RxCocoa (~> 4.5)
+    - RxSwift (~> 4.5)
   - RxKeyboard (0.9.0):
     - RxCocoa (>= 4.3.1)
     - RxSwift (>= 4.3.1)
@@ -26,6 +29,7 @@ DEPENDENCIES:
   - Nuke
   - RxAppState
   - RxCocoa
+  - RxGesture
   - RxKeyboard
   - RxReachability
   - RxStarscream
@@ -39,6 +43,7 @@ SPEC REPOS:
     - ReachabilitySwift
     - RxAppState
     - RxCocoa
+    - RxGesture
     - RxKeyboard
     - RxReachability
     - RxStarscream
@@ -52,6 +57,7 @@ SPEC CHECKSUMS:
   ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
   RxAppState: 46cae19e582daf7283a8f9ef553e7c049e1565b4
   RxCocoa: cbf70265dc65a981d4ac982e513c10cf23df24a0
+  RxGesture: c1b7bf17166b0ef9d642a9510f8bac5785f18990
   RxKeyboard: 4f782303f499f41577b41c96c6a9a5d7acd51a47
   RxReachability: 053f2d913db44998242ade488ccaef558f3ce7cb
   RxStarscream: aa79e742c87e9bcdff218a1ebb59638f5174589e
@@ -60,6 +66,6 @@ SPEC CHECKSUMS:
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
   SwiftyGif: 3ca6760b21372f6b1844c0eb3957d7f49e2481ad
 
-PODFILE CHECKSUM: 582bca6dabc8a9fd921c9feceac8e0b2c5c4331c
+PODFILE CHECKSUM: 4699db2f9b8be0265a899afe7f2ad3509975d85e
 
 COCOAPODS: 1.6.1

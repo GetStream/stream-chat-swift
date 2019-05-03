@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import RxSwift
 
 public protocol AttachmentPreviewProtocol where Self: UIView {
+    var disposeBag: DisposeBag { get }
+    
     /// An attachment.
     var attachment: Attachment? { get set }
     

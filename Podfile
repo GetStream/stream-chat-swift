@@ -9,6 +9,7 @@ target 'GetStreamChat' do
   pod 'RxStarscream'
   pod 'RxReachability'
   pod 'RxAppState'
+  pod 'RxGesture'
   pod 'SnapKit'
   pod 'Nuke'
   pod 'SwiftyGif'

@@ -8,9 +8,11 @@
 
 import UIKit
 import SnapKit
+import RxSwift
 
 final class AttachmentFilePreview: UIImageView, AttachmentPreviewProtocol {
     
+    let disposeBag = DisposeBag()
     public var attachment: Attachment?
     
     private lazy var iconImageView: UIImageView = {

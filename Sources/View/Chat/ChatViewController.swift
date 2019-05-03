@@ -231,15 +231,35 @@ extension ChatViewController {
             cell.avatarView.update(with: message.user.avatarURL, name: message.user.name)
         }
         
-        if !message.isDeleted, !message.attachments.isEmpty {
-            cell.add(attachments: message.attachments, userName: message.user.name) { [weak self] in
-                self?.tableView.update {
-                    self?.tableView.reloadRows(at: [indexPath], with: .none)
-                }
-            }
-        }
+        addAttchaments(message: message, to: cell, at: indexPath)
         
         return cell
+    }
+    
+    private func addAttchaments(message: Message, to cell: MessageTableViewCell, at indexPath: IndexPath) {
+        guard !message.isDeleted, !message.attachments.isEmpty else {
+            return
+        }
+        
+        cell.add(attachments: message.attachments,
+                 userName: message.user.name,
+                 tap: { [weak self] in self?.show(attachment: $0, at: $1, from: $2) }) { [weak self] in
+                    if let self = self {
+                        self.tableView.update {
+                            self.tableView.reloadRows(at: [indexPath], with: .none)
+                        }
+                    }
+        }
+    }
+    
+    private func show(attachment: Attachment, at index: Int, from attachments: [Attachment]) {
+        if attachment.isImage {
+            showMediaGallery(with: attachments.compactMap { MediaGalleryItem(title: $0.title, url: $0.imageURL) },
+                             selectedIndex: index)
+            return
+        }
+        
+        showWebView(url: attachment.url, title: attachment.title)
     }
     
     private func userActivityCell(at indexPath: IndexPath, user: User, _ text: String) -> UITableViewCell {
@@ -261,30 +281,6 @@ extension ChatViewController {
         if let cell = cell as? MessageTableViewCell {
             cell.free()
         }
-    }
-    
-    public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        guard  let presenter = channelPresenter,
-            case .message(let message) = presenter.items[indexPath.row],
-            !message.attachments.isEmpty else {
-                return false
-        }
-        
-        return true
-    }
-    
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard  let presenter = channelPresenter,
-            case .message(let message) = presenter.items[indexPath.row] else {
-                return
-        }
-        
-        if let first = message.attachments.first, !first.isImage {
-            showWebView(url: first.url, title: first.title)
-            return
-        }
-        
-        showMediaGallery(with: message.attachments.compactMap { MediaGalleryItem(title: $0.title, url: $0.imageURL) })
     }
 }
 

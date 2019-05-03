@@ -23,7 +23,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     private var imageViewBottomConstraint: Constraint?
     private var imageTask: ImageTask?
     private var isGifImage = false
-    private let disposeBag = DisposeBag()
+    let disposeBag = DisposeBag()
     
     private(set) lazy var imageView: UIImageView = {
         let imageView = UIImageView(image: UIImage.Icons.image)
