@@ -14,12 +14,12 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     
     let avatarView = AvatarView(cornerRadius: .messageAvatarRadius)
     
-    private let reactionsContainer = UIImageView(frame: .zero)
+    let reactionsContainer = UIImageView(frame: .zero)
     private let reactionsTailImage = UIImageView(frame: .zero)
 
-    private let reactionsLabel: UILabel = {
+    let reactionsLabel: UILabel = {
         let label = UILabel(frame: .zero)
-//        label.textAlignment = .center
+        label.textAlignment = .center
         return label
     }()
     
@@ -67,6 +67,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         stackView.spacing = .messageSpacing
         return stackView
     }()
+    
+    private var messageStackViewTopConstraint: Constraint?
     
     let messageContainerView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -161,14 +163,15 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageStackView.alignment = style.alignment == .left ? .leading : .trailing
         
         messageStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
+            messageStackViewTopConstraint = make.top.equalToSuperview().offset(CGFloat.messageSpacing).constraint
             make.bottom.equalToSuperview()
             make.left.equalToSuperview().offset(messagePadding).priority(999)
             make.right.equalToSuperview().offset(-messagePadding).priority(999)
         }
         
         // Reactions.
-        messageContainerView.addSubview(reactionsContainer)
+        contentView.addSubview(reactionsContainer)
+        reactionsContainer.isHidden = true
         reactionsContainer.addSubview(reactionsTailImage)
         reactionsContainer.addSubview(reactionsLabel)
         reactionsContainer.backgroundColor = style.reactionViewStyle.backgroundColor
@@ -178,31 +181,35 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         let tailAdditionalOffset: CGFloat = 2
 
         reactionsContainer.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
             make.height.equalTo(CGFloat.reactionsHeight).priority(999)
             let minWidth = style.reactionViewStyle.tailImage.size.width + .reactionsHeight - 2 * tailAdditionalOffset
             make.width.greaterThanOrEqualTo(minWidth)
 
             if style.reactionViewStyle.alignment == .left {
-                make.left.equalTo(messageContainerView.snp.right)
+                make.left.greaterThanOrEqualToSuperview().offset(messagePadding).priority(999)
+                make.right.greaterThanOrEqualTo(reactionsTailImage.snp.right)
+                    .offset(CGFloat.reactionsCornerRadius - tailAdditionalOffset).priority(998)
             } else {
-                make.right.equalTo(messageContainerView.snp.left)
+                make.right.lessThanOrEqualToSuperview().offset(-messagePadding).priority(999)
+                make.left.lessThanOrEqualTo(reactionsTailImage.snp.left)
+                    .offset(tailAdditionalOffset - .reactionsCornerRadius).priority(998)
             }
         }
         
         reactionsTailImage.snp.makeConstraints { make in
             make.top.equalTo(reactionsContainer.snp.bottom)
+            make.size.equalTo(style.reactionViewStyle.tailImage.size)
             
             if style.alignment == .left {
-                make.right.equalToSuperview().offset(tailAdditionalOffset - .reactionsCornerRadius)
+                make.left.equalTo(messageLabel.snp.right).offset(CGFloat.reactionsToMessageOffset - .messageInnerPadding)
             } else {
-                make.left.equalToSuperview().offset(.reactionsCornerRadius - tailAdditionalOffset)
+                make.right.equalTo(messageLabel.snp.left).offset(CGFloat.messageInnerPadding - .reactionsToMessageOffset)
             }
         }
         
         reactionsLabel.font = style.reactionViewStyle.font
         reactionsLabel.textColor = style.reactionViewStyle.textColor
-        reactionsLabel.text = "👍😄😂😛😍😎6"
         
         reactionsLabel.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
@@ -223,6 +230,10 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         //        }
     }
     
+    func updateConstraintsForReactions() {
+        messageStackViewTopConstraint?.update(offset: CGFloat.messageSpacing + .reactionsHeight + .reactionsToMessageOffset)
+    }
+    
     public func reset() {
         avatarView.reset()
         avatarView.isHidden = true
@@ -235,6 +246,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         infoLabel.isHidden = true
         infoLabel.text = nil
         
+        messageStackViewTopConstraint?.update(offset: CGFloat.messageSpacing)
+        
         messageContainerView.isHidden = true
         messageContainerView.image = nil
         messageContainerView.layer.borderWidth = 0
@@ -246,6 +259,9 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageLabel.backgroundColor = style?.backgroundColor
         
         paddingType = .regular
+        
+        reactionsContainer.isHidden = true
+        reactionsLabel.text = nil
         
         free()
     }

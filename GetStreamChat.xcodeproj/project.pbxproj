@@ -30,6 +30,8 @@
 		8A4FE7BC227C485B00E47D4C /* MessageTableViewCell+Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */; };
 		8A4FE7BF227CE69000E47D4C /* UIImage+Render.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */; };
 		8A4FE7C1227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */; };
+		8A4FE7C3227DBB7600E47D4C /* ChatViewController+Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7C2227DBB7600E47D4C /* ChatViewController+Cells.swift */; };
+		8A4FE7C5227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */; };
 		8A889144225219E500DD6539 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889143225219E500DD6539 /* Client.swift */; };
 		8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */; };
 		8A88914822521E4800DD6539 /* ClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88914722521E4800DD6539 /* ClientError.swift */; };
@@ -114,6 +116,8 @@
 		8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Updates.swift"; sourceTree = "<group>"; };
 		8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Render.swift"; sourceTree = "<group>"; };
 		8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableParagraphStyle+Extensions.swift"; sourceTree = "<group>"; };
+		8A4FE7C2227DBB7600E47D4C /* ChatViewController+Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Cells.swift"; sourceTree = "<group>"; };
+		8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+TableFooterView.swift"; sourceTree = "<group>"; };
 		8A889143225219E500DD6539 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GetStreamChat.xcassets; sourceTree = "<group>"; };
 		8A88914722521E4800DD6539 /* ClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientError.swift; sourceTree = "<group>"; };
@@ -249,6 +253,8 @@
 			children = (
 				8A1A940A225C8F6000060ACC /* Style */,
 				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
+				8A4FE7C2227DBB7600E47D4C /* ChatViewController+Cells.swift */,
+				8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */,
 				8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */,
 				8A1A9411225DFDA100060ACC /* ComposerView.swift */,
 				8ABC551B2276FB9D008F312B /* AvatarView.swift */,
@@ -597,6 +603,7 @@
 				8AB1B8ED22675B98002C65BD /* MessageResponse.swift in Sources */,
 				8A8891682253D3A500DD6539 /* ClientLogger.swift in Sources */,
 				8AFC2A30226B5C87006278D4 /* Client+WebSocket.swift in Sources */,
+				8A4FE7C3227DBB7600E47D4C /* ChatViewController+Cells.swift in Sources */,
 				8AABC29E22627AA20064CB20 /* Dictionary+Extensions.swift in Sources */,
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
 				8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */,
@@ -663,6 +670,7 @@
 				8A1A9418225E2FE000060ACC /* AttachmentCollectionViewCell.swift in Sources */,
 				8AB1B8F2226772C1002C65BD /* WebViewController.swift in Sources */,
 				8AABC291226086ED0064CB20 /* Attachment.swift in Sources */,
+				8A4FE7C5227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift in Sources */,
 				8A1A9410225CD17300060ACC /* ReactionViewStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

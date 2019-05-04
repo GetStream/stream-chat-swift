@@ -102,4 +102,10 @@ extension MessageTableViewCell {
             }
         }
     }
+    
+    public func update(reactions: String) {
+        reactionsContainer.isHidden = false
+        reactionsLabel.text = reactions
+        updateConstraintsForReactions()
+    }
 }

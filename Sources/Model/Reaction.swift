@@ -9,6 +9,9 @@
 import Foundation
 
 public struct Reaction: Codable {
+    static let emoji = ["👍", "❤️", "😂", "😲", "😔", "😠"]
+    static let emojiKeys = ["like", "love", "haha", "wow", "sad", "angry"]
+    
     private enum CodingKeys: String, CodingKey {
         case type
         case user
@@ -20,4 +23,33 @@ public struct Reaction: Codable {
     public let user: User
     public let created: Date
     public let messageId: String
+    
+    public var emoji: String {
+        guard let index = Reaction.emojiKeys.firstIndex(of: type) else {
+            return type
+        }
+        
+        return Reaction.emoji[index]
+    }
+}
+
+public struct ReactionCounts: Decodable {
+    let counts: [String: Int]
+    let string: String
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        counts = try container.decode([String: Int].self)
+        let count = counts.values.reduce(0, { $0 + $1 })
+        let keys = counts.keys
+        var emoji = ""
+        
+        Reaction.emojiKeys.enumerated().forEach { index, key in
+            if keys.contains(key) {
+                emoji += Reaction.emoji[index]
+            }
+        }
+        
+        string = emoji.appending(String(count))
+    }
 }

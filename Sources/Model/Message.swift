@@ -20,6 +20,8 @@ public struct Message: Codable {
         case attachments
         case mentionedUsers = "mentioned_users"
         case replyCount = "reply_count"
+        case latestReactions = "latest_reactions"
+        case ownReactions = "own_reactions"
         case reactionCounts = "reaction_counts"
     }
     
@@ -33,11 +35,21 @@ public struct Message: Codable {
     public let attachments: [Attachment]
     public let mentionedUsers: [User]
     public let replyCount: Int
-    public let reactionCounts: [String: Int]?
+    public let latestReactions: [Reaction]
+    public let ownReactions: [Reaction]
+    public let reactionCounts: ReactionCounts?
     
     public var isDeleted: Bool {
         return deleted != nil
     }
+//
+//    public var reactionsString: String? {
+//        guard let reactionCounts = reactionCounts else {
+//            return nil
+//        }
+//
+//        return
+//    }
     
     init?(text: String) {
         guard let user = Client.shared.user else {
@@ -54,6 +66,8 @@ public struct Message: Codable {
         attachments = []
         mentionedUsers = []
         replyCount = 0
+        latestReactions = []
+        ownReactions = []
         reactionCounts = nil
     }
     
