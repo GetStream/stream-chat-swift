@@ -28,6 +28,8 @@
 		8A2B60E02278813E00419C8E /* WebSocket+Reconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */; };
 		8A4FE7B9227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */; };
 		8A4FE7BC227C485B00E47D4C /* MessageTableViewCell+Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */; };
+		8A4FE7BF227CE69000E47D4C /* UIImage+Render.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */; };
+		8A4FE7C1227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */; };
 		8A889144225219E500DD6539 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889143225219E500DD6539 /* Client.swift */; };
 		8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */; };
 		8A88914822521E4800DD6539 /* ClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88914722521E4800DD6539 /* ClientError.swift */; };
@@ -110,6 +112,8 @@
 		8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Reconnect.swift"; sourceTree = "<group>"; };
 		8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Attachments.swift"; sourceTree = "<group>"; };
 		8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Updates.swift"; sourceTree = "<group>"; };
+		8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Render.swift"; sourceTree = "<group>"; };
+		8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableParagraphStyle+Extensions.swift"; sourceTree = "<group>"; };
 		8A889143225219E500DD6539 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GetStreamChat.xcassets; sourceTree = "<group>"; };
 		8A88914722521E4800DD6539 /* ClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientError.swift; sourceTree = "<group>"; };
@@ -267,6 +271,16 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		8A4FE7BD227CE67000E47D4C /* UIImage */ = {
+			isa = PBXGroup;
+			children = (
+				8A8891562252827E00DD6539 /* UIImage+Icons.swift */,
+				8A8891592252830C00DD6539 /* UIImage+Extensions.swift */,
+				8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */,
+			);
+			path = UIImage;
+			sourceTree = "<group>";
+		};
 		8A889141225219B100DD6539 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -308,6 +322,7 @@
 				8AABC29D22627AA20064CB20 /* Dictionary+Extensions.swift */,
 				8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */,
 				8AB1B8F322677EEA002C65BD /* String+Extensions.swift */,
+				8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -354,11 +369,10 @@
 			children = (
 				8A1A9405225B4E6900060ACC /* Reusable */,
 				8A88917A22550ECC00DD6539 /* CGFloat+Extensions.swift */,
+				8A4FE7BD227CE67000E47D4C /* UIImage */,
 				8A88917622550E0C00DD6539 /* UIColor+Extensions.swift */,
 				8A88917822550E8D00DD6539 /* UIFont+Extensions.swift */,
 				8ABC551F227730C9008F312B /* UIView+Extensions.swift */,
-				8A8891562252827E00DD6539 /* UIImage+Icons.swift */,
-				8A8891592252830C00DD6539 /* UIImage+Extensions.swift */,
 				8ABF82692273064600A966D9 /* UITableView+Extensions.swift */,
 				8A8891722255000A00DD6539 /* UITableViewCell+Extensions.swift */,
 				8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */,
@@ -586,6 +600,7 @@
 				8AABC29E22627AA20064CB20 /* Dictionary+Extensions.swift in Sources */,
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
 				8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */,
+				8A4FE7C1227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift in Sources */,
 				8AABC2982260D9450064CB20 /* StatusTableViewCell.swift in Sources */,
 				8AFC2A2722688299006278D4 /* Member.swift in Sources */,
 				8A8891552252502900DD6539 /* EndpointProtocol.swift in Sources */,
@@ -612,6 +627,7 @@
 				8A8891642253A86600DD6539 /* Codable+Extensions.swift in Sources */,
 				8ABF8262226F643E00A966D9 /* Reaction.swift in Sources */,
 				8A88916C2254A6B300DD6539 /* CustomChannel.swift in Sources */,
+				8A4FE7BF227CE69000E47D4C /* UIImage+Render.swift in Sources */,
 				8A88914C2252337500DD6539 /* User.swift in Sources */,
 				8ABF82642270668700A966D9 /* unwrap.swift in Sources */,
 				8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */,

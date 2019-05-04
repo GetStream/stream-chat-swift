@@ -34,6 +34,10 @@ extension UIColor {
         return white < 0.5
     }
     
+    public var isClear: Bool {
+        return self == .clear
+    }
+    
     static var random: UIColor {
         return transparent(hue: CGFloat.random(in: 0...10) / 10)
     }

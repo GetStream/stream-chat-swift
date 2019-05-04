@@ -17,10 +17,9 @@ extension MessageTableViewCell {
             return
         }
         
-        if let text = messageLabel.attributedText?.string, text.messageContainsOnlyEmoji {
-            messageLabel.attributedText = attributedText(text: messageLabel.attributedText?.string,
-                                                         font: style.emojiFont,
-                                                         backgroundColor: style.chatBackgroundColor)
+        if let text = messageLabel.text, text.messageContainsOnlyEmoji {
+            messageLabel.font = style.emojiFont
+            messageLabel.backgroundColor = style.chatBackgroundColor
             return
         }
         
@@ -42,12 +41,8 @@ extension MessageTableViewCell {
         }
         
         return style.alignment == .left
-            ? (isContinueMessage
-                ? style.backgroundImages[.leftSide(transparent: false)]
-                : style.backgroundImages[.leftBottomCorner(transparent: false)])
-            : (isContinueMessage
-                ? style.backgroundImages[.rightSide(transparent: false)]
-                : style.backgroundImages[.rightBottomCorner(transparent: false)])
+            ? (isContinueMessage ? style.backgroundImages[.leftSide] : style.backgroundImages[.leftBottomCorner])
+            : (isContinueMessage ? style.backgroundImages[.rightSide] : style.backgroundImages[.rightBottomCorner])
     }
     
     public func update(name: String? = nil, date: Date) {
@@ -74,20 +69,24 @@ extension MessageTableViewCell {
     
     public func update(message: String) {
         messageContainerView.isHidden = message.isEmpty
-        messageLabel.attributedText = attributedText(text: message)
+        messageLabel.text = message
     }
     
     public func update(mentionedUsersNames: [String]) {
-        guard let style = style,
-            let currentAttributedText = messageLabel.attributedText,
-            currentAttributedText.length > 0 else {
-                return
+        guard let style = style, let text = messageLabel.text, !text.isEmpty else {
+            return
         }
         
         DispatchQueue.global(qos: .background).async { [weak self] in
+            if text.messageContainsOnlyEmoji {
+                return
+            }
+            
             let boldFont = style.font.withTraits(.traitBold)
-            let text = currentAttributedText.string
-            let attributedText = NSMutableAttributedString(attributedString: currentAttributedText)
+            
+            let attributedText = NSMutableAttributedString(string: text,
+                                                           attributes: [.foregroundColor: style.textColor,
+                                                                        .paragraphStyle: NSParagraphStyle.default])
             
             mentionedUsersNames.forEach { name in
                 if let range = text.range(of: name) {
@@ -96,7 +95,8 @@ extension MessageTableViewCell {
             }
             
             DispatchQueue.main.async {
-                if let currentText = self?.messageLabel.attributedText?.string, currentText == text {
+                if let currentText = self?.messageLabel.text, currentText == text {
+                    self?.messageLabel.text = nil
                     self?.messageLabel.attributedText = attributedText
                 }
             }

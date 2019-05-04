@@ -52,12 +52,9 @@ public final class ComposerView: UIView {
             return NSAttributedString(string: text)
         }
         
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.1
-        
         return NSAttributedString(string: text, attributes: [.foregroundColor: textColor ?? style.textColor,
                                                              .font: style.font,
-                                                             .paragraphStyle: paragraphStyle])
+                                                             .paragraphStyle: NSParagraphStyle.default])
     }
     
     /// A placeholder label.

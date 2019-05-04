@@ -14,14 +14,15 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     
     let avatarView = AvatarView(cornerRadius: .messageAvatarRadius)
     
-    //    private let reactionsContainer = UIImageView(frame: .zero)
-    //
-    //    private let reactionsLabel: UILabel = {
-    //        let label = UILabel(frame: .zero)
-    //        label.textAlignment = .center
-    //        return label
-    //    }()
-    //
+    private let reactionsContainer = UIImageView(frame: .zero)
+    private let reactionsTailImage = UIImageView(frame: .zero)
+
+    private let reactionsLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+//        label.textAlignment = .center
+        return label
+    }()
+    
     //    private(set) lazy var reactionButton: UIButton = {
     //        let button = UIButton(type: .custom)
     //        button.setImage(UIImage.Icons.happy, for: .normal)
@@ -122,8 +123,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         dateLabel.backgroundColor = backgroundColor
         bottomPaddingView.backgroundColor = backgroundColor
         
-        messageLabel.attributedText = attributedText()
-        
         if style.alignment == .left {
             nameLabel.font = style.nameFont
             nameLabel.textColor = style.infoColor
@@ -147,6 +146,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         
         // Message Stack View
         
+        messageLabel.backgroundColor = style.backgroundColor
+        messageLabel.textColor = style.textColor
         messageContainerView.addSubview(messageLabel)
         
         messageLabel.snp.makeConstraints { make in
@@ -160,33 +161,55 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageStackView.alignment = style.alignment == .left ? .leading : .trailing
         
         messageStackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(CGFloat.messageSpacing) //  + .reactionsHeight + .messageSpacing
+            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
             make.bottom.equalToSuperview()
             make.left.equalToSuperview().offset(messagePadding).priority(999)
             make.right.equalToSuperview().offset(-messagePadding).priority(999)
         }
         
         // Reactions.
-        //        reactionsContainer.addSubview(reactionsLabel)
-        //        reactionsContainer.image = style.reactionViewStyle.backgroundImage
-        //        contentView.addSubview(reactionsContainer)
-        //
-        //        reactionsContainer.snp.makeConstraints { make in
-        //            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
-        //            make.right.equalTo(messageLabel.snp.right).offset(CGFloat.reactionsHeight - 4)
-        //            make.height.equalTo(CGFloat.reactionsFullHeight).priority(999)
-        //        }
-        //
-        //        reactionsLabel.font = style.reactionViewStyle.font
-        //        reactionsLabel.textColor = style.reactionViewStyle.textColor
-        //
-        //        reactionsLabel.snp.makeConstraints { make in
-        //            make.left.equalToSuperview().offset(CGFloat.reactionsTextPagging)
-        //            make.right.equalToSuperview().offset(-CGFloat.reactionsTextPagging)
-        //            make.top.equalToSuperview()
-        //            make.height.equalTo(CGFloat.reactionsHeight)
-        //        }
-        //
+        messageContainerView.addSubview(reactionsContainer)
+        reactionsContainer.addSubview(reactionsTailImage)
+        reactionsContainer.addSubview(reactionsLabel)
+        reactionsContainer.backgroundColor = style.reactionViewStyle.backgroundColor
+        reactionsContainer.layer.cornerRadius = .reactionsCornerRadius
+        reactionsTailImage.image = style.reactionViewStyle.tailImage
+        reactionsTailImage.tintColor = style.reactionViewStyle.backgroundColor
+        let tailAdditionalOffset: CGFloat = 2
+
+        reactionsContainer.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.height.equalTo(CGFloat.reactionsHeight).priority(999)
+            let minWidth = style.reactionViewStyle.tailImage.size.width + .reactionsHeight - 2 * tailAdditionalOffset
+            make.width.greaterThanOrEqualTo(minWidth)
+
+            if style.reactionViewStyle.alignment == .left {
+                make.left.equalTo(messageContainerView.snp.right)
+            } else {
+                make.right.equalTo(messageContainerView.snp.left)
+            }
+        }
+        
+        reactionsTailImage.snp.makeConstraints { make in
+            make.top.equalTo(reactionsContainer.snp.bottom)
+            
+            if style.alignment == .left {
+                make.right.equalToSuperview().offset(tailAdditionalOffset - .reactionsCornerRadius)
+            } else {
+                make.left.equalToSuperview().offset(.reactionsCornerRadius - tailAdditionalOffset)
+            }
+        }
+        
+        reactionsLabel.font = style.reactionViewStyle.font
+        reactionsLabel.textColor = style.reactionViewStyle.textColor
+        reactionsLabel.text = "👍😄😂😛😍😎6"
+        
+        reactionsLabel.snp.makeConstraints { make in
+            make.top.bottom.equalToSuperview()
+            make.left.equalToSuperview().offset(CGFloat.reactionsTextPagging)
+            make.right.equalToSuperview().offset(-CGFloat.reactionsTextPagging)
+        }
+        
         //        if style.alignment == .left {
         //            reactionButton.backgroundColor = style.chatBackgroundColor
         //            contentView.insertSubview(reactionButton, at: 0)
@@ -216,7 +239,11 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageContainerView.image = nil
         messageContainerView.layer.borderWidth = 0
         messageContainerView.backgroundColor = style?.chatBackgroundColor
-        messageLabel.attributedText = attributedText()
+        
+        messageLabel.text = nil
+        messageLabel.attributedText = nil
+        messageLabel.font = style?.font
+        messageLabel.backgroundColor = style?.backgroundColor
         
         paddingType = .regular
         
@@ -226,22 +253,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     public func free() {
         attachmentPreviews.forEach { $0.removeFromSuperview() }
         attachmentPreviews = []
-    }
-    
-    func attributedText(text: String? = nil, font: UIFont? = nil, backgroundColor: UIColor? = nil) -> NSAttributedString {
-        let text = text ?? ""
-        
-        guard let style = style else {
-            return NSAttributedString(string: text)
-        }
-        
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.1
-        
-        return NSAttributedString(string: text, attributes: [.foregroundColor: style.textColor,
-                                                             .backgroundColor: backgroundColor ?? style.backgroundColor,
-                                                             .font: font ?? style.font,
-                                                             .paragraphStyle: paragraphStyle])
     }
 }
 

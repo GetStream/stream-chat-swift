@@ -13,7 +13,11 @@ public struct ChatViewStyle: Hashable {
     public var backgroundColor: UIColor = .white
     public var composer = ComposerViewStyle()
     public var incomingMessage = MessageViewStyle()
-    public var outgoingMessage = MessageViewStyle(alignment: .right, backgroundColor: .chatSuperLightGray, borderWidth: 0)
+    
+    public var outgoingMessage = MessageViewStyle(alignment: .right,
+                                                  backgroundColor: .chatSuperLightGray,
+                                                  borderWidth: 0,
+                                                  reactionViewStyle: .init(alignment: .right))
     
     public static let dark =
         ChatViewStyle(backgroundColor: .chatSuperDarkGray,
@@ -25,14 +29,16 @@ public struct ChatViewStyle: Hashable {
                                                         textColor: .white,
                                                         backgroundColor: .chatSuperDarkGray,
                                                         borderColor: .chatGray,
-                                                        reactionViewStyle: ReactionViewStyle(backgroundColor: .darkGray)),
+                                                        reactionViewStyle: .init(backgroundColor: .darkGray,
+                                                                                 chatBackgroundColor: .chatSuperDarkGray)),
                       outgoingMessage: MessageViewStyle(alignment: .right,
                                                         chatBackgroundColor: .chatSuperDarkGray,
                                                         textColor: .white,
                                                         backgroundColor: .chatDarkGray,
                                                         borderWidth: 0,
-                                                        reactionViewStyle: ReactionViewStyle(alignment: .right,
-                                                                                             backgroundColor: .darkGray)))
+                                                        reactionViewStyle: .init(alignment: .right,
+                                                                                 backgroundColor: .darkGray,
+                                                                                 chatBackgroundColor: .chatSuperDarkGray)))
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(backgroundColor)

@@ -87,10 +87,10 @@ extension MessageTableViewCell {
         }
         
         if style.alignment == .left {
-            return offset == 0 ? messageContainerView.image : style.backgroundImages[.leftSide(transparent: false)]
+            return offset == 0 ? messageContainerView.image : style.backgroundImages[.leftSide]
         }
         
-        return offset == 0 ? messageContainerView.image : style.backgroundImages[.rightSide(transparent: false)]
+        return offset == 0 ? messageContainerView.image : style.backgroundImages[.rightSide]
     }
     
     private func maskImageForAttachment(at offset: Int) -> UIImage? {
@@ -99,13 +99,13 @@ extension MessageTableViewCell {
         }
         
         if style.alignment == .left {
-            return offset == 0 || messageContainerViewImage == style.backgroundImages[.leftBottomCorner(transparent: false)]
-                ? style.backgroundImages[.leftBottomCorner(transparent: true)]
-                : style.backgroundImages[.leftSide(transparent: true)]
+            return offset == 0 || messageContainerViewImage == style.backgroundImages[.leftBottomCorner]
+                ? style.transparentBackgroundImages[.leftBottomCorner]
+                : style.transparentBackgroundImages[.leftSide]
         }
         
-        return offset == 0 || messageContainerViewImage == style.backgroundImages[.rightBottomCorner(transparent: false)]
-            ? style.backgroundImages[.rightBottomCorner(transparent: true)]
-            : style.backgroundImages[.rightSide(transparent: true)]
+        return offset == 0 || messageContainerViewImage == style.backgroundImages[.rightBottomCorner]
+            ? style.transparentBackgroundImages[.rightBottomCorner]
+            : style.transparentBackgroundImages[.rightSide]
     }
 }
