@@ -80,11 +80,10 @@ extension Client {
         logger?.log(response, data: data)
         
         if let error = error {
+            logger?.log(error)
             performInCallbackQueue { completion(.failure(.requestFailed(error))) }
             return
         }
-        
-        logger?.log(error)
         
         guard let data = data else {
             performInCallbackQueue { completion(.failure(.emptyBody)) }
@@ -95,6 +94,8 @@ extension Client {
             let response = try JSONDecoder.stream.decode(T.self, from: data)
             performInCallbackQueue { completion(.success(response)) }
         } catch {
+            logger?.log(error)
+            
             if let errorResponse = try? JSONDecoder.stream.decode(ClientErrorResponse.self, from: data) {
                 performInCallbackQueue { completion(.failure(.responseError(errorResponse))) }
             } else {

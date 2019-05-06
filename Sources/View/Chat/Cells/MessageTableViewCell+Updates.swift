@@ -73,19 +73,23 @@ extension MessageTableViewCell {
     }
     
     public func update(mentionedUsersNames: [String]) {
-        guard let style = style, let text = messageLabel.text, !text.isEmpty else {
+        guard let style = style, let originalText = messageLabel.text else {
             return
         }
         
         DispatchQueue.global(qos: .background).async { [weak self] in
-            if text.messageContainsOnlyEmoji {
+            let text = originalText.trimmingCharacters(in: .whitespacesAndNewlines)
+            
+            if text.messageContainsOnlyEmoji || text.isEmpty {
                 return
             }
             
             let boldFont = style.font.withTraits(.traitBold)
             
             let attributedText = NSMutableAttributedString(string: text,
-                                                           attributes: [.foregroundColor: style.textColor,
+                                                           attributes: [.font: style.font,
+                                                                        .foregroundColor: style.textColor,
+                                                                        .backgroundColor: style.backgroundColor,
                                                                         .paragraphStyle: NSParagraphStyle.default])
             
             mentionedUsersNames.forEach { name in
@@ -95,8 +99,7 @@ extension MessageTableViewCell {
             }
             
             DispatchQueue.main.async {
-                if let currentText = self?.messageLabel.text, currentText == text {
-                    self?.messageLabel.text = nil
+                if let currentText = self?.messageLabel.text, currentText == originalText {
                     self?.messageLabel.attributedText = attributedText
                 }
             }

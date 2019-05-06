@@ -26,6 +26,7 @@
 		8A1A941A225E321100060ACC /* UICollectionView+Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9419225E321100060ACC /* UICollectionView+Reusable.swift */; };
 		8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A210D7C2264A22E00D51FFC /* MediaGalleryViewController.swift */; };
 		8A2B60E02278813E00419C8E /* WebSocket+Reconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */; };
+		8A40803B2280413E00F274FF /* IndexPath+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */; };
 		8A4FE7B9227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */; };
 		8A4FE7BC227C485B00E47D4C /* MessageTableViewCell+Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */; };
 		8A4FE7BF227CE69000E47D4C /* UIImage+Render.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */; };
@@ -112,6 +113,7 @@
 		8A1A9419225E321100060ACC /* UICollectionView+Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Reusable.swift"; sourceTree = "<group>"; };
 		8A210D7C2264A22E00D51FFC /* MediaGalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaGalleryViewController.swift; sourceTree = "<group>"; };
 		8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Reconnect.swift"; sourceTree = "<group>"; };
+		8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexPath+Extensions.swift"; sourceTree = "<group>"; };
 		8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Attachments.swift"; sourceTree = "<group>"; };
 		8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Updates.swift"; sourceTree = "<group>"; };
 		8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Render.swift"; sourceTree = "<group>"; };
@@ -252,9 +254,7 @@
 			isa = PBXGroup;
 			children = (
 				8A1A940A225C8F6000060ACC /* Style */,
-				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
-				8A4FE7C2227DBB7600E47D4C /* ChatViewController+Cells.swift */,
-				8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */,
+				8A408039228026D400F274FF /* View Controller */,
 				8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */,
 				8A1A9411225DFDA100060ACC /* ComposerView.swift */,
 				8ABC551B2276FB9D008F312B /* AvatarView.swift */,
@@ -263,6 +263,16 @@
 				8AABC29422608FCA0064CB20 /* Attachments */,
 			);
 			path = Chat;
+			sourceTree = "<group>";
+		};
+		8A408039228026D400F274FF /* View Controller */ = {
+			isa = PBXGroup;
+			children = (
+				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
+				8A4FE7C2227DBB7600E47D4C /* ChatViewController+Cells.swift */,
+				8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */,
+			);
+			path = "View Controller";
 			sourceTree = "<group>";
 		};
 		8A4FE7BA227C480700E47D4C /* Cells */ = {
@@ -387,6 +397,7 @@
 				8AB8FA732279F3F400C14D94 /* UIApplication+AppState.swift */,
 				8AB8FA75227AFD8F00C14D94 /* UIViewController+Extensions.swift */,
 				8AB8FA77227B194C00C14D94 /* DismissSegue.swift */,
+				8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -634,6 +645,7 @@
 				8A8891642253A86600DD6539 /* Codable+Extensions.swift in Sources */,
 				8ABF8262226F643E00A966D9 /* Reaction.swift in Sources */,
 				8A88916C2254A6B300DD6539 /* CustomChannel.swift in Sources */,
+				8A40803B2280413E00F274FF /* IndexPath+Extensions.swift in Sources */,
 				8A4FE7BF227CE69000E47D4C /* UIImage+Render.swift in Sources */,
 				8A88914C2252337500DD6539 /* User.swift in Sources */,
 				8ABF82642270668700A966D9 /* unwrap.swift in Sources */,

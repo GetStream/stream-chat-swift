@@ -92,8 +92,8 @@ extension WebSocket {
         case userStartWatching(User, _ watcherCount: Int)
         case userStopWatching(User, _ watcherCount: Int)
         
-        case reactionNew(reaction: Reaction, to: Message, user: User)
-        case reactionDeleted(reaction: Reaction, from: Message, user: User)
+        case reactionNew(Reaction, Message, User)
+        case reactionDeleted(Reaction, Message, User)
         
         case typingStart(User)
         case typingStop(User)
@@ -140,11 +140,11 @@ extension WebSocket {
             case "reaction.new":
                 let reaction = try container.decode(Reaction.self, forKey: .reaction)
                 let message = try container.decode(Message.self, forKey: .message)
-                self = .reactionNew(reaction: reaction, to: message, user: user)
+                self = .reactionNew(reaction, message, user)
             case "reaction.deleted":
                 let reaction = try container.decode(Reaction.self, forKey: .reaction)
                 let message = try container.decode(Message.self, forKey: .message)
-                self = .reactionDeleted(reaction: reaction, from: message, user: user)
+                self = .reactionDeleted(reaction, message, user)
                 
             // Typing
             case "typing.start":

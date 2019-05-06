@@ -28,7 +28,7 @@ extension ChatViewController {
         if message.isDeleted {
             cell.update(info: "This message was deleted.", date: message.deleted)
         } else {
-            cell.update(message: message.text)
+            cell.update(message: message.text.trimmingCharacters(in: .whitespacesAndNewlines))
             
             if !message.mentionedUsers.isEmpty {
                 cell.update(mentionedUsersNames: message.mentionedUsers.map({ $0.name }))

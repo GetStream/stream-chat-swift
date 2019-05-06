@@ -31,7 +31,7 @@ class MediaGalleryViewController: UIViewController {
         addCloseButton()
         
         if selected > 0, selected < items.count {
-            collectionView.scrollToItem(at: IndexPath(item: selected, section: 0), at: .centeredHorizontally, animated: false)
+            collectionView.scrollToItem(at: IndexPath(item: selected), at: .centeredHorizontally, animated: false)
         }
     }
     

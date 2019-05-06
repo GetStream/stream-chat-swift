@@ -34,12 +34,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         tableView.registerMessageCell(style: style.outgoingMessage)
         tableView.register(cellType: StatusTableViewCell.self)
         tableView.tableFooterView = ChatTableFooterView()
-        
-        tableView.contentInset = UIEdgeInsets(top: 0,
-                                              left: 0,
-                                              bottom: CGFloat.messagesToComposerPadding,
-                                              right: 0)
-        
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: CGFloat.messagesToComposerPadding, right: 0)
         view.insertSubview(tableView, at: 0)
         return tableView
     }()
@@ -74,7 +69,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         tableView.reloadData()
         
         if needsToScroll {
-            tableView.scrollToRow(at: IndexPath(row: presenter.items.count - 1, section: 0),
+            tableView.scrollToRow(at: IndexPath(row: presenter.items.count - 1),
                                   at: .top,
                                   animated: animated)
         }
@@ -144,21 +139,22 @@ extension ChatViewController {
             return
         }
         
-        if case let .updated(row, position) = changes {
+        switch changes {
+        case .none:
+            return
+        case let .updated(row, position):
             tableView.setContentOffset(tableView.contentOffset, animated: false)
             tableView.reloadData()
-            tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: position, animated: false)
-        }
-        
-        if case let .itemAdded(row, reloadRow, forceToScroll) = changes {
-            let indexPath = IndexPath(row: row, section: 0)
+            tableView.scrollToRow(at: IndexPath(row: row), at: position, animated: false)
+        case let .itemAdded(row, reloadRow, forceToScroll):
+            let indexPath = IndexPath(row: row)
             let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
             
             tableView.update {
                 tableView.insertRows(at: [indexPath], with: .none)
                 
                 if let reloadRow = reloadRow {
-                    tableView.reloadRows(at: [IndexPath(row: reloadRow, section: 0)], with: .none)
+                    tableView.reloadRows(at: [IndexPath(row: reloadRow)], with: .none)
                 }
             }
             
@@ -166,9 +162,11 @@ extension ChatViewController {
                 tableView.setContentOffset(tableView.contentOffset, animated: false)
                 tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
-        }
-        
-        if case let .updateFooter(isUsersTyping, startWatchingUser, stopWatchingUser) = changes {
+        case .itemUpdated(let row):
+            tableView.update {
+                tableView.reloadRows(at: [IndexPath(row: row)], with: .none)
+            }
+        case let .updateFooter(isUsersTyping, startWatchingUser, stopWatchingUser):
             updateFooterView(isUsersTyping, startWatchingUser, stopWatchingUser)
         }
     }
