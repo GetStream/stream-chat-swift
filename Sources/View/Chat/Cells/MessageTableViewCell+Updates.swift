@@ -106,9 +106,19 @@ extension MessageTableViewCell {
         }
     }
     
-    public func update(reactions: String) {
+    public func update(reactions: String, action: @escaping MessageTableViewCell.Action) {
         reactionsContainer.isHidden = false
+        reactionsOverlayView.isHidden = false
         reactionsLabel.text = reactions
         updateConstraintsForReactions()
+        
+        reactionsOverlayView.rx.tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { [weak self] _ in
+                if let self = self {
+                    action(self)
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }

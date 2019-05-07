@@ -9,12 +9,17 @@
 import UIKit
 import SnapKit
 import Nuke
+import RxSwift
 
 final class MessageTableViewCell: UITableViewCell, Reusable {
+    typealias Action = (_ cell: MessageTableViewCell) -> Void
+    
+    private(set) var disposeBag = DisposeBag()
     
     let avatarView = AvatarView(cornerRadius: .messageAvatarRadius)
     
-    let reactionsContainer = UIImageView(frame: .zero)
+    let reactionsContainer: UIImageView = UIImageView(frame: .zero)
+    let reactionsOverlayView = UIView(frame: .zero)
     private let reactionsTailImage = UIImageView(frame: .zero)
     
     let reactionsLabel: UILabel = {
@@ -91,14 +96,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return view
     }()
     
-    private var messagePadding: CGFloat {
-        return .messageEdgePadding + .messageAvatarSize + .messageInnerPadding
-    }
-    
-    var maxMessageWidth: CGFloat {
-        return UIScreen.main.bounds.width - 2 * messagePadding
-    }
-    
     public var paddingType: MessageTableViewCellPaddingType = .regular {
         didSet { bottomPaddingView.isHidden = paddingType == .small }
     }
@@ -165,14 +162,16 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageStackView.alignment = style.alignment == .left ? .leading : .trailing
         
         messageStackView.snp.makeConstraints { make in
-            messageStackViewTopConstraint = make.top.equalToSuperview().offset(CGFloat.messageSpacing).constraint
-            make.bottom.equalToSuperview()
-            make.left.equalToSuperview().offset(messagePadding).priority(999)
-            make.right.equalToSuperview().offset(-messagePadding).priority(999)
+            messageStackViewTopConstraint = make.top.equalToSuperview().offset(CGFloat.messageSpacing).priority(999).constraint
+            make.bottom.equalToSuperview().priority(999)
+            make.left.equalToSuperview().offset(CGFloat.messageTextPadding).priority(999)
+            make.right.equalToSuperview().offset(-CGFloat.messageTextPadding).priority(999)
         }
         
         // Reactions.
         contentView.addSubview(reactionsContainer)
+        contentView.addSubview(reactionsOverlayView)
+        reactionsOverlayView.isHidden = true
         reactionsContainer.isHidden = true
         reactionsContainer.addSubview(reactionsTailImage)
         reactionsContainer.addSubview(reactionsLabel)
@@ -189,11 +188,11 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             make.width.greaterThanOrEqualTo(minWidth)
             
             if style.reactionViewStyle.alignment == .left {
-                make.left.greaterThanOrEqualToSuperview().offset(messagePadding).priority(999)
+                make.left.greaterThanOrEqualToSuperview().offset(CGFloat.messageTextPadding).priority(999)
                 make.right.greaterThanOrEqualTo(reactionsTailImage.snp.right)
                     .offset(CGFloat.reactionsCornerRadius - tailAdditionalOffset).priority(998)
             } else {
-                make.right.lessThanOrEqualToSuperview().offset(-messagePadding).priority(999)
+                make.right.lessThanOrEqualToSuperview().offset(-CGFloat.messageTextPadding).priority(999)
                 make.left.lessThanOrEqualTo(reactionsTailImage.snp.left)
                     .offset(tailAdditionalOffset - .reactionsCornerRadius).priority(998)
             }
@@ -217,6 +216,13 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             make.top.bottom.equalToSuperview()
             make.left.equalToSuperview().offset(CGFloat.reactionsTextPagging)
             make.right.equalToSuperview().offset(-CGFloat.reactionsTextPagging)
+        }
+        
+        reactionsOverlayView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.left.equalTo(reactionsContainer).offset(-CGFloat.messageSpacing)
+            make.right.equalTo(reactionsContainer).offset(CGFloat.messageSpacing)
+            make.bottom.equalTo(reactionsTailImage)
         }
         
         //        if style.alignment == .left {
@@ -263,12 +269,14 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         paddingType = .regular
         
         reactionsContainer.isHidden = true
+        reactionsOverlayView.isHidden = true
         reactionsLabel.text = nil
         
         free()
     }
     
     public func free() {
+        disposeBag = DisposeBag()
         attachmentPreviews.forEach { $0.removeFromSuperview() }
         attachmentPreviews = []
     }

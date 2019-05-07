@@ -37,16 +37,19 @@ extension UIView {
 
 extension UIView {
     
-    static func animateSmooth(withDuration duration: TimeInterval, animations: @escaping () -> Void) {
+    static func animateSmooth(withDuration duration: TimeInterval,
+                              usingSpringWithDamping dampingRatio: CGFloat = 1,
+                              animations: @escaping () -> Void) {
         UIView.animate(withDuration: duration,
                        delay: 0,
-                       usingSpringWithDamping: 1,
+                       usingSpringWithDamping: dampingRatio,
                        initialSpringVelocity: 0,
                        options: .curveLinear,
                        animations: animations)
     }
     
     static func animateSmooth(withDuration duration: TimeInterval,
+                              usingSpringWithDamping dampingRatio: CGFloat = 1,
                               animations: @escaping () -> Void,
                               completion: @escaping (Bool) -> Void) {
         UIView.animate(withDuration: duration,

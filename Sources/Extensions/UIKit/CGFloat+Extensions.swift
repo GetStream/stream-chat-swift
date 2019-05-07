@@ -33,6 +33,8 @@ extension CGFloat {
     public static let messageCornerRadius: CGFloat = 16
     public static let messageHorizontalInset: CGFloat = 10
     public static let messageVerticalInset: CGFloat = 5
+    public static let messageTextPadding: CGFloat = .messageEdgePadding + .messageAvatarSize + .messageInnerPadding
+    public static let messageTextMaxWidth: CGFloat = UIScreen.main.bounds.width - 2 * .messageTextPadding
     
     public static let messageStatusLineWidth: CGFloat = 1
     public static let messageStatusSpacing: CGFloat = 26
@@ -48,5 +50,13 @@ extension CGFloat {
     public static let reactionsToMessageOffset: CGFloat = 2
     public static let reactionsHeight: CGFloat = 2 * .reactionsCornerRadius
     public static let reactionsCornerRadius: CGFloat = 10
-    public static let reactionOptionsHeight: CGFloat = 50
+    
+    public static let reactionsPickerCornerRadius: CGFloat = 30
+    public static let reactionsPickerCornerHeight: CGFloat = 2 * .reactionsPickerCornerRadius
+    public static let reactionsPickerShadowOffsetY: CGFloat = 11
+    public static let reactionsPickerShadowRadius: CGFloat = 8
+    public static let reactionsPickerShdowOpacity: CGFloat = 0.3
+    public static let reactionsPickerAvatarRadius: CGFloat = 10
+    public static let reactionsPickerButtonWidth: CGFloat = 36
+    public static let reactionsPickerCounterHeight: CGFloat = 20
 }

@@ -58,7 +58,7 @@ extension MessageTableViewCell {
                                          imageBackgroundColor: UIColor,
                                          reload: @escaping () -> Void) -> AttachmentPreview {
         let preview = AttachmentPreview(frame: .zero)
-        preview.maxWidth = maxMessageWidth
+        preview.maxWidth = .messageTextMaxWidth
         preview.tintColor = style.textColor
         preview.imageView.backgroundColor = imageBackgroundColor
         preview.layer.cornerRadius = style.cornerRadius

@@ -9,17 +9,21 @@
 import UIKit.UIFont
 
 extension UIFont {
-    public static let chatRegular = UIFont.systemFont(ofSize: 15)
-    public static let chatMedium = UIFont.systemFont(ofSize: 13)
-    public static let chatBoldMedium = UIFont.systemFont(ofSize: 13, weight: .bold)
-    public static let chatSmall = UIFont.systemFont(ofSize: 11)
-    public static let chatXSmall = UIFont.systemFont(ofSize: 10)
-    public static let chatXXSmall = UIFont.systemFont(ofSize: 9)
-    public static let chatBoldXSmall = UIFont.systemFont(ofSize: 10, weight: .bold)
-    public static let chatMediumSmall = UIFont.systemFont(ofSize: 11, weight: .medium)
-    public static let chatBoldSmall = UIFont.systemFont(ofSize: 11, weight: .bold)
-    public static let chatAvatar = UIFont(name: "GillSans-UltraBold", size: 11)
-    public static let chatEmoji = UIFont.systemFont(ofSize: 26)
+    static let chatRegular = UIFont.systemFont(ofSize: 15)
+    static let chatMedium = UIFont.systemFont(ofSize: 13)
+    static let chatBoldMedium = UIFont.systemFont(ofSize: 13, weight: .bold)
+    static let chatSmall = UIFont.systemFont(ofSize: 11)
+    static let chatXSmall = UIFont.systemFont(ofSize: 10)
+    static let chatXXSmall = UIFont.systemFont(ofSize: 9)
+    static let chatBoldXSmall = UIFont.systemFont(ofSize: 10, weight: .bold)
+    static let chatMediumSmall = UIFont.systemFont(ofSize: 11, weight: .medium)
+    static let chatBoldSmall = UIFont.systemFont(ofSize: 11, weight: .bold)
+    static let chatEmoji = UIFont.systemFont(ofSize: 26)
+    static let reactionsEmoji = UIFont.systemFont(ofSize: 22)
+    
+    static func avatarFont(size: CGFloat) -> UIFont? {
+        return UIFont(name: "GillSans-UltraBold", size: size)
+    }
 }
 
 extension UIFont {

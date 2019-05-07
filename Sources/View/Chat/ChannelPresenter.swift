@@ -14,7 +14,7 @@ public enum ChannelChanges: Equatable {
     case none
     case updated(_ row: Int, UITableView.ScrollPosition)
     case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool)
-    case itemUpdated(_ row: Int)
+    case itemUpdated(_ row: Int, Message)
     case updateFooter(_ isUsersTyping: Bool, _ startWatching: User?, _ stopWatching: User?)
 }
 
@@ -118,7 +118,7 @@ extension ChannelPresenter {
                 return false
             }) {
                 items[index] = .message(message)
-                return .itemUpdated(index)
+                return .itemUpdated(index, message)
             }
         default:
             break

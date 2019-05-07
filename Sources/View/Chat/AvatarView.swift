@@ -14,7 +14,6 @@ final class AvatarView: UIImageView, Reusable {
     
     private lazy var avatarLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.font = .chatAvatar
         label.textAlignment = .center
         label.isHidden = true
         label.preferredMaxLayoutWidth = 2 * layer.cornerRadius
@@ -35,8 +34,9 @@ final class AvatarView: UIImageView, Reusable {
         layer.cornerRadius = cornerRadius
         clipsToBounds = true
         contentMode = .scaleAspectFill
-        snp.makeConstraints { $0.width.height.equalTo(2 * cornerRadius) }
+        snp.makeConstraints { $0.width.height.equalTo(2 * cornerRadius).priority(999) }
         addSubview(avatarLabel)
+        avatarLabel.font = .avatarFont(size: cornerRadius * 0.8)
         avatarLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
     
@@ -47,11 +47,11 @@ final class AvatarView: UIImageView, Reusable {
         avatarLabel.isHidden = true
     }
     
-    public func update(with url: URL?, name: String) {
+    public func update(with url: URL?, name: String?, baseColor: UIColor? = nil) {
         isHidden = false
         
         guard let url = url else {
-            showAvatarLabel(with: name)
+            showAvatarLabel(with: name ?? "?", baseColor)
             return
         }
         
@@ -63,7 +63,7 @@ final class AvatarView: UIImageView, Reusable {
         }
     }
     
-    private func showAvatarLabel(with name: String) {
+    private func showAvatarLabel(with name: String, _ baseColor: UIColor?) {
         if name.contains(" ") {
             let words = name.split(separator: " ")
             
@@ -74,8 +74,15 @@ final class AvatarView: UIImageView, Reusable {
             avatarLabel.text = name.first?.uppercased()
         }
         
-        backgroundColor = .color(by: name, isDark: backgroundColor?.isDark ?? false)
+        let nameColor = UIColor.color(by: name, isDark: backgroundColor?.isDark ?? false)
+        
+        if let baseColor = baseColor {
+            backgroundColor = baseColor.blendAlpha(coverColor: nameColor)
+        } else {
+            backgroundColor = nameColor
+        }
+        
         avatarLabel.isHidden = false
-        avatarLabel.textColor = backgroundColor?.withAlphaComponent(0.3)
+        avatarLabel.textColor = nameColor.withAlphaComponent(0.3)
     }
 }

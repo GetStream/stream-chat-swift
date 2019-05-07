@@ -10,13 +10,15 @@ import UIKit
 
 extension UIImage {
     public struct FileTypes {
-        public static let csv: UIImage = UIImage.chat(named: "CSV")
-        public static let doc: UIImage = UIImage.chat(named: "DOC")
-        public static let pdf: UIImage = UIImage.chat(named: "PDF")
-        public static let ppt: UIImage = UIImage.chat(named: "PPT")
-        public static let tar: UIImage = UIImage.chat(named: "TAR")
-        public static let xls: UIImage = UIImage.chat(named: "XLS")
-        public static let zip: UIImage = UIImage.chat(named: "ZIP")
+        public static let csv: UIImage = UIImage.chat(named: "csv")
+        public static let doc: UIImage = UIImage.chat(named: "doc")
+        public static let pdf: UIImage = UIImage.chat(named: "pdf")
+        public static let ppt: UIImage = UIImage.chat(named: "ppt")
+        public static let tar: UIImage = UIImage.chat(named: "tar")
+        public static let xls: UIImage = UIImage.chat(named: "xls")
+        public static let zip: UIImage = UIImage.chat(named: "zip")
+        public static let mp3: UIImage = UIImage.chat(named: "mp3")
+        public static let mp4: UIImage = UIImage.chat(named: "mov")
     }
     
     public struct Icons {
@@ -33,9 +35,11 @@ extension UIImage {
     }
     
     static func chat(named name: String) -> UIImage {
+        let name = name == "mp4" ? "mov" : name
+        
         let bundle = Bundle(for: Client.self)
         return UIImage(named: name, in: bundle, compatibleWith: nil)
-            ?? UIImage(named: "ZIP", in: bundle, compatibleWith: nil)
+            ?? UIImage(named: "zip", in: bundle, compatibleWith: nil)
             ?? .init(color: UIColor.chatGray.withAlphaComponent(0.5))
     }
 }

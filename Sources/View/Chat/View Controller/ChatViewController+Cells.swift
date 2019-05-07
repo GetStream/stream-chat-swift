@@ -34,9 +34,7 @@ extension ChatViewController {
                 cell.update(mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
             }
             
-            if let reactionCounts = message.reactionCounts, !reactionCounts.counts.isEmpty {
-                cell.update(reactions: reactionCounts.string)
-            }
+            update(cell: cell, forReactionsIn: message)
         }
         
         var showAvatar = true

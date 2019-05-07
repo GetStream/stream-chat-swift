@@ -35,7 +35,7 @@ extension ChatViewController {
             let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
             tableView.layoutFooterView()
             
-            if needsToScroll {
+            if scrollEnabled, needsToScroll {
                 tableView.scrollToBottom()
             }
         }

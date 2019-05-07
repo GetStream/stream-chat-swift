@@ -17,6 +17,11 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     
     public var style = ChatViewStyle()
     private let disposeBag = DisposeBag()
+    var reactionsView: ReactionsView?
+    
+    var scrollEnabled: Bool {
+        return reactionsView == nil
+    }
     
     public private(set) lazy var composerView: ComposerView = {
         let composerView = ComposerView(frame: .zero)
@@ -145,7 +150,10 @@ extension ChatViewController {
         case let .updated(row, position):
             tableView.setContentOffset(tableView.contentOffset, animated: false)
             tableView.reloadData()
-            tableView.scrollToRow(at: IndexPath(row: row), at: position, animated: false)
+            
+            if scrollEnabled {
+                tableView.scrollToRow(at: IndexPath(row: row), at: position, animated: false)
+            }
         case let .itemAdded(row, reloadRow, forceToScroll):
             let indexPath = IndexPath(row: row)
             let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
@@ -158,13 +166,17 @@ extension ChatViewController {
                 }
             }
             
-            if forceToScroll || needsToScroll {
+            if scrollEnabled, (forceToScroll || needsToScroll) {
                 tableView.setContentOffset(tableView.contentOffset, animated: false)
                 tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
-        case .itemUpdated(let row):
+        case let .itemUpdated(row, message):
             tableView.update {
                 tableView.reloadRows(at: [IndexPath(row: row)], with: .none)
+            }
+            
+            if let reactionsView = reactionsView {
+                reactionsView.update(with: message)
             }
         case let .updateFooter(isUsersTyping, startWatchingUser, stopWatchingUser):
             updateFooterView(isUsersTyping, startWatchingUser, stopWatchingUser)

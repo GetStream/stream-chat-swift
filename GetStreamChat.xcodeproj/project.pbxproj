@@ -27,6 +27,10 @@
 		8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A210D7C2264A22E00D51FFC /* MediaGalleryViewController.swift */; };
 		8A2B60E02278813E00419C8E /* WebSocket+Reconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */; };
 		8A40803B2280413E00F274FF /* IndexPath+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */; };
+		8A40803D22805ABA00F274FF /* ChatViewController+Reactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803C22805ABA00F274FF /* ChatViewController+Reactions.swift */; };
+		8A40803F2280708900F274FF /* ReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803E2280708900F274FF /* ReactionsView.swift */; };
+		8A40804122818C7A00F274FF /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40804022818C7A00F274FF /* Int+Extensions.swift */; };
+		8A4080432281BDCA00F274FF /* UIStackView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4080422281BDCA00F274FF /* UIStackView+Extensions.swift */; };
 		8A4FE7B9227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */; };
 		8A4FE7BC227C485B00E47D4C /* MessageTableViewCell+Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */; };
 		8A4FE7BF227CE69000E47D4C /* UIImage+Render.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */; };
@@ -114,6 +118,11 @@
 		8A210D7C2264A22E00D51FFC /* MediaGalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaGalleryViewController.swift; sourceTree = "<group>"; };
 		8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Reconnect.swift"; sourceTree = "<group>"; };
 		8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexPath+Extensions.swift"; sourceTree = "<group>"; };
+		8A40803C22805ABA00F274FF /* ChatViewController+Reactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Reactions.swift"; sourceTree = "<group>"; };
+		8A40803E2280708900F274FF /* ReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsView.swift; sourceTree = "<group>"; };
+		8A40804022818C7A00F274FF /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
+		8A4080422281BDCA00F274FF /* UIStackView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Extensions.swift"; sourceTree = "<group>"; };
+		8A4080442281C94600F274FF /* GetStreamChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GetStreamChat.entitlements; sourceTree = "<group>"; };
 		8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Attachments.swift"; sourceTree = "<group>"; };
 		8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Updates.swift"; sourceTree = "<group>"; };
 		8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Render.swift"; sourceTree = "<group>"; };
@@ -212,6 +221,7 @@
 		8A046759224E7F1800493D74 /* GetStreamChat */ = {
 			isa = PBXGroup;
 			children = (
+				8A4080442281C94600F274FF /* GetStreamChat.entitlements */,
 				8A04675A224E7F1800493D74 /* AppDelegate.swift */,
 				8A04675E224E7F1800493D74 /* Main.storyboard */,
 				8A046761224E7F1800493D74 /* Assets.xcassets */,
@@ -258,6 +268,7 @@
 				8A88916E2254F59B00DD6539 /* ChannelPresenter.swift */,
 				8A1A9411225DFDA100060ACC /* ComposerView.swift */,
 				8ABC551B2276FB9D008F312B /* AvatarView.swift */,
+				8A40803E2280708900F274FF /* ReactionsView.swift */,
 				8A4FE7BA227C480700E47D4C /* Cells */,
 				8ABC55212277998F008F312B /* Footer */,
 				8AABC29422608FCA0064CB20 /* Attachments */,
@@ -270,6 +281,7 @@
 			children = (
 				8A8891702254F73B00DD6539 /* ChatViewController.swift */,
 				8A4FE7C2227DBB7600E47D4C /* ChatViewController+Cells.swift */,
+				8A40803C22805ABA00F274FF /* ChatViewController+Reactions.swift */,
 				8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */,
 			);
 			path = "View Controller";
@@ -339,6 +351,7 @@
 				8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */,
 				8AB1B8F322677EEA002C65BD /* String+Extensions.swift */,
 				8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */,
+				8A40804022818C7A00F274FF /* Int+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -398,6 +411,7 @@
 				8AB8FA75227AFD8F00C14D94 /* UIViewController+Extensions.swift */,
 				8AB8FA77227B194C00C14D94 /* DismissSegue.swift */,
 				8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */,
+				8A4080422281BDCA00F274FF /* UIStackView+Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -499,6 +513,11 @@
 				TargetAttributes = {
 					8A046756224E7F1800493D74 = {
 						CreatedOnToolsVersion = 10.2;
+						SystemCapabilities = {
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -621,8 +640,11 @@
 				8A4FE7C1227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift in Sources */,
 				8AABC2982260D9450064CB20 /* StatusTableViewCell.swift in Sources */,
 				8AFC2A2722688299006278D4 /* Member.swift in Sources */,
+				8A40804122818C7A00F274FF /* Int+Extensions.swift in Sources */,
 				8A8891552252502900DD6539 /* EndpointProtocol.swift in Sources */,
+				8A40803D22805ABA00F274FF /* ChatViewController+Reactions.swift in Sources */,
 				8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */,
+				8A4080432281BDCA00F274FF /* UIStackView+Extensions.swift in Sources */,
 				8A889153225240F700DD6539 /* Event.swift in Sources */,
 				8A1A9416225E2EB200060ACC /* DataDetectorWorker.swift in Sources */,
 				8AFC2A2E226B5B37006278D4 /* Client+Request.swift in Sources */,
@@ -680,6 +702,7 @@
 				8A88915E22535FEC00DD6539 /* Message.swift in Sources */,
 				8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */,
 				8A1A9418225E2FE000060ACC /* AttachmentCollectionViewCell.swift in Sources */,
+				8A40803F2280708900F274FF /* ReactionsView.swift in Sources */,
 				8AB1B8F2226772C1002C65BD /* WebViewController.swift in Sources */,
 				8AABC291226086ED0064CB20 /* Attachment.swift in Sources */,
 				8A4FE7C5227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift in Sources */,
@@ -830,6 +853,7 @@
 			baseConfigurationReference = 6096B0855B2D558344DC1272 /* Pods-GetStreamChat.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = GetStreamChat/GetStreamChat.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = GetStreamChat/Info.plist;
@@ -850,6 +874,7 @@
 			baseConfigurationReference = E7A44397211C3D782D15E11D /* Pods-GetStreamChat.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = GetStreamChat/GetStreamChat.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = GetStreamChat/Info.plist;
