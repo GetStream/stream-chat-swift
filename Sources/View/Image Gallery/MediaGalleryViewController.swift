@@ -35,8 +35,8 @@ class MediaGalleryViewController: UIViewController {
         }
     }
     
-    override var prefersStatusBarHidden: Bool {
-        return true
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     private func addCloseButton() {
@@ -69,7 +69,7 @@ extension MediaGalleryViewController: UIScrollViewDelegate {
         view.addSubview(scrollView)
         scrollView.delegate = self
         scrollView.backgroundColor = .chatSuperDarkGray
-        scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        scrollView.edgesEqualToSuperview()
         scrollView.contentSize = UIScreen.main.bounds.size
         scrollView.alwaysBounceVertical = true
         scrollView.showsVerticalScrollIndicator = false
@@ -207,7 +207,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         scrollView.delegate = self
         scrollView.decelerationRate = .fast
         addSubview(scrollView)
-        scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        scrollView.edgesEqualToSuperview()
         scrollView.addGestureRecognizer(doubleTap)
         
         scrollView.addSubview(imageView)

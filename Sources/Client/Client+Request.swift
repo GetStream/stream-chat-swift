@@ -21,6 +21,7 @@ extension Client {
         return URLSession(configuration: config)
     }
     
+    @discardableResult
     func request<T: Decodable>(endpoint: EndpointProtocol,
                                connectionId: String,
                                _ completion: @escaping Completion<T>) -> URLSessionDataTask {
@@ -85,7 +86,7 @@ extension Client {
             return
         }
         
-        guard let data = data else {
+        guard let data = data, !data.isEmpty else {
             performInCallbackQueue { completion(.failure(.emptyBody)) }
             return
         }

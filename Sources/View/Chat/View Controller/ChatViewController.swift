@@ -47,8 +47,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     public var channelPresenter: ChannelPresenter? {
         didSet {
             if let channelPresenter = channelPresenter {
-                Driver.merge(channelPresenter.changes,
-                             channelPresenter.loading)
+                Driver.merge(channelPresenter.changes, channelPresenter.loading)
                     .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
                     .disposed(by: disposeBag)
             }
@@ -135,7 +134,7 @@ extension ChatViewController {
     
     private func setupTableView() {
         tableView.backgroundColor = style.backgroundColor
-        tableView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        tableView.edgesEqualToSuperview()
     }
     
     private func updateTableView(with changes: ChannelChanges) {

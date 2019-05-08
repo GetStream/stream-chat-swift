@@ -85,7 +85,7 @@ extension UIImage {
         
         if borderWidth > 0 {
             borderColor.setStroke()
-            let path = UIBezierPath(roundedRect: rect.inset(by: .init(allEdgeInsets: borderWidth / 2)),
+            let path = UIBezierPath(roundedRect: rect.inset(by: .all(borderWidth / 2)),
                                     byRoundingCorners: type.corners,
                                     cornerRadii: cornerRadii)
             path.lineWidth = borderWidth
@@ -94,7 +94,7 @@ extension UIImage {
         }
         
         if let image = UIGraphicsGetImageFromCurrentImageContext() {
-            return image.resizableImage(withCapInsets: UIEdgeInsets(allEdgeInsets: cornerRadius), resizingMode: .stretch)
+            return image.resizableImage(withCapInsets: .all(cornerRadius), resizingMode: .stretch)
         }
         
         return UIImage(color: .black)

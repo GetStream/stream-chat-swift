@@ -50,6 +50,7 @@ extension ChatViewController {
         var isContinueMessage = false
         
         if indexPath.row > 0,
+            presenter.items.count > indexPath.row,
             case .message(let prevMessage) = presenter.items[indexPath.row - 1],
             prevMessage.user == message.user,
             !prevMessage.text.messageContainsOnlyEmoji {

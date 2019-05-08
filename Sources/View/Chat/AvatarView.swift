@@ -37,7 +37,7 @@ final class AvatarView: UIImageView, Reusable {
         snp.makeConstraints { $0.width.height.equalTo(2 * cornerRadius).priority(999) }
         addSubview(avatarLabel)
         avatarLabel.font = .avatarFont(size: cornerRadius * 0.8)
-        avatarLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
+        avatarLabel.edgesEqualToSuperview()
     }
     
     func reset() {

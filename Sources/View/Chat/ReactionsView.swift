@@ -13,13 +13,14 @@ import RxCocoa
 import RxGesture
 
 final class ReactionsView: UIView {
+    typealias Completion = (_ selectedEmoji: String) -> Bool
     
     private let disposeBag = DisposeBag()
     
     private lazy var avatarsStackView = createAvatarsStackView()
     private lazy var emojiesStackView = cerateEmojiesStackView()
     private lazy var labelsStackView = createLabelsStackView()
-
+    private var reactionCounts: [String: Int]?
     
     private(set) lazy var reactionsView: UIView = {
         let view = UIView(frame: .zero)
@@ -32,7 +33,7 @@ final class ReactionsView: UIView {
         return view
     }()
     
-    func show(at y: CGFloat, for message: Message, dismiss: @escaping () -> Void) {
+    func show(at y: CGFloat, for message: Message, completion: @escaping Completion) {
         addSubview(reactionsView)
         reactionsView.frame = CGRect(x: (UIScreen.main.bounds.width - .messageTextMaxWidth) / 2,
                                      y: y + .reactionsHeight / 2 - .reactionsPickerCornerRadius,
@@ -40,28 +41,28 @@ final class ReactionsView: UIView {
                                      height: .reactionsPickerCornerHeight)
         
         reactionsView.transform = .init(scaleX: 0.2, y: 0.2)
-        reactionsView.alpha = 0
         alpha = 0
+        reactionCounts = message.reactionCounts?.counts
         
-        Reaction.emojiKeys.enumerated().forEach { index, key in
-            let users = message.latestReactions.filter({ $0.type == key }).compactMap({ $0.user })
+        Reaction.emojiTypes.enumerated().forEach { index, type in
+            let users = message.latestReactions.filter({ $0.type == type }).compactMap({ $0.user })
             avatarsStackView.addArrangedSubview(createAvatarView(users))
-            emojiesStackView.addArrangedSubview(createEmojiView(emoji: Reaction.emoji[index]))
-            labelsStackView.addArrangedSubview(createLabel(message.reactionCounts?.counts[key] ?? 0))
+            emojiesStackView.addArrangedSubview(createEmojiView(emoji: Reaction.emoji[index], emojiType: type, completion: completion))
+            labelsStackView.addArrangedSubview(createLabel(message.reactionCounts?.counts[type] ?? 0))
         }
         
-        UIView.animateSmooth(withDuration: 0.3, usingSpringWithDamping: 0.7) {
+        UIView.animateSmooth(withDuration: 0.3, usingSpringWithDamping: 0.6) {
             self.alpha = 1
             self.reactionsView.transform = .identity
-            self.reactionsView.alpha = 1
         }
         
-        rx.tapGesture()
+        let view  = UIView(frame: .zero)
+        insertSubview(view, at: 0)
+        view.edgesEqualToSuperview()
+        
+        view.rx.tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { [weak self] _ in
-                self?.dismiss()
-                dismiss()
-            })
+            .subscribe(onNext: { [weak self] _ in self?.dismiss() })
             .disposed(by: disposeBag)
     }
     
@@ -69,10 +70,27 @@ final class ReactionsView: UIView {
         avatarsStackView.removeAllArrangedSubviews()
         labelsStackView.removeAllArrangedSubviews()
         
-        Reaction.emojiKeys.enumerated().forEach { index, key in
+        Reaction.emojiTypes.enumerated().forEach { index, key in
             let users = message.latestReactions.filter({ $0.type == key }).compactMap({ $0.user })
             avatarsStackView.addArrangedSubview(createAvatarView(users))
             labelsStackView.addArrangedSubview(createLabel(message.reactionCounts?.counts[key] ?? 0))
+        }
+    }
+    
+    private func updateLabel(emojiType: String, increment: Int) {
+        if let index = Reaction.emojiTypes.firstIndex(of: emojiType),
+            let label = labelsStackView.subviews[index].subviews.first as? UILabel {
+            let count = (reactionCounts?[emojiType] ?? 0) + increment
+            label.text = count > 0 ? count.shortString() : nil
+            
+            if increment > 0 {
+                if let avatarView = avatarsStackView.subviews[index].subviews.first as? AvatarView {
+                    let user = Client.shared.user
+                    avatarView.update(with: user?.avatarURL, name: user?.name, baseColor: backgroundColor?.withAlphaComponent(1))
+                }
+            } else {
+                avatarsStackView.subviews[index].subviews.first?.removeFromSuperview()
+            }
         }
     }
     
@@ -108,18 +126,39 @@ final class ReactionsView: UIView {
         return stackView
     }
     
-    private func createEmojiView(emoji: String) -> UIView {
-        let button = UIButton(type: .custom)
-        button.setTitle(emoji, for: .normal)
-        button.titleLabel?.font = .reactionsEmoji
-        button.snp.makeConstraints { $0.width.height.equalTo(CGFloat.reactionsPickerButtonWidth).priority(999) }
-        return button
+    private func createEmojiView(emoji: String, emojiType: String, completion: @escaping Completion) -> UIView {
+        let label = UILabel()
+        label.text = emoji
+        label.textAlignment = .center
+        label.font = .reactionsEmoji
+        label.snp.makeConstraints { $0.width.height.equalTo(CGFloat.reactionsPickerButtonWidth).priority(999) }
+        
+        label.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { [weak self, weak label] _ in
+                self?.isUserInteractionEnabled = false
+                let add = completion(emojiType)
+                self?.updateLabel(emojiType: emojiType, increment: add ? 1 : -1)
+                
+                label?.transform = .init(scaleX: 0.3, y: 0.3)
+                
+                UIView.animateSmooth(withDuration: 0.3,
+                                     usingSpringWithDamping: 0.4,
+                                     initialSpringVelocity: 10,
+                                     animations: { label?.transform = .identity },
+                                     completion: { [weak self] _ in self?.dismiss() })
+            })
+            .disposed(by: disposeBag)
+        
+        return label
     }
     
     // MARK: - Avatars
     
     private func createAvatarsStackView() -> UIStackView {
         let stackView = createStackView()
+        stackView.isUserInteractionEnabled = false
         stackView.snp.makeConstraints { $0.centerY.equalTo(reactionsView.snp.top) }
         return stackView
     }
@@ -128,15 +167,16 @@ final class ReactionsView: UIView {
         let viewContainer = UIView(frame: .zero)
         viewContainer.snp.makeConstraints { $0.width.height.equalTo(CGFloat.reactionsPickerButtonWidth).priority(999) }
         
-        guard let user = users?.first else {
-            return viewContainer
-        }
-        
         let labelBackgroundColor = backgroundColor?.withAlphaComponent(1)
         let avatarView = AvatarView(cornerRadius: .reactionsPickerAvatarRadius)
-        avatarView.update(with: user.avatarURL, name: user.name, baseColor: labelBackgroundColor)
         viewContainer.addSubview(avatarView)
         avatarView.snp.makeConstraints { $0.center.equalToSuperview() }
+        
+        if let user = users?.first {
+            avatarView.update(with: user.avatarURL, name: user.name, baseColor: labelBackgroundColor)
+        } else {
+            avatarView.isHidden = true
+        }
         
         return viewContainer
     }
@@ -145,6 +185,7 @@ final class ReactionsView: UIView {
     
     private func createLabelsStackView() -> UIStackView {
         let stackView = createStackView()
+        stackView.isUserInteractionEnabled = false
         stackView.snp.makeConstraints { $0.top.equalTo(reactionsView.snp.centerY).offset(2) }
         return stackView
     }
@@ -153,12 +194,8 @@ final class ReactionsView: UIView {
         let viewContainer = UIView(frame: .zero)
         viewContainer.snp.makeConstraints { $0.width.height.equalTo(CGFloat.reactionsPickerButtonWidth).priority(999) }
         
-        guard count > 0 else {
-            return viewContainer
-        }
-        
         let label = UILabel(frame: .zero)
-        label.text = count.shortString()
+        label.text = count > 0 ? count.shortString() : nil
         label.font = .chatSmall
         label.textColor = reactionsView.backgroundColor?.oppositeBlackAndWhite
         viewContainer.addSubview(label)

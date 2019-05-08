@@ -12,7 +12,7 @@ import Foundation
 
 public struct Reaction: Codable {
     static let emoji = ["👍", "❤️", "😂", "😲", "😔", "😠"]
-    static let emojiKeys = ["like", "love", "haha", "wow", "sad", "angry"]
+    static let emojiTypes = ["like", "love", "haha", "wow", "sad", "angry"]
     
     private enum CodingKeys: String, CodingKey {
         case type
@@ -26,39 +26,65 @@ public struct Reaction: Codable {
     public let created: Date
     public let messageId: String
     
-    public var emoji: String {
-        guard let index = Reaction.emojiKeys.firstIndex(of: type) else {
-            return type
+    public var isOwn: Bool {
+        if let user = user, let currentUser = Client.shared.user, user == currentUser {
+            return true
         }
         
-        return Reaction.emoji[index]
+        return false
     }
 }
 
 // MARK - Reaction Counts
 
 public struct ReactionCounts: Decodable {
-    let counts: [String: Int]
-    let string: String
+    private(set) var counts: [String: Int]
+    private(set) var string: String
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         counts = try container.decode([String: Int].self)
+        string = ""
+        string = joinToString()
+    }
+    
+    init(reactionType: String) {
+        counts = [reactionType: 1]
+        
+        if let index = Reaction.emojiTypes.firstIndex(of: reactionType) {
+            string = "\(Reaction.emoji[index])1"
+        } else {
+            string = ""
+        }
+    }
+    
+    private func joinToString() -> String {
         let count = counts.values.reduce(0, { $0 + $1 })
         let countKeys = counts.keys
         var emoji = ""
         
         guard !counts.isEmpty else {
-            string = ""
-            return
+            return ""
         }
         
-        Reaction.emojiKeys.enumerated().forEach { index, key in
+        Reaction.emojiTypes.enumerated().forEach { index, key in
             if countKeys.contains(key) {
                 emoji += Reaction.emoji[index]
             }
         }
         
-        string = emoji.appending(String(count))
+        return emoji.appending(String(count))
+    }
+    
+    mutating func update(type: String, increment: Int) {
+        let count = increment + (counts[type] ?? 0)
+        
+        if count <= 0 {
+            counts.removeValue(forKey: type)
+        } else {
+            counts[type] = count
+        }
+        
+        string = joinToString()
     }
 }

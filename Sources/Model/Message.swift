@@ -35,21 +35,13 @@ public struct Message: Codable {
     public let attachments: [Attachment]
     public let mentionedUsers: [User]
     public let replyCount: Int
-    public let latestReactions: [Reaction]
-    public let ownReactions: [Reaction]
-    public let reactionCounts: ReactionCounts?
+    public private(set) var latestReactions: [Reaction]
+    public private(set) var ownReactions: [Reaction]
+    public private(set) var reactionCounts: ReactionCounts?
     
     public var isDeleted: Bool {
         return deleted != nil
     }
-//
-//    public var reactionsString: String? {
-//        guard let reactionCounts = reactionCounts else {
-//            return nil
-//        }
-//
-//        return
-//    }
     
     init?(text: String) {
         guard let user = Client.shared.user else {
@@ -86,6 +78,47 @@ extension Message: Equatable {
             && lhs.created == rhs.created
             && lhs.updated == rhs.updated
             && lhs.deleted == rhs.deleted
+    }
+}
+
+// MARK: - Reactions
+
+extension Message {
+    
+    public func hasOwnReaction(type: String) -> Bool {
+        return !ownReactions.isEmpty && ownReactions.firstIndex(where: { $0.type == type }) != nil
+    }
+    
+    mutating func addToOwnReactions(_ reaction: Reaction) {
+        if let index = latestReactions.firstIndex(where: { $0.type == reaction.type }) {
+            latestReactions[index] = reaction
+        } else {
+            latestReactions.insert(reaction, at: 0)
+        }
+        
+        if let index = ownReactions.firstIndex(where: { $0.type == reaction.type }) {
+            ownReactions[index] = reaction
+        } else {
+            ownReactions.insert(reaction, at: 0)
+        }
+        
+        if reactionCounts != nil {
+            reactionCounts?.update(type: reaction.type, increment: 1)
+        } else {
+            reactionCounts = ReactionCounts(reactionType: reaction.type)
+        }
+    }
+
+    mutating func deleteFromOwnReactions(_ reaction: Reaction) {
+        if let index = latestReactions.firstIndex(where: { $0.type == reaction.type }) {
+            latestReactions.remove(at: index)
+        }
+        
+        if let index = ownReactions.firstIndex(where: { $0.type == reaction.type }) {
+            ownReactions.remove(at: index)
+        }
+        
+        reactionCounts?.update(type: reaction.type, increment: -1)
     }
 }
 

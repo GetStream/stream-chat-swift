@@ -18,7 +18,7 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
         button.setImage(UIImage.Icons.close, for: .normal)
         button.tintColor = .black
         button.backgroundColor = UIColor.chatGray.withAlphaComponent(0.5)
-        button.contentEdgeInsets = .init(allEdgeInsets: 2)
+        button.contentEdgeInsets = .all(2)
         return button
     }()
     
@@ -42,7 +42,7 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
     private func setup() {
         addSubview(imageView)
         imageView.contentMode = .scaleAspectFill
-        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        imageView.edgesEqualToSuperview()
         
         addSubview(removeButton)
         removeButton.snp.makeConstraints { make in

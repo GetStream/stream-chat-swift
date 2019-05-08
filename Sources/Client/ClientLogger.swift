@@ -50,7 +50,7 @@ public struct ClientLogger {
             log("Response", response.description)
         }
         
-        if let data = data{
+        if let data = data {
             if let jsonString = try? data.prettyPrintedJSONString() {
                 log("JSON", jsonString)
             } else if let dataString = String(data: data, encoding: .utf8) {

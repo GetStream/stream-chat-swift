@@ -77,12 +77,6 @@ extension ChannelPresenter {
         let nextRow = items.count
         
         switch response.event {
-        case .userStartWatching(let user, _):
-            return .updateFooter(false, user, nil)
-            
-        case .userStopWatching(let user, _):
-            return .updateFooter(false, nil, user)
-            
         case .typingStart(let user):
             if typingUsers.isEmpty || !typingUsers.contains(user) {
                 typingUsers.append(user)
@@ -109,14 +103,31 @@ extension ChannelPresenter {
             
             return .itemAdded(nextRow, reloadRow, forceToScroll)
             
-        case .reactionNew(_, let message, _), .reactionDeleted(_, let message, _):
+        case .reactionNew(let reaction, let message, _), .reactionDeleted(let reaction, let message, _):
             if let index = items.lastIndex(where: { item -> Bool in
                 if case let .message(existsMessage) = item {
                     return existsMessage.id == message.id
                 }
                 
                 return false
-            }) {
+            }),
+                case .message(let currentMessage) = items[index] {
+                var message = currentMessage
+                
+                if reaction.isOwn {
+                    var isDeleting = false
+                    
+                    if case .reactionDeleted = response.event {
+                        isDeleting = true
+                    }
+                    
+                    if isDeleting {
+                        message.deleteFromOwnReactions(reaction)
+                    } else {
+                        message.addToOwnReactions(reaction)
+                    }
+                }
+                
                 items[index] = .message(message)
                 return .itemUpdated(index, message)
             }
@@ -262,6 +273,28 @@ extension ChannelPresenter {
             return
         }
         
-        channel.send(message)
+        let completion: Client.Completion<MessageResponse> = { _ in }
+        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), connectionId: "", completion)
+    }
+}
+
+// MARK: - Send Reaction
+
+extension ChannelPresenter {
+    
+    public func update(reactionType: String, message: Message) -> Bool {
+        let add = !message.hasOwnReaction(type: reactionType)
+        let endpoint: ChatEndpoint
+        
+        if add {
+            endpoint = .addReaction(reactionType, message)
+        } else {
+            endpoint = .deleteReaction(reactionType, message)
+        }
+        
+        let completion: Client.Completion<MessageResponse> = { _ in }
+        Client.shared.request(endpoint: endpoint, connectionId: "", completion)
+        
+        return add
     }
 }

@@ -28,8 +28,13 @@ extension ChatViewController {
         reactionsView.backgroundColor = style.backgroundColor.withAlphaComponent(0.4)
         reactionsView.reactionsView.backgroundColor = style.incomingMessage.reactionViewStyle.backgroundColor
         view.addSubview(reactionsView)
-        reactionsView.snp.makeConstraints { $0.edges.equalToSuperview() }
-        reactionsView.show(at: rect.origin.y, for: message) { [weak self] in self?.reactionsView = nil }
+        reactionsView.edgesEqualToSuperview()
+        
+        reactionsView.show(at: rect.origin.y, for: message) { [weak self] emojiType in
+            self?.reactionsView = nil
+            return self?.channelPresenter?.update(reactionType: emojiType, message: message) ?? true
+        }
+        
         self.reactionsView = reactionsView
     }
 }

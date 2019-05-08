@@ -12,6 +12,8 @@ import Foundation
 public struct MessageResponse: Decodable {
     /// A message.
     let message: Message
+    /// A reaction.
+    let reaction: Reaction?
     /// A duration of the response.
     let duration: String
 }

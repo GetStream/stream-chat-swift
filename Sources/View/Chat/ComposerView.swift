@@ -227,13 +227,13 @@ public final class ComposerView: UIView {
         let blurView = UIVisualEffectView(effect: blurEffect)
         blurView.isUserInteractionEnabled = false
         insertSubview(blurView, at: 0)
-        blurView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        blurView.edgesEqualToSuperview()
         
         let adjustingView = UIView(frame: .zero)
         adjustingView.isUserInteractionEnabled = false
         adjustingView.backgroundColor = .init(white: isDark ? 1 : 0, alpha: isDark ? 0.25 : 0.1)
         insertSubview(adjustingView, at: 0)
-        adjustingView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        adjustingView.edgesEqualToSuperview()
     }
     
     private func updateStyle(with state: ComposerViewStyle.State) {

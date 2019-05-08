@@ -62,22 +62,6 @@ open class Channel: Codable {
     }
 }
 
-// MARK: - Requests
-
-extension Channel {
-    
-    public func send(_ message: Message) {
-        let completion: Client.Completion<MessageResponse> = { print($0) }
-        _ = Client.shared.request(endpoint: ChatEndpoint.send(message, channel: self), connectionId: "", completion)
-    }
-}
-
-// MARK: - Updates
-
-extension Channel {
-    
-}
-
 // MARK: - Channel Type
 
 public enum ChannelType: String, Codable {
