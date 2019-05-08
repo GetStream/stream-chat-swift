@@ -18,6 +18,21 @@ class MediaGalleryViewController: UIViewController {
     public let scrollView = UIScrollView(frame: .zero)
     /// A horizontal collection view with images.
     public let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    
+    /// A page controler for several item.
+    public lazy var pageControl: UIPageControl = {
+        let pageControl = UIPageControl(frame: .zero)
+        view.addSubview(pageControl)
+        
+        pageControl.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
+            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            make.bottom.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+        }
+        
+        return pageControl
+    }()
+    
     /// An image URL's.
     public var items: [MediaGalleryItem] = []
     public var selected: Int = 0
@@ -30,8 +45,21 @@ class MediaGalleryViewController: UIViewController {
         setupCollectionView()
         addCloseButton()
         
+        if items.count > 1 {
+            pageControl.pageIndicatorTintColor = .chatGray
+            pageControl.numberOfPages = items.count
+            pageControl.currentPage = selected
+            pageControl.hidesForSinglePage = true
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
         if selected > 0, selected < items.count {
-            collectionView.scrollToItem(at: IndexPath(item: selected), at: .centeredHorizontally, animated: false)
+            DispatchQueue.main.async {
+                self.collectionView.scrollToItem(at: IndexPath(item: self.selected), at: .centeredHorizontally, animated: false)
+            }
         }
     }
     
@@ -50,7 +78,7 @@ class MediaGalleryViewController: UIViewController {
         view.addSubview(closeButton)
         
         closeButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(CGFloat.messageSpacing)
             make.right.equalToSuperview().offset(-CGFloat.messageSpacing)
             make.width.height.equalTo(MediaGalleryViewController.closeButtonWidth)
         }
@@ -69,25 +97,34 @@ extension MediaGalleryViewController: UIScrollViewDelegate {
         view.addSubview(scrollView)
         scrollView.delegate = self
         scrollView.backgroundColor = .chatSuperDarkGray
-        scrollView.edgesEqualToSuperview()
-        scrollView.contentSize = UIScreen.main.bounds.size
         scrollView.alwaysBounceVertical = true
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
+        scrollView.edgesEqualToSafeAreaSuperview()
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard scrollView == self.scrollView else {
+            return
+        }
+        
         collectionView.alpha = CGFloat.maximum(0, 1 - scrollView.contentOffset.y / -150)
         
         if scrollView.contentOffset.y < -100 {
             dismiss(animated: true)
         }
     }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        if scrollView == collectionView {
+            pageControl.currentPage = Int(scrollView.contentOffset.x) / Int(scrollView.frame.width)
+        }
+    }
 }
 
 // MARK: - Collection View
 
-extension MediaGalleryViewController: UICollectionViewDataSource {
+extension MediaGalleryViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     private func setupCollectionView() {
         collectionView.backgroundColor = .chatSuperDarkGray
@@ -95,10 +132,12 @@ extension MediaGalleryViewController: UICollectionViewDataSource {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.dataSource = self
+        collectionView.delegate = self
         collectionView.register(cellType: MediaGalleryCollectionViewCell.self)
         scrollView.addSubview(collectionView)
         
-        let itemSize = UIScreen.main.bounds.size
+        let itemSize = CGSize(width: UIScreen.main.bounds.width,
+                              height: UIScreen.main.bounds.height - .safeAreaTop - .safeAreaBottom)
         
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
