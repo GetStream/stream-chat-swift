@@ -23,7 +23,7 @@ extension ChatViewController {
         reactionsView.reactionsView.backgroundColor = style.incomingMessage.reactionViewStyle.backgroundColor
         reactionsView.makeEdgesEqualToSuperview(superview: view)
         self.reactionsView = reactionsView
-
+        
         reactionsView.show(from: tableView.convert(cell.frame, to: view), for: message) { [weak self] emojiType in
             self?.reactionsView = nil
             return self?.channelPresenter?.update(reactionType: emojiType, message: message) ?? true

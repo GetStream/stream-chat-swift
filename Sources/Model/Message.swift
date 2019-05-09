@@ -43,6 +43,10 @@ public struct Message: Codable {
         return deleted != nil
     }
     
+    public var isOwn: Bool {
+        return Client.shared.user == user
+    }
+    
     init?(text: String) {
         guard let user = Client.shared.user else {
             return nil

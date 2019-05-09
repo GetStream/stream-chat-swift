@@ -35,14 +35,12 @@ final class ReactionsView: UIView {
     
     func show(from rect: CGRect, for message: Message, completion: @escaping Completion) {
         addSubview(reactionsView)
-        reactionsView.frame = CGRect(x: (UIScreen.main.bounds.width - .messageTextMaxWidth) / 2,
-                                     y: rect.origin.y + .reactionsHeight / 2 - .reactionsPickerCornerRadius,
-                                     width: .messageTextMaxWidth,
-                                     height: .reactionsPickerCornerHeight)
-        
-        reactionsView.transform = .init(scaleX: 0.2, y: 0.2)
-        alpha = 0
+        let x = (UIScreen.main.bounds.width - .messageTextMaxWidth) / 2
+        let y = rect.origin.y + .reactionsHeight / 2 - .reactionsPickerCornerRadius
+        reactionsView.frame = CGRect(x: x, y: y, width: .messageTextMaxWidth, height: .reactionsPickerCornerHeight)
+        reactionsView.transform = .init(scaleX: 0.5, y: 0.5)
         reactionCounts = message.reactionCounts?.counts
+        alpha = 0
         
         Reaction.emojiTypes.enumerated().forEach { index, type in
             let users = message.latestReactions.filter({ $0.type == type }).compactMap({ $0.user })
@@ -51,7 +49,7 @@ final class ReactionsView: UIView {
             labelsStackView.addArrangedSubview(createLabel(message.reactionCounts?.counts[type] ?? 0))
         }
         
-        UIView.animateSmooth(withDuration: 0.3, usingSpringWithDamping: 0.6) {
+        UIView.animateSmooth(withDuration: 0.3, usingSpringWithDamping: 0.65) {
             self.alpha = 1
             self.reactionsView.transform = .identity
         }
@@ -97,8 +95,7 @@ final class ReactionsView: UIView {
     func dismiss() {
         UIView.animateSmooth(withDuration: 0.25, animations: {
             self.alpha = 0
-            self.reactionsView.transform = .init(scaleX: 0.1, y: 0.1)
-            self.reactionsView.alpha = 0
+            self.reactionsView.transform = .init(scaleX: 0.2, y: 0.2)
         }) { _ in
             self.removeFromSuperview()
         }
