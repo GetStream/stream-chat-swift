@@ -12,5 +12,5 @@ target 'GetStreamChat' do
   pod 'RxGesture'
   pod 'SnapKit'
   pod 'Nuke'
-  pod 'SwiftyGif'
+  pod 'SwiftyGif', :git => 'https://github.com/buh/SwiftyGif.git'
 end

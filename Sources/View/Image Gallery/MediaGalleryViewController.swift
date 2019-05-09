@@ -100,7 +100,7 @@ extension MediaGalleryViewController: UIScrollViewDelegate {
         scrollView.alwaysBounceVertical = true
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
-        scrollView.edgesEqualToSafeAreaSuperview()
+        scrollView.makeEdgesEqualToSafeAreaSuperview()
     }
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -245,8 +245,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         scrollView.maximumZoomScale = 1
         scrollView.delegate = self
         scrollView.decelerationRate = .fast
-        addSubview(scrollView)
-        scrollView.edgesEqualToSuperview()
+        scrollView.makeEdgesEqualToSuperview(superview: self)
         scrollView.addGestureRecognizer(doubleTap)
         
         scrollView.addSubview(imageView)
@@ -258,8 +257,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
             make.size.equalToSuperview()
         }
         
-        addSubview(activityIndicatorView)
-        activityIndicatorView.snp.makeConstraints { $0.center.equalToSuperview() }
+        activityIndicatorView.makeCenterEqualToSuperview(superview: self)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -313,7 +311,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         scrollView.maximumZoomScale = min(5, max(1, scale))
         
         if let animatedImageData = image.animatedImageData,
-            let animatedImage = try? UIImage(gifData: animatedImageData) {
+            let animatedImage = try? UIImage(gifData: animatedImageData, levelOfIntegrity: .highestNoFrameSkipping) {
             imageView.setGifImage(animatedImage)
             
         } else if scale < 1 {

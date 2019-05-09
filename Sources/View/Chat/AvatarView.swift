@@ -35,9 +35,8 @@ final class AvatarView: UIImageView, Reusable {
         clipsToBounds = true
         contentMode = .scaleAspectFill
         snp.makeConstraints { $0.width.height.equalTo(2 * cornerRadius).priority(999) }
-        addSubview(avatarLabel)
         avatarLabel.font = .avatarFont(size: cornerRadius * 0.8)
-        avatarLabel.edgesEqualToSuperview()
+        avatarLabel.makeEdgesEqualToSuperview(superview: self)
     }
     
     func reset() {

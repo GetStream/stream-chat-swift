@@ -106,10 +106,14 @@ extension MessageTableViewCell {
         }
     }
     
-    public func update(reactions: String, action: @escaping MessageTableViewCell.Action) {
+    public func update(reactionCounts: ReactionCounts?, action: @escaping ReactionAction) {
+        guard let reactionCounts = reactionCounts, !reactionCounts.counts.isEmpty else {
+            return
+        }
+        
         reactionsContainer.isHidden = false
         reactionsOverlayView.isHidden = false
-        reactionsLabel.text = reactions
+        reactionsLabel.text = reactionCounts.string
         updateConstraintsForReactions()
         
         reactionsOverlayView.rx.tapGesture()

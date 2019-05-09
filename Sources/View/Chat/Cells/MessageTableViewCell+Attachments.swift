@@ -15,14 +15,17 @@ import RxGesture
 
 extension MessageTableViewCell {
     
-    public func add(attachments: [Attachment],
-                    userName: String,
-                    tap: @escaping (_ attachment: Attachment, _ at: Int, _ attachments: [Attachment]) -> Void,
-                    reload: @escaping () -> Void) {
+    public func addAttachments(from message: Message,
+                               tap: @escaping AttachmentTapAction,
+                               longTap: @escaping LongTapAction,
+                               reload: @escaping () -> Void) {
         guard let style = style else {
             return
         }
         
+        let attachments = message.attachments
+        let imageBackgroundColor = UIColor.color(by: message.user.name, isDark: backgroundColor?.isDark ?? false)
+
         attachments.enumerated().forEach { index, attachment in
             let preview: AttachmentPreviewProtocol
             
@@ -31,7 +34,7 @@ extension MessageTableViewCell {
             } else {
                 preview = createAttachmentPreview(with: attachment,
                                                   style: style,
-                                                  imageBackgroundColor: .color(by: userName, isDark: backgroundColor?.isDark ?? false),
+                                                  imageBackgroundColor: imageBackgroundColor,
                                                   reload: reload)
             }
             
@@ -44,9 +47,22 @@ extension MessageTableViewCell {
                 preview.update(maskImage: maskImageForAttachment(at: index))
             }
             
-            (preview as UIView).rx.tapGesture()
-                .when(.recognized)
-                .subscribe(onNext: { _ in tap(attachment, index, attachments) })
+            (preview as UIView).rx
+                .anyGesture((.tap(configuration: { _, delegate in
+                    delegate.simultaneousRecognitionPolicy = .never
+                }), when: .recognized),
+                            (.longPress(configuration: { _, delegate in
+                                delegate.simultaneousRecognitionPolicy = .never
+                            }), when: .began))
+                .subscribe(onNext: { [weak self] gesture in
+                    if let self = self {
+                        if gesture is UITapGestureRecognizer {
+                            tap(attachment, index, attachments)
+                        } else {
+                            longTap(self, message)
+                        }
+                    }
+                })
                 .disposed(by: preview.disposeBag)
         }
         
@@ -65,7 +81,7 @@ extension MessageTableViewCell {
         preview.attachment = attachment
         preview.forceToReload = reload
         
-        preview.backgroundColor = attachment.isImage
+        preview.backgroundColor = attachment.isImageOrVideo
             ? style.chatBackgroundColor
             : (style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray)
         

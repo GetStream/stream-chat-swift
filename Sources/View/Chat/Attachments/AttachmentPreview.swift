@@ -22,7 +22,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     private var imageViewTopConstraint: Constraint?
     private var imageViewBottomConstraint: Constraint?
     private var imageTask: ImageTask?
-    private var isGifImage = false
+    private(set) var isGifImage = false
     let disposeBag = DisposeBag()
     
     private(set) lazy var imageView: UIImageView = {
@@ -87,7 +87,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     public var attachment: Attachment? {
         didSet {
             if let attachment = attachment {
-                defaultHeight = attachment.isImage ? .attachmentPreviewHeight : .attachmentPreviewMaxHeight
+                defaultHeight = attachment.isImageOrVideo ? .attachmentPreviewHeight : .attachmentPreviewMaxHeight
             }
         }
     }
@@ -130,7 +130,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         if superview != nil, widthConstraint == nil, let attachment = attachment {
             snp.makeConstraints {
                 heightConstraint = $0.height.equalTo(defaultHeight).priority(999).constraint
-                widthConstraint = $0.width.equalTo(attachment.isImage ? defaultHeight : maxWidth).constraint
+                widthConstraint = $0.width.equalTo(attachment.isImageOrVideo ? defaultHeight : maxWidth).constraint
             }
         }
     }
@@ -140,7 +140,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             return
         }
         
-        if !attachment.isImage {
+        if !attachment.isImageOrVideo {
             titleLabel.text = attachment.title
             titleLabel.backgroundColor = backgroundColor
             textLabel.text = attachment.text ?? attachment.url?.host
@@ -162,8 +162,13 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         let options = ImageLoadingOptions(placeholder: UIImage.Icons.image, failureImage: UIImage.Icons.close, contentModes: modes)
         
         if let imageResponse = Nuke.ImageCache.shared.cachedResponse(for: imageRequest) {
-            imageView.image = imageResponse.image
             imageView.contentMode = .scaleAspectFit
+            imageView.image = imageResponse.image
+
+            if let animatedImageData = imageResponse.image.animatedImageData {
+                setGifImage(with: animatedImageData)
+            }
+            
             parse(imageResponse: imageResponse, error: nil, maskImage: maskImage, cached: true)
         } else {
             imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] in
@@ -177,13 +182,13 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             return
         }
         
-        var width = attachment.isImage ? defaultHeight : maxWidth
+        var width = attachment.isImageOrVideo ? defaultHeight : maxWidth
         var height = defaultHeight
         
         if let image = imageResponse?.image, image.size.height > 0 {
             imageView.backgroundColor = backgroundColor
             
-            if attachment.isImage {
+            if attachment.isImageOrVideo {
                 width = min(image.size.width / image.size.height * defaultHeight, maxWidth)
                 widthConstraint?.update(offset: width)
             }
@@ -197,12 +202,12 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                 
                 if !cached {
                     forceToReload()
+                    return
                 }
             }
             
-            if let animatedImageData = image.animatedImageData, let animatedImage = try? UIImage(gifData: animatedImageData) {
-                isGifImage = true
-                imageView.setGifImage(animatedImage)
+            if !cached, let animatedImageData = image.animatedImageData {
+                setGifImage(with: animatedImageData)
             }
         } else {
             if let error = error, let url = imageResponse?.urlResponse?.url {
@@ -216,5 +221,17 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             mask = maskView
             layer.cornerRadius = 0
         }
+    }
+    
+    private func setGifImage(with animatedImageData: Data) {
+        guard let animatedImage = try? UIImage(gifData: animatedImageData) else {
+            return
+        }
+        
+        isGifImage = true
+        imageView.image = nil
+        imageView.setGifImage(animatedImage, manager: SwiftyGifManager(memoryLimit: 50))
+        
+        return
     }
 }

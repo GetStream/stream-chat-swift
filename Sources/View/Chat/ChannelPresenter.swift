@@ -58,7 +58,6 @@ extension ChannelPresenter {
         
         if !items.isEmpty {
             next = .none
-            items = []
             loadPagination.onNext(.pageSize)
         }
         

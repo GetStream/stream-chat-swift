@@ -40,11 +40,11 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
     }
     
     private func setup() {
-        addSubview(imageView)
         imageView.contentMode = .scaleAspectFill
-        imageView.edgesEqualToSuperview()
+        imageView.makeEdgesEqualToSuperview(superview: contentView)
         
-        addSubview(removeButton)
+        contentView.addSubview(removeButton)
+        
         removeButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(2)
             make.right.equalToSuperview().offset(-2)

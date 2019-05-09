@@ -1,5 +1,5 @@
 PODS:
-  - Nuke (7.6.2)
+  - Nuke (7.6.3)
   - ReachabilitySwift (4.3.1)
   - RxAppState (1.5.0):
     - RxCocoa (~> 4.4)
@@ -35,7 +35,7 @@ DEPENDENCIES:
   - RxStarscream
   - RxSwift
   - SnapKit
-  - SwiftyGif
+  - SwiftyGif (from `https://github.com/buh/SwiftyGif.git`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -50,10 +50,18 @@ SPEC REPOS:
     - RxSwift
     - SnapKit
     - Starscream
-    - SwiftyGif
+
+EXTERNAL SOURCES:
+  SwiftyGif:
+    :git: https://github.com/buh/SwiftyGif.git
+
+CHECKOUT OPTIONS:
+  SwiftyGif:
+    :commit: cf1c449a0a378ceb9d770fff08dc344acbedf1b6
+    :git: https://github.com/buh/SwiftyGif.git
 
 SPEC CHECKSUMS:
-  Nuke: 392eff7cb037adbec6699febe9237849ac5dcc47
+  Nuke: 44130e95e09463f8773ae4b96b90de1eba6b3350
   ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
   RxAppState: 46cae19e582daf7283a8f9ef553e7c049e1565b4
   RxCocoa: cbf70265dc65a981d4ac982e513c10cf23df24a0
@@ -66,6 +74,6 @@ SPEC CHECKSUMS:
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
   SwiftyGif: 3ca6760b21372f6b1844c0eb3957d7f49e2481ad
 
-PODFILE CHECKSUM: 4699db2f9b8be0265a899afe7f2ad3509975d85e
+PODFILE CHECKSUM: 5ba62de458ecb97598475d47e1f32406bbf8abab
 
 COCOAPODS: 1.6.1

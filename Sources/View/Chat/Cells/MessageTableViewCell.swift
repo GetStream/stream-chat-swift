@@ -12,7 +12,10 @@ import Nuke
 import RxSwift
 
 final class MessageTableViewCell: UITableViewCell, Reusable {
-    typealias Action = (_ cell: MessageTableViewCell) -> Void
+    typealias ReactionAction = (_ cell: UITableViewCell) -> Void
+    typealias TapAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
+    typealias AttachmentTapAction = (_ attachment: Attachment, _ at: Int, _ attachments: [Attachment]) -> Void
+    typealias LongTapAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
     
     private(set) var disposeBag = DisposeBag()
     
@@ -27,13 +30,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         label.textAlignment = .center
         return label
     }()
-    
-    //    private(set) lazy var reactionButton: UIButton = {
-    //        let button = UIButton(type: .custom)
-    //        button.setImage(UIImage.Icons.happy, for: .normal)
-    //        button.tintColor = .chatGray
-    //        return button
-    //    }()
     
     private(set) lazy var nameAndDateStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, dateLabel])
@@ -224,18 +220,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             make.right.equalTo(reactionsContainer).offset(CGFloat.messageSpacing)
             make.bottom.equalTo(reactionsTailImage)
         }
-        
-        //        if style.alignment == .left {
-        //            reactionButton.backgroundColor = style.chatBackgroundColor
-        //            contentView.insertSubview(reactionButton, at: 0)
-        //
-        //            reactionButton.snp.makeConstraints { make in
-        //                make.top.equalTo(messageLabel.snp.top).offset(-15)
-        //                make.centerX.equalTo(reactionsContainer.snp.right).offset(1)
-        //                make.width.equalTo(30)
-        //                make.height.equalTo(30)
-        //            }
-        //        }
     }
     
     func updateConstraintsForReactions() {

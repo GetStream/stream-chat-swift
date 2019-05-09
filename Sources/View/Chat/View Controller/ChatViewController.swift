@@ -71,12 +71,18 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         tableView.setContentOffset(tableView.contentOffset, animated: false)
         let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
         tableView.reloadData()
+        startGifsAnimations()
         
         if needsToScroll {
             tableView.scrollToRow(at: IndexPath(row: presenter.items.count - 1),
                                   at: .top,
                                   animated: animated)
         }
+    }
+    
+    public override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopGifsAnimations()
     }
     
     public override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -134,7 +140,7 @@ extension ChatViewController {
     
     private func setupTableView() {
         tableView.backgroundColor = style.backgroundColor
-        tableView.edgesEqualToSuperview()
+        tableView.makeEdgesEqualToSuperview()
     }
     
     private func updateTableView(with changes: ChannelChanges) {

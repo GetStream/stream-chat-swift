@@ -45,7 +45,7 @@ extension CGFloat {
     public static let attachmentFileIconWidth: CGFloat = 25
     public static let attachmentFileIconHeight: CGFloat = 30
     public static let attachmentFileIconTop: CGFloat = (.attachmentFilePreviewHeight - .attachmentFileIconHeight) / 2
-
+    
     public static let reactionsTextPagging: CGFloat = 5
     public static let reactionsToMessageOffset: CGFloat = 2
     public static let reactionsHeight: CGFloat = 2 * .reactionsCornerRadius

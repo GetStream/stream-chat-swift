@@ -12,29 +12,21 @@ import SnapKit
 extension ChatViewController {
     
     func update(cell: MessageTableViewCell, forReactionsIn message: Message) {
-        guard let reactionCounts = message.reactionCounts, !reactionCounts.counts.isEmpty else {
-            return
-        }
-        
-        cell.update(reactions: reactionCounts.string) { [weak self] cell in
+        cell.update(reactionCounts: message.reactionCounts) { [weak self] cell in
             self?.showReactions(from: cell, in: message)
         }
     }
     
-    private func showReactions(from cell: MessageTableViewCell, in message: Message) {
-        let rect = tableView.convert(cell.frame, to: view)
-        
+    func showReactions(from cell: UITableViewCell, in message: Message) {
         let reactionsView = ReactionsView(frame: .zero)
         reactionsView.backgroundColor = style.backgroundColor.withAlphaComponent(0.4)
         reactionsView.reactionsView.backgroundColor = style.incomingMessage.reactionViewStyle.backgroundColor
-        view.addSubview(reactionsView)
-        reactionsView.edgesEqualToSuperview()
-        
-        reactionsView.show(at: rect.origin.y, for: message) { [weak self] emojiType in
+        reactionsView.makeEdgesEqualToSuperview(superview: view)
+        self.reactionsView = reactionsView
+
+        reactionsView.show(from: tableView.convert(cell.frame, to: view), for: message) { [weak self] emojiType in
             self?.reactionsView = nil
             return self?.channelPresenter?.update(reactionType: emojiType, message: message) ?? true
         }
-        
-        self.reactionsView = reactionsView
     }
 }

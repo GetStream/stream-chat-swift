@@ -20,7 +20,9 @@ extension UIView {
         return self
     }
     
-    func edgesEqualToSuperview() {
+    func makeEdgesEqualToSuperview(superview parent: UIView? = nil) {
+        parent?.addSubview(self)
+        
         guard superview != nil else {
             print("⚠️ Can't add layout constraints: superview is nil", #function)
             return
@@ -29,17 +31,30 @@ extension UIView {
         snp.makeConstraints { $0.edges.equalToSuperview() }
     }
     
-    func edgesEqualToSafeAreaSuperview() {
-        guard let parentView = superview else {
+    func makeCenterEqualToSuperview(superview parent: UIView? = nil) {
+        parent?.addSubview(self)
+        
+        guard superview != nil else {
+            print("⚠️ Can't add layout constraints: superview is nil", #function)
+            return
+        }
+        
+        snp.makeConstraints { $0.center.equalToSuperview() }
+    }
+
+    func makeEdgesEqualToSafeAreaSuperview(superview parent: UIView? = nil) {
+        parent?.addSubview(self)
+        
+        guard let parent = superview else {
             print("⚠️ Can't add layout constraints: superview is nil", #function)
             return
         }
         
         snp.makeConstraints {
-            $0.top.equalTo(parentView.safeAreaLayoutGuide.snp.topMargin)
-            $0.bottom.equalTo(parentView.safeAreaLayoutGuide.snp.bottomMargin)
-            $0.left.equalTo(parentView.safeAreaLayoutGuide.snp.leftMargin)
-            $0.right.equalTo(parentView.safeAreaLayoutGuide.snp.rightMargin)
+            $0.top.equalTo(parent.safeAreaLayoutGuide.snp.topMargin)
+            $0.bottom.equalTo(parent.safeAreaLayoutGuide.snp.bottomMargin)
+            $0.left.equalTo(parent.safeAreaLayoutGuide.snp.leftMargin)
+            $0.right.equalTo(parent.safeAreaLayoutGuide.snp.rightMargin)
         }
     }
 }

@@ -33,8 +33,8 @@ public struct Attachment: Codable {
     public let imageURL: URL?
     public let file: AttachmentFile?
     
-    public var isImage: Bool {
-        return type.isImage && text == nil
+    public var isImageOrVideo: Bool {
+        return (type.isImage && text == nil) || type == .video
     }
     
     public init(from decoder: Decoder) throws {
@@ -47,8 +47,23 @@ public struct Attachment: Codable {
             ?? container.decodeIfPresent(String.self, forKey: .name)
             ?? ""
         
+        // Parse Image URL.
+        imageURL = Attachment.fixedURL(try container.decodeIfPresent(String.self, forKey: .image)
+            ?? container.decodeIfPresent(String.self, forKey: .imageURL)
+            ?? container.decodeIfPresent(String.self, forKey: .thumbURL))
+        
+        // Parse URL.
+        url = Attachment.fixedURL(try container.decodeIfPresent(String.self, forKey: .assetURL)
+            ?? container.decodeIfPresent(String.self, forKey: .url)
+            ?? container.decodeIfPresent(String.self, forKey: .titleLink)
+            ?? container.decodeIfPresent(String.self, forKey: .ogURL))
+        
         if let existsType = try? AttachmentType(rawValue: container.decode(String.self, forKey: .type)) {
-            type = existsType
+            if existsType == .video, let url = url, url.absoluteString.contains("youtube") {
+                type = .youtube
+            } else {
+                type = existsType
+            }
         } else if let _ = try? container.decodeIfPresent(String.self, forKey: .ogURL) {
             type = .link
         } else {
@@ -56,17 +71,6 @@ public struct Attachment: Codable {
         }
         
         file = type == .file ? try AttachmentFile(from: decoder) : nil
-        
-        // Parse Image URL.
-        imageURL = Attachment.fixedURL(try container.decodeIfPresent(String.self, forKey: .image)
-            ?? container.decodeIfPresent(String.self, forKey: .imageURL)
-            ?? container.decodeIfPresent(String.self, forKey: .thumbURL))
-        
-        // Parse URL.
-        url = Attachment.fixedURL(try container.decodeIfPresent(String.self, forKey: .url)
-            ?? container.decodeIfPresent(String.self, forKey: .titleLink)
-            ?? container.decodeIfPresent(String.self, forKey: .assetURL)
-            ?? container.decodeIfPresent(String.self, forKey: .ogURL))
     }
     
     /// Image upload:
@@ -111,6 +115,7 @@ public enum AttachmentType: String, Codable {
     case imgur
     case giphy
     case video
+    case youtube
     case product
     case file
     case link

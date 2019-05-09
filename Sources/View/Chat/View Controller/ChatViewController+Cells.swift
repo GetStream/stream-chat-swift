@@ -33,8 +33,6 @@ extension ChatViewController {
             if !message.mentionedUsers.isEmpty {
                 cell.update(mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
             }
-            
-            update(cell: cell, forReactionsIn: message)
         }
         
         var showAvatar = true
@@ -64,29 +62,30 @@ extension ChatViewController {
             cell.avatarView.update(with: message.user.avatarURL, name: message.user.name)
         }
         
-        addAttchaments(message: message, to: cell, at: indexPath)
+        guard !message.isDeleted else {
+            return cell
+        }
+        
+        if !message.attachments.isEmpty {
+            cell.addAttachments(from: message,
+                                tap: { [weak self] in self?.show(attachment: $0, at: $1, from: $2) },
+                                longTap: { [weak self] in self?.showReactions(from: $0, in: $1) },
+                                reload: { [weak self] in
+                                    if let self = self {
+                                        self.tableView.update {
+                                            self.tableView.reloadRows(at: [indexPath], with: .none)
+                                        }
+                                    }
+            })
+        }
+        
+        update(cell: cell, forReactionsIn: message)
         
         return cell
     }
     
-    private func addAttchaments(message: Message, to cell: MessageTableViewCell, at indexPath: IndexPath) {
-        guard !message.isDeleted, !message.attachments.isEmpty else {
-            return
-        }
-        
-        cell.add(attachments: message.attachments,
-                 userName: message.user.name,
-                 tap: { [weak self] in self?.show(attachment: $0, at: $1, from: $2) }) { [weak self] in
-                    if let self = self {
-                        self.tableView.update {
-                            self.tableView.reloadRows(at: [indexPath], with: .none)
-                        }
-                    }
-        }
-    }
-    
     private func show(attachment: Attachment, at index: Int, from attachments: [Attachment]) {
-        if attachment.isImage {
+        if attachment.isImageOrVideo {
             showMediaGallery(with: attachments.compactMap { MediaGalleryItem(title: $0.title, url: $0.imageURL) },
                              selectedIndex: index)
             return

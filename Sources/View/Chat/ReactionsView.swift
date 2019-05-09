@@ -33,10 +33,10 @@ final class ReactionsView: UIView {
         return view
     }()
     
-    func show(at y: CGFloat, for message: Message, completion: @escaping Completion) {
+    func show(from rect: CGRect, for message: Message, completion: @escaping Completion) {
         addSubview(reactionsView)
         reactionsView.frame = CGRect(x: (UIScreen.main.bounds.width - .messageTextMaxWidth) / 2,
-                                     y: y + .reactionsHeight / 2 - .reactionsPickerCornerRadius,
+                                     y: rect.origin.y + .reactionsHeight / 2 - .reactionsPickerCornerRadius,
                                      width: .messageTextMaxWidth,
                                      height: .reactionsPickerCornerHeight)
         
@@ -58,7 +58,7 @@ final class ReactionsView: UIView {
         
         let view  = UIView(frame: .zero)
         insertSubview(view, at: 0)
-        view.edgesEqualToSuperview()
+        view.makeEdgesEqualToSuperview()
         
         view.rx.tapGesture()
             .when(.recognized)
@@ -169,8 +169,7 @@ final class ReactionsView: UIView {
         
         let labelBackgroundColor = backgroundColor?.withAlphaComponent(1)
         let avatarView = AvatarView(cornerRadius: .reactionsPickerAvatarRadius)
-        viewContainer.addSubview(avatarView)
-        avatarView.snp.makeConstraints { $0.center.equalToSuperview() }
+        avatarView.makeCenterEqualToSuperview(superview: viewContainer)
         
         if let user = users?.first {
             avatarView.update(with: user.avatarURL, name: user.name, baseColor: labelBackgroundColor)
@@ -198,8 +197,7 @@ final class ReactionsView: UIView {
         label.text = count > 0 ? count.shortString() : nil
         label.font = .chatSmall
         label.textColor = reactionsView.backgroundColor?.oppositeBlackAndWhite
-        viewContainer.addSubview(label)
-        label.snp.makeConstraints { $0.center.equalToSuperview() }
+        label.makeCenterEqualToSuperview(superview: viewContainer)
         
         return viewContainer
     }
