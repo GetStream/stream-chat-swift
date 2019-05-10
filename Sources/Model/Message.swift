@@ -47,6 +47,14 @@ public struct Message: Codable {
         return Client.shared.user == user
     }
     
+    public var canEdit: Bool {
+        return isOwn
+    }
+    
+    public var canDelete: Bool {
+        return isOwn
+    }
+    
     init?(text: String) {
         guard let user = Client.shared.user else {
             return nil

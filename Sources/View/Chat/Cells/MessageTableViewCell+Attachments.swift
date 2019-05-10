@@ -17,7 +17,7 @@ extension MessageTableViewCell {
     
     public func addAttachments(from message: Message,
                                tap: @escaping AttachmentTapAction,
-                               longTap: @escaping LongTapAction,
+                               longPress: @escaping LongPressAction,
                                reload: @escaping () -> Void) {
         guard let style = style else {
             return
@@ -48,10 +48,9 @@ extension MessageTableViewCell {
             }
             
             (preview as UIView).rx
-                .anyGesture((.tap(configuration: { _, delegate in
-                    delegate.simultaneousRecognitionPolicy = .never
-                }), when: .recognized),
-                            (.longPress(configuration: { _, delegate in
+                .anyGesture((.tap(configuration: { $1.simultaneousRecognitionPolicy = .never }), when: .recognized),
+                            (.longPress(configuration: { gesture, delegate in
+                                gesture.minimumPressDuration = MessageTableViewCell.longPressMinimumDuration
                                 delegate.simultaneousRecognitionPolicy = .never
                             }), when: .began))
                 .subscribe(onNext: { [weak self] gesture in
@@ -59,7 +58,7 @@ extension MessageTableViewCell {
                         if gesture is UITapGestureRecognizer {
                             tap(attachment, index, attachments)
                         } else {
-                            longTap(self, message)
+                            longPress(self, message)
                         }
                     }
                 })

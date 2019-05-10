@@ -15,7 +15,11 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     typealias ReactionAction = (_ cell: UITableViewCell) -> Void
     typealias TapAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
     typealias AttachmentTapAction = (_ attachment: Attachment, _ at: Int, _ attachments: [Attachment]) -> Void
-    typealias LongTapAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
+    typealias LongPressAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
+    
+    static let longPressMinimumDuration: TimeInterval = 0.3
+    
+    // MARK: - Properties
     
     private(set) var disposeBag = DisposeBag()
     

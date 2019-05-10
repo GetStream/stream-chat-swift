@@ -73,7 +73,7 @@ public struct ReactionCounts: Decodable {
             }
         }
         
-        return emoji.appending(String(count))
+        return emoji.appending(count.shortString())
     }
     
     mutating func update(type: String, increment: Int) {

@@ -33,10 +33,10 @@ final class ReactionsView: UIView {
         return view
     }()
     
-    func show(from rect: CGRect, for message: Message, completion: @escaping Completion) {
+    func show(atY y: CGFloat, for message: Message, completion: @escaping Completion) {
         addSubview(reactionsView)
         let x = (UIScreen.main.bounds.width - .messageTextMaxWidth) / 2
-        let y = rect.origin.y + .reactionsHeight / 2 - .reactionsPickerCornerRadius
+        let y = max(safeAreaTopOffset + .reactionsPickerAvatarRadius + .messageEdgePadding, y - .reactionsPickerCornerRadius)
         reactionsView.frame = CGRect(x: x, y: y, width: .messageTextMaxWidth, height: .reactionsPickerCornerHeight)
         reactionsView.transform = .init(scaleX: 0.5, y: 0.5)
         reactionCounts = message.reactionCounts?.counts

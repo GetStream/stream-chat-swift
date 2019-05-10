@@ -63,21 +63,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        guard let presenter = channelPresenter, presenter.items.count > 0 else {
-            return
-        }
-        
-        tableView.setContentOffset(tableView.contentOffset, animated: false)
-        let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
-        tableView.reloadData()
         startGifsAnimations()
-        
-        if needsToScroll {
-            tableView.scrollToRow(at: IndexPath(row: presenter.items.count - 1),
-                                  at: .top,
-                                  animated: animated)
-        }
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
@@ -153,7 +139,6 @@ extension ChatViewController {
         case .none:
             return
         case let .updated(row, position):
-            tableView.setContentOffset(tableView.contentOffset, animated: false)
             tableView.reloadData()
             
             if scrollEnabled {

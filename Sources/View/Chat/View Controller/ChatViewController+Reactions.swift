@@ -17,14 +17,25 @@ extension ChatViewController {
         }
     }
     
-    func showReactions(from cell: UITableViewCell, in message: Message) {
+    func showReactions(from cell: UITableViewCell, in message: Message, locationInView: CGPoint? = nil) {
+        if reactionsView != nil {
+            reactionsView?.removeFromSuperview()
+        }
+        
         let reactionsView = ReactionsView(frame: .zero)
         reactionsView.backgroundColor = style.backgroundColor.withAlphaComponent(0.4)
         reactionsView.reactionsView.backgroundColor = style.incomingMessage.reactionViewStyle.backgroundColor
         reactionsView.makeEdgesEqualToSuperview(superview: view)
         self.reactionsView = reactionsView
+        var y = tableView.convert(cell.frame, to: view).origin.y
         
-        reactionsView.show(from: tableView.convert(cell.frame, to: view), for: message) { [weak self] emojiType in
+        if let locationInView = locationInView {
+            y += locationInView.y
+        } else {
+            y += .reactionsHeight / 2
+        }
+        
+        reactionsView.show(atY: y, for: message) { [weak self] emojiType in
             self?.reactionsView = nil
             return self?.channelPresenter?.update(reactionType: emojiType, message: message) ?? true
         }

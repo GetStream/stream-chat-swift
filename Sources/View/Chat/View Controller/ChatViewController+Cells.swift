@@ -69,7 +69,7 @@ extension ChatViewController {
         if !message.attachments.isEmpty {
             cell.addAttachments(from: message,
                                 tap: { [weak self] in self?.show(attachment: $0, at: $1, from: $2) },
-                                longTap: { [weak self] in self?.showReactions(from: $0, in: $1) },
+                                longPress: { [weak self] in self?.showMenu(from: $0, for: $1) },
                                 reload: { [weak self] in
                                     if let self = self {
                                         self.tableView.update {
@@ -80,6 +80,25 @@ extension ChatViewController {
         }
         
         update(cell: cell, forReactionsIn: message)
+        
+        cell.messageStackView.rx
+            .anyGesture((.tap(configuration: { $1.simultaneousRecognitionPolicy = .never }), when: .recognized),
+                        (.longPress(configuration: { gesture, delegate in
+                            gesture.minimumPressDuration = MessageTableViewCell.longPressMinimumDuration
+                            delegate.simultaneousRecognitionPolicy = .never
+                        }), when: .began))
+            .subscribe(onNext: { [weak self, weak cell] gesture in
+                if let self = self, let cell = cell {
+                    let location = gesture.location(in: cell)
+                    
+                    if gesture is UITapGestureRecognizer {
+                        self.showReactions(from: cell, in: message, locationInView: location)
+                    } else {
+                        self.showMenu(from: cell, for: message, locationInView: location)
+                    }
+                }
+            })
+            .disposed(by: cell.disposeBag)
         
         return cell
     }

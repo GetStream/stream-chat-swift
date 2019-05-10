@@ -108,7 +108,7 @@ extension MediaGalleryViewController: UIScrollViewDelegate {
             return
         }
         
-        collectionView.alpha = CGFloat.maximum(0, 1 - scrollView.contentOffset.y / -150)
+        collectionView.alpha = 1 - scrollView.contentOffset.y / -120
         
         if scrollView.contentOffset.y < -100 {
             dismiss(animated: true)
