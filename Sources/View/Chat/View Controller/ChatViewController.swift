@@ -38,7 +38,12 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         tableView.registerMessageCell(style: style.incomingMessage)
         tableView.registerMessageCell(style: style.outgoingMessage)
         tableView.register(cellType: StatusTableViewCell.self)
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: CGFloat.messagesToComposerPadding, right: 0)
+        
+        tableView.contentInset = UIEdgeInsets(top: 2 * .messageEdgePadding,
+                                              left: 0,
+                                              bottom: .messagesToComposerPadding,
+                                              right: 0)
+        
         view.insertSubview(tableView, at: 0)
         
         let footerView = ChatFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: .chatFooterHeight))
@@ -102,7 +107,10 @@ extension ChatViewController {
                     ? tableView.adjustedContentInset.bottom - .messagesToComposerPadding
                     : 0)
                 
-                tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottom, right: 0)
+                tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top,
+                                                      left: tableView.contentInset.left,
+                                                      bottom: bottom,
+                                                      right: tableView.contentInset.right)
             })
             .disposed(by: disposeBag)
         

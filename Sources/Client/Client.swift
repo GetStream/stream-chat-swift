@@ -36,7 +36,7 @@ public final class Client {
         self.callbackQueue = callbackQueue
         self.logOptions = logOptions
         
-        if logOptions == .all || logOptions == .requests {
+        if logOptions == .all || logOptions == .requests || logOptions == .requestsHeaders {
             logger = ClientLogger(icon: "🐴")
         } else {
             logger = nil
@@ -80,6 +80,7 @@ extension Client {
     public enum LogOptions {
         case none
         case requests
+        case requestsHeaders
         case webSocket
         case all
     }

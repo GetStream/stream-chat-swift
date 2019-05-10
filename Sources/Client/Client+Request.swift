@@ -78,7 +78,7 @@ extension Client {
     }
     
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
-        logger?.log(response, data: data)
+        logger?.log(response, data: logOptions != .requestsHeaders ? data : nil)
         
         if let error = error {
             logger?.log(error)

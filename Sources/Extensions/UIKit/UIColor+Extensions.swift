@@ -63,7 +63,7 @@ extension UIColor {
 
 extension UIColor {
     static var random: UIColor {
-        return transparent(hue: CGFloat.random(in: 0...10) / 10)
+        return transparent(hue: .random(in: 0...10) / 10)
     }
         
     /// Create a transparent color with a given hue.
