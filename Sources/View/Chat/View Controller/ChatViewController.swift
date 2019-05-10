@@ -161,7 +161,6 @@ extension ChatViewController {
             }
             
             if scrollEnabled, (forceToScroll || needsToScroll) {
-                tableView.setContentOffset(tableView.contentOffset, animated: false)
                 tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         case let .itemUpdated(row, message):
