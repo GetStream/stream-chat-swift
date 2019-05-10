@@ -1,5 +1,5 @@
 //
-//  MessageFooterView.swift
+//  ChatFooterView.swift
 //  GetStreamChat
 //
 //  Created by Alexey Bukhtin on 29/04/2019.
@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-final class MessageFooterView: UIView {
+final class ChatFooterView: UIView {
     typealias TimerCompletion = () -> Void
     
     private var timerWorker: DispatchWorkItem?
@@ -17,15 +17,15 @@ final class MessageFooterView: UIView {
     private var timeout: TimeInterval = 0
     
     private(set) lazy var avatarView: AvatarView = {
-        let avatarView = AvatarView(cornerRadius: .messageAvatarRadius)
+        let avatarView = AvatarView(cornerRadius: .chatFooterAvatarRadius)
         addSubview(avatarView)
         
         avatarView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(CGFloat.messageBottomPadding).priority(999)
-            make.bottom.equalToSuperview().offset(-CGFloat.messageBottomPadding).priority(999)
+            make.top.equalToSuperview().offset(CGFloat.messageSpacing).priority(999)
+            make.bottom.equalToSuperview().offset(-CGFloat.messageSpacing).priority(999)
             make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
         }
-
+        
         return avatarView
     }()
     
@@ -48,17 +48,16 @@ final class MessageFooterView: UIView {
         timerWorker?.cancel()
     }
     
-    func hide(after timeout: TimeInterval, completion: @escaping TimerCompletion) {
+    func hide(after timeout: TimeInterval) {
         self.timeout = timeout
-        timerCompletion = completion
         restartHidingTimer()
     }
     
     func restartHidingTimer() {
         timerWorker?.cancel()
         
-        if timeout > 0, let completion = timerCompletion {
-            let timerWorker = DispatchWorkItem(block: completion)
+        if timeout > 0 {
+            let timerWorker = DispatchWorkItem { [weak self] in self?.isHidden = true }
             self.timerWorker = timerWorker
             DispatchQueue.main.asyncAfter(deadline: .now() + timeout, execute: timerWorker)
         }

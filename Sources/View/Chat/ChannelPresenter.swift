@@ -15,7 +15,7 @@ public enum ChannelChanges: Equatable {
     case updated(_ row: Int, UITableView.ScrollPosition)
     case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool)
     case itemUpdated(_ row: Int, Message)
-    case updateFooter(_ isUsersTyping: Bool, _ startWatching: User?, _ stopWatching: User?)
+    case updateFooter(_ isUsersTyping: Bool)
 }
 
 public final class ChannelPresenter {
@@ -79,12 +79,12 @@ extension ChannelPresenter {
         case .typingStart(let user):
             if typingUsers.isEmpty || !typingUsers.contains(user) {
                 typingUsers.append(user)
-                return .updateFooter(true, nil, nil)
+                return .updateFooter(true)
             }
         case .typingStop(let user):
             if let index = typingUsers.firstIndex(of: user) {
                 typingUsers.remove(at: index)
-                return .updateFooter(true, nil, nil)
+                return .updateFooter(true)
             }
         case .messageNew(let message, let user, _, _, _):
             var reloadRow: Int? = nil

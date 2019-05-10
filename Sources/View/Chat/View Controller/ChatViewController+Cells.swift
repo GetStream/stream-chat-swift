@@ -59,7 +59,7 @@ extension ChatViewController {
         
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
-            cell.avatarView.update(with: message.user.avatarURL, name: message.user.name)
+            cell.avatarView.update(with: message.user.avatarURL, name: message.user.name, baseColor: style.backgroundColor)
         }
         
         guard !message.isDeleted else {
@@ -117,7 +117,7 @@ extension ChatViewController {
         let cell = tableView.dequeueMessageCell(for: indexPath, style: style.incomingMessage)
         cell.update(info: text)
         cell.update(date: Date())
-        cell.avatarView.update(with: user.avatarURL, name: user.name)
+        cell.avatarView.update(with: user.avatarURL, name: user.name, baseColor: style.backgroundColor)
         return cell
     }
     

@@ -14,6 +14,9 @@ extension CGFloat {
     
     public static let chatBottomThreshold: CGFloat = .messageAvatarSize + 2 * .messageVerticalInset + .messagesToComposerPadding
     
+    public static let chatFooterHeight: CGFloat = 30
+    public static let chatFooterAvatarRadius: CGFloat = 13
+    
     public static let composerCornerRadius: CGFloat = 10
     public static let composerHeight: CGFloat = 60
     public static let composerMaxHeight: CGFloat = 200
@@ -23,7 +26,7 @@ extension CGFloat {
     public static let composerAttachmentWidth: CGFloat = 50
     public static let composerAttachmentHeight: CGFloat = 60
     
-    public static let messagesToComposerPadding: CGFloat = .composerHeight + 2 * .messageEdgePadding + 20
+    public static let messagesToComposerPadding: CGFloat = .composerHeight + 2 * .messageEdgePadding
     public static let messageAvatarRadius: CGFloat = 16
     public static let messageAvatarSize: CGFloat = 2 * .messageAvatarRadius
     public static let messageInnerPadding: CGFloat = 8

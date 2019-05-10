@@ -38,9 +38,13 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         tableView.registerMessageCell(style: style.incomingMessage)
         tableView.registerMessageCell(style: style.outgoingMessage)
         tableView.register(cellType: StatusTableViewCell.self)
-        tableView.tableFooterView = ChatTableFooterView()
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: CGFloat.messagesToComposerPadding, right: 0)
         view.insertSubview(tableView, at: 0)
+        
+        let footerView = ChatFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: .chatFooterHeight))
+        footerView.backgroundColor = style.backgroundColor
+        tableView.tableFooterView = footerView
+        
         return tableView
     }()
     
@@ -168,8 +172,8 @@ extension ChatViewController {
             if let reactionsView = reactionsView {
                 reactionsView.update(with: message)
             }
-        case let .updateFooter(isUsersTyping, startWatchingUser, stopWatchingUser):
-            updateFooterView(isUsersTyping, startWatchingUser, stopWatchingUser)
+        case let .updateFooter(isUsersTyping):
+            updateFooterView(isUsersTyping)
         }
     }
     

@@ -164,12 +164,12 @@ final class ReactionsView: UIView {
         let viewContainer = UIView(frame: .zero)
         viewContainer.snp.makeConstraints { $0.width.height.equalTo(CGFloat.reactionsPickerButtonWidth).priority(999) }
         
-        let labelBackgroundColor = backgroundColor?.withAlphaComponent(1)
         let avatarView = AvatarView(cornerRadius: .reactionsPickerAvatarRadius)
         avatarView.makeCenterEqualToSuperview(superview: viewContainer)
         
         if let user = users?.first {
-            avatarView.update(with: user.avatarURL, name: user.name, baseColor: labelBackgroundColor)
+            let baseColor = backgroundColor?.withAlphaComponent(1)
+            avatarView.update(with: user.avatarURL, name: user.name, baseColor: baseColor)
         } else {
             avatarView.isHidden = true
         }

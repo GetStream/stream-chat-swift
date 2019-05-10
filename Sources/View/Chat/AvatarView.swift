@@ -46,8 +46,9 @@ final class AvatarView: UIImageView, Reusable {
         avatarLabel.isHidden = true
     }
     
-    public func update(with url: URL?, name: String?, baseColor: UIColor? = nil) {
+    public func update(with url: URL?, name: String?, baseColor: UIColor?) {
         isHidden = false
+        let baseColor = baseColor ?? UIColor.white
         
         guard let url = url else {
             showAvatarLabel(with: name ?? "?", baseColor)
@@ -62,7 +63,7 @@ final class AvatarView: UIImageView, Reusable {
         }
     }
     
-    private func showAvatarLabel(with name: String, _ baseColor: UIColor?) {
+    private func showAvatarLabel(with name: String, _ baseColor: UIColor) {
         if name.contains(" ") {
             let words = name.split(separator: " ")
             
@@ -73,15 +74,9 @@ final class AvatarView: UIImageView, Reusable {
             avatarLabel.text = name.first?.uppercased()
         }
         
-        let nameColor = UIColor.color(by: name, isDark: backgroundColor?.isDark ?? false)
-        
-        if let baseColor = baseColor {
-            backgroundColor = baseColor.blendAlpha(coverColor: nameColor)
-        } else {
-            backgroundColor = nameColor
-        }
-        
-        avatarLabel.isHidden = false
+        let nameColor = UIColor.color(by: name, isDark: baseColor.isDark)
+        backgroundColor = baseColor.blendAlpha(coverColor: nameColor)
         avatarLabel.textColor = nameColor.withAlphaComponent(0.3)
+        avatarLabel.isHidden = false
     }
 }
