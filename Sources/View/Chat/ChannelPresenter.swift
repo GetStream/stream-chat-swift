@@ -56,9 +56,9 @@ extension ChannelPresenter {
             return (Query(channel: channel, members: [Member(user: user)], pagination: pagination), connectionId)
         }
         
-        if !items.isEmpty {
+        if !items.isEmpty, next != .none {
             next = .none
-            loadPagination.onNext(.pageSize)
+            DispatchQueue.main.async { self.loadPagination.onNext(.pageSize) }
         }
         
         return nil
