@@ -21,6 +21,7 @@ final class WebSocket {
     private(set) var lastError: Error?
     private(set) var consecutiveFailures: TimeInterval = 0
     let logger: ClientLogger?
+    var isReconnecting = false
     
     private var lastMessageHashValue: Int = 0
     private var lastMessageResponse: Response?
@@ -38,7 +39,7 @@ final class WebSocket {
         return Observable.combineLatest(app.rx.appState.startWith(app.appState),
                                         reachabilityObservation,
                                         webSocket.rx.response)
-            .do(onSubscribed: { [weak self] in self?.connect() },
+            .do(onSubscribed: { [weak self] in self?.reconnect() },
                 onDispose: { [weak self] in self?.disconnect() })
             .map { [weak self] in self?.parseConnection(appState: $0, reachability: $1, event: $2) }
             .unwrap()
@@ -91,7 +92,7 @@ final class WebSocket {
     }
     
     func connect() {
-        if webSocket.isConnected {
+        if webSocket.isConnected || isReconnecting {
            return
         }
         
@@ -136,7 +137,7 @@ extension WebSocket {
         }
         
         if appState == .active, !webSocket.isConnected, lastError == nil {
-            connect()
+            reconnect()
             return .connecting
         }
         

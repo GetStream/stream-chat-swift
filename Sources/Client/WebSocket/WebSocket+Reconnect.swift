@@ -43,11 +43,17 @@ extension WebSocket {
         return nil
     }
     
-    private func reconnect() {
+    func reconnect() {
+        guard !isReconnecting else {
+            return
+        }
+        
         let delay = delayForReconnect
         logger?.log("⏳", "Reconnect in \(delay) sec")
+        isReconnecting = true
         
         webSocket.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
+            self?.isReconnecting = false
             self?.connect()
         }
     }
