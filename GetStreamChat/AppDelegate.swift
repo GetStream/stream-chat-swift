@@ -6,8 +6,9 @@
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import UIKit
+import Fabric
+import Crashlytics
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -44,6 +45,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
             }
         }
+        
+        Fabric.with([Crashlytics.self])
         
         return true
     }

@@ -1,4 +1,7 @@
 PODS:
+  - Crashlytics (3.12.0):
+    - Fabric (~> 1.9.0)
+  - Fabric (1.9.0)
   - Nuke (7.6.3)
   - ReachabilitySwift (4.3.1)
   - RxAppState (1.5.0):
@@ -26,6 +29,7 @@ PODS:
   - SwiftyGif (5.0.1)
 
 DEPENDENCIES:
+  - Crashlytics
   - Nuke
   - RxAppState
   - RxCocoa
@@ -39,6 +43,8 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - Crashlytics
+    - Fabric
     - Nuke
     - ReachabilitySwift
     - RxAppState
@@ -61,6 +67,8 @@ CHECKOUT OPTIONS:
     :git: https://github.com/buh/SwiftyGif.git
 
 SPEC CHECKSUMS:
+  Crashlytics: 07fb167b1694128c1c9a5a5cc319b0e9c3ca0933
+  Fabric: f988e33c97f08930a413e08123064d2e5f68d655
   Nuke: 44130e95e09463f8773ae4b96b90de1eba6b3350
   ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
   RxAppState: 46cae19e582daf7283a8f9ef553e7c049e1565b4
@@ -74,6 +82,6 @@ SPEC CHECKSUMS:
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
   SwiftyGif: 3ca6760b21372f6b1844c0eb3957d7f49e2481ad
 
-PODFILE CHECKSUM: 5ba62de458ecb97598475d47e1f32406bbf8abab
+PODFILE CHECKSUM: e842cf9ee1d54bbb175facfc670fe817270281f5
 
 COCOAPODS: 1.6.1
