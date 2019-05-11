@@ -28,6 +28,7 @@
 		8A2B60E02278813E00419C8E /* WebSocket+Reconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */; };
 		8A2CC95622842AED004CF12D /* ChatViewController+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2CC95522842AED004CF12D /* ChatViewController+Attachments.swift */; };
 		8A2CC9582284AD77004CF12D /* ChatViewController+MessageActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2CC9572284AD77004CF12D /* ChatViewController+MessageActions.swift */; };
+		8A2CC95D22874601004CF12D /* EventResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2CC95C22874601004CF12D /* EventResponse.swift */; };
 		8A40803B2280413E00F274FF /* IndexPath+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */; };
 		8A40803D22805ABA00F274FF /* ChatViewController+Reactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803C22805ABA00F274FF /* ChatViewController+Reactions.swift */; };
 		8A40803F2280708900F274FF /* ReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803E2280708900F274FF /* ReactionsView.swift */; };
@@ -120,6 +121,7 @@
 		8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Reconnect.swift"; sourceTree = "<group>"; };
 		8A2CC95522842AED004CF12D /* ChatViewController+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Attachments.swift"; sourceTree = "<group>"; };
 		8A2CC9572284AD77004CF12D /* ChatViewController+MessageActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+MessageActions.swift"; sourceTree = "<group>"; };
+		8A2CC95C22874601004CF12D /* EventResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventResponse.swift; sourceTree = "<group>"; };
 		8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexPath+Extensions.swift"; sourceTree = "<group>"; };
 		8A40803C22805ABA00F274FF /* ChatViewController+Reactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Reactions.swift"; sourceTree = "<group>"; };
 		8A40803E2280708900F274FF /* ReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsView.swift; sourceTree = "<group>"; };
@@ -370,10 +372,11 @@
 				8A889152225240F700DD6539 /* Event.swift */,
 				8A88915D22535FEC00DD6539 /* Message.swift */,
 				8AABC290226086ED0064CB20 /* Attachment.swift */,
+				8ABF8261226F643E00A966D9 /* Reaction.swift */,
+				8AB1B8EC22675B98002C65BD /* MessageResponse.swift */,
+				8A2CC95C22874601004CF12D /* EventResponse.swift */,
 				8AABC2992262426A0064CB20 /* ChatItem.swift */,
 				8AABC29B22627A1D0064CB20 /* Pagination.swift */,
-				8AB1B8EC22675B98002C65BD /* MessageResponse.swift */,
-				8ABF8261226F643E00A966D9 /* Reaction.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -691,6 +694,7 @@
 				8AB8FA76227AFD8F00C14D94 /* UIViewController+Extensions.swift in Sources */,
 				8A1A9412225DFDA100060ACC /* ComposerView.swift in Sources */,
 				8AB1B8F422677EEA002C65BD /* String+Extensions.swift in Sources */,
+				8A2CC95D22874601004CF12D /* EventResponse.swift in Sources */,
 				8A1A9409225B4EC900060ACC /* UITableView+Reusable.swift in Sources */,
 				8A4FE7BC227C485B00E47D4C /* MessageTableViewCell+Updates.swift in Sources */,
 				8AABC29322608FB90064CB20 /* AttachmentFilePreview.swift in Sources */,

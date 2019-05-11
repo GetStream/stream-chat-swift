@@ -91,6 +91,7 @@ extension ChatViewController {
     
     private func setupComposerView() {
         composerView.addToSuperview(view)
+        channelPresenter?.setup(textControlProperty: composerView.textView.rx.value)
         
         composerView.sendButton.rx.tap
             .subscribe(onNext: { [weak self] in self?.send() })

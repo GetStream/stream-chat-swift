@@ -25,6 +25,7 @@ public final class ChannelPresenter {
     var members: [Member] = []
     private var next: Pagination = .none
     private var disposeBag = DisposeBag()
+    private var isTyping = false
     
     private(set) var items: [ChatItem] = []
     private(set) var typingUsers: [User] = []
@@ -77,12 +78,12 @@ extension ChannelPresenter {
         
         switch response.event {
         case .typingStart(let user):
-            if typingUsers.isEmpty || !typingUsers.contains(user) {
+            if !user.isCurrent && (typingUsers.isEmpty || !typingUsers.contains(user)) {
                 typingUsers.append(user)
                 return .updateFooter(true)
             }
         case .typingStop(let user):
-            if let index = typingUsers.firstIndex(of: user) {
+            if !user.isCurrent, let index = typingUsers.firstIndex(of: user) {
                 typingUsers.remove(at: index)
                 return .updateFooter(true)
             }
@@ -295,5 +296,33 @@ extension ChannelPresenter {
         Client.shared.request(endpoint: endpoint, connectionId: "", completion)
         
         return add
+    }
+}
+
+// MARK: - Send Event
+
+extension ChannelPresenter {
+    
+    public func setup(textControlProperty: ControlProperty<String?>) {
+        textControlProperty
+            .do(onNext: { [weak self] _ in
+                if let self = self, !self.isTyping {
+                    self.isTyping = true
+                    self.send(eventType: .typingStart)
+                }
+            })
+            .debounce(1, scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] text in
+                if let self = self {
+                    self.isTyping = false
+                    self.send(eventType: .typingStop)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func send(eventType: EventType) {
+        let completion: Client.Completion<EventResponse> = { _ in }
+        Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), connectionId: "", completion)
     }
 }

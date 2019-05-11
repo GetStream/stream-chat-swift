@@ -27,6 +27,14 @@ public struct User: Codable, Equatable {
     public let lastActiveDate: Date?
     public let online: Bool
     
+    public var isCurrent: Bool {
+        if let user = Client.shared.user {
+            return self == user
+        }
+        
+        return false
+    }
+    
     init(id: String, name: String, avatarURL: URL?) {
         self.id = id
         self.name = name

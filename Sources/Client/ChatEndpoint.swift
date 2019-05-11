@@ -13,6 +13,7 @@ enum ChatEndpoint: EndpointProtocol {
     case sendMessage(Message, Channel)
     case addReaction(_ reactionType: String, Message)
     case deleteReaction(_ reactionType: String, Message)
+    case sendEvent(EventType, Channel)
 }
 
 extension ChatEndpoint {
@@ -34,6 +35,8 @@ extension ChatEndpoint {
             return path(with: message).appending("reaction")
         case .deleteReaction(let reactionType, let message):
             return path(with: message).appending("reaction/\(reactionType)")
+        case .sendEvent(_, let channel):
+            return path(with: channel).appending("event")
         }
     }
     
@@ -47,6 +50,8 @@ extension ChatEndpoint {
             return ["reaction": ReactionRequestBody(type: reactionType, user: Client.shared.user)]
         case .deleteReaction:
             return nil
+        case .sendEvent(let event, _):
+            return ["event": ["type": event]]
         }
     }
     
