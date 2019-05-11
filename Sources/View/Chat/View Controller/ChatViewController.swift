@@ -91,7 +91,13 @@ extension ChatViewController {
     
     private func setupComposerView() {
         composerView.addToSuperview(view)
-        channelPresenter?.setup(textControlProperty: composerView.textView.rx.value)
+        
+        composerView.textView.rx.value
+                    .skip(1)
+                    .do(onNext: { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: true) })
+                    .debounce(1, scheduler: MainScheduler.instance)
+                    .subscribe(onNext: { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: false) })
+                    .disposed(by: disposeBag)
         
         composerView.sendButton.rx.tap
             .subscribe(onNext: { [weak self] in self?.send() })
@@ -170,7 +176,7 @@ extension ChatViewController {
             }
             
             if scrollEnabled, (forceToScroll || needsToScroll) {
-                tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
             }
         case let .itemUpdated(row, message):
             tableView.update {

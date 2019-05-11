@@ -24,8 +24,7 @@ public final class ChannelPresenter {
     public private(set) var channel: Channel
     var members: [Member] = []
     private var next: Pagination = .none
-    private var disposeBag = DisposeBag()
-    private var isTyping = false
+    private var startedTyping = false
     
     private(set) var items: [ChatItem] = []
     private(set) var typingUsers: [User] = []
@@ -303,22 +302,16 @@ extension ChannelPresenter {
 
 extension ChannelPresenter {
     
-    public func setup(textControlProperty: ControlProperty<String?>) {
-        textControlProperty
-            .do(onNext: { [weak self] _ in
-                if let self = self, !self.isTyping {
-                    self.isTyping = true
-                    self.send(eventType: .typingStart)
-                }
-            })
-            .debounce(1, scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] text in
-                if let self = self {
-                    self.isTyping = false
-                    self.send(eventType: .typingStop)
-                }
-            })
-            .disposed(by: disposeBag)
+    public func sendEvent(isTyping: Bool) {
+        if isTyping {
+            if !startedTyping {
+                startedTyping = true
+                send(eventType: .typingStart)
+            }
+        } else if startedTyping {
+            startedTyping = false
+            send(eventType: .typingStop)
+        }
     }
     
     private func send(eventType: EventType) {
