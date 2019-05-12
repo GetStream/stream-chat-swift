@@ -27,6 +27,8 @@ extension ChatViewController {
         
         if message.isDeleted {
             cell.update(info: "This message was deleted.", date: message.deleted)
+        } else if message.type == .ephemeral {
+            cell.update(message: message.args ?? "")
         } else {
             cell.update(message: message.text.trimmingCharacters(in: .whitespacesAndNewlines))
             
@@ -77,6 +79,10 @@ extension ChatViewController {
                                         }
                                     }
             })
+        }
+        
+        guard message.type != .ephemeral else {
+            return cell
         }
         
         update(cell: cell, forReactionsIn: message)

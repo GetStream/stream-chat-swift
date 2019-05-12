@@ -17,6 +17,7 @@ public struct Message: Codable {
         case updated = "updated_at"
         case deleted = "deleted_at"
         case text
+        case args
         case attachments
         case mentionedUsers = "mentioned_users"
         case replyCount = "reply_count"
@@ -32,6 +33,7 @@ public struct Message: Codable {
     public let updated: Date
     public let deleted: Date?
     public let text: String
+    public let args: String?
     public let attachments: [Attachment]
     public let mentionedUsers: [User]
     public let replyCount: Int
@@ -67,6 +69,7 @@ public struct Message: Codable {
         updated = Date()
         deleted = nil
         self.text = text
+        args = nil
         attachments = []
         mentionedUsers = []
         replyCount = 0

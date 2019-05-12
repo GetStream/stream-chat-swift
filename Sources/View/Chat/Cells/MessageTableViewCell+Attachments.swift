@@ -25,7 +25,7 @@ extension MessageTableViewCell {
         
         let attachments = message.attachments
         let imageBackgroundColor = UIColor.color(by: message.user.name, isDark: backgroundColor?.isDark ?? false)
-
+        
         attachments.enumerated().forEach { index, attachment in
             let preview: AttachmentPreviewProtocol
             
@@ -43,8 +43,14 @@ extension MessageTableViewCell {
             
             if attachment.type == .file {
                 preview.update(maskImage: backgroundImageForAttachment(at: index))
-            } else {
+            } else if attachment.actions.isEmpty {
                 preview.update(maskImage: maskImageForAttachment(at: index))
+            } else {
+                preview.update(maskImage: nil)
+            }
+            
+            guard message.type != .ephemeral else {
+                return
             }
             
             (preview as UIView).rx
@@ -65,7 +71,9 @@ extension MessageTableViewCell {
                 .disposed(by: preview.disposeBag)
         }
         
-        updateBackground(isContinueMessage: true)
+        if message.type != .ephemeral {
+            updateBackground(isContinueMessage: true)
+        }
     }
     
     private func createAttachmentPreview(with attachment: Attachment,
@@ -80,7 +88,7 @@ extension MessageTableViewCell {
         preview.attachment = attachment
         preview.forceToReload = reload
         
-        preview.backgroundColor = attachment.isImageOrVideo
+        preview.backgroundColor = attachment.isImageOrVideo && attachment.actions.isEmpty
             ? style.chatBackgroundColor
             : (style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray)
         

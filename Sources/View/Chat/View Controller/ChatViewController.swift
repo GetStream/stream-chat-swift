@@ -56,7 +56,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     public var channelPresenter: ChannelPresenter? {
         didSet {
             if let channelPresenter = channelPresenter {
-                Driver.merge(channelPresenter.changes, channelPresenter.loading)
+                Driver.merge(channelPresenter.changes, channelPresenter.loading, channelPresenter.ephemeralChanges)
                     .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
                     .disposed(by: disposeBag)
             }
@@ -92,9 +92,19 @@ extension ChatViewController {
     private func setupComposerView() {
         composerView.addToSuperview(view)
         
-        composerView.textView.rx.value
+        composerView.textView.rx.text
                     .skip(1)
-                    .do(onNext: { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: true) })
+                    .do(onNext: { [weak self] text in
+                        if let self = self {
+                            self.channelPresenter?.sendEvent(isTyping: true)
+                            
+                            // Commands.
+                            if let first = text?.first, let last = text?.last, first == "/", last == "\n" {
+                                self.composerView.textView.resignFirstResponder()
+                                self.send()
+                            }
+                        }
+                    })
                     .debounce(1, scheduler: MainScheduler.instance)
                     .subscribe(onNext: { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: false) })
                     .disposed(by: disposeBag)
@@ -110,9 +120,9 @@ extension ChatViewController {
                     return
                 }
                 
-                let bottom: CGFloat = height + .messagesToComposerPadding - (height > 0
-                    ? tableView.adjustedContentInset.bottom - .messagesToComposerPadding
-                    : 0)
+                let bottom = height
+                    + .messagesToComposerPadding
+                    - (height > 0 ? tableView.adjustedContentInset.bottom - .messagesToComposerPadding : 0)
                 
                 tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top,
                                                       left: tableView.contentInset.left,
@@ -157,7 +167,7 @@ extension ChatViewController {
         switch changes {
         case .none:
             return
-        case let .updated(row, position):
+        case let .reloaded(row, position):
             tableView.reloadData()
             
             if scrollEnabled {
@@ -186,17 +196,35 @@ extension ChatViewController {
             if let reactionsView = reactionsView {
                 reactionsView.update(with: message)
             }
+        case .itemRemoved(let row):
+            tableView.update {
+                tableView.deleteRows(at: [IndexPath(row: row)], with: .none)
+            }
         case let .updateFooter(isUsersTyping):
             updateFooterView(isUsersTyping)
         }
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return channelPresenter?.items.count ?? 0
+        if let presenter = channelPresenter {
+            return presenter.items.count + (presenter.hasEphemeralMessage ? 1 : 0)
+        }
+        
+        return 0
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let presenter = channelPresenter, indexPath.row < presenter.items.count else {
+        guard let presenter = channelPresenter else {
+            return .unused
+        }
+        
+        guard indexPath.row < presenter.items.count else {
+            let row = presenter.items.count - indexPath.row
+            
+            if row == 0, let message = presenter.ephemeralMessage {
+                return messageCell(at: indexPath, message: message)
+            }
+            
             return .unused
         }
         

@@ -44,6 +44,7 @@ extension CGFloat {
     
     public static let attachmentPreviewHeight: CGFloat = 150
     public static let attachmentPreviewMaxHeight: CGFloat = 220
+    public static let attachmentPreviewActionButtonHeight: CGFloat = 2 * .messageCornerRadius
     public static let attachmentFilePreviewHeight: CGFloat = 50
     public static let attachmentFileIconWidth: CGFloat = 25
     public static let attachmentFileIconHeight: CGFloat = 30

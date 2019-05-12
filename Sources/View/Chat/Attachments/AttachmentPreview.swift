@@ -81,13 +81,34 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         return label
     }()
     
+    private lazy var actionsStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [])
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.spacing = .messageSpacing
+        addSubview(stackView)
+        imageViewBottomConstraint?.deactivate()
+        
+        stackView.snp.makeConstraints { make in
+            make.top.equalTo(imageView.snp.bottom).offset(CGFloat.messageSpacing).priority(999)
+            make.height.equalTo(CGFloat.attachmentPreviewActionButtonHeight)
+            make.bottom.equalToSuperview().priority(999)
+            make.left.equalToSuperview()
+            make.right.equalToSuperview()
+        }
+        
+        return stackView
+    }()
+    
     public var maxWidth: CGFloat = 0
     var forceToReload: () -> Void = {}
     
     public var attachment: Attachment? {
         didSet {
             if let attachment = attachment {
-                defaultHeight = attachment.isImageOrVideo ? .attachmentPreviewHeight : .attachmentPreviewMaxHeight
+                defaultHeight = attachment.isImageOrVideo && attachment.actions.isEmpty
+                    ? .attachmentPreviewHeight
+                    : .attachmentPreviewMaxHeight
             }
         }
     }
@@ -130,17 +151,27 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         if superview != nil, widthConstraint == nil, let attachment = attachment {
             snp.makeConstraints {
                 heightConstraint = $0.height.equalTo(defaultHeight).priority(999).constraint
-                widthConstraint = $0.width.equalTo(attachment.isImageOrVideo ? defaultHeight : maxWidth).constraint
+                let width = attachment.isImageOrVideo && attachment.actions.isEmpty ? defaultHeight : maxWidth
+                widthConstraint = $0.width.equalTo(width).constraint
             }
         }
     }
 
-    func update(maskImage: UIImage? = nil) {
+    func update(maskImage: UIImage?) {
         guard let attachment = attachment else {
             return
         }
         
-        if !attachment.isImageOrVideo {
+        if !attachment.actions.isEmpty {
+            widthConstraint?.update(offset: maxWidth)
+            
+            attachment.actions.forEach { action in
+                actionsStackView.addArrangedSubview(createActionButton(title: action.text, style: action.style))
+            }
+            
+            backgroundColor = .clear
+            
+        } else if !attachment.isImageOrVideo {
             titleLabel.text = attachment.title
             titleLabel.backgroundColor = backgroundColor
             textLabel.text = attachment.text ?? attachment.url?.host
@@ -182,13 +213,13 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             return
         }
         
-        var width = attachment.isImageOrVideo ? defaultHeight : maxWidth
+        var width = attachment.isImageOrVideo && attachment.actions.isEmpty ? defaultHeight : maxWidth
         var height = defaultHeight
         
         if let image = imageResponse?.image, image.size.height > 0 {
             imageView.backgroundColor = backgroundColor
             
-            if attachment.isImageOrVideo {
+            if attachment.isImageOrVideo, attachment.actions.isEmpty {
                 width = min(image.size.width / image.size.height * defaultHeight, maxWidth)
                 widthConstraint?.update(offset: width)
             }
@@ -233,5 +264,16 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         imageView.setGifImage(animatedImage, manager: SwiftyGifManager(memoryLimit: 50))
         
         return
+    }
+    
+    private func createActionButton(title: String, style: Attachment.ActionStyle) -> UIButton {
+        let button = UIButton(type: .custom)
+        button.layer.cornerRadius = .messageCornerRadius
+        button.titleLabel?.font = style == .primary ? .chatBoldSmall : .chatSmall
+        button.backgroundColor = backgroundColor
+        button.setTitle(title, for: .normal)
+        button.setTitleColor((backgroundColor?.isDark ?? false) ? .white : .black, for: .normal)
+        
+        return button
     }
 }

@@ -12,14 +12,16 @@ import RxCocoa
 
 public enum ChannelChanges: Equatable {
     case none
-    case updated(_ row: Int, UITableView.ScrollPosition)
+    case reloaded(_ row: Int, UITableView.ScrollPosition)
     case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool)
     case itemUpdated(_ row: Int, Message)
+    case itemRemoved(_ row: Int)
     case updateFooter(_ isUsersTyping: Bool)
 }
 
 public final class ChannelPresenter {
     public typealias Completion = (_ error: Error?) -> Void
+    private typealias EphemeralType = (message: Message?, updated: Bool)
     
     public private(set) var channel: Channel
     var members: [Member] = []
@@ -29,6 +31,15 @@ public final class ChannelPresenter {
     private(set) var items: [ChatItem] = []
     private(set) var typingUsers: [User] = []
     private let loadPagination = PublishSubject<Pagination>()
+    private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
+    
+    public var hasEphemeralMessage: Bool {
+        return ephemeralMessage != nil
+    }
+    
+    public var ephemeralMessage: Message? {
+        return (try? ephemeralSubject.value())?.message
+    }
     
     private(set) lazy var loading: Driver<ChannelChanges> =
         Observable.combineLatest(Client.shared.webSocket.connection, loadPagination.asObserver())
@@ -40,6 +51,11 @@ public final class ChannelPresenter {
     
     private(set) lazy var changes: Driver<ChannelChanges> = Client.shared.webSocket.response
         .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
+        .filter { $0 != .none }
+        .asDriver(onErrorJustReturn: .none)
+    
+    private(set) lazy var ephemeralChanges: Driver<ChannelChanges> = ephemeralSubject
+        .map { [weak self] in self?.parseEphemeralChanges($0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
@@ -136,6 +152,18 @@ extension ChannelPresenter {
         
         return .none
     }
+    
+    private func parseEphemeralChanges(_ ephemeralType: EphemeralType) -> ChannelChanges {
+        if let message = ephemeralType.message {
+            if ephemeralType.updated {
+                return .itemUpdated(items.count, message)
+            }
+            
+            return .itemAdded(items.count, nil, true)
+        }
+        
+        return items.count > 0 ? .itemRemoved(items.count - 1) : .none
+    }
 }
 
 // MARK: - Load messages
@@ -213,10 +241,10 @@ extension ChannelPresenter {
         
         if items.count > 0 {
             if isNextPage {
-                return .updated(max(items.count - currentCount, 0), .top)
+                return .reloaded(max(items.count - currentCount, 0), .top)
             }
             
-            return .updated((items.count - 1), .top)
+            return .reloaded((items.count - 1), .top)
         }
         
         return .none
@@ -272,8 +300,13 @@ extension ChannelPresenter {
             return
         }
         
-        let completion: Client.Completion<MessageResponse> = { _ in }
-        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), connectionId: "", completion)
+        let requestCompletion: Client.Completion<MessageResponse> = { [weak self] result in
+            if let self = self, let response = try? result.get(), response.message.type == .ephemeral {
+                self.ephemeralSubject.onNext((response.message, self.hasEphemeralMessage))
+            }
+        }
+        
+        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), connectionId: "", requestCompletion)
     }
 }
 

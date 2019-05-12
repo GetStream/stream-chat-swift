@@ -23,12 +23,14 @@ public struct Attachment: Codable {
         case imageURL = "image_url"
         case assetURL = "asset_url"
         case ogURL = "og_scrape_url"
+        case actions
     }
     
     public let title: String
     public let author: String?
     public let text: String?
     public let type: AttachmentType
+    public let actions: [Action]
     public let url: URL?
     public let imageURL: URL?
     public let file: AttachmentFile?
@@ -58,7 +60,9 @@ public struct Attachment: Codable {
             ?? container.decodeIfPresent(String.self, forKey: .titleLink)
             ?? container.decodeIfPresent(String.self, forKey: .ogURL))
         
-        if let existsType = try? AttachmentType(rawValue: container.decode(String.self, forKey: .type)) {
+        let typeString = try? container.decode(String.self, forKey: .type)
+        
+        if let typeString = typeString, let existsType = AttachmentType(rawValue: typeString) {
             if existsType == .video, let url = url, url.absoluteString.contains("youtube") {
                 type = .youtube
             } else {
@@ -71,6 +75,12 @@ public struct Attachment: Codable {
         }
         
         file = type == .file ? try AttachmentFile(from: decoder) : nil
+        
+        if let actions = try? container.decodeIfPresent([Action].self, forKey: .actions) {
+            self.actions = actions
+        } else {
+            actions = []
+        }
     }
     
     /// Image upload:
@@ -106,6 +116,25 @@ public struct Attachment: Codable {
         }
         
         return URL(string: urlString)
+    }
+}
+
+public extension Attachment {
+    struct Action: Decodable {
+        let name: String
+        let value: String
+        let style: ActionStyle
+        let type: ActionType
+        let text: String
+    }
+    
+    enum ActionType: String, Decodable {
+        case button
+    }
+    
+    enum ActionStyle: String, Decodable {
+        case `default`
+        case primary
     }
 }
 
