@@ -99,7 +99,12 @@ extension ChatViewController {
                             self.channelPresenter?.sendEvent(isTyping: true)
                             
                             // Commands.
-                            if let first = text?.first, let last = text?.last, first == "/", last == "\n" {
+                            if (text ?? "").contains("\n"),
+                                let text = text?.trimmingCharacters(in: .whitespacesAndNewlines),
+                                let first = text.first,
+                                first == "/",
+                                text.contains(" ") {
+                                self.composerView.textView.text = text.replacingOccurrences(of: "\n", with: "")
                                 self.composerView.textView.resignFirstResponder()
                                 self.send()
                             }
