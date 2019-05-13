@@ -33,6 +33,12 @@ public final class ChannelPresenter {
     private let loadPagination = PublishSubject<Pagination>()
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     
+    private lazy var ephemeralMessageCompletion: Client.Completion<MessageResponse> = { [weak self] result in
+        if let self = self, let response = try? result.get(), response.message.type == .ephemeral {
+            self.ephemeralSubject.onNext((response.message, self.hasEphemeralMessage))
+        }
+    }
+    
     public var hasEphemeralMessage: Bool {
         return ephemeralMessage != nil
     }
@@ -162,7 +168,7 @@ extension ChannelPresenter {
             return .itemAdded(items.count, nil, true)
         }
         
-        return items.count > 0 ? .itemRemoved(items.count - 1) : .none
+        return .itemRemoved(items.count)
     }
 }
 
@@ -300,13 +306,7 @@ extension ChannelPresenter {
             return
         }
         
-        let requestCompletion: Client.Completion<MessageResponse> = { [weak self] result in
-            if let self = self, let response = try? result.get(), response.message.type == .ephemeral {
-                self.ephemeralSubject.onNext((response.message, self.hasEphemeralMessage))
-            }
-        }
-        
-        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), connectionId: "", requestCompletion)
+        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), connectionId: "", ephemeralMessageCompletion)
     }
 }
 
@@ -350,5 +350,20 @@ extension ChannelPresenter {
     private func send(eventType: EventType) {
         let completion: Client.Completion<EventResponse> = { _ in }
         Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), connectionId: "", completion)
+    }
+}
+
+// MARK: - Ephemeral Message Actions
+
+extension ChannelPresenter {
+    
+    public func dispatch(action: Attachment.Action, message: Message) {
+        if action.value == "cancel" {
+            ephemeralSubject.onNext((nil, true))
+            return
+        }
+        
+        let messageAction = MessageAction(channel: channel, message: message, action: action)
+        Client.shared.request(endpoint: ChatEndpoint.sendMessageAction(messageAction), connectionId: "", ephemeralMessageCompletion)
     }
 }

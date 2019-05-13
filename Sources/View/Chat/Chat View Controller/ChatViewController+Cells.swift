@@ -27,10 +27,11 @@ extension ChatViewController {
         
         if message.isDeleted {
             cell.update(info: "This message was deleted.", date: message.deleted)
-        } else if message.type == .ephemeral {
+        } else if message.isEphemeral {
             cell.update(message: message.args ?? "")
         } else {
-            cell.update(message: message.text.trimmingCharacters(in: .whitespacesAndNewlines))
+            let text = message.text.trimmingCharacters(in: .whitespacesAndNewlines)
+            cell.update(message: text.isEmpty ? (message.args ?? "") : text)
             
             if !message.mentionedUsers.isEmpty {
                 cell.update(mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
@@ -72,6 +73,7 @@ extension ChatViewController {
             cell.addAttachments(from: message,
                                 tap: { [weak self] in self?.show(attachment: $0, at: $1, from: $2) },
                                 longPress: { [weak self] in self?.showMenu(from: $0, for: $1) },
+                                actionTap: { [weak self] in self?.sendActionForEphemeral(message: $0, button: $1) },
                                 reload: { [weak self] in
                                     if let self = self {
                                         self.tableView.update {
@@ -79,9 +81,11 @@ extension ChatViewController {
                                         }
                                     }
             })
+            
+            cell.updateBackground(isContinueMessage: !message.isEphemeral)
         }
         
-        guard message.type != .ephemeral else {
+        guard !message.isEphemeral else {
             return cell
         }
         

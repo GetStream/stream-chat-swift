@@ -79,12 +79,11 @@ extension ChatViewController {
         let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         showComposerHelperWithCommands(for: text, trimmedText)
         
-        // Send command.
-        if text.contains("\n"),
-            trimmedText.contains(" ") {
-            self.composerView.textView.text = trimmedText.replacingOccurrences(of: "\n", with: "")
-            self.composerView.textView.resignFirstResponder()
-            self.send()
+        // Send command by <Return> key.
+        if text.contains("\n"), trimmedText.contains(" ") {
+            composerView.textView.text = trimmedText
+            view.endEditing(true)
+            send()
         }
     }
     
@@ -153,5 +152,20 @@ extension ChatViewController {
             composerView.textView.text = "/\(command) "
             return
         }
+    }
+}
+
+// MARK: Ephemeral Message Action
+
+extension ChatViewController {
+    func sendActionForEphemeral(message: Message, button: UIButton) {
+        let buttonText = button.title(for: .normal)
+        
+        guard let attachment = message.attachments.first,
+            let action = attachment.actions.first(where: { $0.text == buttonText }) else {
+            return
+        }
+        
+        channelPresenter?.dispatch(action: action, message: message)
     }
 }

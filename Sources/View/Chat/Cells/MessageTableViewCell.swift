@@ -16,6 +16,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     typealias TapAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
     typealias AttachmentTapAction = (_ attachment: Attachment, _ at: Int, _ attachments: [Attachment]) -> Void
     typealias LongPressAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
+    typealias AttachmentActionTapAction = (_ message: Message, _ button: UIButton) -> Void
     
     static let longPressMinimumDuration: TimeInterval = 0.3
     
@@ -248,6 +249,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageContainerView.image = nil
         messageContainerView.layer.borderWidth = 0
         messageContainerView.backgroundColor = style?.chatBackgroundColor
+        messageContainerView.mask = nil
         
         messageLabel.attributedText = nil
         messageLabel.font = style?.font

@@ -41,6 +41,10 @@ public struct Message: Codable {
     public private(set) var ownReactions: [Reaction]
     public private(set) var reactionCounts: ReactionCounts?
     
+    public var isEphemeral: Bool {
+        return type == .ephemeral
+    }
+    
     public var isDeleted: Bool {
         return deleted != nil
     }

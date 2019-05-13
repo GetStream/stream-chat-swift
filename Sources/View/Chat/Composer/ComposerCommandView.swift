@@ -46,8 +46,8 @@ final class ComposerCommandView: UIView {
         self.command = command
         let textColor = backgroundColor?.oppositeBlackAndWhite ?? .black
         
-        let commandAttributedString = NSMutableAttributedString(string: command, attributes: [.font: UIFont.chatMediumBold,
-                                                                                              .foregroundColor: textColor])
+        let commandAttributedString = NSMutableAttributedString(string: "/\(command)", attributes: [.font: UIFont.chatMediumBold,
+                                                                                                    .foregroundColor: textColor])
         
         commandAttributedString.append(.init(string: " \(args)", attributes: [.font: UIFont.chatMedium,
                                                                               .foregroundColor: textColor]))

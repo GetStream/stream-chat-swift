@@ -18,6 +18,7 @@ extension MessageTableViewCell {
     public func addAttachments(from message: Message,
                                tap: @escaping AttachmentTapAction,
                                longPress: @escaping LongPressAction,
+                               actionTap: @escaping AttachmentActionTapAction,
                                reload: @escaping () -> Void) {
         guard let style = style else {
             return
@@ -43,13 +44,29 @@ extension MessageTableViewCell {
             
             if attachment.type == .file {
                 preview.update(maskImage: backgroundImageForAttachment(at: index))
-            } else if attachment.actions.isEmpty {
+                
+            } else if !message.isEphemeral {
                 preview.update(maskImage: maskImageForAttachment(at: index))
+                
             } else {
                 preview.update(maskImage: nil)
+                
+                if let preview = preview as? AttachmentPreview, !preview.actionsStackView.arrangedSubviews.isEmpty {
+                    preview.actionsStackView.arrangedSubviews.forEach {
+                        if let button = $0 as? UIButton {
+                            button.rx.tap.subscribe(onNext: { [weak button, weak preview] _ in
+                                if let button = button {
+                                    preview?.actionsStackView.arrangedSubviews.forEach { ($0 as? UIButton)?.isEnabled = false }
+                                    actionTap(message, button)
+                                }
+                            })
+                            .disposed(by: preview.disposeBag)
+                        }
+                    }
+                }
             }
             
-            guard message.type != .ephemeral else {
+            guard !message.isEphemeral else {
                 return
             }
             
@@ -69,10 +86,6 @@ extension MessageTableViewCell {
                     }
                 })
                 .disposed(by: preview.disposeBag)
-        }
-        
-        if message.type != .ephemeral {
-            updateBackground(isContinueMessage: true)
         }
     }
     

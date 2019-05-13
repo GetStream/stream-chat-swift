@@ -69,6 +69,7 @@
 		8A88917E22560EC100DD6539 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917D22560EC100DD6539 /* Date+Extensions.swift */; };
 		8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88917F225755D500DD6539 /* ChatViewStyle.swift */; };
 		8A9955C322899CD0005D8148 /* ComposerCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9955C222899CD0005D8148 /* ComposerCommandView.swift */; };
+		8A9955C52289C369005D8148 /* MessageAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9955C42289C369005D8148 /* MessageAction.swift */; };
 		8AABC291226086ED0064CB20 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC290226086ED0064CB20 /* Attachment.swift */; };
 		8AABC29322608FB90064CB20 /* AttachmentFilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */; };
 		8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29522608FE10064CB20 /* AttachmentPreviewProtocol.swift */; };
@@ -166,6 +167,7 @@
 		8A88917D22560EC100DD6539 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		8A88917F225755D500DD6539 /* ChatViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewStyle.swift; sourceTree = "<group>"; };
 		8A9955C222899CD0005D8148 /* ComposerCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerCommandView.swift; sourceTree = "<group>"; };
+		8A9955C42289C369005D8148 /* MessageAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAction.swift; sourceTree = "<group>"; };
 		8AABC290226086ED0064CB20 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFilePreview.swift; sourceTree = "<group>"; };
 		8AABC29522608FE10064CB20 /* AttachmentPreviewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProtocol.swift; sourceTree = "<group>"; };
@@ -388,9 +390,10 @@
 				8AFC2A2622688299006278D4 /* Member.swift */,
 				8A889152225240F700DD6539 /* Event.swift */,
 				8A88915D22535FEC00DD6539 /* Message.swift */,
+				8AB1B8EC22675B98002C65BD /* MessageResponse.swift */,
+				8A9955C42289C369005D8148 /* MessageAction.swift */,
 				8AABC290226086ED0064CB20 /* Attachment.swift */,
 				8ABF8261226F643E00A966D9 /* Reaction.swift */,
-				8AB1B8EC22675B98002C65BD /* MessageResponse.swift */,
 				8A2CC95C22874601004CF12D /* EventResponse.swift */,
 				8AABC2992262426A0064CB20 /* ChatItem.swift */,
 				8AABC29B22627A1D0064CB20 /* Pagination.swift */,
@@ -717,6 +720,7 @@
 				8A4FE7BC227C485B00E47D4C /* MessageTableViewCell+Updates.swift in Sources */,
 				8AABC29322608FB90064CB20 /* AttachmentFilePreview.swift in Sources */,
 				8A5D1FED22899421007AB76C /* ChatViewController+Composer.swift in Sources */,
+				8A9955C52289C369005D8148 /* MessageAction.swift in Sources */,
 				8A8891732255000A00DD6539 /* UITableViewCell+Extensions.swift in Sources */,
 				8A88915E22535FEC00DD6539 /* Message.swift in Sources */,
 				8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */,

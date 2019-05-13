@@ -81,7 +81,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         return label
     }()
     
-    private lazy var actionsStackView: UIStackView = {
+    private(set) lazy var actionsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [])
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
@@ -273,6 +273,8 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         button.backgroundColor = backgroundColor
         button.setTitle(title, for: .normal)
         button.setTitleColor((backgroundColor?.isDark ?? false) ? .white : .black, for: .normal)
+        button.setTitleColor(.chatBlue, for: .highlighted)
+        button.setTitleColor(.chatGray, for: .disabled)
         
         return button
     }
