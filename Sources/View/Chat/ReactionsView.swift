@@ -49,7 +49,7 @@ final class ReactionsView: UIView {
             labelsStackView.addArrangedSubview(createLabel(message.reactionCounts?.counts[type] ?? 0))
         }
         
-        UIView.animateSmooth(withDuration: 0.3, usingSpringWithDamping: 0.65) {
+        UIView.animateSmoothly(withDuration: 0.3, usingSpringWithDamping: 0.65) {
             self.alpha = 1
             self.reactionsView.transform = .identity
         }
@@ -93,7 +93,7 @@ final class ReactionsView: UIView {
     }
     
     func dismiss() {
-        UIView.animateSmooth(withDuration: 0.25, animations: {
+        UIView.animateSmoothly(withDuration: 0.25, animations: {
             self.alpha = 0
             self.reactionsView.transform = .init(scaleX: 0.2, y: 0.2)
         }) { _ in
@@ -140,7 +140,7 @@ final class ReactionsView: UIView {
                 
                 label?.transform = .init(scaleX: 0.3, y: 0.3)
                 
-                UIView.animateSmooth(withDuration: 0.3,
+                UIView.animateSmoothly(withDuration: 0.3,
                                      usingSpringWithDamping: 0.4,
                                      initialSpringVelocity: 10,
                                      animations: { label?.transform = .identity },

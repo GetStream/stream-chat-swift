@@ -46,7 +46,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     
     let nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.font = .chatBoldSmall
+        label.font = .chatSmallBold
         label.textColor = .chatGray
         return label
     }()

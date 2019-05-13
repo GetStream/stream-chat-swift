@@ -13,14 +13,14 @@ final class StatusTableViewCell: UITableViewCell, Reusable {
     
     private let titleLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.font = .chatBoldXSmall
+        label.font = .chatXSmallBold
         label.textColor = .chatGray
         return label
     }()
     
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.font = .chatXXSmall
+        label.font = .chatXSmall
         label.textColor = .chatGray
         titleLabel.addSubview(label)
         

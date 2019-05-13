@@ -45,7 +45,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     private lazy var titleLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.numberOfLines = 2
-        label.font = .chatBoldMedium
+        label.font = .chatMediumBold
         label.textColor = .chatBlue
         addSubview(label)
         imageViewBottomConstraint?.deactivate()
@@ -269,7 +269,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     private func createActionButton(title: String, style: Attachment.ActionStyle) -> UIButton {
         let button = UIButton(type: .custom)
         button.layer.cornerRadius = .messageCornerRadius
-        button.titleLabel?.font = style == .primary ? .chatBoldSmall : .chatSmall
+        button.titleLabel?.font = style == .primary ? .chatSmallBold : .chatSmall
         button.backgroundColor = backgroundColor
         button.setTitle(title, for: .normal)
         button.setTitleColor((backgroundColor?.isDark ?? false) ? .white : .black, for: .normal)

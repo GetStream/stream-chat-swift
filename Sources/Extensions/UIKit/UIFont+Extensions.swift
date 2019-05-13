@@ -10,14 +10,15 @@ import UIKit.UIFont
 
 extension UIFont {
     static let chatRegular = UIFont.systemFont(ofSize: 15)
+    static let chatRegularBold = UIFont.systemFont(ofSize: 15, weight: .bold)
     static let chatMedium = UIFont.systemFont(ofSize: 13)
-    static let chatBoldMedium = UIFont.systemFont(ofSize: 13, weight: .bold)
+    static let chatMediumBold = UIFont.systemFont(ofSize: 13, weight: .bold)
     static let chatSmall = UIFont.systemFont(ofSize: 11)
+    static let chatSmallMedium = UIFont.systemFont(ofSize: 11, weight: .medium)
+    static let chatSmallBold = UIFont.systemFont(ofSize: 11, weight: .bold)
     static let chatXSmall = UIFont.systemFont(ofSize: 10)
+    static let chatXSmallBold = UIFont.systemFont(ofSize: 10, weight: .bold)
     static let chatXXSmall = UIFont.systemFont(ofSize: 9)
-    static let chatBoldXSmall = UIFont.systemFont(ofSize: 10, weight: .bold)
-    static let chatMediumSmall = UIFont.systemFont(ofSize: 11, weight: .medium)
-    static let chatBoldSmall = UIFont.systemFont(ofSize: 11, weight: .bold)
     static let chatEmoji = UIFont.systemFont(ofSize: 26)
     static let reactionsEmoji = UIFont.systemFont(ofSize: 22)
     

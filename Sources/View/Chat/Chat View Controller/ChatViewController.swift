@@ -10,13 +10,11 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
-import RxKeyboard
-import Nuke
 
 public final class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     public var style = ChatViewStyle()
-    private let disposeBag = DisposeBag()
+    let disposeBag = DisposeBag()
     var reactionsView: ReactionsView?
     
     var scrollEnabled: Bool {
@@ -27,6 +25,33 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         let composerView = ComposerView(frame: .zero)
         composerView.style = style.composer
         return composerView
+    }()
+    
+    private(set) lazy var composerCommands: ComposerHelperContainerView = {
+        let container = ComposerHelperContainerView()
+        container.backgroundColor = style.backgroundColor.isDark ? .chatDarkGray : .white
+        container.titleLabel.text = "Commands"
+        container.add(for: composerView)
+        container.isHidden = true
+        
+        container.closeButton.rx.tap.subscribe(onNext: { [weak self] _ in
+            self?.composerCommands.animate(show: false)
+        }).disposed(by: disposeBag)
+        
+        if let channelConfig = channelPresenter?.channel.config {
+            channelConfig.commands.forEach { command in
+                let view = ComposerCommandView(frame: .zero)
+                view.backgroundColor = container.backgroundColor
+                view.update(command: command.name, args: command.args, description: command.description)
+                container.containerView.addArrangedSubview(view)
+                
+                view.rx.tapGesture().when(.recognized)
+                    .subscribe(onNext: { [weak self] _ in self?.addCommandToComposer(command: command.name) })
+                    .disposed(by: self.disposeBag)
+            }
+        }
+        
+        return container
     }()
     
     public private(set) lazy var tableView: UITableView = {
@@ -82,75 +107,6 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     
     public override var preferredStatusBarStyle: UIStatusBarStyle {
         return style.backgroundColor.isDark ? .lightContent : .default
-    }
-}
-
-// MARK: - Composer
-
-extension ChatViewController {
-    
-    private func setupComposerView() {
-        composerView.addToSuperview(view)
-        
-        composerView.textView.rx.text
-                    .skip(1)
-                    .do(onNext: { [weak self] text in
-                        if let self = self {
-                            self.channelPresenter?.sendEvent(isTyping: true)
-                            
-                            // Commands.
-                            if (text ?? "").contains("\n"),
-                                let text = text?.trimmingCharacters(in: .whitespacesAndNewlines),
-                                let first = text.first,
-                                first == "/",
-                                text.contains(" ") {
-                                self.composerView.textView.text = text.replacingOccurrences(of: "\n", with: "")
-                                self.composerView.textView.resignFirstResponder()
-                                self.send()
-                            }
-                        }
-                    })
-                    .debounce(1, scheduler: MainScheduler.instance)
-                    .subscribe(onNext: { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: false) })
-                    .disposed(by: disposeBag)
-        
-        composerView.sendButton.rx.tap
-            .subscribe(onNext: { [weak self] in self?.send() })
-            .disposed(by: disposeBag)
-        
-        RxKeyboard.instance.visibleHeight
-            .skip(1)
-            .drive(onNext: { [weak self] height in
-                guard let tableView = self?.tableView else {
-                    return
-                }
-                
-                let bottom = height
-                    + .messagesToComposerPadding
-                    - (height > 0 ? tableView.adjustedContentInset.bottom - .messagesToComposerPadding : 0)
-                
-                tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top,
-                                                      left: tableView.contentInset.left,
-                                                      bottom: bottom,
-                                                      right: tableView.contentInset.right)
-            })
-            .disposed(by: disposeBag)
-        
-        RxKeyboard.instance.willShowVisibleHeight
-            .drive(onNext: { [weak self] height in
-                if let self = self {
-                    var contentOffset = self.tableView.contentOffset
-                    contentOffset.y += height - self.view.safeAreaBottomOffset
-                    self.tableView.contentOffset = contentOffset
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    private func send() {
-        let text = composerView.text
-        composerView.reset()
-        channelPresenter?.send(text: text)
     }
 }
 

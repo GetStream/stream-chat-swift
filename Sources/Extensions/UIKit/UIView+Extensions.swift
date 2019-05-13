@@ -59,7 +59,7 @@ extension UIView {
     }
 }
 
-/// MARK: - Safe Area Layout Guide
+// MARK: - Safe Area Layout Guide
 
 extension UIView {
     
@@ -72,7 +72,17 @@ extension UIView {
     }
 }
 
-/// MARK: - Smooth and Chain animations
+// MARK: - Animations
+
+extension UIView {
+    func removeAllAnimations() {
+        CATransaction.begin()
+        layer.removeAllAnimations()
+        CATransaction.commit()
+    }
+}
+
+// MARK: - Smooth and Chain animations
 
 extension UIView {
     typealias Animations = () -> Void
@@ -137,7 +147,7 @@ extension UIView {
     }
     
     @discardableResult
-    static func animateSmooth(withDuration duration: TimeInterval,
+    static func animateSmoothly(withDuration duration: TimeInterval,
                               usingSpringWithDamping dampingRatio: CGFloat = 1,
                               initialSpringVelocity velocity: CGFloat = 0,
                               options: AnimationOptions = [],
@@ -149,7 +159,7 @@ extension UIView {
                      animations: animations)
     }
     
-    static func animateSmooth(withDuration duration: TimeInterval,
+    static func animateSmoothly(withDuration duration: TimeInterval,
                               delay: TimeInterval = 0,
                               usingSpringWithDamping dampingRatio: CGFloat = 1,
                               initialSpringVelocity velocity: CGFloat = 0,

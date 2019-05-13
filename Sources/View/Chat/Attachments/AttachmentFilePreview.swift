@@ -30,7 +30,7 @@ final class AttachmentFilePreview: UIImageView, AttachmentPreviewProtocol {
     
     private lazy var titleLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.font = .chatBoldMedium
+        label.font = .chatMediumBold
         label.textColor = .chatBlue
         addSubview(label)
         

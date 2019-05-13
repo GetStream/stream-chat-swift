@@ -32,7 +32,7 @@ public struct MessageViewStyle: Hashable {
     init(alignment: Alignment = .left,
          chatBackgroundColor: UIColor = .white,
          font: UIFont = .chatRegular,
-         nameFont: UIFont = .chatBoldSmall,
+         nameFont: UIFont = .chatSmallBold,
          infoFont: UIFont = .chatSmall,
          emojiFont: UIFont = .chatEmoji,
          textColor: UIColor = .black,
