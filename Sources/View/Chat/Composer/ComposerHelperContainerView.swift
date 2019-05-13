@@ -12,6 +12,7 @@ import SnapKit
 final class ComposerHelperContainerView: UIView {
     
     private(set) var shouldBeShown: Bool = false
+    var forcedHidden = false
     
     private(set) lazy var titleLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -75,7 +76,16 @@ final class ComposerHelperContainerView: UIView {
         containerView.snp.makeConstraints { $0.bottom.equalTo(composerView.snp.top).offset(-CGFloat.messageEdgePadding) }
     }
     
-    func animate(show: Bool) {
+    func animate(show: Bool, resetForcedHidden: Bool = false) {
+        if resetForcedHidden {
+            forcedHidden = false
+        }
+        
+        if show, forcedHidden {
+            shouldBeShown = false
+            return
+        }
+        
         guard shouldBeShown != show else {
             return
         }

@@ -34,7 +34,8 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         container.add(for: composerView)
         container.isHidden = true
         
-        container.closeButton.rx.tap.subscribe(onNext: { [weak self] _ in
+        container.closeButton.rx.tap.subscribe(onNext: { [weak self, weak container] _ in
+            container?.forcedHidden = true
             self?.composerCommands.animate(show: false)
         }).disposed(by: disposeBag)
         

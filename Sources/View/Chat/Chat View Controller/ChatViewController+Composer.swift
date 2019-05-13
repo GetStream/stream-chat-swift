@@ -103,7 +103,7 @@ extension ChatViewController {
         
         // Show composer helper container.
         if trimmedText.count == 1, let first = trimmedText.first, first == "/" {
-            composerCommands.animate(show: true)
+            composerCommands.animate(show: true, resetForcedHidden: true)
             return
         }
         
