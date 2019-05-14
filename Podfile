@@ -12,7 +12,7 @@ target 'GetStreamChat' do
   pod 'RxGesture'
   pod 'SnapKit'
   pod 'Nuke'
-  pod 'SwiftyGif', :git => 'https://github.com/buh/SwiftyGif.git'
+  pod 'SwiftyGif'
   
   # ⚠️ For demo app only!
   pod 'Crashlytics'

@@ -1,7 +1,7 @@
 PODS:
-  - Crashlytics (3.12.0):
-    - Fabric (~> 1.9.0)
-  - Fabric (1.9.0)
+  - Crashlytics (3.13.0):
+    - Fabric (~> 1.10.0)
+  - Fabric (1.10.0)
   - Nuke (7.6.3)
   - ReachabilitySwift (4.3.1)
   - RxAppState (1.5.0):
@@ -26,7 +26,7 @@ PODS:
   - RxSwift (4.5.0)
   - SnapKit (5.0.0)
   - Starscream (3.1.0)
-  - SwiftyGif (5.0.1)
+  - SwiftyGif (5.1.1)
 
 DEPENDENCIES:
   - Crashlytics
@@ -39,7 +39,7 @@ DEPENDENCIES:
   - RxStarscream
   - RxSwift
   - SnapKit
-  - SwiftyGif (from `https://github.com/buh/SwiftyGif.git`)
+  - SwiftyGif
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -56,19 +56,11 @@ SPEC REPOS:
     - RxSwift
     - SnapKit
     - Starscream
-
-EXTERNAL SOURCES:
-  SwiftyGif:
-    :git: https://github.com/buh/SwiftyGif.git
-
-CHECKOUT OPTIONS:
-  SwiftyGif:
-    :commit: cf1c449a0a378ceb9d770fff08dc344acbedf1b6
-    :git: https://github.com/buh/SwiftyGif.git
+    - SwiftyGif
 
 SPEC CHECKSUMS:
-  Crashlytics: 07fb167b1694128c1c9a5a5cc319b0e9c3ca0933
-  Fabric: f988e33c97f08930a413e08123064d2e5f68d655
+  Crashlytics: 1f5f752c7feac0add0cc1774756f96444fa3b1a7
+  Fabric: 09de1e053eb7dc415593166ad3e53d4c88123405
   Nuke: 44130e95e09463f8773ae4b96b90de1eba6b3350
   ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
   RxAppState: 46cae19e582daf7283a8f9ef553e7c049e1565b4
@@ -80,8 +72,8 @@ SPEC CHECKSUMS:
   RxSwift: f172070dfd1a93d70a9ab97a5a01166206e1c575
   SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
-  SwiftyGif: 3ca6760b21372f6b1844c0eb3957d7f49e2481ad
+  SwiftyGif: f7702483db93586a41f04f4927cd682852a2fa10
 
-PODFILE CHECKSUM: e842cf9ee1d54bbb175facfc670fe817270281f5
+PODFILE CHECKSUM: 4a2d2920f960b5519fa8a5c93fb55d8db68951f5
 
 COCOAPODS: 1.6.1
