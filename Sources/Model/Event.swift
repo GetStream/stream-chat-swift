@@ -58,7 +58,7 @@ enum Event: Decodable {
     case healthCheck(_ connectionId: String, User?)
     
     case messageRead(user: User)
-    case messageNew(Message, User, _ watcherCount: Int, _ unreadCount: Int, _ totalUnreadCount: Int)
+    case messageNew(Message, User, _ unreadCount: Int, _ totalUnreadCount: Int)
     
     case userUpdated(User)
     case userStatusChanged(User)
@@ -90,10 +90,9 @@ enum Event: Decodable {
         // Message
         case .messageNew:
             let message = try container.decode(Message.self, forKey: .message)
-            let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
             let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
             let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
-            self = .messageNew(message, user, watcherCount, unreadCount, totalUnreadCount)
+            self = .messageNew(message, user, unreadCount, totalUnreadCount)
         case .messageRead:
             self = .messageRead(user: user)
             

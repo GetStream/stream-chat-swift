@@ -126,6 +126,14 @@ public extension Attachment {
         let style: ActionStyle
         let type: ActionType
         let text: String
+        
+        var isCancelled: Bool {
+            return value == "cancel"
+        }
+        
+        var isSend: Bool {
+            return value == "send"
+        }
     }
     
     enum ActionType: String, Decodable {

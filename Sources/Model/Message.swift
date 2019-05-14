@@ -17,6 +17,7 @@ public struct Message: Codable {
         case updated = "updated_at"
         case deleted = "deleted_at"
         case text
+        case command
         case args
         case attachments
         case mentionedUsers = "mentioned_users"
@@ -33,6 +34,7 @@ public struct Message: Codable {
     public let updated: Date
     public let deleted: Date?
     public let text: String
+    public let command: String?
     public let args: String?
     public let attachments: [Attachment]
     public let mentionedUsers: [User]
@@ -73,6 +75,7 @@ public struct Message: Codable {
         updated = Date()
         deleted = nil
         self.text = text
+        command = nil
         args = nil
         attachments = []
         mentionedUsers = []

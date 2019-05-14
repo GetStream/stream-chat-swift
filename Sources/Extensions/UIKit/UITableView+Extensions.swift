@@ -22,7 +22,7 @@ extension UITableView {
     }
     
     /// Scroll to bottom.
-    func scrollToBottom(animated: Bool = true) {
+    public func scrollToBottom(animated: Bool = true) {
         let sectionsCount = numberOfSections
         
         guard sectionsCount > 0 else {

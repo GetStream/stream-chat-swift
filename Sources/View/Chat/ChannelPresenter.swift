@@ -108,7 +108,7 @@ extension ChannelPresenter {
                 typingUsers.remove(at: index)
                 return .updateFooter(true)
             }
-        case .messageNew(let message, let user, _, _, _):
+        case .messageNew(let message, let user, _, _):
             var reloadRow: Int? = nil
             
             if let lastItem = items.last, case .message(let lastMessage) = lastItem, lastMessage.user == user {
@@ -358,9 +358,12 @@ extension ChannelPresenter {
 extension ChannelPresenter {
     
     public func dispatch(action: Attachment.Action, message: Message) {
-        if action.value == "cancel" {
+        if action.isCancelled || action.isSend {
             ephemeralSubject.onNext((nil, true))
-            return
+            
+            if action.isCancelled {
+                return
+            }
         }
         
         let messageAction = MessageAction(channel: channel, message: message, action: action)

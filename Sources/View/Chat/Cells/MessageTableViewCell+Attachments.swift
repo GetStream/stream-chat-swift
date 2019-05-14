@@ -135,13 +135,17 @@ extension MessageTableViewCell {
         }
         
         if style.alignment == .left {
-            return offset == 0 || messageContainerViewImage == style.backgroundImages[.leftBottomCorner]
-                ? style.transparentBackgroundImages[.leftBottomCorner]
-                : style.transparentBackgroundImages[.leftSide]
+            if offset == 0, messageContainerViewImage == style.backgroundImages[.leftBottomCorner] {
+                return style.transparentBackgroundImages[.leftBottomCorner]
+            }
+            
+            return style.transparentBackgroundImages[.leftSide]
         }
         
-        return offset == 0 || messageContainerViewImage == style.backgroundImages[.rightBottomCorner]
-            ? style.transparentBackgroundImages[.rightBottomCorner]
-            : style.transparentBackgroundImages[.rightSide]
+        if offset == 0, messageContainerViewImage == style.backgroundImages[.rightBottomCorner] {
+            return style.transparentBackgroundImages[.rightBottomCorner]
+        }
+        
+        return style.transparentBackgroundImages[.rightSide]
     }
 }
