@@ -13,6 +13,7 @@ target 'GetStreamChat' do
   pod 'SnapKit'
   pod 'Nuke'
   pod 'SwiftyGif'
+  pod 'GzipSwift'
   
   # ⚠️ For demo app only!
   pod 'Crashlytics'

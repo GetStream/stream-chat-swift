@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Gzip
 
 // MARK: - JSONDecoder Stream
 
@@ -36,7 +37,14 @@ extension JSONEncoder {
     public static let stream: JSONEncoder = {
         let encoder = JSONEncoder()
         
-        /// A custom encoding for the custom ISO8601 date.
+        // Gzip data encoding by default.
+        encoder.dataEncodingStrategy = .custom { data, encoder throws in
+            var container = encoder.singleValueContainer()
+            let gzippedData = try data.gzipped()
+            try container.encode(gzippedData)
+        }
+        
+        // A custom encoding for the custom ISO8601 date.
         encoder.dateEncodingStrategy = .custom { date, encoder throws in
             var container = encoder.singleValueContainer()
             try container.encode(DateFormatter.Stream.iso8601DateString(from: date))

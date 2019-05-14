@@ -17,6 +17,7 @@ extension Client {
         
         config.httpAdditionalHeaders = ["Authorization": token,
                                         "Content-Type": "application/json",
+                                        "Content-Encoding": "gzip",
                                         "Stream-Auth-Type": "jwt",
                                         "X-Stream-Client": "stream-chat-swift-client-\(Client.version)"]
         
@@ -80,7 +81,8 @@ extension Client {
     }
     
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
-        logger?.log(response, data: logOptions != .requestsHeaders ? data : nil)
+        let httpResponse = response as? HTTPURLResponse
+        logger?.log(response, data: (logOptions != .requestsHeaders || (httpResponse?.statusCode ?? 400) >= 400) ? data : nil)
         
         if let error = error {
             logger?.log(error)
