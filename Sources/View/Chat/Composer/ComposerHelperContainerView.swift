@@ -21,6 +21,8 @@ final class ComposerHelperContainerView: UIView {
         return label
     }()
     
+    /// TODO: Make it scrollable.
+    /// See https://blog.alltheflow.com/scrollable-uistackview/
     private(set) lazy var containerView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [])
         stackView.axis = .vertical
@@ -72,8 +74,15 @@ final class ComposerHelperContainerView: UIView {
         
         setup()
         parent.insertSubview(self, belowSubview: composerView)
-        snp.makeConstraints { $0.left.right.bottom.equalToSuperview() }
-        containerView.snp.makeConstraints { $0.bottom.equalTo(composerView.snp.top).offset(-CGFloat.messageEdgePadding) }
+        
+        snp.makeConstraints { make in
+            make.left.right.bottom.equalToSuperview()
+            make.top.greaterThanOrEqualTo(parent.safeAreaLayoutGuide.snp.topMargin).offset(CGFloat.composerHelperShadowRadius * 2)
+        }
+        
+        containerView.snp.makeConstraints {
+            $0.bottom.equalTo(composerView.snp.top).offset(-CGFloat.messageEdgePadding).priority(999)
+        }
     }
     
     func animate(show: Bool, resetForcedHidden: Bool = false) {
