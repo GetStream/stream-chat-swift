@@ -24,12 +24,15 @@ extension ChatViewController {
             alert.addAction(.init(title: "Edit", style: .default, handler: { _ in }))
         }
         
+        alert.addAction(.init(title: "Copy", style: .default, handler: { _ in
+        }))
+        
         if message.canDelete {
             alert.addAction(.init(title: "Delete", style: .destructive, handler: { [weak self] _ in
                 self?.conformDeleting(message: message)
             }))
         }
-        
+
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
         
         present(alert, animated: true)

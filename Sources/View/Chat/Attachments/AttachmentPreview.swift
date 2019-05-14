@@ -100,18 +100,27 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         return stackView
     }()
     
+    private(set) lazy var activityIndicatorView: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: (backgroundColor?.isDark ?? false) ? .white : .gray)
+        imageView.addSubview(view)
+        imageView.image = nil
+        view.makeCenterEqualToSuperview()
+        return view
+    }()
+    
     public var maxWidth: CGFloat = 0
     var forceToReload: () -> Void = {}
     
     public var attachment: Attachment? {
         didSet {
             if let attachment = attachment {
-                defaultHeight = attachment.isImageOrVideo && attachment.actions.isEmpty
-                    ? .attachmentPreviewHeight
-                    : .attachmentPreviewMaxHeight
+                hasActions = !attachment.actions.isEmpty
+                defaultHeight = attachment.isImageOrVideo && !hasActions ? .attachmentPreviewHeight : .attachmentPreviewMaxHeight
             }
         }
     }
+    
+    private var hasActions = false
     
     override var tintColor: UIColor! {
         didSet { imageView.tintColor = tintColor }
@@ -151,7 +160,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         if superview != nil, widthConstraint == nil, let attachment = attachment {
             snp.makeConstraints {
                 heightConstraint = $0.height.equalTo(defaultHeight).priority(999).constraint
-                let width = attachment.isImageOrVideo && attachment.actions.isEmpty ? defaultHeight : maxWidth
+                let width = attachment.isImageOrVideo && !hasActions ? defaultHeight : maxWidth
                 widthConstraint = $0.width.equalTo(width).constraint
             }
         }
@@ -162,7 +171,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             return
         }
         
-        if !attachment.actions.isEmpty {
+        if hasActions {
             widthConstraint?.update(offset: maxWidth)
             
             attachment.actions.forEach { action in
@@ -190,7 +199,10 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         let targetSize = CGSize(width: UIScreen.main.scale * maxWidth, height: UIScreen.main.scale * .attachmentPreviewHeight)
         let imageRequest = ImageRequest(url: imageURL, targetSize: targetSize, contentMode: .aspectFit)
         let modes = ImageLoadingOptions.ContentModes(success: .scaleAspectFit, failure: .center, placeholder: .center)
-        let options = ImageLoadingOptions(placeholder: UIImage.Icons.image, failureImage: UIImage.Icons.close, contentModes: modes)
+        
+        let options = ImageLoadingOptions(placeholder: hasActions ? nil : UIImage.Icons.image,
+                                          failureImage: UIImage.Icons.close,
+                                          contentModes: modes)
         
         if let imageResponse = Nuke.ImageCache.shared.cachedResponse(for: imageRequest) {
             imageView.contentMode = .scaleAspectFit
@@ -202,6 +214,10 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             
             parse(imageResponse: imageResponse, error: nil, maskImage: maskImage, cached: true)
         } else {
+            if hasActions {
+                activityIndicatorView.startAnimating()
+            }
+            
             imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] in
                 self?.parse(imageResponse: $0, error: $1, maskImage: maskImage, cached: false)
             }
@@ -213,13 +229,17 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             return
         }
         
-        var width = attachment.isImageOrVideo && attachment.actions.isEmpty ? defaultHeight : maxWidth
+        if imageView.subviews.first is UIActivityIndicatorView {
+            DispatchQueue.main.async { self.activityIndicatorView.stopAnimating() }
+        }
+        
+        var width = attachment.isImageOrVideo && !hasActions ? defaultHeight : maxWidth
         var height = defaultHeight
         
         if let image = imageResponse?.image, image.size.height > 0 {
             imageView.backgroundColor = backgroundColor
             
-            if attachment.isImageOrVideo, attachment.actions.isEmpty {
+            if attachment.isImageOrVideo, !hasActions {
                 width = min(image.size.width / image.size.height * defaultHeight, maxWidth)
                 widthConstraint?.update(offset: width)
             }

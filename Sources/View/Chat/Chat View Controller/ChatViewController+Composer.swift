@@ -77,67 +77,74 @@ extension ChatViewController {
     
     private func dispatchCommands(in text: String) {
         let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        showComposerHelperWithCommands(for: text, trimmedText)
+        showCommandsIfNeeded(for: trimmedText)
         
         // Send command by <Return> key.
-        if text.contains("\n"), trimmedText.contains(" ") {
+        if composerCommands.shouldBeShown, text.contains("\n"), trimmedText.contains(" ") {
             composerView.textView.text = trimmedText
-            view.endEditing(true)
             send()
         }
     }
     
     private func send() {
-        let text = composerView.text
+        let text = composerView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if command(in: text) != nil {
+            view.endEditing(true)
+        }
+        
         composerView.reset()
         channelPresenter?.send(text: text)
+    }
+    
+    private func command(in text: String) -> String? {
+        guard text.count > 1, text.hasPrefix("/") else {
+            return nil
+        }
+        
+        let command: String
+        
+        if let spaceIndex = text.firstIndex(of: " ") {
+            command = String(text.prefix(upTo: spaceIndex))
+        } else {
+            command = text
+        }
+        
+        return command.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .init(charactersIn: "/"))
     }
 }
 
 // MARK: - Composer Helper
 
 extension ChatViewController {
-    private func showComposerHelperWithCommands(for text: String, _ trimmedText: String) {
-        let hide = filterCommands(with: text, trimmedText)
+    private func showCommandsIfNeeded(for text: String) {
+        let hide = filterCommands(with: text)
         
         // Show composer helper container.
-        if trimmedText.count == 1, let first = trimmedText.first, first == "/" {
+        if text.count == 1, let first = text.first, first == "/" {
             composerCommands.animate(show: true, resetForcedHidden: true)
             return
         }
         
-        if hide || trimmedText.first != "/" {
+        if hide || text.first != "/" {
             composerCommands.animate(show: false)
         } else {
             composerCommands.animate(show: true)
         }
     }
     
-    func filterCommands(with text: String, _ trimmedText: String) -> Bool {
-        guard trimmedText.count > 1 else {
+    func filterCommands(with text: String) -> Bool {
+        guard let command = command(in: text) else {
             composerCommands.containerView.arrangedSubviews.forEach { $0.isHidden = false }
             return false
         }
         
-        let prefix = trimmedText.trimmingCharacters(in: .init(charactersIn: "/"))
-        var firstWord: String? = nil
-        
-        if let spaceIndex = text.firstIndex(of: " ") {
-            firstWord = String(text.prefix(upTo: spaceIndex))
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-                .trimmingCharacters(in: .init(charactersIn: "/"))
-        }
-        
         var visible = false
+        let hasSpace = text.contains(" ")
         
         composerCommands.containerView.arrangedSubviews.forEach {
             if let commandView = $0 as? ComposerCommandView {
-                if let firstWord = firstWord {
-                    commandView.isHidden = commandView.command != firstWord
-                } else {
-                    commandView.isHidden = !commandView.command.hasPrefix(prefix)
-                }
-                
+                commandView.isHidden = hasSpace ? commandView.command != command : !commandView.command.hasPrefix(command)
                 visible = visible || !commandView.isHidden
             }
         }

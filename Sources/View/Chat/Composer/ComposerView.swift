@@ -42,7 +42,6 @@ public final class ComposerView: UIView {
         textView.showsVerticalScrollIndicator = false
         textView.showsHorizontalScrollIndicator = false
         textView.isScrollEnabled = false
-        textView.returnKeyType = .send
         return textView
     }()
     

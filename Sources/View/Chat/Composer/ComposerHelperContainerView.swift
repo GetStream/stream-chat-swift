@@ -39,7 +39,7 @@ final class ComposerHelperContainerView: UIView {
     
     private func setup() {
         isHidden = true
-        layer.cornerRadius = .composerCornerRadius
+        layer.cornerRadius = .composerHelperCornerRadius
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOffset = .zero
         layer.shadowRadius = .composerHelperShadowRadius

@@ -48,20 +48,20 @@ extension MessageTableViewCell {
             } else if !message.isEphemeral {
                 preview.update(maskImage: maskImageForAttachment(at: index))
                 
-            } else {
+            } else if let preview = preview as? AttachmentPreview {
                 preview.update(maskImage: nil)
+                preview.layer.cornerRadius = 0
                 
-                if let preview = preview as? AttachmentPreview, !preview.actionsStackView.arrangedSubviews.isEmpty {
-                    preview.actionsStackView.arrangedSubviews.forEach {
-                        if let button = $0 as? UIButton {
-                            button.rx.tap.subscribe(onNext: { [weak button, weak preview] _ in
+                preview.actionsStackView.arrangedSubviews.forEach {
+                    if let button = $0 as? UIButton {
+                        button.rx.tap
+                            .subscribe(onNext: { [weak button, weak preview] _ in
                                 if let button = button {
                                     preview?.actionsStackView.arrangedSubviews.forEach { ($0 as? UIButton)?.isEnabled = false }
                                     actionTap(message, button)
                                 }
                             })
                             .disposed(by: preview.disposeBag)
-                        }
                     }
                 }
             }
