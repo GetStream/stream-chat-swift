@@ -36,22 +36,37 @@ extension JSONDecoder {
 extension JSONEncoder {
     public static let stream: JSONEncoder = {
         let encoder = JSONEncoder()
-        
-        // Gzip data encoding by default.
-        encoder.dataEncodingStrategy = .custom { data, encoder throws in
+        encoder.dateEncodingStrategy = .stream
+        return encoder
+    }()
+    
+    public static let streamGzip: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.dataEncodingStrategy = .gzip
+        encoder.dateEncodingStrategy = .stream
+        return encoder
+    }()
+}
+
+extension JSONEncoder.DataEncodingStrategy {
+    // Gzip data encoding.
+    static var gzip: JSONEncoder.DataEncodingStrategy {
+        return .custom { data, encoder throws in
             var container = encoder.singleValueContainer()
             let gzippedData = try data.gzipped()
             try container.encode(gzippedData)
         }
-        
-        // A custom encoding for the custom ISO8601 date.
-        encoder.dateEncodingStrategy = .custom { date, encoder throws in
+    }
+}
+
+extension JSONEncoder.DateEncodingStrategy {
+    /// A Stream encoding for the custom ISO8601 date.
+    static var stream: JSONEncoder.DateEncodingStrategy {
+        return .custom { date, encoder throws in
             var container = encoder.singleValueContainer()
             try container.encode(DateFormatter.Stream.iso8601DateString(from: date))
         }
-        
-        return encoder
-    }()
+    }
 }
 
 // MARK: - Date Formatter Helper

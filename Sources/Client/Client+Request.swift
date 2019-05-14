@@ -17,7 +17,6 @@ extension Client {
         
         config.httpAdditionalHeaders = ["Authorization": token,
                                         "Content-Type": "application/json",
-                                        "Content-Encoding": "gzip",
                                         "Stream-Auth-Type": "jwt",
                                         "X-Stream-Client": "stream-chat-swift-client-\(Client.version)"]
         
@@ -62,8 +61,15 @@ extension Client {
         urlRequest.httpMethod = endpoint.method.rawValue
         
         if let body = endpoint.body {
+            let encodable = AnyEncodable(body)
+            
             do {
-                urlRequest.httpBody = try JSONEncoder.stream.encode(AnyEncodable(body))
+                if let httpBody = try? JSONEncoder.streamGzip.encode(encodable) {
+                   urlRequest.httpBody = httpBody
+                   urlRequest.addValue("gzip", forHTTPHeaderField: "Content-Encoding")
+                } else {
+                   urlRequest.httpBody = try JSONEncoder.stream.encode(encodable)
+                }
             } catch {
                 completion(.failure(.encodingFailure(error, object: body)))
             }
