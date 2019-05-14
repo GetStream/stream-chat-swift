@@ -25,11 +25,9 @@ public struct ClientErrorResponse: Decodable {
         case code
         case message
         case statusCode = "StatusCode"
-        case duration
     }
     
     public let code: Int
     public let message: String
     public let statusCode: Int
-    public let duration: String
 }

@@ -33,6 +33,8 @@ public final class ChannelPresenter {
     private let loadPagination = PublishSubject<Pagination>()
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     
+    private let emptyMessageCompletion: Client.Completion<MessageResponse> = { _ in }
+    
     private lazy var ephemeralMessageCompletion: Client.Completion<MessageResponse> = { [weak self] result in
         if let self = self, let response = try? result.get(), response.message.type == .ephemeral {
             self.ephemeralSubject.onNext((response.message, self.hasEphemeralMessage))
@@ -324,8 +326,7 @@ extension ChannelPresenter {
             endpoint = .deleteReaction(reactionType, message)
         }
         
-        let completion: Client.Completion<MessageResponse> = { _ in }
-        Client.shared.request(endpoint: endpoint, connectionId: "", completion)
+        Client.shared.request(endpoint: endpoint, connectionId: "", emptyMessageCompletion)
         
         return add
     }
@@ -369,4 +370,15 @@ extension ChannelPresenter {
         let messageAction = MessageAction(channel: channel, message: message, action: action)
         Client.shared.request(endpoint: ChatEndpoint.sendMessageAction(messageAction), connectionId: "", ephemeralMessageCompletion)
     }
+}
+
+// MARK: - Supporting Structs
+
+public struct MessageResponse: Decodable {
+    let message: Message
+    let reaction: Reaction?
+}
+
+public struct EventResponse: Decodable {
+    let event: Event
 }

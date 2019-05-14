@@ -79,7 +79,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         return tableView
     }()
     
-    public var channelPresenter: ChannelPresenter? {
+    var channelPresenter: ChannelPresenter? {
         didSet {
             if let channelPresenter = channelPresenter {
                 Driver.merge(channelPresenter.changes, channelPresenter.loading, channelPresenter.ephemeralChanges)

@@ -9,6 +9,7 @@
 import Foundation
 
 enum ChatEndpoint: EndpointProtocol {
+    case channels
     case query(Query)
     case sendMessage(Message, Channel)
     case sendMessageAction(MessageAction)
@@ -19,6 +20,10 @@ enum ChatEndpoint: EndpointProtocol {
 
 extension ChatEndpoint {
     var method: Client.Method {
+        if case .channels = self {
+            return .get
+        }
+        
         if case .deleteReaction = self {
             return .delete
         }
@@ -28,6 +33,8 @@ extension ChatEndpoint {
     
     var path: String {
         switch self {
+        case .channels:
+            return "channels"
         case .query(let query):
             return path(with: query.channel).appending("query")
         case .sendMessage(_, let channel):
@@ -45,6 +52,8 @@ extension ChatEndpoint {
     
     var body: Encodable? {
         switch self {
+        case .channels:
+            return nil
         case .query(let query):
             return query
         case .sendMessage(let message, _):
@@ -52,7 +61,7 @@ extension ChatEndpoint {
         case .sendMessageAction(let messageAction):
             return messageAction
         case .addReaction(let reactionType, _):
-            return ["reaction": ReactionRequestBody(type: reactionType, user: Client.shared.user)]
+            return ["reaction": ["type": reactionType]]
         case .deleteReaction:
             return nil
         case .sendEvent(let event, _):
@@ -60,16 +69,11 @@ extension ChatEndpoint {
         }
     }
     
-    func path(with channel: Channel) -> String {
+    private func path(with channel: Channel) -> String {
         return "channels/\(channel.type.rawValue)/\(channel.id)/"
     }
     
-    func path(with message: Message) -> String {
+    private func path(with message: Message) -> String {
         return "messages/\(message.id)/"
     }
-}
-
-private struct ReactionRequestBody: Encodable {
-    let type: String
-    let user: User?
 }

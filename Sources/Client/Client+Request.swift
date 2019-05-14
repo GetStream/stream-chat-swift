@@ -9,6 +9,7 @@
 import Foundation
 
 extension Client {
+    static let version: String = Bundle(for: Client.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
     
     func setupURLSession(token: Token) -> URLSession {
         let config = URLSessionConfiguration.default
@@ -16,7 +17,8 @@ extension Client {
         
         config.httpAdditionalHeaders = ["Authorization": token,
                                         "Content-Type": "application/json",
-                                        "stream-auth-type": "jwt"]
+                                        "Stream-Auth-Type": "jwt",
+                                        "X-Stream-Client": "stream-chat-swift-client-\(Client.version)"]
         
         return URLSession(configuration: config)
     }
