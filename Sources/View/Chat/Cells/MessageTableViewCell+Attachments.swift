@@ -17,7 +17,6 @@ extension MessageTableViewCell {
     
     public func addAttachments(from message: Message,
                                tap: @escaping AttachmentTapAction,
-                               longPress: @escaping LongPressAction,
                                actionTap: @escaping AttachmentActionTapAction,
                                reload: @escaping () -> Void) {
         guard let style = style else {
@@ -28,6 +27,22 @@ extension MessageTableViewCell {
         let imageBackgroundColor = UIColor.color(by: message.user.name, isDark: backgroundColor?.isDark ?? false)
         
         attachments.enumerated().forEach { index, attachment in
+            func addGetures(_ preview: UIView, _ error: Error?) {
+                guard !message.isEphemeral else {
+                    return
+                }
+                
+                guard error == nil else {
+                    preview.isUserInteractionEnabled = false
+                    return
+                }
+                
+                (preview as UIView).rx.tapGesture()
+                    .when(.recognized)
+                    .subscribe(onNext: { _ in tap(attachment, index, attachments) })
+                    .disposed(by: disposeBag)
+            }
+            
             let preview: AttachmentPreviewProtocol
             
             if attachment.type == .file {
@@ -43,13 +58,13 @@ extension MessageTableViewCell {
             attachmentPreviews.append(preview)
             
             if attachment.type == .file {
-                preview.update(maskImage: backgroundImageForAttachment(at: index))
-                
+                preview.update(maskImage: backgroundImageForAttachment(at: index)) { _, _ in }
+                addGetures((preview as UIView), nil)
             } else if !message.isEphemeral {
-                preview.update(maskImage: maskImageForAttachment(at: index))
+                preview.update(maskImage: maskImageForAttachment(at: index), addGetures)
                 
             } else if let preview = preview as? AttachmentPreview {
-                preview.update(maskImage: nil)
+                preview.update(maskImage: nil, addGetures)
                 preview.layer.cornerRadius = 0
                 
                 preview.actionsStackView.arrangedSubviews.forEach {
@@ -65,27 +80,6 @@ extension MessageTableViewCell {
                     }
                 }
             }
-            
-            guard !message.isEphemeral else {
-                return
-            }
-            
-            (preview as UIView).rx
-                .anyGesture((.tap(configuration: { $1.simultaneousRecognitionPolicy = .never }), when: .recognized),
-                            (.longPress(configuration: { gesture, delegate in
-                                gesture.minimumPressDuration = MessageTableViewCell.longPressMinimumDuration
-                                delegate.simultaneousRecognitionPolicy = .never
-                            }), when: .began))
-                .subscribe(onNext: { [weak self] gesture in
-                    if let self = self {
-                        if gesture is UITapGestureRecognizer {
-                            tap(attachment, index, attachments)
-                        } else {
-                            longPress(self, message)
-                        }
-                    }
-                })
-                .disposed(by: preview.disposeBag)
         }
     }
     

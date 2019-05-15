@@ -21,12 +21,9 @@ extension ChatViewController {
         
         composerView.textView.rx.text
             .skip(1)
-            .do(onNext: { [weak self] text in
-                if let self = self {
-                    self.channelPresenter?.sendEvent(isTyping: true)
-                    self.dispatchCommands(in: text ?? "")
-                }
-            })
+            .do(onNext: { [weak self] text in self?.dispatchCommands(in: text ?? "") })
+            .filter { [weak self] _ in (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
+            .do(onNext: { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: true) })
             .debounce(1, scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: false) })
             .disposed(by: disposeBag)

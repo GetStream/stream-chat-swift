@@ -10,11 +10,13 @@ import UIKit
 import RxSwift
 
 public protocol AttachmentPreviewProtocol where Self: UIView {
+    typealias Competion = (UIView, Error?) -> Void
+    
     var disposeBag: DisposeBag { get }
     
     /// An attachment.
     var attachment: Attachment? { get set }
     
     /// Update attachment preview with a given attachment and image mask.
-    func update(maskImage: UIImage?)
+    func update(maskImage: UIImage?, _ completion: @escaping Competion)
 }

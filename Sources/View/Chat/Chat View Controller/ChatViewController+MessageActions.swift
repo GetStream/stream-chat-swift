@@ -11,11 +11,17 @@ import UIKit
 extension ChatViewController {
     
     func showMenu(from cell: UITableViewCell, for message: Message, locationInView: CGPoint? = nil) {
+        guard let presenter = channelPresenter else {
+            return
+        }
+        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        alert.addAction(.init(title: Reaction.emoji.joined(separator: "  "), style: .default, handler: { [weak self] _ in
-            self?.showReactions(from: cell, in: message, locationInView: locationInView)
-        }))
+        if presenter.channel.config.reactionsEnabled {
+            alert.addAction(.init(title: Reaction.emoji.joined(separator: "  "), style: .default, handler: { [weak self] _ in
+                self?.showReactions(from: cell, in: message, locationInView: locationInView)
+            }))
+        }
         
         alert.addAction(.init(title: "Reply", style: .default, handler: { _ in
         }))

@@ -81,8 +81,8 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     
     var channelPresenter: ChannelPresenter? {
         didSet {
-            if let channelPresenter = channelPresenter {
-                Driver.merge(channelPresenter.changes, channelPresenter.loading, channelPresenter.ephemeralChanges)
+            if let presenter = channelPresenter {
+                Driver.merge(presenter.request, presenter.changes, presenter.ephemeralChanges)
                     .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
                     .disposed(by: disposeBag)
             }
@@ -162,43 +162,31 @@ extension ChatViewController {
             tableView.update {
                 tableView.deleteRows(at: [IndexPath(row: row)], with: .none)
             }
-        case let .updateFooter(isUsersTyping):
+        case let .footerUpdated(isUsersTyping):
             updateFooterView(isUsersTyping)
         }
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let presenter = channelPresenter {
-            return presenter.items.count + (presenter.hasEphemeralMessage ? 1 : 0)
-        }
-        
-        return 0
+        return channelPresenter?.itemsCount ?? 0
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let presenter = channelPresenter else {
-            return .unused
-        }
-        
-        guard indexPath.row < presenter.items.count else {
-            let row = presenter.items.count - indexPath.row
-            
-            if row == 0, let message = presenter.ephemeralMessage {
-                return messageCell(at: indexPath, message: message)
-            }
-            
-            return .unused
-        }
-        
-        switch presenter.items[indexPath.row] {
-        case .loading:
+        switch channelPresenter?.item(at: indexPath.row) {
+        case .loading?:
             return loadingCell(at: indexPath)
-        case let .status(title, subtitle):
+        case let .status(title, subtitle)?:
             return statusCell(at: indexPath, title: title, subtitle: subtitle)
-        case .message(let message):
+        case .message(let message)?:
             return messageCell(at: indexPath, message: message)
-        case .error:
+        default:
             return .unused
+        }
+    }
+    
+    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if let item = channelPresenter?.item(at: indexPath.row), case .message(let message) = item {
+            willDisplay(cell: cell, at: indexPath, message: message)
         }
     }
     

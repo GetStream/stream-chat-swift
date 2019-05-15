@@ -18,8 +18,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     typealias LongPressAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
     typealias AttachmentActionTapAction = (_ message: Message, _ button: UIButton) -> Void
     
-    static let longPressMinimumDuration: TimeInterval = 0.3
-    
     // MARK: - Properties
     
     private(set) var disposeBag = DisposeBag()

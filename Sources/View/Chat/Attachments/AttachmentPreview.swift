@@ -166,7 +166,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         }
     }
 
-    func update(maskImage: UIImage?) {
+    func update(maskImage: UIImage?, _ completion: @escaping Competion) {
         guard let attachment = attachment else {
             return
         }
@@ -212,20 +212,25 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                 setGifImage(with: animatedImageData)
             }
             
-            parse(imageResponse: imageResponse, error: nil, maskImage: maskImage, cached: true)
+            parse(imageResponse: imageResponse, error: nil, maskImage: maskImage, cached: true, completion)
         } else {
             if hasActions {
                 activityIndicatorView.startAnimating()
             }
             
             imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] in
-                self?.parse(imageResponse: $0, error: $1, maskImage: maskImage, cached: false)
+                self?.parse(imageResponse: $0, error: $1, maskImage: maskImage, cached: false, completion)
             }
         }
     }
     
-    private func parse(imageResponse: ImageResponse?, error: Error?, maskImage: UIImage?, cached: Bool) {
-        guard let attachment = attachment else {
+    private func parse(imageResponse: ImageResponse?,
+                       error: Error?,
+                       maskImage: UIImage?,
+                       cached: Bool,
+                       _ completion: @escaping Competion) {
+        guard let attachment = attachment, error == nil else {
+            completion(self, error)
             return
         }
         
@@ -272,6 +277,8 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             mask = maskView
             layer.cornerRadius = 0
         }
+        
+        completion(self, nil)
     }
     
     private func setGifImage(with animatedImageData: Data) {

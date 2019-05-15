@@ -20,12 +20,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .none)
         
-        Client.shared.set(user: User(id: "broken-waterfall-5", name: "Jon Snow", avatarURL: URL(string: "https://bit.ly/2u9Vc0r")),
+        Client.shared.set(user: User(id: "broken-waterfall-5",
+                                     name: "Jon Snow",
+                                     avatarURL: URL(string: "https://bit.ly/2u9Vc0r")),
                           token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg")
         
-        let channel = Channel(id: "general",
-                              name: "Talk about Go",
-                              imageURL: URL(string: "https://cdn.chrisshort.net/testing-certificate-chains-in-go/GOPHER_MIC_DROP.png"))
+        let channel = Channel(id: "general", name: "General")
         
         if let tabBarController = window?.rootViewController as? UITabBarController {
             tabBarController.viewControllers?.enumerated().forEach { index, viewController in

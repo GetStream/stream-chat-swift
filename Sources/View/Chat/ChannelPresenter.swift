@@ -16,7 +16,7 @@ public enum ChannelChanges: Equatable {
     case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool)
     case itemUpdated(_ row: Int, Message)
     case itemRemoved(_ row: Int)
-    case updateFooter(_ isUsersTyping: Bool)
+    case footerUpdated(_ isUsersTyping: Bool)
 }
 
 public final class ChannelPresenter {
@@ -28,10 +28,14 @@ public final class ChannelPresenter {
     private var next: Pagination = .none
     private var startedTyping = false
     
-    private(set) var items: [ChatItem] = []
+    private var items: [ChatItem] = []
     private(set) var typingUsers: [User] = []
     private let loadPagination = PublishSubject<Pagination>()
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
+    
+    public var itemsCount: Int {
+        return items.count + (hasEphemeralMessage ? 1 : 0)
+    }
     
     private let emptyMessageCompletion: Client.Completion<MessageResponse> = { _ in }
     
@@ -49,10 +53,11 @@ public final class ChannelPresenter {
         return (try? ephemeralSubject.value())?.message
     }
     
-    private(set) lazy var loading: Driver<ChannelChanges> =
+    private(set) lazy var request: Driver<ChannelChanges> =
         Observable.combineLatest(Client.shared.webSocket.connection, loadPagination.asObserver())
             .map { [weak self] in self?.parseConnection($0, pagination: $1) }
             .unwrap()
+            .skip(items.isEmpty ? 0 : 1)
             .flatMapLatest { Client.shared.rx.request(endpoint: ChatEndpoint.query($0), connectionId: $1) }
             .map { [weak self] in self?.parseQuery($0) ?? .none }
             .asDriver(onErrorJustReturn: .none)
@@ -67,8 +72,30 @@ public final class ChannelPresenter {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    init(channel: Channel) {
+    init(channel: Channel, query: Query? = nil) {
         self.channel = channel
+        
+        if let query = query {
+            parseQuery(query)
+        }
+    }
+    
+    public func item(at row: Int) -> ChatItem? {
+        guard row >= 0 else {
+            return nil
+        }
+        
+        guard row < items.count else {
+            let row = items.count - row
+            
+            if row == 0, let message = ephemeralMessage {
+                return .message(message)
+            }
+            
+            return nil
+        }
+        
+        return items[row]
     }
 }
 
@@ -101,14 +128,14 @@ extension ChannelPresenter {
         
         switch response.event {
         case .typingStart(let user):
-            if !user.isCurrent && (typingUsers.isEmpty || !typingUsers.contains(user)) {
+            if channel.config.typingEventsEnabled, !user.isCurrent, (typingUsers.isEmpty || !typingUsers.contains(user)) {
                 typingUsers.append(user)
-                return .updateFooter(true)
+                return .footerUpdated(true)
             }
         case .typingStop(let user):
-            if !user.isCurrent, let index = typingUsers.firstIndex(of: user) {
+            if channel.config.typingEventsEnabled, !user.isCurrent, let index = typingUsers.firstIndex(of: user) {
                 typingUsers.remove(at: index)
-                return .updateFooter(true)
+                return .footerUpdated(true)
             }
         case .messageNew(let message, let user, _, _):
             var reloadRow: Int? = nil
@@ -192,6 +219,7 @@ extension ChannelPresenter {
         loadPagination.onNext(pagination)
     }
     
+    @discardableResult
     private func parseQuery(_ query: Query) -> ChannelChanges {
         var items = next == .none ? [ChatItem]() : self.items
         let currentCount = items.count
@@ -304,6 +332,12 @@ extension ChannelPresenter {
 
 extension ChannelPresenter {
     public func send(text: String) {
+        var text = text
+        
+        if text.count > channel.config.maxMessageLength {
+            text = String(text.prefix(channel.config.maxMessageLength))
+        }
+        
         guard let message = Message(text: text) else {
             return
         }

@@ -33,19 +33,35 @@ public final class Channel: Codable {
     private(set) var type: ChannelType = .messaging
     private(set) var lastMessageDate: Date? = nil
     private(set) var createdBy: User? = nil
-    private(set) var config: Config? = nil
+    private(set) var config: Config
     private(set) var frozen: Bool = false
     
     public let name: String
     public var imageURL: URL?
     var userIds: [String] = []
     
-    public init(type: ChannelType = .messaging, id: String, name: String, imageURL: URL?) {
+    public init(type: ChannelType = .messaging, id: String, name: String, imageURL: URL? = nil) {
         self.id = id
         self.type = type
         self.cid = "\(type.rawValue):\(id)"
         self.name = name
         self.imageURL = imageURL
+        
+        config = Config(name: "",
+                        automodBehavior: "",
+                        automodEnabled: "",
+                        reactionsEnabled: false,
+                        typingEventsEnabled: false,
+                        readEventsEnabled: false,
+                        connectEventsEnabled: false,
+                        repliesEnabled: false,
+                        searchEnabled: false,
+                        mutesEnabled: false,
+                        messageRetention: "",
+                        maxMessageLength: 0,
+                        commands: [],
+                        created: Date(),
+                        updated: Date())
     }
     
     required public init(from decoder: Decoder) throws {

@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+import RxGesture
 
 // MARK: - Cells
 
@@ -22,7 +25,7 @@ extension ChatViewController {
             return .unused
         }
         
-        let isIncoming = message.user != Client.shared.user
+        let isIncoming = !message.user.isCurrent
         let cell = tableView.dequeueMessageCell(for: indexPath, style: isIncoming ? style.incomingMessage : style.outgoingMessage)
         
         if message.isDeleted {
@@ -40,7 +43,7 @@ extension ChatViewController {
         
         var showAvatar = true
         
-        if indexPath.row < (presenter.items.count - 1), case .message(let nextMessage) = presenter.items[indexPath.row + 1] {
+        if let nextItem = presenter.item(at: indexPath.row + 1), case .message(let nextMessage) = nextItem {
             showAvatar = nextMessage.user != message.user
             
             if !showAvatar {
@@ -50,9 +53,8 @@ extension ChatViewController {
         
         var isContinueMessage = false
         
-        if indexPath.row > 0,
-            presenter.items.count > indexPath.row,
-            case .message(let prevMessage) = presenter.items[indexPath.row - 1],
+        if let prevItem = presenter.item(at: indexPath.row - 1),
+            case .message(let prevMessage) = prevItem,
             prevMessage.user == message.user,
             !prevMessage.text.messageContainsOnlyEmoji {
             isContinueMessage = true
@@ -72,7 +74,6 @@ extension ChatViewController {
         if !message.attachments.isEmpty {
             cell.addAttachments(from: message,
                                 tap: { [weak self] in self?.show(attachment: $0, at: $1, from: $2) },
-                                longPress: { [weak self] in self?.showMenu(from: $0, for: $1) },
                                 actionTap: { [weak self] in self?.sendActionForEphemeral(message: $0, button: $1) },
                                 reload: { [weak self] in
                                     if let self = self {
@@ -85,18 +86,21 @@ extension ChatViewController {
             cell.updateBackground(isContinueMessage: !message.isEphemeral)
         }
         
-        guard !message.isEphemeral else {
-            return cell
+        if !message.isEphemeral, presenter.channel.config.reactionsEnabled {
+            update(cell: cell, forReactionsIn: message)
         }
         
-        update(cell: cell, forReactionsIn: message)
+        return cell
+    }
+    
+    func willDisplay(cell: UITableViewCell, at indexPath: IndexPath, message: Message) {
+        guard let cell = cell as? MessageTableViewCell, !message.isEphemeral, let presenter = channelPresenter else {
+            return
+        }
         
-        cell.messageStackView.rx
-            .anyGesture((.tap(configuration: { $1.simultaneousRecognitionPolicy = .never }), when: .recognized),
-                        (.longPress(configuration: { gesture, delegate in
-                            gesture.minimumPressDuration = MessageTableViewCell.longPressMinimumDuration
-                            delegate.simultaneousRecognitionPolicy = .never
-                        }), when: .began))
+        cell.messageStackView.rx.anyGesture(presenter.channel.config.reactionsEnabled
+            ? [TapControlEvent.default, LongPressControlEvent.default]
+            : [LongPressControlEvent.default])
             .subscribe(onNext: { [weak self, weak cell] gesture in
                 if let self = self, let cell = cell {
                     let location = gesture.location(in: cell)
@@ -109,8 +113,6 @@ extension ChatViewController {
                 }
             })
             .disposed(by: cell.disposeBag)
-        
-        return cell
     }
     
     private func show(attachment: Attachment, at index: Int, from attachments: [Attachment]) {
