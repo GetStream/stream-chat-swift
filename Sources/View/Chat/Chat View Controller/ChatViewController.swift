@@ -33,11 +33,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         container.titleLabel.text = "Commands"
         container.add(for: composerView)
         container.isHidden = true
-        
-        container.closeButton.rx.tap.subscribe(onNext: { [weak self, weak container] _ in
-            container?.forcedHidden = true
-            self?.composerCommands.animate(show: false)
-        }).disposed(by: disposeBag)
+        container.closeButton.isHidden = true
         
         if let channelConfig = channelPresenter?.channel.config {
             channelConfig.commands.forEach { command in
@@ -93,7 +89,10 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         super.viewDidLoad()
         setupComposerView()
         setupTableView()
+        updateTitle()
         channelPresenter?.load()
+        tableView.scrollToBottom(animated: false)
+        DispatchQueue.main.async { self.tableView.scrollToBottom(animated: false) }
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -109,6 +108,21 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     public override var preferredStatusBarStyle: UIStatusBarStyle {
         return style.backgroundColor.isDark ? .lightContent : .default
     }
+    
+    private func updateTitle() {
+        guard title == nil, navigationItem.rightBarButtonItem == nil else {
+            return
+        }
+        
+        title = channelPresenter?.channel.name
+        
+        let channelAvatar = AvatarView(cornerRadius: .messageAvatarRadius)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatar)
+        
+        channelAvatar.update(with: channelPresenter?.channel.imageURL,
+                             name: channelPresenter?.channel.name,
+                             baseColor: style.backgroundColor)
+    }
 }
 
 // MARK: - Table View
@@ -120,14 +134,14 @@ extension ChatViewController {
         tableView.makeEdgesEqualToSuperview()
     }
     
-    private func updateTableView(with changes: ChannelChanges) {
+    private func updateTableView(with changes: ViewChanges) {
         // Check if view is loaded nad visible.
         guard isVisible else {
             return
         }
         
         switch changes {
-        case .none:
+        case .none, .itemMoved:
             return
         case let .reloaded(row, position):
             tableView.reloadData()

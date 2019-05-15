@@ -10,23 +10,17 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Chat View Controller-->
+        <!--Channel List View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ChatViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ChannelListViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" id="wHQ-SN-6cp">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="eQu-ov-Ptq">
-                            <connections>
-                                <segue destination="qT1-RQ-qx7" kind="presentation" id="Thm-pt-LIt"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="wHQ-SN-6cp"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
@@ -51,10 +45,10 @@
             </objects>
             <point key="canvasLocation" x="-470" y="-447"/>
         </scene>
-        <!--Chat View Controller-->
+        <!--Channel List View Controller-->
         <scene sceneID="tf3-xX-7NC">
             <objects>
-                <viewController id="cor-4m-0UN" customClass="ChatViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="cor-4m-0UN" customClass="ChannelListViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="XIo-6h-3fA">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -66,28 +60,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qob-9V-kbc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1135" y="-60"/>
-        </scene>
-        <!--Chat View Controller-->
-        <scene sceneID="hZ2-nm-Rlg">
-            <objects>
-                <viewController id="r8Y-PB-nkV" customClass="ChatViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="26J-Te-y5l">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <viewLayoutGuide key="safeArea" id="szM-0H-2fF"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="AXe-fP-fBK">
-                        <barButtonItem key="leftBarButtonItem" systemItem="stop" id="CGZ-pY-wv7">
-                            <connections>
-                                <segue destination="r8Y-PB-nkV" kind="custom" customClass="DismissSegue" customModule="GetStreamChat" customModuleProvider="target" id="yq1-xE-H6h"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="EW6-6d-Zp3" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2671" y="-788"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="NqH-ND-qBY">
@@ -107,25 +79,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BKm-Yw-ls9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="383" y="-788"/>
-        </scene>
-        <!--Item-->
-        <scene sceneID="dqP-yn-XH6">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="qT1-RQ-qx7" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="NZU-i7-SpG"/>
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Cet-La-BZj">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="r8Y-PB-nkV" kind="relationship" relationship="rootViewController" id="ex4-on-iHu"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="8Zz-cG-KXA" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1911" y="-788"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="dJb-rj-cJ1">

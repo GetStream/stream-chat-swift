@@ -36,7 +36,7 @@ extension Date {
             return DateFormatter.weekDay.string(from: self).appending(Date.wordsSeparator).appending(timeString)
         }
         
-        return DateFormatter.short.string(from: self)
+        return DateFormatter.shortDate.string(from: self)
     }
     
     public func isLessThan(timeInterval: TimeInterval, with date: Date) -> Bool {
@@ -62,6 +62,14 @@ extension DateFormatter {
         return formatter
     }()
     
+    /// A short date and time formatter from the date.
+    public static let shortDate: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .none
+        formatter.dateStyle = .short
+        return formatter
+    }()
+
     /// A week formatter from the date.
     public static let weekDay: DateFormatter = {
         let formatter = DateFormatter()

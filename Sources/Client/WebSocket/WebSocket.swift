@@ -205,6 +205,7 @@ extension WebSocket {
         } catch {
             logger?.log(error, message: "😡 Decode response")
             lastMessageResponse = nil
+            lastMessageHashValue = 0
         }
         
         return nil
@@ -214,6 +215,7 @@ extension WebSocket {
 // MARK: - Rx
 
 extension ObservableType where E == WebSocket.Connection {
+    
     func connected() -> Observable<E> {
         return filter {
             if case .connected = $0 {
@@ -222,5 +224,15 @@ extension ObservableType where E == WebSocket.Connection {
             
             return false
         }
+    }
+    
+    func connectionId() -> Observable<String> {
+        return map {
+            if case .connected(let connectionId, _) = $0 {
+                return connectionId
+            }
+            
+            return nil
+        }.unwrap()
     }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public final class Channel: Codable {
+public final class Channel: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case id
         case cid
@@ -83,6 +83,10 @@ public final class Channel: Codable {
         try container.encode(imageURL, forKey: .imageURL)
         try container.encode(userIds, forKey: .members)
     }
+    
+    public static func == (lhs: Channel, rhs: Channel) -> Bool {
+        return lhs.cid == rhs.cid
+    }
 }
 
 // MARK: - Config
@@ -145,4 +149,8 @@ public enum ChannelType: String, Codable {
     case team
     case gaming
     case commerce
+    
+    var title: String {
+        return rawValue.capitalized
+    }
 }

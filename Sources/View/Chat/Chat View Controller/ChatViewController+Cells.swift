@@ -33,8 +33,7 @@ extension ChatViewController {
         } else if message.isEphemeral {
             cell.update(message: message.args ?? "")
         } else {
-            let text = message.text.trimmingCharacters(in: .whitespacesAndNewlines)
-            cell.update(message: text.isEmpty ? (message.args ?? "") : text)
+            cell.update(message: message.textOrArgs)
             
             if !message.mentionedUsers.isEmpty {
                 cell.update(mentionedUsersNames: message.mentionedUsers.map({ $0.name }))

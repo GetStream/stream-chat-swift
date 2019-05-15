@@ -10,12 +10,13 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-public enum ChannelChanges: Equatable {
+public enum ViewChanges: Equatable {
     case none
     case reloaded(_ row: Int, UITableView.ScrollPosition)
     case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool)
     case itemUpdated(_ row: Int, Message)
     case itemRemoved(_ row: Int)
+    case itemMoved(fromRow: Int, toRow: Int)
     case footerUpdated(_ isUsersTyping: Bool)
 }
 
@@ -53,7 +54,7 @@ public final class ChannelPresenter {
         return (try? ephemeralSubject.value())?.message
     }
     
-    private(set) lazy var request: Driver<ChannelChanges> =
+    private(set) lazy var request: Driver<ViewChanges> =
         Observable.combineLatest(Client.shared.webSocket.connection, loadPagination.asObserver())
             .map { [weak self] in self?.parseConnection($0, pagination: $1) }
             .unwrap()
@@ -62,34 +63,48 @@ public final class ChannelPresenter {
             .map { [weak self] in self?.parseQuery($0) ?? .none }
             .asDriver(onErrorJustReturn: .none)
     
-    private(set) lazy var changes: Driver<ChannelChanges> = Client.shared.webSocket.response
+    private(set) lazy var changes: Driver<ViewChanges> = Client.shared.webSocket.response
         .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private(set) lazy var ephemeralChanges: Driver<ChannelChanges> = ephemeralSubject
+    private(set) lazy var ephemeralChanges: Driver<ViewChanges> = ephemeralSubject
         .map { [weak self] in self?.parseEphemeralChanges($0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    init(channel: Channel, query: Query? = nil) {
+    init(channel: Channel) {
         self.channel = channel
-        
-        if let query = query {
-            parseQuery(query)
-        }
     }
     
-    public func item(at row: Int) -> ChatItem? {
+    init(query: Query) {
+        channel = query.channel
+        parseQuery(query)
+    }
+    
+    public func item(at row: Int, findMessageInDirection: Int = 0) -> ChatItem? {
+        var row = row
         guard row >= 0 else {
             return nil
         }
         
         guard row < items.count else {
-            let row = items.count - row
+            row = items.count - row
             
             if row == 0, let message = ephemeralMessage {
                 return .message(message)
+            }
+            
+            return nil
+        }
+        
+        if findMessageInDirection != 0 {
+            while row >= 0, row < items.count {
+                if case .message = items[row] {
+                    return items[row]
+                } else {
+                    row += findMessageInDirection
+                }
             }
             
             return nil
@@ -119,12 +134,13 @@ extension ChannelPresenter {
 // MARK: - Changes
 
 extension ChannelPresenter {
-    private func parseChanges(response: WebSocket.Response) -> ChannelChanges {
+    @discardableResult
+    func parseChanges(response: WebSocket.Response) -> ViewChanges {
         guard response.channelId == channel.id else {
             return .none
         }
         
-        let nextRow = items.count
+        var nextRow = items.count
         
         switch response.event {
         case .typingStart(let user):
@@ -141,10 +157,25 @@ extension ChannelPresenter {
             var reloadRow: Int? = nil
             
             if let lastItem = items.last, case .message(let lastMessage) = lastItem, lastMessage.user == user {
-                reloadRow = nextRow - 1
+                if lastMessage == message {
+                    if items.count > 1 {
+                        let lastLastItem = items[items.count - 2]
+                        
+                        if case .message(let lastLastMessage) = lastLastItem, lastLastMessage.user == user {
+                            reloadRow = nextRow - 2
+                        }
+                    }
+                } else {
+                    reloadRow = nextRow - 1
+                }
             }
             
-            items.append(.message(message))
+            if let lastItem = items.last, case .message(let lastMessage) = lastItem, lastMessage == message {
+                nextRow = items.count - 1
+            } else {
+                items.append(.message(message))
+            }
+            
             var forceToScroll = false
             
             if let currentUser = Client.shared.user {
@@ -188,7 +219,7 @@ extension ChannelPresenter {
         return .none
     }
     
-    private func parseEphemeralChanges(_ ephemeralType: EphemeralType) -> ChannelChanges {
+    private func parseEphemeralChanges(_ ephemeralType: EphemeralType) -> ViewChanges {
         if let message = ephemeralType.message {
             if ephemeralType.updated {
                 return .itemUpdated(items.count, message)
@@ -220,7 +251,7 @@ extension ChannelPresenter {
     }
     
     @discardableResult
-    private func parseQuery(_ query: Query) -> ChannelChanges {
+    private func parseQuery(_ query: Query) -> ViewChanges {
         var items = next == .none ? [ChatItem]() : self.items
         let currentCount = items.count
         

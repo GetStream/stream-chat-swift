@@ -11,13 +11,13 @@ import Foundation
 protocol EndpointProtocol {
     var method: Client.Method { get }
     var path: String { get }
-    var parameters: [String: String]? { get }
+    var queryItems: [String: Encodable]? { get }
     var body: Encodable? { get }
 }
 
 extension EndpointProtocol {
     
-    var parameters: [String: String]? {
+    var queryItems: [String: Encodable]? {
         return nil
     }
     

@@ -11,8 +11,11 @@ import UIKit.UIFont
 extension UIFont {
     static let chatRegular = UIFont.systemFont(ofSize: 15)
     static let chatRegularBold = UIFont.systemFont(ofSize: 15, weight: .bold)
+    static let chatXRegularMedium = UIFont.systemFont(ofSize: 14, weight: .medium)
     static let chatMedium = UIFont.systemFont(ofSize: 13)
     static let chatMediumBold = UIFont.systemFont(ofSize: 13, weight: .bold)
+    static let chatMediumMedium = UIFont.systemFont(ofSize: 13, weight: .medium)
+    static let chatMediumItalic = UIFont.systemFont(ofSize: 13).withTraits(.traitItalic)
     static let chatSmall = UIFont.systemFont(ofSize: 11)
     static let chatSmallMedium = UIFont.systemFont(ofSize: 11, weight: .medium)
     static let chatSmallBold = UIFont.systemFont(ofSize: 11, weight: .bold)

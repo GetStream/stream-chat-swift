@@ -35,6 +35,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                     chatViewController = viewController
                 } else if let navigationController = viewController as? UINavigationController {
                     chatViewController = navigationController.viewControllers.first as? ChatViewController
+                    
+                    if let channelsViewController = navigationController.viewControllers.first as? ChannelListViewController {
+                        let isDark = index % 2 != 0
+                        channelsViewController.style = isDark ? ChatViewStyle.dark : ChatViewStyle()
+                    }
                 }
                 
                 if let chatViewController = chatViewController {

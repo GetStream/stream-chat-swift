@@ -59,6 +59,7 @@ enum Event: Decodable {
     
     case messageRead(user: User)
     case messageNew(Message, User, _ unreadCount: Int, _ totalUnreadCount: Int)
+    case messageDeleted(Message)
     
     case userUpdated(User)
     case userStatusChanged(User)
@@ -95,6 +96,9 @@ enum Event: Decodable {
             self = .messageNew(message, user, unreadCount, totalUnreadCount)
         case .messageRead:
             self = .messageRead(user: user)
+        case .messageDeleted:
+            let message = try container.decode(Message.self, forKey: .message)
+            self = .messageDeleted(message)
             
         // User
         case .userUpdated:

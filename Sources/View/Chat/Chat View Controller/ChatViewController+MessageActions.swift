@@ -47,7 +47,7 @@ extension ChatViewController {
     private func conformDeleting(message: Message) {
         var text: String? = nil
         
-        if message.text.isEmpty {
+        if message.textOrArgs.isEmpty {
             if let attachment = message.attachments.first {
                 text = attachment.title
             }

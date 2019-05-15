@@ -41,8 +41,13 @@ extension Client {
             return URLSessionDataTask()
         }
         
-        if let parameters = endpoint.parameters {
-            queryItems.append(contentsOf: parameters.map { URLQueryItem(name: $0, value: $1) })
+        if let endpointQueryItems = endpoint.queryItems {
+            endpointQueryItems.forEach { (key: String, value: Encodable) in
+                if let data = try? JSONEncoder.stream.encode(AnyEncodable(value)),
+                    let json = String(data: data, encoding: .utf8) {
+                    queryItems.append(URLQueryItem(name: key, value: json))
+                }
+            }
         }
         
         let baseURL = self.baseURL.url(.https)

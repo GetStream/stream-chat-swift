@@ -63,6 +63,10 @@ public struct Message: Codable {
         return isOwn
     }
     
+    public var textOrArgs: String {
+        return (text.isEmpty ? (args ?? "") : text).trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
     init?(text: String) {
         guard let user = Client.shared.user else {
             return nil
