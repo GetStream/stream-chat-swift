@@ -10,7 +10,7 @@ import Foundation
 
 public enum ChatItem: Equatable {
     case loading
-    case status(_ title: String, _ subtitle: String?)
+    case status(_ title: String, _ subtitle: String?, _ highlighted: Bool)
     case message(Message)
     case error(Error)
     
@@ -20,8 +20,8 @@ public enum ChatItem: Equatable {
             return true
         case let (.message(message1), .message(message2)):
             return message1 == message2
-        case let (.status(title1, subtitle1), .status(title2, subtitle2)):
-            return title1 == title2 && subtitle1 == subtitle2
+        case let (.status(title1, subtitle1, highlighted1), .status(title2, subtitle2, highlighted2)):
+            return title1 == title2 && subtitle1 == subtitle2 && highlighted1 == highlighted2
         case (.error, .error):
             return true
         default:

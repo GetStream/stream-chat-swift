@@ -14,6 +14,7 @@ public struct Query: Codable {
         case channel
         case members
         case messages
+        case messageReads = "read"
         case state
         case watch
     }
@@ -21,6 +22,9 @@ public struct Query: Codable {
     public let channel: Channel
     public let members: [Member]
     public let messages: [Message]
+    public let messageReads: [MessageRead]
+    public let lastMessageRead: MessageRead?
+    public let isUnread: Bool
     public let state: Bool = true
     public let watch: Bool = true
     public let pagination: Pagination
@@ -30,6 +34,9 @@ public struct Query: Codable {
         self.members = members
         self.pagination = pagination
         messages = []
+        messageReads = []
+        lastMessageRead = nil
+        isUnread = false
     }
     
     public init(from decoder: Decoder) throws {
@@ -37,7 +44,20 @@ public struct Query: Codable {
         channel = try container.decode(Channel.self, forKey: .channel)
         members = try container.decode([Member].self, forKey: .members)
         messages = try container.decode([Message].self, forKey: .messages)
+        messageReads = try container.decode([MessageRead].self, forKey: .messageReads)
         pagination = .none
+        
+        if let user = Client.shared.user {
+            lastMessageRead = messageReads.first { $0.user == user }
+        } else {
+            lastMessageRead = nil
+        }
+        
+        if let lastMessage = messages.last, let lastMessageRead = lastMessageRead {
+            isUnread = lastMessage.updated > lastMessageRead.lastReadDate
+        } else  {
+            isUnread = false
+        }
     }
     
     public func encode(to encoder: Encoder) throws {

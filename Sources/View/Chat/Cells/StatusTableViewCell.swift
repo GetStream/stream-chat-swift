@@ -32,6 +32,9 @@ final class StatusTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
+    private lazy var lineView1 = createLineView()
+    private lazy var lineView2 = createLineView()
+    
     override func prepareForReuse() {
         reset()
         super.prepareForReuse()
@@ -43,16 +46,13 @@ final class StatusTableViewCell: UITableViewCell, Reusable {
     }
     
     func setup() {
-        let line1 = createLineView()
-        let line2 = createLineView()
-        
-        let stackView = UIStackView(arrangedSubviews: [line1, titleLabel, line2])
+        let stackView = UIStackView(arrangedSubviews: [lineView1, titleLabel, lineView2])
         stackView.axis = .horizontal
         stackView.spacing = .messageStatusSpacing
         stackView.alignment = .center
         
         addSubview(stackView)
-        line1.snp.makeConstraints { $0.width.equalTo(line2) }
+        lineView1.snp.makeConstraints { $0.width.equalTo(lineView2) }
 
         stackView.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(CGFloat.messageStatusSpacing)
@@ -64,17 +64,25 @@ final class StatusTableViewCell: UITableViewCell, Reusable {
     
     private func createLineView() -> UIView {
         let view = UIView(frame: .zero)
-        view.backgroundColor = (backgroundColor?.isDark ?? false) ? .chatDarkGray : .chatSuperLightGray
         view.snp.makeConstraints { $0.height.equalTo(CGFloat.messageStatusLineWidth).priority(999) }
         return view
     }
     
-    public func update(title: String, subtitle: String? = nil) {
+    public func update(title: String, subtitle: String? = nil, highlighted: Bool) {
         if titleLabel.superview == nil {
             setup()
         }
         
         titleLabel.text = title.uppercased()
+        titleLabel.textColor = highlighted ? .chatBlue : .chatGray
+        
+        if highlighted {
+            lineView1.backgroundColor = UIColor.chatBlue.withAlphaComponent(0.5)
+            lineView2.backgroundColor = lineView1.backgroundColor
+        } else {
+            lineView1.backgroundColor = (backgroundColor?.isDark ?? false) ? .chatDarkGray : .chatSuperLightGray
+            lineView2.backgroundColor = lineView1.backgroundColor
+        }
         
         if let subtitle = subtitle {
             subtitleLabel.text = subtitle.uppercased()

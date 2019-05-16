@@ -17,7 +17,7 @@ extension ChatViewController {
     
     func loadingCell(at indexPath: IndexPath) -> UITableViewCell {
         channelPresenter?.loadNext()
-        return statusCell(at: indexPath, title: "Loading...")
+        return statusCell(at: indexPath, title: "Loading...", highlighted: false)
     }
     
     func messageCell(at indexPath: IndexPath, message: Message) -> UITableViewCell {
@@ -132,10 +132,10 @@ extension ChatViewController {
         return cell
     }
     
-    func statusCell(at indexPath: IndexPath, title: String, subtitle: String? = nil) -> UITableViewCell {
+    func statusCell(at indexPath: IndexPath, title: String, subtitle: String? = nil, highlighted: Bool) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(for: indexPath, cellType: StatusTableViewCell.self) as StatusTableViewCell
         cell.backgroundColor = style.backgroundColor
-        cell.update(title: title, subtitle: subtitle)
+        cell.update(title: title, subtitle: subtitle, highlighted: highlighted)
         return cell
     }
 }

@@ -13,10 +13,12 @@ import RxCocoa
 public final class ChannelListPresenter {
     
     public let channelType: ChannelType
+    public let showChannelStatuses: Bool
     private(set) var channelPresenters: [ChannelPresenter] = []
     
-    init(channelType: ChannelType) {
+    init(channelType: ChannelType, showChannelStatuses: Bool = true) {
         self.channelType = channelType
+        self.showChannelStatuses = showChannelStatuses
     }
     
     private(set) lazy var request: Driver<ViewChanges> = Client.shared.webSocket.connection
@@ -42,7 +44,7 @@ public final class ChannelListPresenter {
         .asDriver(onErrorJustReturn: .none)
 
     private func parseChannels(_ response: ChannelListResponse) -> ViewChanges {
-        channelPresenters = response.channels.map { ChannelPresenter(query: $0) }
+        channelPresenters = response.channels.map { ChannelPresenter(query: $0, showStatuses: showChannelStatuses) }
         return .reloaded(0, .top)
     }
 }

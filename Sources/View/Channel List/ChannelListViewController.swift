@@ -78,10 +78,15 @@ extension ChannelListViewController: UITableViewDataSource, UITableViewDelegate 
                                name: channelPresenter.channel.name,
                                baseColor: style.backgroundColor)
         
-        if let chatItem = channelPresenter.item(at: channelPresenter.itemsCount - 1, findMessageInDirection: -1),
-            case .message(let message) = chatItem {
-            cell.update(message: message, unread: false)
-            cell.dateLabel.text = message.updated.relative
+        if let lastMessage = channelPresenter.lastMessage {
+            var text = lastMessage.textOrArgs
+            
+            if text.isEmpty, let first = lastMessage.attachments.first {
+                text = first.title
+            }
+            
+            cell.update(message: text, isDeleted: lastMessage.isDeleted, isUnread: channelPresenter.isUnread)
+            cell.dateLabel.text = lastMessage.updated.relative
         }
         
         return cell

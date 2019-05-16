@@ -147,7 +147,9 @@ extension ChatViewController {
             tableView.reloadData()
             
             if scrollEnabled {
-                tableView.scrollToRow(at: IndexPath(row: row), at: position, animated: false)
+                UIView.layerAnimated(false) {
+                    tableView.scrollToRow(at: IndexPath(row: row), at: position, animated: false)
+                }
             }
         case let .itemAdded(row, reloadRow, forceToScroll):
             let indexPath = IndexPath(row: row)
@@ -189,8 +191,8 @@ extension ChatViewController {
         switch channelPresenter?.item(at: indexPath.row) {
         case .loading?:
             return loadingCell(at: indexPath)
-        case let .status(title, subtitle)?:
-            return statusCell(at: indexPath, title: title, subtitle: subtitle)
+        case let .status(title, subtitle, highlighted)?:
+            return statusCell(at: indexPath, title: title, subtitle: subtitle, highlighted: highlighted)
         case .message(let message)?:
             return messageCell(at: indexPath, message: message)
         default:

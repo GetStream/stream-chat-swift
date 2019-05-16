@@ -90,17 +90,19 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         messageLabel.text = nil
     }
     
-    func update(message: Message, unread: Bool) {
+    func update(message: String, isDeleted: Bool, isUnread: Bool) {
         guard let style = style else {
             return
         }
         
-        if message.isDeleted {
+        if isDeleted {
             messageLabel.font = style.messageDeletedFont
             messageLabel.textColor = style.messageDeletedColor
             messageLabel.text = "Message was deleted"
             return
-        } else if unread {
+        }
+        
+        if isUnread {
             messageLabel.font = style.messageUnreadFont
             messageLabel.textColor = style.messageUnreadColor
         } else {
@@ -108,6 +110,6 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
             messageLabel.textColor = style.messageColor
         }
         
-        messageLabel.text = message.textOrArgs
+        messageLabel.text = message
     }
 }

@@ -174,4 +174,16 @@ extension UIView {
                        animations: animations,
                        completion: completion)
     }
+    
+    static func layerAnimated(_ animated: Bool, _ block: () -> Void) {
+        if animated {
+            block()
+        } else {
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            block()
+            CATransaction.commit()
+            CATransaction.setDisableActions(false)
+        }
+    }
 }

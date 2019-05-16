@@ -11,7 +11,7 @@ import Foundation
 import Foundation
 
 public enum Pagination: Codable, Equatable {
-    static let pageSize: Pagination = .limit(50)
+    static let pageSize: Pagination = .limit(25)
     static let nextPageSize: Pagination = .limit(100)
 
     private enum CodingKeys: String, CodingKey {

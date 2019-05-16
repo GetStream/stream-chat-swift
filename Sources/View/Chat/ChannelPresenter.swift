@@ -10,16 +10,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-public enum ViewChanges: Equatable {
-    case none
-    case reloaded(_ row: Int, UITableView.ScrollPosition)
-    case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool)
-    case itemUpdated(_ row: Int, Message)
-    case itemRemoved(_ row: Int)
-    case itemMoved(fromRow: Int, toRow: Int)
-    case footerUpdated(_ isUsersTyping: Bool)
-}
-
 public final class ChannelPresenter {
     public typealias Completion = (_ error: Error?) -> Void
     private typealias EphemeralType = (message: Message?, updated: Bool)
@@ -30,9 +20,13 @@ public final class ChannelPresenter {
     private var startedTyping = false
     
     private var items: [ChatItem] = []
+    private(set) var lastMessage: Message?
+    private(set) var isUnread = false
+    private(set) var lastMessageRead: MessageRead?
     private(set) var typingUsers: [User] = []
     private let loadPagination = PublishSubject<Pagination>()
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
+    private let showStatuses = true
     
     public var itemsCount: Int {
         return items.count + (hasEphemeralMessage ? 1 : 0)
@@ -73,16 +67,16 @@ public final class ChannelPresenter {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    init(channel: Channel) {
+    init(channel: Channel, showStatuses: Bool = true) {
         self.channel = channel
     }
     
-    init(query: Query) {
+    init(query: Query, showStatuses: Bool = true) {
         channel = query.channel
         parseQuery(query)
     }
     
-    public func item(at row: Int, findMessageInDirection: Int = 0) -> ChatItem? {
+    public func item(at row: Int) -> ChatItem? {
         var row = row
         guard row >= 0 else {
             return nil
@@ -93,18 +87,6 @@ public final class ChannelPresenter {
             
             if row == 0, let message = ephemeralMessage {
                 return .message(message)
-            }
-            
-            return nil
-        }
-        
-        if findMessageInDirection != 0 {
-            while row >= 0, row < items.count {
-                if case .message = items[row] {
-                    return items[row]
-                } else {
-                    row += findMessageInDirection
-                }
             }
             
             return nil
@@ -174,6 +156,7 @@ extension ChannelPresenter {
                 nextRow = items.count - 1
             } else {
                 items.append(.message(message))
+                lastMessage = message
             }
             
             var forceToScroll = false
@@ -243,7 +226,7 @@ extension ChannelPresenter {
     }
     
     func load(pagination: Pagination = .pageSize) {
-        if pagination == .pageSize {
+        if items.isEmpty, pagination == .pageSize {
             next = .none
         }
         
@@ -264,23 +247,43 @@ extension ChannelPresenter {
         var index = 0
         let isNextPage = next != .none
         
+        if !isNextPage {
+            isUnread = query.isUnread
+            lastMessageRead = query.lastMessageRead
+        }
+        
+        var isNewMessagesStatusAdded = -1
+        
         query.messages.forEach { message in
-            if !yesterdayStatusAdded, message.created.isYesterday {
+            if showStatuses, !yesterdayStatusAdded, message.created.isYesterday {
                 yesterdayStatusAdded = true
                 items.insert(.status(ChannelPresenter.statusYesterdayTitle,
-                                     "at \(DateFormatter.time.string(from: message.created))"), at: index)
+                                     "at \(DateFormatter.time.string(from: message.created))",
+                    false), at: index)
                 index += 1
             }
             
-            if !todayStatusAdded, message.created.isToday {
+            if showStatuses, !todayStatusAdded, message.created.isToday {
                 todayStatusAdded = true
                 items.insert(.status(ChannelPresenter.statusTodayTitle,
-                                     "at \(DateFormatter.time.string(from: message.created))"), at: index)
+                                     "at \(DateFormatter.time.string(from: message.created))",
+                    false), at: index)
                 index += 1
             }
             
             items.insert(.message(message), at: index)
             index += 1
+            lastMessage = message
+            
+            if showStatuses,
+                isNewMessagesStatusAdded == -1,
+                isUnread,
+                let lastMessageRead = lastMessageRead,
+                message.updated < lastMessageRead.lastReadDate {
+                isNewMessagesStatusAdded = index
+                items.insert(.status(ChannelPresenter.statusNewMessagesTitle, nil, true), at: index)
+                index += 1
+            }
         }
         
         if isNextPage {
@@ -300,6 +303,10 @@ extension ChannelPresenter {
             items.insert(.loading, at: 0)
         } else {
             next = .none
+            
+            if isNewMessagesStatusAdded == 0 {
+                items.remove(at: 0)
+            }
         }
         
         channel = query.channel
@@ -319,7 +326,7 @@ extension ChannelPresenter {
     
     private func removeDuplicatedStatus(statusTitle: String, items: inout [ChatItem]) {
         let searchBlock = { (item: ChatItem) -> Bool in
-            if case .status(let title, _) = item {
+            if case .status(let title, _, _) = item {
                 return title == statusTitle
             }
             
@@ -339,6 +346,7 @@ extension ChannelPresenter {
 extension ChannelPresenter {
     public static var statusYesterdayTitle = "Yesterday"
     public static var statusTodayTitle = "Today"
+    public static var statusNewMessagesTitle = "New Messages"
 }
 
 extension ChannelPresenter {

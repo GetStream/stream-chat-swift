@@ -64,7 +64,8 @@ public struct Message: Codable {
     }
     
     public var textOrArgs: String {
-        return (text.isEmpty ? (args ?? "") : text).trimmingCharacters(in: .whitespacesAndNewlines)
+        var text = self.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return checkIfTextAsAttachmentURL(text) ? "" : (text.isEmpty ? (args ?? "") : text)
     }
     
     init?(text: String) {
@@ -92,6 +93,11 @@ public struct Message: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(text, forKey: .text)
+    }
+    
+    private func checkIfTextAsAttachmentURL(_ text: String) -> Bool {
+        let text = text.lowercased()
+        return !text.isEmpty && text.hasPrefix("http") && !text.contains(" ") && attachments.count == 1
     }
 }
 
