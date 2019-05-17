@@ -26,6 +26,7 @@ public final class ChannelPresenter {
     private(set) var typingUsers: [User] = []
     private let loadPagination = PublishSubject<Pagination>()
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
+    private let isReadSubject = PublishSubject<Void>()
     private let showStatuses = true
     
     public var itemsCount: Int {
@@ -33,6 +34,7 @@ public final class ChannelPresenter {
     }
     
     private let emptyMessageCompletion: Client.Completion<MessageResponse> = { _ in }
+    private let emptyEventCompletion: Client.Completion<EventResponse> = { _ in }
     
     private lazy var ephemeralMessageCompletion: Client.Completion<MessageResponse> = { [weak self] result in
         if let self = self, let response = try? result.get(), response.message.type == .ephemeral {
@@ -66,6 +68,8 @@ public final class ChannelPresenter {
         .map { [weak self] in self?.parseEphemeralChanges($0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
+    
+    private(set) lazy var isReadUpdates = isReadSubject.asDriver(onErrorJustReturn: ())
     
     init(channel: Channel, showStatuses: Bool = true) {
         self.channel = channel
@@ -155,8 +159,9 @@ extension ChannelPresenter {
             if let lastItem = items.last, case .message(let lastMessage) = lastItem, lastMessage == message {
                 nextRow = items.count - 1
             } else {
-                items.append(.message(message))
+                isUnread = channel.config.readEventsEnabled
                 lastMessage = message
+                items.append(.message(message))
             }
             
             var forceToScroll = false
@@ -226,7 +231,7 @@ extension ChannelPresenter {
     }
     
     func load(pagination: Pagination = .pageSize) {
-        if items.isEmpty, pagination == .pageSize {
+        if pagination == .pageSize {
             next = .none
         }
         
@@ -247,7 +252,7 @@ extension ChannelPresenter {
         var index = 0
         let isNextPage = next != .none
         
-        if !isNextPage {
+        if channel.config.readEventsEnabled, !isNextPage {
             isUnread = query.isUnread
             lastMessageRead = query.lastMessageRead
         }
@@ -276,6 +281,7 @@ extension ChannelPresenter {
             lastMessage = message
             
             if showStatuses,
+                channel.config.readEventsEnabled,
                 isNewMessagesStatusAdded == -1,
                 isUnread,
                 let lastMessageRead = lastMessageRead,
@@ -422,8 +428,30 @@ extension ChannelPresenter {
     }
     
     private func send(eventType: EventType) {
-        let completion: Client.Completion<EventResponse> = { _ in }
-        Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), connectionId: "", completion)
+        Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), connectionId: "", emptyEventCompletion)
+    }
+    
+    func sendRead() {
+        guard channel.config.readEventsEnabled, isUnread, let connectionId = Client.shared.webSocket.lastConnectionId else {
+            return
+        }
+        
+        isUnread = false
+        
+        let emptyEventCompletion: Client.Completion<EventResponse> = { [weak self] result in
+            if let self = self {
+                if let error = result.error {
+                    self.isUnread = false
+                    self.isReadSubject.onError(error)
+                } else {
+                    self.isUnread = false
+                    self.lastMessageRead = nil
+                    self.isReadSubject.onNext(())
+                }
+            }
+        }
+        
+        Client.shared.request(endpoint: ChatEndpoint.sendRead(channel), connectionId: connectionId, emptyEventCompletion)
     }
 }
 

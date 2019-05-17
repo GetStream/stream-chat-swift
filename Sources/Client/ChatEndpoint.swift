@@ -16,6 +16,7 @@ enum ChatEndpoint: EndpointProtocol {
     case addReaction(_ reactionType: String, Message)
     case deleteReaction(_ reactionType: String, Message)
     case sendEvent(EventType, Channel)
+    case sendRead(Channel)
 }
 
 extension ChatEndpoint {
@@ -47,6 +48,8 @@ extension ChatEndpoint {
             return path(with: message).appending("reaction/\(reactionType)")
         case .sendEvent(_, let channel):
             return path(with: channel).appending("event")
+        case .sendRead(let channel):
+            return path(with: channel).appending("read")
         }
     }
     
@@ -74,6 +77,8 @@ extension ChatEndpoint {
             return nil
         case .sendEvent(let event, _):
             return ["event": ["type": event]]
+        case .sendRead:
+            return Empty()
         }
     }
     
@@ -130,3 +135,5 @@ extension ChannelsQuery {
         }
     }
 }
+
+private struct Empty: Encodable {}

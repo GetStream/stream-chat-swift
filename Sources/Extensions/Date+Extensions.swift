@@ -20,7 +20,6 @@ extension Date {
 
 extension Date {
     
-    public static var today = "Today"
     public static var yesterday = "Yesterday"
     public static var wordsSeparator = ", "
     
@@ -29,10 +28,14 @@ extension Date {
         let timeString = DateFormatter.time.string(from: self)
         
         if isToday {
-            return Date.today.appending(Date.wordsSeparator).appending(timeString)
-        } else if isYesterday {
+            return timeString
+        }
+        
+        if isYesterday {
             return Date.yesterday.appending(Date.wordsSeparator).appending(timeString)
-        } else if timeIntervalSinceNow > -518_400 {
+        }
+        
+        if timeIntervalSinceNow > -518_400 {
             return DateFormatter.weekDay.string(from: self).appending(Date.wordsSeparator).appending(timeString)
         }
         

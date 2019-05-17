@@ -33,27 +33,27 @@ extension WebSocket {
 extension WebSocket {
     struct Response: Decodable {
         private enum CodingKeys: String, CodingKey {
-            case channelId = "cid"
+            case cid = "cid"
             case created = "created_at"
         }
         
         private static let channelInfoSeparator: Character = ":"
         
-        let channelId: String
+        let channelId: String?
         let channelType: ChannelType
         let event: Event
         let created: Date
         
         init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let channelInfo = try container.decode(String.self, forKey: .channelId)
+            let cid = try container.decodeIfPresent(String.self, forKey: .cid)
             
-            if channelInfo.contains(Response.channelInfoSeparator) {
-                let channelPair = channelInfo.split(separator: Response.channelInfoSeparator)
+            if let cid = cid, cid.contains(Response.channelInfoSeparator) {
+                let channelPair = cid.split(separator: Response.channelInfoSeparator)
                 channelId = String(channelPair[1])
                 channelType = ChannelType(rawValue: String(channelPair[0])) ?? .unknown
             } else {
-                channelId = channelInfo
+                channelId = nil
                 channelType = .unknown
             }
             

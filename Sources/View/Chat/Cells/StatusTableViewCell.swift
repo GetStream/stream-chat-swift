@@ -55,9 +55,9 @@ final class StatusTableViewCell: UITableViewCell, Reusable {
         lineView1.snp.makeConstraints { $0.width.equalTo(lineView2) }
 
         stackView.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(CGFloat.messageStatusSpacing)
+            make.left.equalToSuperview().offset(CGFloat.messageStatusSpacing).priority(999)
             make.top.equalToSuperview().offset(2 * CGFloat.messageEdgePadding)
-            make.right.equalToSuperview().offset(-CGFloat.messageStatusSpacing)
+            make.right.equalToSuperview().offset(-CGFloat.messageStatusSpacing).priority(999)
             make.bottom.equalToSuperview().offset(-3 * CGFloat.messageEdgePadding)
         }
     }

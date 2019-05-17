@@ -93,9 +93,19 @@ extension ChannelListViewController: UITableViewDataSource, UITableViewDelegate 
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let channelPresenter = channelsPresenter.channelPresenters[indexPath.row]
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style
-        chatViewController.channelPresenter = channelsPresenter.channelPresenters[indexPath.row]
+        chatViewController.channelPresenter = channelPresenter
+        
+        if channelPresenter.channel.config.readEventsEnabled, channelPresenter.isUnread {
+            channelPresenter.isReadUpdates.asObservable()
+                .take(1)
+                .takeUntil(chatViewController.rx.deallocated)
+                .subscribe(onNext: { _ in tableView.reloadRows(at: [indexPath], with: .none) })
+                .disposed(by: disposeBag)
+        }
+        
         navigationController?.pushViewController(chatViewController, animated: true)
     }
 }

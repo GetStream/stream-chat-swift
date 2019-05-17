@@ -19,6 +19,7 @@ final class WebSocket {
     let webSocket: Starscream.WebSocket
     private(set) lazy var reachability = Reachability()
     private(set) var lastError: Error?
+    private(set) var lastConnectionId: String?
     private(set) var consecutiveFailures: TimeInterval = 0
     let logger: ClientLogger?
     var isReconnecting = false
@@ -103,6 +104,8 @@ final class WebSocket {
     }
     
     func disconnect() {
+        lastConnectionId = nil
+        
         if webSocket.isConnected {
             logger?.log("💔", "Disconnecting...")
             handshakeTimer.suspend()
@@ -118,6 +121,7 @@ extension WebSocket {
     
     private func parseConnection(appState: AppState, reachability: Reachability.Connection, event: WebSocketEvent) -> Connection? {
         guard reachability != .none else {
+            lastConnectionId = nil
             return .notConnected
         }
         
@@ -130,6 +134,7 @@ extension WebSocket {
             if let response = parseMessage(event),
                 case let .healthCheck(connectionId, healthCheckUser) = response.event,
                 let user = healthCheckUser {
+                lastConnectionId = connectionId
                 return .connected(connectionId, user)
             } else if lastError != nil {
                 return nil

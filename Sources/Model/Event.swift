@@ -85,6 +85,14 @@ enum Event: Decodable {
             return
         }
         
+        if type == .notificationMarkRead {
+            let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
+            let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
+            let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
+            self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels)
+            return
+        }
+        
         let user = try container.decode(User.self, forKey: .user)
         
         switch type {
@@ -127,13 +135,6 @@ enum Event: Decodable {
             let reaction = try container.decode(Reaction.self, forKey: .reaction)
             let message = try container.decode(Message.self, forKey: .message)
             self = .reactionDeleted(reaction, message, user)
-            
-        // Notifications
-        case .notificationMarkRead:
-            let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
-            let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
-            let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
-            self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels)
             
         default:
             throw ResponseTypeError(type: type)

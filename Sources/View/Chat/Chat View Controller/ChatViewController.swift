@@ -79,6 +79,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         didSet {
             if let presenter = channelPresenter {
                 Driver.merge(presenter.request, presenter.changes, presenter.ephemeralChanges)
+                    .do(onNext: { [weak presenter] _ in presenter?.sendRead() })
                     .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
                     .disposed(by: disposeBag)
             }
@@ -90,9 +91,18 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         setupComposerView()
         setupTableView()
         updateTitle()
-        channelPresenter?.load()
-        tableView.scrollToBottom(animated: false)
-        DispatchQueue.main.async { self.tableView.scrollToBottom(animated: false) }
+        
+        guard let presenter = channelPresenter else {
+            return
+        }
+        
+        if presenter.itemsCount == 0 {
+            channelPresenter?.load()
+        } else {
+            tableView.reloadData()
+            DispatchQueue.main.async { self.tableView.scrollToBottom(animated: false) }
+            presenter.sendRead()
+        }
     }
     
     public override func viewWillAppear(_ animated: Bool) {
