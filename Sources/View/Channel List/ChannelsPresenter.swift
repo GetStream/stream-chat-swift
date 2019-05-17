@@ -1,5 +1,5 @@
 //
-//  ChannelListPresenter.swift
+//  ChannelsPresenter.swift
 //  GetStreamChat
 //
 //  Created by Alexey Bukhtin on 14/05/2019.
@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-public final class ChannelListPresenter {
+public final class ChannelsPresenter {
     
     public let channelType: ChannelType
     public let showChannelStatuses: Bool
@@ -43,7 +43,7 @@ public final class ChannelListPresenter {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
 
-    private func parseChannels(_ response: ChannelListResponse) -> ViewChanges {
+    private func parseChannels(_ response: ChannelsResponse) -> ViewChanges {
         channelPresenters = response.channels.map { ChannelPresenter(query: $0, showStatuses: showChannelStatuses) }
         return .reloaded(0, .top)
     }
@@ -51,7 +51,7 @@ public final class ChannelListPresenter {
 
 // MARK: - Changes
 
-extension ChannelListPresenter {
+extension ChannelsPresenter {
     private func parseChanges(response: WebSocket.Response) -> ViewChanges {
         switch response.event {
         case .messageNew:
@@ -81,6 +81,6 @@ extension ChannelListPresenter {
 
 // MARK: - Supporting Structs
 
-public struct ChannelListResponse: Decodable {
-    let channels: [Query]
+public struct ChannelsResponse: Decodable {
+    let channels: [ChannelQuery]
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Query: Codable {
+public struct ChannelQuery: Codable {
     private enum CodingKeys: String, CodingKey {
         case data
         case channel

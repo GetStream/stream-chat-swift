@@ -75,7 +75,7 @@ public final class ChannelPresenter {
         self.channel = channel
     }
     
-    init(query: Query, showStatuses: Bool = true) {
+    init(query: ChannelQuery, showStatuses: Bool = true) {
         channel = query.channel
         parseQuery(query)
     }
@@ -103,9 +103,9 @@ public final class ChannelPresenter {
 // MARK: - Connection
 
 extension ChannelPresenter {
-    private func parseConnection(_ connection: WebSocket.Connection, pagination: Pagination) -> (Query, String)? {
+    private func parseConnection(_ connection: WebSocket.Connection, pagination: Pagination) -> (ChannelQuery, String)? {
         if case .connected(let connectionId, _) = connection, let user = Client.shared.user {
-            return (Query(channel: channel, members: [Member(user: user)], pagination: pagination), connectionId)
+            return (ChannelQuery(channel: channel, members: [Member(user: user)], pagination: pagination), connectionId)
         }
         
         if !items.isEmpty {
@@ -239,7 +239,7 @@ extension ChannelPresenter {
     }
     
     @discardableResult
-    private func parseQuery(_ query: Query) -> ViewChanges {
+    private func parseQuery(_ query: ChannelQuery) -> ViewChanges {
         var items = next == .none ? [ChatItem]() : self.items
         let currentCount = items.count
         

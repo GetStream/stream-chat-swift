@@ -100,6 +100,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
             channelPresenter?.load()
         } else {
             tableView.reloadData()
+            tableView.scrollToBottom(animated: false)
             DispatchQueue.main.async { self.tableView.scrollToBottom(animated: false) }
             presenter.sendRead()
         }

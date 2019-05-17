@@ -1,5 +1,5 @@
 //
-//  ChannelListViewController.swift
+//  ChannelsViewController.swift
 //  GetStreamChat
 //
 //  Created by Alexey Bukhtin on 14/05/2019.
@@ -10,12 +10,12 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-public final class ChannelListViewController: UIViewController {
+public final class ChannelsViewController: UIViewController {
     
     public var style = ChatViewStyle()
     private let disposeBag = DisposeBag()
     
-    public var channelsPresenter = ChannelListPresenter(channelType: .messaging)
+    public var channelsPresenter = ChannelsPresenter(channelType: .messaging)
     
     private(set) lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -47,7 +47,7 @@ public final class ChannelListViewController: UIViewController {
 
 // MARK: - Table View
 
-extension ChannelListViewController: UITableViewDataSource, UITableViewDelegate {
+extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     
     private func updateTableView(with changes: ViewChanges) {
         switch changes {
