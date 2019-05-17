@@ -293,6 +293,12 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         return
     }
     
+    func showLogo(image: UIImage) {
+        let logoImageView = UIImageView(image: image)
+        imageView.addSubview(logoImageView)
+        logoImageView.snp.makeConstraints { $0.right.bottom.equalToSuperview().offset(CGFloat.messageCornerRadius / -2) }
+    }
+    
     private func createActionButton(title: String, style: Attachment.ActionStyle) -> UIButton {
         let button = UIButton(type: .custom)
         button.layer.cornerRadius = .messageCornerRadius

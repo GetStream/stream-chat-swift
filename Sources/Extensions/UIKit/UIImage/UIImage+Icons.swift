@@ -34,6 +34,10 @@ extension UIImage {
         public static let startThread: UIImage = UIImage.chat(named: "startThreadIcon")
     }
     
+    public struct Logo {
+        public static let giphy: UIImage = UIImage.chat(named: "giphy")
+    }
+    
     static func chat(named name: String) -> UIImage {
         let name = name == "mp4" ? "mov" : name
         
