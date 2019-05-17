@@ -174,6 +174,10 @@ extension MediaGalleryViewController: UICollectionViewDataSource, UICollectionVi
                     self?.collectionView.reloadData()
                 }
             }
+            
+            if let logoImage = item.logoImage {
+                cell.addLogo(image: logoImage)
+            }
         }
         
         return cell
@@ -185,14 +189,16 @@ extension MediaGalleryViewController: UICollectionViewDataSource, UICollectionVi
 public struct MediaGalleryItem: Equatable {
     public let title: String?
     public let url: URL
+    public let logoImage: UIImage?
     
-    init?(title: String?, url: URL?) {
+    init?(title: String?, url: URL?, logoImage: UIImage? = nil) {
         guard let url = url else {
             return nil
         }
         
         self.title = title
         self.url = url
+        self.logoImage = logoImage
     }
 }
 
@@ -225,6 +231,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         return label
     }()
     
+    private var logoImageView: UIImageView?
     private var imageTask: ImageTask?
     
     private lazy var doubleTap: UITapGestureRecognizer = {
@@ -278,6 +285,14 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         imageTask?.cancel()
         imageTask = nil
         titleLabel.text = nil
+        logoImageView?.removeFromSuperview()
+    }
+    
+    fileprivate  func addLogo(image: UIImage) {
+        let logoImageView = UIImageView(image: image)
+        imageView.addSubview(logoImageView)
+        logoImageView.snp.makeConstraints { $0.right.bottom.equalToSuperview().offset(CGFloat.messageCornerRadius / -2) }
+        self.logoImageView = logoImageView
     }
     
     /// Loads the image by a given URL.
