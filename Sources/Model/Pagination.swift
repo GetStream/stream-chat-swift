@@ -8,8 +8,6 @@
 
 import Foundation
 
-import Foundation
-
 public enum Pagination: Codable, Equatable {
     static let pageSize: Pagination = .limit(25)
     static let nextPageSize: Pagination = .limit(100)
@@ -22,11 +20,6 @@ public enum Pagination: Codable, Equatable {
         case lessThan = "id_lt"
         case lessThanOrEqual = "id_lte"
     }
-    
-    public static let defaultLimit = 25
-    
-    /// Default limit is 25.
-    case none
     
     /// The amount of items requested from the APIs.
     case limit(_ limit: Int)
@@ -63,7 +56,7 @@ public enum Pagination: Codable, Equatable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let urlString = try container.decode(String.self)
-        var pagination: Pagination = .none
+        var pagination: Pagination = Pagination.pageSize
         
         if let urlComponents = URLComponents(string: urlString), let queryItems = urlComponents.queryItems {
             queryItems.forEach { queryItem in
@@ -99,8 +92,6 @@ public enum Pagination: Codable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {
-        case .none:
-            break
         case .limit(let limit):
             try container.encode(limit, forKey: .limit)
         case .offset(let offset):
@@ -124,8 +115,6 @@ public enum Pagination: Codable, Equatable {
         var params: [String: Any] = [:]
         
         switch self {
-        case .none:
-            return [:]
         case .limit(let limit):
             params["limit"] = limit
         case let .offset(offset):
@@ -151,14 +140,6 @@ public enum Pagination: Codable, Equatable {
 extension Pagination {
     /// An operator for combining Pagination's.
     public static func +(lhs: Pagination, rhs: Pagination) -> Pagination {
-        if case .none = lhs {
-            return rhs
-        }
-        
-        if case .none = rhs {
-            return lhs
-        }
-        
         return .and(pagination: lhs, another: rhs)
     }
     

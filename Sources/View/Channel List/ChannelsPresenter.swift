@@ -14,6 +14,8 @@ public final class ChannelsPresenter {
     
     public let channelType: ChannelType
     public let showChannelStatuses: Bool
+    private let loadPagination = PublishSubject<Pagination>()
+    private var next = Pagination.pageSize
     private(set) var channelPresenters: [ChannelPresenter] = []
     
     init(channelType: ChannelType, showChannelStatuses: Bool = true) {
@@ -46,6 +48,16 @@ public final class ChannelsPresenter {
     private func parseChannels(_ response: ChannelsResponse) -> ViewChanges {
         channelPresenters = response.channels.map { ChannelPresenter(query: $0, showStatuses: showChannelStatuses) }
         return .reloaded(0, .top)
+    }
+    
+    func loadNext() {
+        if next != .pageSize {
+            load(pagination: next)
+        }
+    }
+    
+    func load(pagination: Pagination = .pageSize) {
+        loadPagination.onNext(pagination)
     }
 }
 

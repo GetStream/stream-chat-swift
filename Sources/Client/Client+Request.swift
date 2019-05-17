@@ -86,6 +86,7 @@ extension Client {
         
         logger?.log(urlSession.configuration)
         logger?.log(urlRequest)
+        logger?.log(queryItems)
         task.resume()
         
         return task

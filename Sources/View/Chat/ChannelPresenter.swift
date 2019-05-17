@@ -16,7 +16,7 @@ public final class ChannelPresenter {
     
     public private(set) var channel: Channel
     var members: [Member] = []
-    private var next: Pagination = .none
+    private var next = Pagination.pageSize
     private var startedTyping = false
     
     private var items: [ChatItem] = []
@@ -109,7 +109,7 @@ extension ChannelPresenter {
         }
         
         if !items.isEmpty {
-            next = .none
+            next = .pageSize
             DispatchQueue.main.async { self.loadPagination.onNext(.pageSize) }
         }
         
@@ -225,16 +225,12 @@ extension ChannelPresenter {
 extension ChannelPresenter {
     
     func loadNext() {
-        if next != .none {
+        if next != .pageSize {
             load(pagination: next)
         }
     }
     
     func load(pagination: Pagination = .pageSize) {
-        if pagination == .pageSize {
-            next = .none
-        }
-        
         loadPagination.onNext(pagination)
     }
     
@@ -250,7 +246,7 @@ extension ChannelPresenter {
         var yesterdayStatusAdded = false
         var todayStatusAdded = false
         var index = 0
-        let isNextPage = next != .none
+        let isNextPage = next != .pageSize
         
         if channel.config.readEventsEnabled, !isNextPage {
             isUnread = query.isUnread
@@ -308,7 +304,7 @@ extension ChannelPresenter {
             next = .nextPageSize + .lessThan(first.id)
             items.insert(.loading, at: 0)
         } else {
-            next = .none
+            next = .pageSize
             
             if isNewMessagesStatusAdded == 0 {
                 items.remove(at: 0)

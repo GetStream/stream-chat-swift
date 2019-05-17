@@ -13,21 +13,30 @@ struct ChannelsQuery: Encodable {
         case filter = "filter_conditions"
         case sort
         case user = "user_details"
-        case limit
         case state
         case watch
         case presence
-        case offset
+        case pagination
     }
     
     let filter: Filter
     let sort: [Sorting]
-    let limit: Int = 20
     let user: User
+    let pagination: Pagination = .pageSize
     let state = true
     let watch = true
     let presence = false
-    let offset = 0
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(filter, forKey: .filter)
+        try container.encode(sort, forKey: .sort)
+        try container.encode(user, forKey: .user)
+        try container.encode(state, forKey: .state)
+        try container.encode(watch, forKey: .watch)
+        try container.encode(presence, forKey: .presence)
+        try pagination.encode(to: encoder)
+    }
 }
 
 extension ChannelsQuery {

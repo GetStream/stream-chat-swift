@@ -45,6 +45,27 @@ public struct ClientLogger {
         }
     }
     
+    func log(_ queryItems: [URLQueryItem]) {
+        guard !queryItems.isEmpty else {
+            return
+        }
+        
+        var message = "URL query items:\n"
+        
+        queryItems.forEach { item in
+            if let value = item.value,
+                value.hasPrefix("{"),
+                let data = value.data(using: .utf8),
+                let json = try? data.prettyPrintedJSONString() {
+                message += "▫️ \(item.name)=\(json)"
+            } else {
+                message += "▫️ \(item.description)\n"
+            }
+        }
+        
+        log(message)
+    }
+    
     func log(_ response: URLResponse?, data: Data?) {
         if let response = response {
             log("Response", response.description)
