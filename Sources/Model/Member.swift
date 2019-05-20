@@ -17,9 +17,9 @@ public struct Member: Codable, Equatable {
     }
     
     public let user: User
+    public let role: Role
     public let created: Date
     public let updated: Date
-    public let role: Role
     
     init(user: User, role: Role = .owner) {
         self.user = user
@@ -38,5 +38,7 @@ public struct Member: Codable, Equatable {
 public extension Member {
     enum Role: String, Codable {
         case owner
+        case member
+        case user
     }
 }

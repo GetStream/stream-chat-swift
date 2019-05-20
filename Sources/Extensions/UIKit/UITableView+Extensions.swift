@@ -43,3 +43,24 @@ extension UITableView {
         tableFooterView = tableFooterView?.systemLayoutHeightToFit()
     }
 }
+
+// MARK: - Cells
+
+extension UITableView {
+    static let loadingTitle = "Loading..."
+    
+    func loadingCell(at indexPath: IndexPath, backgroundColor: UIColor) -> UITableViewCell {
+        return statusCell(at: indexPath, title: UITableView.loadingTitle, backgroundColor: backgroundColor, highlighted: false)
+    }
+    
+    func statusCell(at indexPath: IndexPath,
+                    title: String,
+                    subtitle: String? = nil,
+                    backgroundColor: UIColor,
+                    highlighted: Bool) -> UITableViewCell {
+        let cell = dequeueReusableCell(for: indexPath, cellType: StatusTableViewCell.self) as StatusTableViewCell
+        cell.backgroundColor = backgroundColor
+        cell.update(title: title, subtitle: subtitle, highlighted: highlighted)
+        return cell
+    }
+}

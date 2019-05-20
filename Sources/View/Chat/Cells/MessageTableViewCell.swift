@@ -100,7 +100,11 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     }
     
     public var style: MessageViewStyle? {
-        didSet { setup() }
+        didSet {
+            if oldValue == nil, style != nil {
+                setup()
+            }
+        }
     }
     
     override func prepareForReuse() {

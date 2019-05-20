@@ -45,7 +45,7 @@ public struct ChannelQuery: Codable {
         members = try container.decode([Member].self, forKey: .members)
         messages = try container.decode([Message].self, forKey: .messages)
         messageReads = try container.decode([MessageRead].self, forKey: .messageReads)
-        pagination = .pageSize
+        pagination = .none
         
         if let user = Client.shared.user {
             lastMessageRead = messageReads.first { $0.user == user }

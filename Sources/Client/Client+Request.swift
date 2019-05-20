@@ -87,6 +87,7 @@ extension Client {
         logger?.log(urlSession.configuration)
         logger?.log(urlRequest)
         logger?.log(queryItems)
+        logger?.timing("Send request")
         task.resume()
         
         return task
@@ -94,6 +95,7 @@ extension Client {
     
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
         let httpResponse = response as? HTTPURLResponse
+        logger?.timing("Response received")
         logger?.log(response, data: (logOptions != .requestsHeaders || (httpResponse?.statusCode ?? 400) >= 400) ? data : nil)
         
         if let error = error {
@@ -108,7 +110,9 @@ extension Client {
         }
         
         do {
+            logger?.timing("Prepare for decoding")
             let response = try JSONDecoder.stream.decode(T.self, from: data)
+            logger?.timing("Response decoded")
             performInCallbackQueue { completion(.success(response)) }
         } catch {
             logger?.log(error)

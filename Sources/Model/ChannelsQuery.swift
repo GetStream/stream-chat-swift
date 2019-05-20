@@ -17,12 +17,14 @@ struct ChannelsQuery: Encodable {
         case watch
         case presence
         case pagination
+        case messageLimit = "message_limit"
     }
     
     let filter: Filter
     let sort: [Sorting]
     let user: User
-    let pagination: Pagination = .pageSize
+    let pagination: Pagination
+    let messageLimit = Pagination.messagesPageSize
     let state = true
     let watch = true
     let presence = false
@@ -35,6 +37,7 @@ struct ChannelsQuery: Encodable {
         try container.encode(state, forKey: .state)
         try container.encode(watch, forKey: .watch)
         try container.encode(presence, forKey: .presence)
+        try container.encode(messageLimit.limit, forKey: .messageLimit)
         try pagination.encode(to: encoder)
     }
 }

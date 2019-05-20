@@ -7,15 +7,24 @@
 //
 
 import Foundation
+import UIKit
 
 /// A Client logger.
-public struct ClientLogger {
+public final class ClientLogger {
     
     /// A customizable logger block.
     public static var logger: (_ icon: String, _ dateAndTime: String, _ message: String) -> Void = { print($0, "[\($1)]", $2) }
     
-    let icon: String
+    private let icon: String
+    private var lastTime: CFTimeInterval
+    private var startTime: CFTimeInterval
     
+    init(icon: String) {
+        self.icon = icon
+        startTime = CACurrentMediaTime()
+        lastTime = startTime
+    }
+
     private let logDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM/yyyy HH:mm:ss.SSS"
@@ -90,6 +99,13 @@ public struct ClientLogger {
             
             log("\(error)")
         }
+    }
+    
+    func timing(_ tag: String = "") {
+        let overall: CFTimeInterval = round((CACurrentMediaTime() - startTime) * 1000) / 1000
+        let time: CFTimeInterval = round((CACurrentMediaTime() - lastTime) * 1000) / 1000
+        log("⏱ \(tag) \(overall) +\(time < 0.001 ? 0 : time)")
+        lastTime = CACurrentMediaTime()
     }
     
     func log(_ identifier: String, _ data: Data?) {

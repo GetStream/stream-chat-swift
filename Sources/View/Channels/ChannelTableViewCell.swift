@@ -32,7 +32,11 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
     }()
     
     public var style: ChannelViewStyle? {
-        didSet { setup() }
+        didSet {
+            if oldValue == nil, style != nil {
+                setup()
+            }
+        }
     }
     
     public override func prepareForReuse() {
@@ -46,23 +50,28 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         }
         
         selectionStyle = .none
-        backgroundColor = style.chatBackgroundColor
+        backgroundColor = style.backgroundColor
         
         nameLabel.font = style.nameFont
         nameLabel.textColor = style.nameColor
+        nameLabel.backgroundColor = backgroundColor
+        
         dateLabel.font = style.dateFont
         dateLabel.textColor = style.dateColor
+        dateLabel.backgroundColor = backgroundColor
+        
         messageLabel.font = style.messageFont
         messageLabel.textColor = style.messageColor
+        messageLabel.backgroundColor = backgroundColor
         
         contentView.addSubview(avatarView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(dateLabel)
         contentView.addSubview(messageLabel)
         
+        avatarView.backgroundColor = backgroundColor
         avatarView.snp.makeConstraints { make in
-            make.left.top.equalToSuperview().offset(CGFloat.messageEdgePadding)
-            make.bottom.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            make.left.top.equalToSuperview().offset(CGFloat.messageEdgePadding).priority(999)
             make.size.equalTo(CGFloat.channelBigAvatarSize)
         }
         

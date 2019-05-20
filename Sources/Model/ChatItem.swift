@@ -11,6 +11,7 @@ import Foundation
 public enum ChatItem: Equatable {
     case loading
     case status(_ title: String, _ subtitle: String?, _ highlighted: Bool)
+    case channel(ChannelPresenter)
     case message(Message)
     case error(Error)
     
@@ -18,6 +19,8 @@ public enum ChatItem: Equatable {
         switch (lhs, rhs) {
         case (.loading, .loading):
             return true
+        case let (.channel(channel1), .channel(channel2)):
+            return channel1.channel == channel2.channel
         case let (.message(message1), .message(message2)):
             return message1 == message2
         case let (.status(title1, subtitle1, highlighted1), .status(title2, subtitle2, highlighted2)):

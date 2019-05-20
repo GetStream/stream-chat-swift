@@ -155,12 +155,11 @@ extension ChatViewController {
         case .none, .itemMoved:
             return
         case let .reloaded(row, position):
+            let needsToScroll = isLoadingCellPresented()
             tableView.reloadData()
             
-            if scrollEnabled {
-                UIView.layerAnimated(false) {
-                    tableView.scrollToRow(at: IndexPath(row: row), at: position, animated: false)
-                }
+            if scrollEnabled, needsToScroll {
+                tableView.scrollToRow(at: IndexPath(row: row), at: position, animated: false)
             }
         case let .itemAdded(row, reloadRow, forceToScroll):
             let indexPath = IndexPath(row: row)
@@ -199,11 +198,19 @@ extension ChatViewController {
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let backgroundColor = style.incomingMessage.chatBackgroundColor
+        
         switch channelPresenter?.item(at: indexPath.row) {
         case .loading?:
-            return loadingCell(at: indexPath)
+            channelPresenter?.loadNext()
+            return tableView.loadingCell(at: indexPath, backgroundColor: backgroundColor)
+            
         case let .status(title, subtitle, highlighted)?:
-            return statusCell(at: indexPath, title: title, subtitle: subtitle, highlighted: highlighted)
+            return tableView.statusCell(at: indexPath,
+                                        title: title,
+                                        subtitle: subtitle,
+                                        backgroundColor: backgroundColor,
+                                        highlighted: highlighted)
         case .message(let message)?:
             return messageCell(at: indexPath, message: message)
         default:
@@ -225,5 +232,17 @@ extension ChatViewController {
     
     public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         return false
+    }
+    
+    private func isLoadingCellPresented() -> Bool {
+        return nil != tableView.visibleCells.first(where: { cell -> Bool in
+            if let cell = cell as? StatusTableViewCell,
+                let title = cell.title,
+                title.lowercased() == UITableView.loadingTitle.lowercased() {
+                return true
+            }
+            
+            return false
+        })
     }
 }

@@ -15,11 +15,6 @@ import RxGesture
 
 extension ChatViewController {
     
-    func loadingCell(at indexPath: IndexPath) -> UITableViewCell {
-        channelPresenter?.loadNext()
-        return statusCell(at: indexPath, title: "Loading...", highlighted: false)
-    }
-    
     func messageCell(at indexPath: IndexPath, message: Message) -> UITableViewCell {
         guard let presenter = channelPresenter else {
             return .unused
@@ -134,13 +129,6 @@ extension ChatViewController {
         cell.update(info: text)
         cell.update(date: Date())
         cell.avatarView.update(with: user.avatarURL, name: user.name, baseColor: style.incomingMessage.chatBackgroundColor)
-        return cell
-    }
-    
-    func statusCell(at indexPath: IndexPath, title: String, subtitle: String? = nil, highlighted: Bool) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(for: indexPath, cellType: StatusTableViewCell.self) as StatusTableViewCell
-        cell.backgroundColor = style.incomingMessage.chatBackgroundColor
-        cell.update(title: title, subtitle: subtitle, highlighted: highlighted)
         return cell
     }
 }

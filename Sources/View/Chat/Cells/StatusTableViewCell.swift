@@ -35,6 +35,10 @@ final class StatusTableViewCell: UITableViewCell, Reusable {
     private lazy var lineView1 = createLineView()
     private lazy var lineView2 = createLineView()
     
+    var title: String? {
+        return titleLabel.text
+    }
+    
     override func prepareForReuse() {
         reset()
         super.prepareForReuse()

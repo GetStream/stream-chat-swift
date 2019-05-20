@@ -9,9 +9,11 @@
 import Foundation
 
 public enum Pagination: Codable, Equatable {
-    static let pageSize: Pagination = .limit(25)
-    static let nextPageSize: Pagination = .limit(100)
-
+    static let channelsPageSize: Pagination = .limit(20)
+    static let channelsNextPageSize: Pagination = .limit(30)
+    static let messagesPageSize: Pagination = .limit(25)
+    static let messagesNextPageSize: Pagination = .limit(50)
+    
     private enum CodingKeys: String, CodingKey {
         case limit
         case offset
@@ -20,6 +22,8 @@ public enum Pagination: Codable, Equatable {
         case lessThan = "id_lt"
         case lessThanOrEqual = "id_lte"
     }
+    
+    case none
     
     /// The amount of items requested from the APIs.
     case limit(_ limit: Int)
@@ -53,10 +57,46 @@ public enum Pagination: Codable, Equatable {
     /// ```
     indirect case and(pagination: Pagination, another: Pagination)
     
+    var limit: Int {
+        if case .limit(let limit) = self {
+            return limit
+        }
+        
+        if case let .and(lhs, rhs) = self {
+            let limit = lhs.limit
+            
+            if limit == 0 {
+                return rhs.limit
+            }
+            
+            return limit
+        }
+        
+        return 0
+    }
+    
+    var offset: Int {
+        if case .offset(let offset) = self {
+            return offset
+        }
+        
+        if case let .and(lhs, rhs) = self {
+            let offset = lhs.offset
+            
+            if offset == 0 {
+                return rhs.offset
+            }
+            
+            return offset
+        }
+        
+        return 0
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let urlString = try container.decode(String.self)
-        var pagination: Pagination = Pagination.pageSize
+        var pagination = Pagination.none
         
         if let urlComponents = URLComponents(string: urlString), let queryItems = urlComponents.queryItems {
             queryItems.forEach { queryItem in
@@ -92,6 +132,8 @@ public enum Pagination: Codable, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {
+        case .none:
+            break
         case .limit(let limit):
             try container.encode(limit, forKey: .limit)
         case .offset(let offset):
@@ -115,6 +157,8 @@ public enum Pagination: Codable, Equatable {
         var params: [String: Any] = [:]
         
         switch self {
+        case .none:
+            return [:]
         case .limit(let limit):
             params["limit"] = limit
         case let .offset(offset):
@@ -140,6 +184,14 @@ public enum Pagination: Codable, Equatable {
 extension Pagination {
     /// An operator for combining Pagination's.
     public static func +(lhs: Pagination, rhs: Pagination) -> Pagination {
+        if case .none = lhs {
+            return rhs
+        }
+        
+        if case .none = rhs {
+            return lhs
+        }
+        
         return .and(pagination: lhs, another: rhs)
     }
     

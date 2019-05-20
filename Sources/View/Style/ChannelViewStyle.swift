@@ -9,7 +9,7 @@
 import UIKit
 
 public struct ChannelViewStyle: Hashable {
-    public let chatBackgroundColor: UIColor
+    public let backgroundColor: UIColor
     public let separatorColor: UIColor
     public let nameFont: UIFont
     public let nameColor: UIColor
@@ -22,7 +22,7 @@ public struct ChannelViewStyle: Hashable {
     public let dateFont: UIFont
     public let dateColor: UIColor
     
-    init(chatBackgroundColor: UIColor = .chatSuperLightGray,
+    init(backgroundColor: UIColor = .chatSuperLightGray,
          separatorColor: UIColor = .chatSeparator,
          titleFont: UIFont = .chatXRegularMedium,
          titleColor: UIColor = .black,
@@ -34,7 +34,7 @@ public struct ChannelViewStyle: Hashable {
          messageDeletedColor: UIColor = .chatGray,
          dateFont: UIFont = .chatSmall,
          dateColor: UIColor = .chatGray) {
-        self.chatBackgroundColor = chatBackgroundColor
+        self.backgroundColor = backgroundColor
         self.separatorColor = separatorColor
         self.nameFont = titleFont
         self.nameColor = titleColor
@@ -50,7 +50,7 @@ public struct ChannelViewStyle: Hashable {
     
     public func hash(into hasher:
         inout Hasher) {
-        hasher.combine(chatBackgroundColor)
+        hasher.combine(backgroundColor)
         hasher.combine(separatorColor)
         hasher.combine(nameFont)
         hasher.combine(nameColor)

@@ -100,6 +100,7 @@
 		8ABF82662270A72900A966D9 /* Client+RxRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF82652270A72900A966D9 /* Client+RxRequest.swift */; };
 		8ABF826A2273064600A966D9 /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF82692273064600A966D9 /* UITableView+Extensions.swift */; };
 		8ACAB167228ED6C900674F2D /* ChannelsQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACAB166228ED6C900674F2D /* ChannelsQuery.swift */; };
+		8ACAB169228F645B00674F2D /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACAB168228F645B00674F2D /* ChannelsResponse.swift */; };
 		8AFC2A2722688299006278D4 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2622688299006278D4 /* Member.swift */; };
 		8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A282268933A006278D4 /* WebSocket.swift */; };
 		8AFC2A2B226893FF006278D4 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */; };
@@ -205,6 +206,7 @@
 		8ABF82652270A72900A966D9 /* Client+RxRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxRequest.swift"; sourceTree = "<group>"; };
 		8ABF82692273064600A966D9 /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
 		8ACAB166228ED6C900674F2D /* ChannelsQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsQuery.swift; sourceTree = "<group>"; };
+		8ACAB168228F645B00674F2D /* ChannelsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsResponse.swift; sourceTree = "<group>"; };
 		8AFC2A2622688299006278D4 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		8AFC2A282268933A006278D4 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
@@ -413,6 +415,7 @@
 				8AABC29B22627A1D0064CB20 /* Pagination.swift */,
 				8A0755E7228DB04500A3E4AB /* MessageRead.swift */,
 				8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */,
+				8ACAB168228F645B00674F2D /* ChannelsResponse.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -429,7 +432,7 @@
 			isa = PBXGroup;
 			children = (
 				8A1A940A225C8F6000060ACC /* Style */,
-				8A8BC067228AE0B800687186 /* Channel List */,
+				8A8BC067228AE0B800687186 /* Channels */,
 				8A210D7E2264C3C700D51FFC /* Chat */,
 				8A210D7B2264A1FC00D51FFC /* Image Gallery */,
 				8AB1B8F0226772AC002C65BD /* Web View */,
@@ -461,14 +464,14 @@
 			path = UIKit;
 			sourceTree = "<group>";
 		};
-		8A8BC067228AE0B800687186 /* Channel List */ = {
+		8A8BC067228AE0B800687186 /* Channels */ = {
 			isa = PBXGroup;
 			children = (
 				8A8BC068228AE0D600687186 /* ChannelsViewController.swift */,
 				8A8BC06A228AE1B900687186 /* ChannelsPresenter.swift */,
 				8A8BC06C228AE22900687186 /* ChannelTableViewCell.swift */,
 			);
-			path = "Channel List";
+			path = Channels;
 			sourceTree = "<group>";
 		};
 		8AABC28D225F42BB0064CB20 /* Rx */ = {
@@ -686,6 +689,7 @@
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
 				8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */,
 				8A4FE7C1227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift in Sources */,
+				8ACAB169228F645B00674F2D /* ChannelsResponse.swift in Sources */,
 				8AABC2982260D9450064CB20 /* StatusTableViewCell.swift in Sources */,
 				8AFC2A2722688299006278D4 /* Member.swift in Sources */,
 				8A40804122818C7A00F274FF /* Int+Extensions.swift in Sources */,

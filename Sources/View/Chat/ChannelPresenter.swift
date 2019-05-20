@@ -16,7 +16,7 @@ public final class ChannelPresenter {
     
     public private(set) var channel: Channel
     var members: [Member] = []
-    private var next = Pagination.pageSize
+    private var next = Pagination.messagesPageSize
     private var startedTyping = false
     
     private var items: [ChatItem] = []
@@ -52,9 +52,8 @@ public final class ChannelPresenter {
     
     private(set) lazy var request: Driver<ViewChanges> =
         Observable.combineLatest(Client.shared.webSocket.connection, loadPagination.asObserver())
-            .map { [weak self] in self?.parseConnection($0, pagination: $1) }
+            .map { [weak self] in self?.parseConnection(connection: $0, pagination: $1) }
             .unwrap()
-            .skip(items.isEmpty ? 0 : 1)
             .flatMapLatest { Client.shared.rx.request(endpoint: ChatEndpoint.query($0), connectionId: $1) }
             .map { [weak self] in self?.parseQuery($0) ?? .none }
             .asDriver(onErrorJustReturn: .none)
@@ -103,14 +102,14 @@ public final class ChannelPresenter {
 // MARK: - Connection
 
 extension ChannelPresenter {
-    private func parseConnection(_ connection: WebSocket.Connection, pagination: Pagination) -> (ChannelQuery, String)? {
+    private func parseConnection(connection: WebSocket.Connection, pagination: Pagination) -> (ChannelQuery, String)? {
         if case .connected(let connectionId, _) = connection, let user = Client.shared.user {
             return (ChannelQuery(channel: channel, members: [Member(user: user)], pagination: pagination), connectionId)
         }
         
         if !items.isEmpty {
-            next = .pageSize
-            DispatchQueue.main.async { self.loadPagination.onNext(.pageSize) }
+            next = .messagesPageSize
+            DispatchQueue.main.async { self.loadPagination.onNext(.messagesPageSize) }
         }
         
         return nil
@@ -225,28 +224,28 @@ extension ChannelPresenter {
 extension ChannelPresenter {
     
     func loadNext() {
-        if next != .pageSize {
+        if next != .messagesPageSize {
             load(pagination: next)
         }
     }
     
-    func load(pagination: Pagination = .pageSize) {
+    func load(pagination: Pagination = .messagesPageSize) {
         loadPagination.onNext(pagination)
     }
     
     @discardableResult
     private func parseQuery(_ query: ChannelQuery) -> ViewChanges {
-        var items = next == .none ? [ChatItem]() : self.items
-        let currentCount = items.count
+        let isNextPage = next != .messagesPageSize
+        var items = isNextPage ? self.items : [ChatItem]()
         
         if let first = items.first, case .loading = first {
-            items.remove(at: 0)
+            items.removeFirst()
         }
         
+        let currentCount = items.count
         var yesterdayStatusAdded = false
         var todayStatusAdded = false
         var index = 0
-        let isNextPage = next != .pageSize
         
         if channel.config.readEventsEnabled, !isNextPage {
             isUnread = query.isUnread
@@ -298,17 +297,16 @@ extension ChannelPresenter {
             }
         }
         
-        if case .limit(let limitValue) = (isNextPage ? Pagination.nextPageSize : Pagination.pageSize),
-            query.messages.count == limitValue,
+        if query.messages.count == (isNextPage ? Pagination.messagesNextPageSize : Pagination.messagesPageSize).limit,
             let first = query.messages.first {
-            next = .nextPageSize + .lessThan(first.id)
+            next = .messagesNextPageSize + .lessThan(first.id)
             items.insert(.loading, at: 0)
         } else {
-            next = .pageSize
-            
-            if isNewMessagesStatusAdded == 0 {
-                items.remove(at: 0)
-            }
+            next = .messagesPageSize
+        }
+        
+        if isNewMessagesStatusAdded == 0 {
+            items.remove(at: 0)
         }
         
         channel = query.channel
@@ -317,7 +315,7 @@ extension ChannelPresenter {
         
         if items.count > 0 {
             if isNextPage {
-                return .reloaded(max(items.count - currentCount, 0), .top)
+                return .reloaded(max(items.count - currentCount - 1, 0), .top)
             }
             
             return .reloaded((items.count - 1), .top)

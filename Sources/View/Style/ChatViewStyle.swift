@@ -20,7 +20,7 @@ public struct ChatViewStyle: Hashable {
                                                                reactionViewStyle: .init(alignment: .right))
     
     public static let dark =
-        ChatViewStyle(channel: ChannelViewStyle(chatBackgroundColor: .chatSuperDarkGray,
+        ChatViewStyle(channel: ChannelViewStyle(backgroundColor: .chatSuperDarkGray,
                                                 titleColor: .white,
                                                 messageUnreadColor: .white),
                       composer: ComposerViewStyle(textColor: .white,
