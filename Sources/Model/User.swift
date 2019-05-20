@@ -35,7 +35,7 @@ public struct User: Codable, Equatable {
         return false
     }
     
-    init(id: String, name: String, avatarURL: URL? = nil) {
+    public init(id: String, name: String, avatarURL: URL? = nil) {
         self.id = id
         self.name = name
         self.avatarURL = avatarURL

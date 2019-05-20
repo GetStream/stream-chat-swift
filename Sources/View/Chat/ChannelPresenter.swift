@@ -70,11 +70,11 @@ public final class ChannelPresenter {
     
     private(set) lazy var isReadUpdates = isReadSubject.asDriver(onErrorJustReturn: ())
     
-    init(channel: Channel, showStatuses: Bool = true) {
+    public init(channel: Channel, showStatuses: Bool = true) {
         self.channel = channel
     }
     
-    init(query: ChannelQuery, showStatuses: Bool = true) {
+    public init(query: ChannelQuery, showStatuses: Bool = true) {
         channel = query.channel
         parseQuery(query)
     }

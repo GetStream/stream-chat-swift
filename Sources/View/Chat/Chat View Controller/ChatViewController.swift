@@ -147,7 +147,7 @@ extension ChatViewController {
     
     private func updateTableView(with changes: ViewChanges) {
         // Check if view is loaded nad visible.
-        guard isVisible else {
+        guard isVisible, let presenter = channelPresenter else {
             return
         }
         
@@ -155,7 +155,8 @@ extension ChatViewController {
         case .none, .itemMoved:
             return
         case let .reloaded(row, position):
-            let needsToScroll = isLoadingCellPresented()
+            let scrollToBottom = row == (presenter.itemsCount - 1)
+            let needsToScroll = scrollToBottom || isLoadingCellPresented()
             tableView.reloadData()
             
             if scrollEnabled, needsToScroll {
