@@ -21,7 +21,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         return reactionsView == nil
     }
     
-    public private(set) lazy var composerView: ComposerView = {
+    private(set) lazy var composerView: ComposerView = {
         let composerView = ComposerView(frame: .zero)
         composerView.style = style.composer
         return composerView
@@ -51,7 +51,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         return container
     }()
     
-    public private(set) lazy var tableView: UITableView = {
+    private(set) lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.keyboardDismissMode = .interactive
         tableView.separatorStyle = .none
@@ -75,7 +75,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         return tableView
     }()
     
-    var channelPresenter: ChannelPresenter? {
+    public var channelPresenter: ChannelPresenter? {
         didSet {
             if let presenter = channelPresenter {
                 Driver.merge(presenter.request, presenter.changes, presenter.ephemeralChanges)
