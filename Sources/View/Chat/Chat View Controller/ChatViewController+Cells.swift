@@ -63,7 +63,9 @@ extension ChatViewController {
         
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
-            cell.avatarView.update(with: message.user.avatarURL, name: message.user.name, baseColor: style.backgroundColor)
+            cell.avatarView.update(with: message.user.avatarURL,
+                                   name: message.user.name,
+                                   baseColor: style.incomingMessage.chatBackgroundColor)
         }
         
         guard !message.isDeleted else {
@@ -131,13 +133,13 @@ extension ChatViewController {
         let cell = tableView.dequeueMessageCell(for: indexPath, style: style.incomingMessage)
         cell.update(info: text)
         cell.update(date: Date())
-        cell.avatarView.update(with: user.avatarURL, name: user.name, baseColor: style.backgroundColor)
+        cell.avatarView.update(with: user.avatarURL, name: user.name, baseColor: style.incomingMessage.chatBackgroundColor)
         return cell
     }
     
     func statusCell(at indexPath: IndexPath, title: String, subtitle: String? = nil, highlighted: Bool) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(for: indexPath, cellType: StatusTableViewCell.self) as StatusTableViewCell
-        cell.backgroundColor = style.backgroundColor
+        cell.backgroundColor = style.incomingMessage.chatBackgroundColor
         cell.update(title: title, subtitle: subtitle, highlighted: highlighted)
         return cell
     }

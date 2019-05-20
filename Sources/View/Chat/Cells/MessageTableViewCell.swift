@@ -167,6 +167,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             make.right.equalToSuperview().offset(-CGFloat.messageTextPadding).priority(999)
         }
         
+        infoLabel.backgroundColor = backgroundColor
+        
         // Reactions.
         contentView.addSubview(reactionsContainer)
         contentView.addSubview(reactionsOverlayView)

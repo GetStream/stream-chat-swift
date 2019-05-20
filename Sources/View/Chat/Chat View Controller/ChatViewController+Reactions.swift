@@ -23,7 +23,7 @@ extension ChatViewController {
         }
         
         let reactionsView = ReactionsView(frame: .zero)
-        reactionsView.backgroundColor = style.backgroundColor.withAlphaComponent(0.4)
+        reactionsView.backgroundColor = style.incomingMessage.chatBackgroundColor.withAlphaComponent(0.4)
         reactionsView.reactionsView.backgroundColor = style.incomingMessage.reactionViewStyle.backgroundColor
         reactionsView.makeEdgesEqualToSuperview(superview: view)
         self.reactionsView = reactionsView

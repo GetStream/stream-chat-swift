@@ -10,21 +10,17 @@ import UIKit
 
 public struct ChatViewStyle: Hashable {
     
-    public var backgroundColor: UIColor = .white
-    public var separatorColor: UIColor = .chatSeparator
-    public var channel = ChannelViewStyle()
-    public var composer = ComposerViewStyle()
-    public var incomingMessage = MessageViewStyle()
+    public private(set) var channel = ChannelViewStyle()
+    public private(set) var composer = ComposerViewStyle()
+    public private(set) var incomingMessage = MessageViewStyle()
     
-    public var outgoingMessage = MessageViewStyle(alignment: .right,
-                                                  backgroundColor: .chatSuperLightGray,
-                                                  borderWidth: 0,
-                                                  reactionViewStyle: .init(alignment: .right))
+    public private(set) var outgoingMessage = MessageViewStyle(alignment: .right,
+                                                               backgroundColor: .chatSuperLightGray,
+                                                               borderWidth: 0,
+                                                               reactionViewStyle: .init(alignment: .right))
     
     public static let dark =
-        ChatViewStyle(backgroundColor: .chatSuperDarkGray,
-                      separatorColor: .chatSeparator,
-                      channel: ChannelViewStyle(chatBackgroundColor: .chatSuperDarkGray,
+        ChatViewStyle(channel: ChannelViewStyle(chatBackgroundColor: .chatSuperDarkGray,
                                                 titleColor: .white,
                                                 messageUnreadColor: .white),
                       composer: ComposerViewStyle(textColor: .white,
@@ -47,8 +43,7 @@ public struct ChatViewStyle: Hashable {
                                                                                  chatBackgroundColor: .chatSuperDarkGray)))
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(backgroundColor)
-        hasher.combine(separatorColor)
+        hasher.combine(channel)
         hasher.combine(composer)
         hasher.combine(incomingMessage)
         hasher.combine(outgoingMessage)

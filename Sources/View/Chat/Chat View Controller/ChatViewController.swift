@@ -29,7 +29,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     
     private(set) lazy var composerCommands: ComposerHelperContainerView = {
         let container = ComposerHelperContainerView()
-        container.backgroundColor = style.backgroundColor.isDark ? .chatDarkGray : .white
+        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
         container.titleLabel.text = "Commands"
         container.add(for: composerView)
         container.isHidden = true
@@ -69,7 +69,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         view.insertSubview(tableView, at: 0)
         
         let footerView = ChatFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: .chatFooterHeight))
-        footerView.backgroundColor = style.backgroundColor
+        footerView.backgroundColor = style.incomingMessage.chatBackgroundColor
         tableView.tableFooterView = footerView
         
         return tableView
@@ -117,7 +117,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     }
     
     public override var preferredStatusBarStyle: UIStatusBarStyle {
-        return style.backgroundColor.isDark ? .lightContent : .default
+        return style.incomingMessage.chatBackgroundColor.isDark ? .lightContent : .default
     }
     
     private func updateTitle() {
@@ -132,7 +132,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         
         channelAvatar.update(with: channelPresenter?.channel.imageURL,
                              name: channelPresenter?.channel.name,
-                             baseColor: style.backgroundColor)
+                             baseColor: style.incomingMessage.chatBackgroundColor)
     }
 }
 
@@ -141,7 +141,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
 extension ChatViewController {
     
     private func setupTableView() {
-        tableView.backgroundColor = style.backgroundColor
+        tableView.backgroundColor = style.incomingMessage.chatBackgroundColor
         tableView.makeEdgesEqualToSuperview()
     }
     
