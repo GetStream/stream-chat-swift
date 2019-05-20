@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "GetStreamChat"
-  spec.version      = "0.1.0"
+  spec.version      = "0.1.1"
   spec.summary      = "Stream iOS Chat"
   
   spec.description  = <<-DESC
@@ -26,7 +26,7 @@ DESC
   spec.dependency "RxGesture", "2.2.0"
   spec.dependency "SnapKit", "5.0.0"
   spec.dependency "Nuke", "7.6.3"
-  spec.dependency "SwiftyGif", "4.5.0"
-  spec.dependency "GzipSwift", "5.1.1"
+  spec.dependency "SwiftyGif", "5.1.1"
+  spec.dependency "GzipSwift", "5.0.0"
   spec.requires_arc = true
 end
