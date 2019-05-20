@@ -1,7 +1,7 @@
 PODS:
-  - Crashlytics (3.13.0):
-    - Fabric (~> 1.10.0)
-  - Fabric (1.10.0)
+  - Crashlytics (3.13.1):
+    - Fabric (~> 1.10.1)
+  - Fabric (1.10.1)
   - GzipSwift (5.0.0)
   - Nuke (7.6.3)
   - ReachabilitySwift (4.3.1)
@@ -62,8 +62,8 @@ SPEC REPOS:
     - SwiftyGif
 
 SPEC CHECKSUMS:
-  Crashlytics: 1f5f752c7feac0add0cc1774756f96444fa3b1a7
-  Fabric: 09de1e053eb7dc415593166ad3e53d4c88123405
+  Crashlytics: 5aa8e90dcbf2f34898b4f5a0037787531246cca0
+  Fabric: f6f21452846788bb44595d73e9909d79d328e617
   GzipSwift: 5592f4d62b641e04d06443ba471f8ed76b1363e4
   Nuke: 44130e95e09463f8773ae4b96b90de1eba6b3350
   ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b

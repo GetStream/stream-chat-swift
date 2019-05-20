@@ -27,6 +27,7 @@
 		8A1A9418225E2FE000060ACC /* AttachmentCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9417225E2FE000060ACC /* AttachmentCollectionViewCell.swift */; };
 		8A1A941A225E321100060ACC /* UICollectionView+Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9419225E321100060ACC /* UICollectionView+Reusable.swift */; };
 		8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A210D7C2264A22E00D51FFC /* MediaGalleryViewController.swift */; };
+		8A2AD509229309FF009E5800 /* GetStreamChat.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 8A2AD508229309FE009E5800 /* GetStreamChat.podspec */; };
 		8A2B60E02278813E00419C8E /* WebSocket+Reconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */; };
 		8A2CC95622842AED004CF12D /* ChatViewController+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2CC95522842AED004CF12D /* ChatViewController+Attachments.swift */; };
 		8A2CC9582284AD77004CF12D /* ChatViewController+MessageActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2CC9572284AD77004CF12D /* ChatViewController+MessageActions.swift */; };
@@ -132,6 +133,7 @@
 		8A1A9417225E2FE000060ACC /* AttachmentCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentCollectionViewCell.swift; sourceTree = "<group>"; };
 		8A1A9419225E321100060ACC /* UICollectionView+Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UICollectionView+Reusable.swift"; sourceTree = "<group>"; };
 		8A210D7C2264A22E00D51FFC /* MediaGalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaGalleryViewController.swift; sourceTree = "<group>"; };
+		8A2AD508229309FE009E5800 /* GetStreamChat.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GetStreamChat.podspec; sourceTree = SOURCE_ROOT; };
 		8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Reconnect.swift"; sourceTree = "<group>"; };
 		8A2CC95522842AED004CF12D /* ChatViewController+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Attachments.swift"; sourceTree = "<group>"; };
 		8A2CC9572284AD77004CF12D /* ChatViewController+MessageActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+MessageActions.swift"; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 				8A046761224E7F1800493D74 /* Assets.xcassets */,
 				8A046763224E7F1800493D74 /* LaunchScreen.storyboard */,
 				8A046766224E7F1800493D74 /* Info.plist */,
+				8A2AD508229309FE009E5800 /* GetStreamChat.podspec */,
 			);
 			path = GetStreamChat;
 			sourceTree = "<group>";
@@ -596,6 +599,7 @@
 			files = (
 				8A046765224E7F1800493D74 /* LaunchScreen.storyboard in Resources */,
 				8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */,
+				8A2AD509229309FF009E5800 /* GetStreamChat.podspec in Resources */,
 				8A046762224E7F1800493D74 /* Assets.xcassets in Resources */,
 				8A046760224E7F1800493D74 /* Main.storyboard in Resources */,
 			);
