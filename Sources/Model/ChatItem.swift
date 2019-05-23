@@ -15,6 +15,14 @@ public enum ChatItem: Equatable {
     case message(Message)
     case error(Error)
     
+    var isLoading: Bool {
+        if case .loading = self {
+            return true
+        }
+        
+        return false
+    }
+    
     public static func == (lhs: ChatItem, rhs: ChatItem) -> Bool {
         switch (lhs, rhs) {
         case (.loading, .loading):

@@ -14,13 +14,6 @@ extension UITableView {
         return contentSize.height - (contentOffset.y + frame.height - contentInset.bottom - contentInset.top)
     }
     
-    func update(_ transaction: () -> Void) {
-        beginUpdates()
-        transaction()
-        endUpdates()
-        layoutIfNeeded()
-    }
-    
     /// Scroll to bottom.
     public func scrollToBottom(animated: Bool = true) {
         let sectionsCount = numberOfSections

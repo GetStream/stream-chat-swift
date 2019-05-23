@@ -12,10 +12,12 @@ public struct MessageViewStyle: Hashable {
     public let alignment: Alignment
     public let chatBackgroundColor: UIColor
     public let font: UIFont
+    public let replyFont: UIFont
     public let nameFont: UIFont
     public let infoFont: UIFont
     public let emojiFont: UIFont
     public let textColor: UIColor
+    public let replyColor: UIColor
     public let infoColor: UIColor
     public let backgroundColor: UIColor
     public let borderColor: UIColor
@@ -32,10 +34,12 @@ public struct MessageViewStyle: Hashable {
     init(alignment: Alignment = .left,
          chatBackgroundColor: UIColor = .white,
          font: UIFont = .chatRegular,
+         replyFont: UIFont = .chatSmallBold,
          nameFont: UIFont = .chatSmallBold,
          infoFont: UIFont = .chatSmall,
          emojiFont: UIFont = .chatEmoji,
          textColor: UIColor = .black,
+         replyColor: UIColor = .chatBlue,
          infoColor: UIColor = .chatGray,
          backgroundColor: UIColor = .white,
          borderColor: UIColor = .chatSuperLightGray,
@@ -45,10 +49,12 @@ public struct MessageViewStyle: Hashable {
         self.alignment = alignment
         self.chatBackgroundColor = chatBackgroundColor
         self.font = font
+        self.replyFont = replyFont
         self.nameFont = nameFont
         self.infoFont = infoFont
         self.emojiFont = emojiFont
         self.textColor = textColor
+        self.replyColor = replyColor
         self.infoColor = infoColor
         self.backgroundColor = backgroundColor
         self.borderColor = borderColor
@@ -111,8 +117,11 @@ public struct MessageViewStyle: Hashable {
         hasher.combine(alignment)
         hasher.combine(chatBackgroundColor)
         hasher.combine(font)
+        hasher.combine(replyFont)
+        hasher.combine(nameFont)
         hasher.combine(infoFont)
         hasher.combine(textColor)
+        hasher.combine(replyColor)
         hasher.combine(infoColor)
         hasher.combine(backgroundColor)
         hasher.combine(borderColor)

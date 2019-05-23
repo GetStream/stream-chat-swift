@@ -24,6 +24,11 @@ extension JSONDecoder {
                 return date
             }
             
+            if string == "1970-01-01T00:00:00Z" {
+                print("⚠️ Invalid iso8601 date: 1970-01-01T00:00:00Z")
+                return Date()
+            }
+            
             throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(string)")
         }
         

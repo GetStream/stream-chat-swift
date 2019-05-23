@@ -14,12 +14,19 @@ public final class ChannelPresenter {
     public typealias Completion = (_ error: Error?) -> Void
     private typealias EphemeralType = (message: Message?, updated: Bool)
     
+    private let emptyMessageCompletion: Client.Completion<MessageResponse> = { _ in }
+    private let emptyEventCompletion: Client.Completion<EventResponse> = { _ in }
+    
     public private(set) var channel: Channel
+    public private(set) var parentMessage: Message?
+    public private(set) var showStatuses = true
+    
     var members: [Member] = []
     private var next = Pagination.messagesPageSize
     private var startedTyping = false
     
-    private var items: [ChatItem] = []
+    private(set) var items = [ChatItem]()
+    var isEmpty: Bool { return items.isEmpty }
     private(set) var lastMessage: Message?
     private(set) var isUnread = false
     private(set) var lastMessageRead: MessageRead?
@@ -27,14 +34,6 @@ public final class ChannelPresenter {
     private let loadPagination = PublishSubject<Pagination>()
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
-    private let showStatuses = true
-    
-    public var itemsCount: Int {
-        return items.count + (hasEphemeralMessage ? 1 : 0)
-    }
-    
-    private let emptyMessageCompletion: Client.Completion<MessageResponse> = { _ in }
-    private let emptyEventCompletion: Client.Completion<EventResponse> = { _ in }
     
     private lazy var ephemeralMessageCompletion: Client.Completion<MessageResponse> = { [weak self] result in
         if let self = self, let response = try? result.get(), response.message.type == .ephemeral {
@@ -42,21 +41,33 @@ public final class ChannelPresenter {
         }
     }
     
-    public var hasEphemeralMessage: Bool {
-        return ephemeralMessage != nil
-    }
+    public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
+    public var ephemeralMessage: Message? { return (try? ephemeralSubject.value())?.message }
     
-    public var ephemeralMessage: Message? {
-        return (try? ephemeralSubject.value())?.message
-    }
+    private lazy var request: Observable<Pagination> = Observable
+        .combineLatest(loadPagination.asObserver(), Client.shared.webSocket.connection.connected({ [weak self] connected in
+            if !connected, let self = self, !self.items.isEmpty {
+                self.next = .messagesPageSize
+                DispatchQueue.main.async { self.loadPagination.onNext(.messagesPageSize) }
+            }
+        }))
+        .map { pagination, _ in pagination }
     
-    private(set) lazy var request: Driver<ViewChanges> =
-        Observable.combineLatest(Client.shared.webSocket.connection, loadPagination.asObserver())
-            .map { [weak self] in self?.parseConnection(connection: $0, pagination: $1) }
-            .unwrap()
-            .flatMapLatest { Client.shared.rx.request(endpoint: ChatEndpoint.query($0), connectionId: $1) }
-            .map { [weak self] in self?.parseQuery($0) ?? .none }
-            .asDriver(onErrorJustReturn: .none)
+    private(set) lazy var channelRequest: Driver<ViewChanges> = request
+        .map { [weak self] in self?.channelEndpoint(pagination: $0) }
+        .unwrap()
+        .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
+        .map { [weak self] in self?.parseQuery($0) ?? .none }
+        .filter { $0 != .none }
+        .asDriver(onErrorJustReturn: .none)
+    
+    private(set) lazy var replyRequest: Driver<ViewChanges> = request
+        .map { [weak self] in self?.replyEndpoint(pagination: $0) }
+        .unwrap()
+        .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
+        .map { [weak self] in self?.parseReply($0) ?? .none }
+        .filter { $0 != .none }
+        .asDriver(onErrorJustReturn: .none)
     
     private(set) lazy var changes: Driver<ViewChanges> = Client.shared.webSocket.response
         .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
@@ -64,52 +75,41 @@ public final class ChannelPresenter {
         .asDriver(onErrorJustReturn: .none)
     
     private(set) lazy var ephemeralChanges: Driver<ViewChanges> = ephemeralSubject
+        .skip(1)
         .map { [weak self] in self?.parseEphemeralChanges($0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
     private(set) lazy var isReadUpdates = isReadSubject.asDriver(onErrorJustReturn: ())
     
-    public init(channel: Channel, showStatuses: Bool = true) {
+    public init(channel: Channel, parentMessage: Message? = nil, showStatuses: Bool = true) {
         self.channel = channel
+        self.parentMessage = parentMessage
+        self.showStatuses = showStatuses
     }
     
     public init(query: ChannelQuery, showStatuses: Bool = true) {
+        self.showStatuses = showStatuses
         channel = query.channel
         parseQuery(query)
-    }
-    
-    public func item(at row: Int) -> ChatItem? {
-        var row = row
-        guard row >= 0 else {
-            return nil
-        }
-        
-        guard row < items.count else {
-            row = items.count - row
-            
-            if row == 0, let message = ephemeralMessage {
-                return .message(message)
-            }
-            
-            return nil
-        }
-        
-        return items[row]
     }
 }
 
 // MARK: - Connection
 
 extension ChannelPresenter {
-    private func parseConnection(connection: WebSocket.Connection, pagination: Pagination) -> (ChannelQuery, String)? {
-        if case .connected(let connectionId, _) = connection, let user = Client.shared.user {
-            return (ChannelQuery(channel: channel, members: [Member(user: user)], pagination: pagination), connectionId)
+    
+    private func channelEndpoint(pagination: Pagination) -> ChatEndpoint? {
+        guard parentMessage == nil, let user = Client.shared.user else {
+            return nil
         }
         
-        if !items.isEmpty {
-            next = .messagesPageSize
-            DispatchQueue.main.async { self.loadPagination.onNext(.messagesPageSize) }
+        return .channel(ChannelQuery(channel: channel, members: [Member(user: user)], pagination: pagination))
+    }
+    
+    private func replyEndpoint(pagination: Pagination) -> ChatEndpoint? {
+        if let parentMessage = parentMessage {
+            return .thread(parentMessage, pagination)
         }
         
         return nil
@@ -119,6 +119,7 @@ extension ChannelPresenter {
 // MARK: - Changes
 
 extension ChannelPresenter {
+    
     @discardableResult
     func parseChanges(response: WebSocket.Response) -> ViewChanges {
         guard response.channelId == channel.id else {
@@ -129,16 +130,28 @@ extension ChannelPresenter {
         
         switch response.event {
         case .typingStart(let user):
+            guard parentMessage == nil else {
+                return .none
+            }
+            
             if channel.config.typingEventsEnabled, !user.isCurrent, (typingUsers.isEmpty || !typingUsers.contains(user)) {
                 typingUsers.append(user)
                 return .footerUpdated(true)
             }
         case .typingStop(let user):
+            guard parentMessage == nil else {
+                return .none
+            }
+            
             if channel.config.typingEventsEnabled, !user.isCurrent, let index = typingUsers.firstIndex(of: user) {
                 typingUsers.remove(at: index)
                 return .footerUpdated(true)
             }
         case .messageNew(let message, let user, _, _):
+            guard shouldMessageEventBeHandled(message) else {
+                return .none
+            }
+            
             var reloadRow: Int? = nil
             
             if let lastItem = items.last, case .message(let lastMessage) = lastItem, lastMessage.user == user {
@@ -169,9 +182,28 @@ extension ChannelPresenter {
                 forceToScroll = user == currentUser
             }
             
-            return .itemAdded(nextRow, reloadRow, forceToScroll)
+            return .itemAdded(nextRow, reloadRow, forceToScroll, items)
+            
+        case .messageUpdated(let message):
+            guard shouldMessageEventBeHandled(message) else {
+                return .none
+            }
+            
+            if let index = items.lastIndex(where: { item -> Bool in
+                if case .message(let itemMessage) = item, itemMessage == message {
+                    return true
+                }
+                return false
+            }) {
+                items[index] = .message(message)
+                return .itemUpdated(index, message, items)
+            }
             
         case .reactionNew(let reaction, let message, _), .reactionDeleted(let reaction, let message, _):
+            guard shouldMessageEventBeHandled(message) else {
+                return .none
+            }
+            
             if let index = items.lastIndex(where: { item -> Bool in
                 if case let .message(existsMessage) = item {
                     return existsMessage.id == message.id
@@ -197,7 +229,7 @@ extension ChannelPresenter {
                 }
                 
                 items[index] = .message(message)
-                return .itemUpdated(index, message)
+                return .itemUpdated(index, message, items)
             }
         default:
             break
@@ -206,16 +238,27 @@ extension ChannelPresenter {
         return .none
     }
     
-    private func parseEphemeralChanges(_ ephemeralType: EphemeralType) -> ViewChanges {
-        if let message = ephemeralType.message {
-            if ephemeralType.updated {
-                return .itemUpdated(items.count, message)
-            }
-            
-            return .itemAdded(items.count, nil, true)
+    private func shouldMessageEventBeHandled(_ message: Message) -> Bool {
+        guard let parentMessage = parentMessage else {
+            return message.parentId == nil
         }
         
-        return .itemRemoved(items.count)
+        return message.parentId == parentMessage.id || message.id == parentMessage.id
+    }
+    
+    private func parseEphemeralChanges(_ ephemeralType: EphemeralType) -> ViewChanges {
+        if let message = ephemeralType.message {
+            var items = self.items
+            items.append(.message(message))
+            
+            if ephemeralType.updated {
+                return .itemUpdated(items.count, message, items)
+            }
+            
+            return .itemAdded(items.count, nil, true, items)
+        }
+        
+        return .itemRemoved(items.count, items)
     }
 }
 
@@ -236,25 +279,71 @@ extension ChannelPresenter {
     @discardableResult
     private func parseQuery(_ query: ChannelQuery) -> ViewChanges {
         let isNextPage = next != .messagesPageSize
-        var items = isNextPage ? self.items : [ChatItem]()
+        var items = isNextPage ? self.items : []
         
-        if let first = items.first, case .loading = first {
+        if let first = items.first, first.isLoading {
             items.removeFirst()
         }
-        
-        let currentCount = items.count
-        var yesterdayStatusAdded = false
-        var todayStatusAdded = false
-        var index = 0
         
         if channel.config.readEventsEnabled, !isNextPage {
             isUnread = query.isUnread
             lastMessageRead = query.lastMessageRead
         }
         
-        var isNewMessagesStatusAdded = -1
+        let currentCount = items.count
+        parse(query.messages, to: &items, isNextPage: isNextPage)
+        self.items = items
+        channel = query.channel
+        members = query.members
         
-        query.messages.forEach { message in
+        if self.items.count > 0 {
+            if isNextPage {
+                return .reloaded(max(items.count - currentCount - 1, 0), .top, items)
+            }
+            
+            return .reloaded((items.count - 1), .top, items)
+        }
+        
+        return .none
+    }
+    
+    private func parseReply(_ messagesResponse: MessagesResponse) -> ViewChanges {
+        guard let parentMessage = parentMessage else {
+            return .none
+        }
+        
+        let isNextPage = next != .messagesPageSize
+        var items = isNextPage ? self.items : []
+        
+        if items.isEmpty {
+            items.append(.message(parentMessage))
+        }
+        
+        if items.count > 1, items[1].isLoading {
+            items.remove(at: 1)
+        }
+        
+        let currentCount = items.count
+        parse(messagesResponse.messages, to: &items, startIndex: 1, isNextPage: isNextPage)
+        self.items = items
+        
+        if isNextPage {
+            return .reloaded(max(items.count - currentCount - 1, 0), .top, items)
+        }
+        
+        return .reloaded((items.count - 1), .top, items)
+    }
+    
+    private func parse(_ messages: [Message],
+                       to items: inout [ChatItem],
+                       startIndex: Int = 0,
+                       isNextPage: Bool) {
+        var isNewMessagesStatusAdded = -1
+        var yesterdayStatusAdded = false
+        var todayStatusAdded = false
+        var index = startIndex
+        
+        messages.forEach { message in
             if showStatuses, !yesterdayStatusAdded, message.created.isYesterday {
                 yesterdayStatusAdded = true
                 items.insert(.status(ChannelPresenter.statusYesterdayTitle,
@@ -297,31 +386,17 @@ extension ChannelPresenter {
             }
         }
         
-        if query.messages.count == (isNextPage ? Pagination.messagesNextPageSize : Pagination.messagesPageSize).limit,
-            let first = query.messages.first {
+        if messages.count == (isNextPage ? Pagination.messagesNextPageSize : Pagination.messagesPageSize).limit,
+            let first = messages.first {
             next = .messagesNextPageSize + .lessThan(first.id)
-            items.insert(.loading, at: 0)
+            items.insert(.loading, at: startIndex)
         } else {
             next = .messagesPageSize
         }
         
-        if isNewMessagesStatusAdded == 0 {
-            items.remove(at: 0)
+        if isNewMessagesStatusAdded == startIndex {
+            items.remove(at: startIndex)
         }
-        
-        channel = query.channel
-        members = query.members
-        self.items = items
-        
-        if items.count > 0 {
-            if isNextPage {
-                return .reloaded(max(items.count - currentCount - 1, 0), .top)
-            }
-            
-            return .reloaded((items.count - 1), .top)
-        }
-        
-        return .none
     }
     
     private func removeDuplicatedStatus(statusTitle: String, items: inout [ChatItem]) {
@@ -377,11 +452,15 @@ extension ChannelPresenter {
             text = String(text.prefix(channel.config.maxMessageLength))
         }
         
-        guard let message = Message(text: text) else {
+        guard let message = Message(text: text, parentId: parentMessage?.id, showReplyInChannel: false) else {
             return
         }
         
-        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), connectionId: "", ephemeralMessageCompletion)
+        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), ephemeralMessageCompletion)
+    }
+    
+    public func delete(message: Message) {
+        Client.shared.request(endpoint: ChatEndpoint.deleteMessage(message),  emptyMessageCompletion)
     }
 }
 
@@ -399,7 +478,7 @@ extension ChannelPresenter {
             endpoint = .deleteReaction(reactionType, message)
         }
         
-        Client.shared.request(endpoint: endpoint, connectionId: "", emptyMessageCompletion)
+        Client.shared.request(endpoint: endpoint, emptyMessageCompletion)
         
         return add
     }
@@ -410,6 +489,10 @@ extension ChannelPresenter {
 extension ChannelPresenter {
     
     public func sendEvent(isTyping: Bool) {
+        guard parentMessage == nil else {
+            return
+        }
+        
         if isTyping {
             if !startedTyping {
                 startedTyping = true
@@ -422,11 +505,11 @@ extension ChannelPresenter {
     }
     
     private func send(eventType: EventType) {
-        Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), connectionId: "", emptyEventCompletion)
+        Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), emptyEventCompletion)
     }
     
     func sendRead() {
-        guard channel.config.readEventsEnabled, isUnread, let connectionId = Client.shared.webSocket.lastConnectionId else {
+        guard channel.config.readEventsEnabled, isUnread else {
             return
         }
         
@@ -445,7 +528,7 @@ extension ChannelPresenter {
             }
         }
         
-        Client.shared.request(endpoint: ChatEndpoint.sendRead(channel), connectionId: connectionId, emptyEventCompletion)
+        Client.shared.request(endpoint: ChatEndpoint.sendRead(channel), emptyEventCompletion)
     }
 }
 
@@ -463,7 +546,7 @@ extension ChannelPresenter {
         }
         
         let messageAction = MessageAction(channel: channel, message: message, action: action)
-        Client.shared.request(endpoint: ChatEndpoint.sendMessageAction(messageAction), connectionId: "", ephemeralMessageCompletion)
+        Client.shared.request(endpoint: ChatEndpoint.sendMessageAction(messageAction), ephemeralMessageCompletion)
     }
 }
 
@@ -472,6 +555,10 @@ extension ChannelPresenter {
 public struct MessageResponse: Decodable {
     let message: Message
     let reaction: Reaction?
+}
+
+public struct MessagesResponse: Decodable {
+    let messages: [Message]
 }
 
 public struct EventResponse: Decodable {

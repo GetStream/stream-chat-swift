@@ -16,23 +16,25 @@ public final class ChannelsPresenter {
     public let showChannelStatuses: Bool
     private let loadPagination = PublishSubject<Pagination>()
     private var next = Pagination.channelsPageSize
-    private var items: [ChatItem] = []
-    
-    var itemsCount: Int {
-        return items.count
-    }
+    private(set) var items: [ChatItem] = []
     
     init(channelType: ChannelType, showChannelStatuses: Bool = true) {
         self.channelType = channelType
         self.showChannelStatuses = showChannelStatuses
     }
     
-    private(set) lazy var request: Driver<ViewChanges> =
-        Observable.combineLatest(Client.shared.webSocket.connection, loadPagination.asObserver())
-            .map { [weak self] in self?.parseConnection(connection: $0, pagination: $1) }
+    private(set) lazy var request: Driver<ViewChanges> = Observable
+        .combineLatest(loadPagination.asObserver(), Client.shared.webSocket.connection.connected({ [weak self] in
+            if !$0, let self = self, !self.items.isEmpty {
+                self.next = .channelsPageSize
+                DispatchQueue.main.async { self.loadPagination.onNext(.channelsPageSize) }
+            }
+        }))
+        .map { [weak self] pagination, _ in self?.channelsEndpoint(pagination: pagination) }
         .unwrap()
-        .flatMapLatest { Client.shared.rx.request(endpoint: ChatEndpoint.channels($0), connectionId: $1) }
+        .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
         .map { [weak self] in self?.parseChannels($0) ?? .none }
+        .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
     private(set) lazy var changes: Driver<ViewChanges> = Client.shared.webSocket.response
@@ -60,11 +62,7 @@ public final class ChannelsPresenter {
         
         self.items = items
         
-        return isNextPage ? .reloaded(row, .bottom) : .reloaded(0, .top)
-    }
-    
-    func item(at row: Int) -> ChatItem? {
-        return row >= 0 && row < items.count ? items[row] : nil
+        return isNextPage ? .reloaded(row, .bottom, items) : .reloaded(0, .top, items)
     }
     
     func loadNext() {
@@ -81,19 +79,14 @@ public final class ChannelsPresenter {
 // MARK: - Connection
 
 extension ChannelsPresenter {
-    private func parseConnection(connection: WebSocket.Connection, pagination: Pagination) -> (ChannelsQuery, String)? {
-        if case .connected(let connectionId, _) = connection, let user = Client.shared.user {
-            let query = ChannelsQuery(filter: .init(type: self.channelType),
+    private func channelsEndpoint(pagination: Pagination) -> ChatEndpoint? {
+        if let user = Client.shared.user {
+            let query = ChannelsQuery(filter: .init(type: channelType),
                                       sort: [.lastMessage(isAscending: false)],
                                       user: user,
                                       pagination: pagination)
             
-            return (query, connectionId)
-        }
-        
-        if !items.isEmpty {
-            next = .channelsPageSize
-            DispatchQueue.main.async { self.loadPagination.onNext(.channelsPageSize) }
+            return ChatEndpoint.channels(query)
         }
         
         return nil
@@ -110,13 +103,13 @@ extension ChannelsPresenter {
                 case .channel(let channelPresenter) = items.remove(at: index) {
                 channelPresenter.parseChanges(response: response)
                 items.insert(.channel(channelPresenter), at: 0)
-                return .itemMoved(fromRow: index, toRow: 0)
+                return .itemMoved(fromRow: index, toRow: 0, items)
             }
         case .messageDeleted(let message):
             if let index = channelPresenterIndex(response: response),
                 case .channel(let channelPresenter) = items[index] {
                 channelPresenter.parseChanges(response: response)
-                return .itemUpdated(index, message)
+                return .itemUpdated(index, message, items)
             }
         default:
             break

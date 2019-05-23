@@ -58,7 +58,7 @@ class MediaGalleryViewController: UIViewController {
         
         if selected > 0, selected < items.count {
             DispatchQueue.main.async {
-                self.collectionView.scrollToItem(at: IndexPath(item: self.selected), at: .centeredHorizontally, animated: false)
+                self.collectionView.scrollToItem(at: .item(self.selected), at: .centeredHorizontally, animated: false)
             }
         }
     }

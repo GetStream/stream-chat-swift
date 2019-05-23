@@ -58,6 +58,12 @@ extension MessageTableViewCell {
         dateLabel.text = date.relative
     }
     
+    public func update(replyCount: Int) {
+        replyCountButton.isHidden = false
+        replyCountButton.setTitle(" \(replyCount) \(replyCount > 1 ? "replies" : "reply")", for: .normal)
+        replyCountButton.setNeedsLayout()
+    }
+    
     public func update(info: String?, date: Date? = nil) {
         guard let info = info else {
             return

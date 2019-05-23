@@ -20,6 +20,8 @@ public struct Message: Codable {
         case command
         case args
         case attachments
+        case parentId = "parent_id"
+        case showReplyInChannel = "show_in_channel"
         case mentionedUsers = "mentioned_users"
         case replyCount = "reply_count"
         case latestReactions = "latest_reactions"
@@ -37,6 +39,8 @@ public struct Message: Codable {
     public let command: String?
     public let args: String?
     public let attachments: [Attachment]
+    public let parentId: String?
+    public let showReplyInChannel: Bool?
     public let mentionedUsers: [User]
     public let replyCount: Int
     public private(set) var latestReactions: [Reaction]
@@ -70,12 +74,14 @@ public struct Message: Codable {
             : (text.isEmpty ? (args ?? "") : text).trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    init?(text: String) {
+    init?(text: String, parentId: String?, showReplyInChannel: Bool) {
         guard let user = Client.shared.user else {
             return nil
         }
         
         id = ""
+        self.parentId = parentId
+        self.showReplyInChannel = showReplyInChannel
         type = .regular
         self.user = user
         created = Date()
@@ -95,6 +101,11 @@ public struct Message: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(text, forKey: .text)
+        
+        if parentId != nil {
+            try container.encode(parentId, forKey: .parentId)
+            try container.encode(showReplyInChannel, forKey: .showReplyInChannel)
+        }
     }
     
     private func checkIfTextAsAttachmentURL(_ text: String) -> Bool {

@@ -15,6 +15,14 @@ extension WebSocket {
         case connected(_ connectionId: String, User)
         case disconnected(Error)
         
+        var isConnected: Bool {
+            if case .connected = self {
+                return true
+            }
+            
+            return false
+        }
+        
         static func == (lhs: Connection, rhs: Connection) -> Bool {
             switch (lhs, rhs) {
             case (.notConnected, .notConnected),

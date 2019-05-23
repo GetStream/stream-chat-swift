@@ -12,9 +12,9 @@ import RxSwift
 extension Client: ReactiveCompatible {}
 
 extension Reactive where Base == Client {
-    func request<T: Decodable>(endpoint: EndpointProtocol, connectionId: String) -> Observable<T> {
+    func request<T: Decodable>(endpoint: EndpointProtocol) -> Observable<T> {
         return .create { observer in
-            let task = self.base.request(endpoint: endpoint, connectionId: connectionId) { (result: Result<T, ClientError>) in
+            let task = self.base.request(endpoint: endpoint) { (result: Result<T, ClientError>) in
                 switch result {
                 case .success(let value):
                     observer.onNext(value)

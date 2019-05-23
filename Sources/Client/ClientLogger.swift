@@ -101,11 +101,15 @@ public final class ClientLogger {
         }
     }
     
-    func timing(_ tag: String = "") {
+    func timing(_ tag: String = "", reset: Bool = false) {
         let overall: CFTimeInterval = round((CACurrentMediaTime() - startTime) * 1000) / 1000
         let time: CFTimeInterval = round((CACurrentMediaTime() - lastTime) * 1000) / 1000
         log("⏱ \(tag) \(overall) +\(time < 0.001 ? 0 : time)")
         lastTime = CACurrentMediaTime()
+        
+        if reset {
+            startTime = lastTime
+        }
     }
     
     func log(_ identifier: String, _ data: Data?) {

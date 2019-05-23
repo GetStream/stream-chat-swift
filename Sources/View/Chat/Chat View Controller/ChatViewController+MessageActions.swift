@@ -23,15 +23,15 @@ extension ChatViewController {
             }))
         }
         
-        alert.addAction(.init(title: "Reply", style: .default, handler: { _ in
+        alert.addAction(.init(title: "Reply", style: .default, handler: { [weak self] _ in
+            self?.showReplies(parentMessage: message)
         }))
         
         if message.canEdit {
             alert.addAction(.init(title: "Edit", style: .default, handler: { _ in }))
         }
         
-        alert.addAction(.init(title: "Copy", style: .default, handler: { _ in
-        }))
+        addCopyAction(to: alert, message: message)
         
         if message.canDelete {
             alert.addAction(.init(title: "Delete", style: .destructive, handler: { [weak self] _ in
@@ -42,6 +42,25 @@ extension ChatViewController {
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
         
         present(alert, animated: true)
+    }
+    
+    private func addCopyAction(to alert: UIAlertController, message: Message) {
+        let copyText: String = message.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        var copyURL: URL? = nil
+        
+        if let first = message.attachments.first, let url = first.url {
+            copyURL = url
+        }
+        
+        if !copyText.isEmpty || copyURL != nil {
+            alert.addAction(.init(title: "Copy", style: .default, handler: { _ in
+                if !copyText.isEmpty {
+                    UIPasteboard.general.string = copyText
+                } else if let url = copyURL {
+                    UIPasteboard.general.url = url
+                }
+            }))
+        }
     }
     
     private func conformDeleting(message: Message) {

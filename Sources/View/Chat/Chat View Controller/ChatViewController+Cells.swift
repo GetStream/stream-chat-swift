@@ -33,11 +33,20 @@ extension ChatViewController {
             if !message.mentionedUsers.isEmpty {
                 cell.update(mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
             }
+            
+            if presenter.parentMessage == nil, presenter.channel.config.repliesEnabled, message.replyCount > 0 {
+                cell.update(replyCount: message.replyCount)
+                
+                cell.replyCountButton.rx.anyGesture(TapControlEvent.default)
+                    .subscribe(onNext: { [weak self] _ in self?.showReplies(parentMessage: message) })
+                    .disposed(by: cell.disposeBag)
+            }
         }
         
         var showAvatar = true
+        let nextRow = indexPath.row + 1
         
-        if let nextItem = presenter.item(at: indexPath.row + 1), case .message(let nextMessage) = nextItem {
+        if nextRow < items.count, case .message(let nextMessage) = items[nextRow] {
             showAvatar = nextMessage.user != message.user
             
             if !showAvatar {
@@ -46,9 +55,11 @@ extension ChatViewController {
         }
         
         var isContinueMessage = false
+        let prevRow = indexPath.row - 1
         
-        if let prevItem = presenter.item(at: indexPath.row - 1),
-            case .message(let prevMessage) = prevItem,
+        if prevRow >= 0,
+            prevRow < items.count,
+            case .message(let prevMessage) = items[prevRow],
             prevMessage.user == message.user,
             !prevMessage.text.messageContainsOnlyEmoji {
             isContinueMessage = true
@@ -58,6 +69,7 @@ extension ChatViewController {
         
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
+            
             cell.avatarView.update(with: message.user.avatarURL,
                                    name: message.user.name,
                                    baseColor: style.incomingMessage.chatBackgroundColor)
@@ -73,9 +85,7 @@ extension ChatViewController {
                                 actionTap: { [weak self] in self?.sendActionForEphemeral(message: $0, button: $1) },
                                 reload: { [weak self] in
                                     if let self = self {
-                                        self.tableView.update {
-                                            self.tableView.reloadRows(at: [indexPath], with: .none)
-                                        }
+                                        self.tableView.reloadRows(at: [indexPath], with: .none)
                                     }
             })
             
@@ -90,7 +100,10 @@ extension ChatViewController {
     }
     
     func willDisplay(cell: UITableViewCell, at indexPath: IndexPath, message: Message) {
-        guard let cell = cell as? MessageTableViewCell, !message.isEphemeral, let presenter = channelPresenter else {
+        guard let cell = cell as? MessageTableViewCell,
+            !message.isEphemeral,
+            !message.isDeleted,
+            let presenter = channelPresenter else {
             return
         }
         
@@ -130,5 +143,19 @@ extension ChatViewController {
         cell.update(date: Date())
         cell.avatarView.update(with: user.avatarURL, name: user.name, baseColor: style.incomingMessage.chatBackgroundColor)
         return cell
+    }
+    
+    func showReplies(parentMessage: Message) {
+        guard let presenter = channelPresenter else {
+            return
+        }
+        
+        let messagePresenter = ChannelPresenter(channel: presenter.channel,
+                                                parentMessage: parentMessage,
+                                                showStatuses: presenter.showStatuses)
+        
+        let chatViewController = ChatViewController(nibName: nil, bundle: nil)
+        chatViewController.channelPresenter = messagePresenter
+        navigationController?.pushViewController(chatViewController, animated: true)
     }
 }

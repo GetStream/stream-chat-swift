@@ -14,7 +14,7 @@ public final class ChannelsViewController: UIViewController {
     
     public var style = ChatViewStyle()
     private let disposeBag = DisposeBag()
-    
+    private(set) var items = [ChatItem]()
     public var channelsPresenter = ChannelsPresenter(channelType: .messaging)
     
     private(set) lazy var tableView: UITableView = {
@@ -55,25 +55,31 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     
     private func updateTableView(with changes: ViewChanges) {
         switch changes {
-        case let .itemMoved(fromRow: row1, toRow: row2):
-            tableView.update {
-                tableView.deleteRows(at: [IndexPath(row: row1)], with: .none)
-                tableView.insertRows(at: [IndexPath(row: row2)], with: .none)
-            }
-        case .itemUpdated(let index, _):
-            tableView.reloadRows(at: [IndexPath(row: index)], with: .none)
-        default:
+        case let .itemMoved(fromRow: row1, toRow: row2, items):
+            self.items = items
+            
+            tableView.performBatchUpdates({
+                tableView.deleteRows(at: [.row(row1)], with: .none)
+                tableView.insertRows(at: [.row(row2)], with: .none)
+            })
+        case let .itemUpdated(index, _, items):
+            self.items = items
+            tableView.reloadRows(at: [.row(index)], with: .none)
+        case .reloaded(_, _, let items), .itemAdded(_, _, _, let items), .itemRemoved(_, let items):
+            self.items = items
             tableView.reloadData()
+        case .none, .footerUpdated:
+            return
         }
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return channelsPresenter.itemsCount
+        return items.count
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard case .channel(let channelPresenter)? = channelsPresenter.item(at: indexPath.row) else {
-            if case .loading? = channelsPresenter.item(at: indexPath.row) {
+        guard indexPath.row < items.count, case .channel(let channelPresenter) = items[indexPath.row] else {
+            if indexPath.row < channelsPresenter.items.count, case .loading = channelsPresenter.items[indexPath.row] {
                 channelsPresenter.loadNext()
                 return tableView.loadingCell(at: indexPath, backgroundColor: style.channel.backgroundColor)
             }
@@ -104,7 +110,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard case .channel(let channelPresenter)? = channelsPresenter.item(at: indexPath.row) else {
+        guard indexPath.row < items.count, case .channel(let channelPresenter) = items[indexPath.row] else {
             return
         }
 
@@ -120,6 +126,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
                 .disposed(by: disposeBag)
         }
         
+        chatViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(chatViewController, animated: true)
     }
 }

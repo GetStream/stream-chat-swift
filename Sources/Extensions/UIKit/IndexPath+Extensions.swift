@@ -10,11 +10,11 @@ import UIKit
 
 extension IndexPath {
     
-    init(row: Int) {
-        self.init(row: row, section: 0)
+    static func row(_ row: Int) -> IndexPath {
+        return IndexPath(row: row, section: 0)
     }
     
-    init(item: Int) {
-        self.init(item: item, section: 0)
+    static func item(_ item: Int) -> IndexPath {
+        return IndexPath(item: item, section: 0)
     }
 }

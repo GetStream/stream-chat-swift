@@ -16,6 +16,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     public var style = ChatViewStyle()
     let disposeBag = DisposeBag()
     var reactionsView: ReactionsView?
+    private(set) var items = [ChatItem]()
     
     var scrollEnabled: Bool {
         return reactionsView == nil
@@ -78,7 +79,9 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     public var channelPresenter: ChannelPresenter? {
         didSet {
             if let presenter = channelPresenter {
-                Driver.merge(presenter.request, presenter.changes, presenter.ephemeralChanges)
+                Driver.merge((presenter.parentMessage == nil ? presenter.channelRequest : presenter.replyRequest),
+                             presenter.changes,
+                             presenter.ephemeralChanges)
                     .do(onNext: { [weak presenter] _ in presenter?.sendRead() })
                     .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
                     .disposed(by: disposeBag)
@@ -96,9 +99,10 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
             return
         }
         
-        if presenter.itemsCount == 0 {
+        if presenter.isEmpty {
             channelPresenter?.load()
         } else {
+            items = presenter.items
             tableView.reloadData()
             tableView.scrollToBottom(animated: false)
             DispatchQueue.main.async { self.tableView.scrollToBottom(animated: false) }
@@ -146,73 +150,76 @@ extension ChatViewController {
     }
     
     private func updateTableView(with changes: ViewChanges) {
-        // Check if view is loaded nad visible.
-        guard isVisible, let presenter = channelPresenter else {
+        guard isViewLoaded else {
             return
         }
         
         switch changes {
         case .none, .itemMoved:
             return
-        case let .reloaded(row, position):
-            let scrollToBottom = row == (presenter.itemsCount - 1)
-            let needsToScroll = scrollToBottom || isLoadingCellPresented()
+        case let .reloaded(row, position, items):
+            self.items = items
+            let isLastRow = row == (items.count - 1)
+            let needsToScroll = isLastRow || isLoadingCellPresented()
             tableView.reloadData()
             
             if scrollEnabled, needsToScroll {
-                tableView.scrollToRow(at: IndexPath(row: row), at: position, animated: false)
+                tableView.scrollToRow(at: .row(row), at: position, animated: false)
             }
-        case let .itemAdded(row, reloadRow, forceToScroll):
-            let indexPath = IndexPath(row: row)
+        case let .itemAdded(row, reloadRow, forceToScroll, items):
+            self.items = items
+            let indexPath = IndexPath.row(row)
             let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
             
-            tableView.update {
+            tableView.performBatchUpdates({
                 tableView.insertRows(at: [indexPath], with: .none)
                 
                 if let reloadRow = reloadRow {
-                    tableView.reloadRows(at: [IndexPath(row: reloadRow)], with: .none)
+                    tableView.reloadRows(at: [.row(reloadRow)], with: .none)
                 }
-            }
-            
-            if scrollEnabled, (forceToScroll || needsToScroll) {
-                tableView.scrollToRow(at: indexPath, at: .top, animated: true)
-            }
-        case let .itemUpdated(row, message):
-            tableView.update {
-                tableView.reloadRows(at: [IndexPath(row: row)], with: .none)
-            }
+            }, completion: { finished in
+                if self.scrollEnabled, (forceToScroll || needsToScroll) {
+                    self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+                }
+            })
+        case let .itemUpdated(row, message, items):
+            self.items = items
+            tableView.reloadRows(at: [.row(row)], with: .none)
             
             if let reactionsView = reactionsView {
                 reactionsView.update(with: message)
             }
-        case .itemRemoved(let row):
-            tableView.update {
-                tableView.deleteRows(at: [IndexPath(row: row)], with: .none)
-            }
+        case let .itemRemoved(row, items):
+            self.items = items
+            tableView.deleteRows(at: [.row(row)], with: .none)
         case let .footerUpdated(isUsersTyping):
             updateFooterView(isUsersTyping)
         }
     }
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return channelPresenter?.itemsCount ?? 0
+        return items.count
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard indexPath.row < items.count else {
+            return .unused
+        }
+        
         let backgroundColor = style.incomingMessage.chatBackgroundColor
         
-        switch channelPresenter?.item(at: indexPath.row) {
-        case .loading?:
+        switch items[indexPath.row] {
+        case .loading:
             channelPresenter?.loadNext()
             return tableView.loadingCell(at: indexPath, backgroundColor: backgroundColor)
             
-        case let .status(title, subtitle, highlighted)?:
+        case let .status(title, subtitle, highlighted):
             return tableView.statusCell(at: indexPath,
                                         title: title,
                                         subtitle: subtitle,
                                         backgroundColor: backgroundColor,
                                         highlighted: highlighted)
-        case .message(let message)?:
+        case .message(let message):
             return messageCell(at: indexPath, message: message)
         default:
             return .unused
@@ -220,7 +227,13 @@ extension ChatViewController {
     }
     
     public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let item = channelPresenter?.item(at: indexPath.row), case .message(let message) = item {
+        guard indexPath.row < items.count else {
+            return
+        }
+        
+        let item = items[indexPath.row]
+        
+        if case .message(let message) = item {
             willDisplay(cell: cell, at: indexPath, message: message)
         }
     }

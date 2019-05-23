@@ -24,9 +24,14 @@ extension Client {
     }
     
     @discardableResult
-    func request<T: Decodable>(endpoint: EndpointProtocol,
-                               connectionId: String,
-                               _ completion: @escaping Completion<T>) -> URLSessionDataTask {
+    func request<T: Decodable>(endpoint: EndpointProtocol, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
+        logger?.timing("Prepare for request", reset: true)
+        
+        guard let connectionId = webSocket.lastConnectionId else {
+            completion(.failure(.emptyConnectionId))
+            return URLSessionDataTask()
+        }
+        
         guard let user = user else {
             completion(.failure(.emptyUser))
             return URLSessionDataTask()
@@ -46,6 +51,25 @@ extension Client {
                 if let data = try? JSONEncoder.stream.encode(AnyEncodable(value)),
                     let json = String(data: data, encoding: .utf8) {
                     queryItems.append(URLQueryItem(name: key, value: json))
+                }
+            }
+        }
+        
+        if let endpointQueryItem = endpoint.queryItem {
+            if let data = try? JSONEncoder.stream.encode(AnyEncodable(endpointQueryItem)),
+                let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                json.forEach { key, value in
+                    if let stringValue = value as? String {
+                        queryItems.append(URLQueryItem(name: key, value: stringValue))
+                    } else if let intValue = value as? Int {
+                        queryItems.append(URLQueryItem(name: key, value: String(intValue)))
+                    } else if let floatValue = value as? Float {
+                        queryItems.append(URLQueryItem(name: key, value: String(floatValue)))
+                    } else if let doubleValue = value as? Double {
+                        queryItems.append(URLQueryItem(name: key, value: String(doubleValue)))
+                    } else if let value = value as? CustomStringConvertible {
+                        queryItems.append(URLQueryItem(name: key, value: value.description))
+                    }
                 }
             }
         }

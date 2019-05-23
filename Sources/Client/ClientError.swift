@@ -12,6 +12,7 @@ public enum ClientError: Error {
     case emptyToken
     case emptyUser
     case emptyClientId
+    case emptyConnectionId
     case invalidURL(_ string: String?)
     case requestFailed(_ error: Error?)
     case emptyBody

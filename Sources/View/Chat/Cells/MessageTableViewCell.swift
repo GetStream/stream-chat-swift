@@ -65,8 +65,19 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
+    let replyCountButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage.Icons.path, for: .normal)
+        button.isHidden = true
+        return button
+    }()
+    
     private(set) lazy var messageStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [messageContainerView, infoLabel, nameAndDateStackView, bottomPaddingView])
+        let stackView = UIStackView(arrangedSubviews: [messageContainerView,
+                                                       infoLabel,
+                                                       replyCountButton,
+                                                       nameAndDateStackView,
+                                                       bottomPaddingView])
         stackView.axis = .vertical
         stackView.spacing = .messageSpacing
         return stackView
@@ -123,6 +134,13 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         dateLabel.textColor = style.infoColor
         dateLabel.backgroundColor = backgroundColor
         bottomPaddingView.backgroundColor = backgroundColor
+        
+        replyCountButton.titleLabel?.font = style.replyFont
+        replyCountButton.setTitleColor(style.replyColor, for: .normal)
+        
+        replyCountButton.tintColor = style.borderWidth > 0
+            ? style.borderColor
+            : (style.backgroundColor == style.chatBackgroundColor ? .chatGray : style.backgroundColor)
         
         if style.alignment == .left {
             nameLabel.font = style.nameFont
@@ -240,10 +258,10 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         avatarView.isHidden = true
         avatarView.backgroundColor = backgroundColor
         
+        replyCountButton.isHidden = true
         nameAndDateStackView.isHidden = true
         nameLabel.text = nil
         dateLabel.text = nil
-        
         infoLabel.isHidden = true
         infoLabel.text = nil
         

@@ -48,25 +48,11 @@ final class WebSocket {
             .share(replay: 1)
     }()
     
-    private(set) lazy var response: Observable<WebSocket.Response> =
-        Observable.combineLatest(connection.connected(), webSocket.rx.response)
-            .filter { connection, event -> Bool in
-                if case .connected = connection, case .message = event {
-                    return true
-                }
-                
-                return false
-            }
-            .map { [weak self] _, event in self?.parseMessage(event) }
-            .unwrap()
-            .filter { response -> Bool in
-                if case .healthCheck = response.event {
-                    return false
-                }
-                
-                return true
-            }
-            .share(replay: 1)
+    private(set) lazy var response: Observable<WebSocket.Response> = Observable
+        .combineLatest(webSocket.rx.response, connection.connected())
+        .map { [weak self] event, _ in self?.parseMessage(event) }
+        .unwrap()
+        .share(replay: 1)
     
     init(_ urlRequest: URLRequest, logger: ClientLogger? = nil) {
         self.logger = logger
@@ -220,24 +206,12 @@ extension WebSocket {
 // MARK: - Rx
 
 extension ObservableType where E == WebSocket.Connection {
+    typealias DoConnected = (_ connected: Bool) -> Void
     
-    func connected() -> Observable<E> {
+    func connected(_ doConnected: DoConnected? = nil) -> Observable<E> {
         return filter {
-            if case .connected = $0 {
-                return true
-            }
-            
-            return false
+            doConnected?($0.isConnected)
+            return $0.isConnected
         }
-    }
-    
-    func connectionId() -> Observable<String> {
-        return map {
-            if case .connected(let connectionId, _) = $0 {
-                return connectionId
-            }
-            
-            return nil
-        }.unwrap()
     }
 }

@@ -10,47 +10,60 @@ import Foundation
 
 enum ChatEndpoint: EndpointProtocol {
     case channels(ChannelsQuery)
-    case query(ChannelQuery)
+    case channel(ChannelQuery)
+    case thread(Message, Pagination)
     case sendMessage(Message, Channel)
     case sendMessageAction(MessageAction)
+    case deleteMessage(Message)
+    case sendRead(Channel)
     case addReaction(_ reactionType: String, Message)
     case deleteReaction(_ reactionType: String, Message)
     case sendEvent(EventType, Channel)
-    case sendRead(Channel)
 }
 
 extension ChatEndpoint {
     var method: Client.Method {
-        if case .channels = self {
+        switch self {
+        case .channels, .thread:
             return .get
-        }
-        
-        if case .deleteReaction = self {
+        case .deleteMessage, .deleteReaction:
             return .delete
+        default:
+            return .post
         }
-        
-        return .post
     }
     
     var path: String {
         switch self {
         case .channels:
             return "channels"
-        case .query(let query):
+        case .channel(let query):
             return path(with: query.channel).appending("query")
+        case .thread(let message, _):
+            return path(with: message).appending("replies")
         case .sendMessage(_, let channel):
             return path(with: channel).appending("message")
         case .sendMessageAction(let messageAction):
             return path(with: messageAction.message).appending("action")
+        case .deleteMessage(let message):
+            return path(with: message)
+        case .sendRead(let channel):
+            return path(with: channel).appending("read")
         case .addReaction(_, let message):
             return path(with: message).appending("reaction")
         case .deleteReaction(let reactionType, let message):
             return path(with: message).appending("reaction/\(reactionType)")
         case .sendEvent(_, let channel):
             return path(with: channel).appending("event")
-        case .sendRead(let channel):
-            return path(with: channel).appending("read")
         }
+    }
+    
+    var queryItem: Encodable? {
+        if case .thread(_, let pagination) = self {
+            return pagination
+        }
+        
+        return nil
     }
     
     var queryItems: [String: Encodable]? {
@@ -63,9 +76,12 @@ extension ChatEndpoint {
     
     var body: Encodable? {
         switch self {
-        case .channels:
+        case .channels,
+             .thread,
+             .deleteMessage,
+             .deleteReaction:
             return nil
-        case .query(let query):
+        case .channel(let query):
             return query
         case .sendMessage(let message, _):
             return ["message": message]
@@ -73,8 +89,6 @@ extension ChatEndpoint {
             return messageAction
         case .addReaction(let reactionType, _):
             return ["reaction": ["type": reactionType]]
-        case .deleteReaction:
-            return nil
         case .sendEvent(let event, _):
             return ["event": ["type": event]]
         case .sendRead:
