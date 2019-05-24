@@ -28,7 +28,9 @@ extension ChatViewController {
         }))
         
         if message.canEdit {
-            alert.addAction(.init(title: "Edit", style: .default, handler: { _ in }))
+            alert.addAction(.init(title: "Edit", style: .default, handler: { [weak self] _ in
+                self?.edit(message: message)
+            }))
         }
         
         addCopyAction(to: alert, message: message)
@@ -42,6 +44,22 @@ extension ChatViewController {
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
         
         present(alert, animated: true)
+    }
+    
+    private func edit(message: Message) {
+        if message.text.isEmpty {
+            if let command = message.command, let args = message.args {
+                composerView.text = "/\(command) \(args)"
+            } else {
+                return
+            }
+        } else {
+            composerView.text = message.text
+        }
+        
+        channelPresenter?.editMessage = message
+        composerView.textView.becomeFirstResponder()
+        editComposer.animate(show: true)
     }
     
     private func addCopyAction(to alert: UIAlertController, message: Message) {

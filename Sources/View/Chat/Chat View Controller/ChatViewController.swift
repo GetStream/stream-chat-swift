@@ -52,6 +52,30 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         return container
     }()
     
+    private(set) lazy var editComposer: ComposerHelperContainerView = {
+        let container = ComposerHelperContainerView()
+        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
+        container.titleLabel.text = "Edit message"
+        container.add(for: composerView)
+        container.isHidden = true
+        
+        container.closeButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                if let self = self {
+                    self.channelPresenter?.editMessage = nil
+                    self.composerView.textView.text = ""
+                    self.editComposer.animate(show: false)
+                    
+                    if self.composerView.textView.isFirstResponder {
+                        self.composerView.textView.resignFirstResponder()
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        return container
+    }()
+    
     private(set) lazy var tableView: TableView = {
         let tableView = TableView(frame: .zero, style: .plain)
         tableView.keyboardDismissMode = .interactive

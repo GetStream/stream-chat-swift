@@ -90,12 +90,18 @@ extension ChatViewController {
     
     private func send() {
         let text = composerView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let isMessageEditing = channelPresenter?.editMessage != nil
         
-        if command(in: text) != nil {
+        if command(in: text) != nil || isMessageEditing {
             view.endEditing(true)
         }
         
         composerView.reset()
+        
+        if isMessageEditing {
+            editComposer.animate(show: false)
+        }
+        
         channelPresenter?.send(text: text)
     }
     

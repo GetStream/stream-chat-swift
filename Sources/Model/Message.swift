@@ -74,12 +74,12 @@ public struct Message: Codable {
             : (text.isEmpty ? (args ?? "") : text).trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    init?(text: String, parentId: String?, showReplyInChannel: Bool) {
+    init?(id: String = "", text: String, parentId: String?, showReplyInChannel: Bool) {
         guard let user = Client.shared.user else {
             return nil
         }
         
-        id = ""
+        self.id = id
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel
         type = .regular

@@ -19,6 +19,7 @@ public final class ChannelPresenter {
     
     public private(set) var channel: Channel
     public private(set) var parentMessage: Message?
+    public var editMessage: Message?
     public private(set) var showStatuses = true
     
     var members: [Member] = []
@@ -504,10 +505,14 @@ extension ChannelPresenter {
             text = String(text.prefix(channel.config.maxMessageLength))
         }
         
-        guard let message = Message(text: text, parentId: parentMessage?.id, showReplyInChannel: false) else {
+        guard let message = Message(id: editMessage?.id ?? "",
+                                    text: text,
+                                    parentId: parentMessage?.id,
+                                    showReplyInChannel: false) else {
             return
         }
         
+        editMessage = nil
         Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), ephemeralMessageCompletion)
     }
     

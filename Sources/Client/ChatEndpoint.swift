@@ -41,8 +41,14 @@ extension ChatEndpoint {
             return path(with: query.channel).appending("query")
         case .thread(let message, _):
             return path(with: message).appending("replies")
-        case .sendMessage(_, let channel):
-            return path(with: channel).appending("message")
+            
+        case let .sendMessage(message, channel):
+            if message.id.isEmpty {
+                return path(with: channel).appending("message")
+            }
+            
+            return path(with: message, withSlash: false)
+            
         case .sendMessageAction(let messageAction):
             return path(with: messageAction.message).appending("action")
         case .deleteMessage(let message):
