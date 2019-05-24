@@ -59,11 +59,16 @@ extension MessageTableViewCell {
             if attachment.type == .file {
                 preview.update(maskImage: backgroundImageForAttachment(at: index)) { _, _ in }
                 addGetures((preview as UIView), nil)
-            } else if !message.isEphemeral, let preview = preview as? AttachmentPreview {
-                preview.update(maskImage: maskImageForAttachment(at: index), addGetures)
                 
-                if attachment.type == .giphy {
-                    preview.showLogo(image: UIImage.Logo.giphy)
+            } else if !message.isEphemeral, let preview = preview as? AttachmentPreview {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self, weak preview] in
+                    if let self = self, let preview = preview {
+                        preview.update(maskImage: self.maskImageForAttachment(at: index), addGetures)
+                        
+                        if attachment.type == .giphy {
+                            preview.showLogo(image: UIImage.Logo.giphy)
+                        }
+                    }
                 }
             } else if let preview = preview as? AttachmentPreview {
                 preview.update(maskImage: nil, addGetures)

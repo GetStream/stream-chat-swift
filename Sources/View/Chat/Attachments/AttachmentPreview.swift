@@ -263,7 +263,9 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             }
             
             if !cached, let animatedImageData = image.animatedImageData {
-                setGifImage(with: animatedImageData)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                    self?.setGifImage(with: animatedImageData)
+                }
             }
         } else {
             if let error = error, let url = imageResponse?.urlResponse?.url {

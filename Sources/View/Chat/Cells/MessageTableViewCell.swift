@@ -136,7 +136,9 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         bottomPaddingView.backgroundColor = backgroundColor
         
         replyCountButton.titleLabel?.font = style.replyFont
+        replyCountButton.titleLabel?.backgroundColor = backgroundColor
         replyCountButton.setTitleColor(style.replyColor, for: .normal)
+        replyCountButton.backgroundColor = backgroundColor
         
         replyCountButton.tintColor = style.borderWidth > 0
             ? style.borderColor

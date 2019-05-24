@@ -494,7 +494,7 @@ extension ChannelPresenter {
     }
 }
 
-// MARK: - Send Message
+// MARK: - Send/Delete Message
 
 extension ChannelPresenter {
     public func send(text: String) {
