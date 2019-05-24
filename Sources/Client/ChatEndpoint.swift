@@ -46,7 +46,7 @@ extension ChatEndpoint {
         case .sendMessageAction(let messageAction):
             return path(with: messageAction.message).appending("action")
         case .deleteMessage(let message):
-            return path(with: message)
+            return path(with: message, withSlash: false)
         case .sendRead(let channel):
             return path(with: channel).appending("read")
         case .addReaction(_, let message):
@@ -100,8 +100,8 @@ extension ChatEndpoint {
         return "channels/\(channel.type.rawValue)/\(channel.id)/"
     }
     
-    private func path(with message: Message) -> String {
-        return "messages/\(message.id)/"
+    private func path(with message: Message, withSlash: Bool = true) -> String {
+        return "messages/\(message.id)\(withSlash ? "/" : "")"
     }
 }
 

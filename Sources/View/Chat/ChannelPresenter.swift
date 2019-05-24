@@ -59,6 +59,7 @@ public final class ChannelPresenter {
         .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
         .map { [weak self] in self?.parseQuery($0) ?? .none }
         .filter { $0 != .none }
+        .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .asDriver(onErrorJustReturn: .none)
     
     private(set) lazy var replyRequest: Driver<ViewChanges> = request
@@ -72,6 +73,7 @@ public final class ChannelPresenter {
     private(set) lazy var changes: Driver<ViewChanges> = Client.shared.webSocket.response
         .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
         .filter { $0 != .none }
+        .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .asDriver(onErrorJustReturn: .none)
     
     private(set) lazy var ephemeralChanges: Driver<ViewChanges> = ephemeralSubject
@@ -182,13 +184,14 @@ extension ChannelPresenter {
             
             return .itemAdded(nextRow, reloadRow, forceToScroll, items)
             
-        case .messageUpdated(let message):
+        case .messageUpdated(let message),
+             .messageDeleted(let message):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
             
             if let index = items.lastIndex(where: { item -> Bool in
-                if case .message(let itemMessage) = item, itemMessage == message {
+                if case .message(let itemMessage) = item, itemMessage.id == message.id {
                     return true
                 }
                 return false
@@ -261,16 +264,53 @@ extension ChannelPresenter {
     private func parseEphemeralChanges(_ ephemeralType: EphemeralType) -> ViewChanges {
         if let message = ephemeralType.message {
             var items = self.items
+            let row = items.count
             items.append(.message(message))
             
             if ephemeralType.updated {
-                return .itemUpdated(items.count, message, items)
+                return .itemUpdated(row, message, items)
             }
             
-            return .itemAdded(items.count, nil, true, items)
+            return .itemAdded(row, nil, true, items)
         }
         
         return .itemRemoved(items.count, items)
+    }
+    
+    private func mapWithEphemeralMessage(_ changes: ViewChanges) -> ViewChanges {
+        guard let ephemeralType = try? ephemeralSubject.value(), let ephemeralMessage = ephemeralType.message else {
+            return changes
+        }
+        
+        switch changes {
+        case .none, .footerUpdated:
+            return changes
+            
+        case let .reloaded(row, items):
+            var items = items
+            items.append(.message(ephemeralMessage))
+            return .reloaded(row, items)
+            
+        case let .itemAdded(row, reloadRow, forceToScroll, items):
+            var items = items
+            items.append(.message(ephemeralMessage))
+            return .itemAdded(row, reloadRow, forceToScroll, items)
+            
+        case let .itemUpdated(row, message, items):
+            var items = items
+            items.append(.message(ephemeralMessage))
+            return .itemUpdated(row, message, items)
+            
+        case let .itemRemoved(row, items):
+            var items = items
+            items.append(.message(ephemeralMessage))
+            return .itemRemoved(row, items)
+            
+        case let .itemMoved(fromRow, toRow, items):
+            var items = items
+            items.append(.message(ephemeralMessage))
+            return .itemMoved(fromRow: fromRow, toRow: toRow, items)
+        }
     }
 }
 
@@ -472,7 +512,7 @@ extension ChannelPresenter {
     }
     
     public func delete(message: Message) {
-        Client.shared.request(endpoint: ChatEndpoint.deleteMessage(message),  emptyMessageCompletion)
+        Client.shared.request(endpoint: ChatEndpoint.deleteMessage(message), emptyMessageCompletion)
     }
 }
 

@@ -76,11 +76,11 @@ extension ChatViewController {
         
         let alert = UIAlertController(title: "Delete message?", message: text, preferredStyle: .alert)
         
-        alert.addAction(.init(title: "Delete", style: .destructive, handler: { _ in
+        alert.addAction(.init(title: "Delete", style: .destructive, handler: { [weak self] _ in
+            self?.channelPresenter?.delete(message: message)
         }))
         
-        alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in
-        }))
+        alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
         
         present(alert, animated: true)
     }
