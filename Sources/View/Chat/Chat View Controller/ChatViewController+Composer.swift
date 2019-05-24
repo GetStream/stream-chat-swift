@@ -39,9 +39,15 @@ extension ChatViewController {
                     return
                 }
                 
+                if height > 0 {
+                    tableView.saveContentInsetState()
+                } else {
+                    tableView.resetContentInsetState()
+                }
+                
                 let bottom = height
                     + .messagesToComposerPadding
-                    - (height > 0 ? tableView.adjustedContentInset.bottom - .messagesToComposerPadding : 0)
+                    - (height > 0 ? tableView.oldAdjustedContentInset.bottom : 0)
                 
                 tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top,
                                                       left: tableView.contentInset.left,
@@ -51,11 +57,10 @@ extension ChatViewController {
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.willShowVisibleHeight
-            .skip(1)
             .drive(onNext: { [weak self] height in
                 if let self = self {
                     var contentOffset = self.tableView.contentOffset
-                    contentOffset.y += height - self.view.safeAreaBottomOffset
+                    contentOffset.y += height - self.view.safeAreaBottomOffset - (height > 0 ? .messagesToComposerPadding : 0)
                     self.tableView.contentOffset = contentOffset
                     
                 }

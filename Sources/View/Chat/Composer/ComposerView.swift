@@ -201,6 +201,10 @@ public final class ComposerView: UIView {
         self.placeholderText = placeholderText
         filePickerButton.tintColor = style.tintColor
         
+        let toolBar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
+        toolBar.isHidden = true
+        textView.inputAccessoryView = toolBar
+        
         // Observe the keyboard moving.
         RxKeyboard.instance.visibleHeight
             .drive(onNext: { [weak self] height in
@@ -208,7 +212,10 @@ public final class ComposerView: UIView {
                     return
                 }
                 
-                let bottom: CGFloat = height + .messageEdgePadding - (height > 0 ? parentView.safeAreaBottomOffset : 0)
+                let bottom: CGFloat = height
+                    + .messageEdgePadding
+                    - (height > 0 ? parentView.safeAreaBottomOffset + .messagesToComposerPadding : 0)
+                
                 self.bottomConstraint?.update(offset: -bottom)
                 self.updateStyle(with: height != 0 ? .active : .normal)
             })
