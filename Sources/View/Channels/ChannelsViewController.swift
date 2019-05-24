@@ -65,7 +65,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         case let .itemUpdated(index, _, items):
             self.items = items
             tableView.reloadRows(at: [.row(index)], with: .none)
-        case .reloaded(_, _, let items), .itemAdded(_, _, _, let items), .itemRemoved(_, let items):
+        case .reloaded(_, let items), .itemAdded(_, _, _, let items), .itemRemoved(_, let items):
             self.items = items
             tableView.reloadData()
         case .none, .footerUpdated:

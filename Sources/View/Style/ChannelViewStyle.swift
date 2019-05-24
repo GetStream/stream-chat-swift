@@ -22,7 +22,7 @@ public struct ChannelViewStyle: Hashable {
     public let dateFont: UIFont
     public let dateColor: UIColor
     
-    init(backgroundColor: UIColor = .chatSuperLightGray,
+    init(backgroundColor: UIColor = .white,
          separatorColor: UIColor = .chatSeparator,
          titleFont: UIFont = .chatXRegularMedium,
          titleColor: UIColor = .black,

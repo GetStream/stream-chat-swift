@@ -14,6 +14,7 @@
 		8A046765224E7F1800493D74 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A046763224E7F1800493D74 /* LaunchScreen.storyboard */; };
 		8A0755E8228DB04500A3E4AB /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0755E7228DB04500A3E4AB /* MessageRead.swift */; };
 		8A0755EA228DB5C500A3E4AB /* ViewChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */; };
+		8A0E345222980933008D825E /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0E345122980933008D825E /* TableView.swift */; };
 		8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */; };
 		8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9401225A436800060ACC /* CGRect+Extensions.swift */; };
 		8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */; };
@@ -120,6 +121,7 @@
 		8A046766224E7F1800493D74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A0755E7228DB04500A3E4AB /* MessageRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRead.swift; sourceTree = "<group>"; };
 		8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewChanges.swift; sourceTree = "<group>"; };
+		8A0E345122980933008D825E /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 		8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEdgeInsets.swift; sourceTree = "<group>"; };
 		8A1A9401225A436800060ACC /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
 		8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewStyle.swift; sourceTree = "<group>"; };
@@ -463,6 +465,7 @@
 				8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */,
 				8A4080422281BDCA00F274FF /* UIStackView+Extensions.swift */,
 				8AB8FA77227B194C00C14D94 /* DismissSegue.swift */,
+				8A0E345122980933008D825E /* TableView.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -739,6 +742,7 @@
 				8ABC552522779C81008F312B /* UIStackView.swift in Sources */,
 				8A88917522550B2800DD6539 /* MessageTableViewCell.swift in Sources */,
 				8A2CC9582284AD77004CF12D /* ChatViewController+MessageActions.swift in Sources */,
+				8A0E345222980933008D825E /* TableView.swift in Sources */,
 				8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */,
 				8A2CC95622842AED004CF12D /* ChatViewController+Attachments.swift in Sources */,
 				8A0755EA228DB5C500A3E4AB /* ViewChanges.swift in Sources */,

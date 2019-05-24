@@ -153,23 +153,21 @@ extension ChannelPresenter {
             }
             
             var reloadRow: Int? = nil
+            let last = findLastMessage()
             
-            if let lastItem = items.last, case .message(let lastMessage) = lastItem, lastMessage.user == user {
-                if lastMessage == message {
-                    if items.count > 1 {
-                        let lastLastItem = items[items.count - 2]
-                        
-                        if case .message(let lastLastMessage) = lastLastItem, lastLastMessage.user == user {
-                            reloadRow = nextRow - 2
-                        }
+            if let last = last, last.message.user == user {
+                // Double parsing issue: avoid doublications.
+                if last.message == message {
+                    if items.count > 1, let prev = findLastMessage(before: last.index), prev.message.user == user {
+                        reloadRow = prev.index
                     }
                 } else {
-                    reloadRow = nextRow - 1
+                    reloadRow = last.index
                 }
             }
             
-            if let lastItem = items.last, case .message(let lastMessage) = lastItem, lastMessage == message {
-                nextRow = items.count - 1
+            if let last = last, last.message == message {
+                nextRow = last.index
             } else {
                 isUnread = channel.config.readEventsEnabled
                 lastMessage = message
@@ -246,6 +244,20 @@ extension ChannelPresenter {
         return message.parentId == parentMessage.id || message.id == parentMessage.id
     }
     
+    private func findLastMessage(before beforeIndex: Int = .max) -> (index: Int, message: Message)? {
+        guard !items.isEmpty else {
+            return nil
+        }
+        
+        for (index, item) in items.enumerated().reversed() where index < beforeIndex  {
+            if case .message(let message) = item {
+                return (index, message)
+            }
+        }
+        
+        return nil
+    }
+    
     private func parseEphemeralChanges(_ ephemeralType: EphemeralType) -> ViewChanges {
         if let message = ephemeralType.message {
             var items = self.items
@@ -298,10 +310,10 @@ extension ChannelPresenter {
         
         if self.items.count > 0 {
             if isNextPage {
-                return .reloaded(max(items.count - currentCount - 1, 0), .top, items)
+                return .reloaded(max(items.count - currentCount - 1, 0), items)
             }
             
-            return .reloaded((items.count - 1), .top, items)
+            return .reloaded((items.count - 1), items)
         }
         
         return .none
@@ -328,10 +340,10 @@ extension ChannelPresenter {
         self.items = items
         
         if isNextPage {
-            return .reloaded(max(items.count - currentCount - 1, 0), .top, items)
+            return .reloaded(max(items.count - currentCount - 1, 0), items)
         }
         
-        return .reloaded((items.count - 1), .top, items)
+        return .reloaded((items.count - 1), items)
     }
     
     private func parse(_ messages: [Message],

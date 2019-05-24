@@ -62,7 +62,7 @@ public final class ChannelsPresenter {
         
         self.items = items
         
-        return isNextPage ? .reloaded(row, .bottom, items) : .reloaded(0, .top, items)
+        return isNextPage ? .reloaded(row, items) : .reloaded(0, items)
     }
     
     func loadNext() {

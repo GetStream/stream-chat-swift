@@ -52,8 +52,8 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         return container
     }()
     
-    private(set) lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .plain)
+    private(set) lazy var tableView: TableView = {
+        let tableView = TableView(frame: .zero, style: .plain)
         tableView.keyboardDismissMode = .interactive
         tableView.separatorStyle = .none
         tableView.dataSource = self
@@ -157,29 +157,27 @@ extension ChatViewController {
         switch changes {
         case .none, .itemMoved:
             return
-        case let .reloaded(row, position, items):
+        case let .reloaded(row, items):
             self.items = items
             let isLastRow = row == (items.count - 1)
             let needsToScroll = isLastRow || isLoadingCellPresented()
             tableView.reloadData()
             
             if scrollEnabled, needsToScroll {
-                tableView.scrollToRow(at: .row(row), at: position, animated: false)
+                tableView.scrollToRow(at: .row(row), at: .top, animated: false)
             }
+
         case let .itemAdded(row, reloadRow, forceToScroll, items):
             self.items = items
             let indexPath = IndexPath.row(row)
             let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
+            tableView.stayOnScrollOnce = scrollEnabled && (forceToScroll || needsToScroll)
             
             tableView.performBatchUpdates({
                 tableView.insertRows(at: [indexPath], with: .none)
-                
+
                 if let reloadRow = reloadRow {
                     tableView.reloadRows(at: [.row(reloadRow)], with: .none)
-                }
-            }, completion: { finished in
-                if self.scrollEnabled, (forceToScroll || needsToScroll) {
-                    self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
                 }
             })
         case let .itemUpdated(row, message, items):
