@@ -285,7 +285,7 @@ public final class ComposerView: UIView {
     /// Update the placeholder and send button visibility.
     public func updatePlaceholder() {
         placeholderLabel.isHidden = textView.attributedText.length != 0
-        DispatchQueue.main.async { self.updateSendButton() }
+        DispatchQueue.main.async { [weak self] in self?.updateSendButton() }
     }
     
     private func updateSendButton() {

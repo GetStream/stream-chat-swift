@@ -57,8 +57,10 @@ class MediaGalleryViewController: UIViewController {
         super.viewWillAppear(animated)
         
         if selected > 0, selected < items.count {
-            DispatchQueue.main.async {
-                self.collectionView.scrollToItem(at: .item(self.selected), at: .centeredHorizontally, animated: false)
+            DispatchQueue.main.async { [weak self] in
+                if let self = self {
+                    self.collectionView.scrollToItem(at: .item(self.selected), at: .centeredHorizontally, animated: false)
+                }
             }
         }
     }
@@ -74,7 +76,7 @@ class MediaGalleryViewController: UIViewController {
         closeButton.contentMode = .center
         closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
         closeButton.backgroundColor = UIColor.chatSuperDarkGray.withAlphaComponent(0.5)
-        closeButton.layer.cornerRadius = .messageCornerRadius
+        closeButton.layer.cornerRadius = MediaGalleryViewController.closeButtonWidth / 2
         view.addSubview(closeButton)
         
         closeButton.snp.makeConstraints { make in
@@ -308,7 +310,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
                 if self.imageView.frame.width > 0, self.imageView.frame.height > 0 {
                     self.parse(imageResponse, error: error, completion: completion)
                 } else {
-                    DispatchQueue.main.async { self.parse(imageResponse, error: error, completion: completion) }
+                    DispatchQueue.main.async { [weak self] in self?.parse(imageResponse, error: error, completion: completion) }
                 }
             }
         }

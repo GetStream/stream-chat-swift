@@ -129,7 +129,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
             items = presenter.items
             tableView.reloadData()
             tableView.scrollToBottom(animated: false)
-            DispatchQueue.main.async { self.tableView.scrollToBottom(animated: false) }
+            DispatchQueue.main.async { [weak self] in self?.tableView.scrollToBottom(animated: false) }
             presenter.sendRead()
         }
     }

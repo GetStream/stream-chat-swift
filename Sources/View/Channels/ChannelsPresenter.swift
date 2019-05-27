@@ -27,7 +27,7 @@ public final class ChannelsPresenter {
         .combineLatest(loadPagination.asObserver(), Client.shared.webSocket.connection.connected({ [weak self] in
             if !$0, let self = self, !self.items.isEmpty {
                 self.next = .channelsPageSize
-                DispatchQueue.main.async { self.loadPagination.onNext(.channelsPageSize) }
+                DispatchQueue.main.async { [weak self] in self?.loadPagination.onNext(.channelsPageSize) }
             }
         }))
         .map { [weak self] pagination, _ in self?.channelsEndpoint(pagination: pagination) }
