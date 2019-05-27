@@ -56,40 +56,36 @@ extension MessageTableViewCell {
             messageStackView.insertArrangedSubview(preview, at: index)
             attachmentPreviews.append(preview)
             
+            // File preview.
             if attachment.type == .file {
                 preview.update(maskImage: backgroundImageForAttachment(at: index)) { _, _ in }
                 addGetures((preview as UIView), nil)
-                
-            } else if !message.isEphemeral, let preview = preview as? AttachmentPreview {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self, weak preview] in
-                    if let self = self, let preview = preview {
-                        preview.update(maskImage: self.maskImageForAttachment(at: index), addGetures)
-                        
-                        if attachment.type == .giphy {
-                            preview.showLogo(image: UIImage.Logo.giphy)
+            } else if let preview = preview as? AttachmentPreview {
+                // Ephemeral preview.
+                if message.isEphemeral {
+                    preview.update(maskImage: nil, addGetures)
+                    preview.layer.cornerRadius = 0
+                    
+                    preview.actionsStackView.arrangedSubviews.forEach {
+                        if let button = $0 as? UIButton {
+                            button.rx.tap
+                                .subscribe(onNext: { [weak button, weak preview] _ in
+                                    if let button = button {
+                                        preview?.actionsStackView.arrangedSubviews.forEach {
+                                            if let button = $0 as? UIButton, let title = button.title(for: .normal) {
+                                                button.isEnabled = title.lowercased() == "cancel"
+                                            }
+                                        }
+                                        
+                                        actionTap(message, button)
+                                    }
+                                })
+                                .disposed(by: preview.disposeBag)
                         }
                     }
-                }
-            } else if let preview = preview as? AttachmentPreview {
-                preview.update(maskImage: nil, addGetures)
-                preview.layer.cornerRadius = 0
-                
-                preview.actionsStackView.arrangedSubviews.forEach {
-                    if let button = $0 as? UIButton {
-                        button.rx.tap
-                            .subscribe(onNext: { [weak button, weak preview] _ in
-                                if let button = button {
-                                    preview?.actionsStackView.arrangedSubviews.forEach {
-                                        if let button = $0 as? UIButton, let title = button.title(for: .normal) {
-                                            button.isEnabled = title.lowercased() == "cancel"
-                                        }
-                                    }
-                                    
-                                    actionTap(message, button)
-                                }
-                            })
-                            .disposed(by: preview.disposeBag)
-                    }
+                } else {
+                    // Image/Video preview.
+                    preview.update(maskImage: maskImageForAttachment(at: index), addGetures)
                 }
             }
         }

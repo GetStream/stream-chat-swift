@@ -171,6 +171,10 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             return
         }
         
+        if attachment.type == .giphy {
+            showLogo(image: UIImage.Logo.giphy)
+        }
+        
         if hasActions {
             widthConstraint?.update(offset: maxWidth)
             
@@ -207,11 +211,6 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         if let imageResponse = Nuke.ImageCache.shared.cachedResponse(for: imageRequest) {
             imageView.contentMode = .scaleAspectFit
             imageView.image = imageResponse.image
-
-            if let animatedImageData = imageResponse.image.animatedImageData {
-                setGifImage(with: animatedImageData)
-            }
-            
             parse(imageResponse: imageResponse, error: nil, maskImage: maskImage, cached: true, completion)
         } else {
             if hasActions {
@@ -235,7 +234,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         }
         
         if imageView.subviews.first is UIActivityIndicatorView {
-            DispatchQueue.main.async { self.activityIndicatorView.stopAnimating() }
+            DispatchQueue.main.async { [weak self] in self?.activityIndicatorView.stopAnimating() }
         }
         
         var width = attachment.isImageOrVideo && !hasActions ? defaultHeight : maxWidth
@@ -245,7 +244,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             imageView.backgroundColor = backgroundColor
             
             if attachment.isImageOrVideo, !hasActions {
-                width = min(image.size.width / image.size.height * defaultHeight, maxWidth)
+                width = min(image.size.width / image.size.height * defaultHeight, maxWidth).rounded()
                 widthConstraint?.update(offset: width)
             }
             
@@ -261,38 +260,36 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                     return
                 }
             }
-            
-            if !cached, let animatedImageData = image.animatedImageData {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                    self?.setGifImage(with: animatedImageData)
-                }
-            }
         } else {
             if let error = error, let url = imageResponse?.urlResponse?.url {
                 print("⚠️", url, error)
             }
         }
         
-        if let maskImage = maskImage {
-            let maskView = UIImageView(frame: CGRect(width: width, height: height))
-            maskView.image = maskImage
-            mask = maskView
-            layer.cornerRadius = 0
-        }
+        showGif()
+        addMaskImage(maskImage, size: CGSize(width: width, height: height))
         
         completion(self, nil)
     }
     
-    private func setGifImage(with animatedImageData: Data) {
-        guard let animatedImage = try? UIImage(gifData: animatedImageData) else {
+    private func showGif() {
+        guard let animatedImageData = imageView.image?.animatedImageData,
+            let animatedImage = try? UIImage(gifData: animatedImageData) else {
             return
         }
         
         isGifImage = true
         imageView.image = nil
         imageView.setGifImage(animatedImage, manager: SwiftyGifManager(memoryLimit: 50))
-        
-        return
+    }
+    
+    private func addMaskImage(_ maskImage: UIImage?, size: CGSize) {
+        if let maskImage = maskImage {
+            let maskView = UIImageView(frame: CGRect(origin: .zero, size: size))
+            maskView.image = maskImage
+            mask = maskView
+            layer.cornerRadius = 0
+        }
     }
     
     func showLogo(image: UIImage) {
