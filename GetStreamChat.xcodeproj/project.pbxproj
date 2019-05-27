@@ -104,6 +104,7 @@
 		8ACAB167228ED6C900674F2D /* ChannelsQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACAB166228ED6C900674F2D /* ChannelsQuery.swift */; };
 		8ACAB169228F645B00674F2D /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACAB168228F645B00674F2D /* ChannelsResponse.swift */; };
 		8AD21B99229BEB8D009D6086 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B98229BEB8D009D6086 /* Utils.swift */; };
+		8AD21B9E229C2014009D6086 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B9D229C2014009D6086 /* Notifications.swift */; };
 		8AFC2A2722688299006278D4 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2622688299006278D4 /* Member.swift */; };
 		8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A282268933A006278D4 /* WebSocket.swift */; };
 		8AFC2A2B226893FF006278D4 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */; };
@@ -213,6 +214,7 @@
 		8ACAB166228ED6C900674F2D /* ChannelsQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsQuery.swift; sourceTree = "<group>"; };
 		8ACAB168228F645B00674F2D /* ChannelsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsResponse.swift; sourceTree = "<group>"; };
 		8AD21B98229BEB8D009D6086 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		8AD21B9D229C2014009D6086 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		8AFC2A2622688299006278D4 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		8AFC2A282268933A006278D4 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
@@ -446,6 +448,7 @@
 				8A210D7B2264A1FC00D51FFC /* Image Gallery */,
 				8AB1B8F0226772AC002C65BD /* Web View */,
 				8A1A9415225E2EB200060ACC /* DataDetectorWorker.swift */,
+				8AD21B9D229C2014009D6086 /* Notifications.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -581,6 +584,9 @@
 					8A046756224E7F1800493D74 = {
 						CreatedOnToolsVersion = 10.2;
 						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
 							com.apple.iCloud = {
 								enabled = 1;
 							};
@@ -737,6 +743,7 @@
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8AB8FA742279F3F400C14D94 /* UIApplication+AppState.swift in Sources */,
 				8A88914822521E4800DD6539 /* ClientError.swift in Sources */,
+				8AD21B9E229C2014009D6086 /* Notifications.swift in Sources */,
 				8A4FE7B9227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift in Sources */,
 				8A88917922550E8D00DD6539 /* UIFont+Extensions.swift in Sources */,
 				8A8891642253A86600DD6539 /* Codable+Extensions.swift in Sources */,

@@ -175,6 +175,7 @@ extension ChannelPresenter {
                 isUnread = channel.config.readEventsEnabled
                 lastMessage = message
                 items.append(.message(message))
+                Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             }
             
             var forceToScroll = false
@@ -565,11 +566,19 @@ extension ChannelPresenter {
         Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), emptyEventCompletion)
     }
     
-    func sendRead() {
+    func sendReadIfPossible() {
         guard channel.config.readEventsEnabled, isUnread else {
             return
         }
         
+        DispatchQueue.main.async { [weak self] in
+            if UIApplication.shared.appState == .active {
+                self?.sendRead()
+            }
+        }
+    }
+    
+    private func sendRead() {
         isUnread = false
         
         let emptyEventCompletion: Client.Completion<EventResponse> = { [weak self] result in

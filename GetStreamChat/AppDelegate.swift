@@ -53,6 +53,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         Fabric.with([Crashlytics.self])
         
+        Notifications.shared.askForPermissionsIfNeeded()
+        
         return true
     }
 }

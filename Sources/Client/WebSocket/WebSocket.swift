@@ -23,6 +23,8 @@ final class WebSocket {
     private(set) var consecutiveFailures: TimeInterval = 0
     let logger: ClientLogger?
     var isReconnecting = false
+    private var goingToDisconnect: DispatchWorkItem?
+    private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     
     private var lastMessageHashValue: Int = 0
     private var lastMessageResponse: Response?
@@ -89,15 +91,47 @@ final class WebSocket {
         DispatchQueue.main.async(execute: webSocket.connect)
     }
     
+    func disconnectInBackground() {
+        guard backgroundTask == .invalid else {
+            return
+        }
+        
+        backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
+            self?.disconnect()
+        }
+        
+        if backgroundTask != .invalid {
+            let goingToDisconnect: DispatchWorkItem = DispatchWorkItem { [weak self] in self?.disconnect() }
+            webSocket.callbackQueue.asyncAfter(deadline: .now() + 300, execute: goingToDisconnect)
+            self.goingToDisconnect = goingToDisconnect
+            logger?.log("💜", "Background mode on")
+        } else {
+            disconnect()
+        }
+    }
+    
+    func cancelBackgroundWork() {
+        goingToDisconnect?.cancel()
+        goingToDisconnect = nil
+        
+        if backgroundTask != .invalid {
+            UIApplication.shared.endBackgroundTask(backgroundTask)
+            backgroundTask = .invalid
+            logger?.log("💜", "Background mode off")
+        }
+    }
+    
     func disconnect() {
         lastConnectionId = nil
         
         if webSocket.isConnected {
-            logger?.log("💔", "Disconnecting...")
             handshakeTimer.suspend()
             webSocket.disconnect()
             reachability?.stopNotifier()
+            logger?.log("💔", "Disconnected")
         }
+        
+        cancelBackgroundWork()
     }
 }
 
@@ -107,13 +141,22 @@ extension WebSocket {
     
     private func parseConnection(appState: AppState, reachability: Reachability.Connection, event: WebSocketEvent) -> Connection? {
         guard reachability != .none else {
+            cancelBackgroundWork()
             lastConnectionId = nil
             return .notConnected
         }
         
+        if appState == .active {
+            cancelBackgroundWork()
+        }
+        
         if appState == .background {
-            disconnect()
-            return .notConnected
+            if webSocket.isConnected {
+                disconnectInBackground()
+            } else {
+                disconnect()
+                return .notConnected
+            }
         }
         
         if case .message = event {
@@ -139,11 +182,11 @@ extension WebSocket {
             return .connecting
             
         case .disconnected(let error):
-            logger?.log("🤔 Disconnected")
+            logger?.log("💔🤔 Disconnected")
             handshakeTimer.suspend()
             
             if let error = error {
-                logger?.log(error, message: "😡 Disconnected")
+                logger?.log(error, message: "💔😡 Disconnected")
             }
             
             let parsedError = parseDisconnect(error)
@@ -209,9 +252,11 @@ extension ObservableType where E == WebSocket.Connection {
     typealias DoConnected = (_ connected: Bool) -> Void
     
     func connected(_ doConnected: DoConnected? = nil) -> Observable<E> {
-        return filter {
-            doConnected?($0.isConnected)
-            return $0.isConnected
-        }
+        return filter { $0.isConnected }
+            .do(onNext: {
+                if let doConnected = doConnected {
+                    doConnected($0.isConnected)
+                }
+            })
     }
 }

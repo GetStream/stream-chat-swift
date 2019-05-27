@@ -106,7 +106,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
                 Driver.merge((presenter.parentMessage == nil ? presenter.channelRequest : presenter.replyRequest),
                              presenter.changes,
                              presenter.ephemeralChanges)
-                    .do(onNext: { [weak presenter] _ in presenter?.sendRead() })
+                    .do(onNext: { [weak presenter] _ in presenter?.sendReadIfPossible() })
                     .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
                     .disposed(by: disposeBag)
             }
@@ -130,13 +130,14 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
             tableView.reloadData()
             tableView.scrollToBottom(animated: false)
             DispatchQueue.main.async { [weak self] in self?.tableView.scrollToBottom(animated: false) }
-            presenter.sendRead()
+            presenter.sendReadIfPossible()
         }
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         startGifsAnimations()
+        channelPresenter?.sendReadIfPossible()
     }
     
     public override func viewWillDisappear(_ animated: Bool) {
