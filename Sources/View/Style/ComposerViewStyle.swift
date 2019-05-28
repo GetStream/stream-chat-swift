@@ -13,23 +13,22 @@ public struct ComposerViewStyle: Hashable {
     
     public let font: UIFont
     public let textColor: UIColor
-    public let tintColor: UIColor
-    public let cursorColor: UIColor
+    public let placeholderTextColor: UIColor
     public let backgroundColor: UIColor
     public let cornerRadius: CGFloat
     private let states: [State: Style]
     
     init(font: UIFont = .chatRegular,
          textColor: UIColor = .black,
-         tintColor: UIColor = .chatGray,
-         cursorColor: UIColor = .chatLightBlue,
+         placeholderTextColor: UIColor = .chatGray,
          backgroundColor: UIColor = .clear,
          cornerRadius: CGFloat = .composerCornerRadius,
-         states: States = [.active: .init(borderWidth: 2), .disabled: .init(borderWidth: 2, borderColor: .chatGray)]) {
+         states: States = [.active: .init(tintColor: .chatLightBlue, borderWidth: 2),
+                           .edit: .init(tintColor: .chatGreen, borderWidth: 2),
+                           .disabled: .init(tintColor: .chatGray, borderWidth: 2)]) {
         self.font = font
         self.textColor = textColor
-        self.tintColor = tintColor
-        self.cursorColor = cursorColor
+        self.placeholderTextColor = placeholderTextColor
         self.backgroundColor = backgroundColor
         self.cornerRadius = cornerRadius
         self.states = states
@@ -46,7 +45,7 @@ public struct ComposerViewStyle: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(font)
         hasher.combine(textColor)
-        hasher.combine(tintColor)
+        hasher.combine(placeholderTextColor)
         hasher.combine(backgroundColor)
         hasher.combine(states)
     }
@@ -61,18 +60,17 @@ extension ComposerViewStyle {
     }
     
     public struct Style: Hashable {
+        public let tintColor: UIColor
         public let borderWidth: CGFloat
-        public let borderColor: UIColor
         
-        init(borderWidth: CGFloat = 0,
-             borderColor: UIColor = .chatLightBlue) {
+        init(tintColor: UIColor = .chatGray, borderWidth: CGFloat = 0) {
+            self.tintColor = tintColor
             self.borderWidth = borderWidth
-            self.borderColor = borderColor
         }
         
         public func hash(into hasher: inout Hasher) {
+            hasher.combine(tintColor)
             hasher.combine(borderWidth)
-            hasher.combine(borderColor)
         }
     }
 }

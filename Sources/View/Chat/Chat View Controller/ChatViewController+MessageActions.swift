@@ -58,6 +58,7 @@ extension ChatViewController {
         }
         
         channelPresenter?.editMessage = message
+        composerView.isEditing = true
         composerView.textView.becomeFirstResponder()
         editComposer.animate(show: true)
     }

@@ -16,6 +16,25 @@ public final class ComposerView: UIView {
     
     public var style: ComposerViewStyle?
     
+    private var styleState: ComposerViewStyle.State = .normal {
+        didSet {
+            if let style = style {
+                let styleState = style.style(with: self.styleState)
+                layer.borderWidth = styleState.borderWidth
+                layer.borderColor = styleState.tintColor.cgColor
+                textView.tintColor = styleState.tintColor
+                sendButton.tintColor = styleState.tintColor
+                filePickerButton.tintColor = styleState.tintColor
+            }
+        }
+    }
+    
+    private var styleStateStyle: ComposerViewStyle.Style? {
+        return style?.style(with: styleState)
+    }
+    
+    public var isEditing: Bool = false
+    
     /// A stack view for containers.
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [attachmentsCollectionView, buttonsStackView])
@@ -61,7 +80,7 @@ public final class ComposerView: UIView {
     /// You have to use the `placeholderText` property to change the value of the placeholder label.
     public private(set) lazy var placeholderLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.textColor = style?.tintColor
+        label.textColor = style?.placeholderTextColor
         textView.addSubview(label)
         
         label.snp.makeConstraints { make in
@@ -108,7 +127,7 @@ public final class ComposerView: UIView {
     /// The placeholder text.
     public var placeholderText: String {
         get { return placeholderLabel.attributedText?.string ?? "" }
-        set { placeholderLabel.attributedText = attributedText(text: newValue, textColor: style?.tintColor) }
+        set { placeholderLabel.attributedText = attributedText(text: newValue, textColor: styleStateStyle?.tintColor) }
     }
     
     private let disposeBag = DisposeBag()
@@ -168,8 +187,8 @@ public final class ComposerView: UIView {
         backgroundColor = style.backgroundColor
         clipsToBounds = true
         layer.cornerRadius = style.cornerRadius
-        layer.borderWidth = style.style(with: .normal).borderWidth
-        layer.borderColor = style.style(with: .normal).borderColor.cgColor
+        layer.borderWidth = styleStateStyle?.borderWidth ?? 0
+        layer.borderColor = styleStateStyle?.tintColor.cgColor ?? nil
         
         // Add buttons.
         addSubview(buttonsStackView)
@@ -184,7 +203,6 @@ public final class ComposerView: UIView {
         updateTextHeightIfNeeded()
         textView.keyboardAppearance = style.textColor.isDark ? .default : .dark
         textView.backgroundColor = backgroundColor
-        textView.tintColor = style.cursorColor
         
         textView.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(CGFloat.composerInnerPadding)
@@ -199,7 +217,6 @@ public final class ComposerView: UIView {
         
         // Add placeholder.
         self.placeholderText = placeholderText
-        filePickerButton.tintColor = style.tintColor
         
         let toolBar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
         toolBar.isHidden = true
@@ -217,7 +234,7 @@ public final class ComposerView: UIView {
                     - (height > 0 ? parentView.safeAreaBottomOffset + .messagesToComposerPadding : 0)
                 
                 self.bottomConstraint?.update(offset: -bottom)
-                self.updateStyle(with: height != 0 ? .active : .normal)
+                self.styleState = height != 0 ? (self.isEditing ? .edit : .active) : .normal
             })
             .disposed(by: disposeBag)
     }
@@ -243,14 +260,6 @@ public final class ComposerView: UIView {
         adjustingView.makeEdgesEqualToSuperview()
     }
     
-    private func updateStyle(with state: ComposerViewStyle.State) {
-        if let style = style {
-            let stateStyle = style.style(with: state)
-            layer.borderWidth = stateStyle.borderWidth
-            layer.borderColor = stateStyle.borderColor.cgColor
-        }
-    }
-    
     /// Check if the content is valid: text is not empty or at least one image was added.
     public var isValidContent: Bool {
         return textView.attributedText.length != 0 || !images.isEmpty
@@ -259,6 +268,7 @@ public final class ComposerView: UIView {
     /// Reset states of all child views and clear all added/generated data.
     public func reset() {
         isEnabled = true
+        isEditing = false
         previousTextBeforeReset = textView.attributedText
         textView.attributedText = attributedText()
         images = []
@@ -267,7 +277,11 @@ public final class ComposerView: UIView {
         activityIndicatorView.stopAnimating()
         updatePlaceholder()
         updateTextHeightIfNeeded()
-        updateStyle(with: .normal)
+        styleState = .normal
+        
+        if textView.isFirstResponder {
+            textView.resignFirstResponder()
+        }
     }
     
     /// Toggle `isUserInteractionEnabled` states for all child views.
@@ -278,7 +292,7 @@ public final class ComposerView: UIView {
             filePickerButton.isEnabled = isEnabled
             attachmentsCollectionView.isUserInteractionEnabled = isEnabled
             attachmentsCollectionView.alpha = isEnabled ? 1 : 0.5
-            updateStyle(with: isEnabled ? .normal : .disabled)
+            styleState = isEnabled ? .normal : .disabled
         }
     }
     

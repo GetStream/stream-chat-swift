@@ -10,6 +10,7 @@ import UIKit.UIColor
 
 extension UIColor {
     public static let chatBlue = UIColor(red: 0.15, green: 0.44, blue: 0.96, alpha: 1)
+    public static let chatGreen = UIColor(red: 0.15, green: 0.81, blue: 0.42, alpha: 1)
     public static let chatLightBlue = UIColor(red: 0, green: 0.573, blue: 1, alpha: 1)
     public static let chatGray = UIColor(white: 0.5, alpha: 1)
     public static let chatSuperLightGray = UIColor(white: 0.92, alpha: 1)

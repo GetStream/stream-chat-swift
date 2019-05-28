@@ -63,12 +63,8 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
             .subscribe(onNext: { [weak self] _ in
                 if let self = self {
                     self.channelPresenter?.editMessage = nil
-                    self.composerView.textView.text = ""
+                    self.composerView.reset()
                     self.editComposer.animate(show: false)
-                    
-                    if self.composerView.textView.isFirstResponder {
-                        self.composerView.textView.resignFirstResponder()
-                    }
                 }
             })
             .disposed(by: disposeBag)
