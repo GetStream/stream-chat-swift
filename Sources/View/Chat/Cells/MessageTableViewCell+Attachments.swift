@@ -27,7 +27,7 @@ extension MessageTableViewCell {
         let imageBackgroundColor = UIColor.color(by: message.user.name, isDark: backgroundColor?.isDark ?? false)
         
         attachments.enumerated().forEach { index, attachment in
-            func addGetures(_ preview: UIView, _ error: Error?) {
+            func addGetures(_ preview: AttachmentPreviewProtocol, _ error: Error?) {
                 guard !message.isEphemeral else {
                     return
                 }
@@ -59,7 +59,7 @@ extension MessageTableViewCell {
             // File preview.
             if attachment.type == .file {
                 preview.update(maskImage: backgroundImageForAttachment(at: index)) { _, _ in }
-                addGetures((preview as UIView), nil)
+                addGetures(preview, nil)
             } else if let preview = preview as? AttachmentPreview {
                 // Ephemeral preview.
                 if message.isEphemeral {

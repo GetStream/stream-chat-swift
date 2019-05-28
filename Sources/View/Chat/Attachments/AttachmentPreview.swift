@@ -233,7 +233,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             return
         }
         
-        if imageView.subviews.first is UIActivityIndicatorView {
+        if hasActions {
             DispatchQueue.main.async { [weak self] in self?.activityIndicatorView.stopAnimating() }
         }
         
@@ -274,7 +274,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     
     private func showGif() {
         guard let animatedImageData = imageView.image?.animatedImageData,
-            let animatedImage = try? UIImage(gifData: animatedImageData) else {
+            let animatedImage = try? UIImage(gifData: animatedImageData, levelOfIntegrity: 0.6) else {
             return
         }
         
