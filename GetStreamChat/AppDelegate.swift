@@ -25,36 +25,36 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                                      avatarURL: URL(string: "https://bit.ly/2u9Vc0r")),
                           token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg")
         
-        let channel = Channel(id: "general", name: "General")
+        Fabric.with([Crashlytics.self])
+        setupNotifications()
         
-        if let tabBarController = window?.rootViewController as? UITabBarController {
-            tabBarController.viewControllers?.enumerated().forEach { index, viewController in
-                var chatViewController: ChatViewController?
-                
-                if let viewController = viewController as? ChatViewController {
-                    chatViewController = viewController
-                } else if let navigationController = viewController as? UINavigationController {
-                    chatViewController = navigationController.viewControllers.first as? ChatViewController
-                    
-                    if let channelsViewController = navigationController.viewControllers.first as? ChannelsViewController {
-                        let isDark = index % 2 != 0
-                        channelsViewController.style = isDark ? ChatViewStyle.dark : ChatViewStyle()
-                    }
-                }
-                
-                if let chatViewController = chatViewController {
-                    chatViewController.channelPresenter = ChannelPresenter(channel: channel)
-                    let isDark = index % 2 != 0
-                    chatViewController.title = isDark ? "Dark" : "Light"
-                    chatViewController.style = isDark ? ChatViewStyle.dark : ChatViewStyle()
-                }
-            }
+        // Dark style for the second tab bar item.
+        if let tabBarController = window?.rootViewController as? UITabBarController,
+            let navigationController = tabBarController.viewControllers?[1] as? UINavigationController,
+            let darkChannelsViewController = navigationController.viewControllers.first as? ChannelsViewController {
+            darkChannelsViewController.style = .dark
         }
         
-        Fabric.with([Crashlytics.self])
-        
+        return true
+    }
+    
+    private func setupNotifications() {
         Notifications.shared.askForPermissionsIfNeeded()
         
-        return true
+        Notifications.shared.openNewMessage = { [weak self] messageId, channelId in
+            if let tabBarController = self?.window?.rootViewController as? UITabBarController,
+                let navigationViewController = tabBarController.viewControllers?.first as? UINavigationController,
+                let channelsViewController = navigationViewController.viewControllers.first as? ChannelsViewController,
+                let channelIndex = channelsViewController.channelsPresenter.items.firstIndex(where: { chatItem -> Bool in
+                    if case .channel(let channelPresenter) = chatItem, channelPresenter.channel.id == channelId {
+                        return true
+                    }
+                    
+                    return false
+                }) {
+                channelsViewController.navigationController?.viewControllers = [channelsViewController]
+                channelsViewController.showChatViewController(at: channelIndex)
+            }
+        }
     }
 }

@@ -110,10 +110,14 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.row < items.count, case .channel(let channelPresenter) = items[indexPath.row] else {
+        showChatViewController(at: indexPath.row)
+    }
+    
+    public func showChatViewController(at index: Int) {
+        guard index < items.count, case .channel(let channelPresenter) = items[index] else {
             return
         }
-
+        
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style
         chatViewController.channelPresenter = channelPresenter
@@ -122,7 +126,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             channelPresenter.isReadUpdates.asObservable()
                 .take(1)
                 .takeUntil(chatViewController.rx.deallocated)
-                .subscribe(onNext: { _ in tableView.reloadRows(at: [indexPath], with: .none) })
+                .subscribe(onNext: { [weak self] _ in self?.tableView.reloadRows(at: [.row(index)], with: .none) })
                 .disposed(by: disposeBag)
         }
         
