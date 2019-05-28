@@ -104,7 +104,7 @@ public final class ComposerView: UIView {
     
     private lazy var filePickerButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage.Icons.image, for: .normal)
+        button.setImage(UIImage.Icons.plus, for: .normal)
         button.snp.makeConstraints { $0.width.equalTo(CGFloat.composerButtonWidth).priority(999) }
         button.backgroundColor = backgroundColor
         return button
