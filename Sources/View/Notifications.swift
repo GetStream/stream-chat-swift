@@ -27,6 +27,14 @@ public final class Notifications: NSObject {
     
     public var openNewMessage: OpenNewMessageCallback?
     
+    var logger: ClientLogger?
+    
+    var logsEnabled: Bool = false {
+        didSet {
+            logger = logsEnabled ? ClientLogger(icon: "🗞") : nil
+        }
+    }
+    
     override init() {
         super.init()
         clear()
@@ -56,9 +64,9 @@ public final class Notifications: NSObject {
             if settings.authorizationStatus == .notDetermined {
                 self.askForPermissions()
             } else if settings.authorizationStatus == .denied {
-                print("🗞❌ Notifications denied")
+                self.logger?.log("❌ Notifications denied")
             } else {
-                print("🗞👍 Notifications authorized (\(settings.authorizationStatus.rawValue))")
+                self.logger?.log("👍 Notifications authorized (\(settings.authorizationStatus.rawValue))")
             }
         }
         
@@ -68,11 +76,11 @@ public final class Notifications: NSObject {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { didAllow, error in
             if didAllow {
                 self.authorizationStatus = .authorized
-                print("🗞👍 User has accepter notifications")
+                self.logger?.log("👍 User has accepter notifications")
             } else if let error = error {
-                print("🗞❌ User has declined notifications \(error)")
+                self.logger?.log("❌ User has declined notifications \(error)")
             } else {
-                print("🗞❌ User has declined notifications: unknown reason")
+                self.logger?.log("❌ User has declined notifications: unknown reason")
             }
         }
     }
