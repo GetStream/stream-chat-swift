@@ -155,6 +155,7 @@ extension ChatViewController {
                                                 showStatuses: presenter.showStatuses)
         
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
+        chatViewController.style = style
         chatViewController.channelPresenter = messagePresenter
         navigationController?.pushViewController(chatViewController, animated: true)
     }

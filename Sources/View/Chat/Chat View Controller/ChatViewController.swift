@@ -150,18 +150,15 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     }
     
     private func updateTitle() {
-        guard title == nil, navigationItem.rightBarButtonItem == nil else {
+        guard title == nil, navigationItem.rightBarButtonItem == nil, let presenter = channelPresenter else {
             return
         }
         
-        title = channelPresenter?.channel.name
-        
+        title = presenter.parentMessage?.user.name ?? presenter.channel.name
         let channelAvatar = AvatarView(cornerRadius: .messageAvatarRadius)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatar)
-        
-        channelAvatar.update(with: channelPresenter?.channel.imageURL,
-                             name: channelPresenter?.channel.name,
-                             baseColor: style.incomingMessage.chatBackgroundColor)
+        let imageURL = presenter.parentMessage == nil ? presenter.channel.imageURL : presenter.parentMessage?.user.avatarURL
+        channelAvatar.update(with: imageURL, name: title, baseColor: style.incomingMessage.chatBackgroundColor)
     }
 }
 

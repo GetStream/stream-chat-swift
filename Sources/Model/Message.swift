@@ -69,6 +69,7 @@ public struct Message: Codable {
     
     public var textOrArgs: String {
         let text = self.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        
         return checkIfTextAsAttachmentURL(text)
             ? ""
             : (text.isEmpty ? (args ?? "") : text).trimmingCharacters(in: .whitespacesAndNewlines)

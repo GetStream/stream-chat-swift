@@ -12,6 +12,8 @@ import Nuke
 
 final class AvatarView: UIImageView, Reusable {
     
+    private var imageTask: ImageTask?
+    
     private lazy var avatarLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.textAlignment = .center
@@ -35,7 +37,7 @@ final class AvatarView: UIImageView, Reusable {
         clipsToBounds = true
         contentMode = .scaleAspectFill
         snp.makeConstraints { $0.width.height.equalTo(2 * cornerRadius).priority(999) }
-        avatarLabel.font = .avatarFont(size: cornerRadius * 0.8)
+        avatarLabel.font = .avatarFont(size: cornerRadius * 0.7)
         avatarLabel.makeEdgesEqualToSuperview(superview: self)
     }
     
@@ -44,6 +46,7 @@ final class AvatarView: UIImageView, Reusable {
         backgroundColor = .white
         avatarLabel.text = nil
         avatarLabel.isHidden = true
+        imageTask?.cancel()
     }
     
     public func update(with url: URL?, name: String?, baseColor: UIColor?) {
@@ -58,7 +61,7 @@ final class AvatarView: UIImageView, Reusable {
         let imageSize = 2 * layer.cornerRadius * UIScreen.main.scale
         let request = ImageRequest(url: url, targetSize: CGSize(width: imageSize, height: imageSize), contentMode: .aspectFill)
         
-        ImagePipeline.shared.loadImage(with: request) { [weak self] response, error in
+        imageTask = ImagePipeline.shared.loadImage(with: request) { [weak self] response, error in
             self?.image = response?.image
         }
     }
@@ -76,7 +79,8 @@ final class AvatarView: UIImageView, Reusable {
         
         let nameColor = UIColor.color(by: name, isDark: baseColor.isDark)
         backgroundColor = baseColor.blendAlpha(coverColor: nameColor)
-        avatarLabel.textColor = nameColor.withAlphaComponent(0.3)
+        avatarLabel.textColor = nameColor.withAlphaComponent(0.8)
         avatarLabel.isHidden = false
+        image = nil
     }
 }

@@ -69,13 +69,13 @@ extension UIColor {
         
     /// Create a transparent color with a given hue.
     static func transparent(hue: CGFloat, brightness: CGFloat = 0.5) -> UIColor {
-        return UIColor(hue: hue, saturation: 1, brightness: brightness, alpha: 0.2)
+        return UIColor(hue: hue, saturation: 1, brightness: brightness, alpha: 0.3)
     }
 }
 
 extension UIColor {
     static func color(by string: String, isDark: Bool = false) -> UIColor {
-        let hue: CGFloat = abs(((CGFloat(string.hashValue) / CGFloat(Int.max)) * 15) / 15)
+        let hue: CGFloat = abs(((CGFloat(string.hashValue) / CGFloat(Int.max)) * 20) / 20)
         return .transparent(hue: hue, brightness: isDark ? 1 : 0.5)
     }
 }

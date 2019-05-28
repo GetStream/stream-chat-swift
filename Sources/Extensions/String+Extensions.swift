@@ -8,11 +8,29 @@
 
 import Foundation
 
+// MARK: - NSRange
+
 extension StringProtocol where Index == String.Index {
     func nsRange(from range: Range<Index>) -> NSRange {
         return NSRange(range, in: self)
     }
 }
+
+// MARK: - Check the string is blank
+
+extension String {
+    var isBlank: Bool {
+        return allSatisfy({ $0.isWhitespace })
+    }
+}
+
+extension Optional where Wrapped == String {
+    var isBlank: Bool {
+        return self?.isBlank ?? true
+    }
+}
+
+// MARK: - Emoji
 
 extension String {
     public static var messageEmojiCount = 8
