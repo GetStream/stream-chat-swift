@@ -250,7 +250,7 @@ public final class ComposerView: UIView {
                     + max(0, height - (height > 0 ? parentView.safeAreaBottomOffset + .messagesToComposerPadding : 0))
                 
                 self.bottomConstraint?.update(offset: -bottom)
-                self.styleState = height > .messageEdgePadding ? (self.isEditing ? .edit : .active) : .normal
+                self.updateStyleState(toActive: height > .messageEdgePadding)
             })
             .disposed(by: disposeBag)
     }
@@ -318,6 +318,15 @@ public final class ComposerView: UIView {
     
     private func updateSendButton() {
         sendButton.isHidden = text.count == 0 && images.isEmpty
+    }
+    
+    private func updateStyleState(toActive: Bool = false) {
+        if !toActive, images.isEmpty, text.isEmpty {
+            styleState = .normal
+            return
+        }
+        
+        styleState = isEditing ? .edit : .active
     }
 }
 
@@ -400,6 +409,7 @@ extension ComposerView: UICollectionViewDataSource {
         imagesCollectionView.isHidden = images.isEmpty
         updateTextHeightIfNeeded()
         updateSendButton()
+        updateStyleState()
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
