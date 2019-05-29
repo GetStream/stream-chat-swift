@@ -57,6 +57,32 @@ extension UIView {
             $0.right.equalTo(parent.safeAreaLayoutGuide.snp.rightMargin)
         }
     }
+    
+    func sendToBack(for subviews: [UIView]) {
+        guard let parent = superview else {
+            return
+        }
+        
+        parent.sendSubviewToBack(self, for: subviews)
+    }
+    
+    func sendSubviewToBack(_ subview: UIView, for subviews: [UIView]) {
+        guard let subviewIndex = self.subviews.firstIndex(of: subview) else {
+            return
+        }
+        
+        var newIndex = subviewIndex
+        
+        subviews.forEach { other in
+            if let index = self.subviews.firstIndex(of: other) {
+                newIndex = min(newIndex, index)
+            }
+        }
+        
+        if newIndex != subviewIndex {
+            exchangeSubview(at: subviewIndex, withSubviewAt: newIndex)
+        }
+    }
 }
 
 // MARK: - Safe Area Layout Guide

@@ -39,7 +39,7 @@ extension ChatViewController {
             .disposed(by: disposeBag)
         
         composerView.attachmentButton.rx.tap
-            .subscribe(onNext: { [weak self] in self?.showAttachmentPickerList() })
+            .subscribe(onNext: { [weak self] in self?.showAddFileView() })
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
@@ -113,17 +113,23 @@ extension ChatViewController {
         
         return command.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .init(charactersIn: "/"))
     }
+    
+    private func createComposerHelperContainerView(title: String, closeButtonIsHidden: Bool = false) -> ComposerHelperContainerView {
+        let container = ComposerHelperContainerView()
+        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
+        container.titleLabel.text = title
+        container.add(for: composerView)
+        container.isHidden = true
+        container.closeButton.isHidden = closeButtonIsHidden
+        return container
+    }
 }
 
 // MARK: - Composer Edit
 
 extension ChatViewController {
     func createComposerEditingHelperView() -> ComposerHelperContainerView {
-        let container = ComposerHelperContainerView()
-        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
-        container.titleLabel.text = "Edit message"
-        container.add(for: composerView)
-        container.isHidden = true
+        let container = createComposerHelperContainerView(title: "Edit message")
         
         container.closeButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
@@ -144,14 +150,10 @@ extension ChatViewController {
 extension ChatViewController {
     
     func createComposerCommandsView() -> ComposerHelperContainerView {
-        let container = ComposerHelperContainerView()
-        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
-        container.titleLabel.text = "Commands"
-        container.add(for: composerView)
-        container.isHidden = true
-        container.closeButton.isHidden = true
+        let container = createComposerHelperContainerView(title: "Commands", closeButtonIsHidden: true)
+        container.isEnabled = !(channelPresenter?.channel.config.commands.isEmpty ?? true)
         
-        if let channelConfig = channelPresenter?.channel.config {
+        if container.isEnabled, let channelConfig = channelPresenter?.channel.config {
             channelConfig.commands.forEach { command in
                 let view = ComposerCommandView(frame: .zero)
                 view.backgroundColor = container.backgroundColor
@@ -168,11 +170,16 @@ extension ChatViewController {
     }
     
     private func showCommandsIfNeeded(for text: String) {
+        guard composerCommandsView.isEnabled else {
+            return
+        }
+        
         let hide = filterCommands(with: text)
         
         // Show composer helper container.
         if text.count == 1, let first = text.first, first == "/" {
             composerCommandsView.animate(show: true, resetForcedHidden: true)
+            composerAddFileView.animate(show: false)
             return
         }
         
@@ -180,6 +187,7 @@ extension ChatViewController {
             composerCommandsView.animate(show: false)
         } else {
             composerCommandsView.animate(show: true)
+            composerAddFileView.animate(show: false)
         }
     }
     
@@ -215,7 +223,36 @@ extension ChatViewController {
 // MARK: - Composer Attachments
 
 extension ChatViewController {
-    private func showAttachmentPickerList() {
+    
+    func createComposerAddFileView() -> ComposerHelperContainerView {
+        let container = createComposerHelperContainerView(title: "Add a file")
+        
+        container.closeButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in self?.composerAddFileView.animate(show: false) })
+            .disposed(by: disposeBag)
+        
+        addButtonsToAddFileView(container, icon: UIImage.Icons.images, title: "Upload a photo or video") {}
+        addButtonsToAddFileView(container, icon: UIImage.Icons.file, title: "Upload a file") {}
+        
+        return container
+    }
+    
+    private func addButtonsToAddFileView(_ container: ComposerHelperContainerView,
+                                         icon: UIImage,
+                                         title: String,
+                                         action: @escaping () -> Void) {
+        let view = ComposerAddFileView(icon: icon, title: title)
+        view.backgroundColor = container.backgroundColor
+        container.containerView.addArrangedSubview(view)
+        
+        view.rx.tapGesture().when(.recognized)
+            .subscribe(onNext: { _ in action() })
+            .disposed(by: self.disposeBag)
+    }
+    
+    private func showAddFileView() {
+        composerCommandsView.animate(show: false)
+        composerAddFileView.animate(show: true)
     }
 }
 

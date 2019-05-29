@@ -13,6 +13,7 @@ final class ComposerHelperContainerView: UIView {
     
     private(set) var shouldBeShown: Bool = false
     var forcedHidden = false
+    var isEnabled = true
     
     private(set) lazy var titleLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -45,7 +46,7 @@ final class ComposerHelperContainerView: UIView {
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOffset = .zero
         layer.shadowRadius = .composerHelperShadowRadius
-        layer.shadowOpacity = Float(CGFloat.composerHelperShdowOpacity)
+        layer.shadowOpacity = Float(CGFloat.composerHelperShadowOpacity)
         
         addSubview(closeButton)
         addSubview(titleLabel)
@@ -86,6 +87,10 @@ final class ComposerHelperContainerView: UIView {
     }
     
     func animate(show: Bool, resetForcedHidden: Bool = false) {
+        guard isEnabled else {
+            return
+        }
+        
         if resetForcedHidden {
             forcedHidden = false
         }

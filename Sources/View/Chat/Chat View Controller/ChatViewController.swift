@@ -23,8 +23,9 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     }
     
     private(set) lazy var composerView = createComposerView()
-    private(set) lazy var composerCommandsView = createComposerCommandsView()
     private(set) lazy var composerEditingHelperView = createComposerEditingHelperView()
+    private(set) lazy var composerCommandsView = createComposerCommandsView()
+    private(set) lazy var composerAddFileView = createComposerAddFileView()
     
     private(set) lazy var tableView: TableView = {
         let tableView = TableView(frame: .zero, style: .plain)

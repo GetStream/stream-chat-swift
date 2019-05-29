@@ -29,12 +29,13 @@ extension CGFloat {
     public static let composerAttachmentHeight: CGFloat = 60
     
     public static let composerHelperCornerRadius: CGFloat = .messageCornerRadius
-    public static let composerHelperIconSize: CGFloat = 30
+    public static let composerHelperIconSize: CGFloat = 32
+    public static let composerHelperIconCornerRadius: CGFloat = .composerCornerRadius / 2
     public static let composerHelperTitleEdgePadding: CGFloat = 20
     public static let composerHelperButtonEdgePadding: CGFloat = 15
     public static let composerHelperButtonCornerRadius: CGFloat = 3
     public static let composerHelperShadowRadius: CGFloat = 20
-    public static let composerHelperShdowOpacity: CGFloat = 0.15
+    public static let composerHelperShadowOpacity: CGFloat = 0.15
     
     public static let messagesToComposerPadding: CGFloat = .composerHeight + 2 * .messageEdgePadding
     public static let messageAvatarRadius: CGFloat = 16

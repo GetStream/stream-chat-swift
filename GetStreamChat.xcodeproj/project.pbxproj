@@ -103,6 +103,7 @@
 		8ABF826A2273064600A966D9 /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF82692273064600A966D9 /* UITableView+Extensions.swift */; };
 		8ACAB167228ED6C900674F2D /* ChannelsQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACAB166228ED6C900674F2D /* ChannelsQuery.swift */; };
 		8ACAB169228F645B00674F2D /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACAB168228F645B00674F2D /* ChannelsResponse.swift */; };
+		8AD04516229EA06C00CD6B77 /* ComposerAddFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD04515229EA06B00CD6B77 /* ComposerAddFileView.swift */; };
 		8AD21B99229BEB8D009D6086 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B98229BEB8D009D6086 /* Utils.swift */; };
 		8AD21B9E229C2014009D6086 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B9D229C2014009D6086 /* Notifications.swift */; };
 		8AD21BA0229D4813009D6086 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B9F229D4813009D6086 /* UILabel+Extensions.swift */; };
@@ -214,6 +215,7 @@
 		8ABF82692273064600A966D9 /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
 		8ACAB166228ED6C900674F2D /* ChannelsQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsQuery.swift; sourceTree = "<group>"; };
 		8ACAB168228F645B00674F2D /* ChannelsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsResponse.swift; sourceTree = "<group>"; };
+		8AD04515229EA06B00CD6B77 /* ComposerAddFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerAddFileView.swift; sourceTree = "<group>"; };
 		8AD21B98229BEB8D009D6086 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8AD21B9D229C2014009D6086 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		8AD21B9F229D4813009D6086 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
@@ -357,6 +359,7 @@
 				8A1A9411225DFDA100060ACC /* ComposerView.swift */,
 				8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */,
 				8A9955C222899CD0005D8148 /* ComposerCommandView.swift */,
+				8AD04515229EA06B00CD6B77 /* ComposerAddFileView.swift */,
 			);
 			path = Composer;
 			sourceTree = "<group>";
@@ -725,6 +728,7 @@
 				8ABF826A2273064600A966D9 /* UITableView+Extensions.swift in Sources */,
 				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
 				8AB1B8EF22675CCD002C65BD /* Result+Extensions.swift in Sources */,
+				8AD04516229EA06C00CD6B77 /* ComposerAddFileView.swift in Sources */,
 				8ACAB167228ED6C900674F2D /* ChannelsQuery.swift in Sources */,
 				8A8891502252379700DD6539 /* Channel.swift in Sources */,
 				8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */,

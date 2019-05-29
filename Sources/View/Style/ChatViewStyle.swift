@@ -25,6 +25,7 @@ public struct ChatViewStyle: Hashable {
                                                 messageUnreadColor: .white),
                       composer: ComposerViewStyle(textColor: .white,
                                                   states: [.active: .init(tintColor: .chatBlue, borderWidth: 2),
+                                                           .edit: .init(tintColor: .chatGreen, borderWidth: 2),
                                                            .disabled: .init(tintColor: .chatGray, borderWidth: 2)]),
                       incomingMessage: MessageViewStyle(chatBackgroundColor: .chatSuperDarkGray,
                                                         textColor: .white,
