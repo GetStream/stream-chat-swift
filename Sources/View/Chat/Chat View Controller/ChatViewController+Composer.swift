@@ -231,8 +231,21 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self] _ in self?.composerAddFileView.animate(show: false) })
             .disposed(by: disposeBag)
         
-        addButtonsToAddFileView(container, icon: UIImage.Icons.images, title: "Upload a photo or video") {}
-        addButtonsToAddFileView(container, icon: UIImage.Icons.file, title: "Upload a file") {}
+        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+            addButtonsToAddFileView(container,
+                                    icon: UIImage.Icons.images,
+                                    title: "Upload a photo or video",
+                                    sourceType: .photo(.photoLibrary)) { _ in }
+        }
+        
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            addButtonsToAddFileView(container,
+                                    icon: UIImage.Icons.images,
+                                    title: "Upload from a camera",
+                                    sourceType: .photo(.camera)) { _ in }
+        }
+        
+        addButtonsToAddFileView(container, icon: UIImage.Icons.file, title: "Upload a file", sourceType: .file) { _ in }
         
         return container
     }
@@ -240,19 +253,34 @@ extension ChatViewController {
     private func addButtonsToAddFileView(_ container: ComposerHelperContainerView,
                                          icon: UIImage,
                                          title: String,
-                                         action: @escaping () -> Void) {
-        let view = ComposerAddFileView(icon: icon, title: title)
+                                         sourceType: ComposerAddFileView.SourceType,
+                                         action: @escaping ComposerAddFileView.Action) {
+        let view = ComposerAddFileView(icon: icon, title: title, sourceType: sourceType, action: action)
         view.backgroundColor = container.backgroundColor
         container.containerView.addArrangedSubview(view)
         
         view.rx.tapGesture().when(.recognized)
-            .subscribe(onNext: { _ in action() })
+            .subscribe(onNext: { [weak view] _ in
+                if let view = view {
+                    view.action(view.sourceType)
+                }
+            })
             .disposed(by: self.disposeBag)
     }
     
     private func showAddFileView() {
+        guard !composerAddFileView.containerView.arrangedSubviews.isEmpty else {
+            return
+        }
+        
         composerCommandsView.animate(show: false)
-        composerAddFileView.animate(show: true)
+        
+        if composerAddFileView.containerView.arrangedSubviews.count == 1,
+            let first = composerAddFileView.containerView.arrangedSubviews.first as? ComposerAddFileView {
+            first.action(first.sourceType)
+        } else {
+            composerAddFileView.animate(show: true)
+        }
     }
 }
 

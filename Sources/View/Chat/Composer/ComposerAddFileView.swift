@@ -10,9 +10,12 @@ import UIKit
 import SnapKit
 
 final class ComposerAddFileView: UIView {
+    typealias Action = (_ sourceType: SourceType) -> Void
     
     private let iconImageView: UIImageView
     private let titleLabel: UILabel
+    let sourceType: SourceType
+    let action: Action
     
     override var backgroundColor: UIColor? {
         didSet {
@@ -22,13 +25,15 @@ final class ComposerAddFileView: UIView {
         }
     }
     
-    init(icon: UIImage, title: String) {
+    init(icon: UIImage, title: String, sourceType: SourceType, action: @escaping Action) {
         iconImageView = UIImageView(image: icon)
         iconImageView.contentMode = .center
         iconImageView.layer.cornerRadius = .composerHelperIconCornerRadius
         titleLabel = UILabel(frame: .zero)
         titleLabel.font = .chatMedium
         titleLabel.text = title
+        self.sourceType = sourceType
+        self.action = action
         super.init(frame: .zero)
         addSubview(iconImageView)
         addSubview(titleLabel)
@@ -50,6 +55,15 @@ final class ComposerAddFileView: UIView {
     required init?(coder aDecoder: NSCoder) {
         iconImageView = UIImageView(frame: .zero)
         titleLabel = UILabel(frame: .zero)
+        sourceType = .file
+        action = { _ in }
         super.init(coder: aDecoder)
+    }
+}
+
+extension ComposerAddFileView {
+    enum SourceType {
+        case photo(_ sourceType: UIImagePickerController.SourceType)
+        case file
     }
 }
