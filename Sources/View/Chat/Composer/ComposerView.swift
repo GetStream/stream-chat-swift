@@ -16,15 +16,15 @@ public final class ComposerView: UIView {
     
     public var style: ComposerViewStyle?
     
-    private var styleState: ComposerViewStyle.State = .normal {
+    private var styleState: ComposerViewStyle.State = .disabled {
         didSet {
-            if let style = style {
+            if styleState != oldValue, let style = style {
                 let styleState = style.style(with: self.styleState)
                 layer.borderWidth = styleState.borderWidth
                 layer.borderColor = styleState.tintColor.cgColor
                 textView.tintColor = styleState.tintColor
                 sendButton.tintColor = styleState.tintColor
-                filePickerButton.tintColor = styleState.tintColor
+                attachmentButton.tintColor = styleState.tintColor
             }
         }
     }
@@ -45,7 +45,7 @@ public final class ComposerView: UIView {
     // MARK: - Text View Container
     
     private lazy var buttonsStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [filePickerButton, sendButton, activityIndicatorView])
+        let stackView = UIStackView(arrangedSubviews: [sendButton, activityIndicatorView])
         stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .fill
@@ -102,7 +102,7 @@ public final class ComposerView: UIView {
         return button
     }()
     
-    private lazy var filePickerButton: UIButton = {
+    private(set) lazy var attachmentButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.Icons.plus, for: .normal)
         button.snp.makeConstraints { $0.width.equalTo(CGFloat.composerButtonWidth).priority(999) }
@@ -190,6 +190,15 @@ public final class ComposerView: UIView {
         layer.borderWidth = styleStateStyle?.borderWidth ?? 0
         layer.borderColor = styleStateStyle?.tintColor.cgColor ?? nil
         
+        // Add attachment button.
+        addSubview(attachmentButton)
+        
+        attachmentButton.snp.makeConstraints { make in
+            make.height.equalTo(CGFloat.composerHeight)
+            make.left.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        
         // Add buttons.
         addSubview(buttonsStackView)
         
@@ -205,10 +214,11 @@ public final class ComposerView: UIView {
         textView.backgroundColor = backgroundColor
         
         textView.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(CGFloat.composerInnerPadding)
+            make.left.equalTo(attachmentButton.snp.right)
             make.top.equalToSuperview().offset(textViewPadding)
             make.bottom.equalToSuperview().offset(-textViewPadding)
-            make.right.equalTo(buttonsStackView.snp.left)
+            make.right.lessThanOrEqualTo(buttonsStackView.snp.left)
+            make.right.equalToSuperview().priority(.high)
         }
         
         if style.backgroundColor == .clear {
@@ -229,12 +239,11 @@ public final class ComposerView: UIView {
                     return
                 }
                 
-                let bottom: CGFloat = height
-                    + .messageEdgePadding
-                    - (height > 0 ? parentView.safeAreaBottomOffset + .messagesToComposerPadding : 0)
+                let bottom: CGFloat = .messageEdgePadding
+                    + max(0, height - (height > 0 ? parentView.safeAreaBottomOffset + .messagesToComposerPadding : 0))
                 
                 self.bottomConstraint?.update(offset: -bottom)
-                self.styleState = height != 0 ? (self.isEditing ? .edit : .active) : .normal
+                self.styleState = height > .messageEdgePadding ? (self.isEditing ? .edit : .active) : .normal
             })
             .disposed(by: disposeBag)
     }
@@ -289,7 +298,7 @@ public final class ComposerView: UIView {
         didSet {
             textView.isUserInteractionEnabled = isEnabled
             sendButton.isEnabled = isEnabled
-            filePickerButton.isEnabled = isEnabled
+            attachmentButton.isEnabled = isEnabled
             attachmentsCollectionView.isUserInteractionEnabled = isEnabled
             attachmentsCollectionView.alpha = isEnabled ? 1 : 0.5
             styleState = isEnabled ? .normal : .disabled

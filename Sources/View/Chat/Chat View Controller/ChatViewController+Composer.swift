@@ -16,6 +16,12 @@ import RxKeyboard
 
 extension ChatViewController {
     
+    func createComposerView() -> ComposerView {
+        let composerView = ComposerView(frame: .zero)
+        composerView.style = style.composer
+        return composerView
+    }
+    
     func setupComposerView() {
         composerView.addToSuperview(view)
         
@@ -32,49 +38,36 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self] in self?.send() })
             .disposed(by: disposeBag)
         
+        composerView.attachmentButton.rx.tap
+            .subscribe(onNext: { [weak self] in self?.showAttachmentPickerList() })
+            .disposed(by: disposeBag)
+        
         RxKeyboard.instance.visibleHeight
             .skip(1)
-            .drive(onNext: { [weak self] height in
-                guard let tableView = self?.tableView else {
-                    return
-                }
-                
-                if height > 0 {
-                    tableView.saveContentInsetState()
-                } else {
-                    tableView.resetContentInsetState()
-                }
-                
-                let bottom = height
-                    + .messagesToComposerPadding
-                    - (height > 0 ? tableView.oldAdjustedContentInset.bottom : 0)
-                
-                tableView.contentInset = UIEdgeInsets(top: tableView.contentInset.top,
-                                                      left: tableView.contentInset.left,
-                                                      bottom: bottom,
-                                                      right: tableView.contentInset.right)
-            })
+            .drive(onNext: { [weak self] in self?.updateTableViewContentInsetForKeyboardHeight($0) })
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.willShowVisibleHeight
-            .drive(onNext: { [weak self] height in
-                if let self = self {
-                    var contentOffset = self.tableView.contentOffset
-                    contentOffset.y += height - self.view.safeAreaBottomOffset - (height > 0 ? .messagesToComposerPadding : 0)
-                    self.tableView.contentOffset = contentOffset
-                    
-                }
-            })
+            .drive(onNext: { [weak self] in self?.updateTableViewContentOffsetForKeyboardHeight($0) })
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.isHidden
             .skip(1)
-            .drive(onNext: { [weak self] isHidden in
-                if isHidden {
-                    self?.composerCommands.animate(show: false)
-                }
-            })
+            .filter { $0 }
+            .drive(onNext: { [weak self] _ in self?.composerCommandsView.animate(show: false) })
             .disposed(by: disposeBag)
+    }
+    
+    private func updateTableViewContentInsetForKeyboardHeight(_ height: CGFloat) {
+        height > 0 ? tableView.saveContentInsetState() : tableView.resetContentInsetState()
+        let bottom = .messagesToComposerPadding + max(0, height - (height > 0 ? tableView.oldAdjustedContentInset.bottom : 0))
+        tableView.contentInset.bottom = bottom
+    }
+    
+    private func updateTableViewContentOffsetForKeyboardHeight(_ height: CGFloat) {
+        var contentOffset = tableView.contentOffset
+        contentOffset.y += height - view.safeAreaBottomOffset - (height > 0 ? .messagesToComposerPadding : 0)
+        tableView.contentOffset = contentOffset
     }
     
     private func dispatchCommands(in text: String) {
@@ -82,7 +75,7 @@ extension ChatViewController {
         showCommandsIfNeeded(for: trimmedText)
         
         // Send command by <Return> key.
-        if composerCommands.shouldBeShown, text.contains("\n"), trimmedText.contains(" ") {
+        if composerCommandsView.shouldBeShown, text.contains("\n"), trimmedText.contains(" ") {
             composerView.textView.text = trimmedText
             send()
         }
@@ -99,7 +92,7 @@ extension ChatViewController {
         composerView.reset()
         
         if isMessageEditing {
-            editComposer.animate(show: false)
+            composerEditingHelperView.animate(show: false)
         }
         
         channelPresenter?.send(text: text)
@@ -122,35 +115,84 @@ extension ChatViewController {
     }
 }
 
-// MARK: - Composer Helper
+// MARK: - Composer Edit
 
 extension ChatViewController {
+    func createComposerEditingHelperView() -> ComposerHelperContainerView {
+        let container = ComposerHelperContainerView()
+        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
+        container.titleLabel.text = "Edit message"
+        container.add(for: composerView)
+        container.isHidden = true
+        
+        container.closeButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                if let self = self {
+                    self.channelPresenter?.editMessage = nil
+                    self.composerView.reset()
+                    self.composerEditingHelperView.animate(show: false)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        return container
+    }
+}
+
+// MARK: - Composer Commands
+
+extension ChatViewController {
+    
+    func createComposerCommandsView() -> ComposerHelperContainerView {
+        let container = ComposerHelperContainerView()
+        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
+        container.titleLabel.text = "Commands"
+        container.add(for: composerView)
+        container.isHidden = true
+        container.closeButton.isHidden = true
+        
+        if let channelConfig = channelPresenter?.channel.config {
+            channelConfig.commands.forEach { command in
+                let view = ComposerCommandView(frame: .zero)
+                view.backgroundColor = container.backgroundColor
+                view.update(command: command.name, args: command.args, description: command.description)
+                container.containerView.addArrangedSubview(view)
+                
+                view.rx.tapGesture().when(.recognized)
+                    .subscribe(onNext: { [weak self] _ in self?.addCommandToComposer(command: command.name) })
+                    .disposed(by: self.disposeBag)
+            }
+        }
+        
+        return container
+    }
+    
     private func showCommandsIfNeeded(for text: String) {
         let hide = filterCommands(with: text)
         
         // Show composer helper container.
         if text.count == 1, let first = text.first, first == "/" {
-            composerCommands.animate(show: true, resetForcedHidden: true)
+            composerCommandsView.animate(show: true, resetForcedHidden: true)
             return
         }
         
         if hide || text.first != "/" {
-            composerCommands.animate(show: false)
+            composerCommandsView.animate(show: false)
         } else {
-            composerCommands.animate(show: true)
+            composerCommandsView.animate(show: true)
         }
     }
     
     func filterCommands(with text: String) -> Bool {
         guard let command = command(in: text) else {
-            composerCommands.containerView.arrangedSubviews.forEach { $0.isHidden = false }
+            composerCommandsView.containerView.arrangedSubviews.forEach { $0.isHidden = false }
             return false
         }
         
         var visible = false
         let hasSpace = text.contains(" ")
         
-        composerCommands.containerView.arrangedSubviews.forEach {
+        composerCommandsView.containerView.arrangedSubviews.forEach {
             if let commandView = $0 as? ComposerCommandView {
                 commandView.isHidden = hasSpace ? commandView.command != command : !commandView.command.hasPrefix(command)
                 visible = visible || !commandView.isHidden
@@ -167,6 +209,13 @@ extension ChatViewController {
             composerView.textView.text = "/\(command) "
             return
         }
+    }
+}
+
+// MARK: - Composer Attachments
+
+extension ChatViewController {
+    private func showAttachmentPickerList() {
     }
 }
 

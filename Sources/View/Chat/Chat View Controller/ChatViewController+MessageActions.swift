@@ -60,7 +60,7 @@ extension ChatViewController {
         channelPresenter?.editMessage = message
         composerView.isEditing = true
         composerView.textView.becomeFirstResponder()
-        editComposer.animate(show: true)
+        composerEditingHelperView.animate(show: true)
     }
     
     private func addCopyAction(to alert: UIAlertController, message: Message) {

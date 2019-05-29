@@ -22,55 +22,9 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         return reactionsView == nil
     }
     
-    private(set) lazy var composerView: ComposerView = {
-        let composerView = ComposerView(frame: .zero)
-        composerView.style = style.composer
-        return composerView
-    }()
-    
-    private(set) lazy var composerCommands: ComposerHelperContainerView = {
-        let container = ComposerHelperContainerView()
-        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
-        container.titleLabel.text = "Commands"
-        container.add(for: composerView)
-        container.isHidden = true
-        container.closeButton.isHidden = true
-        
-        if let channelConfig = channelPresenter?.channel.config {
-            channelConfig.commands.forEach { command in
-                let view = ComposerCommandView(frame: .zero)
-                view.backgroundColor = container.backgroundColor
-                view.update(command: command.name, args: command.args, description: command.description)
-                container.containerView.addArrangedSubview(view)
-                
-                view.rx.tapGesture().when(.recognized)
-                    .subscribe(onNext: { [weak self] _ in self?.addCommandToComposer(command: command.name) })
-                    .disposed(by: self.disposeBag)
-            }
-        }
-        
-        return container
-    }()
-    
-    private(set) lazy var editComposer: ComposerHelperContainerView = {
-        let container = ComposerHelperContainerView()
-        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
-        container.titleLabel.text = "Edit message"
-        container.add(for: composerView)
-        container.isHidden = true
-        
-        container.closeButton.rx.tap
-            .subscribe(onNext: { [weak self] _ in
-                if let self = self {
-                    self.channelPresenter?.editMessage = nil
-                    self.composerView.reset()
-                    self.editComposer.animate(show: false)
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        return container
-    }()
+    private(set) lazy var composerView = createComposerView()
+    private(set) lazy var composerCommandsView = createComposerCommandsView()
+    private(set) lazy var composerEditingHelperView = createComposerEditingHelperView()
     
     private(set) lazy var tableView: TableView = {
         let tableView = TableView(frame: .zero, style: .plain)
