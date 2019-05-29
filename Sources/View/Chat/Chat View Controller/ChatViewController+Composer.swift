@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Photos.PHPhotoLibrary
 import SnapKit
 import RxSwift
 import RxCocoa
@@ -231,18 +232,22 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self] _ in self?.composerAddFileView.animate(show: false) })
             .disposed(by: disposeBag)
         
-        if UIImagePickerController.isSourceTypeAvailable(.photoLibrary) {
+        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
             addButtonsToAddFileView(container,
                                     icon: UIImage.Icons.images,
                                     title: "Upload a photo or video",
-                                    sourceType: .photo(.photoLibrary)) { _ in }
+                                    sourceType: .photo(.savedPhotosAlbum)) { [weak self] in
+                                        self?.showImagePicker(composerAddFileViewSourceType: $0)
+            }
         }
         
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             addButtonsToAddFileView(container,
                                     icon: UIImage.Icons.images,
                                     title: "Upload from a camera",
-                                    sourceType: .photo(.camera)) { _ in }
+                                    sourceType: .photo(.camera)) {  [weak self] in
+                                        self?.showImagePicker(composerAddFileViewSourceType: $0)
+            }
         }
         
         addButtonsToAddFileView(container, icon: UIImage.Icons.file, title: "Upload a file", sourceType: .file) { _ in }
@@ -281,6 +286,27 @@ extension ChatViewController {
         } else {
             composerAddFileView.animate(show: true)
         }
+    }
+    
+    private func showImagePicker(composerAddFileViewSourceType sourceType: ComposerAddFileView.SourceType) {
+        guard case .photo(let pickerSourceType) = sourceType else {
+            return
+        }
+        
+        showImagePicker(sourceType: pickerSourceType) { [weak self] info, status in
+            guard status == .authorized else {
+                self?.showImpagePickerAuthorizationStatusAlert(status)
+                return
+            }
+            
+            guard let image = info[.originalImage] as? UIImage else {
+                return
+            }
+            
+            self?.composerView.addImage(image)
+        }
+        
+        composerAddFileView.animate(show: false)
     }
 }
 

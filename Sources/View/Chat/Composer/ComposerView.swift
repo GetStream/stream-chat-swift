@@ -35,13 +35,6 @@ public final class ComposerView: UIView {
     
     public var isEditing: Bool = false
     
-    /// A stack view for containers.
-    private lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [attachmentsCollectionView, buttonsStackView])
-        stackView.axis = .vertical
-        return stackView
-    }()
-    
     // MARK: - Text View Container
     
     private lazy var buttonsStackView: UIStackView = {
@@ -142,15 +135,15 @@ public final class ComposerView: UIView {
     // MARK: - Images Collection View
     
     /// Picked images.
-    public var images: [UIImage] = []
+    private var images: [UIImage] = []
     
-    private lazy var attachmentsCollectionView: UICollectionView = {
+    private lazy var imagesCollectionView: UICollectionView = {
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .horizontal
-        collectionViewLayout.itemSize = CGSize(width: .composerAttachmentWidth, height: .composerAttachmentHeight)
-        collectionViewLayout.minimumLineSpacing = 1
+        collectionViewLayout.itemSize = CGSize(width: .composerAttachmentSize, height: .composerAttachmentSize)
+        collectionViewLayout.minimumLineSpacing = .composerCornerRadius
         collectionViewLayout.minimumInteritemSpacing = 0
-        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: .composerInnerPadding, bottom: 0, right: .composerInnerPadding)
+        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: .composerCornerRadius, bottom: 0, right: .composerCornerRadius)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.isHidden = true
@@ -207,6 +200,14 @@ public final class ComposerView: UIView {
             make.right.bottom.equalToSuperview()
         }
         
+        // Images Collection View.
+        addSubview(imagesCollectionView)
+        
+        imagesCollectionView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.top.equalToSuperview()
+        }
+        
         // Add text view.
         addSubview(textView)
         updateTextHeightIfNeeded()
@@ -215,12 +216,16 @@ public final class ComposerView: UIView {
         
         textView.snp.makeConstraints { make in
             make.left.equalTo(attachmentButton.snp.right)
-            make.top.equalToSuperview().offset(textViewPadding)
+            make.top.greaterThanOrEqualTo(imagesCollectionView.snp.bottom).offset(textViewPadding).priority(999)
+            make.top.equalToSuperview().offset(textViewPadding).priority(998)
             make.bottom.equalToSuperview().offset(-textViewPadding)
             make.right.lessThanOrEqualTo(buttonsStackView.snp.left)
             make.right.equalToSuperview().priority(.high)
         }
         
+        textView.setContentCompressionResistancePriority(.required, for: .vertical)
+        
+        // Blurred background.
         if style.backgroundColor == .clear {
             addBlurredBackground(blurEffectStyle: style.textColor.isDark ? .extraLight : .dark)
         }
@@ -281,11 +286,9 @@ public final class ComposerView: UIView {
         previousTextBeforeReset = textView.attributedText
         textView.attributedText = attributedText()
         images = []
-        attachmentsCollectionView.isHidden = true
-        attachmentsCollectionView.reloadData()
         activityIndicatorView.stopAnimating()
         updatePlaceholder()
-        updateTextHeightIfNeeded()
+        updateImagesCollectionView()
         styleState = .normal
         
         if textView.isFirstResponder {
@@ -299,8 +302,8 @@ public final class ComposerView: UIView {
             textView.isUserInteractionEnabled = isEnabled
             sendButton.isEnabled = isEnabled
             attachmentButton.isEnabled = isEnabled
-            attachmentsCollectionView.isUserInteractionEnabled = isEnabled
-            attachmentsCollectionView.alpha = isEnabled ? 1 : 0.5
+            imagesCollectionView.isUserInteractionEnabled = isEnabled
+            imagesCollectionView.alpha = isEnabled ? 1 : 0.5
             styleState = isEnabled ? .normal : .disabled
         }
     }
@@ -312,7 +315,7 @@ public final class ComposerView: UIView {
     }
     
     private func updateSendButton() {
-        sendButton.isHidden = text.count == 0
+        sendButton.isHidden = text.count == 0 && images.isEmpty
     }
 }
 
@@ -347,9 +350,9 @@ extension ComposerView {
         
         var height = min(max(height + 2 * textViewPadding, CGFloat.composerHeight), CGFloat.composerMaxHeight)
         textView.isScrollEnabled = height == CGFloat.composerMaxHeight
-        attachmentsCollectionView.isHidden = images.count == 0
+        imagesCollectionView.isHidden = images.count == 0
         
-        if !attachmentsCollectionView.isHidden {
+        if !imagesCollectionView.isHidden {
             height += CGFloat.composerAttachmentsHeight
         }
         
@@ -385,36 +388,17 @@ extension ComposerView: UITextViewDelegate {
 
 extension ComposerView: UICollectionViewDataSource {
     
-    /// Enables the image picking with a given view controller.
-    /// The view controller will be used to present `UIImagePickerController`.
-//    public func enableImagePicking(with viewController: UIViewController) {
-//        filePickerButton.isHidden = false
-//
-//        filePickerButton.addTap { [weak self, weak viewController] _ in
-//            if let self = self, let viewController = viewController {
-//                viewController.view.endEditing(true)
-//                self.imagePickerButton.isEnabled = false
-//
-//                viewController.pickImage { info, authorizationStatus, removed in
-//                    if let image = info[.originalImage] as? UIImage {
-//                        self.images.insert(image, at: 0)
-//                        self.imagesCollectionView.reloadData()
-//                        self.updateTextHeightIfNeeded()
-//                    } else if authorizationStatus != .authorized {
-//                        print("❌ Photos authorization status: ", authorizationStatus)
-//                    }
-//
-//                    if !self.textView.isFirstResponder {
-//                        self.textView.becomeFirstResponder()
-//                    }
-//
-//                    if authorizationStatus == .authorized || authorizationStatus == .notDetermined {
-//                        self.imagePickerButton.isEnabled = true
-//                    }
-//                }
-//            }
-//        }
-//    }
+    func addImage(_ image: UIImage) {
+        images.insert(image, at: 0)
+        updateImagesCollectionView()
+    }
+    
+    private func updateImagesCollectionView() {
+        imagesCollectionView.reloadData()
+        imagesCollectionView.isHidden = images.isEmpty
+        updateTextHeightIfNeeded()
+        updateSendButton()
+    }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return images.count
@@ -424,13 +408,12 @@ extension ComposerView: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(for: indexPath) as AttachmentCollectionViewCell
         cell.imageView.image = images[indexPath.item]
         
-//        cell.removeButton.addTap { [weak self] _ in
-//            if let self = self {
-//                self.images.remove(at: indexPath.item)
-//                self.imagesCollectionView.reloadData()
-//                self.updateTextHeightIfNeeded()
-//            }
-//        }
+        cell.updateRemoveButton(tintColor: style?.textColor) { [weak self] in
+            if let self = self {
+                self.images.remove(at: indexPath.item)
+                self.updateImagesCollectionView()
+            }
+        }
         
         return cell
     }

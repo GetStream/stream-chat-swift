@@ -24,9 +24,8 @@ extension CGFloat {
     public static let composerMaxHeight: CGFloat = 200
     public static let composerInnerPadding: CGFloat = 16
     public static let composerButtonWidth: CGFloat = 44
-    public static let composerAttachmentsHeight: CGFloat = 80
-    public static let composerAttachmentWidth: CGFloat = 50
-    public static let composerAttachmentHeight: CGFloat = 60
+    public static let composerAttachmentSize: CGFloat = 60
+    public static let composerAttachmentsHeight: CGFloat = .composerAttachmentSize + 2 * .composerCornerRadius
     
     public static let composerHelperCornerRadius: CGFloat = .messageCornerRadius
     public static let composerHelperIconSize: CGFloat = 32

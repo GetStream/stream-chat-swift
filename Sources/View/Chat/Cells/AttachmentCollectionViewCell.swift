@@ -8,17 +8,18 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
     
+    private  var disposeBag = DisposeBag()
     public let imageView = UIImageView(frame: .zero)
     
     public let removeButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.Icons.close, for: .normal)
-        button.tintColor = .black
-        button.backgroundColor = UIColor.chatGray.withAlphaComponent(0.5)
-        button.contentEdgeInsets = .all(2)
+        button.layer.cornerRadius = UIImage.Icons.close.size.width / 2
         return button
     }()
     
@@ -41,8 +42,9 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
     
     private func setup() {
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = removeButton.layer.cornerRadius
         imageView.makeEdgesEqualToSuperview(superview: contentView)
-        
+        imageView.clipsToBounds = true
         contentView.addSubview(removeButton)
         
         removeButton.snp.makeConstraints { make in
@@ -53,5 +55,15 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
     
     func reset() {
         imageView.image = nil
+        disposeBag = DisposeBag()
+    }
+    
+    func updateRemoveButton(tintColor: UIColor?, action: @escaping () -> Void) {
+        if let tintColor = tintColor {
+            removeButton.tintColor = tintColor
+            removeButton.backgroundColor = tintColor.oppositeBlackAndWhite.withAlphaComponent(0.5)
+        }
+        
+        removeButton.rx.tap.subscribe(onNext: action).disposed(by: disposeBag)
     }
 }
