@@ -102,7 +102,9 @@ public final class ComposerView: UIView {
         button.backgroundColor = backgroundColor
         return button
     }()
-
+    
+    var imagesAddAction: AttachmentCollectionViewCell.TapAction?
+    
     /// An `UIActivityIndicatorView`.
     public private(set) lazy var activityIndicatorView = UIActivityIndicatorView(style: .gray)
     
@@ -141,7 +143,7 @@ public final class ComposerView: UIView {
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .horizontal
         collectionViewLayout.itemSize = CGSize(width: .composerAttachmentSize, height: .composerAttachmentSize)
-        collectionViewLayout.minimumLineSpacing = .composerCornerRadius
+        collectionViewLayout.minimumLineSpacing = .composerCornerRadius / 2
         collectionViewLayout.minimumInteritemSpacing = 0
         collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: .composerCornerRadius, bottom: 0, right: .composerCornerRadius)
         
@@ -401,16 +403,23 @@ extension ComposerView: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+        return images.isEmpty ? 0 : images.count + (imagesAddAction == nil ? 0 : 1)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(for: indexPath) as AttachmentCollectionViewCell
-        cell.imageView.image = images[indexPath.item]
+        
+        if indexPath.item == 0, let imagesAddAction = imagesAddAction {
+            cell.updatePlusButton(tintColor: style?.textColor, action: imagesAddAction)
+            return cell
+        }
+        
+        let imageIndex = indexPath.item - (imagesAddAction == nil ? 0 : 1)
+        cell.imageView.image = images[imageIndex]
         
         cell.updateRemoveButton(tintColor: style?.textColor) { [weak self] in
             if let self = self {
-                self.images.remove(at: indexPath.item)
+                self.images.remove(at: imageIndex)
                 self.updateImagesCollectionView()
             }
         }

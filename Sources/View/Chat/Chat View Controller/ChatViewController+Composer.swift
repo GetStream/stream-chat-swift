@@ -239,6 +239,10 @@ extension ChatViewController {
                                     sourceType: .photo(.savedPhotosAlbum)) { [weak self] in
                                         self?.showImagePicker(composerAddFileViewSourceType: $0)
             }
+            
+            composerView.imagesAddAction = { [weak self] _ in
+                self?.showImagePicker(composerAddFileViewSourceType: .photo(.savedPhotosAlbum))
+            }
         }
         
         if UIImagePickerController.isSourceTypeAvailable(.camera) {

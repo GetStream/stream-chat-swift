@@ -10,8 +10,10 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import RxGesture
 
 final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
+    typealias TapAction = (_ gestureRecognizer: UIGestureRecognizer) -> Void
     
     private  var disposeBag = DisposeBag()
     public let imageView = UIImageView(frame: .zero)
@@ -54,7 +56,11 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
     }
     
     func reset() {
+        removeButton.isHidden = false
         imageView.image = nil
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = .clear
+        imageView.isUserInteractionEnabled = false
         disposeBag = DisposeBag()
     }
     
@@ -65,5 +71,18 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
         }
         
         removeButton.rx.tap.subscribe(onNext: action).disposed(by: disposeBag)
+    }
+    
+    func updatePlusButton(tintColor: UIColor?, action: @escaping TapAction) {
+        removeButton.isHidden = true
+        imageView.image = UIImage.Icons.plus
+        imageView.contentMode = .center
+        imageView.tintColor = tintColor
+        imageView.backgroundColor = tintColor?.withAlphaComponent(0.1)
+        imageView.isUserInteractionEnabled = true
+        
+        imageView.rx.tapGesture().when(.recognized)
+            .subscribe(onNext: action)
+            .disposed(by: disposeBag)
     }
 }
