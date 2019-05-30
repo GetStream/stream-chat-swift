@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ChatEndpoint: EndpointProtocol {
+enum ChatEndpoint {
     case channels(ChannelsQuery)
     case channel(ChannelQuery)
     case thread(Message, Pagination)
@@ -19,14 +19,18 @@ enum ChatEndpoint: EndpointProtocol {
     case addReaction(_ reactionType: String, Message)
     case deleteReaction(_ reactionType: String, Message)
     case sendEvent(EventType, Channel)
+    case sendImage(Data, Channel)
+    case sendFile(Data, Channel)
 }
 
 extension ChatEndpoint {
     var method: Client.Method {
         switch self {
-        case .channels, .thread:
+        case .channels,
+             .thread:
             return .get
-        case .deleteMessage, .deleteReaction:
+        case .deleteMessage,
+             .deleteReaction:
             return .delete
         default:
             return .post
@@ -61,6 +65,10 @@ extension ChatEndpoint {
             return path(with: message).appending("reaction/\(reactionType)")
         case .sendEvent(_, let channel):
             return path(with: channel).appending("event")
+        case .sendImage(_, let channel):
+            return path(with: channel).appending("image")
+        case .sendFile(_, let channel):
+            return path(with: channel).appending("file")
         }
     }
     
@@ -85,7 +93,9 @@ extension ChatEndpoint {
         case .channels,
              .thread,
              .deleteMessage,
-             .deleteReaction:
+             .deleteReaction,
+             .sendImage,
+             .sendFile:
             return nil
         case .channel(let query):
             return query
@@ -99,6 +109,16 @@ extension ChatEndpoint {
             return ["event": ["type": event]]
         case .sendRead:
             return Empty()
+        }
+    }
+    
+    var uploadData: Data? {
+        switch self {
+        case .sendImage(let data, _),
+             .sendFile(let data, _):
+            return data
+        default:
+            return nil
         }
     }
     

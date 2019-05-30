@@ -24,17 +24,48 @@ extension Client {
     }
     
     @discardableResult
-    func request<T: Decodable>(endpoint: EndpointProtocol, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
-        logger?.timing("Prepare for request", reset: true)
+    func request<T: Decodable>(endpoint: ChatEndpoint, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
+        do {
+            logger?.timing("Prepare for request", reset: true)
+            logger?.log(urlSession.configuration)
+            let task: URLSessionDataTask
+            let urlRequest = try self.urlRequest(for: endpoint).get()
+
+            if let uploadData = endpoint.uploadData {
+                task = urlSession.uploadTask(with: urlRequest, from: uploadData) { [weak self] in
+                    self?.parse(data: $0, response: $1, error: $2, completion: completion)
+                }
+                
+                logger?.timing("Uploading...")
+                
+            } else {
+                task = urlSession.dataTask(with: urlRequest) { [weak self] in
+                    self?.parse(data: $0, response: $1, error: $2, completion: completion)
+                }
+                
+                logger?.timing("Sending request...")
+            }
+            
+            task.resume()
+            
+            return task
+            
+        } catch let error as ClientError {
+            completion(.failure(error))
+        } catch {
+            completion(.failure(.unknown))
+        }
         
+        return URLSessionDataTask()
+    }
+    
+    private func urlRequest(for endpoint: ChatEndpoint) -> Result<URLRequest, ClientError> {
         guard let connectionId = webSocket.lastConnectionId else {
-            completion(.failure(.emptyConnectionId))
-            return URLSessionDataTask()
+            return .failure(.emptyConnectionId)
         }
         
         guard let user = user else {
-            completion(.failure(.emptyUser))
-            return URLSessionDataTask()
+            return .failure(.emptyUser)
         }
         
         var queryItems = [URLQueryItem(name: "api_key", value: apiKey),
@@ -42,8 +73,7 @@ extension Client {
                           URLQueryItem(name: "client_id", value: connectionId)]
         
         guard !queryItems.isEmpty else {
-            completion(.failure(.invalidURL(nil)))
-            return URLSessionDataTask()
+            return .failure(.invalidURL(nil))
         }
         
         if let endpointQueryItems = endpoint.queryItems {
@@ -82,8 +112,7 @@ extension Client {
         urlComponents.queryItems = queryItems
         
         guard let url = urlComponents.url?.appendingPathComponent(endpoint.path) else {
-            completion(.failure(.invalidURL(endpoint.path)))
-            return URLSessionDataTask()
+            return .failure(.invalidURL(endpoint.path))
         }
         
         var urlRequest = URLRequest(url: url)
@@ -94,27 +123,20 @@ extension Client {
             
             do {
                 if let httpBody = try? JSONEncoder.streamGzip.encode(encodable) {
-                   urlRequest.httpBody = httpBody
-                   urlRequest.addValue("gzip", forHTTPHeaderField: "Content-Encoding")
+                    urlRequest.httpBody = httpBody
+                    urlRequest.addValue("gzip", forHTTPHeaderField: "Content-Encoding")
                 } else {
-                   urlRequest.httpBody = try JSONEncoder.stream.encode(encodable)
+                    urlRequest.httpBody = try JSONEncoder.stream.encode(encodable)
                 }
             } catch {
-                completion(.failure(.encodingFailure(error, object: body)))
+                return .failure(.encodingFailure(error, object: body))
             }
         }
         
-        let task = urlSession.dataTask(with: urlRequest) { [weak self] in
-            self?.parse(data: $0, response: $1, error: $2, completion: completion)
-        }
-        
-        logger?.log(urlSession.configuration)
         logger?.log(urlRequest)
         logger?.log(queryItems)
-        logger?.timing("Send request")
-        task.resume()
         
-        return task
+        return .success(urlRequest)
     }
     
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {

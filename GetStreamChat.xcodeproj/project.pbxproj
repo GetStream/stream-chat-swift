@@ -52,7 +52,6 @@
 		8A88914C2252337500DD6539 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88914B2252337500DD6539 /* User.swift */; };
 		8A8891502252379700DD6539 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88914F2252379700DD6539 /* Channel.swift */; };
 		8A889153225240F700DD6539 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889152225240F700DD6539 /* Event.swift */; };
-		8A8891552252502900DD6539 /* EndpointProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8891542252502900DD6539 /* EndpointProtocol.swift */; };
 		8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8891562252827E00DD6539 /* UIImage+Icons.swift */; };
 		8A88915A2252830C00DD6539 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8891592252830C00DD6539 /* UIImage+Extensions.swift */; };
 		8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88915B2252997200DD6539 /* ChatEndpoint.swift */; };
@@ -164,7 +163,6 @@
 		8A88914B2252337500DD6539 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8A88914F2252379700DD6539 /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		8A889152225240F700DD6539 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		8A8891542252502900DD6539 /* EndpointProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointProtocol.swift; sourceTree = "<group>"; };
 		8A8891562252827E00DD6539 /* UIImage+Icons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Icons.swift"; sourceTree = "<group>"; };
 		8A8891592252830C00DD6539 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		8A88915B2252997200DD6539 /* ChatEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatEndpoint.swift; sourceTree = "<group>"; };
@@ -387,7 +385,6 @@
 				8A88914722521E4800DD6539 /* ClientError.swift */,
 				8A8891672253D3A500DD6539 /* ClientLogger.swift */,
 				8A8891492252309900DD6539 /* BaseURL.swift */,
-				8A8891542252502900DD6539 /* EndpointProtocol.swift */,
 				8A88915B2252997200DD6539 /* ChatEndpoint.swift */,
 				8AFC2A2C2268B124006278D4 /* WebSocket */,
 			);
@@ -713,7 +710,6 @@
 				8AABC2982260D9450064CB20 /* StatusTableViewCell.swift in Sources */,
 				8AFC2A2722688299006278D4 /* Member.swift in Sources */,
 				8A40804122818C7A00F274FF /* Int+Extensions.swift in Sources */,
-				8A8891552252502900DD6539 /* EndpointProtocol.swift in Sources */,
 				8A5D1FEB2288365B007AB76C /* ComposerHelperContainerView.swift in Sources */,
 				8A40803D22805ABA00F274FF /* ChatViewController+Reactions.swift in Sources */,
 				8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */,

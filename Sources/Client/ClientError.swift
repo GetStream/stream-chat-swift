@@ -9,13 +9,14 @@
 import Foundation
 
 public enum ClientError: Error {
+    case unknown
     case emptyToken
     case emptyUser
     case emptyClientId
     case emptyConnectionId
+    case emptyBody
     case invalidURL(_ string: String?)
     case requestFailed(_ error: Error?)
-    case emptyBody
     case responseError(_ responseError: ClientErrorResponse)
     case encodingFailure(_ error: Error, object: Encodable)
     case decodingFailure(_ error: Error)
