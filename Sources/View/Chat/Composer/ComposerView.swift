@@ -85,6 +85,8 @@ public final class ComposerView: UIView {
         return label
     }()
     
+    private var toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
+    
     /// A send button.
     public private(set) lazy var sendButton: UIButton = {
         let button = UIButton(frame: .zero)
@@ -235,7 +237,6 @@ public final class ComposerView: UIView {
         // Add placeholder.
         self.placeholderText = placeholderText
         
-        let toolBar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
         toolBar.isHidden = true
         textView.inputAccessoryView = toolBar
         
@@ -247,10 +248,15 @@ public final class ComposerView: UIView {
                 }
                 
                 let bottom: CGFloat = .messageEdgePadding
-                    + max(0, height - (height > 0 ? parentView.safeAreaBottomOffset + .messagesToComposerPadding : 0))
+                    + max(0, height - (height > 0 ? parentView.safeAreaBottomOffset + self.toolBar.frame.height : 0))
                 
                 self.bottomConstraint?.update(offset: -bottom)
-                self.updateStyleState(toActive: height > .messageEdgePadding)
+                
+                if height == 0 {
+                    self.textView.resignFirstResponder()
+                }
+                
+                DispatchQueue.main.async { self.updateStyleState() }
             })
             .disposed(by: disposeBag)
     }
@@ -320,13 +326,8 @@ public final class ComposerView: UIView {
         sendButton.isHidden = text.count == 0 && images.isEmpty
     }
     
-    private func updateStyleState(toActive: Bool = false) {
-        if !toActive, images.isEmpty, text.isEmpty {
-            styleState = .normal
-            return
-        }
-        
-        styleState = isEditing ? .edit : .active
+    private func updateStyleState() {
+        styleState = !textView.isFirstResponder && images.isEmpty && text.isEmpty ? .normal : (isEditing ? .edit : .active)
     }
 }
 
@@ -364,14 +365,29 @@ extension ComposerView {
         imagesCollectionView.isHidden = images.count == 0
         
         if !imagesCollectionView.isHidden {
-            height += CGFloat.composerAttachmentsHeight
+            height += .composerAttachmentsHeight
         }
         
+        updateToolBarHeight()
+
         if heightConstraint.layoutConstraints.first?.constant != height {
             heightConstraint.update(offset: height)
             setNeedsLayout()
             layoutIfNeeded()
         }
+    }
+    
+    public func updateToolBarHeight() {
+        let height = CGFloat.messagesToComposerPadding + (imagesCollectionView.isHidden ? 0 : .composerAttachmentsHeight)
+        
+        guard toolBar.frame.height != height else {
+            return
+        }
+        
+        toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width, height: height))
+        toolBar.isHidden = true
+        textView.inputAccessoryView = toolBar
+        textView.reloadInputViews()
     }
 }
 
@@ -411,6 +427,7 @@ extension ComposerView: UICollectionViewDataSource {
         updateTextHeightIfNeeded()
         updateSendButton()
         updateStyleState()
+        updateToolBarHeight()
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

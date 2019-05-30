@@ -44,7 +44,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         
         view.insertSubview(tableView, at: 0)
         
-        let footerView = ChatFooterView(frame: CGRect(x: 0, y: 0, width: 0, height: .chatFooterHeight))
+        let footerView = ChatFooterView(frame: CGRect(width: 0, height: .chatFooterHeight))
         footerView.backgroundColor = style.incomingMessage.chatBackgroundColor
         tableView.tableFooterView = footerView
         
