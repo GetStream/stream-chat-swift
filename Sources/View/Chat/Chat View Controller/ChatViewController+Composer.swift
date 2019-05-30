@@ -180,7 +180,7 @@ extension ChatViewController {
         // Show composer helper container.
         if text.count == 1, let first = text.first, first == "/" {
             composerCommandsView.animate(show: true, resetForcedHidden: true)
-            composerAddFileView.animate(show: false)
+            hideAddFileView()
             return
         }
         
@@ -188,7 +188,7 @@ extension ChatViewController {
             composerCommandsView.animate(show: false)
         } else {
             composerCommandsView.animate(show: true)
-            composerAddFileView.animate(show: false)
+            hideAddFileView()
         }
     }
     
@@ -229,7 +229,7 @@ extension ChatViewController {
         let container = createComposerHelperContainerView(title: "Add a file")
         
         container.closeButton.rx.tap
-            .subscribe(onNext: { [weak self] _ in self?.composerAddFileView.animate(show: false) })
+            .subscribe(onNext: { [weak self] _ in self?.hideAddFileView() })
             .disposed(by: disposeBag)
         
         if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
@@ -284,12 +284,26 @@ extension ChatViewController {
         
         composerCommandsView.animate(show: false)
         
-        if composerAddFileView.containerView.arrangedSubviews.count == 1,
-            let first = composerAddFileView.containerView.arrangedSubviews.first as? ComposerAddFileView {
+        composerAddFileView.containerView.arrangedSubviews.forEach { subview in
+            if let addFileView = subview as? ComposerAddFileView {
+                if case .file = addFileView.sourceType {
+                    addFileView.isHidden = !composerView.images.isEmpty
+                }
+            }
+        }
+        
+        let subviews = composerAddFileView.containerView.arrangedSubviews.filter { $0.isHidden == false }
+        
+        if subviews.count == 1, let first = subviews.first as? ComposerAddFileView {
             first.action(first.sourceType)
         } else {
             composerAddFileView.animate(show: true)
         }
+    }
+    
+    private func hideAddFileView() {
+        composerAddFileView.animate(show: false)
+        composerCommandsView.containerView.arrangedSubviews.forEach { $0.isHidden = false }
     }
     
     private func showImagePicker(composerAddFileViewSourceType sourceType: ComposerAddFileView.SourceType) {
@@ -310,7 +324,7 @@ extension ChatViewController {
             self?.composerView.addImage(image)
         }
         
-        composerAddFileView.animate(show: false)
+        hideAddFileView()
     }
 }
 

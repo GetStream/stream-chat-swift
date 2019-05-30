@@ -137,7 +137,7 @@ public final class ComposerView: UIView {
     // MARK: - Images Collection View
     
     /// Picked images.
-    private var images: [UIImage] = []
+    private(set) var images: [UIImage] = []
     
     private lazy var imagesCollectionView: UICollectionView = {
         let collectionViewLayout = UICollectionViewFlowLayout()
@@ -402,6 +402,7 @@ extension ComposerView: UICollectionViewDataSource {
     func addImage(_ image: UIImage) {
         images.insert(image, at: 0)
         updateImagesCollectionView()
+        imagesCollectionView.scrollToItem(at: .item(0), at: .right, animated: false)
     }
     
     private func updateImagesCollectionView() {
