@@ -45,6 +45,7 @@
 		8A4FE7C5227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */; };
 		8A5D1FEB2288365B007AB76C /* ComposerHelperContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */; };
 		8A5D1FED22899421007AB76C /* ChatViewController+Composer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1FEC22899421007AB76C /* ChatViewController+Composer.swift */; };
+		8A79480E22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A79480D22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift */; };
 		8A889144225219E500DD6539 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889143225219E500DD6539 /* Client.swift */; };
 		8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */; };
 		8A88914822521E4800DD6539 /* ClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A88914722521E4800DD6539 /* ClientError.swift */; };
@@ -106,6 +107,7 @@
 		8AD21B99229BEB8D009D6086 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B98229BEB8D009D6086 /* Utils.swift */; };
 		8AD21B9E229C2014009D6086 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B9D229C2014009D6086 /* Notifications.swift */; };
 		8AD21BA0229D4813009D6086 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B9F229D4813009D6086 /* UILabel+Extensions.swift */; };
+		8AEC7D9E22A145B9000B5B97 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AEC7D9D22A145B9000B5B97 /* Uploader.swift */; };
 		8AFC2A2722688299006278D4 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2622688299006278D4 /* Member.swift */; };
 		8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A282268933A006278D4 /* WebSocket.swift */; };
 		8AFC2A2B226893FF006278D4 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */; };
@@ -156,6 +158,7 @@
 		8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+TableFooterView.swift"; sourceTree = "<group>"; };
 		8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerHelperContainerView.swift; sourceTree = "<group>"; };
 		8A5D1FEC22899421007AB76C /* ChatViewController+Composer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Composer.swift"; sourceTree = "<group>"; };
+		8A79480D22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientURLSessionTaskDelegate.swift; sourceTree = "<group>"; };
 		8A889143225219E500DD6539 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GetStreamChat.xcassets; sourceTree = "<group>"; };
 		8A88914722521E4800DD6539 /* ClientError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientError.swift; sourceTree = "<group>"; };
@@ -217,6 +220,7 @@
 		8AD21B98229BEB8D009D6086 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8AD21B9D229C2014009D6086 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		8AD21B9F229D4813009D6086 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
+		8AEC7D9D22A145B9000B5B97 /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
 		8AFC2A2622688299006278D4 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		8AFC2A282268933A006278D4 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
@@ -380,6 +384,7 @@
 			children = (
 				8A889143225219E500DD6539 /* Client.swift */,
 				8AFC2A2D226B5B37006278D4 /* Client+Request.swift */,
+				8A79480D22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift */,
 				8ABF82652270A72900A966D9 /* Client+RxRequest.swift */,
 				8AFC2A2F226B5C87006278D4 /* Client+WebSocket.swift */,
 				8A88914722521E4800DD6539 /* ClientError.swift */,
@@ -387,6 +392,7 @@
 				8A8891492252309900DD6539 /* BaseURL.swift */,
 				8A88915B2252997200DD6539 /* ChatEndpoint.swift */,
 				8AFC2A2C2268B124006278D4 /* WebSocket */,
+				8AEC7D9D22A145B9000B5B97 /* Uploader.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -696,6 +702,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A79480E22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift in Sources */,
 				8A88917B22550ECC00DD6539 /* CGFloat+Extensions.swift in Sources */,
 				8A2B60E02278813E00419C8E /* WebSocket+Reconnect.swift in Sources */,
 				8ABC5523227799F6008F312B /* ChatFooterView.swift in Sources */,
@@ -732,6 +739,7 @@
 				8ABC5520227730C9008F312B /* UIView+Extensions.swift in Sources */,
 				8A0755E8228DB04500A3E4AB /* MessageRead.swift in Sources */,
 				8ABF82662270A72900A966D9 /* Client+RxRequest.swift in Sources */,
+				8AEC7D9E22A145B9000B5B97 /* Uploader.swift in Sources */,
 				8A1A941A225E321100060ACC /* UICollectionView+Reusable.swift in Sources */,
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8AB8FA742279F3F400C14D94 /* UIApplication+AppState.swift in Sources */,

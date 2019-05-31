@@ -20,7 +20,7 @@ extension Client {
                                         "Stream-Auth-Type": "jwt",
                                         "X-Stream-Client": "stream-chat-swift-client-\(Client.version)"]
         
-        return URLSession(configuration: config)
+        return URLSession(configuration: config, delegate: urlSessionTaskDelegate, delegateQueue: nil)
     }
     
     @discardableResult

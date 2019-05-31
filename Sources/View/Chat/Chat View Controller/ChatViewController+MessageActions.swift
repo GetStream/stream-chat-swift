@@ -18,7 +18,7 @@ extension ChatViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         if presenter.channel.config.reactionsEnabled {
-            alert.addAction(.init(title: Reaction.emoji.joined(separator: "  "), style: .default, handler: { [weak self] _ in
+            alert.addAction(.init(title: "Reactions \(Reaction.emoji.first ?? "")", style: .default, handler: { [weak self] _ in
                 self?.showReactions(from: cell, in: message, locationInView: locationInView)
             }))
         }

@@ -15,7 +15,7 @@ import RxGesture
 final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
     typealias TapAction = (_ gestureRecognizer: UIGestureRecognizer) -> Void
     
-    private  var disposeBag = DisposeBag()
+    private(set) var disposeBag = DisposeBag()
     public let imageView = UIImageView(frame: .zero)
     
     public let removeButton: UIButton = {
@@ -24,6 +24,8 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
         button.layer.cornerRadius = UIImage.Icons.close.size.width / 2
         return button
     }()
+    
+    private(set) lazy var progressView = UIProgressView(progressViewStyle: .default)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,25 +45,57 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
     }
     
     private func setup() {
+        let cornerRadius = removeButton.layer.cornerRadius
+        layer.cornerRadius = cornerRadius
+        clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = removeButton.layer.cornerRadius
         imageView.makeEdgesEqualToSuperview(superview: contentView)
-        imageView.clipsToBounds = true
         contentView.addSubview(removeButton)
         
         removeButton.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(2)
             make.right.equalToSuperview().offset(-2)
         }
+        
+        contentView.addSubview(progressView)
+        
+        progressView.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(cornerRadius)
+            make.right.equalToSuperview().offset(-cornerRadius)
+            make.bottom.equalToSuperview().offset(-cornerRadius)
+        }
     }
     
     func reset() {
+        backgroundColor = .clear
         removeButton.isHidden = false
+        imageView.alpha = 1
         imageView.image = nil
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .clear
         imageView.isUserInteractionEnabled = false
+        progressView.isHidden = true
+        progressView.progress = 0
         disposeBag = DisposeBag()
+    }
+    
+    func updateForProgress(_ progress: Float) {
+        guard progress < 1 else {
+            progressView.isHidden = true
+            imageView.alpha = 1
+            backgroundColor = .clear
+            return
+        }
+        
+        progressView.isHidden = false
+        progressView.progress = progress
+        imageView.alpha = 0.7
+    }
+    
+    func updateForError() {
+        progressView.isHidden = true
+        backgroundColor = .red
+        imageView.alpha = 0.7
     }
     
     func updateRemoveButton(tintColor: UIColor?, action: @escaping () -> Void) {

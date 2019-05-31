@@ -35,16 +35,6 @@ public final class ComposerView: UIView {
     
     public var isEditing: Bool = false
     
-    // MARK: - Text View Container
-    
-    private lazy var buttonsStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [sendButton, activityIndicatorView])
-        stackView.axis = .horizontal
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        return stackView
-    }()
-    
     /// An `UITextView`.
     /// You have to use the `text` property to change the value of the text view.
     public private(set) lazy var textView: UITextView = {
@@ -107,9 +97,6 @@ public final class ComposerView: UIView {
     
     var imagesAddAction: AttachmentCollectionViewCell.TapAction?
     
-    /// An `UIActivityIndicatorView`.
-    public private(set) lazy var activityIndicatorView = UIActivityIndicatorView(style: .gray)
-    
     /// The text of the text view.
     public var text: String {
         get {
@@ -139,7 +126,11 @@ public final class ComposerView: UIView {
     // MARK: - Images Collection View
     
     /// Picked images.
-    private(set) var images: [UIImage] = []
+    var uploader: Uploader?
+    
+    var isUploaderEmpty: Bool {
+        return (uploader?.items ?? []).isEmpty
+    }
     
     private lazy var imagesCollectionView: UICollectionView = {
         let collectionViewLayout = UICollectionViewFlowLayout()
@@ -197,9 +188,9 @@ public final class ComposerView: UIView {
         }
         
         // Add buttons.
-        addSubview(buttonsStackView)
+        addSubview(sendButton)
         
-        buttonsStackView.snp.makeConstraints { make in
+        sendButton.snp.makeConstraints { make in
             make.height.equalTo(CGFloat.composerHeight)
             make.right.bottom.equalToSuperview()
         }
@@ -223,8 +214,7 @@ public final class ComposerView: UIView {
             make.top.greaterThanOrEqualTo(imagesCollectionView.snp.bottom).offset(textViewPadding).priority(999)
             make.top.equalToSuperview().offset(textViewPadding).priority(998)
             make.bottom.equalToSuperview().offset(-textViewPadding)
-            make.right.lessThanOrEqualTo(buttonsStackView.snp.left)
-            make.right.equalToSuperview().priority(.high)
+            make.right.equalTo(sendButton.snp.left)
         }
         
         textView.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -239,9 +229,11 @@ public final class ComposerView: UIView {
         
         toolBar.isHidden = true
         textView.inputAccessoryView = toolBar
+        updateStyleState()
         
         // Observe the keyboard moving.
         RxKeyboard.instance.visibleHeight
+            .skip(1)
             .drive(onNext: { [weak self] height in
                 guard let self = self, let parentView = self.superview else {
                     return
@@ -256,7 +248,11 @@ public final class ComposerView: UIView {
                     self.textView.resignFirstResponder()
                 }
                 
-                DispatchQueue.main.async { self.updateStyleState() }
+                DispatchQueue.main.async {
+                    if self.styleState != .disabled {
+                        self.updateStyleState()
+                    }
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -282,33 +278,23 @@ public final class ComposerView: UIView {
         adjustingView.makeEdgesEqualToSuperview()
     }
     
-    /// Check if the content is valid: text is not empty or at least one image was added.
-    public var isValidContent: Bool {
-        return textView.attributedText.length != 0 || !images.isEmpty
-    }
-    
     /// Reset states of all child views and clear all added/generated data.
     public func reset() {
         isEnabled = true
         isEditing = false
         previousTextBeforeReset = textView.attributedText
         textView.attributedText = attributedText()
-        images = []
-        activityIndicatorView.stopAnimating()
+        uploader?.reset()
         updatePlaceholder()
         updateImagesCollectionView()
-        styleState = .normal
-        
-        if textView.isFirstResponder {
-            textView.resignFirstResponder()
-        }
+        styleState = textView.isFirstResponder ? .active : .normal
     }
     
     /// Toggle `isUserInteractionEnabled` states for all child views.
     public var isEnabled: Bool = true {
         didSet {
-            textView.isUserInteractionEnabled = isEnabled
             sendButton.isEnabled = isEnabled
+            attachmentButton.isEnabled = isEnabled
             attachmentButton.isEnabled = isEnabled
             imagesCollectionView.isUserInteractionEnabled = isEnabled
             imagesCollectionView.alpha = isEnabled ? 1 : 0.5
@@ -323,11 +309,11 @@ public final class ComposerView: UIView {
     }
     
     private func updateSendButton() {
-        sendButton.isHidden = text.count == 0 && images.isEmpty
+        sendButton.isHidden = text.count == 0 && isUploaderEmpty
     }
     
     private func updateStyleState() {
-        styleState = !textView.isFirstResponder && images.isEmpty && text.isEmpty ? .normal : (isEditing ? .edit : .active)
+        styleState = !textView.isFirstResponder && isUploaderEmpty && text.isEmpty ? .normal : (isEditing ? .edit : .active)
     }
 }
 
@@ -362,7 +348,7 @@ extension ComposerView {
         
         var height = min(max(height + 2 * textViewPadding, CGFloat.composerHeight), CGFloat.composerMaxHeight)
         textView.isScrollEnabled = height == CGFloat.composerMaxHeight
-        imagesCollectionView.isHidden = images.count == 0
+        imagesCollectionView.isHidden = isUploaderEmpty
         
         if !imagesCollectionView.isHidden {
             height += .composerAttachmentsHeight
@@ -416,14 +402,18 @@ extension ComposerView: UITextViewDelegate {
 extension ComposerView: UICollectionViewDataSource {
     
     func addImage(_ image: UIImage) {
-        images.insert(image, at: 0)
+        guard let uploader = uploader else {
+            return
+        }
+        
+        uploader.upload(image: image)
         updateImagesCollectionView()
         imagesCollectionView.scrollToItem(at: .item(0), at: .right, animated: false)
     }
     
     private func updateImagesCollectionView() {
         imagesCollectionView.reloadData()
-        imagesCollectionView.isHidden = images.isEmpty
+        imagesCollectionView.isHidden = isUploaderEmpty
         updateTextHeightIfNeeded()
         updateSendButton()
         updateStyleState()
@@ -431,7 +421,7 @@ extension ComposerView: UICollectionViewDataSource {
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.isEmpty ? 0 : images.count + (imagesAddAction == nil ? 0 : 1)
+        return isUploaderEmpty ? 0 : (uploader?.items.count ?? 0) + (imagesAddAction == nil ? 0 : 1)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -443,13 +433,40 @@ extension ComposerView: UICollectionViewDataSource {
         }
         
         let imageIndex = indexPath.item - (imagesAddAction == nil ? 0 : 1)
-        cell.imageView.image = images[imageIndex]
+        
+        guard let item = uploader?.items[imageIndex] else {
+            return .unused
+        }
+        
+        cell.imageView.image = item.image
         
         cell.updateRemoveButton(tintColor: style?.textColor) { [weak self] in
             if let self = self {
-                self.images.remove(at: imageIndex)
+                self.uploader?.remove(at: imageIndex)
                 self.updateImagesCollectionView()
             }
+        }
+        
+        if item.url == nil, item.error == nil {
+            cell.updateForProgress(item.lastProgress)
+            
+            item.uploadingCompletion
+                .observeOn(MainScheduler.instance)
+                .subscribe(onError: { [weak cell] _ in cell?.updateForError() },
+                           onCompleted: { [weak cell] in cell?.updateForProgress(1) })
+                .disposed(by: cell.disposeBag)
+            
+            item.uploadingProgress
+                .do(onError: { [weak cell] error in cell?.updateForError() },
+                    onDispose: { [weak cell, weak item] in
+                        if item?.error == nil {
+                            cell?.updateForProgress(1)
+                        } else {
+                            cell?.updateForError()
+                        }
+                })
+                .bind(to: cell.progressView.rx.progress)
+                .disposed(by: cell.disposeBag)
         }
         
         return cell

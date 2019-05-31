@@ -54,6 +54,8 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     public var channelPresenter: ChannelPresenter? {
         didSet {
             if let presenter = channelPresenter {
+                composerView.uploader = presenter.uploader
+                
                 Driver.merge((presenter.parentMessage == nil ? presenter.channelRequest : presenter.replyRequest),
                              presenter.changes,
                              presenter.ephemeralChanges)
@@ -177,24 +179,27 @@ extension ChatViewController {
             return .unused
         }
         
+        let cell: UITableViewCell
         let backgroundColor = style.incomingMessage.chatBackgroundColor
         
         switch items[indexPath.row] {
         case .loading:
             channelPresenter?.loadNext()
-            return tableView.loadingCell(at: indexPath, backgroundColor: backgroundColor)
+            cell = tableView.loadingCell(at: indexPath, backgroundColor: backgroundColor)
             
         case let .status(title, subtitle, highlighted):
-            return tableView.statusCell(at: indexPath,
+            cell = tableView.statusCell(at: indexPath,
                                         title: title,
                                         subtitle: subtitle,
                                         backgroundColor: backgroundColor,
                                         highlighted: highlighted)
         case .message(let message):
-            return messageCell(at: indexPath, message: message)
+            cell = messageCell(at: indexPath, message: message)
         default:
             return .unused
         }
+        
+        return cell
     }
     
     public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

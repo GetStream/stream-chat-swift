@@ -21,6 +21,7 @@ public final class Client {
     var token: Token?
     private(set) lazy var webSocket = WebSocket(URLRequest(url: baseURL.url(.webSocket)))
     private(set) lazy var urlSession = URLSession.shared
+    private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
     let logOptions: LogOptions

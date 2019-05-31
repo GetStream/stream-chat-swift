@@ -7,12 +7,18 @@
 //
 
 import UIKit.UITableViewCell
+import UIKit.UICollectionViewCell
 
 extension UITableViewCell {
     /// A shortcut of an unused `UITableViewCell`.
     public static let unused: UITableViewCell = {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: "unused")
-        cell.backgroundColor = UIColor.red.withAlphaComponent(0.5)
-        return cell
+        return UITableViewCell(style: .default, reuseIdentifier: "unused")
+    }()
+}
+
+extension UICollectionViewCell {
+    /// A shortcut of an unused `UICollectionViewCell`.
+    public static let unused: UICollectionViewCell = {
+        return UICollectionViewCell(frame: .zero)
     }()
 }

@@ -55,3 +55,15 @@ extension UIImage {
         }
     }
 }
+
+// MARK: - Check
+
+extension UIImage {
+    var hasAlpha: Bool {
+        guard let alpha = cgImage?.alphaInfo else {
+            return false
+        }
+        
+        return alpha == .first || alpha == .last || alpha == .premultipliedFirst || alpha == .premultipliedLast
+    }
+}
