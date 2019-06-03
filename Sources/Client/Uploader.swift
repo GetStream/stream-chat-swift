@@ -14,10 +14,6 @@ final class Uploader {
     let channel: Channel
     var items: [UploaderItem] = []
     
-    var uploadedURLs: [URL] {
-        return items.compactMap { $0.url }
-    }
-    
     init(channel: Channel) {
         self.channel = channel
     }
@@ -43,7 +39,7 @@ final class UploaderItem {
     let fileName: String
     let localURL: URL?
     let fileType: AttachmentFileType
-    private(set) var url: URL? = nil
+    private(set) var attachment: Attachment? = nil
     private(set) var error: Error? = nil
     private(set) var urlSessionTask: URLSessionTask?
     private(set) var lastProgress: Float = 0
@@ -81,13 +77,13 @@ final class UploaderItem {
     }
     
     func upload(in channel: Channel) {
-        let fileCompletion: Client.Completion<FileUploadResponse> = { [weak self] result in
+        let imageCompletion: Client.Completion<FileUploadResponse> = { [weak self] result in
             guard let self = self else {
                 return
             }
             
             if let response = try? result.get() {
-                self.url = response.file
+                self.attachment = Attachment(type: .image, title: self.fileName, imageURL: response.file)
                 self.uploadingCompletion.onCompleted()
             } else if let error = result.error {
                 self.error = error
@@ -107,6 +103,6 @@ final class UploaderItem {
             return
         }
         
-        urlSessionTask = Client.shared.request(endpoint: .sendImage(fileName, mimeType, imageData, channel), fileCompletion)
+        urlSessionTask = Client.shared.request(endpoint: .sendImage(fileName, mimeType, imageData, channel), imageCompletion)
     }
 }

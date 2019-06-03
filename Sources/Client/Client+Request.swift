@@ -178,7 +178,7 @@ extension Client {
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
         let httpResponse = response as? HTTPURLResponse
         logger?.timing("Response received")
-        logger?.log(response, data: (logOptions != .requestsHeaders || (httpResponse?.statusCode ?? 400) >= 400) ? data : nil)
+        logger?.log(response, data: data, forceToShowData: (httpResponse?.statusCode ?? 400) >= 400)
         
         if let error = error {
             logger?.log(error)

@@ -39,6 +39,17 @@ public struct Attachment: Codable {
         return (type.isImage && text == nil) || type == .video
     }
     
+    init(type: AttachmentType, title: String, url: URL? = nil, imageURL: URL? = nil) {
+        self.type = type
+        self.url = url
+        self.imageURL = imageURL
+        self.title = title
+        text = nil
+        author = nil
+        file = nil
+        actions = []
+    }
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         author = try container.decodeIfPresent(String.self, forKey: .author)
@@ -98,7 +109,13 @@ public struct Attachment: Codable {
     ///         mime_type: upload.file.type,
     ///         file_size: upload.file.size,
     ///    }
-    public func encode(to encoder: Encoder) throws {}
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(type, forKey: .type)
+        try container.encode(title, forKey: (type == .image ? .fallback : .title))
+        try container.encodeIfPresent(url, forKey: .url)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
+    }
     
     private static func fixedURL(_ urlString: String?) -> URL? {
         guard let string = urlString else {

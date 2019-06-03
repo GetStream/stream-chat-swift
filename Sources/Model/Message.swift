@@ -75,7 +75,7 @@ public struct Message: Codable {
             : (text.isEmpty ? (args ?? "") : text).trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    init?(id: String = "", text: String, parentId: String?, showReplyInChannel: Bool) {
+    init?(id: String = "", text: String, attachments: [Attachment] = [], parentId: String?, showReplyInChannel: Bool) {
         guard let user = Client.shared.user else {
             return nil
         }
@@ -91,7 +91,7 @@ public struct Message: Codable {
         self.text = text
         command = nil
         args = nil
-        attachments = []
+        self.attachments = attachments
         mentionedUsers = []
         replyCount = 0
         latestReactions = []
@@ -102,6 +102,10 @@ public struct Message: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(text, forKey: .text)
+        
+        if !attachments.isEmpty {
+            try container.encode(attachments, forKey: .attachments)
+        }
         
         if parentId != nil {
             try container.encode(parentId, forKey: .parentId)

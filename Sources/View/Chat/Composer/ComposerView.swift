@@ -447,7 +447,7 @@ extension ComposerView: UICollectionViewDataSource {
             }
         }
         
-        if item.url == nil, item.error == nil {
+        if item.attachment == nil, item.error == nil {
             cell.updateForProgress(item.lastProgress)
             
             item.uploadingCompletion

@@ -24,21 +24,21 @@ public final class Client {
     private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
-    let logOptions: LogOptions
+    let logOptions: ClientLogger.Options
     let logger: ClientLogger?
     var user: User?
     
     public init(apiKey: String = Client.config.apiKey,
                 baseURL: BaseURL = Client.config.baseURL,
                 callbackQueue: DispatchQueue? = Client.config.callbackQueue,
-                logOptions: LogOptions = Client.config.logOptions) {
+                logOptions: ClientLogger.Options = Client.config.logOptions) {
         self.apiKey = apiKey
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue
         self.logOptions = logOptions
         
         if logOptions == .all || logOptions == .requests || logOptions == .requestsHeaders {
-            logger = ClientLogger(icon: "🐴")
+            logger = ClientLogger(icon: "🐴", options: logOptions)
         } else {
             logger = nil
         }
@@ -57,12 +57,12 @@ extension Client {
         public let apiKey: String
         public let baseURL: BaseURL
         public let callbackQueue: DispatchQueue?
-        public let logOptions: LogOptions
+        public let logOptions: ClientLogger.Options
         
         public init(apiKey: String,
                     baseURL: BaseURL = BaseURL(),
                     callbackQueue: DispatchQueue? = nil,
-                    logOptions: LogOptions = .none) {
+                    logOptions: ClientLogger.Options = .none) {
             self.apiKey = apiKey
             self.baseURL = baseURL
             self.callbackQueue = callbackQueue
@@ -74,15 +74,5 @@ extension Client {
         case get = "GET"
         case post = "POST"
         case delete = "DELETE"
-    }
-}
-
-extension Client {
-    public enum LogOptions {
-        case none
-        case requests
-        case requestsHeaders
-        case webSocket
-        case all
     }
 }

@@ -504,6 +504,7 @@ extension ChannelPresenter {
         
         guard let message = Message(id: editMessage?.id ?? "",
                                     text: text,
+                                    attachments: uploader.items.compactMap({ $0.attachment }),
                                     parentId: parentMessage?.id,
                                     showReplyInChannel: false) else {
             return

@@ -90,13 +90,11 @@ extension ChatViewController {
             view.endEditing(true)
         }
         
-        composerView.reset()
-        
         if isMessageEditing {
             composerEditingHelperView.animate(show: false)
         }
         
-        channelPresenter?.send(text: text)
+        channelPresenter?.send(text: text) { [weak composerView] in composerView?.reset() }
     }
     
     private func command(in text: String) -> String? {
@@ -138,6 +136,10 @@ extension ChatViewController {
                     self.channelPresenter?.editMessage = nil
                     self.composerView.reset()
                     self.composerEditingHelperView.animate(show: false)
+                    
+                    if self.composerView.textView.isFirstResponder {
+                        self.composerView.textView.resignFirstResponder()
+                    }
                 }
             })
             .disposed(by: disposeBag)
@@ -247,7 +249,7 @@ extension ChatViewController {
         
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             addButtonsToAddFileView(container,
-                                    icon: UIImage.Icons.images,
+                                    icon: UIImage.Icons.camera,
                                     title: "Upload from a camera",
                                     sourceType: .photo(.camera)) {  [weak self] in
                                         self?.showImagePicker(composerAddFileViewSourceType: $0)
@@ -287,7 +289,7 @@ extension ChatViewController {
         composerAddFileView.containerView.arrangedSubviews.forEach { subview in
             if let addFileView = subview as? ComposerAddFileView {
                 if case .file = addFileView.sourceType {
-                    addFileView.isHidden = !composerView.images.isEmpty
+                    addFileView.isHidden = !composerView.isUploaderEmpty
                 }
             }
         }
@@ -311,17 +313,15 @@ extension ChatViewController {
             return
         }
         
-        showImagePicker(sourceType: pickerSourceType) { [weak self] info, status in
+        showImagePicker(sourceType: pickerSourceType) { [weak self] pickedImage, status in
             guard status == .authorized else {
                 self?.showImpagePickerAuthorizationStatusAlert(status)
                 return
             }
             
-            guard let image = info[.originalImage] as? UIImage else {
-                return
+            if let pickedImage = pickedImage {
+                self?.composerView.addImage(UploaderItem(pickedImage: pickedImage))
             }
-            
-            self?.composerView.addImage(image)
         }
         
         hideAddFileView()

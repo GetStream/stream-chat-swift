@@ -11,6 +11,13 @@ import UIKit
 
 /// A Client logger.
 public final class ClientLogger {
+    public enum Options {
+        case none
+        case requests
+        case requestsHeaders
+        case webSocket
+        case all
+    }
     
     /// A customizable logger block.
     public static var logger: (_ icon: String, _ dateAndTime: String, _ message: String) -> Void = { print($0, "[\($1)]", $2) }
@@ -18,9 +25,11 @@ public final class ClientLogger {
     private let icon: String
     private var lastTime: CFTimeInterval
     private var startTime: CFTimeInterval
+    private let options: Options
     
-    init(icon: String) {
+    init(icon: String, options: Options = .all) {
         self.icon = icon
+        self.options = options
         startTime = CACurrentMediaTime()
         lastTime = startTime
     }
@@ -75,21 +84,25 @@ public final class ClientLogger {
         log(message)
     }
     
-    func log(_ response: URLResponse?, data: Data?) {
+    func log(_ response: URLResponse?, data: Data?, forceToShowData: Bool = false) {
         if let response = response {
             log("Response", response.description)
         }
         
-        if let data = data {
-            let tag = "ⒿⓈⓄⓃ"
-            
-            if let jsonString = try? data.prettyPrintedJSONString() {
-                log(tag, jsonString)
-            } else if let dataString = String(data: data, encoding: .utf8) {
-                log(tag, dataString)
-            } else {
-                log(tag, data.description)
-            }
+        guard let data = data else {
+            return
+        }
+        
+        if !forceToShowData, options == .requestsHeaders, data.count > 500 {
+            return
+        }
+        
+        let tag = "ⒿⓈⓄⓃ \(data.description)"
+        
+        if let jsonString = try? data.prettyPrintedJSONString() {
+            log(tag, jsonString)
+        } else if let dataString = String(data: data, encoding: .utf8) {
+            log(tag, "\"\(dataString)\"")
         }
     }
     
