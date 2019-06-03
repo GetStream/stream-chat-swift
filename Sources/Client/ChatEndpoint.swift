@@ -19,8 +19,8 @@ enum ChatEndpoint {
     case addReaction(_ reactionType: String, Message)
     case deleteReaction(_ reactionType: String, Message)
     case sendEvent(EventType, Channel)
-    case sendImage(Data, Channel)
-    case sendFile(Data, Channel)
+    case sendImage(_ fileName: String, _ mimeType: String, Data, Channel)
+    case sendFile(_ fileName: String, _ mimeType: String, Data, Channel)
 }
 
 extension ChatEndpoint {
@@ -65,9 +65,9 @@ extension ChatEndpoint {
             return path(with: message).appending("reaction/\(reactionType)")
         case .sendEvent(_, let channel):
             return path(with: channel).appending("event")
-        case .sendImage(_, let channel):
+        case .sendImage(_, _, _, let channel):
             return path(with: channel).appending("image")
-        case .sendFile(_, let channel):
+        case .sendFile(_, _, _, let channel):
             return path(with: channel).appending("file")
         }
     }
@@ -112,13 +112,13 @@ extension ChatEndpoint {
         }
     }
     
-    var uploadData: Data? {
+    var isUploading: Bool {
         switch self {
-        case .sendImage(let data, _),
-             .sendFile(let data, _):
-            return data
+        case .sendImage,
+             .sendFile:
+            return true
         default:
-            return nil
+            return false
         }
     }
     

@@ -29,6 +29,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     
     private(set) lazy var tableView: TableView = {
         let tableView = TableView(frame: .zero, style: .plain)
+        tableView.backgroundColor = style.incomingMessage.chatBackgroundColor
         tableView.keyboardDismissMode = .interactive
         tableView.separatorStyle = .none
         tableView.dataSource = self
@@ -43,7 +44,8 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
                                               right: 0)
         
         view.insertSubview(tableView, at: 0)
-        
+        tableView.makeEdgesEqualToSuperview()
+
         let footerView = ChatFooterView(frame: CGRect(width: 0, height: .chatFooterHeight))
         footerView.backgroundColor = style.incomingMessage.chatBackgroundColor
         tableView.tableFooterView = footerView
@@ -69,7 +71,6 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupComposerView()
-        setupTableView()
         updateTitle()
         
         guard let presenter = channelPresenter else {
@@ -118,11 +119,6 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
 // MARK: - Table View
 
 extension ChatViewController {
-    
-    private func setupTableView() {
-        tableView.backgroundColor = style.incomingMessage.chatBackgroundColor
-        tableView.makeEdgesEqualToSuperview()
-    }
     
     private func updateTableView(with changes: ViewChanges) {
         guard isViewLoaded else {

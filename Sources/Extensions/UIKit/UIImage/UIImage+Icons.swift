@@ -29,6 +29,7 @@ extension UIImage {
         public static let image: UIImage = UIImage.chat(named: "imageIcon")
         public static let images: UIImage = UIImage.chat(named: "imagesIcon")
         public static let file: UIImage = UIImage.chat(named: "fileIcon")
+        public static let camera: UIImage = UIImage.chat(named: "cameraIcon")
         public static let more: UIImage = UIImage.chat(named: "moreIcon")
         public static let path: UIImage = UIImage.chat(named: "pathIcon")
         public static let plus: UIImage = UIImage.chat(named: "plusIcon")

@@ -16,7 +16,6 @@ extension Client {
         config.waitsForConnectivity = true
         
         config.httpAdditionalHeaders = ["Authorization": token,
-                                        "Content-Type": "application/json",
                                         "Stream-Auth-Type": "jwt",
                                         "X-Stream-Client": "stream-chat-swift-client-\(Client.version)"]
         
@@ -29,23 +28,23 @@ extension Client {
             logger?.timing("Prepare for request", reset: true)
             logger?.log(urlSession.configuration)
             let task: URLSessionDataTask
-            let urlRequest = try self.urlRequest(for: endpoint).get()
-
-            if let uploadData = endpoint.uploadData {
-                task = urlSession.uploadTask(with: urlRequest, from: uploadData) { [weak self] in
-                    self?.parse(data: $0, response: $1, error: $2, completion: completion)
-                }
-                
+            let queryItems = try self.queryItems(for: endpoint).get()
+            let url = try requestURL(for: endpoint, queryItems: queryItems).get()
+            let urlRequest: URLRequest
+            
+            if endpoint.isUploading {
+                urlRequest = try encodeRequestForUpload(for: endpoint, url: url).get()
                 logger?.timing("Uploading...")
-                
             } else {
-                task = urlSession.dataTask(with: urlRequest) { [weak self] in
-                    self?.parse(data: $0, response: $1, error: $2, completion: completion)
-                }
-                
+                urlRequest = try encodeRequest(for: endpoint, url: url).get()
                 logger?.timing("Sending request...")
             }
             
+            task = urlSession.dataTask(with: urlRequest) { [weak self] in
+                self?.parse(data: $0, response: $1, error: $2, completion: completion)
+            }
+            
+            logger?.log(task.currentRequest ?? urlRequest)
             task.resume()
             
             return task
@@ -53,13 +52,28 @@ extension Client {
         } catch let error as ClientError {
             completion(.failure(error))
         } catch {
-            completion(.failure(.unknown))
+            completion(.failure(.unexpectedError))
         }
         
         return URLSessionDataTask()
     }
     
-    private func urlRequest(for endpoint: ChatEndpoint) -> Result<URLRequest, ClientError> {
+    private func requestURL(for endpoint: ChatEndpoint, queryItems: [URLQueryItem]) -> Result<URL, ClientError> {
+        let baseURL = self.baseURL.url(.https)
+        var urlComponents = URLComponents()
+        urlComponents.scheme = baseURL.scheme
+        urlComponents.host = baseURL.host
+        urlComponents.path = baseURL.path
+        urlComponents.queryItems = queryItems
+        
+        guard let url = urlComponents.url?.appendingPathComponent(endpoint.path) else {
+            return .failure(.invalidURL(endpoint.path))
+        }
+        
+        return .success(url)
+    }
+    
+    private func queryItems(for endpoint: ChatEndpoint) -> Result<[URLQueryItem], ClientError> {
         guard let connectionId = webSocket.lastConnectionId else {
             return .failure(.emptyConnectionId)
         }
@@ -104,19 +118,15 @@ extension Client {
             }
         }
         
-        let baseURL = self.baseURL.url(.https)
-        var urlComponents = URLComponents()
-        urlComponents.scheme = baseURL.scheme
-        urlComponents.host = baseURL.host
-        urlComponents.path = baseURL.path
-        urlComponents.queryItems = queryItems
+        logger?.log(queryItems)
         
-        guard let url = urlComponents.url?.appendingPathComponent(endpoint.path) else {
-            return .failure(.invalidURL(endpoint.path))
-        }
-        
+        return .success(queryItems)
+    }
+    
+    private func encodeRequest(for endpoint: ChatEndpoint, url: URL) -> Result<URLRequest, ClientError> {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = endpoint.method.rawValue
+        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         if let body = endpoint.body {
             let encodable = AnyEncodable(body)
@@ -133,11 +143,37 @@ extension Client {
             }
         }
         
-        logger?.log(urlRequest)
-        logger?.log(queryItems)
+        return .success(urlRequest)
+    }
+}
+
+// MARK: - Upload files
+
+extension Client {
+    private func encodeRequestForUpload(for endpoint: ChatEndpoint, url: URL) -> Result<URLRequest, ClientError> {
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = endpoint.method.rawValue
+        
+        switch endpoint {
+        case let .sendImage(fileName, mimeType, data, _):
+            logger?.log("Data size: \(data.description)")
+            let multipartFormData = MultipartFormData(provider: .data(data), fileName: fileName, mimeType: mimeType)
+            
+            if let data = multipartFormData.data {
+                urlRequest.addValue("multipart/form-data; boundary=\(multipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
+                urlRequest.httpBody = data
+            }
+        default:
+            return .failure(.unexpectedError)
+        }
         
         return .success(urlRequest)
     }
+}
+
+// MARK: - Parsing response
+
+extension Client {
     
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
         let httpResponse = response as? HTTPURLResponse

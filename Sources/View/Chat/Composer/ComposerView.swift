@@ -401,12 +401,12 @@ extension ComposerView: UITextViewDelegate {
 
 extension ComposerView: UICollectionViewDataSource {
     
-    func addImage(_ image: UIImage) {
+    func addImage(_ item: UploaderItem) {
         guard let uploader = uploader else {
             return
         }
         
-        uploader.upload(image: image)
+        uploader.upload(item: item)
         updateImagesCollectionView()
         imagesCollectionView.scrollToItem(at: .item(0), at: .right, animated: false)
     }
@@ -467,6 +467,9 @@ extension ComposerView: UICollectionViewDataSource {
                 })
                 .bind(to: cell.progressView.rx.progress)
                 .disposed(by: cell.disposeBag)
+            
+        } else if item.error != nil {
+            cell.updateForError()
         }
         
         return cell

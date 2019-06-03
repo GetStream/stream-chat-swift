@@ -9,7 +9,7 @@
 import Foundation
 
 public enum ClientError: Error {
-    case unknown
+    case unexpectedError
     case emptyToken
     case emptyUser
     case emptyClientId

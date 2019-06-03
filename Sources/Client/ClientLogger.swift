@@ -81,12 +81,14 @@ public final class ClientLogger {
         }
         
         if let data = data {
+            let tag = "ⒿⓈⓄⓃ"
+            
             if let jsonString = try? data.prettyPrintedJSONString() {
-                log("JSON", jsonString)
+                log(tag, jsonString)
             } else if let dataString = String(data: data, encoding: .utf8) {
-                log("JSON", dataString)
+                log(tag, dataString)
             } else {
-                log("JSON", data.description)
+                log(tag, data.description)
             }
         }
     }

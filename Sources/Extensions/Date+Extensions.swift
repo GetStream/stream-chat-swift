@@ -42,6 +42,10 @@ extension Date {
         return DateFormatter.shortDate.string(from: self)
     }
     
+    var fileName: String {
+        return DateFormatter.fileName.string(from: self)
+    }
+    
     public func isLessThan(timeInterval: TimeInterval, with date: Date) -> Bool {
         return abs(timeIntervalSinceNow - date.timeIntervalSinceNow) < timeInterval
     }
@@ -77,6 +81,12 @@ extension DateFormatter {
     public static let weekDay: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "EEEE"
+        return formatter
+    }()
+    
+    static let fileName: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy_MM_dd_HHmmss"
         return formatter
     }()
 }

@@ -14,12 +14,15 @@ final class Uploader {
     let channel: Channel
     var items: [UploaderItem] = []
     
+    var uploadedURLs: [URL] {
+        return items.compactMap { $0.url }
+    }
+    
     init(channel: Channel) {
         self.channel = channel
     }
     
-    func upload(image: UIImage) {
-        let item = UploaderItem(image: image)
+    func upload(item: UploaderItem) {
         items.insert(item, at: 0)
         DispatchQueue.global(qos: .utility).async { item.upload(in: self.channel) }
     }
@@ -37,6 +40,9 @@ final class Uploader {
 
 final class UploaderItem {
     let image: UIImage?
+    let fileName: String
+    let localURL: URL?
+    let fileType: AttachmentFileType
     private(set) var url: URL? = nil
     private(set) var error: Error? = nil
     private(set) var urlSessionTask: URLSessionTask?
@@ -56,8 +62,22 @@ final class UploaderItem {
         .observeOn(MainScheduler.instance)
         .takeWhile { $0 < 1 }
     
-    init(image: UIImage) {
-        self.image = image
+    init(pickedImage: PickedImage) {
+        image = pickedImage.image
+        fileName = pickedImage.fileName
+        localURL = pickedImage.fileURL
+        
+        if let ext = localURL?.pathExtension {
+            fileType = AttachmentFileType(ext: ext)
+            return
+        }
+        
+        if let dot = fileName.lastIndex(of: ".") {
+            let ext = String(fileName.suffix(from: dot)).trimmingCharacters(in: .init(charactersIn: "."))
+            fileType = AttachmentFileType(ext: ext)
+        } else {
+            fileType = .unknown
+        }
     }
     
     func upload(in channel: Channel) {
@@ -75,8 +95,18 @@ final class UploaderItem {
             }
         }
         
-        if let imageData = image?.jpegData(compressionQuality: 0.9) {
-            urlSessionTask = Client.shared.request(endpoint: .sendImage(imageData, channel), fileCompletion)
+        let imageData: Data
+        var mimeType: String = fileType.mimeType
+        
+        if let localURL = localURL, let localImageData = try? Data(contentsOf: localURL) {
+            imageData = localImageData
+        } else  if let encodedImageData = image?.jpegData(compressionQuality: 0.9) {
+            imageData = encodedImageData
+            mimeType = AttachmentFileType.jpeg.mimeType
+        } else {
+            return
         }
+        
+        urlSessionTask = Client.shared.request(endpoint: .sendImage(fileName, mimeType, imageData, channel), fileCompletion)
     }
 }

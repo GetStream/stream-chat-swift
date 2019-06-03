@@ -79,6 +79,8 @@
 		8A8BC075228C15C500687186 /* RxGesture+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BC074228C15C500687186 /* RxGesture+Extensions.swift */; };
 		8A9955C322899CD0005D8148 /* ComposerCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9955C222899CD0005D8148 /* ComposerCommandView.swift */; };
 		8A9955C52289C369005D8148 /* MessageAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9955C42289C369005D8148 /* MessageAction.swift */; };
+		8A9FA7CA22A51C83004A5678 /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FA7C922A51C83004A5678 /* MultipartFormData.swift */; };
+		8A9FA7CC22A52E9C004A5678 /* UIViewController+ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9FA7CB22A52E9C004A5678 /* UIViewController+ImagePicker.swift */; };
 		8AABC291226086ED0064CB20 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC290226086ED0064CB20 /* Attachment.swift */; };
 		8AABC29322608FB90064CB20 /* AttachmentFilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */; };
 		8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AABC29522608FE10064CB20 /* AttachmentPreviewProtocol.swift */; };
@@ -192,6 +194,8 @@
 		8A8BC074228C15C500687186 /* RxGesture+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RxGesture+Extensions.swift"; sourceTree = "<group>"; };
 		8A9955C222899CD0005D8148 /* ComposerCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerCommandView.swift; sourceTree = "<group>"; };
 		8A9955C42289C369005D8148 /* MessageAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAction.swift; sourceTree = "<group>"; };
+		8A9FA7C922A51C83004A5678 /* MultipartFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartFormData.swift; sourceTree = "<group>"; };
+		8A9FA7CB22A52E9C004A5678 /* UIViewController+ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+ImagePicker.swift"; sourceTree = "<group>"; };
 		8AABC290226086ED0064CB20 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		8AABC29222608FB90064CB20 /* AttachmentFilePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFilePreview.swift; sourceTree = "<group>"; };
 		8AABC29522608FE10064CB20 /* AttachmentPreviewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPreviewProtocol.swift; sourceTree = "<group>"; };
@@ -384,13 +388,13 @@
 			children = (
 				8A889143225219E500DD6539 /* Client.swift */,
 				8AFC2A2D226B5B37006278D4 /* Client+Request.swift */,
-				8A79480D22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift */,
 				8ABF82652270A72900A966D9 /* Client+RxRequest.swift */,
 				8AFC2A2F226B5C87006278D4 /* Client+WebSocket.swift */,
 				8A88914722521E4800DD6539 /* ClientError.swift */,
 				8A8891672253D3A500DD6539 /* ClientLogger.swift */,
 				8A8891492252309900DD6539 /* BaseURL.swift */,
 				8A88915B2252997200DD6539 /* ChatEndpoint.swift */,
+				8A9FA7C822A51C70004A5678 /* Upload */,
 				8AFC2A2C2268B124006278D4 /* WebSocket */,
 				8AEC7D9D22A145B9000B5B97 /* Uploader.swift */,
 			);
@@ -477,6 +481,7 @@
 				8ABC552422779C81008F312B /* UIStackView.swift */,
 				8AB8FA732279F3F400C14D94 /* UIApplication+AppState.swift */,
 				8AB8FA75227AFD8F00C14D94 /* UIViewController+Extensions.swift */,
+				8A9FA7CB22A52E9C004A5678 /* UIViewController+ImagePicker.swift */,
 				8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */,
 				8A4080422281BDCA00F274FF /* UIStackView+Extensions.swift */,
 				8AB8FA77227B194C00C14D94 /* DismissSegue.swift */,
@@ -494,6 +499,15 @@
 				8A8BC06C228AE22900687186 /* ChannelTableViewCell.swift */,
 			);
 			path = Channels;
+			sourceTree = "<group>";
+		};
+		8A9FA7C822A51C70004A5678 /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				8A79480D22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift */,
+				8A9FA7C922A51C83004A5678 /* MultipartFormData.swift */,
+			);
+			path = Upload;
 			sourceTree = "<group>";
 		};
 		8AABC28D225F42BB0064CB20 /* Rx */ = {
@@ -744,6 +758,7 @@
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8AB8FA742279F3F400C14D94 /* UIApplication+AppState.swift in Sources */,
 				8A88914822521E4800DD6539 /* ClientError.swift in Sources */,
+				8A9FA7CC22A52E9C004A5678 /* UIViewController+ImagePicker.swift in Sources */,
 				8AD21B9E229C2014009D6086 /* Notifications.swift in Sources */,
 				8A4FE7B9227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift in Sources */,
 				8A88917922550E8D00DD6539 /* UIFont+Extensions.swift in Sources */,
@@ -799,6 +814,7 @@
 				8A40803F2280708900F274FF /* ReactionsView.swift in Sources */,
 				8AB1B8F2226772C1002C65BD /* WebViewController.swift in Sources */,
 				8AABC291226086ED0064CB20 /* Attachment.swift in Sources */,
+				8A9FA7CA22A51C83004A5678 /* MultipartFormData.swift in Sources */,
 				8A9955C322899CD0005D8148 /* ComposerCommandView.swift in Sources */,
 				8A4FE7C5227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift in Sources */,
 				8A1A9410225CD17300060ACC /* ReactionViewStyle.swift in Sources */,

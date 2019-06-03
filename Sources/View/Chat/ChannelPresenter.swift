@@ -36,12 +36,6 @@ public final class ChannelPresenter {
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
     
-    private lazy var ephemeralMessageCompletion: Client.Completion<MessageResponse> = { [weak self] result in
-        if let self = self, let response = try? result.get(), response.message.type == .ephemeral {
-            self.ephemeralSubject.onNext((response.message, self.hasEphemeralMessage))
-        }
-    }
-    
     public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
     public var ephemeralMessage: Message? { return (try? ephemeralSubject.value())?.message }
     
@@ -83,6 +77,7 @@ public final class ChannelPresenter {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
+    private(set) lazy var uploader = Uploader(channel: channel)
     private(set) lazy var isReadUpdates = isReadSubject.asDriver(onErrorJustReturn: ())
     
     public init(channel: Channel, parentMessage: Message? = nil, showStatuses: Bool = true) {
@@ -499,7 +494,8 @@ extension ChannelPresenter {
 // MARK: - Send/Delete Message
 
 extension ChannelPresenter {
-    public func send(text: String) {
+    
+    public func send(text: String, completion: @escaping () -> Void) {
         var text = text
         
         if text.count > channel.config.maxMessageLength {
@@ -514,11 +510,21 @@ extension ChannelPresenter {
         }
         
         editMessage = nil
-        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), ephemeralMessageCompletion)
+        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), messageCompletion(completion))
     }
     
     public func delete(message: Message) {
         Client.shared.request(endpoint: ChatEndpoint.deleteMessage(message), emptyMessageCompletion)
+    }
+    
+    private func messageCompletion(_ completion: @escaping () -> Void) -> Client.Completion<MessageResponse> {
+        return { [weak self] result in
+            if let self = self, let response = try? result.get(), response.message.type == .ephemeral {
+                self.ephemeralSubject.onNext((response.message, self.hasEphemeralMessage))
+            }
+            
+            DispatchQueue.main.async(execute: completion)
+        }
     }
 }
 
@@ -612,7 +618,7 @@ extension ChannelPresenter {
         }
         
         let messageAction = MessageAction(channel: channel, message: message, action: action)
-        Client.shared.request(endpoint: ChatEndpoint.sendMessageAction(messageAction), ephemeralMessageCompletion)
+        Client.shared.request(endpoint: ChatEndpoint.sendMessageAction(messageAction), messageCompletion({}))
     }
 }
 
@@ -629,4 +635,8 @@ public struct MessagesResponse: Decodable {
 
 public struct EventResponse: Decodable {
     let event: Event
+}
+
+public struct FileUploadResponse: Decodable {
+    let file: URL
 }

@@ -206,6 +206,9 @@ public enum AttachmentFileType: String, Codable {
     case zip
     case mp3
     case mp4
+    case jpeg
+    case png
+    case gif
     
     public init(mimeType: String) {
         switch mimeType {
@@ -218,7 +221,51 @@ public enum AttachmentFileType: String, Codable {
         case "application/zip": self = .zip
         case "audio/mp3": self = .mp3
         case "video/mp4": self = .mp4
+        case "image/jpeg": self = .jpeg
+        case "image/jpg": self = .jpeg
+        case "image/png": self = .png
+        case "image/gif": self = .gif
         default: self = .unknown
+        }
+    }
+    
+    public init(ext: String) {
+        if ext == "jpg" {
+            self = .jpeg
+            return
+        }
+        
+        self = AttachmentFileType(rawValue: ext) ?? .unknown
+    }
+    
+    var mimeType: String {
+        switch self {
+        case .unknown:
+            return "application/octet-stream"
+        case .csv:
+            return "text/csv"
+        case .doc:
+            return "application/msword"
+        case .pdf:
+            return "application/pdf"
+        case .ppt:
+            return "application/vnd.ms-powerpoint"
+        case .tar:
+            return "application/x-tar"
+        case .xls:
+            return "application/vnd.ms-excel"
+        case .zip:
+            return "application/zip"
+        case .mp3:
+            return "audio/mp3"
+        case .mp4:
+            return "video/mp4"
+        case .jpeg:
+            return "image/jpeg"
+        case .png:
+            return "image/png"
+        case .gif:
+            return "image/gif"
         }
     }
 }
