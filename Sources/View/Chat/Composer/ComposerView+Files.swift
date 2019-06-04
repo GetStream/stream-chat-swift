@@ -26,7 +26,7 @@ extension ComposerView {
         filesStackView.isHidden = false
         let fileView = ComposerFileView(frame: .zero)
         filesStackView.addArrangedSubview(fileView)
-        fileView.iconView.image = UIImage.chat(named: item.fileType.iconName)
+        fileView.iconView.image = item.fileType.icon
         fileView.backgroundColor = style?.backgroundColor
         fileView.fileNameLabel.textColor = style?.textColor
         fileView.fileNameLabel.text = item.fileName

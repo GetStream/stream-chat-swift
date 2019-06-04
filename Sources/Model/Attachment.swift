@@ -6,7 +6,7 @@
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public struct Attachment: Codable {
     private enum CodingKeys: String, CodingKey {
@@ -296,7 +296,7 @@ public enum AttachmentFileType: String, Codable {
         }
     }
     
-    var iconName: String {
-        return rawValue.lowercased()
+    var icon: UIImage {
+        return UIImage.chat(named: rawValue.lowercased())
     }
 }
