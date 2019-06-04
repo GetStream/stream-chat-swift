@@ -251,12 +251,14 @@ extension ChatViewController {
             addButtonsToAddFileView(container,
                                     icon: UIImage.Icons.camera,
                                     title: "Upload from a camera",
-                                    sourceType: .photo(.camera)) {  [weak self] in
+                                    sourceType: .photo(.camera)) { [weak self] in
                                         self?.showImagePicker(composerAddFileViewSourceType: $0)
             }
         }
         
-        addButtonsToAddFileView(container, icon: UIImage.Icons.file, title: "Upload a file", sourceType: .file) { _ in }
+        addButtonsToAddFileView(container, icon: UIImage.Icons.file, title: "Upload a file", sourceType: .file) { [weak self] _ in
+            self?.showDocumetPicker()
+        }
         
         return container
     }
@@ -325,6 +327,24 @@ extension ChatViewController {
         }
         
         hideAddFileView()
+    }
+    
+    private func showDocumetPicker() {
+        let documentPickerViewController = UIDocumentPickerViewController(documentTypes: [.anyFileType], in: .import)
+        documentPickerViewController.allowsMultipleSelection = true
+        
+        documentPickerViewController.rx.didPickDocumentsAt
+            .takeUntil(documentPickerViewController.rx.deallocated)
+            .subscribe(onNext: { [weak self] in
+                if let presenter = self?.channelPresenter {
+                    $0.forEach { url in
+                        presenter.uploader.upload(item: UploaderItem(url: url))
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        present(documentPickerViewController, animated: true)
     }
 }
 

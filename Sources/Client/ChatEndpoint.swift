@@ -20,7 +20,7 @@ enum ChatEndpoint {
     case deleteReaction(_ reactionType: String, Message)
     case sendEvent(EventType, Channel)
     case sendImage(_ fileName: String, _ mimeType: String, Data, Channel)
-    case sendFile(_ fileName: String, _ mimeType: String, Data, Channel)
+    case sendFile(_ fileName: String, Data, Channel)
 }
 
 extension ChatEndpoint {
@@ -67,7 +67,7 @@ extension ChatEndpoint {
             return path(with: channel).appending("event")
         case .sendImage(_, _, _, let channel):
             return path(with: channel).appending("image")
-        case .sendFile(_, _, _, let channel):
+        case .sendFile(_, _, let channel):
             return path(with: channel).appending("file")
         }
     }

@@ -11,37 +11,19 @@ import Foundation
 struct MultipartFormData {
     private static let crlf = "\r\n"
     
-    enum FormDataProvider {
-        case data(Foundation.Data)
-        case file(URL)
-        
-        var data: Data? {
-            switch self {
-            case .data(let data):
-                return data
-            case .file(let url):
-                return try? Data(contentsOf: url)
-            }
-        }
-    }
-    
     let boundary: String
-    let provider: FormDataProvider
-    let fileName: String
-    let mimeType: String?
+    private let data: Data
+    private let fileName: String
+    private let mimeType: String?
     
-    init(provider: FormDataProvider, fileName: String, mimeType: String? = nil) {
+    init(_ data: Data, fileName: String, mimeType: String? = nil) {
         boundary = String(format: "chat-%08x%08x", arc4random(), arc4random())
-        self.provider = provider
+        self.data = data
         self.fileName = fileName
         self.mimeType = mimeType
     }
     
-    var data: Data? {
-        guard let providerData = provider.data else {
-            return nil
-        }
-        
+    var multipartFormData: Data {
         var data = "--\(boundary)\(MultipartFormData.crlf)".data(using: .utf8, allowLossyConversion: false)!
         data.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(fileName)\"\(MultipartFormData.crlf)")
         
@@ -50,7 +32,7 @@ struct MultipartFormData {
         }
         
         data.append(MultipartFormData.crlf)
-        data.append(providerData)
+        data.append(self.data)
         data.append("\(MultipartFormData.crlf)--\(boundary)--\(MultipartFormData.crlf)")
         
         return data

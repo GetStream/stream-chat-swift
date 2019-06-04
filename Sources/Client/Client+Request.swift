@@ -151,21 +151,23 @@ extension Client {
 
 extension Client {
     private func encodeRequestForUpload(for endpoint: ChatEndpoint, url: URL) -> Result<URLRequest, ClientError> {
+        let multipartFormData: MultipartFormData
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = endpoint.method.rawValue
         
         switch endpoint {
         case let .sendImage(fileName, mimeType, data, _):
-            logger?.log("Data size: \(data.description)")
-            let multipartFormData = MultipartFormData(provider: .data(data), fileName: fileName, mimeType: mimeType)
-            
-            if let data = multipartFormData.data {
-                urlRequest.addValue("multipart/form-data; boundary=\(multipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
-                urlRequest.httpBody = data
-            }
+            multipartFormData = MultipartFormData(data, fileName: fileName, mimeType: mimeType)
+        case let .sendFile(fileName, data, _):
+            multipartFormData = MultipartFormData(data, fileName: fileName)
         default:
             return .failure(.unexpectedError)
         }
+        
+        let data = multipartFormData.multipartFormData
+        logger?.log("⏫ Uploading \(data.description)")
+        urlRequest.addValue("multipart/form-data; boundary=\(multipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpBody = data
         
         return .success(urlRequest)
     }

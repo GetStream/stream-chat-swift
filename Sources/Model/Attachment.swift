@@ -205,7 +205,7 @@ public struct AttachmentFile: Codable {
         if let mimeType = mimeType {
             type = AttachmentFileType(mimeType: mimeType)
         } else {
-            type = .unknown
+            type = .generic
         }
         
         size = try container.decodeIfPresent(Int64.self, forKey: .size) ?? 0
@@ -213,7 +213,7 @@ public struct AttachmentFile: Codable {
 }
 
 public enum AttachmentFileType: String, Codable {
-    case unknown
+    case generic
     case csv
     case doc
     case pdf
@@ -242,7 +242,7 @@ public enum AttachmentFileType: String, Codable {
         case "image/jpg": self = .jpeg
         case "image/png": self = .png
         case "image/gif": self = .gif
-        default: self = .unknown
+        default: self = .generic
         }
     }
     
@@ -252,12 +252,12 @@ public enum AttachmentFileType: String, Codable {
             return
         }
         
-        self = AttachmentFileType(rawValue: ext) ?? .unknown
+        self = AttachmentFileType(rawValue: ext) ?? .generic
     }
     
     var mimeType: String {
         switch self {
-        case .unknown:
+        case .generic:
             return "application/octet-stream"
         case .csv:
             return "text/csv"

@@ -1,5 +1,5 @@
 //
-//  UIEdgeInsets.swift
+//  UIEdgeInsets+Extensions.swift
 //  GetStreamChat
 //
 //  Created by Alexey Bukhtin on 07/04/2019.

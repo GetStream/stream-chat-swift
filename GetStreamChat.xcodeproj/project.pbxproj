@@ -15,7 +15,7 @@
 		8A0755E8228DB04500A3E4AB /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0755E7228DB04500A3E4AB /* MessageRead.swift */; };
 		8A0755EA228DB5C500A3E4AB /* ViewChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */; };
 		8A0E345222980933008D825E /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0E345122980933008D825E /* TableView.swift */; };
-		8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */; };
+		8A1A9400225A0D7800060ACC /* UIEdgeInsets+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A93FF225A0D7800060ACC /* UIEdgeInsets+Extensions.swift */; };
 		8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9401225A436800060ACC /* CGRect+Extensions.swift */; };
 		8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */; };
 		8A1A9407225B4E7F00060ACC /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9406225B4E7F00060ACC /* Reusable.swift */; };
@@ -97,7 +97,9 @@
 		8ABC551C2276FB9D008F312B /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC551B2276FB9D008F312B /* AvatarView.swift */; };
 		8ABC5520227730C9008F312B /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC551F227730C9008F312B /* UIView+Extensions.swift */; };
 		8ABC5523227799F6008F312B /* ChatFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC5522227799F6008F312B /* ChatFooterView.swift */; };
-		8ABC552522779C81008F312B /* UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC552422779C81008F312B /* UIStackView.swift */; };
+		8ABE5FDA22A67C92004F128C /* UIViewController+DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */; };
+		8ABE5FDC22A67F3C004F128C /* RxDocumentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */; };
+		8ABE5FDF22A6814F004F128C /* String+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDE22A6814F004F128C /* String+FileType.swift */; };
 		8ABF8260226F4A4600A966D9 /* WebSocket+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF825F226F4A4600A966D9 /* WebSocket+Response.swift */; };
 		8ABF8262226F643E00A966D9 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF8261226F643E00A966D9 /* Reaction.swift */; };
 		8ABF82642270668700A966D9 /* unwrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF82632270668700A966D9 /* unwrap.swift */; };
@@ -129,7 +131,7 @@
 		8A0755E7228DB04500A3E4AB /* MessageRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRead.swift; sourceTree = "<group>"; };
 		8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewChanges.swift; sourceTree = "<group>"; };
 		8A0E345122980933008D825E /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
-		8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIEdgeInsets.swift; sourceTree = "<group>"; };
+		8A1A93FF225A0D7800060ACC /* UIEdgeInsets+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+Extensions.swift"; sourceTree = "<group>"; };
 		8A1A9401225A436800060ACC /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
 		8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewStyle.swift; sourceTree = "<group>"; };
 		8A1A9406225B4E7F00060ACC /* Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
@@ -212,7 +214,9 @@
 		8ABC551B2276FB9D008F312B /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		8ABC551F227730C9008F312B /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		8ABC5522227799F6008F312B /* ChatFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatFooterView.swift; sourceTree = "<group>"; };
-		8ABC552422779C81008F312B /* UIStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStackView.swift; sourceTree = "<group>"; };
+		8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DocumentPicker.swift"; sourceTree = "<group>"; };
+		8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxDocumentPickerViewController.swift; sourceTree = "<group>"; };
+		8ABE5FDE22A6814F004F128C /* String+FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FileType.swift"; sourceTree = "<group>"; };
 		8ABF825F226F4A4600A966D9 /* WebSocket+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Response.swift"; sourceTree = "<group>"; };
 		8ABF8261226F643E00A966D9 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8ABF82632270668700A966D9 /* unwrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = unwrap.swift; sourceTree = "<group>"; };
@@ -406,13 +410,12 @@
 			children = (
 				8AABC28D225F42BB0064CB20 /* Rx */,
 				8A88917C22560E8E00DD6539 /* UIKit */,
-				8AD21B9A229BEC21009D6086 /* Nuke */,
+				8ABE5FDD22A68133004F128C /* String */,
 				8A88915F22538CCE00DD6539 /* Data+Extensions.swift */,
 				8A88917D22560EC100DD6539 /* Date+Extensions.swift */,
 				8A8891632253A86600DD6539 /* Codable+Extensions.swift */,
 				8AABC29D22627AA20064CB20 /* Dictionary+Extensions.swift */,
 				8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */,
-				8AB1B8F322677EEA002C65BD /* String+Extensions.swift */,
 				8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */,
 				8A40804022818C7A00F274FF /* Int+Extensions.swift */,
 				8A8BC072228C152600687186 /* TimeInterval+Extensions.swift */,
@@ -472,16 +475,14 @@
 				8A1A9401225A436800060ACC /* CGRect+Extensions.swift */,
 				8A1A9405225B4E6900060ACC /* Reusable */,
 				8A4FE7BD227CE67000E47D4C /* UIImage */,
+				8ABE5FD822A67C2D004F128C /* UIViewController */,
 				8A88917622550E0C00DD6539 /* UIColor+Extensions.swift */,
 				8A88917822550E8D00DD6539 /* UIFont+Extensions.swift */,
 				8ABC551F227730C9008F312B /* UIView+Extensions.swift */,
 				8ABF82692273064600A966D9 /* UITableView+Extensions.swift */,
 				8A8891722255000A00DD6539 /* UITableViewCell+Extensions.swift */,
-				8A1A93FF225A0D7800060ACC /* UIEdgeInsets.swift */,
-				8ABC552422779C81008F312B /* UIStackView.swift */,
+				8A1A93FF225A0D7800060ACC /* UIEdgeInsets+Extensions.swift */,
 				8AB8FA732279F3F400C14D94 /* UIApplication+AppState.swift */,
-				8AB8FA75227AFD8F00C14D94 /* UIViewController+Extensions.swift */,
-				8A9FA7CB22A52E9C004A5678 /* UIViewController+ImagePicker.swift */,
 				8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */,
 				8A4080422281BDCA00F274FF /* UIStackView+Extensions.swift */,
 				8AB8FA77227B194C00C14D94 /* DismissSegue.swift */,
@@ -515,6 +516,7 @@
 			children = (
 				8ABF82632270668700A966D9 /* unwrap.swift */,
 				8A8BC074228C15C500687186 /* RxGesture+Extensions.swift */,
+				8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */,
 			);
 			path = Rx;
 			sourceTree = "<group>";
@@ -537,11 +539,23 @@
 			path = "Web View";
 			sourceTree = "<group>";
 		};
-		8AD21B9A229BEC21009D6086 /* Nuke */ = {
+		8ABE5FD822A67C2D004F128C /* UIViewController */ = {
 			isa = PBXGroup;
 			children = (
+				8AB8FA75227AFD8F00C14D94 /* UIViewController+Extensions.swift */,
+				8A9FA7CB22A52E9C004A5678 /* UIViewController+ImagePicker.swift */,
+				8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */,
 			);
-			path = Nuke;
+			path = UIViewController;
+			sourceTree = "<group>";
+		};
+		8ABE5FDD22A68133004F128C /* String */ = {
+			isa = PBXGroup;
+			children = (
+				8AB1B8F322677EEA002C65BD /* String+Extensions.swift */,
+				8ABE5FDE22A6814F004F128C /* String+FileType.swift */,
+			);
+			path = String;
 			sourceTree = "<group>";
 		};
 		8AFC2A2C2268B124006278D4 /* WebSocket */ = {
@@ -735,6 +749,8 @@
 				8A40803D22805ABA00F274FF /* ChatViewController+Reactions.swift in Sources */,
 				8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */,
 				8A4080432281BDCA00F274FF /* UIStackView+Extensions.swift in Sources */,
+				8ABE5FDA22A67C92004F128C /* UIViewController+DocumentPicker.swift in Sources */,
+				8ABE5FDF22A6814F004F128C /* String+FileType.swift in Sources */,
 				8A889153225240F700DD6539 /* Event.swift in Sources */,
 				8A1A9416225E2EB200060ACC /* DataDetectorWorker.swift in Sources */,
 				8AFC2A2E226B5B37006278D4 /* Client+Request.swift in Sources */,
@@ -748,12 +764,13 @@
 				8AD04516229EA06C00CD6B77 /* ComposerAddFileView.swift in Sources */,
 				8ACAB167228ED6C900674F2D /* ChannelsQuery.swift in Sources */,
 				8A8891502252379700DD6539 /* Channel.swift in Sources */,
-				8A1A9400225A0D7800060ACC /* UIEdgeInsets.swift in Sources */,
+				8A1A9400225A0D7800060ACC /* UIEdgeInsets+Extensions.swift in Sources */,
 				8A1A940E225CC88200060ACC /* AttachmentPreview.swift in Sources */,
 				8ABC5520227730C9008F312B /* UIView+Extensions.swift in Sources */,
 				8A0755E8228DB04500A3E4AB /* MessageRead.swift in Sources */,
 				8ABF82662270A72900A966D9 /* Client+RxRequest.swift in Sources */,
 				8AEC7D9E22A145B9000B5B97 /* Uploader.swift in Sources */,
+				8ABE5FDC22A67F3C004F128C /* RxDocumentPickerViewController.swift in Sources */,
 				8A1A941A225E321100060ACC /* UICollectionView+Reusable.swift in Sources */,
 				8A88915C2252997200DD6539 /* ChatEndpoint.swift in Sources */,
 				8AB8FA742279F3F400C14D94 /* UIApplication+AppState.swift in Sources */,
@@ -774,7 +791,6 @@
 				8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */,
 				8A8891622253A73000DD6539 /* ChannelQuery.swift in Sources */,
 				8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */,
-				8ABC552522779C81008F312B /* UIStackView.swift in Sources */,
 				8A88917522550B2800DD6539 /* MessageTableViewCell.swift in Sources */,
 				8A2CC9582284AD77004CF12D /* ChatViewController+MessageActions.swift in Sources */,
 				8A0E345222980933008D825E /* TableView.swift in Sources */,

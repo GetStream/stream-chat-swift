@@ -51,7 +51,9 @@ public final class ClientLogger {
         log(request.httpMethod ?? "Request", request.description)
         
         if let headers = request.allHTTPHeaderFields, !headers.isEmpty {
-            log("Request Headers", headers.description)
+            var message = "Request headers:\n"
+            headers.forEach { message += "◾️ \($0) = \($1)\n" }
+            log(message)
         }
         
         if let bodyStream = request.httpBodyStream {

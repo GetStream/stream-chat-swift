@@ -8,7 +8,6 @@
 
 import UIKit
 import Photos.PHPhotoLibrary
-import MobileCoreServices
 
 struct PickedImage {
     let image: UIImage
@@ -71,7 +70,7 @@ extension UIViewController {
         let delegateKey = String(ObjectIdentifier(self).hashValue) + "ImagePickerDelegate"
         let imagePickerViewController = UIImagePickerController()
         imagePickerViewController.sourceType = sourceType
-        imagePickerViewController.mediaTypes = UIImagePickerController.availableMediaTypes(for: sourceType) ?? [kUTTypeImage as String]
+        imagePickerViewController.mediaTypes = UIImagePickerController.availableMediaTypes(for: sourceType) ?? [.imageFileType]
         
         let delegate = ImagePickerDelegate(completion) {
             objc_setAssociatedObject(self, delegateKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
