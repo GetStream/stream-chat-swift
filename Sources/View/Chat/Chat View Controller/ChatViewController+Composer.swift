@@ -291,7 +291,9 @@ extension ChatViewController {
         composerAddFileView.containerView.arrangedSubviews.forEach { subview in
             if let addFileView = subview as? ComposerAddFileView {
                 if case .file = addFileView.sourceType {
-                    addFileView.isHidden = !composerView.isUploaderEmpty
+                    addFileView.isHidden = !composerView.isUploaderImagesEmpty
+                } else {
+                    addFileView.isHidden = !composerView.isUploaderFilesEmpty
                 }
             }
         }
@@ -336,15 +338,14 @@ extension ChatViewController {
         documentPickerViewController.rx.didPickDocumentsAt
             .takeUntil(documentPickerViewController.rx.deallocated)
             .subscribe(onNext: { [weak self] in
-                if let presenter = self?.channelPresenter {
-                    $0.forEach { url in
-                        presenter.uploader.upload(item: UploaderItem(url: url))
-                    }
+                if let self = self {
+                    $0.forEach { url in self.composerView.addFile(UploaderItem(url: url)) }
                 }
             })
             .disposed(by: disposeBag)
         
         present(documentPickerViewController, animated: true)
+        hideAddFileView()
     }
 }
 

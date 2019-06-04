@@ -36,6 +36,11 @@ extension CGFloat {
     public static let composerHelperShadowRadius: CGFloat = 20
     public static let composerHelperShadowOpacity: CGFloat = 0.15
     
+    public static let composerFilePadding: CGFloat = 10
+    public static let composerFileHeight: CGFloat = .composerFileIconHeight + 2 * .composerFilePadding
+    public static let composerFileIconHeight: CGFloat = 30
+    public static let composerFileIconWidth: CGFloat = 25
+    
     public static let messagesToComposerPadding: CGFloat = .composerHeight + 2 * .messageEdgePadding
     public static let messageAvatarRadius: CGFloat = 16
     public static let messageAvatarSize: CGFloat = 2 * .messageAvatarRadius

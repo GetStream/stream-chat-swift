@@ -23,8 +23,8 @@ final class Uploader {
         DispatchQueue.global(qos: .utility).async { item.upload(in: self.channel) }
     }
     
-    func remove(at index: Int) {
-        if index < items.count {
+    func remove(_ item: UploaderItem) {
+        if let index = items.firstIndex(of: item) {
             items.remove(at: index).urlSessionTask?.cancel()
         }
     }
@@ -34,11 +34,14 @@ final class Uploader {
     }
 }
 
-final class UploaderItem {
+final class UploaderItem: Equatable {
+    
     let url: URL?
     let image: UIImage?
     let fileName: String
     let fileType: AttachmentFileType
+    let fileSize: Int64
+    let isFileUploading: Bool
     private(set) var attachment: Attachment? = nil
     private(set) var error: Error? = nil
     private(set) var urlSessionTask: URLSessionTask?
@@ -59,9 +62,11 @@ final class UploaderItem {
         .takeWhile { $0 < 1 }
     
     init(pickedImage: PickedImage) {
+        isFileUploading = false
         url = pickedImage.fileURL
         image = pickedImage.image
         fileName = pickedImage.fileName
+        fileSize = 0
         
         if let ext = url?.pathExtension {
             fileType = AttachmentFileType(ext: ext)
@@ -77,28 +82,36 @@ final class UploaderItem {
     }
     
     init(url: URL) {
+        isFileUploading = true
         image = nil
         self.url = url
         fileName = url.lastPathComponent
-        fileType = .generic
+        fileType = AttachmentFileType(ext: url.pathExtension)
+        
+        if let attr = try? FileManager.default.attributesOfItem(atPath: url.path),
+            let size = attr[FileAttributeKey.size] as? UInt64 {
+            fileSize = Int64(size)
+        } else {
+            fileSize = 0
+        }
     }
     
     func upload(in channel: Channel) {
-        let isFileUploading = fileType == .generic
-        
         let fileCompletion: Client.Completion<FileUploadResponse> = { [weak self] result in
             guard let self = self else {
                 return
             }
             
             if let response = try? result.get() {
-                if isFileUploading {
-                    self.attachment = Attachment(type: .file, title: self.fileName, url: response.file)
+                if self.isFileUploading {
+                    let fileAttachment = AttachmentFile(type: self.fileType, size: self.fileSize, mimeType: self.fileType.mimeType)
+                    self.attachment = Attachment(type: .file, title: self.fileName, url: response.file, file: fileAttachment)
                 } else {
                     self.attachment = Attachment(type: .image, title: self.fileName, imageURL: response.file)
                 }
                 
                 self.uploadingCompletion.onCompleted()
+                
             } else if let error = result.error {
                 self.error = error
                 self.uploadingCompletion.onError(error)
@@ -118,7 +131,7 @@ final class UploaderItem {
         let imageData: Data
         var mimeType: String = fileType.mimeType
         
-        if let localURL = url, let localImageData = try? Data(contentsOf: localURL) {
+        if let url = url, let localImageData = try? Data(contentsOf: url) {
             imageData = localImageData
         } else  if let encodedImageData = image?.jpegData(compressionQuality: 0.9) {
             imageData = encodedImageData
@@ -129,5 +142,13 @@ final class UploaderItem {
         }
 
         urlSessionTask = Client.shared.request(endpoint: .sendImage(fileName, mimeType, imageData, channel), fileCompletion)
+    }
+    
+    static func == (lhs: UploaderItem, rhs: UploaderItem) -> Bool {
+        return lhs.url == rhs.url
+            && lhs.image == rhs.image
+            && lhs.fileName == rhs.fileName
+            && lhs.fileType == rhs.fileType
+            && lhs.isFileUploading == rhs.isFileUploading
     }
 }

@@ -63,8 +63,7 @@ final class AttachmentFilePreview: UIImageView, AttachmentPreviewProtocol {
             return
         }
         
-        let fileType = file.type.rawValue.lowercased()
-        iconImageView.image = UIImage.chat(named: fileType)
+        iconImageView.image = UIImage.chat(named: file.type.iconName)
         titleLabel.text = attachment.title
         sizeLabel.text = file.sizeString
         image = maskImage

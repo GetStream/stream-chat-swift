@@ -33,23 +33,24 @@ public final class ComposerView: UIView {
         return style?.style(with: styleState)
     }
     
-    public var isEditing: Bool = false
-    
     /// An `UITextView`.
     /// You have to use the `text` property to change the value of the text view.
-    public private(set) lazy var textView: UITextView = {
-        let textView = UITextView(frame: .zero)
-        textView.delegate = self
-        textView.attributedText = attributedText()
-        textView.showsVerticalScrollIndicator = false
-        textView.showsHorizontalScrollIndicator = false
-        textView.isScrollEnabled = false
-        return textView
-    }()
-    
+    public private(set) lazy var textView = setupTextView()
+    var toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
+    var imagesAddAction: AttachmentCollectionViewCell.TapAction?
     private var previousTextBeforeReset: NSAttributedString?
+    private let disposeBag = DisposeBag()
+    private(set) weak var heightConstraint: Constraint?
+    private weak var bottomConstraint: Constraint?
+    var baseTextHeight = CGFloat.greatestFiniteMagnitude
+    private(set) lazy var imagesCollectionView = setupImagesCollectionView()
+    private(set) lazy var filesStackView = setupFilesStackView()
+    /// Picked images.
+    var uploader: Uploader?
+
+    public var isEditing: Bool = false
     
-    private func attributedText(text: String = "", textColor: UIColor? = nil) -> NSAttributedString {
+    func attributedText(text: String = "", textColor: UIColor? = nil) -> NSAttributedString {
         guard let style = style else {
             return NSAttributedString(string: text)
         }
@@ -75,8 +76,6 @@ public final class ComposerView: UIView {
         return label
     }()
     
-    private var toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
-    
     /// A send button.
     public private(set) lazy var sendButton: UIButton = {
         let button = UIButton(frame: .zero)
@@ -95,8 +94,6 @@ public final class ComposerView: UIView {
         return button
     }()
     
-    var imagesAddAction: AttachmentCollectionViewCell.TapAction?
-    
     /// The text of the text view.
     public var text: String {
         get {
@@ -113,45 +110,6 @@ public final class ComposerView: UIView {
         get { return placeholderLabel.attributedText?.string ?? "" }
         set { placeholderLabel.attributedText = attributedText(text: newValue, textColor: styleStateStyle?.tintColor) }
     }
-    
-    private let disposeBag = DisposeBag()
-    private weak var heightConstraint: Constraint?
-    private weak var bottomConstraint: Constraint?
-    private var baseTextHeight = CGFloat.greatestFiniteMagnitude
-    
-    /// Enables the detector of links in the text.
-    public var linksDetectorEnabled = false
-    var detectedURL: URL?
-    
-    // MARK: - Images Collection View
-    
-    /// Picked images.
-    var uploader: Uploader?
-    
-    var isUploaderEmpty: Bool {
-        return (uploader?.items ?? []).isEmpty
-    }
-    
-    private lazy var imagesCollectionView: UICollectionView = {
-        let collectionViewLayout = UICollectionViewFlowLayout()
-        collectionViewLayout.scrollDirection = .horizontal
-        collectionViewLayout.itemSize = CGSize(width: .composerAttachmentSize, height: .composerAttachmentSize)
-        collectionViewLayout.minimumLineSpacing = .composerCornerRadius / 2
-        collectionViewLayout.minimumInteritemSpacing = 0
-        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: .composerCornerRadius, bottom: 0, right: .composerCornerRadius)
-        
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
-        collectionView.isHidden = true
-        collectionView.backgroundColor = backgroundColor
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.alwaysBounceHorizontal = true
-        collectionView.dataSource = self
-        collectionView.register(cellType: AttachmentCollectionViewCell.self)
-        collectionView.snp.makeConstraints { $0.height.equalTo(CGFloat.composerAttachmentsHeight) }
-        
-        return collectionView
-    }()
     
     // MARK: -
     
@@ -203,6 +161,14 @@ public final class ComposerView: UIView {
             make.top.equalToSuperview()
         }
         
+        // Files Stack View.
+        addSubview(filesStackView)
+        
+        filesStackView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.top.equalToSuperview()
+        }
+
         // Add text view.
         addSubview(textView)
         updateTextHeightIfNeeded()
@@ -212,7 +178,8 @@ public final class ComposerView: UIView {
         textView.snp.makeConstraints { make in
             make.left.equalTo(attachmentButton.snp.right)
             make.top.greaterThanOrEqualTo(imagesCollectionView.snp.bottom).offset(textViewPadding).priority(999)
-            make.top.equalToSuperview().offset(textViewPadding).priority(998)
+            make.top.greaterThanOrEqualTo(filesStackView.snp.bottom).offset(textViewPadding).priority(998)
+            make.top.equalToSuperview().offset(textViewPadding).priority(997)
             make.bottom.equalToSuperview().offset(-textViewPadding)
             make.right.equalTo(sendButton.snp.left)
         }
@@ -286,6 +253,8 @@ public final class ComposerView: UIView {
         textView.attributedText = attributedText()
         uploader?.reset()
         updatePlaceholder()
+        filesStackView.isHidden = true
+        filesStackView.removeAllArrangedSubviews()
         updateImagesCollectionView()
         styleState = textView.isFirstResponder ? .active : .normal
     }
@@ -308,170 +277,14 @@ public final class ComposerView: UIView {
         DispatchQueue.main.async { [weak self] in self?.updateSendButton() }
     }
     
-    private func updateSendButton() {
-        sendButton.isHidden = text.count == 0 && isUploaderEmpty
+    func updateSendButton() {
+        sendButton.isHidden = text.count == 0 && isUploaderImagesEmpty && isUploaderFilesEmpty
     }
     
-    private func updateStyleState() {
-        styleState = !textView.isFirstResponder && isUploaderEmpty && text.isEmpty ? .normal : (isEditing ? .edit : .active)
-    }
-}
-
-// MARK: - Text View Height
-
-extension ComposerView {
-    
-    private var textViewPadding: CGFloat {
-        return (CGFloat.composerHeight - baseTextHeight) / 2
-    }
-    
-    private var textViewContentSize: CGSize {
-        return textView.sizeThatFits(CGSize(width: textView.frame.width, height: .greatestFiniteMagnitude))
-    }
-    
-    /// Update the height of the text view for a big text length.
-    func updateTextHeightIfNeeded() {
-        if baseTextHeight == .greatestFiniteMagnitude {
-            let text = textView.attributedText
-            textView.attributedText = attributedText(text: "T")
-            baseTextHeight = textViewContentSize.height.rounded()
-            textView.attributedText = text
-        }
-        
-        updateTextHeight(textView.attributedText.length > 0 ? textViewContentSize.height.rounded() : baseTextHeight)
-    }
-    
-    private func updateTextHeight(_ height: CGFloat) {
-        guard let heightConstraint = heightConstraint else {
-            return
-        }
-        
-        var height = min(max(height + 2 * textViewPadding, CGFloat.composerHeight), CGFloat.composerMaxHeight)
-        textView.isScrollEnabled = height == CGFloat.composerMaxHeight
-        imagesCollectionView.isHidden = isUploaderEmpty
-        
-        if !imagesCollectionView.isHidden {
-            height += .composerAttachmentsHeight
-        }
-        
-        updateToolBarHeight()
-
-        if heightConstraint.layoutConstraints.first?.constant != height {
-            heightConstraint.update(offset: height)
-            setNeedsLayout()
-            layoutIfNeeded()
-        }
-    }
-    
-    public func updateToolBarHeight() {
-        let height = CGFloat.messagesToComposerPadding + (imagesCollectionView.isHidden ? 0 : .composerAttachmentsHeight)
-        
-        guard toolBar.frame.height != height else {
-            return
-        }
-        
-        toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width, height: height))
-        toolBar.isHidden = true
-        textView.inputAccessoryView = toolBar
-        textView.reloadInputViews()
-    }
-}
-
-// MARK: - Text View Delegate
-
-extension ComposerView: UITextViewDelegate {
-    
-    public func textViewDidBeginEditing(_ textView: UITextView) {
-        updateTextHeightIfNeeded()
-        updateSendButton()
-    }
-    
-    public func textViewDidEndEditing(_ textView: UITextView) {
-        updateTextHeightIfNeeded()
-        updatePlaceholder()
-    }
-    
-    public func textViewDidChange(_ textView: UITextView) {
-        updatePlaceholder()
-        updateTextHeightIfNeeded()
-    }
-}
-
-// MARK: - Images Collection View
-
-extension ComposerView: UICollectionViewDataSource {
-    
-    func addImage(_ item: UploaderItem) {
-        guard let uploader = uploader else {
-            return
-        }
-        
-        uploader.upload(item: item)
-        updateImagesCollectionView()
-        imagesCollectionView.scrollToItem(at: .item(0), at: .right, animated: false)
-    }
-    
-    private func updateImagesCollectionView() {
-        imagesCollectionView.reloadData()
-        imagesCollectionView.isHidden = isUploaderEmpty
-        updateTextHeightIfNeeded()
-        updateSendButton()
-        updateStyleState()
-        updateToolBarHeight()
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isUploaderEmpty ? 0 : (uploader?.items.count ?? 0) + (imagesAddAction == nil ? 0 : 1)
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(for: indexPath) as AttachmentCollectionViewCell
-        
-        if indexPath.item == 0, let imagesAddAction = imagesAddAction {
-            cell.updatePlusButton(tintColor: style?.textColor, action: imagesAddAction)
-            return cell
-        }
-        
-        let imageIndex = indexPath.item - (imagesAddAction == nil ? 0 : 1)
-        
-        guard let item = uploader?.items[imageIndex] else {
-            return .unused
-        }
-        
-        cell.imageView.image = item.image
-        
-        cell.updateRemoveButton(tintColor: style?.textColor) { [weak self] in
-            if let self = self {
-                self.uploader?.remove(at: imageIndex)
-                self.updateImagesCollectionView()
-            }
-        }
-        
-        if item.attachment == nil, item.error == nil {
-            cell.updateForProgress(item.lastProgress)
-            
-            item.uploadingCompletion
-                .observeOn(MainScheduler.instance)
-                .subscribe(onError: { [weak cell] _ in cell?.updateForError() },
-                           onCompleted: { [weak cell] in cell?.updateForProgress(1) })
-                .disposed(by: cell.disposeBag)
-            
-            item.uploadingProgress
-                .do(onError: { [weak cell] error in cell?.updateForError() },
-                    onDispose: { [weak cell, weak item] in
-                        if item?.error == nil {
-                            cell?.updateForProgress(1)
-                        } else {
-                            cell?.updateForError()
-                        }
-                })
-                .bind(to: cell.progressView.rx.progress)
-                .disposed(by: cell.disposeBag)
-            
-        } else if item.error != nil {
-            cell.updateForError()
-        }
-        
-        return cell
+    func updateStyleState() {
+        styleState = !textView.isFirstResponder
+            && isUploaderImagesEmpty
+            && isUploaderFilesEmpty
+            && text.isEmpty ? .normal : (isEditing ? .edit : .active)
     }
 }

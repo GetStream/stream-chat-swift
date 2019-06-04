@@ -39,14 +39,14 @@ public struct Attachment: Codable {
         return (type.isImage && text == nil) || type == .video
     }
     
-    init(type: AttachmentType, title: String, url: URL? = nil, imageURL: URL? = nil) {
+    init(type: AttachmentType, title: String, url: URL? = nil, imageURL: URL? = nil, file: AttachmentFile? = nil) {
         self.type = type
         self.url = url
         self.imageURL = imageURL
         self.title = title
+        self.file = file
         text = nil
         author = nil
-        file = nil
         actions = []
     }
     
@@ -113,8 +113,9 @@ public struct Attachment: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type, forKey: .type)
         try container.encode(title, forKey: (type == .image ? .fallback : .title))
-        try container.encodeIfPresent(url, forKey: .url)
+        try container.encodeIfPresent(url, forKey: .assetURL)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        try file?.encode(to: encoder)
     }
     
     private static func fixedURL(_ urlString: String?) -> URL? {
@@ -189,13 +190,16 @@ public struct AttachmentFile: Codable {
     public let size: Int64
     public let mimeType: String?
     
-    public let sizeFormatter: ByteCountFormatter = {
-        let fomatter = ByteCountFormatter()
-        return fomatter
-    }()
+    public let sizeFormatter = ByteCountFormatter()
     
     public var sizeString: String {
         return sizeFormatter.string(fromByteCount: size)
+    }
+    
+    init(type: AttachmentFileType, size: Int64, mimeType: String?) {
+        self.type = type
+        self.size = size
+        self.mimeType = mimeType
     }
     
     public init(from decoder: Decoder) throws {
@@ -209,6 +213,12 @@ public struct AttachmentFile: Codable {
         }
         
         size = try container.decodeIfPresent(Int64.self, forKey: .size) ?? 0
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(size, forKey: .size)
+        try container.encodeIfPresent(mimeType, forKey: .mimeType)
     }
 }
 
@@ -284,5 +294,9 @@ public enum AttachmentFileType: String, Codable {
         case .gif:
             return "image/gif"
         }
+    }
+    
+    var iconName: String {
+        return rawValue.lowercased()
     }
 }

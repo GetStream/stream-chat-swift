@@ -100,6 +100,10 @@
 		8ABE5FDA22A67C92004F128C /* UIViewController+DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */; };
 		8ABE5FDC22A67F3C004F128C /* RxDocumentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */; };
 		8ABE5FDF22A6814F004F128C /* String+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDE22A6814F004F128C /* String+FileType.swift */; };
+		8ABE5FE122A69FB3004F128C /* ComposerView+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FE022A69FB3004F128C /* ComposerView+Images.swift */; };
+		8ABE5FE322A6A066004F128C /* ComposerView+TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FE222A6A066004F128C /* ComposerView+TextView.swift */; };
+		8ABE5FE522A6A173004F128C /* ComposerView+Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FE422A6A173004F128C /* ComposerView+Files.swift */; };
+		8ABE5FE722A6A98E004F128C /* ComposerFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FE622A6A98E004F128C /* ComposerFileView.swift */; };
 		8ABF8260226F4A4600A966D9 /* WebSocket+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF825F226F4A4600A966D9 /* WebSocket+Response.swift */; };
 		8ABF8262226F643E00A966D9 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF8261226F643E00A966D9 /* Reaction.swift */; };
 		8ABF82642270668700A966D9 /* unwrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF82632270668700A966D9 /* unwrap.swift */; };
@@ -217,6 +221,10 @@
 		8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DocumentPicker.swift"; sourceTree = "<group>"; };
 		8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxDocumentPickerViewController.swift; sourceTree = "<group>"; };
 		8ABE5FDE22A6814F004F128C /* String+FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FileType.swift"; sourceTree = "<group>"; };
+		8ABE5FE022A69FB3004F128C /* ComposerView+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComposerView+Images.swift"; sourceTree = "<group>"; };
+		8ABE5FE222A6A066004F128C /* ComposerView+TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComposerView+TextView.swift"; sourceTree = "<group>"; };
+		8ABE5FE422A6A173004F128C /* ComposerView+Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComposerView+Files.swift"; sourceTree = "<group>"; };
+		8ABE5FE622A6A98E004F128C /* ComposerFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerFileView.swift; sourceTree = "<group>"; };
 		8ABF825F226F4A4600A966D9 /* WebSocket+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Response.swift"; sourceTree = "<group>"; };
 		8ABF8261226F643E00A966D9 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8ABF82632270668700A966D9 /* unwrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = unwrap.swift; sourceTree = "<group>"; };
@@ -348,7 +356,6 @@
 				8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */,
 				8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */,
 				8AABC2972260D9450064CB20 /* StatusTableViewCell.swift */,
-				8A1A9417225E2FE000060ACC /* AttachmentCollectionViewCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -367,9 +374,14 @@
 			isa = PBXGroup;
 			children = (
 				8A1A9411225DFDA100060ACC /* ComposerView.swift */,
+				8ABE5FE222A6A066004F128C /* ComposerView+TextView.swift */,
+				8ABE5FE022A69FB3004F128C /* ComposerView+Images.swift */,
+				8ABE5FE422A6A173004F128C /* ComposerView+Files.swift */,
 				8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */,
 				8A9955C222899CD0005D8148 /* ComposerCommandView.swift */,
 				8AD04515229EA06B00CD6B77 /* ComposerAddFileView.swift */,
+				8ABE5FE622A6A98E004F128C /* ComposerFileView.swift */,
+				8A1A9417225E2FE000060ACC /* AttachmentCollectionViewCell.swift */,
 			);
 			path = Composer;
 			sourceTree = "<group>";
@@ -787,6 +799,8 @@
 				8A4FE7BF227CE69000E47D4C /* UIImage+Render.swift in Sources */,
 				8A88914C2252337500DD6539 /* User.swift in Sources */,
 				8ABF82642270668700A966D9 /* unwrap.swift in Sources */,
+				8ABE5FE122A69FB3004F128C /* ComposerView+Images.swift in Sources */,
+				8ABE5FE522A6A173004F128C /* ComposerView+Files.swift in Sources */,
 				8A8BC069228AE0D600687186 /* ChannelsViewController.swift in Sources */,
 				8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */,
 				8A8891622253A73000DD6539 /* ChannelQuery.swift in Sources */,
@@ -808,6 +822,7 @@
 				8A1A9407225B4E7F00060ACC /* Reusable.swift in Sources */,
 				8A8BC073228C152600687186 /* TimeInterval+Extensions.swift in Sources */,
 				8A1A9414225E01F100060ACC /* ComposerViewStyle.swift in Sources */,
+				8ABE5FE722A6A98E004F128C /* ComposerFileView.swift in Sources */,
 				8A88917722550E0C00DD6539 /* UIColor+Extensions.swift in Sources */,
 				8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */,
 				8ABF8260226F4A4600A966D9 /* WebSocket+Response.swift in Sources */,
@@ -829,6 +844,7 @@
 				8A1A9418225E2FE000060ACC /* AttachmentCollectionViewCell.swift in Sources */,
 				8A40803F2280708900F274FF /* ReactionsView.swift in Sources */,
 				8AB1B8F2226772C1002C65BD /* WebViewController.swift in Sources */,
+				8ABE5FE322A6A066004F128C /* ComposerView+TextView.swift in Sources */,
 				8AABC291226086ED0064CB20 /* Attachment.swift in Sources */,
 				8A9FA7CA22A51C83004A5678 /* MultipartFormData.swift in Sources */,
 				8A9955C322899CD0005D8148 /* ComposerCommandView.swift in Sources */,

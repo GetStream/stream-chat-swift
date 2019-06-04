@@ -66,14 +66,15 @@ public final class Channel: Codable, Equatable {
     
     required public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        id = try container.decode(String.self, forKey: .id)
+        let id = try container.decode(String.self, forKey: .id)
+        self.id = id
         cid = try container.decode(String.self, forKey: .cid)
         type = try container.decode(ChannelType.self, forKey: .type)
         config = try container.decode(Config.self, forKey: .config)
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
         createdBy = try container.decodeIfPresent(User.self, forKey: .createdBy)
         frozen = try container.decode(Bool.self, forKey: .frozen)
-        name = try container.decode(String.self, forKey: .name)
+        name = try container.decodeIfPresent(String.self, forKey: .name) ?? id
         imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
     }
     
