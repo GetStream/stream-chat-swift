@@ -44,7 +44,7 @@ public struct ChannelQuery: Codable {
         channel = try container.decode(Channel.self, forKey: .channel)
         members = try container.decode([Member].self, forKey: .members)
         messages = try container.decode([Message].self, forKey: .messages)
-        messageReads = try container.decode([MessageRead].self, forKey: .messageReads)
+        messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         pagination = .none
         
         if let user = Client.shared.user {

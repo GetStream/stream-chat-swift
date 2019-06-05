@@ -93,7 +93,7 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
     }
     
     func reset() {
-        avatarView.image = nil
+        avatarView.reset()
         nameLabel.text = nil
         dateLabel.text = nil
         messageLabel.text = nil

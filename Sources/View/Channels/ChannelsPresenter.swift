@@ -14,6 +14,8 @@ public final class ChannelsPresenter {
     public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
     
     public let channelType: ChannelType
+    public lazy var channelsFilter: ChannelsQuery.Filter = .type(channelType)
+    public var channelsSorting: [ChannelsQuery.Sorting] = [.lastMessage(isAscending: false)]
     public let showChannelStatuses: Bool
     private let loadPagination = PublishSubject<Pagination>()
     private var next = Pagination.channelsPageSize
@@ -65,7 +67,7 @@ public final class ChannelsPresenter {
             return .channel(channelPresenter)
         })
         
-        if items.count == next.limit {
+        if response.channels.count == next.limit {
             next = .channelsNextPageSize + .offset(next.offset + next.limit)
             items.append(.loading)
         } else {
@@ -93,12 +95,10 @@ public final class ChannelsPresenter {
 extension ChannelsPresenter {
     private func channelsEndpoint(pagination: Pagination) -> ChatEndpoint? {
         if let user = Client.shared.user {
-            let query = ChannelsQuery(filter: .init(type: channelType),
-                                      sort: [.lastMessage(isAscending: false)],
-                                      user: user,
-                                      pagination: pagination)
-            
-            return ChatEndpoint.channels(query)
+            return ChatEndpoint.channels(ChannelsQuery(filter: channelsFilter,
+                                                       sort: channelsSorting,
+                                                       user: user,
+                                                       pagination: pagination))
         }
         
         return nil

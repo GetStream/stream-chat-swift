@@ -108,13 +108,13 @@ public final class ClientLogger {
         }
     }
     
-    func log(_ error: Error?, message: String? = nil) {
+    func log(_ error: Error?, message: String? = nil, function: String = #function, line: Int = #line) {
         if let error = error {
             if let message = message {
                 log(message)
             }
             
-            log("\(error)")
+            log("\(error) in \(function)[\(line)]")
         }
     }
     

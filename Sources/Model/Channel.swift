@@ -75,7 +75,7 @@ public final class Channel: Codable, Equatable {
         createdBy = try container.decodeIfPresent(User.self, forKey: .createdBy)
         frozen = try container.decode(Bool.self, forKey: .frozen)
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? id
-        imageURL = try container.decodeIfPresent(URL.self, forKey: .imageURL)
+        imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
     }
     
     public func encode(to encoder: Encoder) throws {
