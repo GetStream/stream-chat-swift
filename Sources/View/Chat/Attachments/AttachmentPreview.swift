@@ -115,7 +115,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         didSet {
             if let attachment = attachment {
                 hasActions = !attachment.actions.isEmpty
-                defaultHeight = attachment.isImageOrVideo && !hasActions ? .attachmentPreviewHeight : .attachmentPreviewMaxHeight
+                defaultHeight = attachment.isImage && !hasActions ? .attachmentPreviewHeight : .attachmentPreviewMaxHeight
             }
         }
     }
@@ -160,12 +160,12 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         if superview != nil, widthConstraint == nil, let attachment = attachment {
             snp.makeConstraints {
                 heightConstraint = $0.height.equalTo(defaultHeight).priority(999).constraint
-                let width = attachment.isImageOrVideo && !hasActions ? defaultHeight : maxWidth
+                let width = attachment.isImage && !hasActions ? defaultHeight : maxWidth
                 widthConstraint = $0.width.equalTo(width).constraint
             }
         }
     }
-
+    
     func update(maskImage: UIImage?, _ completion: @escaping Competion) {
         guard let attachment = attachment else {
             return
@@ -184,7 +184,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             
             backgroundColor = .clear
             
-        } else if !attachment.isImageOrVideo {
+        } else if !attachment.isImage {
             titleLabel.text = attachment.title
             titleLabel.backgroundColor = backgroundColor
             textLabel.text = attachment.text ?? attachment.url?.host
@@ -237,13 +237,13 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             DispatchQueue.main.async { [weak self] in self?.activityIndicatorView.stopAnimating() }
         }
         
-        var width = attachment.isImageOrVideo && !hasActions ? defaultHeight : maxWidth
+        var width = attachment.isImage && !hasActions ? defaultHeight : maxWidth
         var height = defaultHeight
         
         if let image = imageResponse?.image, image.size.height > 0 {
             imageView.backgroundColor = backgroundColor
             
-            if attachment.isImageOrVideo, !hasActions {
+            if attachment.isImage, !hasActions {
                 width = min(image.size.width / image.size.height * defaultHeight, maxWidth).rounded()
                 widthConstraint?.update(offset: width)
             }

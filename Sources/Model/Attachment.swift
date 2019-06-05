@@ -35,8 +35,8 @@ public struct Attachment: Codable {
     public let imageURL: URL?
     public let file: AttachmentFile?
     
-    public var isImageOrVideo: Bool {
-        return (type.isImage && text == nil) || type == .video
+    public var isImage: Bool {
+        return type.isImage && text == nil
     }
     
     init(type: AttachmentType, title: String, url: URL? = nil, imageURL: URL? = nil, file: AttachmentFile? = nil) {
@@ -72,6 +72,7 @@ public struct Attachment: Codable {
             ?? container.decodeIfPresent(String.self, forKey: .ogURL))
         
         let typeString = try? container.decode(String.self, forKey: .type)
+        let type: AttachmentType
         
         if let typeString = typeString, let existsType = AttachmentType(rawValue: typeString) {
             if existsType == .video, let url = url, url.absoluteString.contains("youtube") {
@@ -85,13 +86,9 @@ public struct Attachment: Codable {
             type = .unknown
         }
         
-        file = type == .file ? try AttachmentFile(from: decoder) : nil
-        
-        if let actions = try? container.decodeIfPresent([Action].self, forKey: .actions) {
-            self.actions = actions
-        } else {
-            actions = []
-        }
+        self.type = type
+        file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
+        actions = try container.decodeIfPresent([Action].self, forKey: .actions) ?? []
     }
     
     /// Image upload:

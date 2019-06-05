@@ -44,7 +44,7 @@ extension MessageTableViewCell {
             
             let preview: AttachmentPreviewProtocol
             
-            if attachment.type == .file {
+            if attachment.type == .file || attachment.type == .video {
                 preview = createAttachmentFilePreview(with: attachment, style: style)
             } else {
                 preview = createAttachmentPreview(with: attachment,
@@ -57,7 +57,7 @@ extension MessageTableViewCell {
             attachmentPreviews.append(preview)
             
             // File preview.
-            if attachment.type == .file {
+            if attachment.type == .file || attachment.type == .video {
                 preview.update(maskImage: backgroundImageForAttachment(at: index)) { _, _ in }
                 addGetures(preview, nil)
             } else if let preview = preview as? AttachmentPreview {
@@ -103,7 +103,7 @@ extension MessageTableViewCell {
         preview.attachment = attachment
         preview.forceToReload = reload
         
-        preview.backgroundColor = attachment.isImageOrVideo && attachment.actions.isEmpty
+        preview.backgroundColor = attachment.isImage && attachment.actions.isEmpty
             ? style.chatBackgroundColor
             : (style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray)
         

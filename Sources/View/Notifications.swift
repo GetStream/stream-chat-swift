@@ -119,7 +119,7 @@ extension Notifications {
         //  3. Create attachment
         //  4. When a notification opened, remove all tmp images from NSTemporaryDirectory() + "notifications"
         //    if let attachment = message.attachments.first,
-        //        attachment.isImageOrVideo,
+        //        attachment.isImage,
         //        let url = attachment.imageURL,
         //        !url.absoluteString.contains(".gif"),
         //        let notificationAttachment = try? UNNotificationAttachment(identifier: attachment.title, url: url) {
