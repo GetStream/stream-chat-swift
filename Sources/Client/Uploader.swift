@@ -35,13 +35,18 @@ final class Uploader {
 }
 
 final class UploaderItem: Equatable {
+    enum UploadingType {
+        case image
+        case video
+        case file
+    }
     
     let url: URL?
     let image: UIImage?
     let fileName: String
     let fileType: AttachmentFileType
     let fileSize: Int64
-    let isFileUploading: Bool
+    let type: UploadingType
     private(set) var attachment: Attachment? = nil
     private(set) var error: Error? = nil
     private(set) var urlSessionTask: URLSessionTask?
@@ -62,19 +67,19 @@ final class UploaderItem: Equatable {
         .takeWhile { $0 < 1 }
     
     init(pickedImage: PickedImage) {
-        isFileUploading = false
+        type = pickedImage.isVideo ? .video : .image
         url = pickedImage.fileURL
         image = pickedImage.image
         fileName = pickedImage.fileName
-        fileSize = 0
+        fileSize = url?.fileSize ?? 0
         
-        if let ext = url?.pathExtension {
+        if let ext = url?.pathExtension.lowercased() {
             fileType = AttachmentFileType(ext: ext)
             return
         }
         
         if let dot = fileName.lastIndex(of: ".") {
-            let ext = String(fileName.suffix(from: dot)).trimmingCharacters(in: .init(charactersIn: "."))
+            let ext = String(fileName.suffix(from: dot)).trimmingCharacters(in: .init(charactersIn: ".")).lowercased()
             fileType = AttachmentFileType(ext: ext)
         } else {
             fileType = .generic
@@ -82,18 +87,12 @@ final class UploaderItem: Equatable {
     }
     
     init(url: URL) {
-        isFileUploading = true
+        type = .file
         image = nil
         self.url = url
         fileName = url.lastPathComponent
         fileType = AttachmentFileType(ext: url.pathExtension)
-        
-        if let attr = try? FileManager.default.attributesOfItem(atPath: url.path),
-            let size = attr[FileAttributeKey.size] as? UInt64 {
-            fileSize = Int64(size)
-        } else {
-            fileSize = 0
-        }
+        fileSize = url.fileSize
     }
     
     func upload(in channel: Channel) {
@@ -103,11 +102,15 @@ final class UploaderItem: Equatable {
             }
             
             if let response = try? result.get() {
-                if self.isFileUploading {
-                    let fileAttachment = AttachmentFile(type: self.fileType, size: self.fileSize, mimeType: self.fileType.mimeType)
-                    self.attachment = Attachment(type: .file, title: self.fileName, url: response.file, file: fileAttachment)
-                } else {
+                if self.type == .image {
                     self.attachment = Attachment(type: .image, title: self.fileName, imageURL: response.file)
+                } else {
+                    let fileAttachment = AttachmentFile(type: self.fileType, size: self.fileSize, mimeType: self.fileType.mimeType)
+                    
+                    self.attachment = Attachment(type: self.type == .video ? .video : .file,
+                                                 title: self.fileName,
+                                                 url: response.file,
+                                                 file: fileAttachment)
                 }
                 
                 self.uploadingCompletion.onCompleted()
@@ -118,9 +121,9 @@ final class UploaderItem: Equatable {
             }
         }
         
-        if isFileUploading {
+        if type == .file || type == .video {
             if let url = url, let data = try? Data(contentsOf: url) {
-                urlSessionTask = Client.shared.request(endpoint: .sendFile(fileName, data, channel), fileCompletion)
+                urlSessionTask = Client.shared.request(endpoint: .sendFile(fileName, fileType.mimeType, data, channel), fileCompletion)
             } else {
                 uploadingCompletion.onError(ClientError.emptyBody)
             }
@@ -149,6 +152,6 @@ final class UploaderItem: Equatable {
             && lhs.image == rhs.image
             && lhs.fileName == rhs.fileName
             && lhs.fileType == rhs.fileType
-            && lhs.isFileUploading == rhs.isFileUploading
+            && lhs.type == rhs.type
     }
 }

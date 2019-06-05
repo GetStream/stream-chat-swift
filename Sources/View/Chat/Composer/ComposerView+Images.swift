@@ -43,7 +43,10 @@ extension ComposerView: UICollectionViewDataSource {
         
         uploader.upload(item: item)
         updateImagesCollectionView()
-        imagesCollectionView.scrollToItem(at: .item(0), at: .right, animated: false)
+        
+        if !isUploaderImagesEmpty {
+            imagesCollectionView.scrollToItem(at: .item(0), at: .right, animated: false)
+        }
     }
     
     func updateImagesCollectionView() {
@@ -56,11 +59,11 @@ extension ComposerView: UICollectionViewDataSource {
     }
     
     var isUploaderImagesEmpty: Bool {
-        return (uploader?.items.firstIndex(where: { !$0.isFileUploading })) == nil
+        return (uploader?.items.firstIndex(where: { $0.type != .file })) == nil
     }
     
     var imagesItems: [UploaderItem] {
-        return uploader?.items.filter({ !$0.isFileUploading }) ?? []
+        return uploader?.items.filter({ $0.type != .file }) ?? []
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

@@ -10,15 +10,25 @@ import UIKit
 import Photos.PHPhotoLibrary
 
 struct PickedImage {
-    let image: UIImage
+    let image: UIImage?
     let fileURL: URL?
     let fileName: String
+    let isVideo: Bool
     
     init?(info: [UIImagePickerController.InfoKey : Any]) {
+        if let videoURL = info[.mediaURL] as? URL, (info[.mediaType] as? String) == .movieFileType {
+            isVideo = true
+            fileURL = videoURL
+            fileName = videoURL.lastPathComponent.lowercased()
+            image = videoURL.videoFrame(at: .middle)
+            return
+        }
+        
         guard let image = info[.originalImage] as? UIImage else {
             return nil
         }
         
+        isVideo = false
         self.image = image
         let fileURL = info[.imageURL] as? URL
         self.fileURL = fileURL

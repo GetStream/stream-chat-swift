@@ -257,7 +257,7 @@ extension ChatViewController {
         }
         
         addButtonsToAddFileView(container, icon: UIImage.Icons.file, title: "Upload a file", sourceType: .file) { [weak self] _ in
-            self?.showDocumetPicker()
+            self?.showDocumentPicker()
         }
         
         return container
@@ -331,7 +331,7 @@ extension ChatViewController {
         hideAddFileView()
     }
     
-    private func showDocumetPicker() {
+    private func showDocumentPicker() {
         let documentPickerViewController = UIDocumentPickerViewController(documentTypes: [.anyFileType], in: .import)
         documentPickerViewController.allowsMultipleSelection = true
         

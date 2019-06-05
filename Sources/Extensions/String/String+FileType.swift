@@ -14,4 +14,5 @@ extension String {
     static let textFileType: String = kUTTypeText as String
     static let pdfFileType: String = kUTTypePDF as String
     static let imageFileType: String = kUTTypeImage as String
+    static let movieFileType: String = kUTTypeMovie as String
 }

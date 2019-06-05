@@ -104,6 +104,7 @@
 		8ABE5FE322A6A066004F128C /* ComposerView+TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FE222A6A066004F128C /* ComposerView+TextView.swift */; };
 		8ABE5FE522A6A173004F128C /* ComposerView+Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FE422A6A173004F128C /* ComposerView+Files.swift */; };
 		8ABE5FE722A6A98E004F128C /* ComposerFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FE622A6A98E004F128C /* ComposerFileView.swift */; };
+		8ABE5FE922A7B665004F128C /* URL+Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FE822A7B665004F128C /* URL+Media.swift */; };
 		8ABF8260226F4A4600A966D9 /* WebSocket+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF825F226F4A4600A966D9 /* WebSocket+Response.swift */; };
 		8ABF8262226F643E00A966D9 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF8261226F643E00A966D9 /* Reaction.swift */; };
 		8ABF82642270668700A966D9 /* unwrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABF82632270668700A966D9 /* unwrap.swift */; };
@@ -225,6 +226,7 @@
 		8ABE5FE222A6A066004F128C /* ComposerView+TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComposerView+TextView.swift"; sourceTree = "<group>"; };
 		8ABE5FE422A6A173004F128C /* ComposerView+Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ComposerView+Files.swift"; sourceTree = "<group>"; };
 		8ABE5FE622A6A98E004F128C /* ComposerFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerFileView.swift; sourceTree = "<group>"; };
+		8ABE5FE822A7B665004F128C /* URL+Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Media.swift"; sourceTree = "<group>"; };
 		8ABF825F226F4A4600A966D9 /* WebSocket+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Response.swift"; sourceTree = "<group>"; };
 		8ABF8261226F643E00A966D9 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8ABF82632270668700A966D9 /* unwrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = unwrap.swift; sourceTree = "<group>"; };
@@ -432,6 +434,7 @@
 				8A40804022818C7A00F274FF /* Int+Extensions.swift */,
 				8A8BC072228C152600687186 /* TimeInterval+Extensions.swift */,
 				8AD21B98229BEB8D009D6086 /* Utils.swift */,
+				8ABE5FE822A7B665004F128C /* URL+Media.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -750,6 +753,7 @@
 				8AFC2A30226B5C87006278D4 /* Client+WebSocket.swift in Sources */,
 				8A4FE7C3227DBB7600E47D4C /* ChatViewController+Cells.swift in Sources */,
 				8AABC29E22627AA20064CB20 /* Dictionary+Extensions.swift in Sources */,
+				8ABE5FE922A7B665004F128C /* URL+Media.swift in Sources */,
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
 				8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */,
 				8A4FE7C1227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift in Sources */,

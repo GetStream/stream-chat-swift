@@ -156,10 +156,9 @@ extension Client {
         urlRequest.httpMethod = endpoint.method.rawValue
         
         switch endpoint {
-        case let .sendImage(fileName, mimeType, data, _):
+        case .sendImage(let fileName, let mimeType, let data, _),
+             .sendFile(let fileName, let mimeType, let data, _):
             multipartFormData = MultipartFormData(data, fileName: fileName, mimeType: mimeType)
-        case let .sendFile(fileName, data, _):
-            multipartFormData = MultipartFormData(data, fileName: fileName)
         default:
             return .failure(.unexpectedError)
         }

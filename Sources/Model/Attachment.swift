@@ -233,27 +233,29 @@ public enum AttachmentFileType: String, Codable {
     case zip
     case mp3
     case mp4
+    case mov
     case jpeg
     case png
     case gif
     
+    private static let mimeTypes: [String: AttachmentFileType] = ["application/octet-stream": .generic,
+                                                                  "text/csv": .csv,
+                                                                  "application/msword": .doc,
+                                                                  "application/pdf": .pdf,
+                                                                  "application/vnd.ms-powerpoint": .ppt,
+                                                                  "application/x-tar": .tar,
+                                                                  "application/vnd.ms-excel": .xls,
+                                                                  "application/zip": .zip,
+                                                                  "audio/mp3": .mp3,
+                                                                  "video/mp4": .mp4,
+                                                                  "video/quicktime": .mov,
+                                                                  "image/jpeg": .jpeg,
+                                                                  "image/jpg": .jpeg,
+                                                                  "image/png": .png,
+                                                                  "image/gif": .gif]
+    
     public init(mimeType: String) {
-        switch mimeType {
-        case "text/csv": self = .csv
-        case "application/msword": self = .doc
-        case "application/pdf": self = .pdf
-        case "application/vnd.ms-powerpoint": self = .ppt
-        case "application/x-tar": self = .tar
-        case "application/vnd.ms-excel": self = .xls
-        case "application/zip": self = .zip
-        case "audio/mp3": self = .mp3
-        case "video/mp4": self = .mp4
-        case "image/jpeg": self = .jpeg
-        case "image/jpg": self = .jpeg
-        case "image/png": self = .png
-        case "image/gif": self = .gif
-        default: self = .generic
-        }
+        self = AttachmentFileType.mimeTypes[mimeType, default: .generic]
     }
     
     public init(ext: String) {
@@ -266,34 +268,7 @@ public enum AttachmentFileType: String, Codable {
     }
     
     var mimeType: String {
-        switch self {
-        case .generic:
-            return "application/octet-stream"
-        case .csv:
-            return "text/csv"
-        case .doc:
-            return "application/msword"
-        case .pdf:
-            return "application/pdf"
-        case .ppt:
-            return "application/vnd.ms-powerpoint"
-        case .tar:
-            return "application/x-tar"
-        case .xls:
-            return "application/vnd.ms-excel"
-        case .zip:
-            return "application/zip"
-        case .mp3:
-            return "audio/mp3"
-        case .mp4:
-            return "video/mp4"
-        case .jpeg:
-            return "image/jpeg"
-        case .png:
-            return "image/png"
-        case .gif:
-            return "image/gif"
-        }
+        return AttachmentFileType.mimeTypes.first(where: { $1 == self })?.key ?? "application/octet-stream"
     }
     
     var icon: UIImage {

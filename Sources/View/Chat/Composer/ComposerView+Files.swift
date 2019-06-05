@@ -71,7 +71,7 @@ extension ComposerView {
     }
     
     var isUploaderFilesEmpty: Bool {
-        return (uploader?.items.firstIndex(where: { $0.isFileUploading })) == nil
+        return (uploader?.items.firstIndex(where: { $0.type == .file })) == nil
     }
     
     func updateFilesStackView() {
