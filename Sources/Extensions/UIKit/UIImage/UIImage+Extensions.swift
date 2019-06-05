@@ -56,6 +56,18 @@ extension UIImage {
     }
 }
 
+// MARK: - Edit
+
+extension UIImage {
+    func flip(orientation: Orientation) -> UIImage? {
+        if let cgImage = cgImage {
+            return UIImage(cgImage: cgImage, scale: scale, orientation: orientation)
+        }
+        
+        return nil
+    }
+}
+
 // MARK: - Check
 
 extension UIImage {

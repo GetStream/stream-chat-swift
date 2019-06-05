@@ -60,7 +60,7 @@ extension MessageTableViewCell {
     
     public func update(replyCount: Int) {
         replyCountButton.isHidden = false
-        replyCountButton.setTitle(" \(replyCount) \(replyCount > 1 ? "replies" : "reply")", for: .normal)
+        replyCountButton.setTitle(" \(replyCount) \(replyCount > 1 ? "replies" : "reply") ", for: .normal)
         replyCountButton.setNeedsLayout()
     }
     

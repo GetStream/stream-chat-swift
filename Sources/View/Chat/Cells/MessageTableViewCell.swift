@@ -65,12 +65,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    let replyCountButton: UIButton = {
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage.Icons.path, for: .normal)
-        button.isHidden = true
-        return button
-    }()
+    let replyCountButton: UIButton = UIButton(type: .custom)
     
     private(set) lazy var messageStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [messageContainerView,
@@ -135,11 +130,19 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         dateLabel.backgroundColor = backgroundColor
         bottomPaddingView.backgroundColor = backgroundColor
         
+        replyCountButton.isHidden = true
         replyCountButton.titleLabel?.font = style.replyFont
         replyCountButton.titleLabel?.backgroundColor = backgroundColor
         replyCountButton.setTitleColor(style.replyColor, for: .normal)
         replyCountButton.backgroundColor = backgroundColor
         
+        if style.alignment == .left {
+            replyCountButton.setImage(UIImage.Icons.path, for: .normal)
+        } else {
+            replyCountButton.setImage(UIImage.Icons.path.flip(orientation: .upMirrored)?.template, for: .normal)
+            replyCountButton.semanticContentAttribute = .forceRightToLeft
+        }
+
         replyCountButton.tintColor = style.borderWidth > 0
             ? style.borderColor
             : (style.backgroundColor == style.chatBackgroundColor ? .chatGray : style.backgroundColor)
