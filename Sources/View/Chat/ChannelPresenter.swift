@@ -11,11 +11,15 @@ import RxSwift
 import RxCocoa
 
 public final class ChannelPresenter {
-    public typealias Completion = (_ error: Error?) -> Void
     private typealias EphemeralType = (message: Message?, updated: Bool)
+    public typealias Completion = (_ error: Error?) -> Void
     
+    public typealias MessageExtraDataCallback =
+        (_ messageId: String, _ text: String, _ attachments: [Attachment], _ parentId: String?) -> Codable?
+
     private let emptyMessageCompletion: Client.Completion<MessageResponse> = { _ in }
     private let emptyEventCompletion: Client.Completion<EventResponse> = { _ in }
+    public var messageExtraDataCallback: MessageExtraDataCallback?
     
     public private(set) var channel: Channel
     public private(set) var parentMessage: Message?
@@ -502,10 +506,21 @@ extension ChannelPresenter {
             text = String(text.prefix(channel.config.maxMessageLength))
         }
         
-        guard let message = Message(id: editMessage?.id ?? "",
+        let messageId = editMessage?.id ?? ""
+        let attachments = uploader.items.compactMap({ $0.attachment })
+        let parentId = parentMessage?.id
+        var extraData: MessageExtraData? = nil
+        
+        if let messageExtraDataCallback = messageExtraDataCallback,
+            let data = messageExtraDataCallback(messageId, text, attachments, parentId) {
+            extraData = MessageExtraData(data)
+        }
+        
+        guard let message = Message(id: messageId,
                                     text: text,
-                                    attachments: uploader.items.compactMap({ $0.attachment }),
-                                    parentId: parentMessage?.id,
+                                    attachments: attachments,
+                                    extraData: extraData,
+                                    parentId: parentId,
                                     showReplyInChannel: false) else {
             return
         }

@@ -116,7 +116,7 @@ extension DateFormatter {
 struct AnyEncodable: Encodable {
     private let encodable: Encodable
     
-    public init(_ encodable: Encodable) {
+    init(_ encodable: Encodable) {
         self.encodable = encodable
     }
     
@@ -124,3 +124,5 @@ struct AnyEncodable: Encodable {
         try encodable.encode(to: encoder)
     }
 }
+
+struct Empty: Codable {}

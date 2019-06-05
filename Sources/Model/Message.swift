@@ -27,6 +27,7 @@ public struct Message: Codable {
         case latestReactions = "latest_reactions"
         case ownReactions = "own_reactions"
         case reactionCounts = "reaction_counts"
+        case extraData
     }
     
     let id: String
@@ -43,6 +44,7 @@ public struct Message: Codable {
     public let showReplyInChannel: Bool?
     public let mentionedUsers: [User]
     public let replyCount: Int
+    public let extraData: MessageExtraData?
     public private(set) var latestReactions: [Reaction]
     public private(set) var ownReactions: [Reaction]
     public private(set) var reactionCounts: ReactionCounts?
@@ -75,7 +77,12 @@ public struct Message: Codable {
             : (text.isEmpty ? (args ?? "") : text).trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    init?(id: String = "", text: String, attachments: [Attachment] = [], parentId: String?, showReplyInChannel: Bool) {
+    init?(id: String = "",
+          text: String,
+          attachments: [Attachment] = [],
+          extraData: MessageExtraData?,
+          parentId: String?,
+          showReplyInChannel: Bool) {
         guard let user = Client.shared.user else {
             return nil
         }
@@ -97,6 +104,7 @@ public struct Message: Codable {
         latestReactions = []
         ownReactions = []
         reactionCounts = nil
+        self.extraData = extraData
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -110,6 +118,35 @@ public struct Message: Codable {
         if parentId != nil {
             try container.encode(parentId, forKey: .parentId)
             try container.encode(showReplyInChannel, forKey: .showReplyInChannel)
+        }
+        
+        try extraData?.encode(to: encoder)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        type = try container.decode(MessageType.self, forKey: .type)
+        user = try container.decode(User.self, forKey: .user)
+        created = try container.decode(Date.self, forKey: .created)
+        updated = try container.decode(Date.self, forKey: .updated)
+        deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
+        text = try container.decode(String.self, forKey: .text)
+        command = try container.decodeIfPresent(String.self, forKey: .command)
+        args = try container.decodeIfPresent(String.self, forKey: .args)
+        attachments = try container.decode([Attachment].self, forKey: .attachments)
+        parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
+        showReplyInChannel = false
+        mentionedUsers = try container.decode([User].self, forKey: .mentionedUsers)
+        replyCount = try container.decode(Int.self, forKey: .replyCount)
+        latestReactions = try container.decode([Reaction].self, forKey: .latestReactions)
+        ownReactions = try container.decode([Reaction].self, forKey: .ownReactions)
+        reactionCounts = try container.decodeIfPresent(ReactionCounts.self, forKey: .reactionCounts)
+        
+        if MessageExtraData.decodableType != Empty.self {
+            extraData = try MessageExtraData.init(from: decoder)
+        } else {
+            extraData = nil
         }
     }
     
@@ -172,6 +209,27 @@ extension Message {
     }
 }
 
+// MARK: - Type
+
 public enum MessageType: String, Codable {
     case regular, ephemeral, error, reply, system
+}
+
+// MARK: - Extra Data
+
+public struct MessageExtraData: Codable {
+    public static var decodableType: Codable.Type = Empty.self
+    public let data: Codable
+    
+    init(_ encodableData: Codable) {
+        data = encodableData
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        try data.encode(to: encoder)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        data = (try? MessageExtraData.decodableType.init(from: decoder)) ?? Empty()
+    }
 }

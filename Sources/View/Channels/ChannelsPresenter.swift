@@ -11,12 +11,15 @@ import RxSwift
 import RxCocoa
 
 public final class ChannelsPresenter {
+    public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
     
     public let channelType: ChannelType
     public let showChannelStatuses: Bool
     private let loadPagination = PublishSubject<Pagination>()
     private var next = Pagination.channelsPageSize
     private(set) var items: [ChatItem] = []
+    
+    public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
     init(channelType: ChannelType, showChannelStatuses: Bool = true) {
         self.channelType = channelType
@@ -51,7 +54,16 @@ public final class ChannelsPresenter {
         }
         
         let row = items.count
-        items.append(contentsOf: response.channels.map { .channel(ChannelPresenter(query: $0, showStatuses: showChannelStatuses)) })
+        
+        items.append(contentsOf: response.channels.map {
+            let channelPresenter = ChannelPresenter(query: $0, showStatuses: showChannelStatuses)
+            
+            if let channelMessageExtraDataCallback = self.channelMessageExtraDataCallback {
+                channelPresenter.messageExtraDataCallback = channelMessageExtraDataCallback($0.channel)
+            }
+            
+            return .channel(channelPresenter)
+        })
         
         if items.count == next.limit {
             next = .channelsNextPageSize + .offset(next.offset + next.limit)

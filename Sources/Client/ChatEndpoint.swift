@@ -130,5 +130,3 @@ extension ChatEndpoint {
         return "messages/\(message.id)\(withSlash ? "/" : "")"
     }
 }
-
-private struct Empty: Encodable {}
