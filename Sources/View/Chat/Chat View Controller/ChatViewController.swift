@@ -142,7 +142,7 @@ extension ChatViewController {
             self.items = items
             let indexPath = IndexPath.row(row)
             let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
-            tableView.stayOnScrollOnce = scrollEnabled && (forceToScroll || needsToScroll)
+            tableView.stayOnScrollOnce = scrollEnabled && needsToScroll && !forceToScroll
             
             tableView.performBatchUpdates({
                 tableView.insertRows(at: [indexPath], with: .none)
@@ -151,6 +151,10 @@ extension ChatViewController {
                     tableView.reloadRows(at: [.row(reloadRow)], with: .none)
                 }
             })
+            
+            if scrollEnabled, forceToScroll {
+                tableView.scrollToRow(at: .row(row), at: .top, animated: false)
+            }
         case let .itemUpdated(row, message, items):
             self.items = items
             tableView.reloadRows(at: [.row(row)], with: .none)
