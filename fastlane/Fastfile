@@ -9,10 +9,12 @@ default_platform :ios
 # don't worry, fastlane will prompt you for required
 # info which you can add here later
 lane :beta do
+  # register_device(name: "iPhone 6", udid: "")
+  
   get_certificates
   get_provisioning_profile(
-      adhoc: true,
-      force: true
+    adhoc: true,
+    # force: true
   )
   
   # build your iOS app
