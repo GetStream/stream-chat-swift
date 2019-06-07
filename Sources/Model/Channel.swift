@@ -19,6 +19,7 @@ public final class Channel: Codable, Equatable {
         case frozen
         case name
         case imageURL = "image"
+        case extraData
     }
     
     public enum DataCodingKeys: String, CodingKey {
@@ -35,17 +36,19 @@ public final class Channel: Codable, Equatable {
     private(set) var createdBy: User? = nil
     private(set) var config: Config
     private(set) var frozen: Bool = false
+    public let extraData: ExtraData?
     
     public let name: String
     public var imageURL: URL?
     var userIds: [String] = []
     
-    public init(type: ChannelType = .messaging, id: String, name: String, imageURL: URL? = nil) {
+    public init(type: ChannelType = .messaging, id: String, name: String, imageURL: URL? = nil, extraData: ExtraData?) {
         self.id = id
         self.type = type
         self.cid = "\(type.rawValue):\(id)"
         self.name = name
         self.imageURL = imageURL
+        self.extraData = extraData
         
         config = Config(name: "",
                         automodBehavior: "",
@@ -76,6 +79,7 @@ public final class Channel: Codable, Equatable {
         frozen = try container.decode(Bool.self, forKey: .frozen)
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? id
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
+        extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isChannel }))
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -83,6 +87,7 @@ public final class Channel: Codable, Equatable {
         try container.encode(name, forKey: .name)
         try container.encode(imageURL, forKey: .imageURL)
         try container.encode(userIds, forKey: .members)
+        extraData?.encodeSafely(to: encoder)
     }
     
     public static func == (lhs: Channel, rhs: Channel) -> Bool {

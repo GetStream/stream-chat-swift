@@ -44,7 +44,7 @@ public struct Message: Codable {
     public let showReplyInChannel: Bool?
     public let mentionedUsers: [User]
     public let replyCount: Int
-    public let extraData: MessageExtraData?
+    public let extraData: ExtraData?
     public private(set) var latestReactions: [Reaction]
     public private(set) var ownReactions: [Reaction]
     public private(set) var reactionCounts: ReactionCounts?
@@ -80,7 +80,7 @@ public struct Message: Codable {
     init?(id: String = "",
           text: String,
           attachments: [Attachment] = [],
-          extraData: MessageExtraData?,
+          extraData: ExtraData?,
           parentId: String?,
           showReplyInChannel: Bool) {
         guard let user = Client.shared.user else {
@@ -110,7 +110,8 @@ public struct Message: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(text, forKey: .text)
-        
+        extraData?.encodeSafely(to: encoder)
+
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)
         }
@@ -119,8 +120,6 @@ public struct Message: Codable {
             try container.encode(parentId, forKey: .parentId)
             try container.encode(showReplyInChannel, forKey: .showReplyInChannel)
         }
-        
-        try extraData?.encode(to: encoder)
     }
     
     public init(from decoder: Decoder) throws {
@@ -142,12 +141,7 @@ public struct Message: Codable {
         latestReactions = try container.decode([Reaction].self, forKey: .latestReactions)
         ownReactions = try container.decode([Reaction].self, forKey: .ownReactions)
         reactionCounts = try container.decodeIfPresent(ReactionCounts.self, forKey: .reactionCounts)
-        
-        if MessageExtraData.decodableType != Empty.self {
-            extraData = try MessageExtraData.init(from: decoder)
-        } else {
-            extraData = nil
-        }
+        extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isMessage }))
     }
     
     private func checkIfTextAsAttachmentURL(_ text: String) -> Bool {
@@ -213,23 +207,4 @@ extension Message {
 
 public enum MessageType: String, Codable {
     case regular, ephemeral, error, reply, system
-}
-
-// MARK: - Extra Data
-
-public struct MessageExtraData: Codable {
-    public static var decodableType: Codable.Type = Empty.self
-    public let data: Codable
-    
-    init(_ encodableData: Codable) {
-        data = encodableData
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        try data.encode(to: encoder)
-    }
-    
-    public init(from decoder: Decoder) throws {
-        data = (try? MessageExtraData.decodableType.init(from: decoder)) ?? Empty()
-    }
 }

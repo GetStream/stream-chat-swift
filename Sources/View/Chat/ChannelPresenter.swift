@@ -15,7 +15,7 @@ public final class ChannelPresenter {
     public typealias Completion = (_ error: Error?) -> Void
     
     public typealias MessageExtraDataCallback =
-        (_ messageId: String, _ text: String, _ attachments: [Attachment], _ parentId: String?) -> Codable?
+        (_ id: String, _ text: String, _ attachments: [Attachment], _ parentId: String?) -> Codable?
 
     private let emptyMessageCompletion: Client.Completion<MessageResponse> = { _ in }
     private let emptyEventCompletion: Client.Completion<EventResponse> = { _ in }
@@ -509,11 +509,11 @@ extension ChannelPresenter {
         let messageId = editMessage?.id ?? ""
         let attachments = uploader.items.compactMap({ $0.attachment })
         let parentId = parentMessage?.id
-        var extraData: MessageExtraData? = nil
+        var extraData: ExtraData? = nil
         
         if let messageExtraDataCallback = messageExtraDataCallback,
             let data = messageExtraDataCallback(messageId, text, attachments, parentId) {
-            extraData = MessageExtraData(data)
+            extraData = ExtraData(data)
         }
         
         guard let message = Message(id: messageId,

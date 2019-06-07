@@ -11,6 +11,7 @@ import RxSwift
 import RxCocoa
 
 public final class ChannelsPresenter {
+    public typealias ChannelExtraDataCallback = (_ type: ChannelType, _ id: String, _ name: String) -> Codable?
     public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
     
     public let channelType: ChannelType
@@ -21,6 +22,7 @@ public final class ChannelsPresenter {
     private var next = Pagination.channelsPageSize
     private(set) var items: [ChatItem] = []
     
+    public var channelExtraDataCallback: ChannelExtraDataCallback?
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
     init(channelType: ChannelType, showChannelStatuses: Bool = true) {

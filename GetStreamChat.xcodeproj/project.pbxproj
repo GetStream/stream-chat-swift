@@ -32,6 +32,7 @@
 		8A2B60E02278813E00419C8E /* WebSocket+Reconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */; };
 		8A2CC95622842AED004CF12D /* ChatViewController+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2CC95522842AED004CF12D /* ChatViewController+Attachments.swift */; };
 		8A2CC9582284AD77004CF12D /* ChatViewController+MessageActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2CC9572284AD77004CF12D /* ChatViewController+MessageActions.swift */; };
+		8A3E461822A9639D00DF464B /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3E461722A9639D00DF464B /* ExtraData.swift */; };
 		8A40803B2280413E00F274FF /* IndexPath+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */; };
 		8A40803D22805ABA00F274FF /* ChatViewController+Reactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803C22805ABA00F274FF /* ChatViewController+Reactions.swift */; };
 		8A40803F2280708900F274FF /* ReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803E2280708900F274FF /* ReactionsView.swift */; };
@@ -153,6 +154,7 @@
 		8A2B60DF2278813E00419C8E /* WebSocket+Reconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Reconnect.swift"; sourceTree = "<group>"; };
 		8A2CC95522842AED004CF12D /* ChatViewController+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Attachments.swift"; sourceTree = "<group>"; };
 		8A2CC9572284AD77004CF12D /* ChatViewController+MessageActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+MessageActions.swift"; sourceTree = "<group>"; };
+		8A3E461722A9639D00DF464B /* ExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
 		8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexPath+Extensions.swift"; sourceTree = "<group>"; };
 		8A40803C22805ABA00F274FF /* ChatViewController+Reactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Reactions.swift"; sourceTree = "<group>"; };
 		8A40803E2280708900F274FF /* ReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsView.swift; sourceTree = "<group>"; };
@@ -457,6 +459,7 @@
 				8A0755E7228DB04500A3E4AB /* MessageRead.swift */,
 				8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */,
 				8ACAB168228F645B00674F2D /* ChannelsResponse.swift */,
+				8A3E461722A9639D00DF464B /* ExtraData.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -845,6 +848,7 @@
 				8A88915E22535FEC00DD6539 /* Message.swift in Sources */,
 				8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */,
 				8AD21BA0229D4813009D6086 /* UILabel+Extensions.swift in Sources */,
+				8A3E461822A9639D00DF464B /* ExtraData.swift in Sources */,
 				8A1A9418225E2FE000060ACC /* AttachmentCollectionViewCell.swift in Sources */,
 				8A40803F2280708900F274FF /* ReactionsView.swift in Sources */,
 				8AB1B8F2226772C1002C65BD /* WebViewController.swift in Sources */,
