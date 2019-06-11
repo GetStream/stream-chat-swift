@@ -31,7 +31,7 @@ extension ChatViewController {
             .do(onNext: { [weak self] text in self?.dispatchCommands(in: text ?? "") })
             .filter { [weak self] _ in (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
             .do(onNext: { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: true) })
-            .debounce(1, scheduler: MainScheduler.instance)
+            .debounce(3, scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: false) })
             .disposed(by: disposeBag)
         
