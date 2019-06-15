@@ -15,6 +15,7 @@ import RxReachability
 import RxAppState
 
 final class WebSocket {
+    private static let maxBackgroundTime: TimeInterval = 300
     
     let webSocket: Starscream.WebSocket
     private(set) lazy var reachability = Reachability()
@@ -102,7 +103,7 @@ final class WebSocket {
         
         if backgroundTask != .invalid {
             let goingToDisconnect: DispatchWorkItem = DispatchWorkItem { [weak self] in self?.disconnect() }
-            webSocket.callbackQueue.asyncAfter(deadline: .now() + 300, execute: goingToDisconnect)
+            webSocket.callbackQueue.asyncAfter(deadline: .now() + WebSocket.maxBackgroundTime, execute: goingToDisconnect)
             self.goingToDisconnect = goingToDisconnect
             logger?.log("💜", "Background mode on")
         } else {
@@ -249,14 +250,11 @@ extension WebSocket {
 // MARK: - Rx
 
 extension ObservableType where E == WebSocket.Connection {
-    typealias DoConnected = (_ connected: Bool) -> Void
+    typealias ConnectionStatusHandler = (_ connected: Bool) -> Void
     
-    func connected(_ doConnected: DoConnected? = nil) -> Observable<E> {
-        return filter { $0.isConnected }
-            .do(onNext: {
-                if let doConnected = doConnected {
-                    doConnected($0.isConnected)
-                }
-            })
+    func connected(_ connectionStatusHandler: ConnectionStatusHandler? = nil) -> Observable<Void> {
+        return self.do(onNext: { connectionStatusHandler?($0.isConnected) })
+            .filter { $0.isConnected }
+            .map { _ in }
     }
 }

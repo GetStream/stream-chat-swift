@@ -16,8 +16,8 @@ extension WebSocket {
         case disconnected(Error)
         
         var isConnected: Bool {
-            if case .connected = self {
-                return true
+            if case .connected(let connectionId, _) = self {
+                return !connectionId.isEmpty
             }
             
             return false

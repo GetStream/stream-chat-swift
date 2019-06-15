@@ -29,12 +29,21 @@ public final class ChannelsPresenter {
     }
     
     private(set) lazy var request: Driver<ViewChanges> = Observable
-        .combineLatest(loadPagination.asObserver(), Client.shared.webSocket.connection.connected({ [weak self] in
-            if !$0, let self = self, !self.items.isEmpty {
-                self.next = .channelsPageSize
-                DispatchQueue.main.async { [weak self] in self?.loadPagination.onNext(.channelsPageSize) }
+        .combineLatest(loadPagination.asObserver().startWith(.channelsPageSize),
+                       Client.shared.webSocket.connection.connected({ [weak self] isConnected in
+                        if !isConnected, let self = self, !self.items.isEmpty {
+                            self.items = []
+                            self.next = .channelsPageSize
+                        }
+                       }))
+        .filter { [weak self] pagination, _ in
+            if let self = self, self.items.isEmpty, pagination != .channelsPageSize {
+                DispatchQueue.main.async { self.loadPagination.onNext(.channelsPageSize) }
+                return false
             }
-        }))
+            
+            return true
+        }
         .map { [weak self] pagination, _ in self?.channelsEndpoint(pagination: pagination) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
@@ -85,7 +94,13 @@ public final class ChannelsPresenter {
         }
     }
     
-    func load(pagination: Pagination = .channelsPageSize) {
+    func reload() {
+        next = .channelsPageSize
+        items = []
+        load()
+    }
+    
+    private func load(pagination: Pagination = .channelsPageSize) {
         loadPagination.onNext(pagination)
     }
 }

@@ -24,7 +24,7 @@ extension Reactive where Base == Client {
                 }
             }
             
-            return Disposables.create(with: task.cancel)
+            return Disposables.create { [weak task] in task?.cancel() }
         }
     }
 }
