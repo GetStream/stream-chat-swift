@@ -12,8 +12,8 @@ import RxCocoa
 
 public final class ChannelsViewController: UIViewController {
     
+    let disposeBag = DisposeBag()
     public var style = ChatViewStyle()
-    private let disposeBag = DisposeBag()
     private(set) var items = [ChatItem]()
     public var channelsPresenter = ChannelsPresenter(channelType: .messaging)
     
@@ -96,14 +96,16 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
                                baseColor: style.channel.backgroundColor)
         
         if let lastMessage = channelPresenter.lastMessage {
-            var text = lastMessage.textOrArgs
+            var text = lastMessage.isDeleted ? "Message was deleted" : lastMessage.textOrArgs
             
             if text.isEmpty, let first = lastMessage.attachments.first {
                 text = first.title
             }
             
-            cell.update(message: text, isDeleted: lastMessage.isDeleted, isUnread: channelPresenter.isUnread)
+            cell.update(message: text, isMeta: lastMessage.isDeleted, isUnread: channelPresenter.isUnread)
             cell.dateLabel.text = lastMessage.updated.relative
+        } else {
+            cell.update(message: "No messages", isMeta: true, isUnread: false)
         }
         
         return cell

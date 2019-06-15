@@ -33,6 +33,7 @@
 		8A2CC95622842AED004CF12D /* ChatViewController+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2CC95522842AED004CF12D /* ChatViewController+Attachments.swift */; };
 		8A2CC9582284AD77004CF12D /* ChatViewController+MessageActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2CC9572284AD77004CF12D /* ChatViewController+MessageActions.swift */; };
 		8A3E461822A9639D00DF464B /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3E461722A9639D00DF464B /* ExtraData.swift */; };
+		8A3E461A22AAB71500DF464B /* Channel+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A3E461922AAB71500DF464B /* Channel+Create.swift */; };
 		8A40803B2280413E00F274FF /* IndexPath+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */; };
 		8A40803D22805ABA00F274FF /* ChatViewController+Reactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803C22805ABA00F274FF /* ChatViewController+Reactions.swift */; };
 		8A40803F2280708900F274FF /* ReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A40803E2280708900F274FF /* ReactionsView.swift */; };
@@ -155,6 +156,7 @@
 		8A2CC95522842AED004CF12D /* ChatViewController+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Attachments.swift"; sourceTree = "<group>"; };
 		8A2CC9572284AD77004CF12D /* ChatViewController+MessageActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+MessageActions.swift"; sourceTree = "<group>"; };
 		8A3E461722A9639D00DF464B /* ExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
+		8A3E461922AAB71500DF464B /* Channel+Create.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Create.swift"; sourceTree = "<group>"; };
 		8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexPath+Extensions.swift"; sourceTree = "<group>"; };
 		8A40803C22805ABA00F274FF /* ChatViewController+Reactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Reactions.swift"; sourceTree = "<group>"; };
 		8A40803E2280708900F274FF /* ReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsView.swift; sourceTree = "<group>"; };
@@ -447,6 +449,7 @@
 				8ACAB166228ED6C900674F2D /* ChannelsQuery.swift */,
 				8A8891612253A73000DD6539 /* ChannelQuery.swift */,
 				8A88914F2252379700DD6539 /* Channel.swift */,
+				8A3E461922AAB71500DF464B /* Channel+Create.swift */,
 				8A88914B2252337500DD6539 /* User.swift */,
 				8AFC2A2622688299006278D4 /* Member.swift */,
 				8A889152225240F700DD6539 /* Event.swift */,
@@ -807,6 +810,7 @@
 				8A88914C2252337500DD6539 /* User.swift in Sources */,
 				8ABF82642270668700A966D9 /* unwrap.swift in Sources */,
 				8ABE5FE122A69FB3004F128C /* ComposerView+Images.swift in Sources */,
+				8A3E461A22AAB71500DF464B /* Channel+Create.swift in Sources */,
 				8ABE5FE522A6A173004F128C /* ComposerView+Files.swift in Sources */,
 				8A8BC069228AE0D600687186 /* ChannelsViewController.swift in Sources */,
 				8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */,

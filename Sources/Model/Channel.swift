@@ -23,32 +23,46 @@ public final class Channel: Codable, Equatable {
     }
     
     public enum DataCodingKeys: String, CodingKey {
+        case id
         case name
         case imageURL = "image"
         case members
         case messages
     }
     
-    private(set) var id: String = UUID().uuidString
-    private(set) var cid: String
-    private(set) var type: ChannelType = .messaging
-    private(set) var lastMessageDate: Date? = nil
-    private(set) var createdBy: User? = nil
-    private(set) var config: Config
-    private(set) var frozen: Bool = false
-    public let extraData: ExtraData?
-    
+    public let id: String
+    public let cid: String
+    public let type: ChannelType
     public let name: String
     public var imageURL: URL?
-    var userIds: [String] = []
+    public let lastMessageDate: Date?
+    public let createdBy: User?
+    public let config: Config
+    public let frozen: Bool
+    public internal(set) var memberIds: [String] = []
+    public let extraData: ExtraData?
     
-    public init(type: ChannelType = .messaging, id: String, name: String, imageURL: URL? = nil, extraData: ExtraData?) {
+    public init(type: ChannelType = .messaging,
+                id: String,
+                name: String?,
+                imageURL: URL? = nil,
+                memberIds: [String],
+                extraData: Codable?) {
         self.id = id
-        self.type = type
         self.cid = "\(type.rawValue):\(id)"
-        self.name = name
+        self.type = type
+        self.name = name ?? id
         self.imageURL = imageURL
-        self.extraData = extraData
+        lastMessageDate = nil
+        createdBy = nil
+        self.memberIds = memberIds
+        frozen = false
+        
+        if let extraData = extraData {
+            self.extraData = ExtraData(extraData)
+        } else {
+            self.extraData = nil
+        }
         
         config = Config(name: "",
                         automodBehavior: "",
@@ -84,9 +98,10 @@ public final class Channel: Codable, Equatable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: DataCodingKeys.self)
+        try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
-        try container.encode(imageURL, forKey: .imageURL)
-        try container.encode(userIds, forKey: .members)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        try container.encode(memberIds, forKey: .members)
         extraData?.encodeSafely(to: encoder)
     }
     
@@ -97,7 +112,7 @@ public final class Channel: Codable, Equatable {
 
 // MARK: - Config
 
-extension Channel {
+public extension Channel {
     struct Config: Decodable {
         private enum CodingKeys: String, CodingKey {
             case name
@@ -140,7 +155,7 @@ extension Channel {
         let set: String
         let args: String
         
-        func hash(into hasher: inout Hasher) {
+        public func hash(into hasher: inout Hasher) {
             return hasher.combine(name)
         }
     }

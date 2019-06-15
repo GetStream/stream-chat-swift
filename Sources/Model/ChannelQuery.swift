@@ -64,9 +64,9 @@ public struct ChannelQuery: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(state, forKey: .state)
         try container.encode(watch, forKey: .watch)
-        channel.userIds = members.map { $0.user.id }
+        channel.memberIds = members.map { $0.user.id }
         try container.encode(channel, forKey: .data)
-        channel.userIds = []
+        channel.memberIds = []
         try container.encode(pagination, forKey: .messages)
     }
 }

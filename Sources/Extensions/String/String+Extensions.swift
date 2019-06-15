@@ -20,7 +20,7 @@ extension StringProtocol where Index == String.Index {
 
 extension String {
     var isBlank: Bool {
-        return allSatisfy({ $0.isWhitespace })
+        return isEmpty || allSatisfy({ $0.isWhitespace })
     }
 }
 

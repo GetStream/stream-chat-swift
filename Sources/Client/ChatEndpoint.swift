@@ -11,6 +11,7 @@ import Foundation
 enum ChatEndpoint {
     case channels(ChannelsQuery)
     case channel(ChannelQuery)
+    case createChannel(Channel)
     case thread(Message, Pagination)
     case sendMessage(Message, Channel)
     case sendMessageAction(MessageAction)
@@ -42,33 +43,35 @@ extension ChatEndpoint {
         case .channels:
             return "channels"
         case .channel(let query):
-            return path(with: query.channel).appending("query")
+            return path(to: query.channel, "query")
+        case .createChannel(let channel):
+            return path(to: channel)
         case .thread(let message, _):
-            return path(with: message).appending("replies")
+            return path(to: message, "replies")
             
         case let .sendMessage(message, channel):
             if message.id.isEmpty {
-                return path(with: channel).appending("message")
+                return path(to: channel, "message")
             }
             
-            return path(with: message, withSlash: false)
+            return path(to: message)
             
         case .sendMessageAction(let messageAction):
-            return path(with: messageAction.message).appending("action")
+            return path(to: messageAction.message, "action")
         case .deleteMessage(let message):
-            return path(with: message, withSlash: false)
+            return path(to: message)
         case .sendRead(let channel):
-            return path(with: channel).appending("read")
+            return path(to: channel, "read")
         case .addReaction(_, let message):
-            return path(with: message).appending("reaction")
+            return path(to: message, "reaction")
         case .deleteReaction(let reactionType, let message):
-            return path(with: message).appending("reaction/\(reactionType)")
+            return path(to: message, "reaction/\(reactionType)")
         case .sendEvent(_, let channel):
-            return path(with: channel).appending("event")
+            return path(to: channel, "event")
         case .sendImage(_, _, _, let channel):
-            return path(with: channel).appending("image")
+            return path(to: channel, "image")
         case .sendFile(_, _, _, let channel):
-            return path(with: channel).appending("file")
+            return path(to: channel, "file")
         }
     }
     
@@ -99,6 +102,8 @@ extension ChatEndpoint {
             return nil
         case .channel(let query):
             return query
+        case .createChannel(let channel):
+            return channel
         case .sendMessage(let message, _):
             return ["message": message]
         case .sendMessageAction(let messageAction):
@@ -122,11 +127,11 @@ extension ChatEndpoint {
         }
     }
     
-    private func path(with channel: Channel) -> String {
-        return "channels/\(channel.type.rawValue)/\(channel.id)/"
+    private func path(to channel: Channel, _ subPath: String? = nil) -> String {
+        return "channels/\(channel.type.rawValue)/\(channel.id)\(subPath == nil ? "" : "/\(subPath ?? "")")"
     }
     
-    private func path(with message: Message, withSlash: Bool = true) -> String {
-        return "messages/\(message.id)\(withSlash ? "/" : "")"
+    private func path(to message: Message, _ subPath: String? = nil) -> String {
+        return "messages/\(message.id)\(subPath == nil ? "" : "/\(subPath ?? "")")"
     }
 }

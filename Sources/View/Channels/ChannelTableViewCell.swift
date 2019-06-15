@@ -99,15 +99,15 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         messageLabel.text = nil
     }
     
-    func update(message: String, isDeleted: Bool, isUnread: Bool) {
+    func update(message: String, isMeta: Bool, isUnread: Bool) {
         guard let style = style else {
             return
         }
         
-        if isDeleted {
+        if isMeta {
             messageLabel.font = style.messageDeletedFont
             messageLabel.textColor = style.messageDeletedColor
-            messageLabel.text = "Message was deleted"
+            messageLabel.text = message
             return
         }
         
