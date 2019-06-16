@@ -247,7 +247,6 @@ public enum AttachmentFileType: String, Codable {
                                                                   "video/mp4": .mp4,
                                                                   "video/quicktime": .mov,
                                                                   "image/jpeg": .jpeg,
-                                                                  "image/jpg": .jpeg,
                                                                   "image/png": .png,
                                                                   "image/gif": .gif]
     
