@@ -34,7 +34,7 @@ extension ChatViewController {
                 cell.update(mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
             }
             
-            if presenter.parentMessage == nil, presenter.channel.config.repliesEnabled, message.replyCount > 0 {
+            if presenter.canReply, message.replyCount > 0 {
                 cell.update(replyCount: message.replyCount)
                 
                 cell.replyCountButton.rx.anyGesture(TapControlEvent.default)

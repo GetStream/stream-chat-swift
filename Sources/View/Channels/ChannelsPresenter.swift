@@ -19,7 +19,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public let showChannelStatuses: Bool
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
-    private(set) lazy var channelsRequest: Driver<ViewChanges> = request
+    private(set) lazy var channelsRequest: Driver<ViewChanges> = request(startPaginationWith: pageSize)
         .map { [weak self] in self?.channelsEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0) }

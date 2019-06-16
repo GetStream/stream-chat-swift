@@ -23,9 +23,11 @@ extension ChatViewController {
             }))
         }
         
-        alert.addAction(.init(title: "Reply", style: .default, handler: { [weak self] _ in
-            self?.showReplies(parentMessage: message)
-        }))
+        if presenter.canReply {
+            alert.addAction(.init(title: "Reply", style: .default, handler: { [weak self] _ in
+                self?.showReplies(parentMessage: message)
+            }))
+        }
         
         if message.canEdit {
             alert.addAction(.init(title: "Edit", style: .default, handler: { [weak self] _ in

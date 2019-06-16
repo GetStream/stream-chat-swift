@@ -18,27 +18,33 @@ public class Presenter<T> {
     var isEmpty: Bool { return items.isEmpty }
     let loadPagination = PublishSubject<Pagination>()
     
-    private(set) lazy var request: Observable<Pagination> = Observable
-        .combineLatest(loadPagination.asObserver().startWith(pageSize),
-                       Client.shared.webSocket.connection.connected({ [weak self] isConnected in
+    init(pageSize: Pagination) {
+        self.pageSize = pageSize
+        self.next = pageSize
+    }
+    
+    func request(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
+        let paginationObservable = pagination == .none
+            ? loadPagination.asObserver()
+            : loadPagination.asObserver().startWith(pagination)
+        
+        let connectionObservable = Client.shared.webSocket.connection.connected({ [weak self] isConnected in
             if !isConnected, let self = self, !self.items.isEmpty {
                 self.items = []
                 self.next = self.pageSize
             }
-        }))
-        .map { pagination, _ in pagination }
-        .filter { [weak self] in
-            if let self = self, self.items.isEmpty, $0 != self.pageSize {
-                DispatchQueue.main.async { self.loadPagination.onNext(self.pageSize) }
-                return false
-            }
-            
-            return true
-    }
-    
-    init(pageSize: Pagination) {
-        self.pageSize = pageSize
-        self.next = pageSize
+        })
+        
+        return Observable.combineLatest(paginationObservable, connectionObservable)
+            .map { pagination, _ in pagination }
+            .filter { [weak self] in
+                if let self = self, self.items.isEmpty, $0 != self.pageSize {
+                    DispatchQueue.main.async { self.loadPagination.onNext(self.pageSize) }
+                    return false
+                }
+                
+                return true
+        }
     }
     
     func reload() {

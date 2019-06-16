@@ -39,7 +39,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
     public var ephemeralMessage: Message? { return (try? ephemeralSubject.value())?.message }
     
-    private(set) lazy var channelRequest: Driver<ViewChanges> = request
+    public var canReply: Bool {
+        return parentMessage == nil && channel.config.repliesEnabled
+    }
+    
+    private lazy var lazyRequest = request()
+    
+    private(set) lazy var channelRequest: Driver<ViewChanges> = lazyRequest
         .map { [weak self] in self?.channelEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
@@ -48,7 +54,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private(set) lazy var replyRequest: Driver<ViewChanges> = request
+    private(set) lazy var replyRequest: Driver<ViewChanges> = lazyRequest
         .map { [weak self] in self?.replyEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
@@ -349,21 +355,18 @@ extension ChannelPresenter {
         
         if items.isEmpty {
             items.append(.message(parentMessage))
+            items.append(.status("Start of thread", nil, false))
         }
         
-        if items.count > 1, items[1].isLoading {
-            items.remove(at: 1)
+        if let loadingIndex = items.firstIndex(of: .loading) {
+            items.remove(at: loadingIndex)
         }
         
         let currentCount = items.count
-        parse(messagesResponse.messages, to: &items, startIndex: 1, isNextPage: isNextPage)
+        parse(messagesResponse.messages, to: &items, startIndex: 2, isNextPage: isNextPage)
         self.items = items
         
-        if isNextPage {
-            return .reloaded(max(items.count - currentCount - 1, 0), items)
-        }
-        
-        return .reloaded((items.count - 1), items)
+        return isNextPage ? .reloaded(max(items.count - currentCount - 1, 0), items) : .reloaded((items.count - 1), items)
     }
     
     private func parse(_ messages: [Message],
