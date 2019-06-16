@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-public final class ChannelPresenter {
+public final class ChannelPresenter: Presenter<ChatItem> {
     private typealias EphemeralType = (message: Message?, updated: Bool)
     public typealias Completion = (_ error: Error?) -> Void
     
@@ -27,30 +27,17 @@ public final class ChannelPresenter {
     public private(set) var showStatuses = true
     
     var members: [Member] = []
-    private var next = Pagination.messagesPageSize
     private var startedTyping = false
     
-    private(set) var items = [ChatItem]()
-    var isEmpty: Bool { return items.isEmpty }
     private(set) var lastMessage: Message?
     private(set) var isUnread = false
     private(set) var lastMessageRead: MessageRead?
     private(set) var typingUsers: [User] = []
-    private let loadPagination = PublishSubject<Pagination>()
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
     
     public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
     public var ephemeralMessage: Message? { return (try? ephemeralSubject.value())?.message }
-    
-    private lazy var request: Observable<Pagination> = Observable
-        .combineLatest(loadPagination.asObserver(), Client.shared.webSocket.connection.connected({ [weak self] connected in
-            if !connected, let self = self, !self.items.isEmpty {
-                self.next = .messagesPageSize
-                DispatchQueue.main.async { [weak self] in self?.loadPagination.onNext(.messagesPageSize) }
-            }
-        }))
-        .map { pagination, _ in pagination }
     
     private(set) lazy var channelRequest: Driver<ViewChanges> = request
         .map { [weak self] in self?.channelEndpoint(pagination: $0) }
@@ -88,11 +75,13 @@ public final class ChannelPresenter {
         self.channel = channel
         self.parentMessage = parentMessage
         self.showStatuses = showStatuses
+        super.init(pageSize: .messagesPageSize)
     }
     
     public init(query: ChannelQuery, showStatuses: Bool = true) {
         self.showStatuses = showStatuses
         channel = query.channel
+        super.init(pageSize: .messagesPageSize)
         parseQuery(query)
     }
 }
@@ -319,19 +308,9 @@ extension ChannelPresenter {
 
 extension ChannelPresenter {
     
-    func loadNext() {
-        if next != .messagesPageSize {
-            load(pagination: next)
-        }
-    }
-    
-    func load(pagination: Pagination = .messagesPageSize) {
-        loadPagination.onNext(pagination)
-    }
-    
     @discardableResult
     private func parseQuery(_ query: ChannelQuery) -> ViewChanges {
-        let isNextPage = next != .messagesPageSize
+        let isNextPage = next != pageSize
         var items = isNextPage ? self.items : []
         
         if let first = items.first, first.isLoading {
@@ -365,7 +344,7 @@ extension ChannelPresenter {
             return .none
         }
         
-        let isNextPage = next != .messagesPageSize
+        let isNextPage = next != pageSize
         var items = isNextPage ? self.items : []
         
         if items.isEmpty {
@@ -439,12 +418,12 @@ extension ChannelPresenter {
             }
         }
         
-        if messages.count == (isNextPage ? Pagination.messagesNextPageSize : Pagination.messagesPageSize).limit,
+        if messages.count == (isNextPage ? Pagination.messagesNextPageSize : pageSize).limit,
             let first = messages.first {
             next = .messagesNextPageSize + .lessThan(first.id)
             items.insert(.loading, at: startIndex)
         } else {
-            next = .messagesPageSize
+            next = pageSize
         }
         
         if isNewMessagesStatusAdded == startIndex {

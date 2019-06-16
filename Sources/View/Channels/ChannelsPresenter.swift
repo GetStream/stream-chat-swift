@@ -10,41 +10,17 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-public final class ChannelsPresenter {
+public final class ChannelsPresenter: Presenter<ChatItem> {
     public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
     
     public let channelType: ChannelType
     public lazy var channelsFilter: ChannelsQuery.Filter = .type(channelType)
     public var channelsSorting: [ChannelsQuery.Sorting] = [.lastMessage(isAscending: false)]
     public let showChannelStatuses: Bool
-    private let loadPagination = PublishSubject<Pagination>()
-    private var next = Pagination.channelsPageSize
-    private(set) var items: [ChatItem] = []
-    
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
-    init(channelType: ChannelType, showChannelStatuses: Bool = true) {
-        self.channelType = channelType
-        self.showChannelStatuses = showChannelStatuses
-    }
-    
-    private(set) lazy var request: Driver<ViewChanges> = Observable
-        .combineLatest(loadPagination.asObserver().startWith(.channelsPageSize),
-                       Client.shared.webSocket.connection.connected({ [weak self] isConnected in
-                        if !isConnected, let self = self, !self.items.isEmpty {
-                            self.items = []
-                            self.next = .channelsPageSize
-                        }
-                       }))
-        .filter { [weak self] pagination, _ in
-            if let self = self, self.items.isEmpty, pagination != .channelsPageSize {
-                DispatchQueue.main.async { self.loadPagination.onNext(.channelsPageSize) }
-                return false
-            }
-            
-            return true
-        }
-        .map { [weak self] pagination, _ in self?.channelsEndpoint(pagination: pagination) }
+    private(set) lazy var channelsRequest: Driver<ViewChanges> = request
+        .map { [weak self] in self?.channelsEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
         .map { [weak self] in self?.parseChannels($0) ?? .none }
@@ -55,9 +31,31 @@ public final class ChannelsPresenter {
         .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
+    
+    init(channelType: ChannelType, showChannelStatuses: Bool = true) {
+        self.channelType = channelType
+        self.showChannelStatuses = showChannelStatuses
+        super.init(pageSize: .channelsPageSize)
+    }
+}
 
+// MARK: - Parsing
+
+extension ChannelsPresenter {
+    
+    private func channelsEndpoint(pagination: Pagination) -> ChatEndpoint? {
+        if let user = Client.shared.user {
+            return ChatEndpoint.channels(ChannelsQuery(filter: channelsFilter,
+                                                       sort: channelsSorting,
+                                                       user: user,
+                                                       pagination: pagination))
+        }
+        
+        return nil
+    }
+    
     private func parseChannels(_ response: ChannelsResponse) -> ViewChanges {
-        let isNextPage = next != .channelsPageSize
+        let isNextPage = next != pageSize
         var items = isNextPage ? self.items : [ChatItem]()
         
         if let last = items.last, case .loading = last {
@@ -80,7 +78,7 @@ public final class ChannelsPresenter {
             next = .channelsNextPageSize + .offset(next.offset + next.limit)
             items.append(.loading)
         } else {
-            next = .channelsPageSize
+            next = pageSize
         }
         
         self.items = items
@@ -88,41 +86,6 @@ public final class ChannelsPresenter {
         return isNextPage ? .reloaded(row, items) : .reloaded(0, items)
     }
     
-    func loadNext() {
-        if next != .channelsPageSize {
-            load(pagination: next)
-        }
-    }
-    
-    func reload() {
-        next = .channelsPageSize
-        items = []
-        load()
-    }
-    
-    private func load(pagination: Pagination = .channelsPageSize) {
-        loadPagination.onNext(pagination)
-    }
-}
-
-// MARK: - Connection
-
-extension ChannelsPresenter {
-    private func channelsEndpoint(pagination: Pagination) -> ChatEndpoint? {
-        if let user = Client.shared.user {
-            return ChatEndpoint.channels(ChannelsQuery(filter: channelsFilter,
-                                                       sort: channelsSorting,
-                                                       user: user,
-                                                       pagination: pagination))
-        }
-        
-        return nil
-    }
-}
-
-// MARK: - Changes
-
-extension ChannelsPresenter {
     private func parseChanges(response: WebSocket.Response) -> ViewChanges {
         switch response.event {
         case .messageNew:

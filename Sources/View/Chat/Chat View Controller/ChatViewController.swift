@@ -78,7 +78,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         }
         
         if presenter.isEmpty {
-            channelPresenter?.load()
+            channelPresenter?.reload()
         } else {
             items = presenter.items
             tableView.reloadData()

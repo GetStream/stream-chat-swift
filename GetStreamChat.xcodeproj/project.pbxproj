@@ -12,6 +12,7 @@
 		8A046760224E7F1800493D74 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A04675E224E7F1800493D74 /* Main.storyboard */; };
 		8A046762224E7F1800493D74 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A046761224E7F1800493D74 /* Assets.xcassets */; };
 		8A046765224E7F1800493D74 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A046763224E7F1800493D74 /* LaunchScreen.storyboard */; };
+		8A057D5622B5A2440048C9DD /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A057D5522B5A2440048C9DD /* Presenter.swift */; };
 		8A0755E8228DB04500A3E4AB /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0755E7228DB04500A3E4AB /* MessageRead.swift */; };
 		8A0755EA228DB5C500A3E4AB /* ViewChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */; };
 		8A0E345222980933008D825E /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0E345122980933008D825E /* TableView.swift */; };
@@ -135,6 +136,7 @@
 		8A046761224E7F1800493D74 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8A046764224E7F1800493D74 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8A046766224E7F1800493D74 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8A057D5522B5A2440048C9DD /* Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presenter.swift; sourceTree = "<group>"; };
 		8A0755E7228DB04500A3E4AB /* MessageRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRead.swift; sourceTree = "<group>"; };
 		8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewChanges.swift; sourceTree = "<group>"; };
 		8A0E345122980933008D825E /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
@@ -478,6 +480,7 @@
 		8A88916D2254F58500DD6539 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				8A057D5522B5A2440048C9DD /* Presenter.swift */,
 				8A1A940A225C8F6000060ACC /* Style */,
 				8A8BC067228AE0B800687186 /* Channels */,
 				8A210D7E2264C3C700D51FFC /* Chat */,
@@ -801,6 +804,7 @@
 				8AD21B9E229C2014009D6086 /* Notifications.swift in Sources */,
 				8A4FE7B9227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift in Sources */,
 				8A88917922550E8D00DD6539 /* UIFont+Extensions.swift in Sources */,
+				8A057D5622B5A2440048C9DD /* Presenter.swift in Sources */,
 				8A8891642253A86600DD6539 /* Codable+Extensions.swift in Sources */,
 				8ABF8262226F643E00A966D9 /* Reaction.swift in Sources */,
 				8A88916C2254A6B300DD6539 /* CustomChannel.swift in Sources */,
