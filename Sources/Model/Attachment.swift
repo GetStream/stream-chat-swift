@@ -247,6 +247,7 @@ public enum AttachmentFileType: String, Codable {
                                                                   "video/mp4": .mp4,
                                                                   "video/quicktime": .mov,
                                                                   "image/jpeg": .jpeg,
+                                                                  "image/jpg": .jpeg,
                                                                   "image/png": .png,
                                                                   "image/gif": .gif]
     
@@ -264,6 +265,10 @@ public enum AttachmentFileType: String, Codable {
     }
     
     var mimeType: String {
+        if self == .jpeg {
+            return "image/jpeg"
+        }
+        
         return AttachmentFileType.mimeTypes.first(where: { $1 == self })?.key ?? "application/octet-stream"
     }
     
