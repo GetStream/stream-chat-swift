@@ -196,28 +196,33 @@ extension ChannelPresenter {
                 return .none
             }
             
-            if let index = items.lastIndex(where: { item -> Bool in
-                if case .message(let itemMessage) = item, itemMessage.id == message.id {
-                    return true
-                }
-                return false
-            }) {
+            if let index = items.lastIndex(whereMessageId: message.id) {
                 items[index] = .message(message)
                 return .itemUpdated(index, message, items)
             }
             
-        case .reactionNew(_, let message, _), .reactionDeleted(_, let message, _):
+        case .reactionNew(let reaction, let message, _), .reactionDeleted(let reaction, let message, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
             
-            if let index = items.lastIndex(where: { item -> Bool in
-                if case let .message(existsMessage) = item {
-                    return existsMessage.id == message.id
+            if let index = items.lastIndex(whereMessageId: message.id), let currentMessage = items[index].message {
+                var message = currentMessage
+                
+                if reaction.isOwn {
+                    var isDeleting = false
+                    
+                    if case .reactionDeleted = response.event {
+                        isDeleting = true
+                    }
+                    
+                    if isDeleting {
+                        message.deleteFromOwnReactions(reaction)
+                    } else {
+                        message.addToOwnReactions(reaction)
+                    }
                 }
                 
-                return false
-            }) {
                 items[index] = .message(message)
                 return .itemUpdated(index, message, items)
             }
@@ -411,16 +416,8 @@ extension ChannelPresenter {
     }
     
     private func removeDuplicatedStatus(statusTitle: String, items: inout [ChatItem]) {
-        let searchBlock = { (item: ChatItem) -> Bool in
-            if case .status(let title, _, _) = item {
-                return title == statusTitle
-            }
-            
-            return false
-        }
-        
-        if let firstIndex = items.firstIndex(where: searchBlock),
-            let lastIndex = items.lastIndex(where: searchBlock),
+        if let firstIndex = items.firstIndex(whereStatusTitle: statusTitle),
+            let lastIndex = items.lastIndex(whereStatusTitle: statusTitle),
             firstIndex != lastIndex {
             items.remove(at: lastIndex)
         }

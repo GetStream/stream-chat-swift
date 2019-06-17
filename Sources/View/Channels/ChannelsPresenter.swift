@@ -71,7 +71,7 @@ extension ChannelsPresenter {
                 channelPresenter.messageExtraDataCallback = channelMessageExtraDataCallback($0.channel)
             }
             
-            return .channel(channelPresenter)
+            return .channelPresenter(channelPresenter)
         })
         
         if response.channels.count == next.limit {
@@ -87,17 +87,21 @@ extension ChannelsPresenter {
     }
     
     private func parseChanges(response: WebSocket.Response) -> ViewChanges {
+        guard let channelId = response.channelId else {
+            return .none
+        }
+        
         switch response.event {
         case .messageNew:
-            if let index = channelPresenterIndex(response: response),
-                case .channel(let channelPresenter) = items.remove(at: index) {
+            if let index = items.firstIndex(whereChannelId: channelId),
+                let channelPresenter = items.remove(at: index).channelPresenter {
                 channelPresenter.parseChanges(response: response)
-                items.insert(.channel(channelPresenter), at: 0)
+                items.insert(.channelPresenter(channelPresenter), at: 0)
                 return .itemMoved(fromRow: index, toRow: 0, items)
             }
         case .messageDeleted(let message):
-            if let index = channelPresenterIndex(response: response),
-                case .channel(let channelPresenter) = items[index] {
+            if let index = items.firstIndex(whereChannelId: channelId),
+                let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseChanges(response: response)
                 return .itemUpdated(index, message, items)
             }
@@ -106,15 +110,5 @@ extension ChannelsPresenter {
         }
         
         return .none
-    }
-    
-    private func channelPresenterIndex(response: WebSocket.Response) -> Int? {
-        return items.firstIndex {
-            if case .channel(let channelPresenter) = $0 {
-                return channelPresenter.channel.id == response.channelId
-            }
-            
-            return false
-        }
     }
 }

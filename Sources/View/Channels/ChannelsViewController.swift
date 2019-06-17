@@ -76,7 +76,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard indexPath.row < items.count, case .channel(let channelPresenter) = items[indexPath.row] else {
+        guard indexPath.row < items.count, let channelPresenter = items[indexPath.row].channelPresenter else {
             if indexPath.row < channelsPresenter.items.count, case .loading = channelsPresenter.items[indexPath.row] {
                 channelsPresenter.loadNext()
                 return tableView.loadingCell(at: indexPath, backgroundColor: style.channel.backgroundColor)
@@ -114,7 +114,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     public func showChatViewController(at index: Int) {
-        guard index < items.count, case .channel(let channelPresenter) = items[index] else {
+        guard index < items.count, let channelPresenter = items[index].channelPresenter else {
             return
         }
         

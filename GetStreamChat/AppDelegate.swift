@@ -93,13 +93,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             if let tabBarController = self?.window?.rootViewController as? UITabBarController,
                 let navigationViewController = tabBarController.viewControllers?.first as? UINavigationController,
                 let channelsViewController = navigationViewController.viewControllers.first as? ChannelsViewController,
-                let channelIndex = channelsViewController.channelsPresenter.items.firstIndex(where: { chatItem -> Bool in
-                    if case .channel(let channelPresenter) = chatItem, channelPresenter.channel.id == channelId {
-                        return true
-                    }
-                    
-                    return false
-                }) {
+                let channelIndex = channelsViewController.channelsPresenter.items.firstIndex(whereChannelId: channelId) {
                 channelsViewController.navigationController?.viewControllers = [channelsViewController]
                 channelsViewController.showChatViewController(at: channelIndex)
             }
