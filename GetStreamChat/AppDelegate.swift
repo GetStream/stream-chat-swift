@@ -20,7 +20,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .all)
+        Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .none)
         
         Client.shared.set(user: User(id: "broken-waterfall-5",
                                      name: "Jon Snow",
@@ -30,11 +30,18 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         Fabric.with([Crashlytics.self])
         setupNotifications()
         
-        // Dark style for the second tab bar item.
-        if let tabBarController = window?.rootViewController as? UITabBarController,
-            let navigationController = tabBarController.viewControllers?[1] as? UINavigationController,
-            let darkChannelsViewController = navigationController.viewControllers.first as? ChannelsViewController {
-            setupChatWithDarkStyle(darkChannelsViewController)
+        if let tabBarController = window?.rootViewController as? UITabBarController {
+            // Dark style for the second tab bar item.
+            if let navigationController = tabBarController.viewControllers?[1] as? UINavigationController,
+                let darkChannelsViewController = navigationController.viewControllers.first as? ChannelsViewController {
+                setupChatWithDarkStyle(darkChannelsViewController)
+            }
+            
+            // Single chat view controller.
+            if let chatViewController = tabBarController.viewControllers?[2] as? ChatViewController {
+                let channel = Channel(id: "general", name: "General")
+                chatViewController.channelPresenter = ChannelPresenter(channel: channel)
+            }
         }
         
         return true
