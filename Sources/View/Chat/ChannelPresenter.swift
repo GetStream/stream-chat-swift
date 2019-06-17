@@ -206,20 +206,14 @@ extension ChannelPresenter {
                 return .none
             }
             
-            if let index = items.lastIndex(whereMessageId: message.id), let currentMessage = items[index].message {
-                var message = currentMessage
+            if let index = items.lastIndex(whereMessageId: message.id) {
+                var message = message
                 
-                if reaction.isOwn {
-                    var isDeleting = false
-                    
+                if reaction.isOwn, let currentMessage = items[index].message {
                     if case .reactionDeleted = response.event {
-                        isDeleting = true
-                    }
-                    
-                    if isDeleting {
-                        message.deleteFromOwnReactions(reaction)
+                        message.deleteFromOwnReactions(reaction, reactions: currentMessage.ownReactions)
                     } else {
-                        message.addToOwnReactions(reaction)
+                        message.addToOwnReactions(reaction, reactions: currentMessage.ownReactions)
                     }
                 }
                 
@@ -502,7 +496,11 @@ extension ChannelPresenter {
 
 extension ChannelPresenter {
     
-    public func update(reactionType: String, message: Message) -> Bool {
+    public func update(reactionType: String, messageId: String) -> Bool? {
+        guard let index = items.lastIndex(whereMessageId: messageId), let message = items[index].message else {
+            return nil
+        }
+        
         let add = !message.hasOwnReaction(type: reactionType)
         let endpoint: ChatEndpoint
         

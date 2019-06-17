@@ -13,7 +13,7 @@ import RxCocoa
 import RxGesture
 
 final class ReactionsView: UIView {
-    typealias Completion = (_ selectedEmoji: String) -> Bool
+    typealias Completion = (_ selectedEmoji: String) -> Bool?
     
     private let disposeBag = DisposeBag()
     
@@ -135,8 +135,10 @@ final class ReactionsView: UIView {
             .when(.recognized)
             .subscribe(onNext: { [weak self, weak label] _ in
                 self?.isUserInteractionEnabled = false
-                let add = completion(emojiType)
-                self?.updateLabel(emojiType: emojiType, increment: add ? 1 : -1)
+                
+                if let add = completion(emojiType) {
+                    self?.updateLabel(emojiType: emojiType, increment: add ? 1 : -1)
+                }
                 
                 label?.transform = .init(scaleX: 0.3, y: 0.3)
                 

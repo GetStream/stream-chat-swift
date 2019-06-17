@@ -22,6 +22,7 @@ extension ChatViewController {
             reactionsView?.removeFromSuperview()
         }
         
+        let messageId = message.id
         let reactionsView = ReactionsView(frame: .zero)
         reactionsView.backgroundColor = style.incomingMessage.chatBackgroundColor.withAlphaComponent(0.4)
         reactionsView.reactionsView.backgroundColor = style.incomingMessage.reactionViewStyle.backgroundColor
@@ -37,7 +38,7 @@ extension ChatViewController {
         
         reactionsView.show(atY: y, for: message) { [weak self] emojiType in
             self?.reactionsView = nil
-            return self?.channelPresenter?.update(reactionType: emojiType, message: message) ?? true
+            return self?.channelPresenter?.update(reactionType: emojiType, messageId: messageId)
         }
     }
 }

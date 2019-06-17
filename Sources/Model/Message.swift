@@ -170,36 +170,26 @@ extension Message {
         return !ownReactions.isEmpty && ownReactions.firstIndex(where: { $0.type == type }) != nil
     }
     
-    mutating func addToOwnReactions(_ reaction: Reaction) {
-        if let index = latestReactions.firstIndex(where: { $0.type == reaction.type }) {
-            latestReactions[index] = reaction
+    mutating func addToOwnReactions(_ reaction: Reaction, reactions: [Reaction]) {
+        var reactions = reactions
+        
+        if let index = reactions.firstIndex(where: { $0.type == reaction.type }) {
+            reactions[index] = reaction
         } else {
-            latestReactions.insert(reaction, at: 0)
+            reactions.insert(reaction, at: 0)
         }
         
-        if let index = ownReactions.firstIndex(where: { $0.type == reaction.type }) {
-            ownReactions[index] = reaction
-        } else {
-            ownReactions.insert(reaction, at: 0)
-        }
-        
-        if reactionCounts != nil {
-            reactionCounts?.update(type: reaction.type, increment: 1)
-        } else {
-            reactionCounts = ReactionCounts(reactionType: reaction.type)
-        }
+        ownReactions = reactions
     }
 
-    mutating func deleteFromOwnReactions(_ reaction: Reaction) {
-        if let index = latestReactions.firstIndex(where: { $0.type == reaction.type }) {
-            latestReactions.remove(at: index)
+    mutating func deleteFromOwnReactions(_ reaction: Reaction, reactions: [Reaction]) {
+        var reactions = reactions
+        
+        if let index = reactions.firstIndex(where: { $0.type == reaction.type }) {
+            reactions.remove(at: index)
         }
         
-        if let index = ownReactions.firstIndex(where: { $0.type == reaction.type }) {
-            ownReactions.remove(at: index)
-        }
-        
-        reactionCounts?.update(type: reaction.type, increment: -1)
+        ownReactions = reactions
     }
 }
 
