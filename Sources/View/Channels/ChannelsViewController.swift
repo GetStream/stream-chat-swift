@@ -122,11 +122,10 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         chatViewController.style = style
         chatViewController.channelPresenter = channelPresenter
         
-        if channelPresenter.channel.config.readEventsEnabled, channelPresenter.isUnread {
+        if channelPresenter.channel.config.readEventsEnabled {
             channelPresenter.isReadUpdates.asObservable()
-                .take(1)
                 .takeUntil(chatViewController.rx.deallocated)
-                .subscribe(onNext: { [weak self] _ in self?.tableView.reloadRows(at: [.row(index)], with: .none) })
+                .subscribe(onNext: { [weak self] in self?.tableView.reloadRows(at: [.row(index)], with: .none) })
                 .disposed(by: disposeBag)
         }
         

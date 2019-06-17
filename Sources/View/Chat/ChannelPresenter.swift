@@ -30,11 +30,14 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private var startedTyping = false
     
     private(set) var lastMessage: Message?
-    private(set) var isUnread = false
-    private(set) var lastMessageRead: MessageRead?
+    private(set) var unreadMessageRead: MessageRead?
     private(set) var typingUsers: [User] = []
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
+    
+    var isUnread: Bool {
+        return channel.config.readEventsEnabled && unreadMessageRead != nil
+    }
     
     public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
     public var ephemeralMessage: Message? { return (try? ephemeralSubject.value())?.message }
@@ -153,7 +156,7 @@ extension ChannelPresenter {
             let last = findLastMessage()
             
             if let last = last, last.message.user == user {
-                // Double parsing issue: avoid doublications.
+                // Double parsing issue: avoid duplications.
                 if last.message == message {
                     if items.count > 1, let prev = findLastMessage(before: last.index), prev.message.user == user {
                         reloadRow = prev.index
@@ -166,7 +169,14 @@ extension ChannelPresenter {
             if let last = last, last.message == message {
                 nextRow = last.index
             } else {
-                isUnread = channel.config.readEventsEnabled
+                if channel.config.readEventsEnabled, let currentUser = Client.shared.user, currentUser != message.user {
+                    if let lastMessage = lastMessage {
+                        unreadMessageRead = MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated)
+                    } else {
+                        unreadMessageRead = MessageRead(user: message.user, lastReadDate: message.updated)
+                    }
+                }
+                
                 lastMessage = message
                 items.append(.message(message))
                 Notifications.shared.showIfNeeded(newMessage: message, in: channel)
@@ -306,9 +316,8 @@ extension ChannelPresenter {
             items.removeFirst()
         }
         
-        if channel.config.readEventsEnabled, !isNextPage {
-            isUnread = query.isUnread
-            lastMessageRead = query.lastMessageRead
+        if channel.config.readEventsEnabled {
+            unreadMessageRead = query.unreadMessageRead
         }
         
         let currentCount = items.count
@@ -356,7 +365,6 @@ extension ChannelPresenter {
                        to items: inout [ChatItem],
                        startIndex: Int = 0,
                        isNextPage: Bool) {
-        var isNewMessagesStatusAdded = -1
         var yesterdayStatusAdded = false
         var todayStatusAdded = false
         var index = startIndex
@@ -381,17 +389,6 @@ extension ChannelPresenter {
             items.insert(.message(message), at: index)
             index += 1
             lastMessage = message
-            
-            if showStatuses,
-                channel.config.readEventsEnabled,
-                isNewMessagesStatusAdded == -1,
-                isUnread,
-                let lastMessageRead = lastMessageRead,
-                message.updated < lastMessageRead.lastReadDate {
-                isNewMessagesStatusAdded = index
-                items.insert(.status(ChannelPresenter.statusNewMessagesTitle, nil, true), at: index)
-                index += 1
-            }
         }
         
         if isNextPage {
@@ -410,10 +407,6 @@ extension ChannelPresenter {
             items.insert(.loading, at: startIndex)
         } else {
             next = pageSize
-        }
-        
-        if isNewMessagesStatusAdded == startIndex {
-            items.remove(at: startIndex)
         }
     }
     
@@ -439,7 +432,6 @@ extension ChannelPresenter {
 extension ChannelPresenter {
     public static var statusYesterdayTitle = "Yesterday"
     public static var statusTodayTitle = "Today"
-    public static var statusNewMessagesTitle = "New Messages"
 }
 
 extension ChannelPresenter {
@@ -550,32 +542,37 @@ extension ChannelPresenter {
     }
     
     private func send(eventType: EventType) {
+        Client.shared.logger?.log("🎫", eventType.rawValue)
         Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), emptyEventCompletion)
     }
     
     func sendReadIfPossible() {
-        guard channel.config.readEventsEnabled, isUnread else {
+        guard isUnread, UIApplication.shared.appState == .active else {
             return
         }
         
+        Client.shared.logger?.log("🎫", "Send Read. Unread from \(unreadMessageRead?.lastReadDate.description ?? "false")")
+        let oldUnreadMessageRead = unreadMessageRead
+        unreadMessageRead = nil
+        
         DispatchQueue.main.async { [weak self] in
             if UIApplication.shared.appState == .active {
-                self?.sendRead()
+                self?.sendRead(oldUnreadMessageRead: oldUnreadMessageRead)
+            } else {
+                self?.unreadMessageRead = oldUnreadMessageRead
             }
         }
     }
     
-    private func sendRead() {
-        isUnread = false
-        
+    private func sendRead(oldUnreadMessageRead: MessageRead?) {
         let emptyEventCompletion: Client.Completion<EventResponse> = { [weak self] result in
             if let self = self {
                 if let error = result.error {
-                    self.isUnread = false
+                    self.unreadMessageRead = oldUnreadMessageRead
                     self.isReadSubject.onError(error)
                 } else {
-                    self.isUnread = false
-                    self.lastMessageRead = nil
+                    self.unreadMessageRead = nil
+                    Client.shared.logger?.log("🎫", "Read done.")
                     self.isReadSubject.onNext(())
                 }
             }

@@ -23,8 +23,7 @@ public struct ChannelQuery: Codable {
     public let members: [Member]
     public let messages: [Message]
     public let messageReads: [MessageRead]
-    public let lastMessageRead: MessageRead?
-    public let isUnread: Bool
+    public let unreadMessageRead: MessageRead?
     public let state: Bool = true
     public let watch: Bool = true
     public let pagination: Pagination
@@ -35,8 +34,7 @@ public struct ChannelQuery: Codable {
         self.pagination = pagination
         messages = []
         messageReads = []
-        lastMessageRead = nil
-        isUnread = false
+        unreadMessageRead = nil
     }
     
     public init(from decoder: Decoder) throws {
@@ -48,15 +46,15 @@ public struct ChannelQuery: Codable {
         pagination = .none
         
         if let user = Client.shared.user {
-            lastMessageRead = messageReads.first { $0.user == user }
+            if let lastMessage = messages.last,
+                let messageRead = messageReads.first(where: { $0.user == user }),
+                lastMessage.updated > messageRead.lastReadDate {
+                unreadMessageRead = messageRead
+            } else  {
+                unreadMessageRead = nil
+            }
         } else {
-            lastMessageRead = nil
-        }
-        
-        if let lastMessage = messages.last, let lastMessageRead = lastMessageRead {
-            isUnread = lastMessage.updated > lastMessageRead.lastReadDate
-        } else  {
-            isUnread = false
+            unreadMessageRead = nil
         }
     }
     
