@@ -165,6 +165,8 @@ extension WebSocket {
                 case let .healthCheck(connectionId, healthCheckUser) = response.event,
                 let user = healthCheckUser {
                 lastConnectionId = connectionId
+                handshakeTimer.resume()
+                logger?.log("🥰 Connected")
                 return .connected(connectionId, user)
             } else if lastError != nil {
                 return nil
@@ -178,8 +180,7 @@ extension WebSocket {
         
         switch event {
         case .connected:
-            logger?.log("😊 Connected")
-            handshakeTimer.resume()
+            logger?.log("WebSocket connected")
             return .connecting
             
         case .disconnected(let error):
@@ -187,7 +188,7 @@ extension WebSocket {
             handshakeTimer.suspend()
             
             if let error = error {
-                logger?.log(error, message: "💔😡 Disconnected")
+                logger?.log(error, message: "💔😡 Disconnected by error:")
             }
             
             let parsedError = parseDisconnect(error)
@@ -198,7 +199,7 @@ extension WebSocket {
                 consecutiveFailures = 0
             }
             
-            return .notConnected //.disconnected(parsedError)
+            return .notConnected
             
         default:
             break

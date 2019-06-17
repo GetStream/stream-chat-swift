@@ -48,7 +48,7 @@ public final class ClientLogger {
     }
     
     func log(_ request: URLRequest) {
-        log(request.httpMethod ?? "Request", request.description)
+        log("➡️ \(request.httpMethod ?? "Request")", request.description)
         
         if let headers = request.allHTTPHeaderFields, !headers.isEmpty {
             var message = "Request headers:\n"
