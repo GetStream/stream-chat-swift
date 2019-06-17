@@ -45,8 +45,8 @@ public final class Channel: Codable, Equatable {
                 id: String,
                 name: String?,
                 imageURL: URL? = nil,
-                memberIds: [String],
-                extraData: Codable?) {
+                memberIds: [String] = [],
+                extraData: Codable? = nil) {
         self.id = id
         self.cid = "\(type.rawValue):\(id)"
         self.type = type
