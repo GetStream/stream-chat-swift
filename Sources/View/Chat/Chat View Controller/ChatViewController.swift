@@ -45,7 +45,7 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         
         view.insertSubview(tableView, at: 0)
         tableView.makeEdgesEqualToSuperview()
-
+        
         let footerView = ChatFooterView(frame: CGRect(width: 0, height: .chatFooterHeight))
         footerView.backgroundColor = style.incomingMessage.chatBackgroundColor
         tableView.tableFooterView = footerView
@@ -152,15 +152,14 @@ extension ChatViewController {
         case .none, .itemMoved:
             return
         case let .reloaded(row, items):
+            let needsToScroll = !items.isEmpty && ((row == (items.count - 1)) || isLoadingCellPresented())
             self.items = items
-            let isLastRow = row == (items.count - 1)
-            let needsToScroll = isLastRow || isLoadingCellPresented()
             tableView.reloadData()
             
             if scrollEnabled, needsToScroll {
                 tableView.scrollToRow(at: .row(row), at: .top, animated: false)
             }
-
+            
         case let .itemAdded(row, reloadRow, forceToScroll, items):
             self.items = items
             let indexPath = IndexPath.row(row)
@@ -169,7 +168,7 @@ extension ChatViewController {
             
             tableView.performBatchUpdates({
                 tableView.insertRows(at: [indexPath], with: .none)
-
+                
                 if let reloadRow = reloadRow {
                     tableView.reloadRows(at: [.row(reloadRow)], with: .none)
                 }
