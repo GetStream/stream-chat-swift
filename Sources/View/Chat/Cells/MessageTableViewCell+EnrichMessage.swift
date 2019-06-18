@@ -24,10 +24,33 @@ extension MessageTableViewCell {
     }
     
     private func createAttributedText(with text: String, mentionedUsersNames: [String], style: MessageViewStyle) -> NSAttributedString {
-        let attributedText = NSMutableAttributedString(string: text,
-                                                       attributes: [.font: style.font,
-                                                                    .foregroundColor: style.textColor,
-                                                                    .backgroundColor: style.backgroundColor])
+        let lines = text.components(separatedBy: .newlines)
+        let mainAttributedText = NSMutableAttributedString(string: "")
+        
+        let defaultAttributes: [NSAttributedString.Key : Any] = [.font: style.font,
+                                                                 .foregroundColor: style.textColor,
+                                                                 .backgroundColor: style.backgroundColor]
+        for (index, line) in lines.enumerated() {
+            if index > 0 {
+                mainAttributedText.append(NSAttributedString(string: "\n"))
+            }
+            
+            if line.isEmpty {
+                mainAttributedText.append(NSAttributedString(string: "\n"))
+            } else {
+                let attributedText = NSMutableAttributedString(string: line, attributes: defaultAttributes)
+                addAttributes(to: attributedText, mentionedUsersNames: mentionedUsersNames, style: style)
+                mainAttributedText.append(attributedText)
+            }
+        }
+        
+        return mainAttributedText
+    }
+    
+    private func addAttributes(to attributedText: NSMutableAttributedString,
+                               mentionedUsersNames: [String],
+                               style: MessageViewStyle) {
+        let text = attributedText.string
         let boldFont = style.font.withTraits(.traitBold)
         
         if !mentionedUsersNames.isEmpty {
@@ -35,14 +58,14 @@ extension MessageTableViewCell {
         }
         
         guard style.markdownEnabled, text.rangeOfCharacter(from: .markdown) != nil else {
-            return attributedText
+            return
         }
         
         // Add Bold.
-        addAttributes(to: attributedText, regexKeyChar: "*", attributes: [.font: boldFont])
+        addAttributes(to: attributedText, regexKeyChar: "\\*\\*|__", attributes: [.font: boldFont])
         
         // Add Italic.
-        addAttributes(to: attributedText, regexKeyChar: "_", attributes: [.font: style.font.withTraits(.traitItalic)])
+        addAttributes(to: attributedText, regexKeyChar: "\\*|_", attributes: [.font: style.font.withTraits(.traitItalic)])
         
         // Add Strikethrough.
         addAttributes(to: attributedText, regexKeyChar: "-", attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue,
@@ -53,9 +76,8 @@ extension MessageTableViewCell {
             addAttributes(to: attributedText, regexKeyChar: "`", attributes: [.font: font])
         }
         
+        // Add quotes.
         addQuoteAttributes(to: attributedText)
-        
-        return attributedText
     }
     
     private func addAttributes(to attributedText: NSMutableAttributedString,
@@ -72,8 +94,7 @@ extension MessageTableViewCell {
     private func addAttributes(to attributedText: NSMutableAttributedString,
                                regexKeyChar: String,
                                attributes: [NSAttributedString.Key: Any]) {
-        guard attributedText.string.contains(regexKeyChar),
-            let regularExpression = try? NSRegularExpression(pattern: "(\\s+|^)(\\\(regexKeyChar))(.+?)(\\2)", options: []) else {
+        guard let regularExpression = try? NSRegularExpression(pattern: "(\\s+|^)(\(regexKeyChar))(.+?)(\\2)", options: []) else {
             return
         }
         
@@ -95,7 +116,7 @@ extension MessageTableViewCell {
     private func addQuoteAttributes(to attributedText: NSMutableAttributedString) {
         guard let style = style,
             attributedText.string.contains(">"),
-            let regularExpression = try? NSRegularExpression(pattern: "(\n|^)(\\>)\\s*(.+)(\n|$)", options: []) else {
+            let regularExpression = try? NSRegularExpression(pattern: "(^)(\\>)\\s*(.+)($)", options: []) else {
                 return
         }
         
