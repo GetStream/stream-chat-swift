@@ -28,6 +28,10 @@ extension UIFont {
     static func avatarFont(size: CGFloat) -> UIFont? {
         return UIFont(name: "GillSans-UltraBold", size: size)
     }
+    
+    static func monospaced(size: CGFloat) -> UIFont? {
+        return UIFont(name: "Menlo-Regular", size: size)
+    }
 }
 
 extension UIFont {

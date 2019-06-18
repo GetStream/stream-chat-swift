@@ -24,6 +24,7 @@ public struct MessageViewStyle: Hashable {
     public let borderWidth: CGFloat
     public let cornerRadius: CGFloat
     public let reactionViewStyle: ReactionViewStyle
+    public let markdownEnabled: Bool
     private(set) var backgroundImages: [RoundedImageType: UIImage] = [:]
     private(set) var transparentBackgroundImages: [RoundedImageType: UIImage] = [:]
     
@@ -45,7 +46,8 @@ public struct MessageViewStyle: Hashable {
          borderColor: UIColor = .chatSuperLightGray,
          borderWidth: CGFloat = 1,
          cornerRadius: CGFloat = .messageCornerRadius,
-         reactionViewStyle: ReactionViewStyle = ReactionViewStyle()) {
+         reactionViewStyle: ReactionViewStyle = ReactionViewStyle(),
+         markdownEnabled: Bool = true) {
         self.alignment = alignment
         self.chatBackgroundColor = chatBackgroundColor
         self.font = font
@@ -61,6 +63,7 @@ public struct MessageViewStyle: Hashable {
         self.borderWidth = borderWidth
         self.cornerRadius = cornerRadius
         self.reactionViewStyle = reactionViewStyle
+        self.markdownEnabled = markdownEnabled
         
         guard hasBackgroundImage else {
             return

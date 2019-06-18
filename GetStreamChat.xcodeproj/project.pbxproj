@@ -43,7 +43,6 @@
 		8A4FE7B9227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */; };
 		8A4FE7BC227C485B00E47D4C /* MessageTableViewCell+Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */; };
 		8A4FE7BF227CE69000E47D4C /* UIImage+Render.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */; };
-		8A4FE7C1227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */; };
 		8A4FE7C3227DBB7600E47D4C /* ChatViewController+Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7C2227DBB7600E47D4C /* ChatViewController+Cells.swift */; };
 		8A4FE7C5227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */; };
 		8A5D1FEB2288365B007AB76C /* ComposerHelperContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */; };
@@ -100,6 +99,8 @@
 		8ABC551C2276FB9D008F312B /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC551B2276FB9D008F312B /* AvatarView.swift */; };
 		8ABC5520227730C9008F312B /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC551F227730C9008F312B /* UIView+Extensions.swift */; };
 		8ABC5523227799F6008F312B /* ChatFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC5522227799F6008F312B /* ChatFooterView.swift */; };
+		8ABD997022B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD996F22B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift */; };
+		8ABD997222B8E01B00929D99 /* CharacterSet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */; };
 		8ABE5FDA22A67C92004F128C /* UIViewController+DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */; };
 		8ABE5FDC22A67F3C004F128C /* RxDocumentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */; };
 		8ABE5FDF22A6814F004F128C /* String+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDE22A6814F004F128C /* String+FileType.swift */; };
@@ -168,7 +169,6 @@
 		8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Attachments.swift"; sourceTree = "<group>"; };
 		8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Updates.swift"; sourceTree = "<group>"; };
 		8A4FE7BE227CE69000E47D4C /* UIImage+Render.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Render.swift"; sourceTree = "<group>"; };
-		8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableParagraphStyle+Extensions.swift"; sourceTree = "<group>"; };
 		8A4FE7C2227DBB7600E47D4C /* ChatViewController+Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Cells.swift"; sourceTree = "<group>"; };
 		8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+TableFooterView.swift"; sourceTree = "<group>"; };
 		8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerHelperContainerView.swift; sourceTree = "<group>"; };
@@ -225,6 +225,8 @@
 		8ABC551B2276FB9D008F312B /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		8ABC551F227730C9008F312B /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		8ABC5522227799F6008F312B /* ChatFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatFooterView.swift; sourceTree = "<group>"; };
+		8ABD996F22B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+EnrichMessage.swift"; sourceTree = "<group>"; };
+		8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CharacterSet+Extensions.swift"; sourceTree = "<group>"; };
 		8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DocumentPicker.swift"; sourceTree = "<group>"; };
 		8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxDocumentPickerViewController.swift; sourceTree = "<group>"; };
 		8ABE5FDE22A6814F004F128C /* String+FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FileType.swift"; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 			children = (
 				8A88917422550B2800DD6539 /* MessageTableViewCell.swift */,
 				8A4FE7BB227C485B00E47D4C /* MessageTableViewCell+Updates.swift */,
+				8ABD996F22B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift */,
 				8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */,
 				8AABC2972260D9450064CB20 /* StatusTableViewCell.swift */,
 			);
@@ -436,11 +439,11 @@
 				8A8891632253A86600DD6539 /* Codable+Extensions.swift */,
 				8AABC29D22627AA20064CB20 /* Dictionary+Extensions.swift */,
 				8AB1B8EE22675CCD002C65BD /* Result+Extensions.swift */,
-				8A4FE7C0227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift */,
 				8A40804022818C7A00F274FF /* Int+Extensions.swift */,
 				8A8BC072228C152600687186 /* TimeInterval+Extensions.swift */,
 				8AD21B98229BEB8D009D6086 /* Utils.swift */,
 				8ABE5FE822A7B665004F128C /* URL+Media.swift */,
+				8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -765,7 +768,6 @@
 				8ABE5FE922A7B665004F128C /* URL+Media.swift in Sources */,
 				8A88916022538CCE00DD6539 /* Data+Extensions.swift in Sources */,
 				8A210D7D2264A22E00D51FFC /* MediaGalleryViewController.swift in Sources */,
-				8A4FE7C1227CEE2900E47D4C /* NSMutableParagraphStyle+Extensions.swift in Sources */,
 				8ACAB169228F645B00674F2D /* ChannelsResponse.swift in Sources */,
 				8AABC2982260D9450064CB20 /* StatusTableViewCell.swift in Sources */,
 				8AFC2A2722688299006278D4 /* Member.swift in Sources */,
@@ -783,6 +785,7 @@
 				8AD21B99229BEB8D009D6086 /* Utils.swift in Sources */,
 				8AB8FA78227B194C00C14D94 /* DismissSegue.swift in Sources */,
 				8A88915A2252830C00DD6539 /* UIImage+Extensions.swift in Sources */,
+				8ABD997022B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift in Sources */,
 				8ABF826A2273064600A966D9 /* UITableView+Extensions.swift in Sources */,
 				8A88916F2254F59B00DD6539 /* ChannelPresenter.swift in Sources */,
 				8AB1B8EF22675CCD002C65BD /* Result+Extensions.swift in Sources */,
@@ -833,6 +836,7 @@
 				8A04675B224E7F1800493D74 /* AppDelegate.swift in Sources */,
 				8A889144225219E500DD6539 /* Client.swift in Sources */,
 				8AABC29C22627A1D0064CB20 /* Pagination.swift in Sources */,
+				8ABD997222B8E01B00929D99 /* CharacterSet+Extensions.swift in Sources */,
 				8A8891712254F73B00DD6539 /* ChatViewController.swift in Sources */,
 				8A1A9407225B4E7F00060ACC /* Reusable.swift in Sources */,
 				8A8BC073228C152600687186 /* TimeInterval+Extensions.swift in Sources */,

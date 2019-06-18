@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RxSwift
 
 // MARK: - Updates
 
@@ -73,42 +74,23 @@ extension MessageTableViewCell {
         infoLabel.isHidden = false
     }
     
-    public func update(message: String) {
-        messageContainerView.isHidden = message.isEmpty
-        messageLabel.text = message
-    }
-    
-    public func update(mentionedUsersNames: [String]) {
-        guard let style = style, let originalText = messageLabel.text else {
+    public func update(message: String, mentionedUsersNames: [String] = []) {
+        let text = message.trimmingCharacters(in: .whitespacesAndNewlines)
+        messageContainerView.isHidden = text.isEmpty
+        messageLabel.text = text
+        
+        if text.isEmpty || text.messageContainsOnlyEmoji {
             return
         }
         
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            let text = originalText.trimmingCharacters(in: .whitespacesAndNewlines)
-            
-            if text.messageContainsOnlyEmoji || text.isEmpty {
-                return
-            }
-            
-            let boldFont = style.font.withTraits(.traitBold)
-            
-            let attributedText = NSMutableAttributedString(string: text,
-                                                           attributes: [.font: style.font,
-                                                                        .foregroundColor: style.textColor,
-                                                                        .backgroundColor: style.backgroundColor,
-                                                                        .paragraphStyle: NSParagraphStyle.default])
-            
-            mentionedUsersNames.forEach { name in
-                if let range = text.range(of: name) {
-                    attributedText.addAttribute(.font, value: boldFont, range: text.nsRange(from: range))
-                }
-            }
-            
-            DispatchQueue.main.async {
-                if let currentText = self?.messageLabel.text, currentText == originalText {
-                    self?.messageLabel.attributedText = attributedText
-                }
-            }
+        if let style = style,
+            (!mentionedUsersNames.isEmpty || (style.markdownEnabled && text.rangeOfCharacter(from: .markdown) != nil)) {
+            enrichMessage(with: text, mentionedUsersNames: mentionedUsersNames, style: style)
+                .take(1)
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .utility))
+                .observeOn(MainScheduler.instance)
+                .subscribe(onNext: { [weak self] in self?.messageLabel.attributedText = $0 })
+                .disposed(by: disposeBag)
         }
     }
     

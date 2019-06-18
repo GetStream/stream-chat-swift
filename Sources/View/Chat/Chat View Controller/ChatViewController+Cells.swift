@@ -28,10 +28,10 @@ extension ChatViewController {
         } else if message.isEphemeral {
             cell.update(message: message.args ?? "")
         } else {
-            cell.update(message: message.textOrArgs)
-            
             if !message.mentionedUsers.isEmpty {
-                cell.update(mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
+                cell.update(message: message.textOrArgs, mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
+            } else {
+                cell.update(message: message.textOrArgs)
             }
             
             if presenter.canReply, message.replyCount > 0 {
