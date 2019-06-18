@@ -37,16 +37,16 @@ public final class Notifications: NSObject {
     
     override init() {
         super.init()
-        clear()
-        
-        UIApplication.shared.rx.appState.subscribe(onNext: { [weak self] state in
-            if state == .active {
-                self?.clear()
-            }
-        })
-        .disposed(by: disposeBag)
-        
         UNUserNotificationCenter.current().delegate = self
+
+        DispatchQueue.main.async {
+            self.clear()
+            
+            UIApplication.shared.rx.appState
+                .filter { $0 == .active }
+                .subscribe(onNext: { [weak self] _ in self?.clear() })
+                .disposed(by: self.disposeBag)
+        }
     }
     
     func clear() {
