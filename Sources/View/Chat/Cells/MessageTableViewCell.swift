@@ -156,15 +156,17 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
         
         // Avatar
-        contentView.addSubview(avatarView)
-        
-        avatarView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-CGFloat.messageBottomPadding)
+        if style.showCurrentUserAvatar {
+            contentView.addSubview(avatarView)
             
-            if style.alignment == .left {
-                make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
-            } else {
-                make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            avatarView.snp.makeConstraints { make in
+                make.bottom.equalToSuperview().offset(-CGFloat.messageBottomPadding)
+                
+                if style.alignment == .left {
+                    make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
+                } else {
+                    make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+                }
             }
         }
         
@@ -190,8 +192,17 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageStackView.snp.makeConstraints { make in
             messageStackViewTopConstraint = make.top.equalToSuperview().offset(CGFloat.messageSpacing).priority(999).constraint
             make.bottom.equalToSuperview().priority(999)
-            make.left.equalToSuperview().offset(CGFloat.messageTextPadding).priority(999)
-            make.right.equalToSuperview().offset(-CGFloat.messageTextPadding).priority(999)
+            
+            if style.showCurrentUserAvatar {
+                make.left.equalToSuperview().offset(CGFloat.messageTextPaddingWithAvatar).priority(999)
+                make.right.equalToSuperview().offset(-CGFloat.messageTextPaddingWithAvatar).priority(999)
+            } else if style.reactionViewStyle.alignment == .left {
+                make.left.equalToSuperview().offset(CGFloat.messageEdgePadding).priority(999)
+                make.right.equalToSuperview().offset(-CGFloat.messageTextPaddingWithAvatar).priority(999)
+            } else {
+                make.left.equalToSuperview().offset(CGFloat.messageTextPaddingWithAvatar).priority(999)
+                make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding).priority(999)
+            }
         }
         
         infoLabel.backgroundColor = backgroundColor
@@ -215,12 +226,14 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             let minWidth = style.reactionViewStyle.tailImage.size.width + .reactionsHeight - 2 * tailAdditionalOffset
             make.width.greaterThanOrEqualTo(minWidth)
             
+            let messagePadding: CGFloat = style.showCurrentUserAvatar ? .messageTextPaddingWithAvatar : .messageEdgePadding
+            
             if style.reactionViewStyle.alignment == .left {
-                make.left.greaterThanOrEqualToSuperview().offset(CGFloat.messageTextPadding).priority(999)
+                make.left.greaterThanOrEqualToSuperview().offset(messagePadding).priority(999)
                 make.right.greaterThanOrEqualTo(reactionsTailImage.snp.right)
                     .offset(CGFloat.reactionsCornerRadius - tailAdditionalOffset).priority(998)
             } else {
-                make.right.lessThanOrEqualToSuperview().offset(-CGFloat.messageTextPadding).priority(999)
+                make.right.lessThanOrEqualToSuperview().offset(-messagePadding).priority(999)
                 make.left.lessThanOrEqualTo(reactionsTailImage.snp.left)
                     .offset(tailAdditionalOffset - .reactionsCornerRadius).priority(998)
             }

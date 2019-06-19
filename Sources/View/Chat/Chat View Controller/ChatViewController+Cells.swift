@@ -21,7 +21,8 @@ extension ChatViewController {
         }
         
         let isIncoming = !message.user.isCurrent
-        let cell = tableView.dequeueMessageCell(for: indexPath, style: isIncoming ? style.incomingMessage : style.outgoingMessage)
+        let messageStyle = isIncoming ? style.incomingMessage : style.outgoingMessage
+        let cell = tableView.dequeueMessageCell(for: indexPath, style: messageStyle)
         
         if message.isDeleted {
             cell.update(info: "This message was deleted.", date: message.deleted)
@@ -70,9 +71,11 @@ extension ChatViewController {
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
             
-            cell.avatarView.update(with: message.user.avatarURL,
-                                   name: message.user.name,
-                                   baseColor: style.incomingMessage.chatBackgroundColor)
+            if messageStyle.showCurrentUserAvatar {
+                cell.avatarView.update(with: message.user.avatarURL,
+                                       name: message.user.name,
+                                       baseColor: messageStyle.chatBackgroundColor)
+            }
         }
         
         guard !message.isDeleted else {

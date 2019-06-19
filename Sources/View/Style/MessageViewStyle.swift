@@ -10,6 +10,7 @@ import UIKit
 
 public struct MessageViewStyle: Hashable {
     public let alignment: Alignment
+    public let showCurrentUserAvatar: Bool
     public let chatBackgroundColor: UIColor
     public let font: UIFont
     public let replyFont: UIFont
@@ -33,6 +34,7 @@ public struct MessageViewStyle: Hashable {
     }
     
     init(alignment: Alignment = .left,
+         showCurrentUserAvatar: Bool = true,
          chatBackgroundColor: UIColor = .white,
          font: UIFont = .chatRegular,
          replyFont: UIFont = .chatSmallBold,
@@ -49,6 +51,7 @@ public struct MessageViewStyle: Hashable {
          reactionViewStyle: ReactionViewStyle = ReactionViewStyle(),
          markdownEnabled: Bool = true) {
         self.alignment = alignment
+        self.showCurrentUserAvatar = showCurrentUserAvatar
         self.chatBackgroundColor = chatBackgroundColor
         self.font = font
         self.replyFont = replyFont
