@@ -101,6 +101,7 @@
 		8ABC5523227799F6008F312B /* ChatFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABC5522227799F6008F312B /* ChatFooterView.swift */; };
 		8ABD997022B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD996F22B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift */; };
 		8ABD997222B8E01B00929D99 /* CharacterSet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */; };
+		8ABD997422BA2F1F00929D99 /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD997322BA2F1F00929D99 /* UIDevice+Extensions.swift */; };
 		8ABE5FDA22A67C92004F128C /* UIViewController+DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */; };
 		8ABE5FDC22A67F3C004F128C /* RxDocumentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */; };
 		8ABE5FDF22A6814F004F128C /* String+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDE22A6814F004F128C /* String+FileType.swift */; };
@@ -227,6 +228,7 @@
 		8ABC5522227799F6008F312B /* ChatFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatFooterView.swift; sourceTree = "<group>"; };
 		8ABD996F22B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+EnrichMessage.swift"; sourceTree = "<group>"; };
 		8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CharacterSet+Extensions.swift"; sourceTree = "<group>"; };
+		8ABD997322BA2F1F00929D99 /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DocumentPicker.swift"; sourceTree = "<group>"; };
 		8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxDocumentPickerViewController.swift; sourceTree = "<group>"; };
 		8ABE5FDE22A6814F004F128C /* String+FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FileType.swift"; sourceTree = "<group>"; };
@@ -498,6 +500,9 @@
 		8A88917C22560E8E00DD6539 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				8AB8FA732279F3F400C14D94 /* UIApplication+AppState.swift */,
+				8A0E345122980933008D825E /* TableView.swift */,
+				8AB8FA77227B194C00C14D94 /* DismissSegue.swift */,
 				8A88917A22550ECC00DD6539 /* CGFloat+Extensions.swift */,
 				8A1A9401225A436800060ACC /* CGRect+Extensions.swift */,
 				8A1A9405225B4E6900060ACC /* Reusable */,
@@ -509,12 +514,10 @@
 				8ABF82692273064600A966D9 /* UITableView+Extensions.swift */,
 				8A8891722255000A00DD6539 /* UITableViewCell+Extensions.swift */,
 				8A1A93FF225A0D7800060ACC /* UIEdgeInsets+Extensions.swift */,
-				8AB8FA732279F3F400C14D94 /* UIApplication+AppState.swift */,
 				8A40803A2280413D00F274FF /* IndexPath+Extensions.swift */,
 				8A4080422281BDCA00F274FF /* UIStackView+Extensions.swift */,
-				8AB8FA77227B194C00C14D94 /* DismissSegue.swift */,
-				8A0E345122980933008D825E /* TableView.swift */,
 				8AD21B9F229D4813009D6086 /* UILabel+Extensions.swift */,
+				8ABD997322BA2F1F00929D99 /* UIDevice+Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -822,6 +825,7 @@
 				8A8BC069228AE0D600687186 /* ChannelsViewController.swift in Sources */,
 				8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */,
 				8A8891622253A73000DD6539 /* ChannelQuery.swift in Sources */,
+				8ABD997422BA2F1F00929D99 /* UIDevice+Extensions.swift in Sources */,
 				8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */,
 				8A88917522550B2800DD6539 /* MessageTableViewCell.swift in Sources */,
 				8A2CC9582284AD77004CF12D /* ChatViewController+MessageActions.swift in Sources */,

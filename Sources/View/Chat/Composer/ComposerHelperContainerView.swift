@@ -63,7 +63,7 @@ final class ComposerHelperContainerView: UIView {
         }
         
         containerView.snp.makeConstraints { make in
-            make.top.equalTo(closeButton.snp.bottom).offset(CGFloat.messageEdgePadding)
+            make.top.equalTo(closeButton.snp.bottom).offset(CGFloat.messageInnerPadding)
             make.left.right.equalToSuperview()
         }
     }
@@ -82,7 +82,7 @@ final class ComposerHelperContainerView: UIView {
         }
         
         containerView.snp.makeConstraints {
-            $0.bottom.equalTo(composerView.snp.top).offset(-CGFloat.messageEdgePadding).priority(999)
+            $0.bottom.equalTo(composerView.snp.top).offset(-CGFloat.messageInnerPadding).priority(999)
         }
     }
     

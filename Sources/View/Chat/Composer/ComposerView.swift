@@ -126,7 +126,7 @@ public final class ComposerView: UIView {
             make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
             heightConstraint = make.height.equalTo(CGFloat.composerHeight).constraint
             let bottomMargin = view.safeAreaLayoutGuide.snp.bottomMargin
-            bottomConstraint = make.bottom.equalTo(bottomMargin).offset(-CGFloat.messageEdgePadding).constraint
+            bottomConstraint = make.bottom.equalTo(bottomMargin).offset(-CGFloat.messageBottomPadding).constraint
         }
         
         // Apply style.

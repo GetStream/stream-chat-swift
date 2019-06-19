@@ -23,7 +23,7 @@ public final class ChannelsViewController: UIViewController {
         tableView.separatorColor = style.channel.separatorColor
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 2 * .messageEdgePadding + .channelBigAvatarSize
+        tableView.rowHeight = 2 * .messageInnerPadding + .channelBigAvatarSize
         tableView.register(cellType: ChannelTableViewCell.self)
         tableView.register(cellType: StatusTableViewCell.self)
         view.insertSubview(tableView, at: 0)

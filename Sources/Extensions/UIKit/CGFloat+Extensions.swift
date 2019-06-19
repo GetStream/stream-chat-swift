@@ -45,7 +45,7 @@ extension CGFloat {
     public static let messageAvatarRadius: CGFloat = 16
     public static let messageAvatarSize: CGFloat = 2 * .messageAvatarRadius
     public static let messageInnerPadding: CGFloat = 8
-    public static let messageEdgePadding: CGFloat = 10
+    public static let messageEdgePadding: CGFloat = UIDevice.current.hasBigScreen ? 20 : 10
     public static let messageBottomPadding: CGFloat = 10
     public static let messageSpacing: CGFloat = 3
     public static let messageCornerRadius: CGFloat = 16

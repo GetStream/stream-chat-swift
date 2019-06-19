@@ -71,13 +71,14 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         
         avatarView.backgroundColor = backgroundColor
         avatarView.snp.makeConstraints { make in
-            make.left.top.equalToSuperview().offset(CGFloat.messageEdgePadding).priority(999)
+            make.top.equalToSuperview().offset(CGFloat.messageInnerPadding).priority(999)
+            make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
             make.size.equalTo(CGFloat.channelBigAvatarSize)
         }
         
         nameLabel.snp.makeConstraints { make in
-            make.left.equalTo(avatarView.snp.right).offset(CGFloat.messageEdgePadding)
-            make.right.lessThanOrEqualTo(dateLabel.snp.left).offset(-CGFloat.messageEdgePadding)
+            make.left.equalTo(avatarView.snp.right).offset(CGFloat.messageInnerPadding)
+            make.right.lessThanOrEqualTo(dateLabel.snp.left).offset(-CGFloat.messageInnerPadding)
             make.bottom.equalTo(avatarView.snp.centerY)
         }
         
@@ -85,6 +86,8 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
             make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
             make.centerY.equalTo(nameLabel.snp.centerY)
         }
+        
+        dateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         messageLabel.snp.makeConstraints { make in
             make.top.equalTo(avatarView.snp.centerY)

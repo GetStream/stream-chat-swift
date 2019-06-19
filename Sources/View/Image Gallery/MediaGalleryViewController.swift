@@ -27,7 +27,7 @@ class MediaGalleryViewController: UIViewController {
         pageControl.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
             make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
-            make.bottom.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            make.bottom.equalToSuperview().offset(-CGFloat.messageInnerPadding)
         }
         
         return pageControl
