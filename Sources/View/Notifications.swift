@@ -19,7 +19,7 @@ public final class Notifications: NSObject {
     
     public typealias OpenNewMessageCallback = (_ messageId: String, _ channelId: String) -> Void
     
-    static let shared = Notifications()
+    public static let shared = Notifications()
     
     let disposeBag = DisposeBag()
     var authorizationStatus: UNAuthorizationStatus = .notDetermined
@@ -43,6 +43,7 @@ public final class Notifications: NSObject {
             self.clear()
             
             UIApplication.shared.rx.appState
+                .observeOn(MainScheduler.instance)
                 .filter { $0 == .active }
                 .subscribe(onNext: { [weak self] _ in self?.clear() })
                 .disposed(by: self.disposeBag)
