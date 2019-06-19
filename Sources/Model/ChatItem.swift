@@ -9,7 +9,7 @@
 import Foundation
 
 public enum ChatItem: Equatable {
-    case loading
+    case loading(_ inProgress: Bool)
     case status(_ title: String, _ subtitle: String?, _ highlighted: Bool)
     case channelPresenter(ChannelPresenter)
     case message(Message)
@@ -41,8 +41,8 @@ public enum ChatItem: Equatable {
     
     public static func == (lhs: ChatItem, rhs: ChatItem) -> Bool {
         switch (lhs, rhs) {
-        case (.loading, .loading):
-            return true
+        case let (.loading(inProgress1), .loading(inProgress2)):
+            return inProgress1 == inProgress2
         case let (.channelPresenter(channelPresenter1), .channelPresenter(channelPresenter2)):
             return channelPresenter1.channel == channelPresenter2.channel
         case let (.message(message1), .message(message2)):
@@ -75,6 +75,16 @@ extension Array where Element == ChatItem {
         return lastIndex(where: { item -> Bool in
             if case .message(let message) = item {
                 return message.id == messageId
+            }
+            
+            return false
+        })
+    }
+    
+    func firstIndexWhereStatusLoading() -> Int? {
+        return firstIndex(where: { item -> Bool in
+            if case .loading = item {
+                return true
             }
             
             return false

@@ -154,10 +154,19 @@ extension ChatViewController {
         case let .reloaded(row, items):
             let needsToScroll = !items.isEmpty && ((row == (items.count - 1)) || isLoadingCellPresented())
             self.items = items
+            
+            if !items.isEmpty, case .loading = items[0] {
+                self.items[0] = .loading(true)
+            }
+            
             tableView.reloadData()
             
             if scrollEnabled, needsToScroll {
                 tableView.scrollToRow(at: .row(row), at: .top, animated: false)
+            }
+            
+            if !items.isEmpty, case .loading = items[0] {
+                self.items[0] = .loading(false)
             }
             
         case let .itemAdded(row, reloadRow, forceToScroll, items):
@@ -207,8 +216,12 @@ extension ChatViewController {
         let backgroundColor = style.incomingMessage.chatBackgroundColor
         
         switch items[indexPath.row] {
-        case .loading:
-            channelPresenter?.loadNext()
+        case .loading(let inProgress):
+            if !inProgress {
+                items[indexPath.row] = .loading(true)
+                channelPresenter?.loadNext()
+            }
+            
             cell = tableView.loadingCell(at: indexPath, backgroundColor: backgroundColor)
             
         case let .status(title, subtitle, highlighted):

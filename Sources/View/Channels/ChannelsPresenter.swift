@@ -76,7 +76,7 @@ extension ChannelsPresenter {
         
         if response.channels.count == next.limit {
             next = .channelsNextPageSize + .offset(next.offset + next.limit)
-            items.append(.loading)
+            items.append(.loading(false))
         } else {
             next = pageSize
         }

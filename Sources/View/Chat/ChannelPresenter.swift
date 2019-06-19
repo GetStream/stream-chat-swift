@@ -349,7 +349,7 @@ extension ChannelPresenter {
             items.append(.status("Start of thread", nil, false))
         }
         
-        if let loadingIndex = items.firstIndex(of: .loading) {
+        if let loadingIndex = items.firstIndexWhereStatusLoading() {
             items.remove(at: loadingIndex)
         }
         
@@ -403,7 +403,7 @@ extension ChannelPresenter {
         if messages.count == (isNextPage ? Pagination.messagesNextPageSize : pageSize).limit,
             let first = messages.first {
             next = .messagesNextPageSize + .lessThan(first.id)
-            items.insert(.loading, at: startIndex)
+            items.insert(.loading(false), at: startIndex)
         } else {
             next = pageSize
         }

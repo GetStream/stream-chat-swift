@@ -77,8 +77,12 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard indexPath.row < items.count, let channelPresenter = items[indexPath.row].channelPresenter else {
-            if indexPath.row < channelsPresenter.items.count, case .loading = channelsPresenter.items[indexPath.row] {
-                channelsPresenter.loadNext()
+            if indexPath.row < items.count, case .loading(let inProgress) = items[indexPath.row] {
+                if !inProgress {
+                    items[indexPath.row] = .loading(true)
+                    channelsPresenter.loadNext()
+                }
+                
                 return tableView.loadingCell(at: indexPath, backgroundColor: style.channel.backgroundColor)
             }
             
