@@ -80,7 +80,10 @@ extension UIViewController {
         let delegateKey = String(ObjectIdentifier(self).hashValue) + "ImagePickerDelegate"
         let imagePickerViewController = UIImagePickerController()
         imagePickerViewController.sourceType = sourceType
-        imagePickerViewController.mediaTypes = UIImagePickerController.availableMediaTypes(for: sourceType) ?? [.imageFileType]
+        
+        if sourceType != .camera || Bundle.main.hasInfoDescription(for: .microphone) {
+            imagePickerViewController.mediaTypes = UIImagePickerController.availableMediaTypes(for: sourceType) ?? [.imageFileType]
+        }
         
         let delegate = ImagePickerDelegate(completion) {
             objc_setAssociatedObject(self, delegateKey, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)

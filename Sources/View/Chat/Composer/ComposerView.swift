@@ -264,7 +264,6 @@ public final class ComposerView: UIView {
         didSet {
             sendButton.isEnabled = isEnabled
             attachmentButton.isEnabled = isEnabled
-            attachmentButton.isEnabled = isEnabled
             imagesCollectionView.isUserInteractionEnabled = isEnabled
             imagesCollectionView.alpha = isEnabled ? 1 : 0.5
             styleState = isEnabled ? .normal : .disabled

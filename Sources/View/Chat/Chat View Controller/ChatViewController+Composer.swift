@@ -234,7 +234,8 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self] _ in self?.hideAddFileView() })
             .disposed(by: disposeBag)
         
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+        if UIImagePickerController.hasPermissionDescription(for: .savedPhotosAlbum),
+            UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
             addButtonsToAddFileView(container,
                                     icon: UIImage.Icons.images,
                                     title: "Upload a photo or video",
@@ -247,7 +248,8 @@ extension ChatViewController {
             }
         }
         
-        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+        if UIImagePickerController.hasPermissionDescription(for: .camera),
+            UIImagePickerController.isSourceTypeAvailable(.camera) {
             addButtonsToAddFileView(container,
                                     icon: UIImage.Icons.camera,
                                     title: "Upload from a camera",

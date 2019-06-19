@@ -122,6 +122,8 @@
 		8AD21B9E229C2014009D6086 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B9D229C2014009D6086 /* Notifications.swift */; };
 		8AD21BA0229D4813009D6086 /* UILabel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD21B9F229D4813009D6086 /* UILabel+Extensions.swift */; };
 		8AEC7D9E22A145B9000B5B97 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AEC7D9D22A145B9000B5B97 /* Uploader.swift */; };
+		8AFA806E22BA7AE40036F450 /* UIImagePickerController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFA806D22BA7AE40036F450 /* UIImagePickerController+Extensions.swift */; };
+		8AFA807022BA7CDD0036F450 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFA806F22BA7CDD0036F450 /* Bundle+Extensions.swift */; };
 		8AFC2A2722688299006278D4 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2622688299006278D4 /* Member.swift */; };
 		8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A282268933A006278D4 /* WebSocket.swift */; };
 		8AFC2A2B226893FF006278D4 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */; };
@@ -249,6 +251,8 @@
 		8AD21B9D229C2014009D6086 /* Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		8AD21B9F229D4813009D6086 /* UILabel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extensions.swift"; sourceTree = "<group>"; };
 		8AEC7D9D22A145B9000B5B97 /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
+		8AFA806D22BA7AE40036F450 /* UIImagePickerController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImagePickerController+Extensions.swift"; sourceTree = "<group>"; };
+		8AFA806F22BA7CDD0036F450 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		8AFC2A2622688299006278D4 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		8AFC2A282268933A006278D4 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		8AFC2A2A226893FF006278D4 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
@@ -446,6 +450,7 @@
 				8AD21B98229BEB8D009D6086 /* Utils.swift */,
 				8ABE5FE822A7B665004F128C /* URL+Media.swift */,
 				8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */,
+				8AFA806F22BA7CDD0036F450 /* Bundle+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -518,6 +523,7 @@
 				8A4080422281BDCA00F274FF /* UIStackView+Extensions.swift */,
 				8AD21B9F229D4813009D6086 /* UILabel+Extensions.swift */,
 				8ABD997322BA2F1F00929D99 /* UIDevice+Extensions.swift */,
+				8AFA806D22BA7AE40036F450 /* UIImagePickerController+Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -823,11 +829,13 @@
 				8A3E461A22AAB71500DF464B /* Channel+Create.swift in Sources */,
 				8ABE5FE522A6A173004F128C /* ComposerView+Files.swift in Sources */,
 				8A8BC069228AE0D600687186 /* ChannelsViewController.swift in Sources */,
+				8AFA807022BA7CDD0036F450 /* Bundle+Extensions.swift in Sources */,
 				8A8891572252827E00DD6539 /* UIImage+Icons.swift in Sources */,
 				8A8891622253A73000DD6539 /* ChannelQuery.swift in Sources */,
 				8ABD997422BA2F1F00929D99 /* UIDevice+Extensions.swift in Sources */,
 				8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */,
 				8A88917522550B2800DD6539 /* MessageTableViewCell.swift in Sources */,
+				8AFA806E22BA7AE40036F450 /* UIImagePickerController+Extensions.swift in Sources */,
 				8A2CC9582284AD77004CF12D /* ChatViewController+MessageActions.swift in Sources */,
 				8A0E345222980933008D825E /* TableView.swift in Sources */,
 				8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */,
