@@ -51,6 +51,7 @@ final class UploaderItem: Equatable {
     private(set) var error: Error? = nil
     private(set) var urlSessionTask: URLSessionTask?
     private(set) var lastProgress: Float = 0
+    private var tryToUploadAgain: Bool = true
     let uploadingCompletion = PublishSubject<Void>()
     
     private(set) lazy var uploadingProgress: Observable<Float> = Client.shared.urlSessionTaskDelegate.uploadProgress
@@ -116,8 +117,13 @@ final class UploaderItem: Equatable {
                 self.uploadingCompletion.onCompleted()
                 
             } else if let error = result.error {
-                self.error = error
-                self.uploadingCompletion.onError(error)
+                if self.tryToUploadAgain {
+                    self.tryToUploadAgain = false
+                    self.upload(in: channel)
+                } else {
+                    self.error = error
+                    self.uploadingCompletion.onError(error)
+                }
             }
         }
         
@@ -143,7 +149,7 @@ final class UploaderItem: Equatable {
             uploadingCompletion.onError(ClientError.emptyBody)
             return
         }
-
+        
         urlSessionTask = Client.shared.request(endpoint: .sendImage(fileName, mimeType, imageData, channel), fileCompletion)
     }
     
