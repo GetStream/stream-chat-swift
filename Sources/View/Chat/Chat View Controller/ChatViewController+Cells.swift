@@ -62,7 +62,8 @@ extension ChatViewController {
             prevRow < items.count,
             let prevMessage = items[prevRow].message,
             prevMessage.user == message.user,
-            !prevMessage.text.messageContainsOnlyEmoji {
+            !prevMessage.text.messageContainsOnlyEmoji,
+            (!presenter.channel.config.reactionsEnabled || !message.hasReactions) {
             isContinueMessage = true
         }
         

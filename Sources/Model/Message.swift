@@ -69,6 +69,10 @@ public struct Message: Codable {
         return isOwn
     }
     
+    public var hasReactions: Bool {
+        return reactionCounts != nil && !(reactionCounts?.counts.isEmpty ?? true)
+    }
+    
     public var textOrArgs: String {
         let text = self.text.trimmingCharacters(in: .whitespacesAndNewlines)
         
