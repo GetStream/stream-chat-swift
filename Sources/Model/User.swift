@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct User: Codable, Equatable {
+public struct User: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
         case name
@@ -73,8 +73,15 @@ public struct User: Codable, Equatable {
         try container.encode(name, forKey: .name)
         try container.encode(avatarURL, forKey: .avatarURL)
     }
+}
+
+extension User: Equatable, Hashable {
     
     public static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

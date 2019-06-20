@@ -186,11 +186,11 @@ extension ChatViewController {
             if scrollEnabled, forceToScroll {
                 tableView.scrollToRow(at: .row(row), at: .top, animated: false)
             }
-        case let .itemUpdated(row, message, items):
+        case let .itemUpdated(rows, messages, items):
             self.items = items
-            tableView.reloadRows(at: [.row(row)], with: .none)
+            tableView.reloadRows(at: rows.map({ .row($0) }), with: .none)
             
-            if let reactionsView = reactionsView {
+            if let reactionsView = reactionsView, let message = messages.first {
                 reactionsView.update(with: message)
             }
         case let .itemRemoved(row, items):
@@ -230,8 +230,8 @@ extension ChatViewController {
                                         subtitle: subtitle,
                                         backgroundColor: backgroundColor,
                                         highlighted: highlighted)
-        case .message(let message):
-            cell = messageCell(at: indexPath, message: message)
+        case let .message(message, readUsers):
+            cell = messageCell(at: indexPath, message: message, readUsers: readUsers)
         default:
             return .unused
         }
@@ -246,7 +246,7 @@ extension ChatViewController {
         
         let item = items[indexPath.row]
         
-        if case .message(let message) = item {
+        if case .message(let message, _) = item {
             willDisplay(cell: cell, at: indexPath, message: message)
         }
     }

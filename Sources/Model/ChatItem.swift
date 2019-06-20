@@ -12,7 +12,7 @@ public enum ChatItem: Equatable {
     case loading(_ inProgress: Bool)
     case status(_ title: String, _ subtitle: String?, _ highlighted: Bool)
     case channelPresenter(ChannelPresenter)
-    case message(Message)
+    case message(Message, _ usersRead: [User])
     case error(Error)
     
     var isLoading: Bool {
@@ -32,11 +32,19 @@ public enum ChatItem: Equatable {
     }
     
     var message: Message? {
-        if case .message(let message) = self {
+        if case .message(let message, _) = self {
             return message
         }
         
         return nil
+    }
+    
+    var messageReadUsers: [User] {
+        if case .message(_, let users) = self {
+            return users
+        }
+        
+        return []
     }
     
     public static func == (lhs: ChatItem, rhs: ChatItem) -> Bool {
@@ -73,7 +81,7 @@ extension Array where Element == ChatItem {
     
     func lastIndex(whereMessageId messageId: String) -> Int? {
         return lastIndex(where: { item -> Bool in
-            if case .message(let message) = item {
+            if case .message(let message, _) = item {
                 return message.id == messageId
             }
             
@@ -81,6 +89,20 @@ extension Array where Element == ChatItem {
         })
     }
     
+    func findLastMessage(before beforeIndex: Int = .max) -> (index: Int, message: Message)? {
+        guard !isEmpty else {
+            return nil
+        }
+        
+        for (index, item) in enumerated().reversed() where index < beforeIndex  {
+            if case .message(let message, _) = item {
+                return (index, message)
+            }
+        }
+        
+        return nil
+    }
+
     func firstIndexWhereStatusLoading() -> Int? {
         return firstIndex(where: { item -> Bool in
             if case .loading = item {

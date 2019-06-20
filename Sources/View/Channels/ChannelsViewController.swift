@@ -60,9 +60,9 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
                 tableView.deleteRows(at: [.row(row1)], with: .none)
                 tableView.insertRows(at: [.row(row2)], with: .none)
             })
-        case let .itemUpdated(index, _, items):
+        case let .itemUpdated(rows, _, items):
             self.items = items
-            tableView.reloadRows(at: [.row(index)], with: .none)
+            tableView.reloadRows(at: rows.map({ .row($0) }), with: .none)
         case .reloaded(_, let items), .itemAdded(_, _, _, let items), .itemRemoved(_, let items):
             self.items = items
             tableView.reloadData()

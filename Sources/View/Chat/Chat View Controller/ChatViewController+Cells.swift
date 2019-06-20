@@ -15,7 +15,7 @@ import RxGesture
 
 extension ChatViewController {
     
-    func messageCell(at indexPath: IndexPath, message: Message) -> UITableViewCell {
+    func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
         guard let presenter = channelPresenter else {
             return .unused
         }
@@ -29,10 +29,16 @@ extension ChatViewController {
         } else if message.isEphemeral {
             cell.update(message: message.args ?? "")
         } else {
+            var text = message.textOrArgs
+            
+            if !readUsers.isEmpty {
+                text = text.appending("\n😎 ").appending(readUsers.map({ $0.id }).joined(separator: ", "))
+            }
+            
             if !message.mentionedUsers.isEmpty {
-                cell.update(message: message.textOrArgs, mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
+                cell.update(message: text, mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
             } else {
-                cell.update(message: message.textOrArgs)
+                cell.update(message: text)
             }
             
             if presenter.canReply, message.replyCount > 0 {
@@ -47,7 +53,7 @@ extension ChatViewController {
         var showAvatar = true
         let nextRow = indexPath.row + 1
         
-        if nextRow < items.count, case .message(let nextMessage) = items[nextRow] {
+        if nextRow < items.count, case .message(let nextMessage, _) = items[nextRow] {
             showAvatar = nextMessage.user != message.user
             
             if !showAvatar {

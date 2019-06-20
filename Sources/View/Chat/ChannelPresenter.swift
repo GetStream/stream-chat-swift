@@ -30,8 +30,10 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private var startedTyping = false
     
     private(set) var lastMessage: Message?
+    private(set) var lastOwnMessage: Message?
     private(set) var unreadMessageRead: MessageRead?
     private(set) var typingUsers: [User] = []
+    private var messageReadsToMessageId: [MessageRead: String] = [:]
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
     
@@ -51,7 +53,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private(set) lazy var channelRequest: Driver<ViewChanges> = lazyRequest
         .map { [weak self] in self?.channelEndpoint(pagination: $0) }
         .unwrap()
-        .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
+        .flatMapLatest { Client.shared.rx.request(endpoint: $0).retry(3) }
         .map { [weak self] in self?.parseQuery($0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
@@ -153,12 +155,12 @@ extension ChannelPresenter {
             }
             
             var reloadRow: Int? = nil
-            let last = findLastMessage()
+            let last = items.findLastMessage()
             
             if let last = last, last.message.user == user {
                 // Double parsing issue: avoid duplications.
                 if last.message == message {
-                    if items.count > 1, let prev = findLastMessage(before: last.index), prev.message.user == user {
+                    if items.count > 1, let prev = items.findLastMessage(before: last.index), prev.message.user == user {
                         reloadRow = prev.index
                     }
                 } else {
@@ -177,8 +179,12 @@ extension ChannelPresenter {
                     }
                 }
                 
+                if message.isOwn {
+                    lastOwnMessage = message
+                }
+                
                 lastMessage = message
-                items.append(.message(message))
+                items.append(.message(message, []))
                 Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             }
             
@@ -197,8 +203,8 @@ extension ChannelPresenter {
             }
             
             if let index = items.lastIndex(whereMessageId: message.id) {
-                items[index] = .message(message)
-                return .itemUpdated(index, message, items)
+                items[index] = .message(message, items[index].messageReadUsers)
+                return .itemUpdated([index], [message], items)
             }
             
         case .reactionNew(let reaction, let message, _), .reactionDeleted(let reaction, let message, _):
@@ -217,9 +223,50 @@ extension ChannelPresenter {
                     }
                 }
                 
-                items[index] = .message(message)
-                return .itemUpdated(index, message, items)
+                items[index] = .message(message, items[index].messageReadUsers)
+                return .itemUpdated([index], [message], items)
             }
+            
+        case .messageRead(let messageRead):
+            guard channel.config.readEventsEnabled,
+                let currentUser = Client.shared.user,
+                messageRead.user != currentUser,
+                let lastOwnMessage = lastOwnMessage,
+                lastOwnMessage.created <= messageRead.lastReadDate,
+                let lastOwnMessageIndex = items.lastIndex(whereMessageId: lastOwnMessage.id) else {
+                return .none
+            }
+            
+            var rows: [Int] = []
+            var messages: [Message] = []
+            
+            // Reload old position.
+            if let messageId = messageReadsToMessageId[messageRead], let index = items.lastIndex(whereMessageId: messageId) {
+                if index == lastOwnMessageIndex {
+                    return .none
+                }
+                
+                if case let .message(message, readUsers) = items[index] {
+                    var readUsers = readUsers
+                    readUsers.removeAll { $0.id == messageRead.user.id }
+                    items[index] = .message(message, readUsers)
+                    rows.append(index)
+                    messages.append(message)
+                }
+            }
+            
+            // Reload new position.
+            if case let .message(_, readUsers) = items[lastOwnMessageIndex] {
+                var readUsers = readUsers
+                readUsers.append(messageRead.user)
+                items[lastOwnMessageIndex] = .message(lastOwnMessage, readUsers)
+                rows.append(lastOwnMessageIndex)
+                messages.append(lastOwnMessage)
+                messageReadsToMessageId[messageRead] = lastOwnMessage.id
+            }
+            
+            return .itemUpdated(rows, messages, items)
+            
         default:
             break
         }
@@ -235,28 +282,14 @@ extension ChannelPresenter {
         return message.parentId == parentMessage.id || message.id == parentMessage.id
     }
     
-    private func findLastMessage(before beforeIndex: Int = .max) -> (index: Int, message: Message)? {
-        guard !items.isEmpty else {
-            return nil
-        }
-        
-        for (index, item) in items.enumerated().reversed() where index < beforeIndex  {
-            if case .message(let message) = item {
-                return (index, message)
-            }
-        }
-        
-        return nil
-    }
-    
     private func parseEphemeralChanges(_ ephemeralType: EphemeralType) -> ViewChanges {
         if let message = ephemeralType.message {
             var items = self.items
             let row = items.count
-            items.append(.message(message))
+            items.append(.message(message, []))
             
             if ephemeralType.updated {
-                return .itemUpdated(row, message, items)
+                return .itemUpdated([row], [message], items)
             }
             
             return .itemAdded(row, nil, true, items)
@@ -276,27 +309,27 @@ extension ChannelPresenter {
             
         case let .reloaded(row, items):
             var items = items
-            items.append(.message(ephemeralMessage))
+            items.append(.message(ephemeralMessage, []))
             return .reloaded(row, items)
             
         case let .itemAdded(row, reloadRow, forceToScroll, items):
             var items = items
-            items.append(.message(ephemeralMessage))
+            items.append(.message(ephemeralMessage, []))
             return .itemAdded(row, reloadRow, forceToScroll, items)
             
         case let .itemUpdated(row, message, items):
             var items = items
-            items.append(.message(ephemeralMessage))
+            items.append(.message(ephemeralMessage, []))
             return .itemUpdated(row, message, items)
             
         case let .itemRemoved(row, items):
             var items = items
-            items.append(.message(ephemeralMessage))
+            items.append(.message(ephemeralMessage, []))
             return .itemRemoved(row, items)
             
         case let .itemMoved(fromRow, toRow, items):
             var items = items
-            items.append(.message(ephemeralMessage))
+            items.append(.message(ephemeralMessage, []))
             return .itemMoved(fromRow: fromRow, toRow: toRow, items)
         }
     }
@@ -317,10 +350,15 @@ extension ChannelPresenter {
         
         if channel.config.readEventsEnabled {
             unreadMessageRead = query.unreadMessageRead
+            
+            if !isNextPage {
+                messageReadsToMessageId = [:]
+            }
         }
         
         let currentCount = items.count
-        parse(query.messages, to: &items, isNextPage: isNextPage)
+        let messageReads = channel.config.readEventsEnabled ? query.messageReads : []
+        parse(query.messages, messageReads: messageReads, to: &items, isNextPage: isNextPage)
         self.items = items
         channel = query.channel
         members = query.members
@@ -345,7 +383,7 @@ extension ChannelPresenter {
         var items = isNextPage ? self.items : []
         
         if items.isEmpty {
-            items.append(.message(parentMessage))
+            items.append(.message(parentMessage, []))
             items.append(.status("Start of thread", nil, false))
         }
         
@@ -361,14 +399,21 @@ extension ChannelPresenter {
     }
     
     private func parse(_ messages: [Message],
+                       messageReads: [MessageRead] = [],
                        to items: inout [ChatItem],
                        startIndex: Int = 0,
                        isNextPage: Bool) {
+        guard let currentUser = Client.shared.user else {
+            return
+        }
+        
         var yesterdayStatusAdded = false
         var todayStatusAdded = false
         var index = startIndex
+        var ownMessagesIndexes: [Int] = []
         
-        messages.forEach { message in
+        // Add chat items for messages.
+        messages.enumerated().forEach { messageIndex, message in
             if showStatuses, !yesterdayStatusAdded, message.created.isYesterday {
                 yesterdayStatusAdded = true
                 items.insert(.status(ChannelPresenter.statusYesterdayTitle,
@@ -385,9 +430,47 @@ extension ChannelPresenter {
                 index += 1
             }
             
-            items.insert(.message(message), at: index)
-            index += 1
+            if message.isOwn {
+                lastOwnMessage = message
+                ownMessagesIndexes.append(index)
+            }
+            
             lastMessage = message
+            items.insert(.message(message, []), at: index)
+            index += 1
+        }
+        
+        // Add read users.
+        if !messageReads.isEmpty, !ownMessagesIndexes.isEmpty {
+            var messageReads = messageReads
+            
+            for ownMessagesIndex in ownMessagesIndexes.reversed() {
+                if let ownMessage = items[ownMessagesIndex].message {
+                    var leftMessageReads: [MessageRead] = []
+                    var readUsers: [User] = []
+                    
+                    messageReads.forEach { messageRead in
+                        if messageRead.user != currentUser {
+                            if messageRead.lastReadDate > ownMessage.created {
+                                readUsers.append(messageRead.user)
+                                messageReadsToMessageId[messageRead] = ownMessage.id
+                            } else {
+                                leftMessageReads.append(messageRead)
+                            }
+                        }
+                    }
+                    
+                    if !readUsers.isEmpty {
+                        items[ownMessagesIndex] = .message(ownMessage, readUsers)
+                    }
+                    
+                    messageReads = leftMessageReads
+                    
+                    if messageReads.isEmpty {
+                        break
+                    }
+                }
+            }
         }
         
         if isNextPage {

@@ -49,6 +49,7 @@ enum Event: Decodable {
         case unreadCount = "unread_count"
         case unreadChannels = "unread_channels"
         case totalUnreadCount = "total_unread_count"
+        case created = "created_at"
     }
     
     struct ResponseTypeError: Swift.Error {
@@ -57,7 +58,7 @@ enum Event: Decodable {
     
     case healthCheck(_ connectionId: String, User?)
     
-    case messageRead(user: User)
+    case messageRead(MessageRead)
     case messageNew(Message, User, _ unreadCount: Int, _ totalUnreadCount: Int)
     case messageDeleted(Message)
     case messageUpdated(Message)
@@ -104,7 +105,8 @@ enum Event: Decodable {
             let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
             self = .messageNew(message, user, unreadCount, totalUnreadCount)
         case .messageRead:
-            self = .messageRead(user: user)
+            let created = try container.decode(Date.self, forKey: .created)
+            self = .messageRead(MessageRead(user: user, lastReadDate: created))
         case .messageDeleted:
             let message = try container.decode(Message.self, forKey: .message)
             self = .messageDeleted(message)

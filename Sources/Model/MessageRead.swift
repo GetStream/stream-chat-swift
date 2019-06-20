@@ -17,3 +17,14 @@ public struct MessageRead: Decodable {
     let user: User
     let lastReadDate: Date
 }
+
+extension MessageRead: Equatable, Hashable {
+    
+    public static func == (lhs: MessageRead, rhs: MessageRead) -> Bool {
+        return lhs.user == rhs.user
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(user)
+    }
+}

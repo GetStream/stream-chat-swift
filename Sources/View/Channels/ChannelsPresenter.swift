@@ -103,7 +103,7 @@ extension ChannelsPresenter {
             if let index = items.firstIndex(whereChannelId: channelId),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseChanges(response: response)
-                return .itemUpdated(index, message, items)
+                return .itemUpdated([index], [message], items)
             }
         default:
             break
