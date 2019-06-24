@@ -56,6 +56,14 @@ extension String {
     }
 }
 
+extension String {
+    func replacingOccurrences(of characterSet: CharacterSet, with replacementString: String = "") -> String {
+        return components(separatedBy: characterSet).joined(separator: replacementString)
+    }
+}
+
+// MARK: - UnidoceScalar
+
 fileprivate extension UnicodeScalar {
     
     var isEmoji: Bool {

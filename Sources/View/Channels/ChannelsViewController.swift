@@ -101,7 +101,9 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             var text = lastMessage.isDeleted ? "Message was deleted" : lastMessage.textOrArgs
             
             if text.isEmpty, let first = lastMessage.attachments.first {
-                text = first.title
+                text = first.title.isEmpty ? ((first.url ?? first.imageURL)?.lastPathComponent) ?? "" : first.title
+            } else if !text.isEmpty{
+               text = text.replacingOccurrences(of: CharacterSet.markdown, with: "")
             }
             
             cell.update(message: text, isMeta: lastMessage.isDeleted, isUnread: channelPresenter.isUnread)
