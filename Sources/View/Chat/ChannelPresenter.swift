@@ -32,7 +32,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private(set) var lastMessage: Message?
     private(set) var lastOwnMessage: Message?
     private(set) var unreadMessageRead: MessageRead?
-    private(set) var typingUsers: [User] = []
+    private(set) var typingUsers: [TypingUser] = []
     private var messageReadsToMessageId: [MessageRead: String] = [:]
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
@@ -136,18 +136,32 @@ extension ChannelPresenter {
                 return .none
             }
             
-            if channel.config.typingEventsEnabled, !user.isCurrent, (typingUsers.isEmpty || !typingUsers.contains(user)) {
-                typingUsers.append(user)
-                return .footerUpdated(true)
+            let shouldUpdate = filterInvalidatedTypingUsers()
+            
+            if channel.config.typingEventsEnabled,
+                !user.isCurrent,
+                (typingUsers.isEmpty || !typingUsers.contains(.init(user: user))) {
+                typingUsers.append(.init(user: user))
+                return .footerUpdated
+            }
+            
+            if shouldUpdate {
+                return .footerUpdated
             }
         case .typingStop(let user):
             guard parentMessage == nil else {
                 return .none
             }
             
-            if channel.config.typingEventsEnabled, !user.isCurrent, let index = typingUsers.firstIndex(of: user) {
+            let shouldUpdate = filterInvalidatedTypingUsers()
+            
+            if channel.config.typingEventsEnabled, !user.isCurrent, let index = typingUsers.firstIndex(of: .init(user: user)) {
                 typingUsers.remove(at: index)
-                return .footerUpdated(true)
+                return .footerUpdated
+            }
+            
+            if shouldUpdate {
+                return .footerUpdated
             }
         case .messageNew(let message, let user, _, _):
             guard shouldMessageEventBeHandled(message) else {
@@ -509,17 +523,24 @@ extension ChannelPresenter {
 }
 
 extension ChannelPresenter {
+    
+    private func filterInvalidatedTypingUsers() -> Bool {
+        let count = typingUsers.count
+        typingUsers = typingUsers.filter { $0.started.timeIntervalSinceNow > -TypingUser.timeout }
+        return typingUsers.count != count
+    }
+    
     func typingUsersText() -> String? {
         guard !typingUsers.isEmpty else {
             return nil
         }
         
-        if typingUsers.count == 1, let user = typingUsers.first {
-            return "\(user.name) is typing..."
+        if typingUsers.count == 1, let typingUser = typingUsers.first {
+            return "\(typingUser.user.name) is typing..."
         } else if typingUsers.count == 2 {
-            return "\(typingUsers[0].name) and \(typingUsers[1].name) are typing..."
-        } else if let user = typingUsers.first {
-            return "\(user.name) and \(String(typingUsers.count - 1)) others are typing..."
+            return "\(typingUsers[0].user.name) and \(typingUsers[1].user.name) are typing..."
+        } else if let typingUser = typingUsers.first {
+            return "\(typingUser.user.name) and \(String(typingUsers.count - 1)) others are typing..."
         }
         
         return nil
@@ -695,4 +716,19 @@ public struct EventResponse: Decodable {
 
 public struct FileUploadResponse: Decodable {
     let file: URL
+}
+
+public struct TypingUser: Equatable, Hashable {
+    static let timeout: TimeInterval = 30
+    
+    let user: User
+    let started = Date()
+    
+    public static func == (lhs: TypingUser, rhs: TypingUser) -> Bool {
+        return lhs.user == rhs.user
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(user)
+    }
 }

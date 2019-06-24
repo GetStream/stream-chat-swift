@@ -196,8 +196,8 @@ extension ChatViewController {
         case let .itemRemoved(row, items):
             self.items = items
             tableView.deleteRows(at: [.row(row)], with: .none)
-        case let .footerUpdated(isUsersTyping):
-            updateFooterView(isUsersTyping)
+        case .footerUpdated:
+            updateFooterView()
         }
         
         updateTitleReplyCount()

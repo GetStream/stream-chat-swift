@@ -15,7 +15,7 @@ public enum ViewChanges: Equatable {
     case itemUpdated(_ rows: [Int], [Message], _ items: [ChatItem])
     case itemRemoved(_ row: Int, _ items: [ChatItem])
     case itemMoved(fromRow: Int, toRow: Int, _ items: [ChatItem])
-    case footerUpdated(_ isUsersTyping: Bool)
+    case footerUpdated
 }
 
 extension ViewChanges: CustomStringConvertible {
@@ -33,8 +33,8 @@ extension ViewChanges: CustomStringConvertible {
             return "<itemRemoved\(items.count): \(row)>"
         case let .itemMoved(fromRow, toRow, items):
             return "<itemMoved\(items.count): \(fromRow) -> \(toRow)>"
-        case .footerUpdated(let isUsersTyping):
-            return "<footerUpdated: typing=\(isUsersTyping)>"
+        case .footerUpdated:
+            return "<footerUpdated>"
         }
     }
 }

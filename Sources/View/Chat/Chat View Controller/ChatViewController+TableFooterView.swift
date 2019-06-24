@@ -12,12 +12,12 @@ import UIKit
 
 extension ChatViewController {
     
-    func updateFooterView(_ isUsersTyping: Bool) {
+    func updateFooterView() {
         guard let footerView = tableView.tableFooterView as? ChatFooterView else {
             return
         }
         
-        guard let presenter = channelPresenter, !presenter.typingUsers.isEmpty, let user = presenter.typingUsers.first else {
+        guard let presenter = channelPresenter, !presenter.typingUsers.isEmpty, let user = presenter.typingUsers.first?.user else {
             footerView.isHidden = true
             return
         }
@@ -25,6 +25,6 @@ extension ChatViewController {
         footerView.isHidden = false
         footerView.textLabel.text = presenter.typingUsersText()
         footerView.avatarView.update(with: user.avatarURL, name: user.name, baseColor: style.incomingMessage.chatBackgroundColor)
-        footerView.hide(after: 30)
+        footerView.hide(after: TypingUser.timeout)
     }
 }
