@@ -29,16 +29,14 @@ extension ChatViewController {
         } else if message.isEphemeral {
             cell.update(message: message.args ?? "")
         } else {
-            var text = message.textOrArgs
-            
-            if !readUsers.isEmpty {
-                text = text.appending("\n😎 ").appending(readUsers.map({ $0.id }).joined(separator: ", "))
+            if !message.mentionedUsers.isEmpty {
+                cell.update(message: message.textOrArgs, mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
+            } else {
+                cell.update(message: message.textOrArgs)
             }
             
-            if !message.mentionedUsers.isEmpty {
-                cell.update(message: text, mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
-            } else {
-                cell.update(message: text)
+            if !isIncoming {
+                cell.readUsersView.update(readUsers: readUsers)
             }
             
             if presenter.canReply, message.replyCount > 0 {

@@ -14,7 +14,7 @@ extension CGRect {
         self.init(x: 0, y: 0, width: edge, height: edge)
     }
     
-    init(width: CGFloat, height: CGFloat) {
-        self.init(x: 0, y: 0, width: width, height: height)
+    init(width: CGFloat, height: CGFloat = 0) {
+        self.init(x: 0, y: 0, width: width, height: height > 0 ? height : width)
     }
 }

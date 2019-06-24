@@ -54,6 +54,10 @@ extension CGFloat {
     public static let messageTextPaddingWithAvatar: CGFloat = .messageEdgePadding + .messageAvatarSize + .messageInnerPadding
     public static let messageTextMaxWidth: CGFloat = UIScreen.main.bounds.width - 2 * .messageTextPaddingWithAvatar
     
+    public static let messageReadUsersAvatarBorderWidth: CGFloat = 1
+    public static let messageReadUsersAvatarCornerRadius: CGFloat = 10
+    public static let messageReadUsersSize: CGFloat = 2 * .messageReadUsersAvatarCornerRadius
+    
     public static let messageStatusLineWidth: CGFloat = 1
     public static let messageStatusSpacing: CGFloat = 26
     

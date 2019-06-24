@@ -102,6 +102,7 @@
 		8ABD997022B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD996F22B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift */; };
 		8ABD997222B8E01B00929D99 /* CharacterSet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */; };
 		8ABD997422BA2F1F00929D99 /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD997322BA2F1F00929D99 /* UIDevice+Extensions.swift */; };
+		8ABDF5EB22BD573900A031B9 /* ReadUsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABDF5EA22BD573900A031B9 /* ReadUsersView.swift */; };
 		8ABE5FDA22A67C92004F128C /* UIViewController+DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */; };
 		8ABE5FDC22A67F3C004F128C /* RxDocumentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */; };
 		8ABE5FDF22A6814F004F128C /* String+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDE22A6814F004F128C /* String+FileType.swift */; };
@@ -231,6 +232,7 @@
 		8ABD996F22B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+EnrichMessage.swift"; sourceTree = "<group>"; };
 		8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CharacterSet+Extensions.swift"; sourceTree = "<group>"; };
 		8ABD997322BA2F1F00929D99 /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
+		8ABDF5EA22BD573900A031B9 /* ReadUsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadUsersView.swift; sourceTree = "<group>"; };
 		8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DocumentPicker.swift"; sourceTree = "<group>"; };
 		8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxDocumentPickerViewController.swift; sourceTree = "<group>"; };
 		8ABE5FDE22A6814F004F128C /* String+FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FileType.swift"; sourceTree = "<group>"; };
@@ -373,6 +375,7 @@
 				8ABD996F22B8DBCF00929D99 /* MessageTableViewCell+EnrichMessage.swift */,
 				8A4FE7B8227C41EA00E47D4C /* MessageTableViewCell+Attachments.swift */,
 				8AABC2972260D9450064CB20 /* StatusTableViewCell.swift */,
+				8ABDF5EA22BD573900A031B9 /* ReadUsersView.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -881,6 +884,7 @@
 				8A9FA7CA22A51C83004A5678 /* MultipartFormData.swift in Sources */,
 				8A9955C322899CD0005D8148 /* ComposerCommandView.swift in Sources */,
 				8A4FE7C5227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift in Sources */,
+				8ABDF5EB22BD573900A031B9 /* ReadUsersView.swift in Sources */,
 				8A1A9410225CD17300060ACC /* ReactionViewStyle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

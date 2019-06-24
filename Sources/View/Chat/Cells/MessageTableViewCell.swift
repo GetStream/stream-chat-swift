@@ -65,7 +65,11 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    let replyCountButton: UIButton = UIButton(type: .custom)
+    let replyCountButton = UIButton(type: .custom)
+    
+    let readUsersView = ReadUsersView()
+    var readUsersRightConstraint: Constraint?
+    var readUsersBottomConstraint: Constraint?
     
     private(set) lazy var messageStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [messageContainerView,
@@ -94,7 +98,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     
     lazy var attachmentPreviews: [AttachmentPreviewProtocol] = []
     
-    private let bottomPaddingView: UIView = {
+    let bottomPaddingView: UIView = {
         let view = UIView(frame: .zero)
         view.isUserInteractionEnabled = false
         view.snp.makeConstraints { $0.height.equalTo(CGFloat.messageBottomPadding).priority(999) }
@@ -110,6 +114,14 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             if oldValue == nil, style != nil {
                 setup()
             }
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutIfNeeded()
+        
+        if !readUsersView.isHidden {
+            DispatchQueue.main.async(execute: updateReadUsersView)
         }
     }
     
@@ -207,6 +219,22 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         
         infoLabel.backgroundColor = backgroundColor
         
+        // Read Users.
+        readUsersView.isHidden = true
+        
+        if style.alignment == .right {
+            readUsersView.backgroundColor = backgroundColor
+            readUsersView.countLabel.textColor = style.infoColor
+            readUsersView.countLabel.font = style.infoFont
+            contentView.addSubview(readUsersView)
+            
+            readUsersView.snp.makeConstraints { make in
+                self.readUsersRightConstraint = make.right.equalTo(messageStackView).constraint
+                self.readUsersBottomConstraint = make.bottom.equalTo(messageStackView).constraint
+                make.height.equalTo(CGFloat.messageReadUsersSize)
+            }
+        }
+        
         // Reactions.
         contentView.addSubview(reactionsContainer)
         contentView.addSubview(reactionsOverlayView)
@@ -296,6 +324,10 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageLabel.textColor = style?.textColor
         messageLabel.backgroundColor = style?.backgroundColor
         
+        readUsersView.reset()
+        readUsersRightConstraint?.update(offset: 0)
+        readUsersBottomConstraint?.update(offset: 0)
+        
         paddingType = .regular
         
         reactionsContainer.isHidden = true
@@ -309,6 +341,42 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         disposeBag = DisposeBag()
         attachmentPreviews.forEach { $0.removeFromSuperview() }
         attachmentPreviews = []
+    }
+    
+    private func updateReadUsersView() {
+        guard !readUsersView.isHidden else {
+            return
+        }
+        
+        var visibleViews = messageStackView.arrangedSubviews.filter { $0.isHidden == false }
+        
+        guard visibleViews.count > 0 else {
+            return
+        }
+        
+        var bottom: CGFloat = 0
+        
+        if visibleViews.last == bottomPaddingView {
+            visibleViews.removeLast()
+        }
+        
+        if visibleViews.last == nameAndDateStackView {
+            bottom = bottomPaddingView.frame.height + nameAndDateStackView.frame.height + 2 * messageStackView.spacing
+            visibleViews.removeLast()
+        }
+        
+        if visibleViews.last == replyCountButton {
+            bottom += replyCountButton.frame.height + messageStackView.spacing
+            visibleViews.removeLast()
+        }
+        
+        if let view = visibleViews.last {
+            readUsersRightConstraint?.update(offset: -(view.frame.width + messageStackView.spacing))
+        }
+        
+        if bottom > 0 {
+            readUsersBottomConstraint?.update(offset: -bottom)
+        }
     }
 }
 
