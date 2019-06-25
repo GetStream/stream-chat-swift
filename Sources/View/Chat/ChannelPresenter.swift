@@ -31,14 +31,27 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     private(set) var lastMessage: Message?
     private(set) var lastOwnMessage: Message?
-    private(set) var unreadMessageRead: MessageRead?
+    
+    private(set) var unreadMessageRead: MessageRead? {
+        didSet {
+            if unreadMessageRead == nil {
+                unreadCountMvar.set(0)
+            }
+        }
+    }
+    
     private(set) var typingUsers: [TypingUser] = []
     private var messageReadsToMessageId: [MessageRead: String] = [:]
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
+    private let unreadCountMvar = MVar(0)
     
-    var isUnread: Bool {
+    public var isUnread: Bool {
         return channel.config.readEventsEnabled && unreadMessageRead != nil
+    }
+    
+    public var unreadCount: Int {
+        return channel.config.readEventsEnabled ? unreadCountMvar.get(defaultValue: 0) : 0
     }
     
     public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
@@ -191,6 +204,8 @@ extension ChannelPresenter {
                     } else {
                         unreadMessageRead = MessageRead(user: message.user, lastReadDate: message.updated)
                     }
+                    
+                    unreadCountMvar += 1
                 }
                 
                 if message.isOwn {
@@ -377,6 +392,10 @@ extension ChannelPresenter {
         channel = query.channel
         members = query.members
         
+        if channel.config.readEventsEnabled {
+            updateUnreadCount()
+        }
+        
         if self.items.count > 0 {
             if isNextPage {
                 return .reloaded(max(items.count - currentCount - 1, 0), items)
@@ -512,6 +531,27 @@ extension ChannelPresenter {
             firstIndex != lastIndex {
             items.remove(at: lastIndex)
         }
+    }
+    
+    private func updateUnreadCount() {
+        guard let unreadMessageRead = self.unreadMessageRead else {
+            unreadCountMvar.set(0)
+            return
+        }
+        
+        var count = 0
+        
+        for item in items.reversed() {
+            if let message = item.message {
+                if message.created > unreadMessageRead.lastReadDate {
+                    count += 1
+                } else {
+                    break
+                }
+            }
+        }
+        
+        unreadCountMvar.set(count)
     }
 }
 
@@ -668,6 +708,7 @@ extension ChannelPresenter {
             if let self = self {
                 if let error = result.error {
                     self.unreadMessageRead = oldUnreadMessageRead
+                    self.updateUnreadCount()
                     self.isReadSubject.onError(error)
                 } else {
                     self.unreadMessageRead = nil

@@ -10,9 +10,9 @@ import UIKit
 
 public final class ChannelTableViewCell: UITableViewCell, Reusable {
     
-    let avatarView: AvatarView = AvatarView(cornerRadius: 20)
+    public let avatarView: AvatarView = AvatarView(cornerRadius: 20)
     
-    let nameLabel: UILabel = {
+    public let nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatRegularBold
         return label
@@ -24,7 +24,14 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    let dateLabel: UILabel = {
+    public let dateLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = .chatSmall
+        label.textColor = .chatGray
+        return label
+    }()
+    
+    private let infoLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatSmall
         label.textColor = .chatGray
@@ -55,20 +62,25 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         nameLabel.font = style.nameFont
         nameLabel.textColor = style.nameColor
         nameLabel.backgroundColor = backgroundColor
+
+        messageLabel.font = style.messageFont
+        messageLabel.textColor = style.messageColor
+        messageLabel.backgroundColor = backgroundColor
         
         dateLabel.font = style.dateFont
         dateLabel.textColor = style.dateColor
         dateLabel.backgroundColor = backgroundColor
         
-        messageLabel.font = style.messageFont
-        messageLabel.textColor = style.messageColor
-        messageLabel.backgroundColor = backgroundColor
+        infoLabel.font = style.dateFont
+        infoLabel.textColor = style.dateColor
+        infoLabel.backgroundColor = backgroundColor
         
         contentView.addSubview(avatarView)
         contentView.addSubview(nameLabel)
-        contentView.addSubview(dateLabel)
         contentView.addSubview(messageLabel)
-        
+        contentView.addSubview(dateLabel)
+        contentView.addSubview(infoLabel)
+
         avatarView.backgroundColor = backgroundColor
         avatarView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(CGFloat.messageInnerPadding).priority(999)
@@ -87,6 +99,11 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
             make.centerY.equalTo(nameLabel.snp.centerY)
         }
         
+        infoLabel.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            make.centerY.equalTo(messageLabel.snp.centerY)
+        }
+        
         dateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         messageLabel.snp.makeConstraints { make in
@@ -100,9 +117,10 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         nameLabel.text = nil
         dateLabel.text = nil
         messageLabel.text = nil
+        infoLabel.text = nil
     }
     
-    func update(message: String, isMeta: Bool, isUnread: Bool) {
+    public func update(message: String, isMeta: Bool, isUnread: Bool) {
         guard let style = style else {
             return
         }
@@ -123,5 +141,21 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         }
         
         messageLabel.text = message
+    }
+    
+    public func update(info: String?, bold: Bool = false) {
+        guard let style = style, let info = info else {
+            return
+        }
+        
+        if bold {
+            infoLabel.font = style.messageUnreadFont
+            infoLabel.textColor = style.messageUnreadColor
+        } else {
+            infoLabel.font = style.dateFont
+            infoLabel.textColor = style.dateColor
+        }
+        
+        infoLabel.text = info
     }
 }

@@ -48,6 +48,7 @@
 		8A5D1FEB2288365B007AB76C /* ComposerHelperContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */; };
 		8A5D1FED22899421007AB76C /* ChatViewController+Composer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1FEC22899421007AB76C /* ChatViewController+Composer.swift */; };
 		8A6EC39C22C21F65008AB754 /* Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6EC39B22C21F65008AB754 /* Sorting.swift */; };
+		8A6EC39E22C265CB008AB754 /* MVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6EC39D22C265CB008AB754 /* MVar.swift */; };
 		8A79480E22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A79480D22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift */; };
 		8A889144225219E500DD6539 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889143225219E500DD6539 /* Client.swift */; };
 		8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */; };
@@ -180,6 +181,7 @@
 		8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerHelperContainerView.swift; sourceTree = "<group>"; };
 		8A5D1FEC22899421007AB76C /* ChatViewController+Composer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Composer.swift"; sourceTree = "<group>"; };
 		8A6EC39B22C21F65008AB754 /* Sorting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sorting.swift; sourceTree = "<group>"; };
+		8A6EC39D22C265CB008AB754 /* MVar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MVar.swift; sourceTree = "<group>"; };
 		8A79480D22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientURLSessionTaskDelegate.swift; sourceTree = "<group>"; };
 		8A889143225219E500DD6539 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GetStreamChat.xcassets; sourceTree = "<group>"; };
@@ -458,6 +460,7 @@
 				8ABE5FE822A7B665004F128C /* URL+Media.swift */,
 				8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */,
 				8AFA806F22BA7CDD0036F450 /* Bundle+Extensions.swift */,
+				8A6EC39D22C265CB008AB754 /* MVar.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -850,6 +853,7 @@
 				8A0E345222980933008D825E /* TableView.swift in Sources */,
 				8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */,
 				8A2CC95622842AED004CF12D /* ChatViewController+Attachments.swift in Sources */,
+				8A6EC39E22C265CB008AB754 /* MVar.swift in Sources */,
 				8A0755EA228DB5C500A3E4AB /* ViewChanges.swift in Sources */,
 				8AABC29A2262426A0064CB20 /* ChatItem.swift in Sources */,
 				8A88914A2252309900DD6539 /* BaseURL.swift in Sources */,

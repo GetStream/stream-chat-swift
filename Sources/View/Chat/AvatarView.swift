@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Nuke
 
-final class AvatarView: UIImageView, Reusable {
+public final class AvatarView: UIImageView, Reusable {
     
     private var imageTask: ImageTask?
     
@@ -22,7 +22,7 @@ final class AvatarView: UIImageView, Reusable {
         return label
     }()
     
-    init(cornerRadius: CGFloat = .messageAvatarRadius) {
+    public init(cornerRadius: CGFloat = .messageAvatarRadius) {
         super.init(frame: .zero)
         setup(cornerRadius: cornerRadius)
     }
