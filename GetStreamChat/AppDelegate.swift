@@ -95,7 +95,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 let channelsViewController = navigationViewController.viewControllers.first as? ChannelsViewController,
                 let channelIndex = channelsViewController.channelsPresenter.items.firstIndex(whereChannelId: channelId) {
                 channelsViewController.navigationController?.viewControllers = [channelsViewController]
-                channelsViewController.showChatViewController(at: channelIndex)
+                channelsViewController.show(chatViewController: channelsViewController.createChatViewController(at: channelIndex))
             }
         }
     }

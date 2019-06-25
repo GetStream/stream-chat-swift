@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-public final class ChannelsViewController: UIViewController {
+open class ChannelsViewController: UIViewController {
     
     let disposeBag = DisposeBag()
     public var style = ChatViewStyle()
@@ -32,7 +32,7 @@ public final class ChannelsViewController: UIViewController {
         return tableView
     }()
     
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         hideBackButtonTitle()
         view.backgroundColor = style.channel.backgroundColor
@@ -76,8 +76,12 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard indexPath.row < items.count, let channelPresenter = items[indexPath.row].channelPresenter else {
-            if indexPath.row < items.count, case .loading(let inProgress) = items[indexPath.row] {
+        guard indexPath.row < items.count else {
+            return .unused
+        }
+        
+        guard let channelPresenter = items[indexPath.row].channelPresenter else {
+            if case .loading(let inProgress) = items[indexPath.row] {
                 if !inProgress {
                     items[indexPath.row] = .loading(true)
                     channelsPresenter.loadNext()
@@ -89,6 +93,20 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             return .unused
         }
         
+        return channelCell(at: indexPath, channelPresenter: channelPresenter)
+    }
+    
+    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row < items.count, items[indexPath.row].isLoading {
+            willDisplayLoading(at: indexPath, loadingChatItem: items[indexPath.row])
+        }
+    }
+}
+
+// MARK: - Channel Cell
+
+extension ChannelsViewController {
+    open func channelCell(at indexPath: IndexPath, channelPresenter: ChannelPresenter) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(for: indexPath) as ChannelTableViewCell
         cell.style = style.channel
         cell.nameLabel.text = channelPresenter.channel.name
@@ -103,25 +121,51 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             if text.isEmpty, let first = lastMessage.attachments.first {
                 text = first.title.isEmpty ? ((first.url ?? first.imageURL)?.lastPathComponent) ?? "" : first.title
             } else if !text.isEmpty{
-               text = text.replacingOccurrences(of: CharacterSet.markdown, with: "")
+                text = text.replacingOccurrences(of: CharacterSet.markdown, with: "")
             }
             
             cell.update(message: text, isMeta: lastMessage.isDeleted, isUnread: channelPresenter.isUnread)
             cell.dateLabel.text = lastMessage.updated.relative
+            
         } else {
             cell.update(message: "No messages", isMeta: true, isUnread: false)
         }
         
         return cell
     }
+}
+
+// MARK: - Loading Cell
+
+extension ChannelsViewController {
     
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        showChatViewController(at: indexPath.row)
+    open func loadingCell(at indexPath: IndexPath, chatItem: ChatItem) -> UITableViewCell {
+        return chatItem.isLoading ? tableView.loadingCell(at: indexPath, backgroundColor: style.channel.backgroundColor) : .unused
     }
     
-    public func showChatViewController(at index: Int) {
-        guard index < items.count, let channelPresenter = items[index].channelPresenter else {
+    open func willDisplayLoading(at indexPath: IndexPath, loadingChatItem: ChatItem) {
+        guard case .loading(let inProgress) = loadingChatItem else {
             return
+        }
+        
+        if !inProgress {
+            items[indexPath.row] = .loading(true)
+            channelsPresenter.loadNext()
+        }
+    }
+}
+
+// MARK: - Show Chat
+
+extension ChannelsViewController {
+    
+    open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        show(chatViewController: createChatViewController(at: indexPath.row))
+    }
+    
+    open func createChatViewController(at row: Int) -> ChatViewController? {
+        guard row < items.count, let channelPresenter = items[row].channelPresenter else {
+            return nil
         }
         
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
@@ -131,8 +175,16 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         if channelPresenter.channel.config.readEventsEnabled {
             channelPresenter.isReadUpdates.asObservable()
                 .takeUntil(chatViewController.rx.deallocated)
-                .subscribe(onNext: { [weak self] in self?.tableView.reloadRows(at: [.row(index)], with: .none) })
+                .subscribe(onNext: { [weak self] in self?.tableView.reloadRows(at: [.row(row)], with: .none) })
                 .disposed(by: disposeBag)
+        }
+        
+        return chatViewController
+    }
+    
+    open func show(chatViewController: ChatViewController?) {
+        guard let chatViewController = chatViewController else {
+            return
         }
         
         chatViewController.hidesBottomBarWhenPushed = true
