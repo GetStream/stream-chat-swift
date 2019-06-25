@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = "GetStreamChat"
-  spec.version      = "0.1.7"
+  spec.version      = "0.1.8"
   spec.summary      = "Stream iOS Chat"
   
   spec.description  = <<-DESC
