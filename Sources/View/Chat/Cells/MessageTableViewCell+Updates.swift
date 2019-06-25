@@ -95,14 +95,27 @@ extension MessageTableViewCell {
     }
     
     public func update(reactionCounts: ReactionCounts?, action: @escaping ReactionAction) {
-        guard let reactionCounts = reactionCounts, !reactionCounts.counts.isEmpty else {
+        guard let reactionCounts = reactionCounts,
+            !reactionCounts.counts.isEmpty,
+            let anchorView = messageStackView.arrangedSubviews.first(where: { !$0.isHidden }),
+            let style = style?.reactionViewStyle else {
             return
         }
         
         reactionsContainer.isHidden = false
         reactionsOverlayView.isHidden = false
         reactionsLabel.text = reactionCounts.string
-        updateConstraintsForReactions()
+        messageStackViewTopConstraint?.update(offset: CGFloat.messageSpacing + .reactionsHeight + .reactionsToMessageOffset)
+        
+        reactionsTailImage.snp.makeConstraints { make in
+            let tailOffset: CGFloat = .reactionsToMessageOffset + style.tailCornerRadius - style.tailImage.size.width - 2
+            
+            if style.alignment == .left {
+                self.reactionsTailImageLeftConstraint = make.left.equalTo(anchorView.snp.right).offset(tailOffset).constraint
+            } else {
+                self.reactionsTailImageRightConstraint = make.right.equalTo(anchorView.snp.left).offset(-tailOffset).constraint
+            }
+        }
         
         reactionsOverlayView.rx.tapGesture()
             .when(.recognized)

@@ -26,7 +26,9 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     
     let reactionsContainer: UIImageView = UIImageView(frame: .zero)
     let reactionsOverlayView = UIView(frame: .zero)
-    private let reactionsTailImage = UIImageView(frame: .zero)
+    let reactionsTailImage = UIImageView(frame: .zero)
+    var reactionsTailImageLeftConstraint: Constraint?
+    var reactionsTailImageRightConstraint: Constraint?
     
     let reactionsLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -82,7 +84,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return stackView
     }()
     
-    private var messageStackViewTopConstraint: Constraint?
+    var messageStackViewTopConstraint: Constraint?
     
     let messageContainerView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
@@ -257,12 +259,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         reactionsTailImage.snp.makeConstraints { make in
             make.top.equalTo(reactionsContainer.snp.bottom)
             make.size.equalTo(style.reactionViewStyle.tailImage.size)
-            
-            if style.alignment == .left {
-                make.left.equalTo(messageLabel.snp.right).offset(CGFloat.reactionsToMessageOffset - .messageInnerPadding)
-            } else {
-                make.right.equalTo(messageLabel.snp.left).offset(CGFloat.messageInnerPadding - .reactionsToMessageOffset)
-            }
         }
         
         reactionsLabel.font = style.reactionViewStyle.font
@@ -270,8 +266,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         
         reactionsLabel.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
-            make.left.equalToSuperview().offset(CGFloat.reactionsTextPagging)
-            make.right.equalToSuperview().offset(-CGFloat.reactionsTextPagging)
+            make.left.equalToSuperview().offset(CGFloat.reactionsTextPadding)
+            make.right.equalToSuperview().offset(-CGFloat.reactionsTextPadding)
         }
         
         reactionsOverlayView.snp.makeConstraints { make in
@@ -280,10 +276,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             make.right.equalTo(reactionsContainer).offset(CGFloat.messageSpacing)
             make.bottom.equalTo(reactionsTailImage)
         }
-    }
-    
-    func updateConstraintsForReactions() {
-        messageStackViewTopConstraint?.update(offset: CGFloat.messageSpacing + .reactionsHeight + .reactionsToMessageOffset)
     }
     
     public func reset() {
@@ -322,6 +314,10 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         reactionsContainer.isHidden = true
         reactionsOverlayView.isHidden = true
         reactionsLabel.text = nil
+        reactionsTailImageLeftConstraint?.deactivate()
+        reactionsTailImageLeftConstraint = nil
+        reactionsTailImageRightConstraint?.deactivate()
+        reactionsTailImageRightConstraint = nil
         
         free()
     }

@@ -15,6 +15,9 @@ public struct ReactionViewStyle: Hashable {
     public let textColor: UIColor
     public let backgroundColor: UIColor
     public let chatBackgroundColor: UIColor
+    public let cornerRadius: CGFloat
+    public let tailCornerRadius: CGFloat
+    public let tailMessageCornerRadius: CGFloat
     public private(set) var tailImage: UIImage
 
     init(alignment: MessageViewStyle.Alignment = .left,
@@ -23,14 +26,16 @@ public struct ReactionViewStyle: Hashable {
          backgroundColor: UIColor = .chatDarkGray,
          chatBackgroundColor: UIColor = .white,
          cornerRadius: CGFloat = .reactionsCornerRadius,
-         messageCornerRadius: CGFloat = .messageCornerRadius) {
+         tailMessageCornerRadius: CGFloat = .messageCornerRadius) {
         self.alignment = alignment
         self.font = font
         self.textColor = textColor
         self.backgroundColor = backgroundColor
         self.chatBackgroundColor = chatBackgroundColor
-        
-        tailImage = .renderTailImage(smallRadius: round(cornerRadius * 0.8), bigRadius: messageCornerRadius, alignment: alignment)
+        self.cornerRadius = cornerRadius
+        self.tailCornerRadius = cornerRadius * 0.8
+        self.tailMessageCornerRadius = tailMessageCornerRadius
+        tailImage = .renderTailImage(smallRadius: tailCornerRadius, bigRadius: tailMessageCornerRadius, alignment: alignment)
     }
     
     public func hash(into hasher: inout Hasher) {
