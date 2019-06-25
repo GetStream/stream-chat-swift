@@ -117,14 +117,6 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
     }
     
-    override func layoutSubviews() {
-        super.layoutIfNeeded()
-        
-        if !readUsersView.isHidden {
-            DispatchQueue.main.async(execute: updateReadUsersView)
-        }
-    }
-    
     override func prepareForReuse() {
         reset()
         super.prepareForReuse()
@@ -227,12 +219,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
             readUsersView.countLabel.textColor = style.infoColor
             readUsersView.countLabel.font = style.infoFont
             contentView.addSubview(readUsersView)
-            
-            readUsersView.snp.makeConstraints { make in
-                self.readUsersRightConstraint = make.right.equalTo(messageStackView).constraint
-                self.readUsersBottomConstraint = make.bottom.equalTo(messageStackView).constraint
-                make.height.equalTo(CGFloat.messageReadUsersSize)
-            }
+            readUsersView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageReadUsersSize) }
         }
         
         // Reactions.
@@ -325,8 +312,10 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         messageLabel.backgroundColor = style?.backgroundColor
         
         readUsersView.reset()
-        readUsersRightConstraint?.update(offset: 0)
-        readUsersBottomConstraint?.update(offset: 0)
+        readUsersRightConstraint?.deactivate()
+        readUsersRightConstraint = nil
+        readUsersBottomConstraint?.deactivate()
+        readUsersBottomConstraint = nil
         
         paddingType = .regular
         
@@ -343,39 +332,30 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         attachmentPreviews = []
     }
     
-    private func updateReadUsersView() {
-        guard !readUsersView.isHidden else {
-            return
-        }
-        
+    func updateReadUsersViewConstraints() {
         var visibleViews = messageStackView.arrangedSubviews.filter { $0.isHidden == false }
         
         guard visibleViews.count > 0 else {
             return
         }
         
-        var bottom: CGFloat = 0
-        
         if visibleViews.last == bottomPaddingView {
             visibleViews.removeLast()
         }
         
         if visibleViews.last == nameAndDateStackView {
-            bottom = bottomPaddingView.frame.height + nameAndDateStackView.frame.height + 2 * messageStackView.spacing
             visibleViews.removeLast()
         }
         
         if visibleViews.last == replyCountButton {
-            bottom += replyCountButton.frame.height + messageStackView.spacing
             visibleViews.removeLast()
         }
         
         if let view = visibleViews.last {
-            readUsersRightConstraint?.update(offset: -(view.frame.width + messageStackView.spacing))
-        }
-        
-        if bottom > 0 {
-            readUsersBottomConstraint?.update(offset: -bottom)
+            readUsersView.snp.makeConstraints { make in
+                self.readUsersRightConstraint = make.right.equalTo(view.snp.left).offset(-CGFloat.messageSpacing).constraint
+                self.readUsersBottomConstraint = make.bottom.equalTo(view).constraint
+            }
         }
     }
 }

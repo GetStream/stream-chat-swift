@@ -100,8 +100,16 @@ extension ChatViewController {
             cell.updateBackground(isContinueMessage: !message.isEphemeral)
         }
         
-        if !message.isEphemeral, presenter.channel.config.reactionsEnabled {
+        guard !message.isEphemeral else {
+            return cell
+        }
+        
+        if presenter.channel.config.reactionsEnabled {
             update(cell: cell, forReactionsIn: message)
+        }
+        
+        if !cell.readUsersView.isHidden {
+            cell.updateReadUsersViewConstraints()
         }
         
         return cell
