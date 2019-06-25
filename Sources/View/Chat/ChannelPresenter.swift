@@ -29,14 +29,17 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     var members: [Member] = []
     private var startedTyping = false
     
-    private(set) var lastMessage: Message?
-    private(set) var lastOwnMessage: Message?
+    private let lastMessageMVar = MVar<Message>()
     
-    private(set) var unreadMessageRead: MessageRead? {
-        didSet {
-            if unreadMessageRead == nil {
-                unreadCountMvar.set(0)
-            }
+    public var lastMessage: Message? {
+        return lastMessageMVar.get()
+    }
+    
+    private var lastOwnMessage: Message?
+    
+    private lazy var unreadMessageReadMVar = MVar<MessageRead>() { [weak self] in
+        if $0 == nil {
+            self?.unreadCountMVar.set(0)
         }
     }
     
@@ -44,14 +47,14 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private var messageReadsToMessageId: [MessageRead: String] = [:]
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
-    private let unreadCountMvar = MVar(0)
+    private let unreadCountMVar = MVar(0)
     
     public var isUnread: Bool {
-        return channel.config.readEventsEnabled && unreadMessageRead != nil
+        return channel.config.readEventsEnabled && unreadMessageReadMVar.get() != nil
     }
     
     public var unreadCount: Int {
-        return channel.config.readEventsEnabled ? unreadCountMvar.get(defaultValue: 0) : 0
+        return channel.config.readEventsEnabled ? unreadCountMVar.get(defaultValue: 0) : 0
     }
     
     public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
@@ -199,20 +202,20 @@ extension ChannelPresenter {
                 nextRow = last.index
             } else {
                 if channel.config.readEventsEnabled, let currentUser = Client.shared.user, currentUser != message.user {
-                    if let lastMessage = lastMessage {
-                        unreadMessageRead = MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated)
+                    if let lastMessage = lastMessageMVar.get() {
+                        unreadMessageReadMVar.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
                     } else {
-                        unreadMessageRead = MessageRead(user: message.user, lastReadDate: message.updated)
+                        unreadMessageReadMVar.set(MessageRead(user: message.user, lastReadDate: message.updated))
                     }
                     
-                    unreadCountMvar += 1
+                    unreadCountMVar += 1
                 }
                 
                 if message.isOwn {
                     lastOwnMessage = message
                 }
                 
-                lastMessage = message
+                lastMessageMVar.set(message)
                 items.append(.message(message, []))
                 Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             }
@@ -378,7 +381,7 @@ extension ChannelPresenter {
         }
         
         if channel.config.readEventsEnabled {
-            unreadMessageRead = query.unreadMessageRead
+            unreadMessageReadMVar.set(query.unreadMessageRead)
             
             if !isNextPage {
                 messageReadsToMessageId = [:]
@@ -468,7 +471,7 @@ extension ChannelPresenter {
                 ownMessagesIndexes.append(index)
             }
             
-            lastMessage = message
+            lastMessageMVar.set(message)
             items.insert(.message(message, []), at: index)
             index += 1
         }
@@ -534,8 +537,8 @@ extension ChannelPresenter {
     }
     
     private func updateUnreadCount() {
-        guard let unreadMessageRead = self.unreadMessageRead else {
-            unreadCountMvar.set(0)
+        guard let unreadMessageRead = unreadMessageReadMVar.get() else {
+            unreadCountMVar.set(0)
             return
         }
         
@@ -551,7 +554,7 @@ extension ChannelPresenter {
             }
         }
         
-        unreadCountMvar.set(count)
+        unreadCountMVar.set(count)
     }
 }
 
@@ -690,15 +693,16 @@ extension ChannelPresenter {
             return
         }
         
-        Client.shared.logger?.log("🎫", "Send Read. Unread from \(unreadMessageRead?.lastReadDate.description ?? "false")")
-        let oldUnreadMessageRead = unreadMessageRead
-        unreadMessageRead = nil
+        let oldUnreadMessageRead = unreadMessageReadMVar.get()
+        Client.shared.logger?.log("🎫", "Send Read. Unread from \(oldUnreadMessageRead?.lastReadDate.description ?? "false")")
+        unreadMessageReadMVar.set(nil)
         
         DispatchQueue.main.async { [weak self] in
             if UIApplication.shared.appState == .active {
                 self?.sendRead(oldUnreadMessageRead: oldUnreadMessageRead)
             } else {
-                self?.unreadMessageRead = oldUnreadMessageRead
+                self?.unreadMessageReadMVar.set(oldUnreadMessageRead)
+                self?.updateUnreadCount()
             }
         }
     }
@@ -707,11 +711,11 @@ extension ChannelPresenter {
         let emptyEventCompletion: Client.Completion<EventResponse> = { [weak self] result in
             if let self = self {
                 if let error = result.error {
-                    self.unreadMessageRead = oldUnreadMessageRead
+                    self.unreadMessageReadMVar.set(oldUnreadMessageRead)
                     self.updateUnreadCount()
                     self.isReadSubject.onError(error)
                 } else {
-                    self.unreadMessageRead = nil
+                    self.unreadMessageReadMVar.set(nil)
                     Client.shared.logger?.log("🎫", "Read done.")
                     self.isReadSubject.onNext(())
                 }

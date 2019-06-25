@@ -9,15 +9,22 @@
 import Foundation
 
 final class MVar<T> {
-    private let queue = DispatchQueue(label: "io.getstream.Chat.MVar", qos: .utility, attributes: .concurrent)
-    private var value: T
+    typealias DidSetCallback = (T?) -> Void
     
-    init(_ value: T) {
+    private let queue = DispatchQueue(label: "io.getstream.Chat.MVar", qos: .utility, attributes: .concurrent)
+    private var value: T?
+    private var didSet: DidSetCallback?
+    
+    init(_ value: T? = nil, _ didSet: DidSetCallback? = nil) {
         self.value = value
+        self.didSet = didSet
     }
     
-    func set(_ newValue: T) {
-        queue.async(flags: .barrier) { self.value = newValue }
+    func set(_ newValue: T?) {
+        queue.async(flags: .barrier) {
+            self.value = newValue
+            self.didSet?(newValue)
+        }
     }
     
     func get() -> T? {
