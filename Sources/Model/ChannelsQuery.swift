@@ -20,8 +20,8 @@ public struct ChannelsQuery: Encodable {
         case messageLimit = "message_limit"
     }
     
-    let filter: Filter
-    let sort: [Sorting]
+    let filter: Filter<Channel.CodingKeys>
+    let sort: [Sorting<Channel.CodingKeys>]
     let user: User
     let pagination: Pagination
     let messageLimit = Pagination.messagesPageSize
@@ -39,50 +39,5 @@ public struct ChannelsQuery: Encodable {
         try container.encode(presence, forKey: .presence)
         try container.encode(messageLimit.limit, forKey: .messageLimit)
         try pagination.encode(to: encoder)
-    }
-}
-
-public extension ChannelsQuery {
-    enum Filter: Encodable {
-        private enum CodingKeys: String, CodingKey {
-            case type
-        }
-        
-        case type(ChannelType)
-        case custom(Encodable)
-        
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            
-            switch self {
-            case .type(let channelType):
-                try container.encode(channelType, forKey: .type)
-            case .custom(let encodable):
-                try encodable.encode(to: encoder)
-            }
-        }
-    }
-    
-    enum Sorting: Encodable {
-        private enum CodingKeys: String, CodingKey {
-            case field
-            case direction
-        }
-        
-        case lastMessage(isAscending: Bool)
-        case custom(field: String, isAscending: Bool)
-        
-        public func encode(to encoder: Encoder) throws {
-            var container = encoder.container(keyedBy: CodingKeys.self)
-            
-            switch self {
-            case .lastMessage(let isAscending):
-                try container.encode("last_message_at", forKey: .field)
-                try container.encode(isAscending ? 1 : -1, forKey: .direction)
-            case let .custom(field, isAscending):
-                try container.encode(field, forKey: .field)
-                try container.encode(isAscending ? 1 : -1, forKey: .direction)
-            }
-        }
     }
 }

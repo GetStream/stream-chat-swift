@@ -47,6 +47,7 @@
 		8A4FE7C5227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */; };
 		8A5D1FEB2288365B007AB76C /* ComposerHelperContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */; };
 		8A5D1FED22899421007AB76C /* ChatViewController+Composer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D1FEC22899421007AB76C /* ChatViewController+Composer.swift */; };
+		8A6EC39C22C21F65008AB754 /* Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6EC39B22C21F65008AB754 /* Sorting.swift */; };
 		8A79480E22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A79480D22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift */; };
 		8A889144225219E500DD6539 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A889143225219E500DD6539 /* Client.swift */; };
 		8A88914622521A0F00DD6539 /* GetStreamChat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */; };
@@ -103,6 +104,7 @@
 		8ABD997222B8E01B00929D99 /* CharacterSet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */; };
 		8ABD997422BA2F1F00929D99 /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABD997322BA2F1F00929D99 /* UIDevice+Extensions.swift */; };
 		8ABDF5EB22BD573900A031B9 /* ReadUsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABDF5EA22BD573900A031B9 /* ReadUsersView.swift */; };
+		8ABDF5ED22C119B500A031B9 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABDF5EC22C119B500A031B9 /* Filter.swift */; };
 		8ABE5FDA22A67C92004F128C /* UIViewController+DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */; };
 		8ABE5FDC22A67F3C004F128C /* RxDocumentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */; };
 		8ABE5FDF22A6814F004F128C /* String+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ABE5FDE22A6814F004F128C /* String+FileType.swift */; };
@@ -177,6 +179,7 @@
 		8A4FE7C4227DBC3A00E47D4C /* ChatViewController+TableFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+TableFooterView.swift"; sourceTree = "<group>"; };
 		8A5D1FEA2288365B007AB76C /* ComposerHelperContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerHelperContainerView.swift; sourceTree = "<group>"; };
 		8A5D1FEC22899421007AB76C /* ChatViewController+Composer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Composer.swift"; sourceTree = "<group>"; };
+		8A6EC39B22C21F65008AB754 /* Sorting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sorting.swift; sourceTree = "<group>"; };
 		8A79480D22A0329700653CA6 /* ClientURLSessionTaskDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientURLSessionTaskDelegate.swift; sourceTree = "<group>"; };
 		8A889143225219E500DD6539 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8A88914522521A0F00DD6539 /* GetStreamChat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = GetStreamChat.xcassets; sourceTree = "<group>"; };
@@ -233,6 +236,7 @@
 		8ABD997122B8E01B00929D99 /* CharacterSet+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CharacterSet+Extensions.swift"; sourceTree = "<group>"; };
 		8ABD997322BA2F1F00929D99 /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		8ABDF5EA22BD573900A031B9 /* ReadUsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadUsersView.swift; sourceTree = "<group>"; };
+		8ABDF5EC22C119B500A031B9 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		8ABE5FD922A67C92004F128C /* UIViewController+DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DocumentPicker.swift"; sourceTree = "<group>"; };
 		8ABE5FDB22A67F3C004F128C /* RxDocumentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxDocumentPickerViewController.swift; sourceTree = "<group>"; };
 		8ABE5FDE22A6814F004F128C /* String+FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FileType.swift"; sourceTree = "<group>"; };
@@ -478,6 +482,8 @@
 				8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */,
 				8ACAB168228F645B00674F2D /* ChannelsResponse.swift */,
 				8A3E461722A9639D00DF464B /* ExtraData.swift */,
+				8ABDF5EC22C119B500A031B9 /* Filter.swift */,
+				8A6EC39B22C21F65008AB754 /* Sorting.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -787,6 +793,7 @@
 				8A5D1FEB2288365B007AB76C /* ComposerHelperContainerView.swift in Sources */,
 				8A40803D22805ABA00F274FF /* ChatViewController+Reactions.swift in Sources */,
 				8AFC2A292268933A006278D4 /* WebSocket.swift in Sources */,
+				8A6EC39C22C21F65008AB754 /* Sorting.swift in Sources */,
 				8A4080432281BDCA00F274FF /* UIStackView+Extensions.swift in Sources */,
 				8ABE5FDA22A67C92004F128C /* UIViewController+DocumentPicker.swift in Sources */,
 				8ABE5FDF22A6814F004F128C /* String+FileType.swift in Sources */,
@@ -858,6 +865,7 @@
 				8A1A9414225E01F100060ACC /* ComposerViewStyle.swift in Sources */,
 				8ABE5FE722A6A98E004F128C /* ComposerFileView.swift in Sources */,
 				8A88917722550E0C00DD6539 /* UIColor+Extensions.swift in Sources */,
+				8ABDF5ED22C119B500A031B9 /* Filter.swift in Sources */,
 				8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */,
 				8ABF8260226F4A4600A966D9 /* WebSocket+Response.swift in Sources */,
 				8ABC551C2276FB9D008F312B /* AvatarView.swift in Sources */,

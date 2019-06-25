@@ -9,17 +9,19 @@
 import Foundation
 
 public final class Channel: Codable, Equatable {
-    private enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case id
         case cid
         case type
         case lastMessageDate = "last_message_at"
         case createdBy = "created_by"
+        case created = "created_at"
         case config
         case frozen
         case name
         case imageURL = "image"
         case extraData
+        case members
     }
     
     public enum DataCodingKeys: String, CodingKey {
