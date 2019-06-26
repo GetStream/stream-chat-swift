@@ -99,16 +99,19 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
             make.centerY.equalTo(nameLabel.snp.centerY)
         }
         
+        dateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        
         infoLabel.snp.makeConstraints { make in
             make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
             make.centerY.equalTo(messageLabel.snp.centerY)
         }
         
-        dateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        infoLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         messageLabel.snp.makeConstraints { make in
             make.top.equalTo(avatarView.snp.centerY)
-            make.left.right.equalTo(nameLabel)
+            make.left.equalTo(nameLabel)
+            make.right.equalTo(infoLabel.snp.left).offset(-CGFloat.messageInnerPadding)
         }
     }
     

@@ -11,14 +11,10 @@ import UIKit.UICollectionViewCell
 
 extension UITableViewCell {
     /// A shortcut of an unused `UITableViewCell`.
-    public static let unused: UITableViewCell = {
-        return UITableViewCell(style: .default, reuseIdentifier: "unused")
-    }()
+    public static let unused = UITableViewCell(style: .default, reuseIdentifier: "unused")
 }
 
 extension UICollectionViewCell {
     /// A shortcut of an unused `UICollectionViewCell`.
-    public static let unused: UICollectionViewCell = {
-        return UICollectionViewCell(frame: .zero)
-    }()
+    public static let unused = UICollectionViewCell(frame: .zero)
 }

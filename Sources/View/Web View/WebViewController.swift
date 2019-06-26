@@ -11,7 +11,7 @@ import WebKit
 import SnapKit
 
 /// A siple web view controller with `WKWebView` and navigation buttons in the navigation bar.
-open class WebViewController: UIViewController {
+open class WebViewController: UIViewController, WKNavigationDelegate {
     
     /// An activity indicator.
     public private(set) lazy var activityIndicatorView = UIActivityIndicatorView(style: .gray)
@@ -56,11 +56,8 @@ open class WebViewController: UIViewController {
     @IBAction public func close(_ sender: Any) {
         dismiss(animated: true)
     }
-}
-
-// MARK: - WebView
-
-extension WebViewController: WKNavigationDelegate {
+    
+    // MARK: - WebView
     
     /// Setup and layout the web view.
     open func setupWebView() {
