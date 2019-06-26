@@ -649,14 +649,7 @@ extension ChannelPresenter {
         }
         
         let add = !message.hasOwnReaction(type: reactionType)
-        let endpoint: ChatEndpoint
-        
-        if add {
-            endpoint = .addReaction(reactionType, message)
-        } else {
-            endpoint = .deleteReaction(reactionType, message)
-        }
-        
+        let endpoint = add ? ChatEndpoint.addReaction(reactionType, message) : .deleteReaction(reactionType, message)
         Client.shared.request(endpoint: endpoint, emptyMessageCompletion)
         
         return add

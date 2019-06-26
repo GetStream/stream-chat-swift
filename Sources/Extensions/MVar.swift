@@ -42,13 +42,13 @@ final class MVar<T> {
 
 extension MVar where T == Int {
     
-    static func +=(lhs: MVar<T>, rhs: T) {
+    static func += (lhs: MVar<T>, rhs: T) {
         if let currentValue = lhs.get() {
             lhs.set(currentValue + rhs)
         }
     }
     
-    static func -=(lhs: MVar<T>, rhs: T) {
+    static func -= (lhs: MVar<T>, rhs: T) {
         if let currentValue = lhs.get() {
             lhs.set(currentValue - rhs)
         }

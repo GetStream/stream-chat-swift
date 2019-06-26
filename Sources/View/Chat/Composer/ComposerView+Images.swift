@@ -15,6 +15,7 @@ import RxKeyboard
 // MARK: - Images Collection View
 
 extension ComposerView: UICollectionViewDataSource {
+    
     func setupImagesCollectionView() -> UICollectionView {
         let collectionViewLayout = UICollectionViewFlowLayout()
         collectionViewLayout.scrollDirection = .horizontal
@@ -92,6 +93,7 @@ extension ComposerView: UICollectionViewDataSource {
             if let self = self {
                 self.uploader?.remove(item)
                 self.updateImagesCollectionView()
+                self.updateSendButton()
             }
         }
         
@@ -101,7 +103,10 @@ extension ComposerView: UICollectionViewDataSource {
             item.uploadingCompletion
                 .observeOn(MainScheduler.instance)
                 .subscribe(onError: { [weak cell] _ in cell?.updateForError() },
-                           onCompleted: { [weak cell] in cell?.updateForProgress(1) })
+                           onCompleted: { [weak self, weak cell] in
+                            cell?.updateForProgress(1)
+                            self?.updateSendButton()
+                })
                 .disposed(by: cell.disposeBag)
             
             item.uploadingProgress

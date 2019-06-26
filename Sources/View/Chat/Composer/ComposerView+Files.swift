@@ -47,7 +47,10 @@ extension ComposerView {
             item.uploadingCompletion
                 .observeOn(MainScheduler.instance)
                 .subscribe(onError: { [weak fileView] error in fileView?.updateForError(error.localizedDescription) },
-                           onCompleted: { [weak fileView] in fileView?.updateForProgress(1) })
+                           onCompleted: { [weak self, weak fileView] in
+                            fileView?.updateForProgress(1)
+                            self?.updateSendButton()
+                })
                 .disposed(by: fileView.disposeBag)
             
             item.uploadingProgress

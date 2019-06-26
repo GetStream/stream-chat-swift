@@ -277,7 +277,8 @@ public final class ComposerView: UIView {
     }
     
     func updateSendButton() {
-        sendButton.isHidden = text.count == 0 && isUploaderImagesEmpty && isUploaderFilesEmpty
+        let isAnyFileUploaded = uploader?.items.first(where: { $0.attachment != nil }) != nil
+        sendButton.isHidden = text.count == 0 && !isAnyFileUploaded
     }
     
     func updateStyleState() {
