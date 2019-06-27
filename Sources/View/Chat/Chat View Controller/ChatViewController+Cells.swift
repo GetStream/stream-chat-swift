@@ -173,6 +173,25 @@ extension ChatViewController {
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style
         chatViewController.channelPresenter = messagePresenter
-        navigationController?.pushViewController(chatViewController, animated: true)
+        
+        if let navigationController = navigationController {
+            navigationController.pushViewController(chatViewController, animated: true)
+        } else {
+            let navigationController = UINavigationController(rootViewController: chatViewController)
+            chatViewController.addCloseButton()
+            present(navigationController, animated: true)
+        }
+    }
+}
+
+extension ChatViewController {
+    private func addCloseButton() {
+        let closeButton = UIButton(type: .custom)
+        closeButton.setImage(UIImage.Icons.close, for: .normal)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: closeButton)
+        
+        closeButton.rx.tap
+            .subscribe(onNext: { [weak self] in self?.dismiss(animated: true) })
+            .disposed(by: disposeBag)
     }
 }
