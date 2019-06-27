@@ -82,17 +82,6 @@ open class ChannelsViewController: UIViewController {
         return chatItem.isLoading ? tableView.loadingCell(at: indexPath, backgroundColor: style.channel.backgroundColor) : .unused
     }
     
-    open func willDisplayLoading(at indexPath: IndexPath, loadingChatItem: ChatItem) {
-        guard case .loading(let inProgress) = loadingChatItem else {
-            return
-        }
-        
-        if !inProgress {
-            items[indexPath.row] = .loading(true)
-            channelsPresenter.loadNext()
-        }
-    }
-    
     // MARK: - Show Chat
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -162,12 +151,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         }
         
         guard let channelPresenter = items[indexPath.row].channelPresenter else {
-            if case .loading(let inProgress) = items[indexPath.row] {
-                if !inProgress {
-                    items[indexPath.row] = .loading(true)
-                    channelsPresenter.loadNext()
-                }
-                
+            if items[indexPath.row].isLoading {
                 return tableView.loadingCell(at: indexPath, backgroundColor: style.channel.backgroundColor)
             }
             
@@ -178,8 +162,9 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row < items.count, items[indexPath.row].isLoading {
-            willDisplayLoading(at: indexPath, loadingChatItem: items[indexPath.row])
+        if indexPath.row < items.count, case .loading(let inProgress) = items[indexPath.row], !inProgress {
+            items[indexPath.row] = .loading(true)
+            channelsPresenter.loadNext()
         }
     }
 }

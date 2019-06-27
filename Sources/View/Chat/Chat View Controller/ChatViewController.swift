@@ -216,14 +216,8 @@ extension ChatViewController {
         let backgroundColor = style.incomingMessage.chatBackgroundColor
         
         switch items[indexPath.row] {
-        case .loading(let inProgress):
-            if !inProgress {
-                items[indexPath.row] = .loading(true)
-                channelPresenter?.loadNext()
-            }
-            
+        case .loading:
             cell = tableView.loadingCell(at: indexPath, backgroundColor: backgroundColor)
-            
         case let .status(title, subtitle, highlighted):
             cell = tableView.statusCell(at: indexPath,
                                         title: title,
@@ -246,7 +240,12 @@ extension ChatViewController {
         
         let item = items[indexPath.row]
         
-        if case .message(let message, _) = item {
+        if case .loading(let inProgress) = item {
+            if !inProgress {
+                items[indexPath.row] = .loading(true)
+                channelPresenter?.loadNext()
+            }
+        } else if let message = item.message {
             willDisplay(cell: cell, at: indexPath, message: message)
         }
     }
