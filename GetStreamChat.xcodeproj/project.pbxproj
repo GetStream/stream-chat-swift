@@ -16,6 +16,7 @@
 		8A0755E8228DB04500A3E4AB /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0755E7228DB04500A3E4AB /* MessageRead.swift */; };
 		8A0755EA228DB5C500A3E4AB /* ViewChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */; };
 		8A0E345222980933008D825E /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0E345122980933008D825E /* TableView.swift */; };
+		8A1627F222C64A8200EB0B51 /* CustomChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1627F122C64A8200EB0B51 /* CustomChatViewController.swift */; };
 		8A1A9400225A0D7800060ACC /* UIEdgeInsets+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A93FF225A0D7800060ACC /* UIEdgeInsets+Extensions.swift */; };
 		8A1A9402225A436800060ACC /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9401225A436800060ACC /* CGRect+Extensions.swift */; };
 		8A1A9404225B4C7100060ACC /* MessageViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */; };
@@ -148,6 +149,7 @@
 		8A0755E7228DB04500A3E4AB /* MessageRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRead.swift; sourceTree = "<group>"; };
 		8A0755E9228DB5C500A3E4AB /* ViewChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewChanges.swift; sourceTree = "<group>"; };
 		8A0E345122980933008D825E /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
+		8A1627F122C64A8200EB0B51 /* CustomChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChatViewController.swift; sourceTree = "<group>"; };
 		8A1A93FF225A0D7800060ACC /* UIEdgeInsets+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+Extensions.swift"; sourceTree = "<group>"; };
 		8A1A9401225A436800060ACC /* CGRect+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extensions.swift"; sourceTree = "<group>"; };
 		8A1A9403225B4C7100060ACC /* MessageViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewStyle.swift; sourceTree = "<group>"; };
@@ -305,6 +307,7 @@
 			children = (
 				8A4080442281C94600F274FF /* GetStreamChat.entitlements */,
 				8A04675A224E7F1800493D74 /* AppDelegate.swift */,
+				8A1627F122C64A8200EB0B51 /* CustomChatViewController.swift */,
 				8A04675E224E7F1800493D74 /* Main.storyboard */,
 				8A046761224E7F1800493D74 /* Assets.xcassets */,
 				8A046763224E7F1800493D74 /* LaunchScreen.storyboard */,
@@ -849,6 +852,7 @@
 				8A889180225755D500DD6539 /* ChatViewStyle.swift in Sources */,
 				8A88917522550B2800DD6539 /* MessageTableViewCell.swift in Sources */,
 				8AFA806E22BA7AE40036F450 /* UIImagePickerController+Extensions.swift in Sources */,
+				8A1627F222C64A8200EB0B51 /* CustomChatViewController.swift in Sources */,
 				8A2CC9582284AD77004CF12D /* ChatViewController+MessageActions.swift in Sources */,
 				8A0E345222980933008D825E /* TableView.swift in Sources */,
 				8AABC29622608FE10064CB20 /* AttachmentPreviewProtocol.swift in Sources */,

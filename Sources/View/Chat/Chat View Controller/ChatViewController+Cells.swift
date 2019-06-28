@@ -20,8 +20,7 @@ extension ChatViewController {
             return .unused
         }
         
-        let isIncoming = !message.user.isCurrent
-        let messageStyle = isIncoming ? style.incomingMessage : style.outgoingMessage
+        let messageStyle = message.isOwn ? style.outgoingMessage : style.incomingMessage
         let cell = tableView.dequeueMessageCell(for: indexPath, style: messageStyle)
         
         if message.isDeleted {
@@ -35,7 +34,7 @@ extension ChatViewController {
                 cell.update(message: message.textOrArgs)
             }
             
-            if !isIncoming {
+            if message.isOwn {
                 cell.readUsersView.update(readUsers: readUsers)
             }
             

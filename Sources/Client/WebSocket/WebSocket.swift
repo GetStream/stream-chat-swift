@@ -40,11 +40,11 @@ final class WebSocket {
         let connection = reachability?.connection ?? .none
         let reachabilityObservation = reachability?.rx.reachabilityChanged.map { $0.connection }.startWith(connection) ?? .empty()
         
-        return Observable.combineLatest(app.rx.appState.startWith(app.appState),
-                                        reachabilityObservation,
-                                        webSocket.rx.response)
+        let webSocketResponse = webSocket.rx.response
             .do(onSubscribed: { [weak self] in self?.reconnect() },
                 onDispose: { [weak self] in self?.disconnect() })
+        
+        return Observable.combineLatest(app.rx.appState.startWith(app.appState), reachabilityObservation, webSocketResponse)
             .map { [weak self] in self?.parseConnection(appState: $0, reachability: $1, event: $2) }
             .unwrap()
             .distinctUntilChanged()

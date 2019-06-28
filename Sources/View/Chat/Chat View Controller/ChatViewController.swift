@@ -27,7 +27,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
     private(set) lazy var composerCommandsView = createComposerCommandsView()
     private(set) lazy var composerAddFileView = createComposerAddFileView()
     
-    private(set) lazy var tableView: TableView = {
+    public private(set) lazy var tableView: TableView = {
         let tableView = TableView(frame: .zero, style: .plain)
         tableView.backgroundColor = style.incomingMessage.chatBackgroundColor
         tableView.keyboardDismissMode = .interactive
@@ -53,20 +53,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         return tableView
     }()
     
-    public var channelPresenter: ChannelPresenter? {
-        didSet {
-            if let presenter = channelPresenter {
-                composerView.uploader = presenter.uploader
-                
-                Driver.merge((presenter.parentMessage == nil ? presenter.channelRequest : presenter.replyRequest),
-                             presenter.changes,
-                             presenter.ephemeralChanges)
-                    .do(onNext: { [weak presenter] _ in presenter?.sendReadIfPossible() })
-                    .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
-                    .disposed(by: disposeBag)
-            }
-        }
-    }
+    public var channelPresenter: ChannelPresenter?
     
     open override func viewDidLoad() {
         super.viewDidLoad()
@@ -77,6 +64,15 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         guard let presenter = channelPresenter else {
             return
         }
+        
+        composerView.uploader = presenter.uploader
+        
+        Driver.merge((presenter.parentMessage == nil ? presenter.channelRequest : presenter.replyRequest),
+                     presenter.changes,
+                     presenter.ephemeralChanges)
+            .do(onNext: { [weak presenter] _ in presenter?.sendReadIfPossible() })
+            .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
+            .disposed(by: disposeBag)
         
         if presenter.isEmpty {
             channelPresenter?.reload()
@@ -106,6 +102,18 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
     
     open func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
         return extensionMessageCell(at: indexPath, message: message, readUsers: readUsers)
+    }
+    
+    open func loadingCell(at indexPath: IndexPath, backgroundColor: UIColor) -> UITableViewCell? {
+        return nil
+    }
+    
+    open func statusCell(at indexPath: IndexPath,
+                         title: String,
+                         subtitle: String? = nil,
+                         backgroundColor: UIColor,
+                         highlighted: Bool) -> UITableViewCell? {
+        return nil
     }
 }
 
@@ -227,9 +235,15 @@ extension ChatViewController {
         
         switch items[indexPath.row] {
         case .loading:
-            cell = tableView.loadingCell(at: indexPath, backgroundColor: backgroundColor)
+            cell = loadingCell(at: indexPath, backgroundColor: backgroundColor)
+                ?? tableView.loadingCell(at: indexPath, backgroundColor: backgroundColor)
         case let .status(title, subtitle, highlighted):
-            cell = tableView.statusCell(at: indexPath,
+            cell = statusCell(at: indexPath,
+                              title: title,
+                              subtitle: subtitle,
+                              backgroundColor: backgroundColor,
+                              highlighted: highlighted)
+                ?? tableView.statusCell(at: indexPath,
                                         title: title,
                                         subtitle: subtitle,
                                         backgroundColor: backgroundColor,

@@ -37,9 +37,9 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
+                        <segue destination="e0G-IG-Gxn" kind="relationship" relationship="viewControllers" id="Pth-mU-gIf"/>
                         <segue destination="aEe-dp-x44" kind="relationship" relationship="viewControllers" id="hH7-pj-tv8"/>
                         <segue destination="f3z-HF-D2M" kind="relationship" relationship="viewControllers" id="Oqg-uo-mtT"/>
-                        <segue destination="e0G-IG-Gxn" kind="relationship" relationship="viewControllers" id="Pth-mU-gIf"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pdL-XF-BKm" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -104,10 +104,10 @@
             </objects>
             <point key="canvasLocation" x="383" y="-60"/>
         </scene>
-        <!--Chat View Controller-->
+        <!--Custom Chat View Controller-->
         <scene sceneID="K8d-gL-AUv">
             <objects>
-                <viewController id="e0G-IG-Gxn" customClass="ChatViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="e0G-IG-Gxn" customClass="CustomChatViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="p7A-Vg-wGQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -30,18 +30,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         Fabric.with([Crashlytics.self])
         setupNotifications()
         
-        if let tabBarController = window?.rootViewController as? UITabBarController {
-            // Dark style for the second tab bar item.
-            if let navigationController = tabBarController.viewControllers?[1] as? UINavigationController,
-                let darkChannelsViewController = navigationController.viewControllers.first as? ChannelsViewController {
-                setupChatWithDarkStyle(darkChannelsViewController)
-            }
-            
-            // Single chat view controller.
-            if let chatViewController = tabBarController.viewControllers?[2] as? ChatViewController {
-                let channel = Channel(id: "general", name: "General")
-                chatViewController.channelPresenter = ChannelPresenter(channel: channel)
-            }
+        if let tabBarController = window?.rootViewController as? UITabBarController,
+            let navigationController = tabBarController.viewControllers?[1] as? UINavigationController,
+            let darkChannelsViewController = navigationController.viewControllers.first as? ChannelsViewController {
+            setupChatWithDarkStyle(darkChannelsViewController)
         }
         
         return true

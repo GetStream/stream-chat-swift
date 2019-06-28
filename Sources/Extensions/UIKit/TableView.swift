@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class TableView: UITableView {
+public final class TableView: UITableView {
     
     private var oldContentSize: CGSize = .zero
     private var oldContentOffset: CGPoint = .zero
@@ -23,7 +23,7 @@ final class TableView: UITableView {
         }
     }
     
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         
         if stayOnScrollOnce, oldContentSize.height != contentSize.height {
