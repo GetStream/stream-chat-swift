@@ -1,5 +1,7 @@
 # stream-chat-swift
 
+![Cocoapods](https://img.shields.io/cocoapods/v/GetStreamChat.svg)
+
 [stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat applications.
 
 You can sign up for a Stream account at [https://getstream.io/chat/get_started/](https://getstream.io/chat/get_started/).
