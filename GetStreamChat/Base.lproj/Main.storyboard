@@ -37,9 +37,9 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
-                        <segue destination="e0G-IG-Gxn" kind="relationship" relationship="viewControllers" id="Pth-mU-gIf"/>
                         <segue destination="aEe-dp-x44" kind="relationship" relationship="viewControllers" id="hH7-pj-tv8"/>
                         <segue destination="f3z-HF-D2M" kind="relationship" relationship="viewControllers" id="Oqg-uo-mtT"/>
+                        <segue destination="e0G-IG-Gxn" kind="relationship" relationship="viewControllers" id="Pth-mU-gIf"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="pdL-XF-BKm" userLabel="First Responder" sceneMemberID="firstResponder"/>
