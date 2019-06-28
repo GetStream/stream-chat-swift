@@ -55,7 +55,10 @@ extension ChatViewController {
         RxKeyboard.instance.isHidden
             .skip(1)
             .filter { $0 }
-            .drive(onNext: { [weak self] _ in self?.composerCommandsView.animate(show: false) })
+            .drive(onNext: { [weak self] _ in
+                self?.composerCommandsView.animate(show: false)
+                self?.composerView.textView.autocorrectionType = .default
+            })
             .disposed(by: disposeBag)
     }
     
@@ -182,14 +185,17 @@ extension ChatViewController {
         // Show composer helper container.
         if text.count == 1, let first = text.first, first == "/" {
             composerCommandsView.animate(show: true, resetForcedHidden: true)
+            composerView.textView.autocorrectionType = .no
             hideAddFileView()
             return
         }
         
         if hide || text.first != "/" {
             composerCommandsView.animate(show: false)
+            composerView.textView.autocorrectionType = .default
         } else {
             composerCommandsView.animate(show: true)
+            composerView.textView.autocorrectionType = .no
             hideAddFileView()
         }
     }
@@ -289,6 +295,7 @@ extension ChatViewController {
         }
         
         composerCommandsView.animate(show: false)
+        composerView.textView.autocorrectionType = .default
         
         composerAddFileView.containerView.arrangedSubviews.forEach { subview in
             if let addFileView = subview as? ComposerAddFileView {
