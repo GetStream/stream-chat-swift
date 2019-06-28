@@ -11,7 +11,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-public final class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+open class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     public var style = ChatViewStyle()
     let disposeBag = DisposeBag()
@@ -68,8 +68,9 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         }
     }
     
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = style.incomingMessage.chatBackgroundColor
         setupComposerView()
         updateTitle()
         
@@ -88,20 +89,29 @@ public final class ChatViewController: UIViewController, UITableViewDataSource, 
         }
     }
     
-    public override func viewWillAppear(_ animated: Bool) {
+    open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         startGifsAnimations()
         channelPresenter?.sendReadIfPossible()
     }
     
-    public override func viewWillDisappear(_ animated: Bool) {
+    open override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopGifsAnimations()
     }
     
-    public override var preferredStatusBarStyle: UIStatusBarStyle {
-        return style.incomingMessage.chatBackgroundColor.isDark ? .lightContent : .default
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
+        return style.incomingMessage.textColor.isDark ? .default : .lightContent
     }
+    
+    open func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
+        return extensionMessageCell(at: indexPath, message: message, readUsers: readUsers)
+    }
+}
+
+// MARK: - Title
+
+extension ChatViewController {
     
     private func updateTitle() {
         guard title == nil, navigationItem.rightBarButtonItem == nil, let presenter = channelPresenter else {

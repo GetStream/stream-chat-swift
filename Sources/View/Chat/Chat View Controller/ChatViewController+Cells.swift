@@ -15,7 +15,7 @@ import RxGesture
 
 extension ChatViewController {
     
-    func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
+    func extensionMessageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
         guard let presenter = channelPresenter else {
             return .unused
         }
