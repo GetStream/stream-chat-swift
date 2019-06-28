@@ -60,8 +60,8 @@ public final class StatusTableViewCell: UITableViewCell, Reusable {
 
         stackView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.left.equalToSuperview().offset(CGFloat.messageStatusSpacing).priority(999)
-            make.right.equalToSuperview().offset(-CGFloat.messageStatusSpacing).priority(999)
+            make.left.equalToSuperview().priority(999)
+            make.right.equalToSuperview().priority(999)
         }
     }
     
