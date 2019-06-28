@@ -22,6 +22,9 @@ final class ComposerHelperContainerView: UIView {
         return label
     }()
     
+    private var containerViewBottomConstraint: Constraint?
+    private weak var composerView: ComposerView?
+    
     /// TODO: Make it scrollable.
     /// See https://blog.alltheflow.com/scrollable-uistackview/
     private(set) lazy var containerView: UIStackView = {
@@ -74,6 +77,7 @@ final class ComposerHelperContainerView: UIView {
         }
         
         setup()
+        self.composerView = composerView
         parent.insertSubview(self, belowSubview: composerView)
         
         snp.makeConstraints { make in
@@ -81,8 +85,21 @@ final class ComposerHelperContainerView: UIView {
             make.top.greaterThanOrEqualTo(parent.safeAreaLayoutGuide.snp.topMargin).offset(CGFloat.composerHelperShadowRadius * 2)
         }
         
+        moveContainerViewPosition()
+    }
+    
+    func moveContainerViewPosition(abouveView view: UIView? = nil) {
+        guard let view = view ?? self.composerView else {
+            return
+        }
+        
+        containerViewBottomConstraint?.deactivate()
+        
         containerView.snp.makeConstraints {
-            $0.bottom.equalTo(composerView.snp.top).offset(-CGFloat.messageInnerPadding).priority(999)
+            containerViewBottomConstraint = $0.bottom.equalTo(view.snp.top)
+                .offset(-CGFloat.messageInnerPadding)
+                .priority(999)
+                .constraint
         }
     }
     

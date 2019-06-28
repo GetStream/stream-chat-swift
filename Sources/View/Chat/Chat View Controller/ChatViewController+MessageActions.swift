@@ -15,6 +15,8 @@ extension ChatViewController {
             return
         }
         
+        view.endEditing(true)
+        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         if presenter.channel.config.reactionsEnabled {

@@ -55,10 +55,7 @@ extension ChatViewController {
         RxKeyboard.instance.isHidden
             .skip(1)
             .filter { $0 }
-            .drive(onNext: { [weak self] _ in
-                self?.composerCommandsView.animate(show: false)
-                self?.composerView.textView.autocorrectionType = .default
-            })
+            .drive(onNext: { [weak self] _ in self?.showCommands(show: false) })
             .disposed(by: disposeBag)
     }
     
@@ -138,6 +135,7 @@ extension ChatViewController {
                 if let self = self {
                     self.channelPresenter?.editMessage = nil
                     self.composerView.reset()
+                    self.hideAddFileView()
                     self.composerEditingHelperView.animate(show: false)
                     
                     if self.composerView.textView.isFirstResponder {
@@ -184,19 +182,16 @@ extension ChatViewController {
         
         // Show composer helper container.
         if text.count == 1, let first = text.first, first == "/" {
-            composerCommandsView.animate(show: true, resetForcedHidden: true)
-            composerView.textView.autocorrectionType = .no
             hideAddFileView()
+            showCommands(resetForcedHidden: true)
             return
         }
         
         if hide || text.first != "/" {
-            composerCommandsView.animate(show: false)
-            composerView.textView.autocorrectionType = .default
+            showCommands(show: false)
         } else {
-            composerCommandsView.animate(show: true)
-            composerView.textView.autocorrectionType = .no
             hideAddFileView()
+            showCommands()
         }
     }
     
@@ -217,6 +212,15 @@ extension ChatViewController {
         }
         
         return !visible
+    }
+    
+    private func showCommands(show: Bool = true, resetForcedHidden: Bool = false) {
+        composerCommandsView.animate(show: show, resetForcedHidden: resetForcedHidden)
+        composerView.textView.autocorrectionType = show ? .no : .default
+        
+        if composerEditingHelperView.isHidden == false {
+            composerEditingHelperView.moveContainerViewPosition(abouveView: show ? composerCommandsView : nil)
+        }
     }
     
     func addCommandToComposer(command: String) {
@@ -294,8 +298,7 @@ extension ChatViewController {
             return
         }
         
-        composerCommandsView.animate(show: false)
-        composerView.textView.autocorrectionType = .default
+        showCommands(show: false)
         
         composerAddFileView.containerView.arrangedSubviews.forEach { subview in
             if let addFileView = subview as? ComposerAddFileView {
@@ -313,12 +316,20 @@ extension ChatViewController {
             first.action(first.sourceType)
         } else {
             composerAddFileView.animate(show: true)
+            
+            if composerEditingHelperView.isHidden == false {
+                composerEditingHelperView.moveContainerViewPosition(abouveView: composerAddFileView)
+            }
         }
     }
     
     private func hideAddFileView() {
         composerAddFileView.animate(show: false)
         composerCommandsView.containerView.arrangedSubviews.forEach { $0.isHidden = false }
+        
+        if composerEditingHelperView.isHidden == false {
+            composerEditingHelperView.moveContainerViewPosition()
+        }
     }
     
     private func showImagePicker(composerAddFileViewSourceType sourceType: ComposerAddFileView.SourceType) {
