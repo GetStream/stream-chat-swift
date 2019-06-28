@@ -115,7 +115,7 @@ extension ChatViewController {
     
     private func createComposerHelperContainerView(title: String, closeButtonIsHidden: Bool = false) -> ComposerHelperContainerView {
         let container = ComposerHelperContainerView()
-        container.backgroundColor = style.incomingMessage.chatBackgroundColor.isDark ? .chatDarkGray : .white
+        container.backgroundColor = style.incomingMessage.textColor.isDark ? .white : .chatDarkGray
         container.titleLabel.text = title
         container.add(for: composerView)
         container.isHidden = true

@@ -24,7 +24,7 @@ extension MessageTableViewCell {
         }
         
         let attachments = message.attachments
-        let imageBackgroundColor = UIColor.color(by: message.user.name, isDark: backgroundColor?.isDark ?? false)
+        let imageBackgroundColor = UIColor.color(by: message.user.name, isDark: !(messageLabel.textColor?.isDark ?? true))
         
         attachments.enumerated().forEach { index, attachment in
             func addGetures(_ preview: AttachmentPreviewProtocol, _ error: Error?) {
@@ -105,7 +105,7 @@ extension MessageTableViewCell {
         
         preview.backgroundColor = attachment.isImage && attachment.actions.isEmpty
             ? style.chatBackgroundColor
-            : (style.chatBackgroundColor.isDark ? .chatDarkGray : .chatSuperLightGray)
+            : (style.textColor.isDark ? .chatSuperLightGray : .chatDarkGray)
         
         return preview
     }
