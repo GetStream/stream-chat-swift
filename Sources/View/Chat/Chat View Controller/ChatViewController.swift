@@ -195,27 +195,35 @@ extension ChatViewController {
             let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
             tableView.stayOnScrollOnce = scrollEnabled && needsToScroll && !forceToScroll
             
-            tableView.performBatchUpdates({
-                tableView.insertRows(at: [indexPath], with: .none)
+            UIView.performWithoutAnimation {
+                tableView.performBatchUpdates({
+                    tableView.insertRows(at: [indexPath], with: .none)
+                    
+                    if let reloadRow = reloadRow {
+                        tableView.reloadRows(at: [.row(reloadRow)], with: .none)
+                    }
+                })
                 
-                if let reloadRow = reloadRow {
-                    tableView.reloadRows(at: [.row(reloadRow)], with: .none)
+                if scrollEnabled, forceToScroll {
+                    tableView.scrollToRow(at: .row(row), at: .top, animated: false)
                 }
-            })
-            
-            if scrollEnabled, forceToScroll {
-                tableView.scrollToRow(at: .row(row), at: .top, animated: false)
             }
         case let .itemUpdated(rows, messages, items):
             self.items = items
-            tableView.reloadRows(at: rows.map({ .row($0) }), with: .none)
             
-            if let reactionsView = reactionsView, let message = messages.first {
-                reactionsView.update(with: message)
+            UIView.performWithoutAnimation {
+                tableView.reloadRows(at: rows.map({ .row($0) }), with: .none)
+                
+                if let reactionsView = reactionsView, let message = messages.first {
+                    reactionsView.update(with: message)
+                }
             }
         case let .itemRemoved(row, items):
             self.items = items
-            tableView.deleteRows(at: [.row(row)], with: .none)
+            
+            UIView.performWithoutAnimation {
+                tableView.deleteRows(at: [.row(row)], with: .none)
+            }
         case .footerUpdated:
             updateFooterView()
         }
