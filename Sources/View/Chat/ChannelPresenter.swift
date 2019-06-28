@@ -602,13 +602,17 @@ extension ChannelPresenter {
         }
         
         let messageId = editMessage?.id ?? ""
-        let attachments = uploader.items.compactMap({ $0.attachment })
+        var attachments = uploader.items.compactMap({ $0.attachment })
         let parentId = parentMessage?.id
         var extraData: ExtraData? = nil
         
         if let messageExtraDataCallback = messageExtraDataCallback,
             let data = messageExtraDataCallback(messageId, text, attachments, parentId) {
             extraData = ExtraData(data)
+        }
+        
+        if attachments.isEmpty, let editMessage = editMessage, !editMessage.attachments.isEmpty {
+            attachments = editMessage.attachments
         }
         
         guard let message = Message(id: messageId,

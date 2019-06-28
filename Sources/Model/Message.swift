@@ -62,7 +62,7 @@ public struct Message: Codable {
     }
     
     public var canEdit: Bool {
-        return isOwn
+        return isOwn && (!text.isBlank || !attachments.isEmpty)
     }
     
     public var canDelete: Bool {

@@ -51,16 +51,7 @@ extension ChatViewController {
     }
     
     private func edit(message: Message) {
-        if message.text.isEmpty {
-            if let command = message.command, let args = message.args {
-                composerView.text = "/\(command) \(args)"
-            } else {
-                return
-            }
-        } else {
-            composerView.text = message.text
-        }
-        
+        composerView.text = message.text
         channelPresenter?.editMessage = message
         composerView.isEditing = true
         composerView.textView.becomeFirstResponder()
