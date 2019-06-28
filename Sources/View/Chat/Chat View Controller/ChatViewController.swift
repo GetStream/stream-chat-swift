@@ -170,16 +170,18 @@ extension ChatViewController {
         case .none, .itemMoved:
             return
         case let .reloaded(row, items):
-            let needsToScroll = !items.isEmpty && ((row == (items.count - 1)) || isLoadingCellPresented())
+            let needsToScroll = !items.isEmpty && ((row == (items.count - 1)))
+            var isLoading = false
             self.items = items
             
             if !items.isEmpty, case .loading = items[0] {
+                isLoading = true
                 self.items[0] = .loading(true)
             }
             
             tableView.reloadData()
             
-            if scrollEnabled, needsToScroll {
+            if isLoading || (scrollEnabled && needsToScroll) {
                 tableView.scrollToRow(at: .row(row), at: .top, animated: false)
             }
             
@@ -282,17 +284,5 @@ extension ChatViewController {
     
     public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         return false
-    }
-    
-    private func isLoadingCellPresented() -> Bool {
-        return nil != tableView.visibleCells.first(where: { cell -> Bool in
-            if let cell = cell as? StatusTableViewCell,
-                let title = cell.title,
-                title.lowercased() == UITableView.loadingTitle.lowercased() {
-                return true
-            }
-            
-            return false
-        })
     }
 }
