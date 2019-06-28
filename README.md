@@ -13,7 +13,7 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 
 For Stream, use the following entry in your `Podfile`:
 ```
-pod 'GetStreamChat', '~> 1.0'
+pod 'GetStreamChat', '~> $LATEST'
 ```
 Then run `pod install`.
 
