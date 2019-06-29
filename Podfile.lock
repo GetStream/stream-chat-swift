@@ -1,7 +1,7 @@
 PODS:
-  - Crashlytics (3.13.1):
-    - Fabric (~> 1.10.1)
-  - Fabric (1.10.1)
+  - Crashlytics (3.13.2):
+    - Fabric (~> 1.10.2)
+  - Fabric (1.10.2)
   - GzipSwift (5.0.0)
   - Nuke (7.6.3)
   - ReachabilitySwift (4.3.1)
@@ -62,8 +62,8 @@ SPEC REPOS:
     - SwiftyGif
 
 SPEC CHECKSUMS:
-  Crashlytics: 5aa8e90dcbf2f34898b4f5a0037787531246cca0
-  Fabric: f6f21452846788bb44595d73e9909d79d328e617
+  Crashlytics: 611738c7847f8291a1a51084e35987b86ba6b3ee
+  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
   GzipSwift: 5592f4d62b641e04d06443ba471f8ed76b1363e4
   Nuke: 44130e95e09463f8773ae4b96b90de1eba6b3350
   ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
@@ -78,6 +78,6 @@ SPEC CHECKSUMS:
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
   SwiftyGif: f7702483db93586a41f04f4927cd682852a2fa10
 
-PODFILE CHECKSUM: acb07f145ab5d3023690c43b112932cd1e3656b5
+PODFILE CHECKSUM: 4cd41e6f35a66a8d9d0308cf4c1a83268fb8eb0b
 
-COCOAPODS: 1.7.0
+COCOAPODS: 1.7.3
