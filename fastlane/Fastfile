@@ -12,13 +12,13 @@ lane :beta do
   # get_certificates
   get_provisioning_profile(
     adhoc: true,
-    # force: true
+    #force: true
   )
   
   # build your iOS app
   build_app(
-    scheme: "GetStreamChat",
-    workspace: "GetStreamChat.xcworkspace",
+    scheme: "StreamChat",
+    workspace: "StreamChat.xcworkspace",
     include_bitcode: true,
     export_method: "ad-hoc",
     export_options: {iCloudContainerEnvironment: "Production"}
