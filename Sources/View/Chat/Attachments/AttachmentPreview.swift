@@ -20,6 +20,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     private var heightConstraint: Constraint?
     private var widthConstraint: Constraint?
     private var imageViewBottomConstraint: Constraint?
+    private var linkStackViewTopConstraint: Constraint?
     private var imageTask: ImageTask?
     private(set) var isGifImage = false
     let disposeBag = DisposeBag()
@@ -33,7 +34,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         imageView.snp.makeConstraints {
             $0.top.equalToSuperview().priority(999)
             imageViewBottomConstraint = $0.bottom.equalToSuperview().priority(999).constraint
-            $0.left.right.equalToSuperview()
+            $0.left.right.equalToSuperview().priority(999)
         }
         
         imageView.setContentHuggingPriority(.required - 3, for: .vertical)
@@ -50,10 +51,9 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         addSubview(stackView)
         
         stackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().priority(999)
-            make.bottom.equalToSuperview().offset(-CGFloat.messageInnerPadding).priority(999)
-            make.left.equalToSuperview()
-            make.right.equalToSuperview()
+            linkStackViewTopConstraint = make.top.equalToSuperview().priority(999).constraint
+            make.bottom.equalToSuperview().offset(-CGFloat.messageCornerRadius).priority(999)
+            make.left.right.equalToSuperview()
         }
         
         return stackView
@@ -64,11 +64,14 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         label.numberOfLines = 2
         label.font = .chatMediumBold
         label.textColor = .chatBlue
-        linkStackView.addArrangedSubview(label)
+        let container = UIView(frame: .zero)
+        linkStackView.addArrangedSubview(container)
+        container.addSubview(label)
         
         label.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(CGFloat.messageInnerPadding)
-            make.right.equalToSuperview().offset(-CGFloat.messageInnerPadding)
+            make.top.bottom.equalToSuperview()
+            make.left.equalToSuperview().offset(CGFloat.messageCornerRadius)
+            make.right.equalToSuperview().offset(-CGFloat.messageCornerRadius)
         }
         
         label.setContentCompressionResistancePriority(.required - 1, for: .vertical)
@@ -81,11 +84,14 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         label.numberOfLines = 4
         label.font = .chatSmall
         label.textColor = .chatGray
-        linkStackView.addArrangedSubview(label)
+        let container = UIView(frame: .zero)
+        linkStackView.addArrangedSubview(container)
+        container.addSubview(label)
         
         label.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(CGFloat.messageInnerPadding)
-            make.right.equalToSuperview().offset(-CGFloat.messageInnerPadding)
+            make.top.bottom.equalToSuperview()
+            make.left.equalToSuperview().offset(CGFloat.messageCornerRadius)
+            make.right.equalToSuperview().offset(-CGFloat.messageCornerRadius)
         }
         
         label.setContentCompressionResistancePriority(.required - 2, for: .vertical)
@@ -213,6 +219,11 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         guard let imageURL = attachment.imageURL else {
             imageView.isHidden = true
             heightConstraint?.deactivate()
+            
+            if isLink {
+                linkStackViewTopConstraint?.update(offset: CGFloat.messageCornerRadius)
+            }
+            
             return
         }
         
@@ -248,8 +259,9 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         guard let attachment = attachment, error == nil else {
             if isLink {
                 imageView.isHidden = true
-                linkStackView.insertArrangedSubview(UIView(frame: .zero), at: 0)
+                linkStackViewTopConstraint?.update(offset: CGFloat.messageCornerRadius)
                 linkStackView.addArrangedSubview(UIView(frame: .zero))
+                heightConstraint?.deactivate()
             }
             
             completion(self, error)

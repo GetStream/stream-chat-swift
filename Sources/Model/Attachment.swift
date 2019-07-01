@@ -53,12 +53,17 @@ public struct Attachment: Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         author = try container.decodeIfPresent(String.self, forKey: .author)
-        text = try container.decodeIfPresent(String.self, forKey: .text)
-
-        title = try container.decodeIfPresent(String.self, forKey: .title)
+        
+        if let text = try container.decodeIfPresent(String.self, forKey: .text) {
+            self.text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        } else {
+            text = nil
+        }
+        
+        title = (try container.decodeIfPresent(String.self, forKey: .title)
             ?? container.decodeIfPresent(String.self, forKey: .fallback)
             ?? container.decodeIfPresent(String.self, forKey: .name)
-            ?? ""
+            ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         
         // Parse Image URL.
         imageURL = Attachment.fixedURL(try container.decodeIfPresent(String.self, forKey: .image)
