@@ -62,7 +62,13 @@ public final class AvatarView: UIImageView, Reusable {
         let request = ImageRequest(url: url, targetSize: CGSize(width: imageSize, height: imageSize), contentMode: .aspectFill)
         
         imageTask = ImagePipeline.shared.loadImage(with: request) { [weak self] response, error in
-            self?.image = response?.image
+            if let self = self {
+                if let image = response?.image {
+                    self.image = image
+                } else {
+                    self.showAvatarLabel(with: name ?? "?", baseColor)
+                }
+            }
         }
     }
     
