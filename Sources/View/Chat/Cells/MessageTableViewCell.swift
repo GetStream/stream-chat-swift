@@ -40,7 +40,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, dateLabel])
         stackView.axis = .horizontal
         stackView.spacing = .messageSpacing
-        stackView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageAvatarRadius).priority(999) }
+        stackView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageAvatarRadius - .messageSpacing).priority(999) }
         stackView.isHidden = true
         return stackView
     }()
@@ -103,7 +103,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     let bottomPaddingView: UIView = {
         let view = UIView(frame: .zero)
         view.isUserInteractionEnabled = false
-        view.snp.makeConstraints { $0.height.equalTo(CGFloat.messageBottomPadding).priority(999) }
+        view.snp.makeConstraints { $0.height.equalTo(CGFloat.messageBottomPadding - .messageSpacing).priority(999) }
         return view
     }()
     
