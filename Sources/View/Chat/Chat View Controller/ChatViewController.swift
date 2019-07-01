@@ -208,7 +208,7 @@ extension ChatViewController {
                     }
                 })
                 
-                if scrollEnabled || forceToScroll {
+                if (scrollEnabled && needsToScroll) || forceToScroll {
                     tableView.scrollToRow(at: .row(row), at: .top, animated: false)
                 }
             }

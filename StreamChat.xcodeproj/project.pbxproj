@@ -464,10 +464,10 @@
 		8A91169D22C782820006FB01 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				8A91169E22C782820006FB01 /* Cells */,
 				8A9116A522C782820006FB01 /* ChatFooterView.swift */,
 				8A9116A622C782820006FB01 /* Composer */,
 				8A9116B022C782820006FB01 /* Chat View Controller */,
+				8A91169E22C782820006FB01 /* Cells */,
 				8A9116B822C782820006FB01 /* AvatarView.swift */,
 				8A9116B922C782820006FB01 /* ReactionsView.swift */,
 				8A9116BA22C782820006FB01 /* ChannelPresenter.swift */,

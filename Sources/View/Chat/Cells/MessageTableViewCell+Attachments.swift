@@ -32,7 +32,7 @@ extension MessageTableViewCell {
                     return
                 }
                 
-                guard error == nil else {
+                guard let attachment = preview.attachment, (error == nil || !attachment.isImage) else {
                     preview.isUserInteractionEnabled = false
                     return
                 }

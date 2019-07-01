@@ -19,7 +19,6 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     
     private var heightConstraint: Constraint?
     private var widthConstraint: Constraint?
-    private var imageViewTopConstraint: Constraint?
     private var imageViewBottomConstraint: Constraint?
     private var imageTask: ImageTask?
     private(set) var isGifImage = false
@@ -32,14 +31,32 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         addSubview(imageView)
         
         imageView.snp.makeConstraints {
-            imageViewTopConstraint = $0.top.equalToSuperview().priority(999).constraint
+            $0.top.equalToSuperview().priority(999)
             imageViewBottomConstraint = $0.bottom.equalToSuperview().priority(999).constraint
             $0.left.right.equalToSuperview()
         }
         
-        imageView.setContentHuggingPriority(.defaultLow, for: .vertical)
+        imageView.setContentHuggingPriority(.required - 3, for: .vertical)
         
         return imageView
+    }()
+    
+    private lazy var linkStackView: UIStackView = {
+        imageViewBottomConstraint?.deactivate()
+        let stackView = UIStackView(arrangedSubviews: [])
+        stackView.axis = .vertical  
+        stackView.spacing = .messageInnerPadding
+        stackView.alignment = .top
+        addSubview(stackView)
+        
+        stackView.snp.makeConstraints { make in
+            make.top.equalToSuperview().priority(999)
+            make.bottom.equalToSuperview().offset(-CGFloat.messageInnerPadding).priority(999)
+            make.left.equalToSuperview()
+            make.right.equalToSuperview()
+        }
+        
+        return stackView
     }()
     
     private lazy var titleLabel: UILabel = {
@@ -47,17 +64,14 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         label.numberOfLines = 2
         label.font = .chatMediumBold
         label.textColor = .chatBlue
-        addSubview(label)
-        imageViewBottomConstraint?.deactivate()
+        linkStackView.addArrangedSubview(label)
         
         label.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(CGFloat.messageEdgePadding).priority(999)
-            make.top.equalToSuperview().offset(CGFloat.messageEdgePadding).priority(750)
-            make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
-            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            make.left.equalToSuperview().offset(CGFloat.messageInnerPadding)
+            make.right.equalToSuperview().offset(-CGFloat.messageInnerPadding)
         }
         
-        label.setContentCompressionResistancePriority(.defaultHigh + 20, for: .vertical)
+        label.setContentCompressionResistancePriority(.required - 1, for: .vertical)
         
         return label
     }()
@@ -67,18 +81,16 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         label.numberOfLines = 4
         label.font = .chatSmall
         label.textColor = .chatGray
-        addSubview(label)
+        linkStackView.addArrangedSubview(label)
         
         label.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).priority(999)
-            make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
-            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
-            make.bottom.equalToSuperview().offset(-CGFloat.messageEdgePadding).priority(999)
+            make.left.equalToSuperview().offset(CGFloat.messageInnerPadding)
+            make.right.equalToSuperview().offset(-CGFloat.messageInnerPadding)
         }
         
-        label.setContentCompressionResistancePriority(.defaultHigh + 10, for: .vertical)
+        label.setContentCompressionResistancePriority(.required - 2, for: .vertical)
         
-        return label
+       return label
     }()
     
     private(set) lazy var actionsStackView: UIStackView = {
@@ -115,12 +127,14 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         didSet {
             if let attachment = attachment {
                 hasActions = !attachment.actions.isEmpty
+                isLink = !attachment.isImage
                 defaultHeight = attachment.isImage && !hasActions ? .attachmentPreviewHeight : .attachmentPreviewMaxHeight
             }
         }
     }
     
     private var hasActions = false
+    private var isLink = false
     
     override var tintColor: UIColor! {
         didSet { imageView.tintColor = tintColor }
@@ -184,13 +198,16 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             
             backgroundColor = .clear
             
-        } else if !attachment.isImage {
+        } else if isLink {
+            widthConstraint?.update(offset: maxWidth)
+            imageViewBottomConstraint?.deactivate()
+            imageViewBottomConstraint = nil
+            linkStackView.addArrangedSubview(imageView)
+            imageView.backgroundColor = backgroundColor
             titleLabel.text = attachment.title
             titleLabel.backgroundColor = backgroundColor
             textLabel.text = attachment.text ?? attachment.url?.host
             textLabel.backgroundColor = backgroundColor
-            widthConstraint?.update(offset: maxWidth)
-            imageViewTopConstraint?.update(offset: CGFloat.messageEdgePadding)
         }
         
         guard let imageURL = attachment.imageURL else {
@@ -229,6 +246,12 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                        cached: Bool,
                        _ completion: @escaping Competion) {
         guard let attachment = attachment, error == nil else {
+            if isLink {
+                imageView.isHidden = true
+                linkStackView.insertArrangedSubview(UIView(frame: .zero), at: 0)
+                linkStackView.addArrangedSubview(UIView(frame: .zero))
+            }
+            
             completion(self, error)
             return
         }
@@ -266,7 +289,12 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
             }
         }
         
-        showGif()
+        if isLink {
+            imageView.contentMode = .scaleAspectFill
+        } else {
+            showGif()
+        }
+        
         addMaskImage(maskImage, size: CGSize(width: width, height: height))
         
         completion(self, nil)
