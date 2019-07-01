@@ -220,11 +220,7 @@ extension ChannelPresenter {
                 Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             }
             
-            var forceToScroll = false
-            
-            if let currentUser = Client.shared.user {
-                forceToScroll = user == currentUser
-            }
+            let forceToScroll = Client.shared.user == user
             
             return .itemAdded(nextRow, reloadRow, forceToScroll, items)
             

@@ -12,7 +12,6 @@
 		8A91164722C781500006FB01 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A91164522C781500006FB01 /* Main.storyboard */; };
 		8A91164922C781500006FB01 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A91164822C781500006FB01 /* Assets.xcassets */; };
 		8A91164C22C781500006FB01 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A91164A22C781500006FB01 /* LaunchScreen.storyboard */; };
-		8A9116E222C782820006FB01 /* CustomChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91165522C782820006FB01 /* CustomChannel.swift */; };
 		8A9116E322C782820006FB01 /* Chat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A91165622C782820006FB01 /* Chat.xcassets */; };
 		8A9116E422C782820006FB01 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91165822C782820006FB01 /* Int+Extensions.swift */; };
 		8A9116E522C782820006FB01 /* UIImage+Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91165B22C782820006FB01 /* UIImage+Icons.swift */; };
@@ -146,7 +145,6 @@
 		8A91164822C781500006FB01 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8A91164B22C781500006FB01 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8A91164D22C781500006FB01 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8A91165522C782820006FB01 /* CustomChannel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomChannel.swift; sourceTree = "<group>"; };
 		8A91165622C782820006FB01 /* Chat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Chat.xcassets; sourceTree = "<group>"; };
 		8A91165822C782820006FB01 /* Int+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		8A91165B22C782820006FB01 /* UIImage+Icons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Icons.swift"; sourceTree = "<group>"; };
@@ -320,22 +318,13 @@
 		8A91165322C782820006FB01 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				8A91165422C782820006FB01 /* Customization Examples */,
-				8A91165722C782820006FB01 /* Extensions */,
+				8A9116D022C782820006FB01 /* Client */,
 				8A91168822C782820006FB01 /* Model */,
 				8A91169C22C782820006FB01 /* View */,
-				8A9116D022C782820006FB01 /* Client */,
+				8A91165722C782820006FB01 /* Extensions */,
 				8A91165622C782820006FB01 /* Chat.xcassets */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		8A91165422C782820006FB01 /* Customization Examples */ = {
-			isa = PBXGroup;
-			children = (
-				8A91165522C782820006FB01 /* CustomChannel.swift */,
-			);
-			path = "Customization Examples";
 			sourceTree = "<group>";
 		};
 		8A91165722C782820006FB01 /* Extensions */ = {
@@ -809,7 +798,6 @@
 				8A91170A22C782830006FB01 /* RxGesture+Extensions.swift in Sources */,
 				8A91170F22C782830006FB01 /* Event.swift in Sources */,
 				8A9116F122C782820006FB01 /* UIViewController+ImagePicker.swift in Sources */,
-				8A9116E222C782820006FB01 /* CustomChannel.swift in Sources */,
 				8A91170922C782830006FB01 /* Date+Extensions.swift in Sources */,
 				8A91174F22C782830006FB01 /* BaseURL.swift in Sources */,
 				8A91172D22C782830006FB01 /* ComposerView+Files.swift in Sources */,

@@ -15,7 +15,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
     
     public var style = ChatViewStyle()
     let disposeBag = DisposeBag()
-    var reactionsView: ReactionsView?
+    weak var reactionsView: ReactionsView?
     private(set) var items = [ChatItem]()
     
     var scrollEnabled: Bool {
@@ -195,6 +195,10 @@ extension ChatViewController {
             let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
             tableView.stayOnScrollOnce = scrollEnabled && needsToScroll && !forceToScroll
             
+            if forceToScroll {
+                reactionsView?.dismiss()
+            }
+            
             UIView.performWithoutAnimation {
                 tableView.performBatchUpdates({
                     tableView.insertRows(at: [indexPath], with: .none)
@@ -204,7 +208,7 @@ extension ChatViewController {
                     }
                 })
                 
-                if scrollEnabled, forceToScroll {
+                if scrollEnabled || forceToScroll {
                     tableView.scrollToRow(at: .row(row), at: .top, animated: false)
                 }
             }
@@ -213,11 +217,12 @@ extension ChatViewController {
             
             UIView.performWithoutAnimation {
                 tableView.reloadRows(at: rows.map({ .row($0) }), with: .none)
-                
-                if let reactionsView = reactionsView, let message = messages.first {
-                    reactionsView.update(with: message)
-                }
             }
+            
+            if let reactionsView = reactionsView, let message = messages.first {
+                reactionsView.update(with: message)
+            }
+            
         case let .itemRemoved(row, items):
             self.items = items
             
