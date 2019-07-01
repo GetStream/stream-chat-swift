@@ -9,23 +9,36 @@
 import UIKit
 
 public struct MessageViewStyle: Hashable {
-    public let alignment: Alignment
-    public let showCurrentUserAvatar: Bool
-    public let chatBackgroundColor: UIColor
-    public let font: UIFont
-    public let replyFont: UIFont
-    public let nameFont: UIFont
-    public let infoFont: UIFont
-    public let emojiFont: UIFont
-    public let textColor: UIColor
-    public let replyColor: UIColor
-    public let infoColor: UIColor
-    public let backgroundColor: UIColor
-    public let borderColor: UIColor
-    public let borderWidth: CGFloat
-    public let cornerRadius: CGFloat
-    public let reactionViewStyle: ReactionViewStyle
-    public let markdownEnabled: Bool
+    public var alignment: Alignment
+    public var showCurrentUserAvatar: Bool
+    public var font: UIFont
+    public var replyFont: UIFont
+    public var nameFont: UIFont
+    public var infoFont: UIFont
+    public var emojiFont: UIFont
+    public var textColor: UIColor
+    public var replyColor: UIColor
+    public var infoColor: UIColor
+    public var borderColor: UIColor
+    
+    public var chatBackgroundColor: UIColor {
+        didSet { updateBackgroundImages() }
+    }
+    
+    public var backgroundColor: UIColor {
+        didSet { updateBackgroundImages() }
+    }
+    
+    public var borderWidth: CGFloat {
+        didSet { updateBackgroundImages() }
+    }
+    
+    public var cornerRadius: CGFloat {
+        didSet { updateBackgroundImages() }
+    }
+    
+    public var reactionViewStyle: ReactionViewStyle
+    public var markdownEnabled: Bool
     private(set) var backgroundImages: [RoundedImageType: UIImage] = [:]
     private(set) var transparentBackgroundImages: [RoundedImageType: UIImage] = [:]
     
@@ -33,23 +46,23 @@ public struct MessageViewStyle: Hashable {
         return cornerRadius > 1 && (chatBackgroundColor != backgroundColor || borderWidth > 0)
     }
     
-    init(alignment: Alignment = .left,
-         showCurrentUserAvatar: Bool = true,
-         chatBackgroundColor: UIColor = .white,
-         font: UIFont = .chatRegular,
-         replyFont: UIFont = .chatSmallBold,
-         nameFont: UIFont = .chatSmallBold,
-         infoFont: UIFont = .chatSmall,
-         emojiFont: UIFont = .chatEmoji,
-         textColor: UIColor = .black,
-         replyColor: UIColor = .chatBlue,
-         infoColor: UIColor = .chatGray,
-         backgroundColor: UIColor = .white,
-         borderColor: UIColor = .chatSuperLightGray,
-         borderWidth: CGFloat = 1,
-         cornerRadius: CGFloat = .messageCornerRadius,
-         reactionViewStyle: ReactionViewStyle = ReactionViewStyle(),
-         markdownEnabled: Bool = true) {
+    public init(alignment: Alignment = .left,
+                showCurrentUserAvatar: Bool = true,
+                chatBackgroundColor: UIColor = .white,
+                font: UIFont = .chatRegular,
+                replyFont: UIFont = .chatSmallBold,
+                nameFont: UIFont = .chatSmallBold,
+                infoFont: UIFont = .chatSmall,
+                emojiFont: UIFont = .chatEmoji,
+                textColor: UIColor = .black,
+                replyColor: UIColor = .chatBlue,
+                infoColor: UIColor = .chatGray,
+                backgroundColor: UIColor = .white,
+                borderColor: UIColor = .chatSuperLightGray,
+                borderWidth: CGFloat = 1,
+                cornerRadius: CGFloat = .messageCornerRadius,
+                reactionViewStyle: ReactionViewStyle = ReactionViewStyle(),
+                markdownEnabled: Bool = true) {
         self.alignment = alignment
         self.showCurrentUserAvatar = showCurrentUserAvatar
         self.chatBackgroundColor = chatBackgroundColor
@@ -67,7 +80,12 @@ public struct MessageViewStyle: Hashable {
         self.cornerRadius = cornerRadius
         self.reactionViewStyle = reactionViewStyle
         self.markdownEnabled = markdownEnabled
-        
+        backgroundImages = [:]
+        transparentBackgroundImages = [:]
+        updateBackgroundImages()
+    }
+    
+    private mutating func updateBackgroundImages() {
         guard hasBackgroundImage else {
             return
         }

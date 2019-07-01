@@ -19,14 +19,14 @@ public struct ReactionViewStyle: Hashable {
     public let tailCornerRadius: CGFloat
     public let tailMessageCornerRadius: CGFloat
     public private(set) var tailImage: UIImage
-
-    init(alignment: MessageViewStyle.Alignment = .left,
-         font: UIFont = .chatSmall,
-         textColor: UIColor = .white,
-         backgroundColor: UIColor = .chatDarkGray,
-         chatBackgroundColor: UIColor = .white,
-         cornerRadius: CGFloat = .reactionsCornerRadius,
-         tailMessageCornerRadius: CGFloat = .messageCornerRadius) {
+    
+    public init(alignment: MessageViewStyle.Alignment = .left,
+                font: UIFont = .chatSmall,
+                textColor: UIColor = .white,
+                backgroundColor: UIColor = .chatDarkGray,
+                chatBackgroundColor: UIColor = .white,
+                cornerRadius: CGFloat = .reactionsCornerRadius,
+                tailMessageCornerRadius: CGFloat = .messageCornerRadius) {
         self.alignment = alignment
         self.font = font
         self.textColor = textColor

@@ -9,31 +9,31 @@
 import UIKit
 
 public struct ChannelViewStyle: Hashable {
-    public let backgroundColor: UIColor
-    public let separatorColor: UIColor
-    public let nameFont: UIFont
-    public let nameColor: UIColor
-    public let messageFont: UIFont
-    public let messageColor: UIColor
-    public let messageUnreadFont: UIFont
-    public let messageUnreadColor: UIColor
-    public let messageDeletedFont: UIFont
-    public let messageDeletedColor: UIColor
-    public let dateFont: UIFont
-    public let dateColor: UIColor
+    public var backgroundColor: UIColor
+    public var separatorColor: UIColor
+    public var nameFont: UIFont
+    public var nameColor: UIColor
+    public var messageFont: UIFont
+    public var messageColor: UIColor
+    public var messageUnreadFont: UIFont
+    public var messageUnreadColor: UIColor
+    public var messageDeletedFont: UIFont
+    public var messageDeletedColor: UIColor
+    public var dateFont: UIFont
+    public var dateColor: UIColor
     
-    init(backgroundColor: UIColor = .white,
-         separatorColor: UIColor = .chatSeparator,
-         titleFont: UIFont = .chatXRegularMedium,
-         titleColor: UIColor = .black,
-         messageFont: UIFont = .chatMedium,
-         messageColor: UIColor = .chatGray,
-         messageUnreadFont: UIFont = .chatMediumMedium,
-         messageUnreadColor: UIColor = .black,
-         messageDeletedFont: UIFont = .chatMediumItalic,
-         messageDeletedColor: UIColor = .chatGray,
-         dateFont: UIFont = .chatSmall,
-         dateColor: UIColor = .chatGray) {
+    public init(backgroundColor: UIColor = .white,
+                separatorColor: UIColor = .chatSeparator,
+                titleFont: UIFont = .chatXRegularMedium,
+                titleColor: UIColor = .black,
+                messageFont: UIFont = .chatMedium,
+                messageColor: UIColor = .chatGray,
+                messageUnreadFont: UIFont = .chatMediumMedium,
+                messageUnreadColor: UIColor = .black,
+                messageDeletedFont: UIFont = .chatMediumItalic,
+                messageDeletedColor: UIColor = .chatGray,
+                dateFont: UIFont = .chatSmall,
+                dateColor: UIColor = .chatGray) {
         self.backgroundColor = backgroundColor
         self.separatorColor = separatorColor
         self.nameFont = titleFont

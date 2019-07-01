@@ -42,7 +42,7 @@ extension UIColor {
         return isDark ? .white : .black
     }
     
-    func blendAlpha(coverColor: UIColor) -> UIColor {
+    public func blendAlpha(coverColor: UIColor) -> UIColor {
         let c1 = coverColor.rgbaTuple()
         let c2 = rgbaTuple()
         let r = c1.r * c1.a + c2.r  * (1 - c1.a)

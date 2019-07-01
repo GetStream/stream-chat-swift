@@ -11,21 +11,21 @@ import UIKit
 public struct ComposerViewStyle: Hashable {
     public typealias States = [State: Style]
     
-    public let font: UIFont
-    public let textColor: UIColor
-    public let placeholderTextColor: UIColor
-    public let backgroundColor: UIColor
-    public let cornerRadius: CGFloat
-    private let states: [State: Style]
+    public var font: UIFont
+    public var textColor: UIColor
+    public var placeholderTextColor: UIColor
+    public var backgroundColor: UIColor
+    public var cornerRadius: CGFloat
+    public var states: [State: Style]
     
-    init(font: UIFont = .chatRegular,
-         textColor: UIColor = .black,
-         placeholderTextColor: UIColor = .chatGray,
-         backgroundColor: UIColor = .clear,
-         cornerRadius: CGFloat = .composerCornerRadius,
-         states: States = [.active: .init(tintColor: .chatLightBlue, borderWidth: 2),
-                           .edit: .init(tintColor: .chatGreen, borderWidth: 2),
-                           .disabled: .init(tintColor: .chatGray, borderWidth: 2)]) {
+    public init(font: UIFont = .chatRegular,
+                textColor: UIColor = .black,
+                placeholderTextColor: UIColor = .chatGray,
+                backgroundColor: UIColor = .clear,
+                cornerRadius: CGFloat = .composerCornerRadius,
+                states: States = [.active: .init(tintColor: .chatLightBlue, borderWidth: 2),
+                                  .edit: .init(tintColor: .chatGreen, borderWidth: 2),
+                                  .disabled: .init(tintColor: .chatGray, borderWidth: 2)]) {
         self.font = font
         self.textColor = textColor
         self.placeholderTextColor = placeholderTextColor
@@ -63,7 +63,7 @@ extension ComposerViewStyle {
         public let tintColor: UIColor
         public let borderWidth: CGFloat
         
-        init(tintColor: UIColor = .chatGray, borderWidth: CGFloat = 0) {
+        public init(tintColor: UIColor = .chatGray, borderWidth: CGFloat = 0) {
             self.tintColor = tintColor
             self.borderWidth = borderWidth
         }
