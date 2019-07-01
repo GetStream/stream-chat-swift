@@ -112,7 +112,6 @@
 		8A91174422C782830006FB01 /* ChatViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116C822C782820006FB01 /* ChatViewStyle.swift */; };
 		8A91174522C782830006FB01 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116C922C782820006FB01 /* Notifications.swift */; };
 		8A91174622C782830006FB01 /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116CA22C782820006FB01 /* Presenter.swift */; };
-		8A91174722C782830006FB01 /* DataDetectorWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116CB22C782820006FB01 /* DataDetectorWorker.swift */; };
 		8A91174822C782830006FB01 /* ChannelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116CD22C782820006FB01 /* ChannelsViewController.swift */; };
 		8A91174922C782830006FB01 /* ChannelsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116CE22C782820006FB01 /* ChannelsPresenter.swift */; };
 		8A91174A22C782830006FB01 /* ChannelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116CF22C782820006FB01 /* ChannelTableViewCell.swift */; };
@@ -245,7 +244,6 @@
 		8A9116C822C782820006FB01 /* ChatViewStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewStyle.swift; sourceTree = "<group>"; };
 		8A9116C922C782820006FB01 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		8A9116CA22C782820006FB01 /* Presenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Presenter.swift; sourceTree = "<group>"; };
-		8A9116CB22C782820006FB01 /* DataDetectorWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataDetectorWorker.swift; sourceTree = "<group>"; };
 		8A9116CD22C782820006FB01 /* ChannelsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelsViewController.swift; sourceTree = "<group>"; };
 		8A9116CE22C782820006FB01 /* ChannelsPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelsPresenter.swift; sourceTree = "<group>"; };
 		8A9116CF22C782820006FB01 /* ChannelTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelTableViewCell.swift; sourceTree = "<group>"; };
@@ -330,20 +328,19 @@
 		8A91165722C782820006FB01 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				8A91165822C782820006FB01 /* Int+Extensions.swift */,
 				8A91165922C782820006FB01 /* UIKit */,
+				8A91167F22C782820006FB01 /* String */,
+				8A91168322C782820006FB01 /* Rx */,
+				8A91182322CA0C2800D938B0 /* Utils */,
+				8A91165822C782820006FB01 /* Int+Extensions.swift */,
 				8A91167622C782820006FB01 /* Result+Extensions.swift */,
 				8A91167722C782820006FB01 /* URL+Media.swift */,
 				8A91167822C782820006FB01 /* CharacterSet+Extensions.swift */,
 				8A91167922C782820006FB01 /* Codable+Extensions.swift */,
-				8A91167A22C782820006FB01 /* MVar.swift */,
 				8A91167B22C782820006FB01 /* Dictionary+Extensions.swift */,
-				8A91167C22C782820006FB01 /* Utils.swift */,
 				8A91167D22C782820006FB01 /* TimeInterval+Extensions.swift */,
 				8A91167E22C782820006FB01 /* Bundle+Extensions.swift */,
-				8A91167F22C782820006FB01 /* String */,
 				8A91168222C782820006FB01 /* Date+Extensions.swift */,
-				8A91168322C782820006FB01 /* Rx */,
 				8A91168722C782820006FB01 /* Data+Extensions.swift */,
 			);
 			path = Extensions;
@@ -352,7 +349,9 @@
 		8A91165922C782820006FB01 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				8A91166722C782820006FB01 /* UIViewController */,
 				8A91165A22C782820006FB01 /* UIImage */,
+				8A91167222C782820006FB01 /* Reusable */,
 				8A91165E22C782820006FB01 /* IndexPath+Extensions.swift */,
 				8A91165F22C782820006FB01 /* UIView+Extensions.swift */,
 				8A91166022C782820006FB01 /* UIEdgeInsets+Extensions.swift */,
@@ -362,7 +361,6 @@
 				8A91166422C782820006FB01 /* UIColor+Extensions.swift */,
 				8A91166522C782820006FB01 /* UIDevice+Extensions.swift */,
 				8A91166622C782820006FB01 /* UIApplication+AppState.swift */,
-				8A91166722C782820006FB01 /* UIViewController */,
 				8A91166B22C782820006FB01 /* TableView.swift */,
 				8A91166C22C782820006FB01 /* UIStackView+Extensions.swift */,
 				8A91166D22C782820006FB01 /* UITableView+Extensions.swift */,
@@ -370,7 +368,6 @@
 				8A91166F22C782820006FB01 /* UILabel+Extensions.swift */,
 				8A91167022C782820006FB01 /* CGRect+Extensions.swift */,
 				8A91167122C782820006FB01 /* CGFloat+Extensions.swift */,
-				8A91167222C782820006FB01 /* Reusable */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -427,25 +424,25 @@
 		8A91168822C782820006FB01 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				8A91168922C782820006FB01 /* Attachment.swift */,
-				8A91168A22C782820006FB01 /* Event.swift */,
-				8A91168B22C782820006FB01 /* ExtraData.swift */,
-				8A91168C22C782820006FB01 /* ChannelQuery.swift */,
-				8A91168D22C782820006FB01 /* ChannelsQuery.swift */,
-				8A91168E22C782820006FB01 /* Message.swift */,
-				8A91168F22C782820006FB01 /* Channel.swift */,
-				8A91169022C782820006FB01 /* MessageRead.swift */,
-				8A91169122C782820006FB01 /* Sorting.swift */,
 				8A91169222C782820006FB01 /* User.swift */,
 				8A91169322C782820006FB01 /* Member.swift */,
+				8A91168E22C782820006FB01 /* Message.swift */,
+				8A91169022C782820006FB01 /* MessageRead.swift */,
 				8A91169422C782820006FB01 /* MessageAction.swift */,
-				8A91169522C782820006FB01 /* Reaction.swift */,
-				8A91169622C782820006FB01 /* ChatItem.swift */,
-				8A91169722C782820006FB01 /* Pagination.swift */,
+				8A91168922C782820006FB01 /* Attachment.swift */,
+				8A91168F22C782820006FB01 /* Channel.swift */,
 				8A91169822C782820006FB01 /* Channel+Create.swift */,
+				8A91168C22C782820006FB01 /* ChannelQuery.swift */,
+				8A91168D22C782820006FB01 /* ChannelsQuery.swift */,
+				8A91169B22C782820006FB01 /* ChannelsResponse.swift */,
+				8A91168A22C782820006FB01 /* Event.swift */,
+				8A91169522C782820006FB01 /* Reaction.swift */,
+				8A91168B22C782820006FB01 /* ExtraData.swift */,
+				8A91169722C782820006FB01 /* Pagination.swift */,
+				8A91169122C782820006FB01 /* Sorting.swift */,
 				8A91169922C782820006FB01 /* Filter.swift */,
 				8A91169A22C782820006FB01 /* ViewChanges.swift */,
-				8A91169B22C782820006FB01 /* ChannelsResponse.swift */,
+				8A91169622C782820006FB01 /* ChatItem.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -453,14 +450,13 @@
 		8A91169C22C782820006FB01 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				8A9116C322C782820006FB01 /* Style */,
+				8A9116CC22C782820006FB01 /* Channels */,
 				8A91169D22C782820006FB01 /* Chat */,
 				8A9116BF22C782820006FB01 /* Web View */,
 				8A9116C122C782820006FB01 /* Image Gallery */,
-				8A9116C322C782820006FB01 /* Style */,
-				8A9116C922C782820006FB01 /* Notifications.swift */,
 				8A9116CA22C782820006FB01 /* Presenter.swift */,
-				8A9116CB22C782820006FB01 /* DataDetectorWorker.swift */,
-				8A9116CC22C782820006FB01 /* Channels */,
+				8A9116C922C782820006FB01 /* Notifications.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -483,12 +479,12 @@
 		8A91169E22C782820006FB01 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				8A91169F22C782820006FB01 /* StatusTableViewCell.swift */,
-				8A9116A022C782820006FB01 /* MessageTableViewCell+EnrichMessage.swift */,
-				8A9116A122C782820006FB01 /* MessageTableViewCell+Attachments.swift */,
-				8A9116A222C782820006FB01 /* ReadUsersView.swift */,
-				8A9116A322C782820006FB01 /* MessageTableViewCell+Updates.swift */,
 				8A9116A422C782820006FB01 /* MessageTableViewCell.swift */,
+				8A9116A322C782820006FB01 /* MessageTableViewCell+Updates.swift */,
+				8A9116A122C782820006FB01 /* MessageTableViewCell+Attachments.swift */,
+				8A9116A022C782820006FB01 /* MessageTableViewCell+EnrichMessage.swift */,
+				8A91169F22C782820006FB01 /* StatusTableViewCell.swift */,
+				8A9116A222C782820006FB01 /* ReadUsersView.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -496,15 +492,15 @@
 		8A9116A622C782820006FB01 /* Composer */ = {
 			isa = PBXGroup;
 			children = (
-				8A9116A722C782820006FB01 /* ComposerCommandView.swift */,
-				8A9116A822C782820006FB01 /* ComposerView+Images.swift */,
-				8A9116A922C782820006FB01 /* ComposerAddFileView.swift */,
-				8A9116AA22C782820006FB01 /* ComposerView+TextView.swift */,
-				8A9116AB22C782820006FB01 /* AttachmentCollectionViewCell.swift */,
-				8A9116AC22C782820006FB01 /* ComposerView+Files.swift */,
-				8A9116AD22C782820006FB01 /* ComposerFileView.swift */,
 				8A9116AE22C782820006FB01 /* ComposerView.swift */,
+				8A9116AA22C782820006FB01 /* ComposerView+TextView.swift */,
+				8A9116A822C782820006FB01 /* ComposerView+Images.swift */,
+				8A9116AC22C782820006FB01 /* ComposerView+Files.swift */,
 				8A9116AF22C782820006FB01 /* ComposerHelperContainerView.swift */,
+				8A9116A922C782820006FB01 /* ComposerAddFileView.swift */,
+				8A9116AD22C782820006FB01 /* ComposerFileView.swift */,
+				8A9116A722C782820006FB01 /* ComposerCommandView.swift */,
+				8A9116AB22C782820006FB01 /* AttachmentCollectionViewCell.swift */,
 			);
 			path = Composer;
 			sourceTree = "<group>";
@@ -513,12 +509,12 @@
 			isa = PBXGroup;
 			children = (
 				8A9116B122C782820006FB01 /* ChatViewController.swift */,
+				8A9116B722C782820006FB01 /* ChatViewController+Cells.swift */,
 				8A9116B222C782820006FB01 /* ChatViewController+Attachments.swift */,
 				8A9116B322C782820006FB01 /* ChatViewController+Composer.swift */,
-				8A9116B422C782820006FB01 /* ChatViewController+TableFooterView.swift */,
 				8A9116B522C782820006FB01 /* ChatViewController+Reactions.swift */,
 				8A9116B622C782820006FB01 /* ChatViewController+MessageActions.swift */,
-				8A9116B722C782820006FB01 /* ChatViewController+Cells.swift */,
+				8A9116B422C782820006FB01 /* ChatViewController+TableFooterView.swift */,
 			);
 			path = "Chat View Controller";
 			sourceTree = "<group>";
@@ -526,9 +522,9 @@
 		8A9116BB22C782820006FB01 /* Attachments */ = {
 			isa = PBXGroup;
 			children = (
-				8A9116BC22C782820006FB01 /* AttachmentFilePreview.swift */,
 				8A9116BD22C782820006FB01 /* AttachmentPreviewProtocol.swift */,
 				8A9116BE22C782820006FB01 /* AttachmentPreview.swift */,
+				8A9116BC22C782820006FB01 /* AttachmentFilePreview.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -576,13 +572,13 @@
 			children = (
 				8A9116D122C782820006FB01 /* WebSocket */,
 				8A9116D622C782820006FB01 /* BaseURL.swift */,
-				8A9116D722C782820006FB01 /* Uploader.swift */,
 				8A9116D822C782820006FB01 /* Client.swift */,
 				8A9116D922C782820006FB01 /* ChatEndpoint.swift */,
 				8A9116DA22C782820006FB01 /* Client+RxRequest.swift */,
 				8A9116DB22C782820006FB01 /* Client+Request.swift */,
 				8A9116DC22C782820006FB01 /* ClientError.swift */,
 				8A9116DD22C782820006FB01 /* Client+WebSocket.swift */,
+				8A9116D722C782820006FB01 /* Uploader.swift */,
 				8A9116DE22C782820006FB01 /* ClientLogger.swift */,
 				8A9116DF22C782820006FB01 /* Upload */,
 			);
@@ -592,9 +588,8 @@
 		8A9116D122C782820006FB01 /* WebSocket */ = {
 			isa = PBXGroup;
 			children = (
-				8A9116D222C782820006FB01 /* WebSocket+Response.swift */,
 				8A9116D322C782820006FB01 /* WebSocket.swift */,
-				8A9116D422C782820006FB01 /* RepeatingTimer.swift */,
+				8A9116D222C782820006FB01 /* WebSocket+Response.swift */,
 				8A9116D522C782820006FB01 /* WebSocket+Reconnect.swift */,
 			);
 			path = WebSocket;
@@ -607,6 +602,16 @@
 				8A9116E122C782820006FB01 /* ClientURLSessionTaskDelegate.swift */,
 			);
 			path = Upload;
+			sourceTree = "<group>";
+		};
+		8A91182322CA0C2800D938B0 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				8A91167A22C782820006FB01 /* MVar.swift */,
+				8A9116D422C782820006FB01 /* RepeatingTimer.swift */,
+				8A91167C22C782820006FB01 /* Utils.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		9777790C356375993062525F /* Frameworks */ = {
@@ -816,7 +821,6 @@
 				8A9116FC22C782830006FB01 /* Reusable.swift in Sources */,
 				8A9116E622C782820006FB01 /* UIImage+Extensions.swift in Sources */,
 				8A91173122C782830006FB01 /* ChatViewController.swift in Sources */,
-				8A91174722C782830006FB01 /* DataDetectorWorker.swift in Sources */,
 				8A91172022C782830006FB01 /* ChannelsResponse.swift in Sources */,
 				8A91175C22C782F20006FB01 /* CustomChatViewController.swift in Sources */,
 				8A91171922C782830006FB01 /* MessageAction.swift in Sources */,
@@ -1026,7 +1030,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1047,7 +1051,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

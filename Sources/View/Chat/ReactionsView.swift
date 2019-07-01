@@ -29,7 +29,6 @@ final class ReactionsView: UIView {
         view.layer.shadowOffset = CGSize(width: 0, height: .reactionsPickerShadowOffsetY)
         view.layer.shadowRadius = .reactionsPickerShadowRadius
         view.layer.shadowOpacity = Float(CGFloat.reactionsPickerShdowOpacity)
-        
         return view
     }()
     
