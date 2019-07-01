@@ -264,7 +264,7 @@
 		8A9116E122C782820006FB01 /* ClientURLSessionTaskDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientURLSessionTaskDelegate.swift; sourceTree = "<group>"; };
 		8A91175A22C782900006FB01 /* StreamChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StreamChat.entitlements; sourceTree = "<group>"; };
 		8A91175B22C782F10006FB01 /* CustomChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomChatViewController.swift; sourceTree = "<group>"; };
-		8A91175D22C783A00006FB01 /* StreamChat.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChat.podspec; sourceTree = SOURCE_ROOT; };
+		8A91175D22C783A00006FB01 /* StreamChat.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChat.podspec; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
