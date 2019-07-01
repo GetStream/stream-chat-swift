@@ -17,7 +17,7 @@ extension WebSocket {
         let error: Error
     }
     
-    struct Error: Decodable {s
+    struct Error: Decodable {
         private enum CodingKeys: String, CodingKey {
             case code
             case message
