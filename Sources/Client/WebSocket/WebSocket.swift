@@ -19,7 +19,7 @@ final class WebSocket {
     
     let webSocket: Starscream.WebSocket
     private(set) lazy var reachability = Reachability()
-    private(set) var lastError: Error?
+    private(set) var lastJSONError: Error?
     private(set) var lastConnectionId: String?
     private(set) var consecutiveFailures: TimeInterval = 0
     let logger: ClientLogger?
@@ -168,12 +168,12 @@ extension WebSocket {
                 handshakeTimer.resume()
                 logger?.log("🥰 Connected")
                 return .connected(connectionId, user)
-            } else if lastError != nil {
+            } else if lastJSONError != nil {
                 return nil
             }
         }
         
-        if appState == .active, !webSocket.isConnected, lastError == nil {
+        if appState == .active, !webSocket.isConnected, lastJSONError == nil {
             reconnect()
             return .connecting
         }
@@ -189,11 +189,10 @@ extension WebSocket {
             
             if let error = error {
                 logger?.log(error, message: "💔😡 Disconnected by error:")
+                ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
             }
             
-            let parsedError = parseDisconnect(error)
-            
-            if parsedError == nil {
+            if let error = error, willReconnectAfterError(error) {
                 consecutiveFailures += 1
             } else {
                 consecutiveFailures = 0
@@ -225,10 +224,10 @@ extension WebSocket {
         }
         
         logger?.log("📦", data)
-        lastError = nil
+        lastJSONError = nil
         
-        if let errorContsainer = try? JSONDecoder.stream.decode(ErrorContainer.self, from: data) {
-            lastError = errorContsainer.error
+        if let errorContainer = try? JSONDecoder.stream.decode(ErrorContainer.self, from: data) {
+            lastJSONError = errorContainer.error
             lastMessageResponse = nil
             return nil
         }

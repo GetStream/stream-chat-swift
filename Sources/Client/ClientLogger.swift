@@ -149,4 +149,16 @@ public final class ClientLogger {
     func log(_ message: String) {
         ClientLogger.logger(icon, logDateFormatter.string(from: Date()), message)
     }
+    
+    static func showConnectionAlert(_ error: Error, jsonError: WebSocket.Error?) {
+        #if DEBUG
+        let jsonError = jsonError ?? WebSocket.Error(code: 0, message: "<unknown>", statusCode: 0)
+        let message = "\(jsonError.message)\n\nCode: \(jsonError.code)\nStatus Code: \(jsonError.statusCode)\n\n\(error)"
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Connection Error", message: message, preferredStyle: .alert)
+            alert.addAction(.init(title: "Ok, I'll check", style: .cancel, handler: nil))
+            UIApplication.shared.delegate?.window??.rootViewController?.present(alert, animated: true)
+        }
+        #endif
+    }
 }

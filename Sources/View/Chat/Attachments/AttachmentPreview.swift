@@ -44,7 +44,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     private lazy var linkStackView: UIStackView = {
         imageViewBottomConstraint?.deactivate()
         let stackView = UIStackView(arrangedSubviews: [])
-        stackView.axis = .vertical  
+        stackView.axis = .vertical
         stackView.spacing = .messageInnerPadding
         stackView.alignment = .top
         addSubview(stackView)

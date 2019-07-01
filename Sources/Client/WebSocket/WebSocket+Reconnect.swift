@@ -8,6 +8,7 @@
 
 import Foundation
 import Reachability
+import Starscream
 
 // MARK: - WebSocket Error
 
@@ -16,7 +17,7 @@ extension WebSocket {
         let error: Error
     }
     
-    struct Error: Decodable {
+    struct Error: Decodable {s
         private enum CodingKeys: String, CodingKey {
             case code
             case message
@@ -31,16 +32,21 @@ extension WebSocket {
 
 extension WebSocket {
     
-    func parseDisconnect(_ error: Swift.Error?) -> Error? {
-        if let lastError = lastError, lastError.code == 1000 {
-            return lastError
+    func willReconnectAfterError(_ error: Swift.Error) -> Bool {
+        if let lastJSONError = lastJSONError, lastJSONError.code == 1000 {
+            return false
+        }
+        
+        if let wsError = error as? WSError, wsError.code == 1000 {
+            return false
         }
         
         if reachability?.connection != .none {
             reconnect()
+            return true
         }
         
-        return nil
+        return false
     }
     
     func reconnect() {
