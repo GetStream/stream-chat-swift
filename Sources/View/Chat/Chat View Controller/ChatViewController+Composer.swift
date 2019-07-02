@@ -94,6 +94,7 @@ extension ChatViewController {
             composerEditingHelperView.animate(show: false)
         }
         
+        composerView.isEnabled = false
         channelPresenter?.send(text: text) { [weak composerView] in composerView?.reset() }
     }
     
