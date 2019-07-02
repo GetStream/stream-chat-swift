@@ -18,18 +18,23 @@ extension JSONDecoder {
         /// A custom decoding for a date.
         decoder.dateDecodingStrategy = .custom { decoder throws -> Date in
             let container = try decoder.singleValueContainer()
-            let string: String = try container.decode(String.self)
+            var dateString: String = try container.decode(String.self)
             
-            if let date = DateFormatter.Stream.iso8601Date(from: string) {
+            if !dateString.contains(".") {
+                dateString.removeLast()
+                dateString.append(".0Z")
+            }
+            
+            if let date = DateFormatter.Stream.iso8601Date(from: dateString) {
                 return date
             }
             
-            if string == "1970-01-01T00:00:00Z" {
-                print("⚠️ Invalid iso8601 date: 1970-01-01T00:00:00Z")
+            if dateString.hasPrefix("1970-01-01T00:00:00") {
+                print("⚠️ Invalid ISO8601 date: \(dateString)")
                 return Date()
             }
             
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(string)")
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(dateString)")
         }
         
         return decoder
