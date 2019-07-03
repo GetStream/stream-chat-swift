@@ -19,7 +19,9 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public let showChannelStatuses: Bool
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
-    private(set) lazy var channelsRequest: Driver<ViewChanges> = request(startPaginationWith: pageSize)
+    private(set) lazy var changes = Driver.merge(requestChanges, webSocketChanges)
+    
+    private lazy var requestChanges: Driver<ViewChanges> = request(startPaginationWith: pageSize)
         .map { [weak self] in self?.channelsEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
@@ -27,7 +29,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private(set) lazy var changes: Driver<ViewChanges> = Client.shared.webSocket.response
+    private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.webSocket.response
         .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)

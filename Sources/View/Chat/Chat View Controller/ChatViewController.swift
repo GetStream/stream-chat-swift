@@ -77,9 +77,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
             presenter.sendReadIfPossible()
         }
         
-        Driver.merge((presenter.parentMessage == nil ? presenter.channelRequest : presenter.replyRequest),
-                     presenter.changes,
-                     presenter.ephemeralChanges)
+        presenter.changes
             .do(onNext: { [weak presenter] _ in presenter?.sendReadIfPossible() })
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)

@@ -44,7 +44,8 @@ public class Presenter<T> {
                 }
                 
                 return true
-        }
+            }
+            .share()
     }
     
     func reload() {

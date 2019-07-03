@@ -54,7 +54,7 @@ final class WebSocket {
         .combineLatest(webSocket.rx.response, connection.connected())
         .map { [weak self] event, _ in self?.parseMessage(event) }
         .unwrap()
-        .share(replay: 1)
+        .share()
     
     init(_ urlRequest: URLRequest, logger: ClientLogger? = nil) {
         self.logger = logger

@@ -41,7 +41,7 @@ open class ChannelsViewController: UIViewController {
             title = channelsPresenter.channelType.title
         }
         
-        Driver.merge(channelsPresenter.channelsRequest, channelsPresenter.changes)
+        channelsPresenter.changes
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
     }

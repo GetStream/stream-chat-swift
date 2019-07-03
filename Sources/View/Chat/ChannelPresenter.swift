@@ -64,9 +64,11 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         return parentMessage == nil && channel.config.repliesEnabled
     }
     
-    private lazy var lazyRequest = request()
+    private(set) lazy var changes = Driver.merge(parentMessage == nil ? channelRequest : replyRequest,
+                                                 webSocketChanges,
+                                                 ephemeralChanges)
     
-    private(set) lazy var channelRequest: Driver<ViewChanges> = lazyRequest
+    private lazy var channelRequest: Driver<ViewChanges> = request()
         .map { [weak self] in self?.channelEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0).retry(3) }
@@ -75,7 +77,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private(set) lazy var replyRequest: Driver<ViewChanges> = lazyRequest
+    private lazy var replyRequest: Driver<ViewChanges> = request()
         .map { [weak self] in self?.replyEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
@@ -83,13 +85,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private(set) lazy var changes: Driver<ViewChanges> = Client.shared.webSocket.response
+    private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.webSocket.response
         .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private(set) lazy var ephemeralChanges: Driver<ViewChanges> = ephemeralSubject
+    private lazy var ephemeralChanges: Driver<ViewChanges> = ephemeralSubject
         .skip(1)
         .map { [weak self] in self?.parseEphemeralChanges($0) ?? .none }
         .filter { $0 != .none }
