@@ -36,8 +36,8 @@ final class ChatFooterView: UIView {
         addSubview(activityIndicator)
         activityIndicator.snp.makeConstraints { $0.center.equalTo(avatarView.snp.center) }
         return activityIndicator
-    }()s
-
+    }()
+    
     private(set) lazy var textLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = UIFont.chatMedium

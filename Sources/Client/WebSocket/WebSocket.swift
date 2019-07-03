@@ -86,7 +86,11 @@ final class WebSocket {
         }
         
         if backgroundTask != .invalid {
-            let goingToDisconnect: DispatchWorkItem = DispatchWorkItem { [weak self] in self?.disconnect() }
+            let goingToDisconnect: DispatchWorkItem = DispatchWorkItem { [weak self] in
+                self?.disconnect()
+                InternetConnection.shared.stopObserving()
+            }
+            
             webSocket.callbackQueue.asyncAfter(deadline: .now() + WebSocket.maxBackgroundTime, execute: goingToDisconnect)
             self.goingToDisconnect = goingToDisconnect
             logger?.log("💜", "Background mode on")
