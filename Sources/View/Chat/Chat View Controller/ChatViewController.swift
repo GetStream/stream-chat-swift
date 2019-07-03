@@ -47,7 +47,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         tableView.makeEdgesEqualToSuperview()
         
         let footerView = ChatFooterView(frame: CGRect(width: 0, height: .chatFooterHeight))
-        footerView.backgroundColor = style.incomingMessage.chatBackgroundColor
+        footerView.backgroundColor = tableView.backgroundColor
         tableView.tableFooterView = footerView
         
         return tableView
@@ -82,6 +82,16 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
                      presenter.ephemeralChanges)
             .do(onNext: { [weak presenter] _ in presenter?.sendReadIfPossible() })
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
+            .disposed(by: disposeBag)
+        
+        InternetConnection.shared.isAvailableObservable
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                if let self = self {
+                    self.updateFooterView()
+                    self.composerView.isEnabled = $0
+                }
+            })
             .disposed(by: disposeBag)
     }
     

@@ -41,7 +41,7 @@ extension WebSocket {
             return false
         }
         
-        if reachability?.connection != .none {
+        if InternetConnection.shared.isAvailable {
             reconnect()
             return true
         }

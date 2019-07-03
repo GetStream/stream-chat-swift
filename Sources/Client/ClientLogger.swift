@@ -13,14 +13,27 @@ import UIKit
 public final class ClientLogger {
     public enum Options {
         case none
+        case important
         case requests
         case requestsHeaders
         case webSocket
         case all
+        
+        var isEnabled: Bool {
+            if case .none = self {
+                return false
+            }
+            
+            return true
+        }
     }
     
     /// A customizable logger block.
-    public static var logger: (_ icon: String, _ dateAndTime: String, _ message: String) -> Void = { print($0, "[\($1)]", $2) }
+    public static var logger: (_ icon: String, _ dateAndTime: String, _ message: String) -> Void = {
+        if Client.shared.logOptions.isEnabled {
+            print($0, $1.isEmpty ? "" : "[\($1)]", $2)
+        }
+    }
     
     private let icon: String
     private var lastTime: CFTimeInterval

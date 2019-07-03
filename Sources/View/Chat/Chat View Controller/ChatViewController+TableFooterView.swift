@@ -13,12 +13,20 @@ import UIKit
 extension ChatViewController {
     
     func updateFooterView() {
-        guard let footerView = tableView.tableFooterView as? ChatFooterView else {
+        guard let footerView = tableView.tableFooterView as? ChatFooterView, let presenter = channelPresenter else {
             return
         }
         
-        guard let presenter = channelPresenter, !presenter.typingUsers.isEmpty, let user = presenter.typingUsers.first?.user else {
-            footerView.isHidden = true
+        footerView.hide()
+        
+        guard InternetConnection.shared.isAvailable else {
+            footerView.isHidden = false
+            footerView.textLabel.text = "Waiting for network..."
+            footerView.activityIndicatorView.startAnimating()
+            return
+        }
+        
+        guard !presenter.typingUsers.isEmpty, let user = presenter.typingUsers.first?.user else {
             return
         }
         

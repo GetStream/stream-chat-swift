@@ -29,6 +29,15 @@ final class ChatFooterView: UIView {
         return avatarView
     }()
     
+    private(set) lazy var activityIndicatorView: UIActivityIndicatorView = {
+        let style: UIActivityIndicatorView.Style = (backgroundColor?.isDark ?? false) ? .white : .gray
+        let activityIndicator = UIActivityIndicatorView(style: style)
+        activityIndicator.stopAnimating()
+        addSubview(activityIndicator)
+        activityIndicator.snp.makeConstraints { $0.center.equalTo(avatarView.snp.center) }
+        return activityIndicator
+    }()s
+
     private(set) lazy var textLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = UIFont.chatMedium
@@ -48,6 +57,14 @@ final class ChatFooterView: UIView {
         timerWorker?.cancel()
     }
     
+    func hide() {
+        isHidden = true
+        avatarView.reset()
+        activityIndicatorView.stopAnimating()
+        timerWorker?.cancel()
+        timerWorker = nil
+    }
+    
     func hide(after timeout: TimeInterval) {
         self.timeout = timeout
         restartHidingTimer()
@@ -57,7 +74,7 @@ final class ChatFooterView: UIView {
         timerWorker?.cancel()
         
         if timeout > 0 {
-            let timerWorker = DispatchWorkItem { [weak self] in self?.isHidden = true }
+            let timerWorker = DispatchWorkItem { [weak self] in self?.hide() }
             self.timerWorker = timerWorker
             DispatchQueue.main.asyncAfter(deadline: .now() + timeout, execute: timerWorker)
         }

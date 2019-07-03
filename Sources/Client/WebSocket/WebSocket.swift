@@ -18,7 +18,6 @@ final class WebSocket {
     private static let maxBackgroundTime: TimeInterval = 300
     
     let webSocket: Starscream.WebSocket
-    private(set) lazy var reachability = Reachability()
     private(set) var lastJSONError: Error?
     private(set) var lastConnectionId: String?
     private(set) var consecutiveFailures: TimeInterval = 0
@@ -37,15 +36,15 @@ final class WebSocket {
     
     private(set) lazy var connection: Observable<WebSocket.Connection> = {
         let app = UIApplication.shared
-        let connection = reachability?.connection ?? .none
-        let reachabilityObservation = reachability?.rx.reachabilityChanged.map { $0.connection }.startWith(connection) ?? .empty()
         
         let webSocketResponse = webSocket.rx.response
             .do(onSubscribed: { [weak self] in self?.reconnect() },
                 onDispose: { [weak self] in self?.disconnect() })
         
-        return Observable.combineLatest(app.rx.appState.startWith(app.appState), reachabilityObservation, webSocketResponse)
-            .map { [weak self] in self?.parseConnection(appState: $0, reachability: $1, event: $2) }
+        return Observable.combineLatest(app.rx.appState.startWith(app.appState),
+                                        InternetConnection.shared.isAvailableObservable,
+                                        webSocketResponse)
+            .map { [weak self] in self?.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
             .unwrap()
             .distinctUntilChanged()
             .share(replay: 1)
@@ -61,24 +60,10 @@ final class WebSocket {
         self.logger = logger
         webSocket = Starscream.WebSocket(request: urlRequest)
         webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat", qos: .userInitiated)
-        
-        if let host = urlRequest.url?.host {
-            reachability = Reachability(hostname: host)!
-            startReachability()
-        }
     }
     
     deinit {
-        reachability?.stopNotifier()
         disconnect()
-    }
-    
-    private func startReachability() {
-        do {
-            try reachability?.startNotifier()
-        } catch {
-            logger?.log(error, message: "😡 Reachability")
-        }
     }
     
     func connect() {
@@ -88,7 +73,6 @@ final class WebSocket {
         
         logger?.log("❤️", "Connecting...")
         logger?.log(webSocket.request)
-        startReachability()
         DispatchQueue.main.async(execute: webSocket.connect)
     }
     
@@ -128,7 +112,6 @@ final class WebSocket {
         if webSocket.isConnected {
             handshakeTimer.suspend()
             webSocket.disconnect()
-            reachability?.stopNotifier()
             logger?.log("💔", "Disconnected")
         }
         
@@ -140,8 +123,8 @@ final class WebSocket {
 
 extension WebSocket {
     
-    private func parseConnection(appState: AppState, reachability: Reachability.Connection, event: WebSocketEvent) -> Connection? {
-        guard reachability != .none else {
+    private func parseConnection(appState: AppState, isInternetAvailable: Bool, event: WebSocketEvent) -> Connection? {
+        guard isInternetAvailable else {
             cancelBackgroundWork()
             lastConnectionId = nil
             return .notConnected
