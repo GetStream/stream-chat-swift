@@ -44,6 +44,7 @@ enum Event: Decodable {
         case me
         case user
         case watcherCount = "watcher_count"
+        case channel
         case message
         case reaction
         case unreadCount = "unread_count"
@@ -59,7 +60,7 @@ enum Event: Decodable {
     case healthCheck(_ connectionId: String, User?)
     
     case messageRead(MessageRead)
-    case messageNew(Message, User, _ unreadCount: Int, _ totalUnreadCount: Int)
+    case messageNew(Message, User, _ unreadCount: Int, _ totalUnreadCount: Int, Channel?)
     case messageDeleted(Message)
     case messageUpdated(Message)
     
@@ -87,60 +88,62 @@ enum Event: Decodable {
             return
         }
         
-        if type == .notificationMarkRead {
-            let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
-            let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
-            let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
-            self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels)
-            return
+        func user() throws -> User {
+            return try container.decode(User.self, forKey: .user)
         }
         
-        let user = try container.decode(User.self, forKey: .user)
+        func message() throws -> Message {
+            return try container.decode(Message.self, forKey: .message)
+        }
         
         switch type {
         // Message
-        case .messageNew:
-            let message = try container.decode(Message.self, forKey: .message)
+        case .messageNew, .notificationMessageNew:
+            let channel = try container.decodeIfPresent(Channel.self, forKey: .channel)
+            let newMessage = try message()
             let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
             let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
-            self = .messageNew(message, user, unreadCount, totalUnreadCount)
+            self = .messageNew(newMessage, newMessage.user, unreadCount, totalUnreadCount, channel)
         case .messageRead:
             let created = try container.decode(Date.self, forKey: .created)
-            self = .messageRead(MessageRead(user: user, lastReadDate: created))
+            self = .messageRead(MessageRead(user: try user(), lastReadDate: created))
         case .messageDeleted:
-            let message = try container.decode(Message.self, forKey: .message)
-            self = .messageDeleted(message)
+            self = .messageDeleted(try message())
         case .messageUpdated:
-            let message = try container.decode(Message.self, forKey: .message)
-            self = .messageUpdated(message)
+            self = .messageUpdated(try message())
             
         // User
         case .userUpdated:
-            self = .userUpdated(user)
+            self = .userUpdated(try user())
         case .userStatusChanged:
-            self = .userStatusChanged(user)
+            self = .userStatusChanged(try user())
         case .userStartWatching:
             let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
-            self = .userStartWatching(user, watcherCount)
+            self = .userStartWatching(try user(), watcherCount)
         case .userStopWatching:
             let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
-            self = .userStopWatching(user, watcherCount)
+            self = .userStopWatching(try user(), watcherCount)
             
         // Typing
         case .typingStart:
-            self = .typingStart(user)
+            self = .typingStart(try user())
         case .typingStop:
-            self = .typingStop(user)
+            self = .typingStop(try user())
             
         // Reaction
         case .reactionNew:
             let reaction = try container.decode(Reaction.self, forKey: .reaction)
-            let message = try container.decode(Message.self, forKey: .message)
-            self = .reactionNew(reaction, message, user)
+            self = .reactionNew(reaction, try message(), try user())
         case .reactionDeleted:
             let reaction = try container.decode(Reaction.self, forKey: .reaction)
-            let message = try container.decode(Message.self, forKey: .message)
-            self = .reactionDeleted(reaction, message, user)
+            self = .reactionDeleted(reaction, try message(), try user())
+            
+        // Notifications
+        case .notificationMarkRead:
+            let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
+            let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
+            let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
+            self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels)
             
         default:
             throw ResponseTypeError(type: type)

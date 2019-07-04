@@ -94,12 +94,16 @@ extension ChannelsPresenter {
         }
         
         switch response.event {
-        case .messageNew:
+        case .messageNew(_, _, _, _, let channel):
             if let index = items.firstIndex(whereChannelId: channelId),
                 let channelPresenter = items.remove(at: index).channelPresenter {
                 channelPresenter.parseChanges(response: response)
                 items.insert(.channelPresenter(channelPresenter), at: 0)
                 return .itemMoved(fromRow: index, toRow: 0, items)
+            } else if let channel = channel {
+                let channelPresenter = ChannelPresenter(channel: channel, parentMessage: nil, showStatuses: showChannelStatuses)
+                items.insert(.channelPresenter(channelPresenter), at: 0)
+                return .itemAdded(0, nil, false, items)
             }
         case .messageDeleted(let message):
             if let index = items.firstIndex(whereChannelId: channelId),
