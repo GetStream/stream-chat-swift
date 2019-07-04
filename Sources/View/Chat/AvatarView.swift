@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import Nuke
 
+/// A view with a user avatar or user name intials.
 public final class AvatarView: UIImageView, Reusable {
     
     private var imageTask: ImageTask?
@@ -22,11 +23,13 @@ public final class AvatarView: UIImageView, Reusable {
         return label
     }()
     
+    /// Create a AvatarView with a given corner radius.
     public init(cornerRadius: CGFloat = .messageAvatarRadius) {
         super.init(frame: .zero)
         setup(cornerRadius: cornerRadius)
     }
     
+    /// A decoder.
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         setup(cornerRadius: frame.width / 2)
@@ -41,7 +44,8 @@ public final class AvatarView: UIImageView, Reusable {
         avatarLabel.makeEdgesEqualToSuperview(superview: self)
     }
     
-    func reset() {
+    /// Reset the AvatarView states for the reusing.
+    public func reset() {
         image = nil
         backgroundColor = .white
         avatarLabel.text = nil
@@ -49,6 +53,12 @@ public final class AvatarView: UIImageView, Reusable {
         imageTask?.cancel()
     }
     
+    /// Update the view with a given image url with user name.
+    ///
+    /// - Parameters:
+    ///     - url: an avatar image url.
+    ///     - name: a user name.
+    ///     - baseColor: this should be a background color of the superview or it would be white by default.
     public func update(with url: URL?, name: String?, baseColor: UIColor?) {
         isHidden = false
         let baseColor = baseColor ?? UIColor.white

@@ -67,6 +67,11 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         
         composerView.uploader = presenter.uploader
         
+        presenter.changes
+            .do(onNext: { [weak presenter] _ in presenter?.sendReadIfPossible() })
+            .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
+            .disposed(by: disposeBag)
+        
         if presenter.isEmpty {
             channelPresenter?.reload()
         } else {
@@ -76,11 +81,6 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
             DispatchQueue.main.async { [weak self] in self?.tableView.scrollToBottom(animated: false) }
             presenter.sendReadIfPossible()
         }
-        
-        presenter.changes
-            .do(onNext: { [weak presenter] _ in presenter?.sendReadIfPossible() })
-            .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
-            .disposed(by: disposeBag)
         
         InternetConnection.shared.isAvailableObservable
             .observeOn(MainScheduler.instance)
