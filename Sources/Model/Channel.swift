@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A Channel class.
 public final class Channel: Codable, Equatable {
     public enum CodingKeys: String, CodingKey {
         case id
@@ -31,21 +32,40 @@ public final class Channel: Codable, Equatable {
         case messages
     }
     
+    /// A channel id.
     public let id: String
+    /// A channel type + id.
     public let cid: String
+    /// A channel type.
     public let type: ChannelType
+    /// A channel name.
     public let name: String
+    /// An image of the channel.
     public var imageURL: URL?
+    /// The last message date.  
     public let lastMessageDate: Date?
+    /// A creator of the channel.
     public let createdBy: User?
+    /// A config.
     public let config: Config
-    public let frozen: Bool
+    let frozen: Bool
+    /// A list of user ids of the channel members.
     public internal(set) var memberIds: [String] = []
+    /// An extra data for the channel.
     public let extraData: ExtraData?
     
+    /// Init a channel.
+    ///
+    /// - Parameters:
+    ///     - type: a channel type (`ChannelType`).
+    ///     - id: a channel id.
+    ///     - name: a channel name.
+    ///     - imageURL: an image url of the channel.
+    ///     - memberIds: a list of user ids of the channel members.
+    ///     - extraData: an `Codable` object with extra data of the channel.
     public init(type: ChannelType = .messaging,
                 id: String,
-                name: String?,
+                name: String? = nil,
                 imageURL: URL? = nil,
                 memberIds: [String] = [],
                 extraData: Codable? = nil) {
@@ -113,6 +133,7 @@ public final class Channel: Codable, Equatable {
 // MARK: - Config
 
 public extension Channel {
+    /// A channel config.
     struct Config: Decodable {
         private enum CodingKeys: String, CodingKey {
             case name
@@ -132,28 +153,44 @@ public extension Channel {
             case updated = "updated_at"
         }
         
+        
         let name: String
         let automodBehavior: String
         let automodEnabled: String
-        let reactionsEnabled: Bool
-        let typingEventsEnabled: Bool
-        let readEventsEnabled: Bool
+        /// If users are allowed to add reactions to messages. Enabled by default.
+        public let reactionsEnabled: Bool
+        /// Controls if typing indicators are shown. Enabled by default.
+        public let typingEventsEnabled: Bool
+        /// Controls whether the chat shows how far you’ve read. Enabled by default.
+        public let readEventsEnabled: Bool
+        /// Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
         let connectEventsEnabled: Bool
-        let repliesEnabled: Bool
-        let searchEnabled: Bool
-        let mutesEnabled: Bool
-        let messageRetention: String
-        let maxMessageLength: Int
-        let commands: [Command]
-        let created: Date
-        let updated: Date
+        /// Enables message threads and replies. Enabled by default.
+        public let repliesEnabled: Bool
+        /// Controls if messages should be searchable (this is a premium feature). Disabled by default.
+        public let searchEnabled: Bool
+        /// Determines if users are able to mute other users. Enabled by default.
+        public let mutesEnabled: Bool
+        /// A number of days or infinite. Infinite by default.
+        public let messageRetention: String
+        /// The max message length. 5000 by default.
+        public let maxMessageLength: Int
+        /// An array of commands, e.g. giphy.
+        public let commands: [Command]
+        /// A channel created date.
+        public let created: Date
+        /// A channel updated date.
+        public let updated: Date
     }
     
     struct Command: Decodable, Hashable {
-        let name: String
-        let description: String
+        /// A command name.
+        public let name: String
+        /// A description.
+        public let description: String
         let set: String
-        let args: String
+        /// Args for the command.
+        public let args: String
         
         public func hash(into hasher: inout Hasher) {
             return hasher.combine(name)
@@ -163,6 +200,7 @@ public extension Channel {
 
 // MARK: - Channel Type
 
+/// A channel type.
 public enum ChannelType: String, Codable {
     case unknown
     case livestream
@@ -171,7 +209,8 @@ public enum ChannelType: String, Codable {
     case gaming
     case commerce
     
-    var title: String {
+    /// A channel type title.
+    public var title: String {
         return rawValue.capitalized
     }
 }
