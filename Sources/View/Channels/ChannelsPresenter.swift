@@ -14,8 +14,8 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
     
     public let channelType: ChannelType
-    public lazy var channelsFilter: Filter<Channel.DecodingKeys> = .key(.type, .equal(to: channelType))
-    public var channelsSorting: [Sorting<Channel.DecodingKeys>] = [.init(.lastMessageDate)]
+    public lazy var filter: Filter<Channel.DecodingKeys> = .key(.type, .equal(to: channelType))
+    public var sorting: [Sorting<Channel.DecodingKeys>] = [.init(.lastMessageDate)]
     public let showChannelStatuses: Bool
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
@@ -47,8 +47,8 @@ extension ChannelsPresenter {
     
     private func channelsEndpoint(pagination: Pagination) -> ChatEndpoint? {
         if let user = Client.shared.user {
-            return ChatEndpoint.channels(ChannelsQuery(filter: channelsFilter,
-                                                       sort: channelsSorting,
+            return ChatEndpoint.channels(ChannelsQuery(filter: filter,
+                                                       sort: sorting,
                                                        user: user,
                                                        pagination: pagination))
         }
@@ -105,6 +105,12 @@ extension ChannelsPresenter {
                 // We need to load messages and for that we have to subscribe for changes in ChannelsViewController.
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak channelPresenter] in channelPresenter?.reload() }
                 items.insert(.channelPresenter(channelPresenter), at: 0)
+                
+                // Update pagination offset.
+                if next != pageSize {
+                    next = .channelsNextPageSize + .offset(next.offset + 1)
+                }
+                
                 return .itemAdded(0, nil, false, items)
             }
         case .messageDeleted(let message):
