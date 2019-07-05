@@ -2,6 +2,7 @@
 
 [![Language: Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org)
 ![Cocoapods](https://img.shields.io/cocoapods/v/StreamChat.svg)
+[![Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/badge.svg)]
 
 [stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat applications.
 
@@ -47,6 +48,8 @@ TODO
 TODO - Swift Chat Tutorial page
 
 [Official API Docs](https://getstream.io/chat/docs)
+
+[API Reference](https://getstream.github.io/stream-chat-swift/)
 
 ## Supported features
 
