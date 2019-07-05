@@ -11,6 +11,7 @@ import UIKit
 
 /// A Client logger.
 public final class ClientLogger {
+    /// A client logger options.
     public enum Options {
         case none
         case important
@@ -29,6 +30,12 @@ public final class ClientLogger {
     }
     
     /// A customizable logger block.
+    /// By default error messages will print to the console, but you can customize it to use own logger.
+    ///
+    /// - Parameters:
+    ///     - icon: a small icon string like a tag for messages, e.g. 🦄
+    ///     - dateAndTime: a formatted string of date and time, could be empty.
+    ///     - message: a message.
     public static var logger: (_ icon: String, _ dateAndTime: String, _ message: String) -> Void = {
         if Client.shared.logOptions.isEnabled {
             print($0, $1.isEmpty ? "" : "[\($1)]", $2)

@@ -12,7 +12,6 @@ import RxSwift
 
 final class ComposerFileView: UIView {
     
-    private let sizeFormatter = ByteCountFormatter()
     let disposeBag = DisposeBag()
     
     let iconView = UIImageView(image: UIImage.FileTypes.zip)
@@ -33,7 +32,7 @@ final class ComposerFileView: UIView {
     
     var fileSize: Int64 = 0 {
         didSet {
-            fileSizeLabel.text = fileSize > 0 ? sizeFormatter.string(fromByteCount: fileSize) : nil
+            fileSizeLabel.text = fileSize > 0 ? AttachmentFile.sizeFormatter.string(fromByteCount: fileSize) : nil
         }
     }
     

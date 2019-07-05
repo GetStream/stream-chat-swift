@@ -74,7 +74,6 @@
 		8A91171D22C782830006FB01 /* Channel+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91169822C782820006FB01 /* Channel+Create.swift */; };
 		8A91171E22C782830006FB01 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91169922C782820006FB01 /* Filter.swift */; };
 		8A91171F22C782830006FB01 /* ViewChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91169A22C782820006FB01 /* ViewChanges.swift */; };
-		8A91172022C782830006FB01 /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91169B22C782820006FB01 /* ChannelsResponse.swift */; };
 		8A91172122C782830006FB01 /* StatusTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91169F22C782820006FB01 /* StatusTableViewCell.swift */; };
 		8A91172222C782830006FB01 /* MessageTableViewCell+EnrichMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116A022C782820006FB01 /* MessageTableViewCell+EnrichMessage.swift */; };
 		8A91172322C782830006FB01 /* MessageTableViewCell+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116A122C782820006FB01 /* MessageTableViewCell+Attachments.swift */; };
@@ -207,7 +206,6 @@
 		8A91169822C782820006FB01 /* Channel+Create.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Channel+Create.swift"; sourceTree = "<group>"; };
 		8A91169922C782820006FB01 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		8A91169A22C782820006FB01 /* ViewChanges.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewChanges.swift; sourceTree = "<group>"; };
-		8A91169B22C782820006FB01 /* ChannelsResponse.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelsResponse.swift; sourceTree = "<group>"; };
 		8A91169F22C782820006FB01 /* StatusTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusTableViewCell.swift; sourceTree = "<group>"; };
 		8A9116A022C782820006FB01 /* MessageTableViewCell+EnrichMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+EnrichMessage.swift"; sourceTree = "<group>"; };
 		8A9116A122C782820006FB01 /* MessageTableViewCell+Attachments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Attachments.swift"; sourceTree = "<group>"; };
@@ -436,7 +434,6 @@
 				8A91169822C782820006FB01 /* Channel+Create.swift */,
 				8A91168C22C782820006FB01 /* ChannelQuery.swift */,
 				8A91168D22C782820006FB01 /* ChannelsQuery.swift */,
-				8A91169B22C782820006FB01 /* ChannelsResponse.swift */,
 				8A91168A22C782820006FB01 /* Event.swift */,
 				8A91169522C782820006FB01 /* Reaction.swift */,
 				8A91168B22C782820006FB01 /* ExtraData.swift */,
@@ -466,14 +463,14 @@
 		8A91169D22C782820006FB01 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
-				8A9116A522C782820006FB01 /* ChatFooterView.swift */,
-				8A9116A622C782820006FB01 /* Composer */,
+				8A9116BA22C782820006FB01 /* ChannelPresenter.swift */,
 				8A9116B022C782820006FB01 /* Chat View Controller */,
+				8A9116A622C782820006FB01 /* Composer */,
 				8A91169E22C782820006FB01 /* Cells */,
+				8A9116BB22C782820006FB01 /* Attachments */,
+				8A9116A522C782820006FB01 /* ChatFooterView.swift */,
 				8A9116B822C782820006FB01 /* AvatarView.swift */,
 				8A9116B922C782820006FB01 /* ReactionsView.swift */,
-				8A9116BA22C782820006FB01 /* ChannelPresenter.swift */,
-				8A9116BB22C782820006FB01 /* Attachments */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -825,7 +822,6 @@
 				8A9116FC22C782830006FB01 /* Reusable.swift in Sources */,
 				8A9116E622C782820006FB01 /* UIImage+Extensions.swift in Sources */,
 				8A91173122C782830006FB01 /* ChatViewController.swift in Sources */,
-				8A91172022C782830006FB01 /* ChannelsResponse.swift in Sources */,
 				8A91175C22C782F20006FB01 /* CustomChatViewController.swift in Sources */,
 				8A91171922C782830006FB01 /* MessageAction.swift in Sources */,
 				8A91173222C782830006FB01 /* ChatViewController+Attachments.swift in Sources */,

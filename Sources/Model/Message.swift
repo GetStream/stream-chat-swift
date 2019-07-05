@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A message.
 public struct Message: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
@@ -31,48 +32,74 @@ public struct Message: Codable {
     }
     
     let id: String
+    /// A message type (see `MessageType`).
     public let type: MessageType
+    /// A user (see `User`).
     public let user: User
+    /// A created date.
     public let created: Date
+    /// A updated date.
     public let updated: Date
+    /// A deleted date.
     public let deleted: Date?
+    /// A text.
     public let text: String
+    /// A used command name.
     public let command: String?
+    /// A used command args.
     public let args: String?
+    /// Attachments (see `Attachment`).
     public let attachments: [Attachment]
+    /// A parent message id.
     public let parentId: String?
+    /// Check if this reply message needs to show in the channel.
     public let showReplyInChannel: Bool?
+    /// Mentioned users (see `User`).
     public let mentionedUsers: [User]
+    /// Reply count.
     public let replyCount: Int
+    /// An extra data for the message.
     public let extraData: ExtraData?
+    /// The latest reactions (see `Reaction`).
     public private(set) var latestReactions: [Reaction]
+    /// The current user own reactions (see `Reaction`).
     public private(set) var ownReactions: [Reaction]
+    /// A reactions count (see `ReactionCounts`).
     public private(set) var reactionCounts: ReactionCounts?
     
+    /// Check if the message is ephemeral, e.g. Giphy preview.
     public var isEphemeral: Bool {
         return type == .ephemeral
     }
     
+    /// Check if the message was deleted.
     public var isDeleted: Bool {
         return deleted != nil
     }
     
+    /// Check if the message is own message of the current user.
     public var isOwn: Bool {
         return Client.shared.user == user
     }
     
+    /// Check if the message could be edited.
     public var canEdit: Bool {
         return isOwn && (!text.isBlank || !attachments.isEmpty)
     }
     
+    /// Check if the message could be deleted.
     public var canDelete: Bool {
         return isOwn
     }
     
+    /// Check if the message has reactions.
     public var hasReactions: Bool {
         return reactionCounts != nil && !(reactionCounts?.counts.isEmpty ?? true)
     }
     
+    /// A combination of message text and command args.
+    /// 1. if the text is not empty and it's not equal to the single attachment URL, then it will return empty string.
+    /// 2. if the text is empty, then it will return commands args.
     public var textOrArgs: String {
         let text = self.text.trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -170,6 +197,7 @@ extension Message: Equatable {
 
 extension Message {
     
+    /// Check if the message has a reaction with the given type from the current user.
     public func hasOwnReaction(type: String) -> Bool {
         return !ownReactions.isEmpty && ownReactions.firstIndex(where: { $0.type == type }) != nil
     }
@@ -199,6 +227,7 @@ extension Message {
 
 // MARK: - Type
 
+/// A message type, e.g. regular, ephemeral, reply.
 public enum MessageType: String, Codable {
     case regular, ephemeral, error, reply, system
 }

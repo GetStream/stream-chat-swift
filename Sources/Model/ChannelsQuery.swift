@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A channels query.
 public struct ChannelsQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
@@ -40,4 +41,11 @@ public struct ChannelsQuery: Encodable {
         try container.encode(messageLimit.limit, forKey: .messageLimit)
         try pagination.encode(to: encoder)
     }
+}
+
+// MARK: - Channels Response
+
+/// A channels query response.
+public struct ChannelsResponse: Decodable {
+    let channels: [ChannelQuery]
 }

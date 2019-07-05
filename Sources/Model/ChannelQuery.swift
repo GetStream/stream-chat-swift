@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A channel query.
 public struct ChannelQuery: Codable {
     private enum CodingKeys: String, CodingKey {
         case data
@@ -19,15 +20,27 @@ public struct ChannelQuery: Codable {
         case watch
     }
     
+    /// A channel.
     public let channel: Channel
+    /// Members of the channel (see `Member`).
     public let members: [Member]
+    /// Messages (see `Message`).
     public let messages: [Message]
+    /// Message read states (see `MessageRead`)
     public let messageReads: [MessageRead]
+    /// Unread message state by the current user.
     public let unreadMessageRead: MessageRead?
-    public let state: Bool = true
-    public let watch: Bool = true
+    let state: Bool = true
+    let watch: Bool = true
+    /// A pagination (see `Pagination`).
     public let pagination: Pagination
     
+    /// Init a channel query.
+    ///
+    /// - Parameters:
+    ///     - channel: a channel.
+    ///     - memebers: members of the channel.
+    ///     - pagination: a pagination (see `Pagination`).
     public init(channel: Channel, members: [Member], pagination: Pagination) {
         self.channel = channel
         self.members = members

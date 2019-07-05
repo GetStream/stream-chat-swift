@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A member.
 public struct Member: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case user
@@ -16,9 +17,13 @@ public struct Member: Codable, Equatable {
         case updated = "updated_at"
     }
     
+    /// A user.
     public let user: User
+    /// A role of the user.
     public let role: Role
+    /// A created date.
     public let created: Date
+    /// A updated date.
     public let updated: Date
     
     init(user: User, role: Role = .owner) {
@@ -36,6 +41,7 @@ public struct Member: Codable, Equatable {
 }
 
 public extension Member {
+    /// A role.
     enum Role: String, Codable {
         case owner
         case member

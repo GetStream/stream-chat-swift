@@ -8,11 +8,19 @@
 
 import Foundation
 
+/// Sorting options.
 public struct Sorting<T: CodingKey>: Encodable {
-    let field: String
-    let direction: Int
+    /// A sorting field name.
+    public let field: String
+    /// A sorting direction.
+    public let direction: Int
     
-    init(_ key: T, isAscending: Bool = false) {
+    /// Init sorting options.
+    ///
+    /// - Parameters:
+    ///     - key: a key from coding keys.
+    ///     - isAscending: a diration of the sorting.
+    public init(_ key: T, isAscending: Bool = false) {
         field = key.stringValue
         direction = isAscending ? 1 : -1
     }

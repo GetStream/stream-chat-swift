@@ -10,6 +10,7 @@ import Foundation
 
 // MARK: - Reaction
 
+/// A reaction for a message.
 public struct Reaction: Codable, Equatable {
     static let emoji = ["👍", "❤️", "😂", "😲", "😔", "😠"]
     static let emojiTypes = ["like", "love", "haha", "wow", "sad", "angry"]
@@ -21,11 +22,16 @@ public struct Reaction: Codable, Equatable {
         case created = "created_at"
     }
     
+    /// A reaction type.
     public let type: String
+    /// A user of the reaction.
     public let user: User?
+    /// A created date.
     public let created: Date
+    /// A message id.
     public let messageId: String
     
+    /// Check if the reaction if by the current user.
     public var isOwn: Bool {
         if let user = user, let currentUser = Client.shared.user, user == currentUser {
             return true
@@ -37,6 +43,7 @@ public struct Reaction: Codable, Equatable {
 
 // MARK - Reaction Counts
 
+/// A reaction counts.
 public struct ReactionCounts: Decodable {
     private(set) var counts: [String: Int]
     private(set) var string: String
@@ -48,6 +55,7 @@ public struct ReactionCounts: Decodable {
         string = joinToString()
     }
     
+    /// Init a reaction counts with 1 for a given reaction type.
     init(reactionType: String) {
         counts = [reactionType: 1]
         

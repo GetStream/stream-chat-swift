@@ -10,20 +10,26 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+/// A channel presenter.
 public final class ChannelPresenter: Presenter<ChatItem> {
     private typealias EphemeralType = (message: Message?, updated: Bool)
-    public typealias Completion = (_ error: Error?) -> Void
     
+    /// A callback type for the adding an extra data for a new message.
     public typealias MessageExtraDataCallback =
         (_ id: String, _ text: String, _ attachments: [Attachment], _ parentId: String?) -> Codable?
-
+    
     private let emptyMessageCompletion: Client.Completion<MessageResponse> = { _ in }
     private let emptyEventCompletion: Client.Completion<EventResponse> = { _ in }
+    /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
     
+    /// A channel (see `Channel`).
     public private(set) var channel: Channel
+    /// A parent message for replies.
     public private(set) var parentMessage: Message?
+    /// An edited message.
     public var editMessage: Message?
+    /// Show statuses separators, e.g. Today
     public private(set) var showStatuses = true
     
     var members: [Member] = []
@@ -31,6 +37,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     private let lastMessageMVar = MVar<Message>()
     
+    /// The last parsed message from WebSocket events.
     public var lastMessage: Message? {
         return lastMessageMVar.get()
     }
@@ -51,17 +58,22 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private let isReadSubject = PublishSubject<Void>()
     private let unreadCountMVar = MVar(0)
     
+    /// Check if the channel has unread messages.
     public var isUnread: Bool {
         return channel.config.readEventsEnabled && unreadMessageReadMVar.get() != nil
     }
     
+    /// A number of unread messages in the channel.
     public var unreadCount: Int {
         return channel.config.readEventsEnabled ? unreadCountMVar.get(defaultValue: 0) : 0
     }
     
+    /// Check if the channel has ephemeral message, e.g. Giphy preview.
     public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
+    /// An ephemeral message, e.g. Giphy preview.
     public var ephemeralMessage: Message? { return (try? ephemeralSubject.value())?.message }
     
+    /// Check if the user can reply (create a thread) to a message.
     public var canReply: Bool {
         return parentMessage == nil && channel.config.repliesEnabled
     }
@@ -102,6 +114,12 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private(set) lazy var uploader = Uploader(channel: channel)
     private(set) lazy var isReadUpdates = isReadSubject.asDriver(onErrorJustReturn: ())
     
+    /// Init a presenter with a given channel.
+    ///
+    /// - Parameters:
+    ///     - channel: a channel
+    ///     - parentMessage: a parent message for replies
+    ///     - showStatuses: shows statuses separators, e.g. Today
     public init(channel: Channel, parentMessage: Message? = nil, showStatuses: Bool = true) {
         self.channel = channel
         self.parentMessage = parentMessage
@@ -109,6 +127,11 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         super.init(pageSize: .messagesPageSize)
     }
     
+    /// Init a presenter with a given channel query.
+    ///
+    /// - Parameters:
+    ///     - query: a channel query result with messages
+    ///     - showStatuses: shows statuses separators, e.g. Today
     public init(query: ChannelQuery, showStatuses: Bool = true) {
         self.showStatuses = showStatuses
         channel = query.channel
@@ -260,7 +283,7 @@ extension ChannelPresenter {
                 let lastAddedOwnMessage = lastAddedOwnMessage,
                 lastAddedOwnMessage.created <= messageRead.lastReadDate,
                 let lastOwnMessageIndex = items.lastIndex(whereMessageId: lastAddedOwnMessage.id) else {
-                return .none
+                    return .none
             }
             
             var rows: [Int] = []
@@ -569,7 +592,9 @@ extension ChannelPresenter {
 // MARK: - Helpers
 
 extension ChannelPresenter {
+    /// A title for the yesterday separator.
     public static var statusYesterdayTitle = "Yesterday"
+    /// A title for the today separator.
     public static var statusTodayTitle = "Today"
 }
 
@@ -602,6 +627,11 @@ extension ChannelPresenter {
 
 extension ChannelPresenter {
     
+    /// Create a message by sending a text.
+    ///
+    /// - Parameters:
+    ///     - text: a message text
+    ///     - completion: a completion blocks
     public func send(text: String, completion: @escaping () -> Void) {
         var text = text
         
@@ -629,13 +659,14 @@ extension ChannelPresenter {
                                     extraData: extraData,
                                     parentId: parentId,
                                     showReplyInChannel: false) else {
-            return
+                                        return
         }
         
         editMessage = nil
         Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), messageCompletion(completion))
     }
     
+    /// Delete a message.
     public func delete(message: Message) {
         Client.shared.request(endpoint: ChatEndpoint.deleteMessage(message), emptyMessageCompletion)
     }
@@ -654,7 +685,11 @@ extension ChannelPresenter {
 // MARK: - Send Reaction
 
 extension ChannelPresenter {
-    
+    /// Update a message reaction.
+    ///
+    /// - Parameters:
+    ///     - reactionType: a reaction type (see `Reaction`).
+    ///     - messageId: a message id.
     public func update(reactionType: String, messageId: String) -> Bool? {
         guard let index = items.lastIndex(whereMessageId: messageId), let message = items[index].message else {
             return nil
@@ -671,7 +706,7 @@ extension ChannelPresenter {
 // MARK: - Send Event
 
 extension ChannelPresenter {
-    
+    /// Send a typing event.
     public func sendEvent(isTyping: Bool) {
         guard parentMessage == nil else {
             return
@@ -734,8 +769,7 @@ extension ChannelPresenter {
 // MARK: - Ephemeral Message Actions
 
 extension ChannelPresenter {
-    
-    public func dispatch(action: Attachment.Action, message: Message) {
+    func dispatch(action: Attachment.Action, message: Message) {
         if action.isCancelled || action.isSend {
             ephemeralSubject.onNext((nil, true))
             
@@ -751,34 +785,34 @@ extension ChannelPresenter {
 
 // MARK: - Supporting Structs
 
-public struct MessageResponse: Decodable {
+struct MessageResponse: Decodable {
     let message: Message
     let reaction: Reaction?
 }
 
-public struct MessagesResponse: Decodable {
+struct MessagesResponse: Decodable {
     let messages: [Message]
 }
 
-public struct EventResponse: Decodable {
+struct EventResponse: Decodable {
     let event: Event
 }
 
-public struct FileUploadResponse: Decodable {
+struct FileUploadResponse: Decodable {
     let file: URL
 }
 
-public struct TypingUser: Equatable, Hashable {
+struct TypingUser: Equatable, Hashable {
     static let timeout: TimeInterval = 30
     
     let user: User
     let started = Date()
     
-    public static func == (lhs: TypingUser, rhs: TypingUser) -> Bool {
+    static func == (lhs: TypingUser, rhs: TypingUser) -> Bool {
         return lhs.user == rhs.user
     }
     
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(user)
     }
 }

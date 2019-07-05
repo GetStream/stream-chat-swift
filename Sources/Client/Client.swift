@@ -8,14 +8,19 @@
 
 import Foundation
 
+/// A token.
 public typealias Token = String
 
+/// A network client.
 public final class Client {
+    /// A request completion block.
     public typealias Completion<T: Decodable> = (Result<T, ClientError>) -> Void
     
+    /// A client config (see `Config`).
     public static var config = Config(apiKey: "")
+    /// A shared client.
     public static let shared = Client()
-
+    
     let apiKey: String
     let baseURL: BaseURL
     var token: Token?
@@ -28,6 +33,13 @@ public final class Client {
     let logger: ClientLogger?
     var user: User?
     
+    /// Init a network client.
+    ///
+    /// - Parameters:
+    ///     - apiKey: a Stream Chat API key.
+    ///     - baseURL: a base URL (see `BaseURL`).
+    ///     - callbackQueue: a request callback queue, default nil (some background thread).
+    ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
     public init(apiKey: String = Client.config.apiKey,
                 baseURL: BaseURL = Client.config.baseURL,
                 callbackQueue: DispatchQueue? = Client.config.callbackQueue,
@@ -44,6 +56,11 @@ public final class Client {
         }
     }
     
+    /// Setup the current user.
+    ///
+    /// - Parameters:
+    ///     - user: the current user (see `User`).
+    ///     - token: a Stream Chat API token.
     public func set(user: User, token: Token) {
         self.user = user
         self.token = token
@@ -53,12 +70,24 @@ public final class Client {
 }
 
 extension Client {
+    /// A config for a shread `Client`.
     public struct Config {
+        /// A Stream Chat API key.
         public let apiKey: String
+        /// A base URL (see `BaseURL`).
         public let baseURL: BaseURL
+        /// A request callback queue, default nil (some background thread).
         public let callbackQueue: DispatchQueue?
+        /// Enable logs (see `ClientLogger.Options`), e.g. `.all`.
         public let logOptions: ClientLogger.Options
         
+        /// Init a config for a shread `Client`.
+        ///
+        /// - Parameters:
+        ///     - apiKey: a Stream Chat API key.
+        ///     - baseURL: a base URL (see `BaseURL`).
+        ///     - callbackQueue: a request callback queue, default nil (some background thread).
+        ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init(apiKey: String,
                     baseURL: BaseURL = BaseURL(),
                     callbackQueue: DispatchQueue? = nil,

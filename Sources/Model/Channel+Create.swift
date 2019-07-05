@@ -13,12 +13,22 @@ import RxSwift
 
 public extension Channel {
     
+    /// Create a channel.
+    ///
+    /// - Parameters:
+    ///     - type: a channel type (see `ChannelType`).
+    ///     - id: a channel id.
+    ///     - name: a channel name.
+    ///     - imageURL: a channel image URL.
+    ///     - memberIds: members of the channel. If empty, then the current user will be added.
+    ///     - extraData: an extra data for the channel.
+    /// - Returns: an observable channel query (see `ChannelQuery`).
     static func create(type: ChannelType = .messaging,
-                id: String = "",
-                name: String? = nil,
-                imageURL: URL? = nil,
-                memberIds: [String] = [],
-                extraData: Codable? = nil) -> Observable<ChannelQuery> {
+                       id: String = "",
+                       name: String? = nil,
+                       imageURL: URL? = nil,
+                       memberIds: [String] = [],
+                       extraData: Codable? = nil) -> Observable<ChannelQuery> {
         guard let currentUser = Client.shared.user else {
             return .empty()
         }

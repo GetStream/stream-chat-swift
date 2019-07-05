@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A client error.
 public enum ClientError: Error {
     case unexpectedError
     case emptyToken
@@ -22,6 +23,7 @@ public enum ClientError: Error {
     case decodingFailure(_ error: Error)
 }
 
+/// A parsed server response error.
 public struct ClientErrorResponse: Decodable {
     private enum CodingKeys: String, CodingKey {
         case code
@@ -29,7 +31,10 @@ public struct ClientErrorResponse: Decodable {
         case statusCode = "StatusCode"
     }
     
+    /// An error code.
     public let code: Int
+    /// A message.
     public let message: String
+    /// A status code.
     public let statusCode: Int
 }

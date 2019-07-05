@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A filter.
 public enum Filter<T: CodingKey>: Encodable {
     case key(T, Operator)
     indirect case and([Filter])
@@ -29,6 +30,7 @@ public enum Filter<T: CodingKey>: Encodable {
 }
 
 public extension Filter {
+    /// An operator for the filter.
     enum Operator: Encodable {
         case equal(to: Encodable)
         case notEqual(to: Encodable)
@@ -86,7 +88,7 @@ public extension Filter {
 
 public extension Filter {
     
-    static func +(lhs: Filter, rhs: Filter) -> Filter {
+    static func + (lhs: Filter, rhs: Filter) -> Filter {
         var newFilter: [Filter] = []
         
         if case .and(let filter) = lhs {
@@ -104,18 +106,18 @@ public extension Filter {
         return .and(newFilter)
     }
     
-    static func +=(lhs: inout Filter, rhs: Filter) {
+    static func += (lhs: inout Filter, rhs: Filter) {
         lhs = lhs + rhs
     }
     
-    static func |(lhs: Filter, rhs: Filter) -> Filter {
+    static func | (lhs: Filter, rhs: Filter) -> Filter {
         var newFilter: [Filter] = []
         
         if case .or(let filter) = lhs {
             newFilter.append(contentsOf: filter)
         } else {
             newFilter.append(lhs)
-        }
+        }   
         
         if case .or(let filter) = rhs {
             newFilter.append(contentsOf: filter)
@@ -126,7 +128,7 @@ public extension Filter {
         return .or(newFilter)
     }
     
-    static func |=(lhs: inout Filter, rhs: Filter) {
+    static func |= (lhs: inout Filter, rhs: Filter) {
         lhs = lhs | rhs
     }
 }

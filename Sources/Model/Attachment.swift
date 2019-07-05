@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A message attachment.
 public struct Attachment: Codable {
     private enum CodingKeys: String, CodingKey {
         case title
@@ -26,15 +27,24 @@ public struct Attachment: Codable {
         case actions
     }
     
+    /// A title.
     public let title: String
+    /// An author.
     public let author: String?
+    /// A description text.
     public let text: String?
+    /// A type (see `AttachmentType`).
     public let type: AttachmentType
+    /// Actions from a command (see `Action`, `Command`).
     public let actions: [Action]
+    /// An URL.
     public let url: URL?
+    /// An image preview URL.
     public let imageURL: URL?
+    /// A file description (see `AttachmentFile`).
     public let file: AttachmentFile?
     
+    /// Check if the attachment is an image.
     public var isImage: Bool {
         return type.isImage && text == nil
     }
@@ -166,6 +176,7 @@ public extension Attachment {
     }
 }
 
+/// An attachment type.
 public enum AttachmentType: String, Codable {
     case unknown
     case image
@@ -182,20 +193,25 @@ public enum AttachmentType: String, Codable {
     }
 }
 
+/// An attachment file description.
 public struct AttachmentFile: Codable {
     private enum CodingKeys: String, CodingKey {
         case mimeType = "mime_type"
         case size = "file_size"
     }
     
+    /// An attachment file type (see `AttachmentFileType`).
     public let type: AttachmentFileType
+    /// A size of the file.
     public let size: Int64
+    /// A mime type.
     public let mimeType: String?
     
-    public let sizeFormatter = ByteCountFormatter()
+    static let sizeFormatter = ByteCountFormatter()
     
+    /// A formatted file size.
     public var sizeString: String {
-        return sizeFormatter.string(fromByteCount: size)
+        return AttachmentFile.sizeFormatter.string(fromByteCount: size)
     }
     
     init(type: AttachmentFileType, size: Int64, mimeType: String?) {
@@ -224,6 +240,7 @@ public struct AttachmentFile: Codable {
     }
 }
 
+/// An attachment file type.
 public enum AttachmentFileType: String, Codable {
     case generic
     case csv
@@ -256,10 +273,16 @@ public enum AttachmentFileType: String, Codable {
                                                                   "image/png": .png,
                                                                   "image/gif": .gif]
     
+    /// Init an attachment file type by mime type.
+    ///
+    /// - Parameter mimeType: a mime type.
     public init(mimeType: String) {
         self = AttachmentFileType.mimeTypes[mimeType, default: .generic]
     }
     
+    /// Init an attachment file type by a file extension.
+    ///
+    /// - Parameter ext: a file extension.
     public init(ext: String) {
         if ext == "jpg" {
             self = .jpeg

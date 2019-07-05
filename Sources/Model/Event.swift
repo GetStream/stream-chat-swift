@@ -8,7 +8,8 @@
 
 import Foundation
 
-public enum EventType: String, Codable {
+/// A web socket event type.
+enum EventType: String, Codable {
     case healthCheck = "health.check"
     case messageNew = "message.new"
     case messageRead = "message.read"
@@ -37,6 +38,7 @@ public enum EventType: String, Codable {
     case connectionRecovered = "connection.recovered"
 }
 
+/// A web socket event.
 enum Event: Decodable {
     private enum CodingKeys: String, CodingKey {
         case connectionId = "connection_id"

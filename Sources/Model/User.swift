@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A user.
 public struct User: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
@@ -19,14 +20,22 @@ public struct User: Codable {
         case lastActiveDate = "last_active"
     }
     
+    /// A user id.
     public let id: String
+    /// A user name.
     public let name: String
+    /// An avatar URL.
     public let avatarURL: URL?
+    /// A created date.
     public let created: Date
+    /// An updated date.
     public let updated: Date
+    /// A last active date.
     public let lastActiveDate: Date?
+    /// An indicator if a user is online.
     public let online: Bool
     
+    /// Check if the user is the current user.
     public var isCurrent: Bool {
         if let user = Client.shared.user {
             return self == user
@@ -35,6 +44,12 @@ public struct User: Codable {
         return false
     }
     
+    /// Init a user.
+    ///
+    /// - Parameters:
+    ///     - id: a user id.
+    ///     - name: a user name.
+    ///     - an avatar URL.
     public init(id: String, name: String, avatarURL: URL? = nil) {
         self.id = id
         self.name = name

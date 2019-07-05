@@ -8,11 +8,15 @@
 
 import Foundation
 
+/// A base URL for the `Client`.
 public struct BaseURL {
     static let placeholderURL = URL(string: "https://getstream.io")!
     
     private let urlString: String
     
+    /// Create a base URL.
+    ///
+    /// - Parameter location: a server location.
     public init(location: Location = .usEast) {
         urlString = "//chat\(location.rawValue.isEmpty ? "" : "-")\(location.rawValue).stream-io-api.com/"
     }
@@ -23,6 +27,7 @@ public struct BaseURL {
 }
 
 extension BaseURL {
+    /// A server location.
     public enum Location: String {
         case usEast = "us-east-1"
     }
@@ -34,7 +39,8 @@ extension BaseURL: CustomStringConvertible {
     }
 }
 
-public enum ClientScheme: String {
+/// An url scheme.
+enum ClientScheme: String {
     case https = "https"
     case webSocket = "wss"
 }

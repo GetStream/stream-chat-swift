@@ -8,7 +8,9 @@
 
 import Foundation
 
+/// An extra data wrapper.
 public struct ExtraData: Codable {
+    /// A custom extra data type.
     public enum DecodableType {
         case channel(Codable.Type)
         case message(Codable.Type)
@@ -30,10 +32,13 @@ public struct ExtraData: Codable {
         }
     }
     
+    /// A list of a custom extra data type.
     public static var decodableTypes: [DecodableType] = []
     
+    /// An extra data.
     public let data: Codable
     
+    /// Init an extra data with custom data.
     init(_ encodableData: Codable) {
         data = encodableData
     }

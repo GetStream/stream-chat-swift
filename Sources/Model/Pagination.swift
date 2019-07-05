@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Pagination options.
 public enum Pagination: Codable, Equatable {
     static let channelsPageSize: Pagination = .limit(20)
     static let channelsNextPageSize: Pagination = .limit(30)
