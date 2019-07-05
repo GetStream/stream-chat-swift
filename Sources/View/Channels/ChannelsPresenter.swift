@@ -102,6 +102,8 @@ extension ChannelsPresenter {
                 return .itemMoved(fromRow: index, toRow: 0, items)
             } else if let channel = channel {
                 let channelPresenter = ChannelPresenter(channel: channel, parentMessage: nil, showStatuses: showChannelStatuses)
+                // We need to load messages and for that we have to subscribe for changes in ChannelsViewController.
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak channelPresenter] in channelPresenter?.reload() }
                 items.insert(.channelPresenter(channelPresenter), at: 0)
                 return .itemAdded(0, nil, false, items)
             }
