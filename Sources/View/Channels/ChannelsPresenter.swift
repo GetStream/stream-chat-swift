@@ -94,7 +94,7 @@ extension ChannelsPresenter {
         }
         
         switch response.event {
-        case .messageNew(_, _, _, _, let channel):
+        case .messageNew(_, _, _, let channel):
             if let index = items.firstIndex(whereChannelId: channelId),
                 let channelPresenter = items.remove(at: index).channelPresenter {
                 channelPresenter.parseChanges(response: response)

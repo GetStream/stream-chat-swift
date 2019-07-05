@@ -10,7 +10,7 @@ import Foundation
 
 // MARK: - Reaction
 
-public struct Reaction: Codable {
+public struct Reaction: Codable, Equatable {
     static let emoji = ["👍", "❤️", "😂", "😲", "😔", "😠"]
     static let emojiTypes = ["like", "love", "haha", "wow", "sad", "angry"]
     

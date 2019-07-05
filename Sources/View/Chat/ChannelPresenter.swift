@@ -35,7 +35,9 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         return lastMessageMVar.get()
     }
     
-    private var lastOwnMessage: Message?
+    private var lastAddedOwnMessage: Message?
+    private var lastParsedEvent: Event?
+    private var lastWebSocketEventViewChanges: ViewChanges?
     
     private lazy var unreadMessageReadMVar = MVar<MessageRead>() { [weak self] in
         if $0 == nil {
@@ -146,7 +148,14 @@ extension ChannelPresenter {
             return .none
         }
         
-        var nextRow = items.count
+        if let lastWebSocketEvent = lastParsedEvent,
+            response.event == lastWebSocketEvent,
+            let lastViewChanges = lastWebSocketEventViewChanges {
+            return lastViewChanges
+        }
+        
+        lastParsedEvent = response.event
+        lastWebSocketEventViewChanges = nil
         
         switch response.event {
         case .typingStart(let user):
@@ -166,6 +175,7 @@ extension ChannelPresenter {
             if shouldUpdate {
                 return .footerUpdated
             }
+            
         case .typingStop(let user):
             guard parentMessage == nil else {
                 return .none
@@ -181,50 +191,32 @@ extension ChannelPresenter {
             if shouldUpdate {
                 return .footerUpdated
             }
-        case .messageNew(let message, let user, _, _, _):
+            
+        case .messageNew(let message, _, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
             
-            var reloadRow: Int? = nil
-            let last = items.findLastMessage()
+            let isCurrentUserMessage = Client.shared.user == message.user
             
-            if let last = last, last.message.user == user {
-                // Double parsing issue: avoid duplications.
-                if last.message == message {
-                    if items.count > 1, let prev = items.findLastMessage(before: last.index), prev.message.user == user {
-                        reloadRow = prev.index
-                    }
+            if channel.config.readEventsEnabled, !isCurrentUserMessage {
+                if let lastMessage = lastMessageMVar.get() {
+                    unreadMessageReadMVar.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
                 } else {
-                    reloadRow = last.index
-                }
-            }
-            
-            if let last = last, last.message == message {
-                nextRow = last.index
-            } else {
-                if channel.config.readEventsEnabled, let currentUser = Client.shared.user, currentUser != message.user {
-                    if let lastMessage = lastMessageMVar.get() {
-                        unreadMessageReadMVar.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
-                    } else {
-                        unreadMessageReadMVar.set(MessageRead(user: message.user, lastReadDate: message.updated))
-                    }
-                    
-                    unreadCountMVar += 1
+                    unreadMessageReadMVar.set(MessageRead(user: message.user, lastReadDate: message.updated))
                 }
                 
-                if message.isOwn {
-                    lastOwnMessage = message
-                }
-                
-                lastMessageMVar.set(message)
-                items.append(.message(message, []))
-                Notifications.shared.showIfNeeded(newMessage: message, in: channel)
+                unreadCountMVar += 1
             }
             
-            let forceToScroll = Client.shared.user == user
+            let nextRow = items.count
+            let reloadRow: Int? = items.last?.message?.user == message.user ? nextRow - 1 : nil
+            appendOrUpdateMessageItem(message)
+            let viewChanges = ViewChanges.itemAdded(nextRow, reloadRow, isCurrentUserMessage, items)
+            lastWebSocketEventViewChanges = viewChanges
+            Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             
-            return .itemAdded(nextRow, reloadRow, forceToScroll, items)
+            return viewChanges
             
         case .messageUpdated(let message),
              .messageDeleted(let message):
@@ -233,8 +225,10 @@ extension ChannelPresenter {
             }
             
             if let index = items.lastIndex(whereMessageId: message.id) {
-                items[index] = .message(message, items[index].messageReadUsers)
-                return .itemUpdated([index], [message], items)
+                appendOrUpdateMessageItem(message, at: index)
+                let viewChanges = ViewChanges.itemUpdated([index], [message], items)
+                lastWebSocketEventViewChanges = viewChanges
+                return viewChanges
             }
             
         case .reactionNew(let reaction, let message, _), .reactionDeleted(let reaction, let message, _):
@@ -253,17 +247,19 @@ extension ChannelPresenter {
                     }
                 }
                 
-                items[index] = .message(message, items[index].messageReadUsers)
-                return .itemUpdated([index], [message], items)
+                appendOrUpdateMessageItem(message, at: index)
+                let viewChanges = ViewChanges.itemUpdated([index], [message], items)
+                lastWebSocketEventViewChanges = viewChanges
+                return viewChanges
             }
             
         case .messageRead(let messageRead):
             guard channel.config.readEventsEnabled,
                 let currentUser = Client.shared.user,
                 messageRead.user != currentUser,
-                let lastOwnMessage = lastOwnMessage,
-                lastOwnMessage.created <= messageRead.lastReadDate,
-                let lastOwnMessageIndex = items.lastIndex(whereMessageId: lastOwnMessage.id) else {
+                let lastAddedOwnMessage = lastAddedOwnMessage,
+                lastAddedOwnMessage.created <= messageRead.lastReadDate,
+                let lastOwnMessageIndex = items.lastIndex(whereMessageId: lastAddedOwnMessage.id) else {
                 return .none
             }
             
@@ -289,10 +285,10 @@ extension ChannelPresenter {
             if case let .message(_, readUsers) = items[lastOwnMessageIndex] {
                 var readUsers = readUsers
                 readUsers.append(messageRead.user)
-                items[lastOwnMessageIndex] = .message(lastOwnMessage, readUsers)
+                items[lastOwnMessageIndex] = .message(lastAddedOwnMessage, readUsers)
                 rows.append(lastOwnMessageIndex)
-                messages.append(lastOwnMessage)
-                messageReadsToMessageId[messageRead] = lastOwnMessage.id
+                messages.append(lastAddedOwnMessage)
+                messageReadsToMessageId[messageRead] = lastAddedOwnMessage.id
             }
             
             return .itemUpdated(rows, messages, items)
@@ -302,6 +298,20 @@ extension ChannelPresenter {
         }
         
         return .none
+    }
+    
+    private func appendOrUpdateMessageItem(_ message: Message, at index: Int = -1) {
+        lastMessageMVar.set(message)
+        
+        if index == -1 {
+            if message.isOwn {
+                lastAddedOwnMessage = message
+            }
+            
+            items.append(.message(message, []))
+        } else if index < items.count {
+            items[index] = .message(message, items[index].messageReadUsers)
+        }
     }
     
     private func shouldMessageEventBeHandled(_ message: Message) -> Bool {
@@ -465,7 +475,7 @@ extension ChannelPresenter {
             }
             
             if message.isOwn {
-                lastOwnMessage = message
+                lastAddedOwnMessage = message
                 ownMessagesIndexes.append(index)
             }
             

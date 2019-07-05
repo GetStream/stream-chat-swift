@@ -60,7 +60,7 @@ enum Event: Decodable {
     case healthCheck(_ connectionId: String, User?)
     
     case messageRead(MessageRead)
-    case messageNew(Message, User, _ unreadCount: Int, _ totalUnreadCount: Int, Channel?)
+    case messageNew(Message, _ unreadCount: Int, _ totalUnreadCount: Int, Channel?)
     case messageDeleted(Message)
     case messageUpdated(Message)
     
@@ -103,7 +103,7 @@ enum Event: Decodable {
             let newMessage = try message()
             let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
             let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
-            self = .messageNew(newMessage, newMessage.user, unreadCount, totalUnreadCount, channel)
+            self = .messageNew(newMessage, unreadCount, totalUnreadCount, channel)
         case .messageRead:
             let created = try container.decode(Date.self, forKey: .created)
             self = .messageRead(MessageRead(user: try user(), lastReadDate: created))
@@ -147,6 +147,48 @@ enum Event: Decodable {
             
         default:
             throw ResponseTypeError(type: type)
+        }
+    }
+}
+
+extension Event: Equatable {
+    static func == (lhs: Event, rhs: Event) -> Bool {
+        switch (lhs, rhs) {
+        case (.healthCheck, .healthCheck):
+            return true
+        case (.messageRead(let messageRead1), .messageRead(let messageRead2)):
+            return messageRead1 == messageRead2
+        case (.messageNew(let message1, let unreadCount1, let totalUnreadCount1, let channel1),
+              .messageNew(let message2, let unreadCount2, let totalUnreadCount2, let channel2)):
+            return message1 == message2
+                && unreadCount1 == unreadCount2
+                && totalUnreadCount1 == totalUnreadCount2
+                && channel1 == channel2
+        case (.messageDeleted(let message1), .messageDeleted(let message2)):
+            return message1 == message2
+        case (.messageUpdated(let message1), .messageUpdated(let message2)):
+            return message1 == message2
+        case (.userUpdated(let user1), .userUpdated(let user2)):
+            return user1 == user2
+        case (.userStatusChanged(let user1), .userStatusChanged(let user2)):
+            return user1 == user2
+        case (.userStartWatching(let user1, let watcherCount1), .userStartWatching(let user2, let watcherCount2)):
+            return user1 == user2 && watcherCount1 == watcherCount2
+        case (.userStopWatching(let user1, let watcherCount1), .userStopWatching(let user2, let watcherCount2)):
+            return user1 == user2 && watcherCount1 == watcherCount2
+        case (.reactionNew(let reaction1, let message1, let user1), .reactionNew(let reaction2, let message2, let user2)):
+            return reaction1 == reaction2 && message1 == message2 && user1 == user2
+        case (.reactionDeleted(let reaction1, let message1, let user1), .reactionDeleted(let reaction2, let message2, let user2)):
+            return reaction1 == reaction2 && message1 == message2 && user1 == user2
+        case (.typingStart(let user1), .typingStart(let user2)):
+            return user1 == user2
+        case (.typingStop(let user1), .typingStop(let user2)):
+            return user1 == user2
+        case (.notificationMarkRead(let unreadCount1, let totalUnreadCount1, let unreadChannels1),
+              .notificationMarkRead(let unreadCount2, let totalUnreadCount2, let unreadChannels2)):
+            return unreadCount1 == unreadCount2 && totalUnreadCount1 == totalUnreadCount2 && unreadChannels1 == unreadChannels2
+        default:
+            return false
         }
     }
 }
