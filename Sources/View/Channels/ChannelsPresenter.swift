@@ -14,8 +14,8 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
     
     public let channelType: ChannelType
-    public lazy var channelsFilter: Filter<Channel.CodingKeys> = .key(.type, .equal(to: channelType))
-    public var channelsSorting: [Sorting<Channel.CodingKeys>] = [.init(.lastMessageDate)]
+    public lazy var channelsFilter: Filter<Channel.DecodingKeys> = .key(.type, .equal(to: channelType))
+    public var channelsSorting: [Sorting<Channel.DecodingKeys>] = [.init(.lastMessageDate)]
     public let showChannelStatuses: Bool
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     

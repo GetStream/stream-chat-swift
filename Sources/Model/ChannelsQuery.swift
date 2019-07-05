@@ -20,8 +20,8 @@ public struct ChannelsQuery: Encodable {
         case messageLimit = "message_limit"
     }
     
-    let filter: Filter<Channel.CodingKeys>
-    let sort: [Sorting<Channel.CodingKeys>]
+    let filter: Filter<Channel.DecodingKeys>
+    let sort: [Sorting<Channel.DecodingKeys>]
     let user: User
     let pagination: Pagination
     let messageLimit = Pagination.messagesPageSize

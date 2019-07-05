@@ -10,7 +10,8 @@ import Foundation
 
 /// A Channel class.
 public final class Channel: Codable, Equatable {
-    public enum CodingKeys: String, CodingKey {
+    /// Coding keys for the decoding.
+    public enum DecodingKeys: String, CodingKey {
         case id
         case cid
         case type
@@ -25,7 +26,8 @@ public final class Channel: Codable, Equatable {
         case members
     }
     
-    public enum DataCodingKeys: String, CodingKey {
+    /// Coding keys for the encoding.
+    private enum EncodingKeys: String, CodingKey {
         case name
         case imageURL = "image"
         case members
@@ -103,7 +105,7 @@ public final class Channel: Codable, Equatable {
     }
     
     required public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: DecodingKeys.self)
         let id = try container.decode(String.self, forKey: .id)
         self.id = id
         cid = try container.decode(String.self, forKey: .cid)
@@ -118,7 +120,7 @@ public final class Channel: Codable, Equatable {
     }
     
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: DataCodingKeys.self)
+        var container = encoder.container(keyedBy: EncodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try container.encode(memberIds, forKey: .members)
@@ -175,7 +177,7 @@ public extension Channel {
         public let messageRetention: String
         /// The max message length. 5000 by default.
         public let maxMessageLength: Int
-        /// An array of commands, e.g. giphy.
+        /// An array of commands, e.g. /giphy.
         public let commands: [Command]
         /// A channel created date.
         public let created: Date
@@ -183,6 +185,7 @@ public extension Channel {
         public let updated: Date
     }
     
+    /// A command in a message, e.g. /giphy.
     struct Command: Decodable, Hashable {
         /// A command name.
         public let name: String
