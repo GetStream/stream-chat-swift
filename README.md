@@ -45,11 +45,11 @@ TODO
 
 ## Documentation
 
-TODO - Swift Chat Tutorial page
-
 [Official API Docs](https://getstream.io/chat/docs)
 
 [API Reference](https://getstream.github.io/stream-chat-swift/)
+
+[Getting started tutorial](https://getstream.io/chat/ios-chat/tutorial/)
 
 ## Supported features
 
@@ -70,8 +70,3 @@ TODO - Swift Chat Tutorial page
 - Light/Dark styles
 - Style customization
 - UI customization
-
-## Getting started
-
-
-TODO: https://getstream.io/chat/docs/#introduction but with Swift code examples
