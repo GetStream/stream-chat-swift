@@ -14,7 +14,7 @@
     <a title="ChannelTableViewCell Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (39% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (58% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -77,13 +77,13 @@
                 <a href="../Classes/ComposerView.html">ComposerView</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/Notifications.html">Notifications</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/StatusTableViewCell.html">StatusTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/TableView.html">TableView</a>
@@ -118,9 +118,6 @@
                 <a href="../Enums/Filter/Operator.html">– Operator</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/MessageTableViewCellPaddingType.html">MessageTableViewCellPaddingType</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Enums/MessageType.html">MessageType</a>
               </li>
               <li class="nav-group-task">
@@ -151,12 +148,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/JSONEncoder.html">JSONEncoder</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/MediaGalleryViewController.html">MediaGalleryViewController</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/MessageTableViewCell.html">MessageTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Reactive.html">Reactive</a>
@@ -199,14 +190,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIViewController.html">UIViewController</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="../Protocols.html">Protocols</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="../Protocols/AttachmentPreviewProtocol.html">AttachmentPreviewProtocol</a>
               </li>
             </ul>
           </li>
@@ -328,7 +311,7 @@
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p>Channel table view cell.</p>
 
           </section>
           <section class="section task-group-section">
@@ -347,7 +330,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>An avatar view.</p>
 
                       </div>
                       <div class="declaration">
@@ -374,7 +357,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>A channel name label.</p>
 
                       </div>
                       <div class="declaration">
@@ -401,7 +384,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>A date label.</p>
 
                       </div>
                       <div class="declaration">
@@ -428,7 +411,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>A channel style.</p>
 
                       </div>
                       <div class="declaration">
@@ -482,7 +465,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Update the channel cell with a message text.</p>
 
                       </div>
                       <div class="declaration">
@@ -492,6 +475,49 @@
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">update</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">isMeta</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="nv">isUnread</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a last message text.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isMeta</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>shows the message text as a meta data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isUnread</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>shows the message as unread.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -509,7 +535,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Update the channel cell with an info text.</p>
 
                       </div>
                       <div class="declaration">
@@ -520,6 +546,37 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>info</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an info text.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>bold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>shows the info as bold.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -528,7 +585,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-05)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

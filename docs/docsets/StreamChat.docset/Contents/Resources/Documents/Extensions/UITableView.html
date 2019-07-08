@@ -14,7 +14,7 @@
     <a title="UITableView Extension Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (39% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (58% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -77,13 +77,13 @@
                 <a href="../Classes/ComposerView.html">ComposerView</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/Notifications.html">Notifications</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/StatusTableViewCell.html">StatusTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/TableView.html">TableView</a>
@@ -118,9 +118,6 @@
                 <a href="../Enums/Filter/Operator.html">– Operator</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/MessageTableViewCellPaddingType.html">MessageTableViewCellPaddingType</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Enums/MessageType.html">MessageType</a>
               </li>
               <li class="nav-group-task">
@@ -151,12 +148,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/JSONEncoder.html">JSONEncoder</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/MediaGalleryViewController.html">MediaGalleryViewController</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/MessageTableViewCell.html">MessageTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Reactive.html">Reactive</a>
@@ -199,14 +190,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIViewController.html">UIViewController</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="../Protocols.html">Protocols</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="../Protocols/AttachmentPreviewProtocol.html">AttachmentPreviewProtocol</a>
               </li>
             </ul>
           </li>
@@ -394,9 +377,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:So11UITableViewC10StreamChatE11loadingCell2at15backgroundColorSo0abF0C10Foundation9IndexPathV_So7UIColorCtF"></a>
-                    <a name="//apple_ref/swift/Method/loadingCell(at:backgroundColor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:So11UITableViewC10StreamChatE11loadingCell2at15backgroundColorSo0abF0C10Foundation9IndexPathV_So7UIColorCtF">loadingCell(at:backgroundColor:)</a>
+                    <a name="/s:So11UITableViewC10StreamChatE11loadingCell2atSo0abF0C10Foundation9IndexPathV_tF"></a>
+                    <a name="//apple_ref/swift/Method/loadingCell(at:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So11UITableViewC10StreamChatE11loadingCell2atSo0abF0C10Foundation9IndexPathV_tF">loadingCell(at:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -404,16 +387,39 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>A default loading table view cell.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">loadingCell</span><span class="p">(</span><span class="n">at</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">,</span> <span class="nv">backgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UITableViewCell</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">loadingCell</span><span class="p">(</span><span class="n">at</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UITableViewCell</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>indexPath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an index path.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>a loading table view cell.</p>
                       </div>
                     </section>
                   </div>
@@ -421,9 +427,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:So11UITableViewC10StreamChatE10statusCell2at5title8subtitle15backgroundColor11highlightedSo0abF0C10Foundation9IndexPathV_S2SSgSo7UIColorCSbtF"></a>
-                    <a name="//apple_ref/swift/Method/statusCell(at:title:subtitle:backgroundColor:highlighted:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:So11UITableViewC10StreamChatE10statusCell2at5title8subtitle15backgroundColor11highlightedSo0abF0C10Foundation9IndexPathV_S2SSgSo7UIColorCSbtF">statusCell(at:title:subtitle:backgroundColor:highlighted:)</a>
+                    <a name="/s:So11UITableViewC10StreamChatE10statusCell2at5title8subtitle11highlightedSo0abF0C10Foundation9IndexPathV_S2SSgSbtF"></a>
+                    <a name="//apple_ref/swift/Method/statusCell(at:title:subtitle:highlighted:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So11UITableViewC10StreamChatE10statusCell2at5title8subtitle11highlightedSo0abF0C10Foundation9IndexPathV_S2SSgSbtF">statusCell(at:title:subtitle:highlighted:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -431,7 +437,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>A default status table view cell.</p>
 
                       </div>
                       <div class="declaration">
@@ -441,10 +447,68 @@
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">statusCell</span><span class="p">(</span><span class="n">at</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">,</span>
                        <span class="nv">title</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
                        <span class="nv">subtitle</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                       <span class="nv">backgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span><span class="p">,</span>
                        <span class="nv">highlighted</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UITableViewCell</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>indexPath</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an index path.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>title</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a title.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>subtitle</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a subtitle.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>highlighted</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>change the status cell style to highlighted.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>a status table view cell.</p>
                       </div>
                     </section>
                   </div>
@@ -454,7 +518,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-05)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

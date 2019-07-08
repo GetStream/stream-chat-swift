@@ -14,7 +14,7 @@
     <a title="ChatItem Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (39% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (58% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -77,13 +77,13 @@
                 <a href="../Classes/ComposerView.html">ComposerView</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/Notifications.html">Notifications</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/StatusTableViewCell.html">StatusTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/TableView.html">TableView</a>
@@ -118,9 +118,6 @@
                 <a href="../Enums/Filter/Operator.html">– Operator</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/MessageTableViewCellPaddingType.html">MessageTableViewCellPaddingType</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Enums/MessageType.html">MessageType</a>
               </li>
               <li class="nav-group-task">
@@ -151,12 +148,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/JSONEncoder.html">JSONEncoder</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/MediaGalleryViewController.html">MediaGalleryViewController</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/MessageTableViewCell.html">MessageTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Reactive.html">Reactive</a>
@@ -199,14 +190,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIViewController.html">UIViewController</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="../Protocols.html">Protocols</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="../Protocols/AttachmentPreviewProtocol.html">AttachmentPreviewProtocol</a>
               </li>
             </ul>
           </li>
@@ -328,7 +311,7 @@
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p>A chat item type for view elements.</p>
 
           </section>
           <section class="section task-group-section">
@@ -472,6 +455,114 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10StreamChat0B4ItemO9isLoadingSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isLoading" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat0B4ItemO9isLoadingSbvp">isLoading</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if the chat item is loading.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isLoading</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat0B4ItemO16channelPresenterAA07ChannelE0CSgvp"></a>
+                    <a name="//apple_ref/swift/Property/channelPresenter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat0B4ItemO16channelPresenterAA07ChannelE0CSgvp">channelPresenter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Return a channel presenter if the chat item is a channel presenter.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">channelPresenter</span><span class="p">:</span> <span class="kt"><a href="../Classes/ChannelPresenter.html">ChannelPresenter</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat0B4ItemO7messageAA7MessageVSgvp"></a>
+                    <a name="//apple_ref/swift/Property/message" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat0B4ItemO7messageAA7MessageVSgvp">message</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Return a message if the chat item is a message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat0B4ItemO16messageReadUsersSayAA4UserVGvp"></a>
+                    <a name="//apple_ref/swift/Property/messageReadUsers" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat0B4ItemO16messageReadUsersSayAA4UserVGvp">messageReadUsers</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Return read users for a message chat item.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">messageReadUsers</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:SQ2eeoiySbx_xtFZ"></a>
                     <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:SQ2eeoiySbx_xtFZ">==(_:_:)</a>
@@ -500,7 +591,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-05)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

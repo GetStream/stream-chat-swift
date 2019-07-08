@@ -14,7 +14,7 @@
     <a title="Enumerations  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">StreamChat Docs</a> (39% documented)</p>
+        <p><a href="index.html">StreamChat Docs</a> (58% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -77,13 +77,13 @@
                 <a href="Classes/ComposerView.html">ComposerView</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/Notifications.html">Notifications</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/StatusTableViewCell.html">StatusTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/TableView.html">TableView</a>
@@ -118,9 +118,6 @@
                 <a href="Enums/Filter/Operator.html">– Operator</a>
               </li>
               <li class="nav-group-task">
-                <a href="Enums/MessageTableViewCellPaddingType.html">MessageTableViewCellPaddingType</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="Enums/MessageType.html">MessageType</a>
               </li>
               <li class="nav-group-task">
@@ -151,12 +148,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/JSONEncoder.html">JSONEncoder</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Extensions/MediaGalleryViewController.html">MediaGalleryViewController</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Extensions/MessageTableViewCell.html">MessageTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/Reactive.html">Reactive</a>
@@ -199,14 +190,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/UIViewController.html">UIViewController</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a href="Protocols.html">Protocols</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="Protocols/AttachmentPreviewProtocol.html">AttachmentPreviewProtocol</a>
               </li>
             </ul>
           </li>
@@ -472,7 +455,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>A chat item type for view elements.</p>
 
                         <a href="Enums/ChatItem.html" class="slightly-smaller">See more</a>
                       </div>
@@ -505,6 +488,17 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         <p>A filter.</p>
+
+<p>For example:</p>
+<pre class="highlight swift"><code><span class="c1">// Filter channels by type:</span>
+<span class="k">var</span> <span class="nv">filter</span><span class="p">:</span> <span class="kt">Filter</span><span class="o">&lt;</span><span class="kt">Channel</span><span class="o">.</span><span class="kt">DecodingKeys</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">.</span><span class="nf">key</span><span class="p">(</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="o">.</span><span class="nf">equal</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="s">"messaging"</span><span class="p">))</span>
+<span class="c1">// Filter channels by members:</span>
+<span class="n">filter</span> <span class="o">=</span> <span class="o">.</span><span class="nf">key</span><span class="p">(</span><span class="o">.</span><span class="n">members</span><span class="p">,</span> <span class="o">.</span><span class="nf">in</span><span class="p">([</span><span class="s">"jon"</span><span class="p">]))</span>
+<span class="c1">// Filter channels by type and members:</span>
+<span class="n">filter</span> <span class="o">=</span> <span class="o">.</span><span class="nf">key</span><span class="p">(</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="o">.</span><span class="nf">equal</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="s">"messaging"</span><span class="p">))</span> <span class="o">+</span> <span class="o">.</span><span class="nf">key</span><span class="p">(</span><span class="o">.</span><span class="n">members</span><span class="p">,</span> <span class="o">.</span><span class="nf">in</span><span class="p">([</span><span class="s">"jon"</span><span class="p">]))</span>
+<span class="c1">// Filter channels by type or members:</span>
+<span class="n">filter</span> <span class="o">=</span> <span class="o">.</span><span class="nf">key</span><span class="p">(</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="o">.</span><span class="nf">equal</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="s">"messaging"</span><span class="p">))</span> <span class="o">|</span> <span class="o">.</span><span class="nf">key</span><span class="p">(</span><span class="o">.</span><span class="n">members</span><span class="p">,</span> <span class="o">.</span><span class="nf">in</span><span class="p">([</span><span class="s">"jon"</span><span class="p">]))</span>
+</code></pre>
 
                         <a href="Enums/Filter.html" class="slightly-smaller">See more</a>
                       </div>
@@ -577,6 +571,16 @@
                       <div class="abstract">
                         <p>Pagination options.</p>
 
+<p>For example:</p>
+<pre class="highlight swift"><code><span class="c1">// Limit by 20.</span>
+<span class="k">var</span> <span class="nv">pagination</span> <span class="o">=</span> <span class="kt">Pagination</span><span class="o">.</span><span class="nf">limit</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+<span class="c1">// add the offset to the limit:</span>
+<span class="n">pagination</span> <span class="o">+=</span> <span class="o">.</span><span class="nf">offset</span><span class="p">(</span><span class="mi">40</span><span class="p">)</span>
+
+<span class="c1">// Another pagination:</span>
+<span class="k">let</span> <span class="nv">pagination</span> <span class="o">=</span> <span class="kt">Pagination</span><span class="o">.</span><span class="nf">limit</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="o">+</span> <span class="o">.</span><span class="nf">lessThan</span><span class="p">(</span><span class="s">"some_id"</span><span class="p">)</span>
+</code></pre>
+
                         <a href="Enums/Pagination.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
@@ -607,7 +611,9 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>A view changes.</p>
+
+<p>ViewChanges describes how a view should be updated depends on a data response.</p>
 
                         <a href="Enums/ViewChanges.html" class="slightly-smaller">See more</a>
                       </div>
@@ -624,42 +630,10 @@
                 </li>
               </ul>
             </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10StreamChat31MessageTableViewCellPaddingTypeO"></a>
-                    <a name="//apple_ref/swift/Enum/MessageTableViewCellPaddingType" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat31MessageTableViewCellPaddingTypeO">MessageTableViewCellPaddingType</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                        <a href="Enums/MessageTableViewCellPaddingType.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">MessageTableViewCellPaddingType</span> <span class="p">:</span> <span class="kt">String</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-05)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

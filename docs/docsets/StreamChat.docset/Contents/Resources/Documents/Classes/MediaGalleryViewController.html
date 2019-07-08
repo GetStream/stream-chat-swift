@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>ChannelViewStyle Structure Reference</title>
+    <title>MediaGalleryViewController Class Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Struct/ChannelViewStyle" class="dashAnchor"></a>
-    <a title="ChannelViewStyle Structure Reference"></a>
+    <a name="//apple_ref/swift/Class/MediaGalleryViewController" class="dashAnchor"></a>
+    <a title="MediaGalleryViewController Class Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html">StreamChat Docs</a> (58% documented)</p>
@@ -22,7 +22,7 @@
       <p id="breadcrumbs">
         <a href="../index.html">StreamChat Reference</a>
         <img id="carat" src="../img/carat.png" />
-        ChannelViewStyle Structure Reference
+        MediaGalleryViewController Class Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -304,14 +304,14 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>ChannelViewStyle</h1>
+            <h1>MediaGalleryViewController</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ChannelViewStyle</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MediaGalleryViewController</span> <span class="p">:</span> <span class="kt">UIViewController</span></code></pre>
 
                 </div>
               </div>
-            <p>A channel view style.</p>
+            <p>A media gallery to show images or gifs.</p>
 
           </section>
           <section class="section task-group-section">
@@ -320,9 +320,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV15backgroundColorSo7UIColorCvp"></a>
-                    <a name="//apple_ref/swift/Property/backgroundColor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV15backgroundColorSo7UIColorCvp">backgroundColor</a>
+                    <a name="/s:10StreamChat26MediaGalleryViewControllerC06scrollE0So08UIScrollE0Cvp"></a>
+                    <a name="//apple_ref/swift/Property/scrollView" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat26MediaGalleryViewControllerC06scrollE0So08UIScrollE0Cvp">scrollView</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -330,14 +330,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A background color.</p>
+                        <p>A scroll view to dismiss the gellary by pull down.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">backgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">scrollView</span><span class="p">:</span> <span class="kt">UIScrollView</span></code></pre>
 
                         </div>
                       </div>
@@ -347,9 +347,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV14separatorColorSo7UIColorCvp"></a>
-                    <a name="//apple_ref/swift/Property/separatorColor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV14separatorColorSo7UIColorCvp">separatorColor</a>
+                    <a name="/s:10StreamChat26MediaGalleryViewControllerC010collectionE0So012UICollectionE0Cvp"></a>
+                    <a name="//apple_ref/swift/Property/collectionView" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat26MediaGalleryViewControllerC010collectionE0So012UICollectionE0Cvp">collectionView</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -357,14 +357,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A separator color.</p>
+                        <p>A horizontal collection view with images.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">separatorColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">collectionView</span><span class="p">:</span> <span class="kt">UICollectionView</span></code></pre>
 
                         </div>
                       </div>
@@ -374,9 +374,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV8nameFontSo6UIFontCvp"></a>
-                    <a name="//apple_ref/swift/Property/nameFont" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV8nameFontSo6UIFontCvp">nameFont</a>
+                    <a name="/s:10StreamChat26MediaGalleryViewControllerC11pageControlSo06UIPageH0Cvp"></a>
+                    <a name="//apple_ref/swift/Property/pageControl" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat26MediaGalleryViewControllerC11pageControlSo06UIPageH0Cvp">pageControl</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -384,14 +384,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A channel name font.</p>
+                        <p>A page controler for several item.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">nameFont</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">lazy</span> <span class="k">var</span> <span class="nv">pageControl</span><span class="p">:</span> <span class="kt">UIPageControl</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -401,9 +401,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV9nameColorSo7UIColorCvp"></a>
-                    <a name="//apple_ref/swift/Property/nameColor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV9nameColorSo7UIColorCvp">nameColor</a>
+                    <a name="/s:10StreamChat26MediaGalleryViewControllerC5itemsSayAA0cD4ItemVGvp"></a>
+                    <a name="//apple_ref/swift/Property/items" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat26MediaGalleryViewControllerC5itemsSayAA0cD4ItemVGvp">items</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -411,14 +411,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A channel name color.</p>
+                        <p>An image URL&rsquo;s.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">nameColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">items</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/MediaGalleryItem.html">MediaGalleryItem</a></span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
@@ -428,9 +428,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV11messageFontSo6UIFontCvp"></a>
-                    <a name="//apple_ref/swift/Property/messageFont" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV11messageFontSo6UIFontCvp">messageFont</a>
+                    <a name="/s:10StreamChat26MediaGalleryViewControllerC8selectedSivp"></a>
+                    <a name="//apple_ref/swift/Property/selected" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat26MediaGalleryViewControllerC8selectedSivp">selected</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -438,14 +438,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A last message font.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">messageFont</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">selected</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
@@ -455,9 +455,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV12messageColorSo7UIColorCvp"></a>
-                    <a name="//apple_ref/swift/Property/messageColor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV12messageColorSo7UIColorCvp">messageColor</a>
+                    <a name="/c:@M@StreamChat@objc(cs)MediaGalleryViewController(im)viewDidLoad"></a>
+                    <a name="//apple_ref/swift/Method/viewDidLoad()" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@StreamChat@objc(cs)MediaGalleryViewController(im)viewDidLoad">viewDidLoad()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -465,14 +465,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A last message text color.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">messageColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">viewDidLoad</span><span class="p">()</span></code></pre>
 
                         </div>
                       </div>
@@ -482,9 +482,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV17messageUnreadFontSo6UIFontCvp"></a>
-                    <a name="//apple_ref/swift/Property/messageUnreadFont" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV17messageUnreadFontSo6UIFontCvp">messageUnreadFont</a>
+                    <a name="/c:@M@StreamChat@objc(cs)MediaGalleryViewController(im)viewWillAppear:"></a>
+                    <a name="//apple_ref/swift/Method/viewWillAppear(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@StreamChat@objc(cs)MediaGalleryViewController(im)viewWillAppear:">viewWillAppear(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -492,14 +492,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A last unread message font.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">messageUnreadFont</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">public</span> <span class="kd">func</span> <span class="nf">viewWillAppear</span><span class="p">(</span><span class="n">_</span> <span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -509,9 +509,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV18messageUnreadColorSo7UIColorCvp"></a>
-                    <a name="//apple_ref/swift/Property/messageUnreadColor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV18messageUnreadColorSo7UIColorCvp">messageUnreadColor</a>
+                    <a name="/c:@M@StreamChat@objc(cs)MediaGalleryViewController(py)preferredStatusBarStyle"></a>
+                    <a name="//apple_ref/swift/Property/preferredStatusBarStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@StreamChat@objc(cs)MediaGalleryViewController(py)preferredStatusBarStyle">preferredStatusBarStyle</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -519,14 +519,52 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A last unread message text color.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">messageUnreadColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">override</span> <span class="kd">public</span> <span class="k">var</span> <span class="nv">preferredStatusBarStyle</span><span class="p">:</span> <span class="kt">UIStatusBarStyle</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Scroll%20View"></a>
+                <a name="//apple_ref/swift/Section/Scroll View" class="dashAnchor"></a>
+                <a href="#/Scroll%20View">
+                  <h3 class="section-name">Scroll View</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@StreamChat@objc(cs)MediaGalleryViewController(im)scrollViewDidScroll:"></a>
+                    <a name="//apple_ref/swift/Method/scrollViewDidScroll(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@StreamChat@objc(cs)MediaGalleryViewController(im)scrollViewDidScroll:">scrollViewDidScroll(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">scrollViewDidScroll</span><span class="p">(</span><span class="n">_</span> <span class="nv">scrollView</span><span class="p">:</span> <span class="kt">UIScrollView</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -536,9 +574,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV18messageDeletedFontSo6UIFontCvp"></a>
-                    <a name="//apple_ref/swift/Property/messageDeletedFont" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV18messageDeletedFontSo6UIFontCvp">messageDeletedFont</a>
+                    <a name="/c:@CM@StreamChat@objc(cs)MediaGalleryViewController(im)scrollViewDidEndDecelerating:"></a>
+                    <a name="//apple_ref/swift/Method/scrollViewDidEndDecelerating(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@StreamChat@objc(cs)MediaGalleryViewController(im)scrollViewDidEndDecelerating:">scrollViewDidEndDecelerating(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -546,14 +584,52 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A deleted message font.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">messageDeletedFont</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">scrollViewDidEndDecelerating</span><span class="p">(</span><span class="n">_</span> <span class="nv">scrollView</span><span class="p">:</span> <span class="kt">UIScrollView</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Collection%20View"></a>
+                <a name="//apple_ref/swift/Section/Collection View" class="dashAnchor"></a>
+                <a href="#/Collection%20View">
+                  <h3 class="section-name">Collection View</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@StreamChat@objc(cs)MediaGalleryViewController(im)collectionView:numberOfItemsInSection:"></a>
+                    <a name="//apple_ref/swift/Method/collectionView(_:numberOfItemsInSection:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@StreamChat@objc(cs)MediaGalleryViewController(im)collectionView:numberOfItemsInSection:">collectionView(_:numberOfItemsInSection:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">collectionView</span><span class="p">(</span><span class="n">_</span> <span class="nv">collectionView</span><span class="p">:</span> <span class="kt">UICollectionView</span><span class="p">,</span> <span class="n">numberOfItemsInSection</span> <span class="nv">section</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
@@ -563,9 +639,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV19messageDeletedColorSo7UIColorCvp"></a>
-                    <a name="//apple_ref/swift/Property/messageDeletedColor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV19messageDeletedColorSo7UIColorCvp">messageDeletedColor</a>
+                    <a name="/c:@CM@StreamChat@objc(cs)MediaGalleryViewController(im)collectionView:cellForItemAtIndexPath:"></a>
+                    <a name="//apple_ref/swift/Method/collectionView(_:cellForItemAt:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@StreamChat@objc(cs)MediaGalleryViewController(im)collectionView:cellForItemAtIndexPath:">collectionView(_:cellForItemAt:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -573,284 +649,15 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A deleted message text color.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">messageDeletedColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV8dateFontSo6UIFontCvp"></a>
-                    <a name="//apple_ref/swift/Property/dateFont" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV8dateFontSo6UIFontCvp">dateFont</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A date font.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">dateFont</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV9dateColorSo7UIColorCvp"></a>
-                    <a name="//apple_ref/swift/Property/dateColor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV9dateColorSo7UIColorCvp">dateColor</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A date text color.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">dateColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorG08nameFont0iG007messageJ00kG00k6UnreadJ00klG00k7DeletedJ00kmG004dateJ00nG0ACSo7UIColorC_AQSo6UIFontCAqsqsqsqsQtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(backgroundColor:separatorColor:nameFont:nameColor:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:dateFont:dateColor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorG08nameFont0iG007messageJ00kG00k6UnreadJ00klG00k7DeletedJ00kmG004dateJ00nG0ACSo7UIColorC_AQSo6UIFontCAqsqsqsqsQtcfc">init(backgroundColor:separatorColor:nameFont:nameColor:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:dateFont:dateColor:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Init a channel view style.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">backgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">white</span><span class="p">,</span>
-            <span class="nv">separatorColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatSeparator</span><span class="p">,</span>
-            <span class="nv">nameFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatXRegularMedium</span><span class="p">,</span>
-            <span class="nv">nameColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">black</span><span class="p">,</span>
-            <span class="nv">messageFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatMedium</span><span class="p">,</span>
-            <span class="nv">messageColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span>
-            <span class="nv">messageUnreadFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatMediumMedium</span><span class="p">,</span>
-            <span class="nv">messageUnreadColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">black</span><span class="p">,</span>
-            <span class="nv">messageDeletedFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatMediumItalic</span><span class="p">,</span>
-            <span class="nv">messageDeletedColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span>
-            <span class="nv">dateFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatSmall</span><span class="p">,</span>
-            <span class="nv">dateColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>backgroundColor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a background color.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>separatorColor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a separator color.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>nameFont</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a channel name font.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>nameColor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a channel name color.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>messageFont</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a last message font.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>messageColor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a last message text color.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>messageUnreadFont</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a last unread message font.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>messageUnreadColor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a last unread message text color.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>messageDeletedFont</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a deleted message font.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>messageDeletedColor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a deleted message text color.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>dateFont</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a date font.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>dateColor</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a date text color.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:SH4hash4intoys6HasherVz_tF"></a>
-                    <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:SH4hash4intoys6HasherVz_tF">hash(into:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span>
-    <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">collectionView</span><span class="p">(</span><span class="n">_</span> <span class="nv">collectionView</span><span class="p">:</span> <span class="kt">UICollectionView</span><span class="p">,</span>
+                           <span class="n">cellForItemAt</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UICollectionViewCell</span></code></pre>
 
                         </div>
                       </div>
