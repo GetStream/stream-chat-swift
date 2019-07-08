@@ -29,7 +29,7 @@ class CustomChatViewController: ChatViewController {
         return cell
     }
 
-    override func loadingCell(at indexPath: IndexPath, backgroundColor: UIColor) -> UITableViewCell? {
+    override func loadingCell(at indexPath: IndexPath) -> UITableViewCell? {
         let cell = tableView.dequeueReusableCell(withIdentifier: "loading")
             ?? UITableViewCell(style: .default, reuseIdentifier: "loading")
 
@@ -43,7 +43,6 @@ class CustomChatViewController: ChatViewController {
     override func statusCell(at indexPath: IndexPath,
                              title: String,
                              subtitle: String? = nil,
-                             backgroundColor: UIColor,
                              highlighted: Bool) -> UITableViewCell? {
         let cell = tableView.dequeueReusableCell(withIdentifier: "status")
             ?? UITableViewCell(style: .default, reuseIdentifier: "status")

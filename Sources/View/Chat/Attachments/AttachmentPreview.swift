@@ -126,10 +126,10 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         return view
     }()
     
-    public var maxWidth: CGFloat = 0
+    var maxWidth: CGFloat = 0
     var forceToReload: () -> Void = {}
     
-    public var attachment: Attachment? {
+    var attachment: Attachment? {
         didSet {
             if let attachment = attachment {
                 hasActions = !attachment.actions.isEmpty

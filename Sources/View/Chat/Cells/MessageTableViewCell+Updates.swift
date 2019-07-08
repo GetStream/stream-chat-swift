@@ -13,7 +13,7 @@ import RxSwift
 
 extension MessageTableViewCell {
     
-    public func updateBackground(isContinueMessage: Bool) {
+    func updateBackground(isContinueMessage: Bool) {
         guard let style = style else {
             return
         }
@@ -46,7 +46,7 @@ extension MessageTableViewCell {
             : (isContinueMessage ? style.backgroundImages[.rightSide] : style.backgroundImages[.rightBottomCorner])
     }
     
-    public func update(name: String? = nil, date: Date) {
+    func update(name: String? = nil, date: Date) {
         nameAndDateStackView.isHidden = false
         
         if style?.alignment == .left, let name = name, !name.isEmpty {
@@ -59,13 +59,13 @@ extension MessageTableViewCell {
         dateLabel.text = date.relative
     }
     
-    public func update(replyCount: Int) {
+    func update(replyCount: Int) {
         replyCountButton.isHidden = false
         replyCountButton.setTitle(" \(replyCount) \(replyCount > 1 ? "replies" : "reply") ", for: .normal)
         replyCountButton.setNeedsLayout()
     }
     
-    public func update(info: String?, date: Date? = nil) {
+    func update(info: String?, date: Date? = nil) {
         guard let info = info else {
             return
         }
@@ -74,7 +74,7 @@ extension MessageTableViewCell {
         infoLabel.isHidden = false
     }
     
-    public func update(message: String, mentionedUsersNames: [String] = []) {
+    func update(message: String, mentionedUsersNames: [String] = []) {
         let text = message.trimmingCharacters(in: .whitespacesAndNewlines)
         messageContainerView.isHidden = text.isEmpty
         messageLabel.text = text
@@ -94,7 +94,7 @@ extension MessageTableViewCell {
         }
     }
     
-    public func update(reactionCounts: ReactionCounts?, action: @escaping ReactionAction) {
+    func update(reactionCounts: ReactionCounts?, action: @escaping ReactionAction) {
         guard let reactionCounts = reactionCounts,
             !reactionCounts.counts.isEmpty,
             let anchorView = messageStackView.arrangedSubviews.first(where: { !$0.isHidden }),

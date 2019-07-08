@@ -9,6 +9,17 @@
 import Foundation
 
 /// Pagination options.
+///
+/// For example:
+/// ```
+/// // Limit by 20.
+/// var pagination = Pagination.limit(20)
+/// // add the offset to the limit:
+/// pagination += .offset(40)
+///
+/// // Another pagination:
+/// let pagination = Pagination.limit(50) + .lessThan("some_id")
+/// ```
 public enum Pagination: Codable, Equatable {
     static let channelsPageSize: Pagination = .limit(20)
     static let channelsNextPageSize: Pagination = .limit(30)

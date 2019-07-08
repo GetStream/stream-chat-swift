@@ -8,24 +8,52 @@
 
 import UIKit
 
+/// A channel view style.
 public struct ChannelViewStyle: Hashable {
+    /// A background color.
     public var backgroundColor: UIColor
+    /// A separator color.
     public var separatorColor: UIColor
+    /// A channel name font.
     public var nameFont: UIFont
+    /// A channel name color.
     public var nameColor: UIColor
+    /// A last message font.
     public var messageFont: UIFont
+    /// A last message text color.
     public var messageColor: UIColor
+    /// A last unread message font.
     public var messageUnreadFont: UIFont
+    /// A last unread message text color.
     public var messageUnreadColor: UIColor
+    /// A deleted message font.
     public var messageDeletedFont: UIFont
+    /// A deleted message text color.
     public var messageDeletedColor: UIColor
+    /// A date font.
     public var dateFont: UIFont
+    /// A date text color.
     public var dateColor: UIColor
     
+    /// Init a channel view style.
+    ///
+    /// - Parameters:
+    ///   - backgroundColor: a background color.
+    ///   - separatorColor: a separator color.
+    ///   - nameFont: a channel name font.
+    ///   - nameColor: a channel name color.
+    ///   - messageFont: a last message font.
+    ///   - messageColor: a last message text color.
+    ///   - messageUnreadFont: a last unread message font.
+    ///   - messageUnreadColor: a last unread message text color.
+    ///   - messageDeletedFont: a deleted message font.
+    ///   - messageDeletedColor: a deleted message text color.
+    ///   - dateFont: a date font.
+    ///   - dateColor: a date text color.
     public init(backgroundColor: UIColor = .white,
                 separatorColor: UIColor = .chatSeparator,
-                titleFont: UIFont = .chatXRegularMedium,
-                titleColor: UIColor = .black,
+                nameFont: UIFont = .chatXRegularMedium,
+                nameColor: UIColor = .black,
                 messageFont: UIFont = .chatMedium,
                 messageColor: UIColor = .chatGray,
                 messageUnreadFont: UIFont = .chatMediumMedium,
@@ -36,8 +64,8 @@ public struct ChannelViewStyle: Hashable {
                 dateColor: UIColor = .chatGray) {
         self.backgroundColor = backgroundColor
         self.separatorColor = separatorColor
-        self.nameFont = titleFont
-        self.nameColor = titleColor
+        self.nameFont = nameFont
+        self.nameColor = nameColor
         self.messageFont = messageFont
         self.messageColor = messageColor
         self.messageUnreadFont = messageUnreadFont

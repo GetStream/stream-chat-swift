@@ -8,16 +8,22 @@
 
 import UIKit
 
+/// A composition of view styles.
 public struct ChatViewStyle: Hashable {
     
+    /// A channel view style.
     public var channel: ChannelViewStyle
+    /// A composer view style.
     public var composer: ComposerViewStyle
+    /// An incoming message view style.
     public var incomingMessage: MessageViewStyle
+    /// An outgoing message view style.
     public var outgoingMessage: MessageViewStyle
     
+    /// A dark chat view style.
     public static let dark =
         ChatViewStyle(channel: ChannelViewStyle(backgroundColor: .chatSuperDarkGray,
-                                                titleColor: .white,
+                                                nameColor: .white,
                                                 messageUnreadColor: .white),
                       composer: ComposerViewStyle(textColor: .white,
                                                   states: [.active: .init(tintColor: .chatBlue, borderWidth: 2),
@@ -38,6 +44,13 @@ public struct ChatViewStyle: Hashable {
                                                                                  backgroundColor: .darkGray,
                                                                                  chatBackgroundColor: .chatSuperDarkGray)))
     
+    /// Init a composition of view styles.
+    ///
+    /// - Parameters:
+    ///   - channel: a channel view style.
+    ///   - composer: a composer view style.
+    ///   - incomingMessage: an incoming message view style.
+    ///   - outgoingMessage: an outgoing message view style.
     public init(channel: ChannelViewStyle = .init(),
                 composer: ComposerViewStyle = .init(),
                 incomingMessage: MessageViewStyle = .init(),

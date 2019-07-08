@@ -37,12 +37,18 @@ open class WebViewController: UIViewController, WKNavigationDelegate {
         }
     }
     
+    
     /// Makes a request with a given `URL` to load the web view.
+    ///
+    /// - Parameter url: an URL for a request.
     public func open(_ url: URL) {
         open(URLRequest(url: url))
     }
     
+    
     /// Makes a request with a given `URLRequest` to load the web view.
+    ///
+    /// - Parameter request: a request.
     public func open(_ request: URLRequest) {
         activityIndicatorView.startAnimating()
         webView.load(request)

@@ -1,10 +1,10 @@
 Pod::Spec.new do |spec|
-  spec.name         = "StreamChat"
-  spec.version      = "0.3.6"
-  spec.summary      = "Stream iOS Chat"
-  spec.description  = "stream-chat-swift is the official Swift client for Stream Chat, a service for building chat applications."
+  spec.name = "StreamChat"
+  spec.version = "0.3.6"
+  spec.summary = "Stream iOS Chat"
+  spec.description = "stream-chat-swift is the official Swift client for Stream Chat, a service for building chat applications."
 
-  spec.homepage     = "https://getstream.io/chat/"
+  spec.homepage = "https://getstream.io/chat/"
   spec.license = { :type => "BSD-3", :file => "LICENSE" }
   spec.author = { "Alexey Bukhtin" => "alexey@getstream.io" }
   spec.social_media_url = "https://getstream.io"

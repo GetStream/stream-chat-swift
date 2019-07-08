@@ -69,7 +69,7 @@ extension ComposerView {
         }
     }
     
-    public func updateToolBarHeight() {
+    func updateToolBarHeight() {
         let height = CGFloat.messagesToComposerPadding + (imagesCollectionView.isHidden ? 0 : .composerAttachmentsHeight)
         
         guard toolBar.frame.height != height else {

@@ -8,44 +8,88 @@
 
 import UIKit
 
+/// A message view style.
 public struct MessageViewStyle: Hashable {
+    
+    /// An alignment of a message for incoming or outgoing messages.
     public var alignment: Alignment
+    /// Shows the current user avatar for outgoing messages.
     public var showCurrentUserAvatar: Bool
+    /// A message font.
     public var font: UIFont
+    /// A reply info font.
     public var replyFont: UIFont
+    /// A user name font.
     public var nameFont: UIFont
+    /// An info font, e.g. date.
     public var infoFont: UIFont
+    /// An emoji font of messages.
     public var emojiFont: UIFont
+    /// A message text color.
     public var textColor: UIColor
+    /// A reply info text color.
     public var replyColor: UIColor
+    /// An info text color, e.g. date.
     public var infoColor: UIColor
+    /// A border color.
     public var borderColor: UIColor
     
+    /// A background color of the chat screen.
     public var chatBackgroundColor: UIColor {
         didSet { updateBackgroundImages() }
     }
     
+    /// A background color of a message.
     public var backgroundColor: UIColor {
         didSet { updateBackgroundImages() }
     }
     
+    /// A border width.
     public var borderWidth: CGFloat {
         didSet { updateBackgroundImages() }
     }
     
+    /// A corner radius.
     public var cornerRadius: CGFloat {
         didSet { updateBackgroundImages() }
     }
     
+    /// A reaction style.
     public var reactionViewStyle: ReactionViewStyle
+    
+    /// Shows markdown text with text attributes.
+    ///
+    /// For example: makes italic text for "*italic*", bold text for "**bold**".
     public var markdownEnabled: Bool
+    
     private(set) var backgroundImages: [RoundedImageType: UIImage] = [:]
     private(set) var transparentBackgroundImages: [RoundedImageType: UIImage] = [:]
     
+    /// Check if the message has a generated background bubble image.
     public var hasBackgroundImage: Bool {
         return cornerRadius > 1 && (chatBackgroundColor != backgroundColor || borderWidth > 0)
     }
     
+    /// Init a message view style.
+    ///
+    /// - Parameters:
+    ///   - alignment: an alignment of a message for incoming or outgoing messages.
+    ///   - showCurrentUserAvatar: shows the current user avatar for outgoing messages.
+    ///   - chatBackgroundColor: a background color of the chat screen.
+    ///   - font: a message font.
+    ///   - replyFont: a reply info font.
+    ///   - nameFont: a user name font.
+    ///   - infoFont: an info font, e.g. date.
+    ///   - emojiFont: an emoji font of messages.
+    ///   - textColor: a message text color.
+    ///   - replyColor: a reply info text color.
+    ///   - infoColor: an info text color, e.g. date.
+    ///   - backgroundColor: a background color of a message.
+    ///   - borderColor: a border color.
+    ///   - borderWidth: a border width.
+    ///   - cornerRadius: a corner radius.
+    ///   - reactionViewStyle: a reaction style.
+    ///   - markdownEnabled: shows markdown text with text attributes, e.g. *italic*, **bold**.
     public init(alignment: Alignment = .left,
                 showCurrentUserAvatar: Bool = true,
                 chatBackgroundColor: UIColor = .white,
@@ -156,6 +200,7 @@ public struct MessageViewStyle: Hashable {
 }
 
 extension MessageViewStyle {
+    /// An alignment of a message for incoming or outgoing messages.
     public enum Alignment: String {
         case left
         case right

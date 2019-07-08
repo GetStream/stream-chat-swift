@@ -12,8 +12,10 @@ import RxSwift
 import RxCocoa
 import RxKeyboard
 
+/// A composer view.
 public final class ComposerView: UIView {
     
+    /// A composer view  style.
     public var style: ComposerViewStyle?
     
     private var styleState: ComposerViewStyle.State = .disabled {
@@ -47,7 +49,8 @@ public final class ComposerView: UIView {
     private(set) lazy var filesStackView = setupFilesStackView()
     /// Picked images.
     var uploader: Uploader?
-
+    
+    /// An editing state of the composer.
     public var isEditing: Bool = false
     
     func attributedText(text: String = "", textColor: UIColor? = nil) -> NSAttributedString {
@@ -113,6 +116,12 @@ public final class ComposerView: UIView {
     
     // MARK: -
     
+    
+    /// Add the composer to a view.
+    ///
+    /// - Parameters:
+    ///   - view: a superview.
+    ///   - placeholderText: a placeholder text.
     public func addToSuperview(_ view: UIView, placeholderText: String = "Write a message") {
         guard let style = style else {
             return

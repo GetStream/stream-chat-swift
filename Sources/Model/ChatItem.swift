@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// A chat item type for view elements.
 public enum ChatItem: Equatable {
     case loading(_ inProgress: Bool)
     case status(_ title: String, _ subtitle: String?, _ highlighted: Bool)
@@ -15,7 +16,8 @@ public enum ChatItem: Equatable {
     case message(Message, _ usersRead: [User])
     case error(Error)
     
-    var isLoading: Bool {
+    /// Check if the chat item is loading.
+    public var isLoading: Bool {
         if case .loading = self {
             return true
         }
@@ -23,7 +25,8 @@ public enum ChatItem: Equatable {
         return false
     }
     
-    var channelPresenter: ChannelPresenter? {
+    /// Return a channel presenter if the chat item is a channel presenter.
+    public var channelPresenter: ChannelPresenter? {
         if case .channelPresenter(let channelPresenter) = self {
             return channelPresenter
         }
@@ -31,7 +34,8 @@ public enum ChatItem: Equatable {
         return nil
     }
     
-    var message: Message? {
+    /// Return a message if the chat item is a message.
+    public var message: Message? {
         if case .message(let message, _) = self {
             return message
         }
@@ -39,7 +43,8 @@ public enum ChatItem: Equatable {
         return nil
     }
     
-    var messageReadUsers: [User] {
+    /// Return read users for a message chat item.
+    public var messageReadUsers: [User] {
         if case .message(_, let users) = self {
             return users
         }

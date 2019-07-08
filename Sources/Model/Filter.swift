@@ -9,6 +9,18 @@
 import Foundation
 
 /// A filter.
+///
+/// For example:
+/// ```
+/// // Filter channels by type:
+/// var filter: Filter<Channel.DecodingKeys> = .key(.type, .equal(to: "messaging"))
+/// // Filter channels by members:
+/// filter = .key(.members, .in(["jon"]))
+/// // Filter channels by type and members:
+/// filter = .key(.type, .equal(to: "messaging")) + .key(.members, .in(["jon"]))
+/// // Filter channels by type or members:
+/// filter = .key(.type, .equal(to: "messaging")) | .key(.members, .in(["jon"]))
+/// ```
 public enum Filter<T: CodingKey>: Encodable {
     case key(T, Operator)
     indirect case and([Filter])

@@ -9,7 +9,7 @@
 import UIKit
 import RxSwift
 
-public protocol AttachmentPreviewProtocol where Self: UIView {
+protocol AttachmentPreviewProtocol where Self: UIView {
     typealias Competion = (Self, Error?) -> Void
     
     var disposeBag: DisposeBag { get }

@@ -11,8 +11,9 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
+/// A chat view controller of a channel.
 open class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-    
+    /// A chat view style.
     public var style = ChatViewStyle()
     let disposeBag = DisposeBag()
     weak var reactionsView: ReactionsView?
@@ -27,6 +28,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
     private(set) lazy var composerCommandsView = createComposerCommandsView()
     private(set) lazy var composerAddFileView = createComposerAddFileView()
     
+    /// A table view of messages.
     public private(set) lazy var tableView: TableView = {
         let tableView = TableView(frame: .zero, style: .plain)
         tableView.backgroundColor = style.incomingMessage.chatBackgroundColor
@@ -53,6 +55,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         return tableView
     }()
     
+    /// A channel presenter.
     public var channelPresenter: ChannelPresenter?
     
     open override func viewDidLoad() {
@@ -108,18 +111,37 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         return style.incomingMessage.textColor.isDark ? .default : .lightContent
     }
     
+    /// A message cell to insert in a particular location of the table view.
+    ///
+    /// - Parameters:
+    ///   - indexPath: an index path.
+    ///   - message: a message.
+    ///   - readUsers: a list of users who read the message.
+    /// - Returns: a message table view cell.
     open func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
         return extensionMessageCell(at: indexPath, message: message, readUsers: readUsers)
     }
     
-    open func loadingCell(at indexPath: IndexPath, backgroundColor: UIColor) -> UITableViewCell? {
+    /// A custom loading cell to insert in a particular location of the table view.
+    ///
+    /// - Parameters:
+    ///   - indexPath: an index path.
+    /// - Returns: a loading table view cell.
+    open func loadingCell(at indexPath: IndexPath) -> UITableViewCell? {
         return nil
     }
     
+    /// A custom status cell to insert in a particular location of the table view.
+    ///
+    /// - Parameters:
+    ///   - indexPath: an index path.
+    ///   - title: a title.
+    ///   - subtitle: a subtitle.
+    ///   - highlighted: change the status cell style to highlighted.
+    /// - Returns: a status table view cell.
     open func statusCell(at indexPath: IndexPath,
                          title: String,
                          subtitle: String? = nil,
-                         backgroundColor: UIColor,
                          highlighted: Bool) -> UITableViewCell? {
         return nil
     }
@@ -254,23 +276,16 @@ extension ChatViewController {
         }
         
         let cell: UITableViewCell
-        let backgroundColor = style.incomingMessage.chatBackgroundColor
         
         switch items[indexPath.row] {
         case .loading:
-            cell = loadingCell(at: indexPath, backgroundColor: backgroundColor)
-                ?? tableView.loadingCell(at: indexPath, backgroundColor: backgroundColor)
+            cell = loadingCell(at: indexPath) ?? tableView.loadingCell(at: indexPath)
         case let .status(title, subtitle, highlighted):
             cell = statusCell(at: indexPath,
                               title: title,
                               subtitle: subtitle,
-                              backgroundColor: backgroundColor,
                               highlighted: highlighted)
-                ?? tableView.statusCell(at: indexPath,
-                                        title: title,
-                                        subtitle: subtitle,
-                                        backgroundColor: backgroundColor,
-                                        highlighted: highlighted)
+                ?? tableView.statusCell(at: indexPath, title: title, subtitle: subtitle, highlighted: highlighted)
         case let .message(message, readUsers):
             cell = messageCell(at: indexPath, message: message, readUsers: readUsers)
         default:

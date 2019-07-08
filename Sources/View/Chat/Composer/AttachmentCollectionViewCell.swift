@@ -16,9 +16,9 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
     typealias TapAction = (_ gestureRecognizer: UIGestureRecognizer) -> Void
     
     private(set) var disposeBag = DisposeBag()
-    public let imageView = UIImageView(frame: .zero)
+    let imageView = UIImageView(frame: .zero)
     
-    public let removeButton: UIButton = {
+    let removeButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.Icons.close, for: .normal)
         button.layer.cornerRadius = UIImage.Icons.close.size.width / 2

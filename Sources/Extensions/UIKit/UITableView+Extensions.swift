@@ -42,14 +42,27 @@ extension UITableView {
 extension UITableView {
     public static var loadingTitle = "Loading..."
     
-    public func loadingCell(at indexPath: IndexPath, backgroundColor: UIColor) -> UITableViewCell {
-        return statusCell(at: indexPath, title: UITableView.loadingTitle, backgroundColor: backgroundColor, highlighted: false)
+    
+    /// A default loading table view cell.
+    ///
+    /// - Parameter indexPath: an index path.
+    /// - Returns: a loading table view cell.
+    public func loadingCell(at indexPath: IndexPath) -> UITableViewCell {
+        return statusCell(at: indexPath, title: UITableView.loadingTitle, highlighted: false)
     }
     
+    
+    /// A default status table view cell.
+    ///
+    /// - Parameters:
+    ///   - indexPath: an index path.
+    ///   - title: a title.
+    ///   - subtitle: a subtitle.
+    ///   - highlighted: change the status cell style to highlighted.
+    /// - Returns: a status table view cell.
     public func statusCell(at indexPath: IndexPath,
                            title: String,
                            subtitle: String? = nil,
-                           backgroundColor: UIColor,
                            highlighted: Bool) -> UITableViewCell {
         let cell = dequeueReusableCell(for: indexPath, cellType: StatusTableViewCell.self) as StatusTableViewCell
         cell.backgroundColor = backgroundColor

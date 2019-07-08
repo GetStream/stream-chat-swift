@@ -8,6 +8,9 @@
 
 import UIKit
 
+/// A view changes.
+///
+/// ViewChanges describes how a view should be updated depends on a data response.
 public enum ViewChanges: Equatable {
     case none
     case reloaded(_ row: Int, _ items: [ChatItem])

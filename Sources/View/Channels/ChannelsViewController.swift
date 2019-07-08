@@ -10,14 +10,18 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+/// A channels view controller.
 open class ChannelsViewController: UIViewController {
     
     let disposeBag = DisposeBag()
+    /// A chat style.
     public var style = ChatViewStyle()
     private(set) var items = [ChatItem]()
+    /// A channels presenter.
     public var channelsPresenter = ChannelsPresenter(channelType: .messaging)
     
-    private(set) lazy var tableView: UITableView = {
+    /// A table view of channels.
+    public private(set) lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.backgroundColor = style.channel.backgroundColor
         tableView.separatorColor = style.channel.separatorColor
@@ -78,8 +82,14 @@ open class ChannelsViewController: UIViewController {
     
     // MARK: - Loading Cell
     
+    /// A loading cell to insert in a particular location of the table view.
+    ///
+    /// - Parameters:
+    ///   - indexPath: an index path.
+    ///   - chatItem: a loading chat item.
+    /// - Returns: a loading table view cell.
     open func loadingCell(at indexPath: IndexPath, chatItem: ChatItem) -> UITableViewCell {
-        return chatItem.isLoading ? tableView.loadingCell(at: indexPath, backgroundColor: style.channel.backgroundColor) : .unused
+        return chatItem.isLoading ? tableView.loadingCell(at: indexPath) : .unused
     }
     
     // MARK: - Show Chat
@@ -88,6 +98,10 @@ open class ChannelsViewController: UIViewController {
         show(chatViewController: createChatViewController(at: indexPath.row))
     }
     
+    /// Creates a chat view controller for the selected channel cell.
+    ///
+    /// - Parameter row: a selected row of a channel cell.
+    /// - Returns: a chat view controller.
     open func createChatViewController(at row: Int) -> ChatViewController? {
         guard row < items.count, let channelPresenter = items[row].channelPresenter else {
             return nil
@@ -107,6 +121,9 @@ open class ChannelsViewController: UIViewController {
         return chatViewController
     }
     
+    /// Presents a chat view controller of a selected channel cell.
+    ///
+    /// - Parameter chatViewController: a chat view controller with a selected channel.
     open func show(chatViewController: ChatViewController?) {
         guard let chatViewController = chatViewController else {
             return
@@ -168,7 +185,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let channelPresenter = items[indexPath.row].channelPresenter else {
             if items[indexPath.row].isLoading {
-                return tableView.loadingCell(at: indexPath, backgroundColor: style.channel.backgroundColor)
+                return tableView.loadingCell(at: indexPath)
             }
             
             return .unused

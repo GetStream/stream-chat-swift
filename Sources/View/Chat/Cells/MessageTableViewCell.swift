@@ -107,11 +107,11 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         return view
     }()
     
-    public var paddingType: MessageTableViewCellPaddingType = .regular {
+    var paddingType: MessageTableViewCellPaddingType = .regular {
         didSet { bottomPaddingView.isHidden = paddingType == .small }
     }
     
-    public var style: MessageViewStyle? {
+    var style: MessageViewStyle? {
         didSet {
             if oldValue == nil, style != nil {
                 setup()
@@ -278,7 +278,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
     }
     
-    public func reset() {
+    func reset() {
         avatarView.reset()
         avatarView.isHidden = true
         avatarView.backgroundColor = backgroundColor
@@ -322,7 +322,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         free()
     }
     
-    public func free() {
+    func free() {
         disposeBag = DisposeBag()
         attachmentPreviews.forEach { $0.removeFromSuperview() }
         attachmentPreviews = []
@@ -356,7 +356,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     }
 }
 
-public enum MessageTableViewCellPaddingType: String {
+enum MessageTableViewCellPaddingType: String {
     case regular
     case small
 }

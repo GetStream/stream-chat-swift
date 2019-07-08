@@ -11,7 +11,8 @@ import SnapKit
 import SwiftyGif
 import Nuke
 
-class MediaGalleryViewController: UIViewController {
+/// A media gallery to show images or gifs.
+public class MediaGalleryViewController: UIViewController {
     fileprivate static let closeButtonWidth: CGFloat = 44
     
     /// A scroll view to dismiss the gellary by pull down.
@@ -53,7 +54,7 @@ class MediaGalleryViewController: UIViewController {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         if selected > 0, selected < items.count {
@@ -65,7 +66,7 @@ class MediaGalleryViewController: UIViewController {
         }
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
+    override public var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
@@ -117,7 +118,7 @@ extension MediaGalleryViewController: UIScrollViewDelegate {
         }
     }
     
-    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         if scrollView == collectionView {
             pageControl.currentPage = Int(scrollView.contentOffset.x) / Int(scrollView.frame.width)
         }
@@ -188,12 +189,22 @@ extension MediaGalleryViewController: UICollectionViewDataSource, UICollectionVi
 
 // MARK: - Cell
 
+/// A media gallery item.
 public struct MediaGalleryItem: Equatable {
+    /// A title of the item.
     public let title: String?
+    /// An URL.
     public let url: URL
+    /// A copyright logo of the item.
     public let logoImage: UIImage?
     
-    init?(title: String?, url: URL?, logoImage: UIImage? = nil) {
+    /// Init a media gallery item.
+    ///
+    /// - Parameters:
+    ///   - title: a title.
+    ///   - url: an URL.
+    ///   - logoImage: a copyright logo of the item.
+    public init?(title: String?, url: URL?, logoImage: UIImage? = nil) {
         guard let url = url else {
             return nil
         }
@@ -359,6 +370,11 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
 extension UIViewController {
     
     /// Presents the image gallery with a given image URL's.
+    ///
+    /// - Parameters:
+    ///   - items: a list of media gallery items.
+    ///   - selectedIndex: a selected item by default.
+    ///   - animated: present animated.
     public func showMediaGallery(with items: [MediaGalleryItem]?, selectedIndex: Int = 0, animated: Bool = true) {
         guard let items = items, !items.isEmpty else {
             return

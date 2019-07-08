@@ -9,6 +9,12 @@
 import Foundation
 
 /// Sorting options.
+///
+/// For example:
+/// ```
+/// // Sort channels by the last message date:
+/// let sorting = Sorting<Channel.DecodingKeys>(.lastMessageDate)
+/// ```
 public struct Sorting<T: CodingKey>: Encodable {
     /// A sorting field name.
     public let field: String

@@ -15,7 +15,7 @@ import RxGesture
 
 extension MessageTableViewCell {
     
-    public func addAttachments(from message: Message,
+    func addAttachments(from message: Message,
                                tap: @escaping AttachmentTapAction,
                                actionTap: @escaping AttachmentActionTapAction,
                                reload: @escaping () -> Void) {

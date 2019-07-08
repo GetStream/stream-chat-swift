@@ -10,6 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+/// A presenter.
 public class Presenter<T> {
     
     var items = [T]()

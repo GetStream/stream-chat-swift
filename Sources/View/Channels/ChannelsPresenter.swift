@@ -10,13 +10,20 @@ import Foundation
 import RxSwift
 import RxCocoa
 
+/// A channels presenter.
 public final class ChannelsPresenter: Presenter<ChatItem> {
+    /// A callback type to provide an extra data for a channel.
     public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
     
+    /// A channel type.
     public let channelType: ChannelType
+    /// Filter channels.
     public lazy var filter: Filter<Channel.DecodingKeys> = .key(.type, .equal(to: channelType))
+    /// Sort channels.
     public var sorting: [Sorting<Channel.DecodingKeys>] = [.init(.lastMessageDate)]
+    /// Show channel statuses on a chat view controller of a selected channel.
     public let showChannelStatuses: Bool
+    /// A callback to provide an extra data for a channel.
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
     private(set) lazy var changes = Driver.merge(requestChanges, webSocketChanges)
@@ -34,7 +41,12 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    init(channelType: ChannelType, showChannelStatuses: Bool = true) {
+    /// Init a channels presenter.
+    ///
+    /// - Parameters:
+    ///   - channelType: a channel type.
+    ///   - showChannelStatuses: show channel statuses on a chat view controller of a selected channel.
+    public init(channelType: ChannelType, showChannelStatuses: Bool = true) {
         self.channelType = channelType
         self.showChannelStatuses = showChannelStatuses
         super.init(pageSize: .channelsPageSize)

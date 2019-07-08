@@ -8,22 +8,27 @@
 
 import UIKit
 
+/// Channel table view cell.
 public final class ChannelTableViewCell: UITableViewCell, Reusable {
     
+    /// An avatar view.
     public let avatarView: AvatarView = AvatarView(cornerRadius: 20)
     
+    /// A channel name label.
     public let nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatRegularBold
         return label
     }()
     
+    /// A last message label.
     private let messageLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatMedium
         return label
     }()
     
+    /// A date label.
     public let dateLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatSmall
@@ -31,6 +36,7 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
+    /// An info label.
     private let infoLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatSmall
@@ -38,6 +44,7 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
+    /// A channel style.
     public var style: ChannelViewStyle? {
         didSet {
             if oldValue == nil, style != nil {
@@ -123,6 +130,12 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         infoLabel.text = nil
     }
     
+    /// Update the channel cell with a message text.
+    ///
+    /// - Parameters:
+    ///   - message: a last message text.
+    ///   - isMeta: shows the message text as a meta data.
+    ///   - isUnread: shows the message as unread.
     public func update(message: String, isMeta: Bool, isUnread: Bool) {
         guard let style = style else {
             return
@@ -146,6 +159,11 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         messageLabel.text = message
     }
     
+    /// Update the channel cell with an info text.
+    ///
+    /// - Parameters:
+    ///   - info: an info text.
+    ///   - bold: shows the info as bold.
     public func update(info: String?, bold: Bool = false) {
         guard let style = style, let info = info else {
             return

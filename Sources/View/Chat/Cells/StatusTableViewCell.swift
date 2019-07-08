@@ -9,7 +9,7 @@
 import UIKit
 import SnapKit
 
-public final class StatusTableViewCell: UITableViewCell, Reusable {
+final class StatusTableViewCell: UITableViewCell, Reusable {
     
     private let titleLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -39,12 +39,12 @@ public final class StatusTableViewCell: UITableViewCell, Reusable {
         return titleLabel.text
     }
     
-    public override func prepareForReuse() {
+    override func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }
     
-    public func reset() {
+    func reset() {
         titleLabel.text = nil
         subtitleLabel.text = nil
     }
@@ -71,7 +71,7 @@ public final class StatusTableViewCell: UITableViewCell, Reusable {
         return view
     }
     
-    public func update(title: String, subtitle: String? = nil, highlighted: Bool) {
+    func update(title: String, subtitle: String? = nil, highlighted: Bool) {
         if titleLabel.superview == nil {
             setup()
         }
