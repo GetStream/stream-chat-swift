@@ -11,20 +11,24 @@ import UserNotifications
 import RxSwift
 import RxAppState
 
+/// A notifications manager.
 public final class Notifications: NSObject {
     enum NotificationUserInfoKeys: String {
         case channelId
         case messageId
     }
     
+    /// A callback type to open a chat view controller with a given message id and channel id.
     public typealias OpenNewMessageCallback = (_ messageId: String, _ channelId: String) -> Void
     
+    /// A shared instance of notifications manager.
     public static let shared = Notifications()
     
     let disposeBag = DisposeBag()
     var authorizationStatus: UNAuthorizationStatus = .notDetermined
     var iconBadgeNumber: Int = 0
     
+    /// A callback to open a chat view controller with a given message id and channel id.
     public var openNewMessage: OpenNewMessageCallback?
     
     var logger: ClientLogger?
@@ -58,6 +62,7 @@ public final class Notifications: NSObject {
         notificationCenter.removeAllPendingNotificationRequests()
     }
     
+    /// Ask for permissions for notifications.
     public func askForPermissionsIfNeeded() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             self.authorizationStatus = settings.authorizationStatus

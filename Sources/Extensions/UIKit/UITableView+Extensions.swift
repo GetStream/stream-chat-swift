@@ -14,7 +14,9 @@ extension UITableView {
         return contentSize.height - (contentOffset.y + frame.height - contentInset.bottom - contentInset.top)
     }
     
-    /// Scroll to bottom.
+    /// Scroll a table view to the last bottom cell.
+    ///
+    /// - Parameter animated: true if you want to animate the change in position; false if it should be immediate.
     public func scrollToBottom(animated: Bool = true) {
         let sectionsCount = numberOfSections
         
@@ -40,6 +42,7 @@ extension UITableView {
 // MARK: - Cells
 
 extension UITableView {
+    /// A loading cell title.
     public static var loadingTitle = "Loading..."
     
     

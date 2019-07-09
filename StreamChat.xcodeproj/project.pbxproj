@@ -47,7 +47,6 @@
 		8A91170222C782830006FB01 /* MVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91167A22C782820006FB01 /* MVar.swift */; };
 		8A91170322C782830006FB01 /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91167B22C782820006FB01 /* Dictionary+Extensions.swift */; };
 		8A91170422C782830006FB01 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91167C22C782820006FB01 /* Utils.swift */; };
-		8A91170522C782830006FB01 /* TimeInterval+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91167D22C782820006FB01 /* TimeInterval+Extensions.swift */; };
 		8A91170622C782830006FB01 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91167E22C782820006FB01 /* Bundle+Extensions.swift */; };
 		8A91170722C782830006FB01 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91168022C782820006FB01 /* String+Extensions.swift */; };
 		8A91170822C782830006FB01 /* String+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91168122C782820006FB01 /* String+FileType.swift */; };
@@ -180,7 +179,6 @@
 		8A91167A22C782820006FB01 /* MVar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MVar.swift; sourceTree = "<group>"; };
 		8A91167B22C782820006FB01 /* Dictionary+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extensions.swift"; sourceTree = "<group>"; };
 		8A91167C22C782820006FB01 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		8A91167D22C782820006FB01 /* TimeInterval+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Extensions.swift"; sourceTree = "<group>"; };
 		8A91167E22C782820006FB01 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		8A91168022C782820006FB01 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		8A91168122C782820006FB01 /* String+FileType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+FileType.swift"; sourceTree = "<group>"; };
@@ -340,7 +338,6 @@
 				8A91167822C782820006FB01 /* CharacterSet+Extensions.swift */,
 				8A91167922C782820006FB01 /* Codable+Extensions.swift */,
 				8A91167B22C782820006FB01 /* Dictionary+Extensions.swift */,
-				8A91167D22C782820006FB01 /* TimeInterval+Extensions.swift */,
 				8A91167E22C782820006FB01 /* Bundle+Extensions.swift */,
 				8A91168222C782820006FB01 /* Date+Extensions.swift */,
 				8A91168722C782820006FB01 /* Data+Extensions.swift */,
@@ -786,7 +783,6 @@
 				8A91173622C782830006FB01 /* ChatViewController+MessageActions.swift in Sources */,
 				8A91170222C782830006FB01 /* MVar.swift in Sources */,
 				8A9116F922C782830006FB01 /* CGRect+Extensions.swift in Sources */,
-				8A91170522C782830006FB01 /* TimeInterval+Extensions.swift in Sources */,
 				8A91170022C782830006FB01 /* CharacterSet+Extensions.swift in Sources */,
 				8A91175122C782830006FB01 /* Client.swift in Sources */,
 				8A9116F322C782820006FB01 /* UIViewController+Extensions.swift in Sources */,

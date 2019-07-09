@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import RxGesture
 
-public typealias GestureFactory = (AnyFactory, when: GestureRecognizerState)
+typealias GestureFactory = (AnyFactory, when: GestureRecognizerState)
 
 extension TapControlEvent {
     static var `default`: GestureFactory {
@@ -21,7 +21,7 @@ extension TapControlEvent {
 extension LongPressControlEvent {
     static var `default`: GestureFactory {
         return (.longPress(configuration: { gesture, delegate in
-            gesture.minimumPressDuration = .longPressMinimumDuration
+            gesture.minimumPressDuration = 0.3
             delegate.simultaneousRecognitionPolicy = .never
         }), when: .began)
     }
@@ -36,7 +36,7 @@ extension Reactive where Base: View {
     /// rx.anyGesture can't error and is subscribed/observed on main scheduler.
     /// - parameter factories: a `(Factory + state)` collection you want to use to create the `GestureRecognizers` to add and observe
     /// - returns: a `ControlEvent<G>` that re-emit the gesture recognizer itself
-    public func anyGesture(_ factories: [GestureFactory]) -> ControlEvent<GestureRecognizer> {
+    func anyGesture(_ factories: [GestureFactory]) -> ControlEvent<GestureRecognizer> {
         let observables = factories.map { gesture, state in
             self.gesture(gesture).when(state).asObservable() as Observable<GestureRecognizer>
         }

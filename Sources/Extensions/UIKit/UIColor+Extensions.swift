@@ -9,16 +9,27 @@
 import UIKit.UIColor
 
 extension UIColor {
+    /// A chat blue color.
     public static let chatBlue = UIColor(red: 0.15, green: 0.44, blue: 0.96, alpha: 1)
+    /// A chat green color.
     public static let chatGreen = UIColor(red: 0.15, green: 0.81, blue: 0.42, alpha: 1)
+    /// A chat light blue color.
     public static let chatLightBlue = UIColor(red: 0, green: 0.573, blue: 1, alpha: 1)
+    /// A chat super light gray color.
     public static let chatSuperLightGray = UIColor(white: 0.92, alpha: 1)
+    /// A chat gray color.
     public static let chatGray = UIColor(white: 0.5, alpha: 1)
+    /// A chat dark gray color.
     public static let chatDarkGray = UIColor(white: 0.2, alpha: 1)
+    /// A chat super dark gray color.
     public static let chatSuperDarkGray = UIColor(white: 0.1, alpha: 1)
+    /// A chat composer color.
     public static let chatComposer = UIColor(white: 0.95, alpha: 1)
+    /// A chat error background color.
     public static let messageErrorBackground = UIColor(red: 0.91, green: 0.85, blue: 0.87, alpha: 1)
+    /// A chat error border color.
     public static let messageErrorBorder = UIColor(red: 0.9, green: 0.80, blue: 0.83, alpha: 1)
+    /// A chat separator color.
     public static let chatSeparator = UIColor.chatGray.withAlphaComponent(0.4)
 }
 
@@ -42,6 +53,10 @@ extension UIColor {
         return isDark ? .white : .black
     }
     
+    /// Blend two color to avoid transparency.
+    ///
+    /// - Parameter coverColor: a transparent cover color.
+    /// - Returns: a solid color.
     public func blendAlpha(coverColor: UIColor) -> UIColor {
         let c1 = coverColor.rgbaTuple()
         let c2 = rgbaTuple()

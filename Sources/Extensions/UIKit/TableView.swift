@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// A custom chat table view.
 public final class TableView: UITableView {
     
     private var oldContentSize: CGSize = .zero

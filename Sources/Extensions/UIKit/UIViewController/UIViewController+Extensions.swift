@@ -9,10 +9,6 @@
 import UIKit
 
 extension UIViewController {
-    public var isVisible: Bool {
-        return isViewLoaded && view.window != nil
-    }
-
     /// Hides the back button title from the navigation bar.
     public func hideBackButtonTitle() {
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)

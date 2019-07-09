@@ -33,7 +33,7 @@ extension Optional where Wrapped == String {
 // MARK: - Emoji
 
 extension String {
-    public static var messageEmojiCount = 8
+    static var messageEmojiCount = 8
     
     /// Check the message text is it contains only emoji.
     var messageContainsOnlyEmoji: Bool {

@@ -12,6 +12,7 @@ import Gzip
 // MARK: - JSONDecoder Stream
 
 extension JSONDecoder {
+    /// A Stream Chat JSON decoder.
     public static let stream: JSONDecoder = {
         let decoder = JSONDecoder()
         
@@ -44,12 +45,14 @@ extension JSONDecoder {
 // MARK: - JSONEncoder Stream
 
 extension JSONEncoder {
+    /// A Stream Chat JSON encoder.
     public static let stream: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .stream
         return encoder
     }()
     
+    /// A Stream Chat JSON encoder with a gzipped content.
     public static let streamGzip: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dataEncodingStrategy = .gzip
@@ -82,7 +85,13 @@ extension JSONEncoder.DateEncodingStrategy {
 // MARK: - Date Formatter Helper
 
 extension DateFormatter {
+    /// A Stream Chat date formatters.
     public struct Stream {
+        
+        /// Creates and returns a date object from the specified ISO 8601 formatted string representation.
+        ///
+        /// - Parameter string: The ISO 8601 formatted string representation of a date.
+        /// - Returns: A date object, or nil if no valid date was found.
         public static func iso8601Date(from string: String) -> Date? {
             if #available(iOS 11, macOS 10.13, *) {
                 return Stream.iso8601DateFormatter.date(from: string)
@@ -91,6 +100,10 @@ extension DateFormatter {
             return Stream.dateFormatter.date(from: string)
         }
         
+        /// Creates and returns an ISO 8601 formatted string representation of the specified date.
+        ///
+        /// - Parameter date: The date to be represented.
+        /// - Returns: A user-readable string representing the date.
         public static func iso8601DateString(from date: Date) -> String? {
             if #available(iOS 11, macOS 10.13, *) {
                 return Stream.iso8601DateFormatter.string(from: date)

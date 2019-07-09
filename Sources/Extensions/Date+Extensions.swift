@@ -19,8 +19,9 @@ extension Date {
 }
 
 extension Date {
-    
+    /// A yesterday title for a status separartor.
     public static var yesterday = "Yesterday"
+    /// A words separator for day and time.
     public static var wordsSeparator = ", "
     
     /// A relative date from the current time in string.
@@ -46,6 +47,12 @@ extension Date {
         return DateFormatter.fileName.string(from: self)
     }
     
+    /// Check if a time interval between dates is less then a given time interval.
+    ///
+    /// - Parameters:
+    ///   - timeInterval: a required time interval.
+    ///   - date: a date for comparing.
+    /// - Returns: a logical comparison result.
     public func isLessThan(timeInterval: TimeInterval, with date: Date) -> Bool {
         return abs(timeIntervalSinceNow - date.timeIntervalSinceNow) < timeInterval
     }
