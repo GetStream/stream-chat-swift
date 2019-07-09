@@ -21,7 +21,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .none)
-        Client.shared.set(user: .user1, token: .token1)
+        Client.shared.set(user: .user2, token: .token2)
         
         Fabric.with([Crashlytics.self])
         setupNotifications()

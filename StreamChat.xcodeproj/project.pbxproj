@@ -132,6 +132,7 @@
 		8A91175922C782830006FB01 /* ClientURLSessionTaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9116E122C782820006FB01 /* ClientURLSessionTaskDelegate.swift */; };
 		8A91175C22C782F20006FB01 /* CustomChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91175B22C782F10006FB01 /* CustomChatViewController.swift */; };
 		8A91175E22C783A00006FB01 /* StreamChat.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 8A91175D22C783A00006FB01 /* StreamChat.podspec */; };
+		8AF88F3922D4C49E005FDFDC /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF88F3822D4C49E005FDFDC /* Token.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -265,6 +266,7 @@
 		8A91175A22C782900006FB01 /* StreamChat.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StreamChat.entitlements; sourceTree = "<group>"; };
 		8A91175B22C782F10006FB01 /* CustomChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomChatViewController.swift; sourceTree = "<group>"; };
 		8A91175D22C783A00006FB01 /* StreamChat.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChat.podspec; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		8AF88F3822D4C49E005FDFDC /* Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -571,6 +573,7 @@
 			children = (
 				8A9116D122C782820006FB01 /* WebSocket */,
 				8A9116D622C782820006FB01 /* BaseURL.swift */,
+				8AF88F3822D4C49E005FDFDC /* Token.swift */,
 				8A9116D822C782820006FB01 /* Client.swift */,
 				8A9116DB22C782820006FB01 /* Client+Request.swift */,
 				8A9116DA22C782820006FB01 /* Client+RxRequest.swift */,
@@ -864,6 +867,7 @@
 				8A91173322C782830006FB01 /* ChatViewController+Composer.swift in Sources */,
 				8A91173A22C782830006FB01 /* ChannelPresenter.swift in Sources */,
 				8A91171C22C782830006FB01 /* Pagination.swift in Sources */,
+				8AF88F3922D4C49E005FDFDC /* Token.swift in Sources */,
 				8A91172122C782830006FB01 /* StatusTableViewCell.swift in Sources */,
 				8A91171B22C782830006FB01 /* ChatItem.swift in Sources */,
 				8A91175822C782830006FB01 /* MultipartFormData.swift in Sources */,

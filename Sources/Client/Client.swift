@@ -8,9 +8,6 @@
 
 import Foundation
 
-/// A token.
-public typealias Token = String
-
 /// A network client.
 public final class Client {
     /// A request completion block.
@@ -56,13 +53,54 @@ public final class Client {
         }
     }
     
-    /// Setup the current user.
+    /// Setup the current user with a given token.
     ///
     /// - Parameters:
     ///     - user: the current user (see `User`).
     ///     - token: a Stream Chat API token.
     public func set(user: User, token: Token) {
         self.user = user
+        setup(token: token)
+    }
+    
+    /// Setup the current user with a token provider (see `TokenProvider`).
+    ///
+    /// A token provider is a function in which you send a request to your own backend to get a Stream Chat API token.
+    /// Then you send it to the client to complete the setup with a callback function from the token provider.
+    ///
+    /// Example:
+    /// ```
+    /// Client.shared.set(user: user) { callback in
+    ///    if let url = URL(string: "https://my.backend.io/token?user_id=\(user.id)") {
+    ///        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+    ///            if error == nil,
+    ///                let json = try? JSONSerialization.jsonObject(with: data),
+    ///                let token = json["token"] as? String {
+    ///                callback(token)
+    ///            } else {
+    ///                // Handle the error.
+    ///                print("Token request failed", error)
+    ///            }
+    ///        }
+    ///
+    ///        task.resume()
+    ///    }
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - user: the current user (see `User`).
+    ///   - tokenProvider: a token provider.
+    public func set(user: User, _ tokenProvider: TokenProvider) {
+        self.user = user
+        tokenProvider { self.setup(token: $0) }
+    }
+    
+    private func setup(token: Token) {
+        guard let user = user else {
+            return
+        }
+        
         self.token = token
         urlSession = setupURLSession(token: token)
         webSocket = setupWebSocket(user: user, token: token)
