@@ -34,24 +34,8 @@ final class WebSocket {
         self?.webSocket.write(ping: Data())
     }
     
-    private(set) lazy var connection: Observable<WebSocket.Connection> = {
-        let app = UIApplication.shared
-        
-        let webSocketResponse = webSocket.rx.response
-            .do(onSubscribed: { [weak self] in self?.reconnect() },
-                onDispose: { [weak self] in self?.disconnect() })
-        
-        return Observable.combineLatest(app.rx.appState.startWith(app.appState),
-                                        InternetConnection.shared.isAvailableObservable,
-                                        webSocketResponse)
-            .map { [weak self] in self?.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
-            .unwrap()
-            .distinctUntilChanged()
-            .share(replay: 1)
-    }()
-    
     private(set) lazy var response: Observable<WebSocket.Response> = Observable
-        .combineLatest(webSocket.rx.response, connection.connected())
+        .combineLatest(webSocket.rx.response, Client.shared.connection.connected())
         .map { [weak self] event, _ in self?.parseMessage(event) }
         .unwrap()
         .share()
@@ -127,7 +111,7 @@ final class WebSocket {
 
 extension WebSocket {
     
-    private func parseConnection(appState: AppState, isInternetAvailable: Bool, event: WebSocketEvent) -> Connection? {
+    func parseConnection(appState: AppState, isInternetAvailable: Bool, event: WebSocketEvent) -> Connection? {
         guard isInternetAvailable else {
             cancelBackgroundWork()
             lastConnectionId = nil

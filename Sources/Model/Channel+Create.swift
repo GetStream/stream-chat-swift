@@ -41,7 +41,7 @@ public extension Channel {
         
         let channel = Channel(type: type, id: id, name: name, imageURL: imageURL, memberIds: memberIds, extraData: extraData)
         
-        return Client.shared.webSocket.connection.connected()
+        return Client.shared.connection.connected()
             .flatMapLatest { _ in Client.shared.rx.request(endpoint: .createChannel(channel)) }
     }
 }

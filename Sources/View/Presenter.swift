@@ -29,7 +29,7 @@ public class Presenter<T> {
             ? loadPagination.asObserver()
             : loadPagination.asObserver().startWith(pagination)
         
-        let connectionObservable = Client.shared.webSocket.connection.connected({ [weak self] isConnected in
+        let connectionObservable = Client.shared.connection.connected({ [weak self] isConnected in
             if !isConnected, let self = self, !self.items.isEmpty {
                 self.items = []
                 self.next = self.pageSize

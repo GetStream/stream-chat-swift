@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import RxStarscream
+import RxSwift
 
 // MARK: - Setup
 
@@ -67,15 +69,17 @@ extension Client {
         
         var token = token
         
-        if token == .development, let developmentToken = developmentToken() {
-            token = developmentToken
-        } else {
-            return
+        if token == .development {
+            if let developmentToken = developmentToken() {
+                token = developmentToken
+            } else {
+                return
+            }
         }
         
-        self.token = token
         urlSession = setupURLSession(token: token)
         webSocket = setupWebSocket(user: user, token: token)
+        self.token = token
     }
     
     private func requestGuestToken() {
@@ -95,9 +99,33 @@ extension Client {
     private func developmentToken() -> Token? {
         guard let user = user,
             let json = try? JSONSerialization.data(withJSONObject: ["user_id": user.id]) else {
-            return nil
+                return nil
         }
         
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.\(json.base64EncodedString()).devtoken" //{"alg": "HS256", "typ": "JWT"}
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.\(json.base64EncodedString()).devtoken" // {"alg": "HS256", "typ": "JWT"}
+    }
+}
+
+// MARK: - Connection
+
+extension Client {
+    func createObservableConnection() -> Observable<WebSocket.Connection> {
+        let app = UIApplication.shared
+        
+        let webSocketResponse = tokenSubject.asObserver()
+            .distinctUntilChanged()
+            .unwrap()
+            .observeOn(MainScheduler.instance)
+            .do(onNext: { [weak self] _ in self?.webSocket.connect() })
+            .flatMap { [weak self] _ -> Observable<WebSocketEvent> in self?.webSocket.webSocket.rx.response ?? .empty() }
+            .do(onDispose: { [weak self] in self?.webSocket.disconnect() })
+        
+        return Observable.combineLatest(app.rx.appState.startWith(app.appState),
+                                        InternetConnection.shared.isAvailableObservable,
+                                        webSocketResponse)
+            .map { [weak self] in self?.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
+            .unwrap()
+            .distinctUntilChanged()
+            .share(replay: 1)
     }
 }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RxSwift
 
 /// A network client.
 public final class Client {
@@ -20,7 +21,13 @@ public final class Client {
     
     let apiKey: String
     let baseURL: BaseURL
-    var token: Token?
+    
+    var token: Token? {
+        didSet { tokenSubject.onNext(token) }
+    }
+    
+    let tokenSubject = BehaviorSubject<Token?>(value: nil)
+    
     lazy var webSocket = WebSocket(URLRequest(url: baseURL.url(.webSocket)))
     lazy var urlSession = setupURLSession(token: "")
     private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
@@ -29,6 +36,7 @@ public final class Client {
     let logOptions: ClientLogger.Options
     let logger: ClientLogger?
     var user: User?
+    lazy var connection = createObservableConnection()
     
     /// Init a network client.
     ///
