@@ -21,16 +21,20 @@ import Foundation
 /// // Filter channels by type or members:
 /// filter = .key(.type, .equal(to: "messaging")) | .key(.members, .in(["jon"]))
 /// ```
-public enum Filter<T: CodingKey>: Encodable {
-    case key(T, Operator)
+public enum Filter: Encodable {
+    /// Filter by a given key with a given operator (see Operator).
+    case key(String, Operator)
+    /// Filter with all filters (like `and`).
     indirect case and([Filter])
+    /// Filter with any of filters (like `or`).
     indirect case or([Filter])
+    /// Filter without any of filters (like `not or`).
     indirect case nor([Filter])
     
     public func encode(to encoder: Encoder) throws {
         switch self {
         case .key(let key, let `operator`):
-            try [key.stringValue: `operator`].encode(to: encoder)
+            try [key: `operator`].encode(to: encoder)
         case .and(let filters):
             try ["$and": filters].encode(to: encoder)
         case .or(let filters):
@@ -44,13 +48,21 @@ public enum Filter<T: CodingKey>: Encodable {
 public extension Filter {
     /// An operator for the filter.
     enum Operator: Encodable {
+        /// An equal operator.
         case equal(to: Encodable)
+        /// A not equal operator.
         case notEqual(to: Encodable)
+        /// A greater then operator.
         case greater(than: Encodable)
+        /// A greater or equal than operator.
         case greaterOrEqual(than: Encodable)
+        /// A less then operator.
         case less(than: Encodable)
+        /// A less or equal than operator.
         case lessOrEqual(than: Encodable)
+        /// An in list operator.
         case `in`([Encodable])
+        /// A not in list operator.
         case notIn([Encodable])
         
         public func encode(to encoder: Encoder) throws {

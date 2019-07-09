@@ -13,9 +13,9 @@ import Foundation
 /// For example:
 /// ```
 /// // Sort channels by the last message date:
-/// let sorting = Sorting<Channel.DecodingKeys>(.lastMessageDate)
+/// let sorting = Sorting("lastMessageDate")
 /// ```
-public struct Sorting<T: CodingKey>: Encodable {
+public struct Sorting: Encodable {
     /// A sorting field name.
     public let field: String
     /// A sorting direction.
@@ -26,8 +26,8 @@ public struct Sorting<T: CodingKey>: Encodable {
     /// - Parameters:
     ///     - key: a key from coding keys.
     ///     - isAscending: a diration of the sorting.
-    public init(_ key: T, isAscending: Bool = false) {
-        field = key.stringValue
+    public init(_ key: String, isAscending: Bool = false) {
+        field = key
         direction = isAscending ? 1 : -1
     }
 }

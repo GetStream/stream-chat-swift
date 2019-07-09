@@ -22,9 +22,9 @@ public struct ChannelsQuery: Encodable {
     }
     
     /// A filter for the query (see `Filter`).
-    let filter: Filter<Channel.DecodingKeys>
+    let filter: Filter
     /// A sorting for the query (see `Filter`).
-    let sort: [Sorting<Channel.DecodingKeys>]
+    let sort: [Sorting]
     /// A current user (see `Client.shread.user`).
     let user: User
     /// A pagination.

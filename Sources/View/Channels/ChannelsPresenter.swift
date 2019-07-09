@@ -18,9 +18,9 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     /// A channel type.
     public let channelType: ChannelType
     /// Filter channels.
-    public lazy var filter: Filter<Channel.DecodingKeys> = .key(.type, .equal(to: channelType))
+    public lazy var filter: Filter = .key("type", .equal(to: channelType))
     /// Sort channels.
-    public var sorting: [Sorting<Channel.DecodingKeys>] = [.init(.lastMessageDate)]
+    public var sorting: [Sorting] = [.init(Channel.DecodingKeys.lastMessageDate.rawValue)]
     /// Show channel statuses on a chat view controller of a selected channel.
     public let showChannelStatuses: Bool
     /// A callback to provide an extra data for a channel.
