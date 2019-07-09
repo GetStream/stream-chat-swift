@@ -14,7 +14,7 @@
     <a title="Filter Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (58% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (71% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -150,13 +150,7 @@
                 <a href="../Extensions/JSONEncoder.html">JSONEncoder</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/Reactive.html">Reactive</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/String.html">String</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/TimeInterval.html">TimeInterval</a>
+                <a href="../Extensions/Token.html">Token</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
@@ -292,10 +286,10 @@
             <a href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10StreamChat14GestureFactorya">GestureFactory</a>
+                <a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a>
+                <a href="../Typealiases.html#/s:10StreamChat13TokenProvidera">TokenProvider</a>
               </li>
             </ul>
           </li>
@@ -307,7 +301,7 @@
             <h1>Filter</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Filter</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="p">:</span> <span class="kt">Encodable</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">CodingKey</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Filter</span> <span class="p">:</span> <span class="kt">Encodable</span></code></pre>
 
                 </div>
               </div>
@@ -331,9 +325,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat6FilterO3keyyACyxGx_AC8OperatorOyx_GtcAEms9CodingKeyRzlF"></a>
+                    <a name="/s:10StreamChat6FilterO3keyyACSS_AC8OperatorOtcACmF"></a>
                     <a name="//apple_ref/swift/Element/key(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat6FilterO3keyyACyxGx_AC8OperatorOyx_GtcAEms9CodingKeyRzlF">key(_:_:)</a>
+                    <a class="token" href="#/s:10StreamChat6FilterO3keyyACSS_AC8OperatorOtcACmF">key(_:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -341,14 +335,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Filter by a given key with a given operator (see Operator).</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">key</span><span class="p">(</span><span class="kt">T</span><span class="p">,</span> <span class="kt"><a href="../Enums/Filter/Operator.html">Operator</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">key</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt"><a href="../Enums/Filter/Operator.html">Operator</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -358,9 +352,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat6FilterO3andyACyxGSayAEGcAEms9CodingKeyRzlF"></a>
+                    <a name="/s:10StreamChat6FilterO3andyACSayACGcACmF"></a>
                     <a name="//apple_ref/swift/Element/and(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat6FilterO3andyACyxGSayAEGcAEms9CodingKeyRzlF">and(_:)</a>
+                    <a class="token" href="#/s:10StreamChat6FilterO3andyACSayACGcACmF">and(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -368,7 +362,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Filter with all filters (like <code>and</code>).</p>
 
                       </div>
                       <div class="declaration">
@@ -385,9 +379,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat6FilterO2oryACyxGSayAEGcAEms9CodingKeyRzlF"></a>
+                    <a name="/s:10StreamChat6FilterO2oryACSayACGcACmF"></a>
                     <a name="//apple_ref/swift/Element/or(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat6FilterO2oryACyxGSayAEGcAEms9CodingKeyRzlF">or(_:)</a>
+                    <a class="token" href="#/s:10StreamChat6FilterO2oryACSayACGcACmF">or(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -395,7 +389,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Filter with any of filters (like <code>or</code>).</p>
 
                       </div>
                       <div class="declaration">
@@ -412,9 +406,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat6FilterO3noryACyxGSayAEGcAEms9CodingKeyRzlF"></a>
+                    <a name="/s:10StreamChat6FilterO3noryACSayACGcACmF"></a>
                     <a name="//apple_ref/swift/Element/nor(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat6FilterO3noryACyxGSayAEGcAEms9CodingKeyRzlF">nor(_:)</a>
+                    <a class="token" href="#/s:10StreamChat6FilterO3noryACSayACGcACmF">nor(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -422,7 +416,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Filter without any of filters (like <code>not or</code>).</p>
 
                       </div>
                       <div class="declaration">
@@ -508,9 +502,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat6FilterO1poiyACyxGAE_AEtFZ"></a>
+                    <a name="/s:10StreamChat6FilterO1poiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/+(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat6FilterO1poiyACyxGAE_AEtFZ">+(_:_:)</a>
+                    <a class="token" href="#/s:10StreamChat6FilterO1poiyA2C_ACtFZ">+(_:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -535,9 +529,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat6FilterO2peoiyyACyxGz_AEtFZ"></a>
+                    <a name="/s:10StreamChat6FilterO2peoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/+=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat6FilterO2peoiyyACyxGz_AEtFZ">+=(_:_:)</a>
+                    <a class="token" href="#/s:10StreamChat6FilterO2peoiyyACz_ACtFZ">+=(_:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -562,9 +556,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat6FilterO1ooiyACyxGAE_AEtFZ"></a>
+                    <a name="/s:10StreamChat6FilterO1ooiyA2C_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/|(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat6FilterO1ooiyACyxGAE_AEtFZ">|(_:_:)</a>
+                    <a class="token" href="#/s:10StreamChat6FilterO1ooiyA2C_ACtFZ">|(_:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -589,9 +583,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat6FilterO2oeoiyyACyxGz_AEtFZ"></a>
+                    <a name="/s:10StreamChat6FilterO2oeoiyyACz_ACtFZ"></a>
                     <a name="//apple_ref/swift/Method/|=(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat6FilterO2oeoiyyACyxGz_AEtFZ">|=(_:_:)</a>
+                    <a class="token" href="#/s:10StreamChat6FilterO2oeoiyyACz_ACtFZ">|=(_:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -618,7 +612,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-08)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-09)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

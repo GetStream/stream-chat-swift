@@ -1058,20 +1058,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Extensions/UIKit/UITableView+Extensions.swift",
-      "line": 45,
-      "symbol": "UITableView.loadingCell(at:backgroundColor:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Extensions/UIKit/UITableView+Extensions.swift",
-      "line": 49,
-      "symbol": "UITableView.statusCell(at:title:subtitle:backgroundColor:highlighted:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Extensions/UIKit/UIViewController/UIViewController+Extensions.swift",
       "line": 12,
       "symbol": "UIViewController.isVisible",
@@ -1409,42 +1395,35 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ChatItem.swift",
-      "line": 11,
-      "symbol": "ChatItem",
-      "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ChatItem.swift",
-      "line": 12,
+      "line": 13,
       "symbol": "ChatItem.loading(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ChatItem.swift",
-      "line": 13,
+      "line": 14,
       "symbol": "ChatItem.status(_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ChatItem.swift",
-      "line": 14,
+      "line": 15,
       "symbol": "ChatItem.channelPresenter(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ChatItem.swift",
-      "line": 15,
+      "line": 16,
       "symbol": "ChatItem.message(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ChatItem.swift",
-      "line": 16,
+      "line": 17,
       "symbol": "ChatItem.error(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
@@ -1465,112 +1444,112 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 13,
+      "line": 25,
       "symbol": "Filter.key(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 14,
+      "line": 26,
       "symbol": "Filter.and(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 15,
+      "line": 27,
       "symbol": "Filter.or(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 16,
+      "line": 28,
       "symbol": "Filter.nor(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 35,
+      "line": 47,
       "symbol": "Filter.Operator.equal(to:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 36,
+      "line": 48,
       "symbol": "Filter.Operator.notEqual(to:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 37,
+      "line": 49,
       "symbol": "Filter.Operator.greater(than:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 38,
+      "line": 50,
       "symbol": "Filter.Operator.greaterOrEqual(than:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 39,
+      "line": 51,
       "symbol": "Filter.Operator.less(than:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 40,
+      "line": 52,
       "symbol": "Filter.Operator.lessOrEqual(than:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 41,
+      "line": 53,
       "symbol": "Filter.Operator.in(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 42,
+      "line": 54,
       "symbol": "Filter.Operator.notIn(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 91,
+      "line": 103,
       "symbol": "Filter.+(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 109,
+      "line": 121,
       "symbol": "Filter.+=(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 113,
+      "line": 125,
       "symbol": "Filter.|(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Filter.swift",
-      "line": 131,
+      "line": 143,
       "symbol": "Filter.|=(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
@@ -1633,511 +1612,168 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/Pagination.swift",
-      "line": 27,
+      "line": 38,
       "symbol": "Pagination.none",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ViewChanges.swift",
-      "line": null,
-      "symbol": "ViewChanges",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ViewChanges.swift",
-      "line": 11,
-      "symbol": "ViewChanges",
-      "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ViewChanges.swift",
-      "line": 12,
+      "line": 15,
       "symbol": "ViewChanges.none",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ViewChanges.swift",
-      "line": 13,
+      "line": 16,
       "symbol": "ViewChanges.reloaded(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ViewChanges.swift",
-      "line": 14,
+      "line": 17,
       "symbol": "ViewChanges.itemAdded(_:_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ViewChanges.swift",
-      "line": 15,
+      "line": 18,
       "symbol": "ViewChanges.itemUpdated(_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ViewChanges.swift",
-      "line": 16,
+      "line": 19,
       "symbol": "ViewChanges.itemRemoved(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ViewChanges.swift",
-      "line": 17,
+      "line": 20,
       "symbol": "ViewChanges.itemMoved(fromRow:toRow:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Model/ViewChanges.swift",
-      "line": 18,
+      "line": 21,
       "symbol": "ViewChanges.footerUpdated",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelTableViewCell.swift",
-      "line": 11,
-      "symbol": "ChannelTableViewCell",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelTableViewCell.swift",
-      "line": 13,
-      "symbol": "ChannelTableViewCell.avatarView",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelTableViewCell.swift",
-      "line": 15,
-      "symbol": "ChannelTableViewCell.nameLabel",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelTableViewCell.swift",
-      "line": 27,
-      "symbol": "ChannelTableViewCell.dateLabel",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelTableViewCell.swift",
-      "line": 41,
-      "symbol": "ChannelTableViewCell.style",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelTableViewCell.swift",
-      "line": 49,
+      "line": 56,
       "symbol": "ChannelTableViewCell.prepareForReuse()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelTableViewCell.swift",
-      "line": 126,
-      "symbol": "ChannelTableViewCell.update(message:isMeta:isUnread:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelTableViewCell.swift",
-      "line": 149,
-      "symbol": "ChannelTableViewCell.update(info:bold:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsPresenter.swift",
-      "line": 13,
-      "symbol": "ChannelsPresenter",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsPresenter.swift",
-      "line": 14,
-      "symbol": "ChannelsPresenter.ChannelMessageExtraDataCallback",
-      "symbol_kind": "source.lang.swift.decl.typealias",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsPresenter.swift",
-      "line": 16,
-      "symbol": "ChannelsPresenter.channelType",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsPresenter.swift",
-      "line": 17,
-      "symbol": "ChannelsPresenter.filter",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsPresenter.swift",
-      "line": 18,
-      "symbol": "ChannelsPresenter.sorting",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsPresenter.swift",
-      "line": 19,
-      "symbol": "ChannelsPresenter.showChannelStatuses",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsPresenter.swift",
-      "line": 20,
-      "symbol": "ChannelsPresenter.channelMessageExtraDataCallback",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": null,
-      "symbol": "ChannelsViewController",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 13,
-      "symbol": "ChannelsViewController",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 16,
-      "symbol": "ChannelsViewController.style",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 18,
-      "symbol": "ChannelsViewController.channelsPresenter",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 35,
+      "line": 39,
       "symbol": "ChannelsViewController.viewDidLoad()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 51,
+      "line": 55,
       "symbol": "ChannelsViewController.channelCell(at:channelPresenter:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 81,
-      "symbol": "ChannelsViewController.loadingCell(at:chatItem:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 87,
+      "line": 97,
       "symbol": "ChannelsViewController.tableView(_:didSelectRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 91,
-      "symbol": "ChannelsViewController.createChatViewController(at:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 110,
-      "symbol": "ChannelsViewController.show(chatViewController:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 160,
+      "line": 177,
       "symbol": "ChannelsViewController.tableView(_:numberOfRowsInSection:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 164,
+      "line": 181,
       "symbol": "ChannelsViewController.tableView(_:cellForRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Channels/ChannelsViewController.swift",
-      "line": 180,
+      "line": 197,
       "symbol": "ChannelsViewController.tableView(_:willDisplay:forRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Attachments/AttachmentPreviewProtocol.swift",
-      "line": 12,
-      "symbol": "AttachmentPreviewProtocol",
-      "symbol_kind": "source.lang.swift.decl.protocol",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Attachments/AttachmentPreviewProtocol.swift",
-      "line": 13,
-      "symbol": "AttachmentPreviewProtocol.Competion",
-      "symbol_kind": "source.lang.swift.decl.typealias",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Attachments/AttachmentPreviewProtocol.swift",
-      "line": 15,
-      "symbol": "AttachmentPreviewProtocol.disposeBag",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell+Attachments.swift",
-      "line": 18,
-      "symbol": "MessageTableViewCell.addAttachments(from:tap:actionTap:reload:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell+Updates.swift",
-      "line": 16,
-      "symbol": "MessageTableViewCell.updateBackground(isContinueMessage:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell+Updates.swift",
-      "line": 49,
-      "symbol": "MessageTableViewCell.update(name:date:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell+Updates.swift",
-      "line": 62,
-      "symbol": "MessageTableViewCell.update(replyCount:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell+Updates.swift",
-      "line": 68,
-      "symbol": "MessageTableViewCell.update(info:date:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell+Updates.swift",
-      "line": 77,
-      "symbol": "MessageTableViewCell.update(message:mentionedUsersNames:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell+Updates.swift",
-      "line": 97,
-      "symbol": "MessageTableViewCell.update(reactionCounts:action:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell.swift",
-      "line": null,
-      "symbol": "MessageTableViewCell",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell.swift",
-      "line": null,
-      "symbol": "MessageTableViewCell",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell.swift",
-      "line": 359,
-      "symbol": "MessageTableViewCellPaddingType",
-      "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell.swift",
-      "line": 360,
-      "symbol": "MessageTableViewCellPaddingType.regular",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/MessageTableViewCell.swift",
-      "line": 361,
-      "symbol": "MessageTableViewCellPaddingType.small",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/StatusTableViewCell.swift",
-      "line": 12,
-      "symbol": "StatusTableViewCell",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/StatusTableViewCell.swift",
-      "line": 42,
-      "symbol": "StatusTableViewCell.prepareForReuse()",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Cells/StatusTableViewCell.swift",
-      "line": 74,
-      "symbol": "StatusTableViewCell.update(title:subtitle:highlighted:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": null,
-      "symbol": "ChatViewController",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 14,
-      "symbol": "ChatViewController",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 16,
-      "symbol": "ChatViewController.style",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 30,
-      "symbol": "ChatViewController.tableView",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 56,
-      "symbol": "ChatViewController.channelPresenter",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 58,
+      "line": 61,
       "symbol": "ChatViewController.viewDidLoad()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 96,
+      "line": 99,
       "symbol": "ChatViewController.viewWillAppear(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 102,
+      "line": 105,
       "symbol": "ChatViewController.viewWillDisappear(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 107,
+      "line": 110,
       "symbol": "ChatViewController.preferredStatusBarStyle",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 111,
-      "symbol": "ChatViewController.messageCell(at:message:readUsers:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 115,
-      "symbol": "ChatViewController.loadingCell(at:backgroundColor:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 119,
-      "symbol": "ChatViewController.statusCell(at:title:subtitle:backgroundColor:highlighted:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 247,
+      "line": 269,
       "symbol": "ChatViewController.tableView(_:numberOfRowsInSection:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 251,
+      "line": 273,
       "symbol": "ChatViewController.tableView(_:cellForRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 283,
+      "line": 298,
       "symbol": "ChatViewController.tableView(_:willDisplay:forRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 300,
+      "line": 315,
       "symbol": "ChatViewController.tableView(_:didEndDisplaying:forRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 306,
+      "line": 321,
       "symbol": "ChatViewController.tableView(_:shouldHighlightRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -2153,13 +1789,6 @@
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView+Images.swift",
       "line": 74,
       "symbol": "ComposerView.collectionView(_:cellForItemAt:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView+TextView.swift",
-      "line": 72,
-      "symbol": "ComposerView.updateToolBarHeight()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
@@ -2185,115 +1814,59 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView.swift",
-      "line": null,
-      "symbol": "ComposerView",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView.swift",
-      "line": null,
-      "symbol": "ComposerView",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView.swift",
-      "line": null,
-      "symbol": "ComposerView",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView.swift",
-      "line": 15,
-      "symbol": "ComposerView",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView.swift",
-      "line": 17,
-      "symbol": "ComposerView.style",
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 39,
+      "symbol": "MediaGalleryViewController.selected",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView.swift",
-      "line": 51,
-      "symbol": "ComposerView.isEditing",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Chat/Composer/ComposerView.swift",
-      "line": 116,
-      "symbol": "ComposerView.addToSuperview(_:placeholderText:)",
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 41,
+      "symbol": "MediaGalleryViewController.viewDidLoad()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
-      "line": null,
-      "symbol": "MediaGalleryViewController",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 57,
+      "symbol": "MediaGalleryViewController.viewWillAppear(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
-      "line": null,
-      "symbol": "MediaGalleryViewController",
-      "symbol_kind": "source.lang.swift.decl.extension",
+      "line": 69,
+      "symbol": "MediaGalleryViewController.preferredStatusBarStyle",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
-      "line": 108,
+      "line": 109,
       "symbol": "MediaGalleryViewController.scrollViewDidScroll(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
-      "line": 159,
+      "line": 121,
+      "symbol": "MediaGalleryViewController.scrollViewDidEndDecelerating(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
+      "line": 160,
       "symbol": "MediaGalleryViewController.collectionView(_:numberOfItemsInSection:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
-      "line": 163,
+      "line": 164,
       "symbol": "MediaGalleryViewController.collectionView(_:cellForItemAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
-      "line": 191,
-      "symbol": "MediaGalleryItem",
-      "symbol_kind": "source.lang.swift.decl.struct",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
-      "line": 192,
-      "symbol": "MediaGalleryItem.title",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
-      "line": 193,
-      "symbol": "MediaGalleryItem.url",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Image Gallery/MediaGalleryViewController.swift",
-      "line": 194,
-      "symbol": "MediaGalleryItem.logoImage",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
@@ -2346,542 +1919,45 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Presenter.swift",
-      "line": 13,
-      "symbol": "Presenter",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 11,
-      "symbol": "ChannelViewStyle",
-      "symbol_kind": "source.lang.swift.decl.struct",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 12,
-      "symbol": "ChannelViewStyle.backgroundColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 13,
-      "symbol": "ChannelViewStyle.separatorColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 14,
-      "symbol": "ChannelViewStyle.nameFont",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 15,
-      "symbol": "ChannelViewStyle.nameColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 16,
-      "symbol": "ChannelViewStyle.messageFont",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 17,
-      "symbol": "ChannelViewStyle.messageColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 18,
-      "symbol": "ChannelViewStyle.messageUnreadFont",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 19,
-      "symbol": "ChannelViewStyle.messageUnreadColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 20,
-      "symbol": "ChannelViewStyle.messageDeletedFont",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 21,
-      "symbol": "ChannelViewStyle.messageDeletedColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 22,
-      "symbol": "ChannelViewStyle.dateFont",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 23,
-      "symbol": "ChannelViewStyle.dateColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChannelViewStyle.swift",
-      "line": 25,
-      "symbol": "ChannelViewStyle.init(backgroundColor:separatorColor:titleFont:titleColor:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:dateFont:dateColor:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChatViewStyle.swift",
-      "line": 11,
-      "symbol": "ChatViewStyle",
-      "symbol_kind": "source.lang.swift.decl.struct",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChatViewStyle.swift",
-      "line": 13,
-      "symbol": "ChatViewStyle.channel",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChatViewStyle.swift",
-      "line": 14,
-      "symbol": "ChatViewStyle.composer",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChatViewStyle.swift",
-      "line": 15,
-      "symbol": "ChatViewStyle.incomingMessage",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChatViewStyle.swift",
-      "line": 16,
-      "symbol": "ChatViewStyle.outgoingMessage",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChatViewStyle.swift",
-      "line": 18,
-      "symbol": "ChatViewStyle.dark",
-      "symbol_kind": "source.lang.swift.decl.var.static",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ChatViewStyle.swift",
-      "line": 41,
-      "symbol": "ChatViewStyle.init(channel:composer:incomingMessage:outgoingMessage:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": null,
-      "symbol": "ComposerViewStyle",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 11,
-      "symbol": "ComposerViewStyle",
-      "symbol_kind": "source.lang.swift.decl.struct",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 12,
-      "symbol": "ComposerViewStyle.States",
-      "symbol_kind": "source.lang.swift.decl.typealias",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 14,
-      "symbol": "ComposerViewStyle.font",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 15,
-      "symbol": "ComposerViewStyle.textColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 16,
-      "symbol": "ComposerViewStyle.placeholderTextColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 17,
-      "symbol": "ComposerViewStyle.backgroundColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 18,
-      "symbol": "ComposerViewStyle.cornerRadius",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 19,
-      "symbol": "ComposerViewStyle.states",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 21,
-      "symbol": "ComposerViewStyle.init(font:textColor:placeholderTextColor:backgroundColor:cornerRadius:states:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 37,
-      "symbol": "ComposerViewStyle.style(with:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 55,
-      "symbol": "ComposerViewStyle.State",
-      "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 56,
+      "line": 94,
       "symbol": "ComposerViewStyle.State.normal",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 57,
+      "line": 95,
       "symbol": "ComposerViewStyle.State.active",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 58,
+      "line": 96,
       "symbol": "ComposerViewStyle.State.edit",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 59,
+      "line": 97,
       "symbol": "ComposerViewStyle.State.disabled",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 62,
-      "symbol": "ComposerViewStyle.Style",
-      "symbol_kind": "source.lang.swift.decl.struct",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 63,
-      "symbol": "ComposerViewStyle.Style.tintColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 64,
-      "symbol": "ComposerViewStyle.Style.borderWidth",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ComposerViewStyle.swift",
-      "line": 66,
-      "symbol": "ComposerViewStyle.Style.init(tintColor:borderWidth:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": null,
-      "symbol": "MessageViewStyle",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 11,
-      "symbol": "MessageViewStyle",
-      "symbol_kind": "source.lang.swift.decl.struct",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 12,
-      "symbol": "MessageViewStyle.alignment",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 13,
-      "symbol": "MessageViewStyle.showCurrentUserAvatar",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 14,
-      "symbol": "MessageViewStyle.font",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 15,
-      "symbol": "MessageViewStyle.replyFont",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 16,
-      "symbol": "MessageViewStyle.nameFont",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 17,
-      "symbol": "MessageViewStyle.infoFont",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 18,
-      "symbol": "MessageViewStyle.emojiFont",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 19,
-      "symbol": "MessageViewStyle.textColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 20,
-      "symbol": "MessageViewStyle.replyColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 21,
-      "symbol": "MessageViewStyle.infoColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 22,
-      "symbol": "MessageViewStyle.borderColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 24,
-      "symbol": "MessageViewStyle.chatBackgroundColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 28,
-      "symbol": "MessageViewStyle.backgroundColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 32,
-      "symbol": "MessageViewStyle.borderWidth",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 36,
-      "symbol": "MessageViewStyle.cornerRadius",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 40,
-      "symbol": "MessageViewStyle.reactionViewStyle",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 41,
-      "symbol": "MessageViewStyle.markdownEnabled",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 45,
-      "symbol": "MessageViewStyle.hasBackgroundImage",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 49,
-      "symbol": "MessageViewStyle.init(alignment:showCurrentUserAvatar:chatBackgroundColor:font:replyFont:nameFont:infoFont:emojiFont:textColor:replyColor:infoColor:backgroundColor:borderColor:borderWidth:cornerRadius:reactionViewStyle:markdownEnabled:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 159,
-      "symbol": "MessageViewStyle.Alignment",
-      "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 160,
+      "line": 205,
       "symbol": "MessageViewStyle.Alignment.left",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/MessageViewStyle.swift",
-      "line": 161,
+      "line": 206,
       "symbol": "MessageViewStyle.Alignment.right",
       "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 11,
-      "symbol": "ReactionViewStyle",
-      "symbol_kind": "source.lang.swift.decl.struct",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 13,
-      "symbol": "ReactionViewStyle.alignment",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 14,
-      "symbol": "ReactionViewStyle.font",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 15,
-      "symbol": "ReactionViewStyle.textColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 16,
-      "symbol": "ReactionViewStyle.backgroundColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 17,
-      "symbol": "ReactionViewStyle.chatBackgroundColor",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 18,
-      "symbol": "ReactionViewStyle.cornerRadius",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 19,
-      "symbol": "ReactionViewStyle.tailCornerRadius",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 20,
-      "symbol": "ReactionViewStyle.tailMessageCornerRadius",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 21,
-      "symbol": "ReactionViewStyle.tailImage",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Style/ReactionViewStyle.swift",
-      "line": 23,
-      "symbol": "ReactionViewStyle.init(alignment:font:textColor:backgroundColor:chatBackgroundColor:cornerRadius:tailMessageCornerRadius:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
@@ -2893,14 +1969,14 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Web View/WebViewController.swift",
-      "line": 73,
+      "line": 79,
       "symbol": "WebViewController.webView(_:didStartProvisionalNavigation:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/View/Web View/WebViewController.swift",
-      "line": 77,
+      "line": 83,
       "symbol": "WebViewController.webView(_:didFinish:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

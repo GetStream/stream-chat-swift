@@ -14,7 +14,7 @@
     <a title="Stream Structure Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../../index.html">StreamChat Docs</a> (58% documented)</p>
+        <p><a href="../../index.html">StreamChat Docs</a> (71% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -150,13 +150,7 @@
                 <a href="../../Extensions/JSONEncoder.html">JSONEncoder</a>
               </li>
               <li class="nav-group-task">
-                <a href="../../Extensions/Reactive.html">Reactive</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../../Extensions/String.html">String</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../../Extensions/TimeInterval.html">TimeInterval</a>
+                <a href="../../Extensions/Token.html">Token</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
@@ -292,10 +286,10 @@
             <a href="../../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../../Typealiases.html#/s:10StreamChat14GestureFactorya">GestureFactory</a>
+                <a href="../../Typealiases.html#/s:10StreamChat5Tokena">Token</a>
               </li>
               <li class="nav-group-task">
-                <a href="../../Typealiases.html#/s:10StreamChat5Tokena">Token</a>
+                <a href="../../Typealiases.html#/s:10StreamChat13TokenProvidera">TokenProvider</a>
               </li>
             </ul>
           </li>
@@ -311,7 +305,7 @@
 
                 </div>
               </div>
-            <p>Undocumented</p>
+            <p>A Stream Chat date formatters.</p>
 
           </section>
           <section class="section task-group-section">
@@ -330,7 +324,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates and returns a date object from the specified ISO 8601 formatted string representation.</p>
 
                       </div>
                       <div class="declaration">
@@ -340,6 +334,29 @@
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">iso8601Date</span><span class="p">(</span><span class="n">from</span> <span class="nv">string</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Date</span><span class="p">?</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>string</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The ISO 8601 formatted string representation of a date.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A date object, or nil if no valid date was found.</p>
                       </div>
                     </section>
                   </div>
@@ -357,7 +374,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Creates and returns an ISO 8601 formatted string representation of the specified date.</p>
 
                       </div>
                       <div class="declaration">
@@ -368,6 +385,29 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>date</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The date to be represented.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A user-readable string representing the date.</p>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -376,7 +416,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-08)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-09)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

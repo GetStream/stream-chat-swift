@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Notifications Class Reference</title>
+    <title>Token Extension Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Class/Notifications" class="dashAnchor"></a>
-    <a title="Notifications Class Reference"></a>
+    <a name="//apple_ref/swift/Extension/Token" class="dashAnchor"></a>
+    <a title="Token Extension Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../index.html">StreamChat Docs</a> (71% documented)</p>
@@ -22,7 +22,7 @@
       <p id="breadcrumbs">
         <a href="../index.html">StreamChat Reference</a>
         <img id="carat" src="../img/carat.png" />
-        Notifications Class Reference
+        Token Extension Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -298,15 +298,14 @@
       <article class="main-content">
         <section>
           <section class="section">
-            <h1>Notifications</h1>
+            <h1>Token</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">Notifications</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt"><a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a></span> <span class="o">=</span> <span class="kt">String</span></code></pre>
 
                 </div>
               </div>
-            <p>A notifications manager.</p>
-
+            
           </section>
           <section class="section task-group-section">
             <div class="task-group">
@@ -314,9 +313,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat13NotificationsC22OpenNewMessageCallbacka"></a>
-                    <a name="//apple_ref/swift/Alias/OpenNewMessageCallback" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat13NotificationsC22OpenNewMessageCallbacka">OpenNewMessageCallback</a>
+                    <a name="/s:SS10StreamChatE11developmentSSvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/development" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SS10StreamChatE11developmentSSvpZ">development</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -324,14 +323,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A callback type to open a chat view controller with a given message id and channel id.</p>
+                        <p>A development token.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">OpenNewMessageCallback</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span> <span class="nv">messageId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">_</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">development</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a></span></code></pre>
 
                         </div>
                       </div>
@@ -341,9 +340,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat13NotificationsC6sharedACvpZ"></a>
-                    <a name="//apple_ref/swift/Variable/shared" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat13NotificationsC6sharedACvpZ">shared</a>
+                    <a name="/s:SS10StreamChatE5guestSSvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/guest" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SS10StreamChatE5guestSSvpZ">guest</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -351,108 +350,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A shared instance of notifications manager.</p>
+                        <p>A guest token.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">shared</span><span class="p">:</span> <span class="kt">Notifications</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10StreamChat13NotificationsC14openNewMessageySS_SStcSgvp"></a>
-                    <a name="//apple_ref/swift/Property/openNewMessage" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat13NotificationsC14openNewMessageySS_SStcSgvp">openNewMessage</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A callback to open a chat view controller with a given message id and channel id.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">openNewMessage</span><span class="p">:</span> <span class="kt">Notifications</span><span class="o">.</span><span class="kt"><a href="../Classes/Notifications.html#/s:10StreamChat13NotificationsC22OpenNewMessageCallbacka">OpenNewMessageCallback</a></span><span class="p">?</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10StreamChat13NotificationsC25askForPermissionsIfNeededyyF"></a>
-                    <a name="//apple_ref/swift/Method/askForPermissionsIfNeeded()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat13NotificationsC25askForPermissionsIfNeededyyF">askForPermissionsIfNeeded()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Ask for permissions for notifications.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">askForPermissionsIfNeeded</span><span class="p">()</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Handle%20Actions"></a>
-                <a name="//apple_ref/swift/Section/Handle Actions" class="dashAnchor"></a>
-                <a href="#/Handle%20Actions">
-                  <h3 class="section-name">Handle Actions</h3>
-                </a>
-              </div>
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@CM@StreamChat@objc(cs)Notifications(im)userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:"></a>
-                    <a name="//apple_ref/swift/Method/userNotificationCenter(_:didReceive:withCompletionHandler:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@StreamChat@objc(cs)Notifications(im)userNotificationCenter:didReceiveNotificationResponse:withCompletionHandler:">userNotificationCenter(_:didReceive:withCompletionHandler:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">userNotificationCenter</span><span class="p">(</span><span class="n">_</span> <span class="nv">center</span><span class="p">:</span> <span class="kt">UNUserNotificationCenter</span><span class="p">,</span>
-                                   <span class="n">didReceive</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">UNNotificationResponse</span><span class="p">,</span>
-                                   <span class="n">withCompletionHandler</span> <span class="nv">completionHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">guest</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a></span></code></pre>
 
                         </div>
                       </div>
