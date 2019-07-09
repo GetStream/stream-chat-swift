@@ -15,9 +15,16 @@ extension Client {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
         
-        config.httpAdditionalHeaders = ["Authorization": token,
-                                        "Stream-Auth-Type": "jwt",
-                                        "X-Stream-Client": "stream-chat-swift-client-\(Client.version)"]
+        var headers = ["X-Stream-Client": "stream-chat-swift-client-\(Client.version)"]
+        
+        if token.isBlank {
+            headers["Stream-Auth-Type"] = "anonymous"
+        } else {
+            headers["Stream-Auth-Type"] = "jwt"
+            headers["Authorization"] = token
+        }
+        
+        config.httpAdditionalHeaders = headers
         
         return URLSession(configuration: config, delegate: urlSessionTaskDelegate, delegateQueue: nil)
     }
@@ -74,17 +81,18 @@ extension Client {
     }
     
     private func queryItems(for endpoint: ChatEndpoint) -> Result<[URLQueryItem], ClientError> {
-        guard let connectionId = webSocket.lastConnectionId else {
-            return .failure(.emptyConnectionId)
-        }
-        
         guard let user = user else {
             return .failure(.emptyUser)
         }
         
         var queryItems = [URLQueryItem(name: "api_key", value: apiKey),
-                          URLQueryItem(name: "user_id", value: user.id),
-                          URLQueryItem(name: "client_id", value: connectionId)]
+                          URLQueryItem(name: "user_id", value: user.id)]
+        
+        if let connectionId = webSocket.lastConnectionId {
+            queryItems.append(URLQueryItem(name: "client_id", value: connectionId))
+        } else if case .guestToken = endpoint {} else {
+            return .failure(.emptyConnectionId)
+        }
         
         guard !queryItems.isEmpty else {
             return .failure(.invalidURL(nil))

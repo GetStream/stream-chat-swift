@@ -21,3 +21,15 @@ extension Token {
     /// A guest token.
     public static let guest: Token = "guest"
 }
+
+// MARK: - Token response
+
+struct TokenResponse: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case user
+        case token = "access_token"
+    }
+    
+    let user: User
+    let token: Token
+}

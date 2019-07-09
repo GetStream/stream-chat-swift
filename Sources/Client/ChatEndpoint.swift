@@ -9,6 +9,7 @@
 import Foundation
 
 enum ChatEndpoint {
+    case guestToken(User)
     case channels(ChannelsQuery)
     case channel(ChannelQuery)
     case createChannel(Channel)
@@ -40,6 +41,8 @@ extension ChatEndpoint {
     
     var path: String {
         switch self {
+        case .guestToken:
+            return "guest"
         case .channels:
             return "channels"
         case .channel(let query):
@@ -100,6 +103,8 @@ extension ChatEndpoint {
              .sendImage,
              .sendFile:
             return nil
+        case .guestToken(let user):
+            return ["user": user]
         case .channel(let query):
             return query
         case .createChannel(let channel):

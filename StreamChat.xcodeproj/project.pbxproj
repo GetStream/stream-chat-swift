@@ -132,6 +132,7 @@
 		8A91175C22C782F20006FB01 /* CustomChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A91175B22C782F10006FB01 /* CustomChatViewController.swift */; };
 		8A91175E22C783A00006FB01 /* StreamChat.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 8A91175D22C783A00006FB01 /* StreamChat.podspec */; };
 		8AF88F3922D4C49E005FDFDC /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF88F3822D4C49E005FDFDC /* Token.swift */; };
+		8AF88F3B22D4E5E1005FDFDC /* Client+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF88F3A22D4E5E1005FDFDC /* Client+Setup.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -265,6 +266,7 @@
 		8A91175B22C782F10006FB01 /* CustomChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomChatViewController.swift; sourceTree = "<group>"; };
 		8A91175D22C783A00006FB01 /* StreamChat.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChat.podspec; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AF88F3822D4C49E005FDFDC /* Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
+		8AF88F3A22D4E5E1005FDFDC /* Client+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Setup.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -572,6 +574,7 @@
 				8A9116D622C782820006FB01 /* BaseURL.swift */,
 				8AF88F3822D4C49E005FDFDC /* Token.swift */,
 				8A9116D822C782820006FB01 /* Client.swift */,
+				8AF88F3A22D4E5E1005FDFDC /* Client+Setup.swift */,
 				8A9116DB22C782820006FB01 /* Client+Request.swift */,
 				8A9116DA22C782820006FB01 /* Client+RxRequest.swift */,
 				8A9116DD22C782820006FB01 /* Client+WebSocket.swift */,
@@ -801,6 +804,7 @@
 				8A91171422C782830006FB01 /* Channel.swift in Sources */,
 				8A91173822C782830006FB01 /* AvatarView.swift in Sources */,
 				8A91170A22C782830006FB01 /* RxGesture+Extensions.swift in Sources */,
+				8AF88F3B22D4E5E1005FDFDC /* Client+Setup.swift in Sources */,
 				8A91170F22C782830006FB01 /* Event.swift in Sources */,
 				8A9116F122C782820006FB01 /* UIViewController+ImagePicker.swift in Sources */,
 				8A91170922C782830006FB01 /* Date+Extensions.swift in Sources */,
