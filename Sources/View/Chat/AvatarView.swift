@@ -69,11 +69,12 @@ public final class AvatarView: UIImageView, Reusable {
         }
         
         let imageSize = 2 * layer.cornerRadius * UIScreen.main.scale
-        let request = ImageRequest(url: url, targetSize: CGSize(width: imageSize, height: imageSize), contentMode: .aspectFill)
+        let processors = [ImageProcessor.Resize(size: CGSize(width: imageSize, height: imageSize))]
+        let imageRequest = ImageRequest(url: url, processors: processors)
         
-        imageTask = ImagePipeline.shared.loadImage(with: request) { [weak self] response, error in
+        imageTask = ImagePipeline.shared.loadImage(with: imageRequest) { [weak self] result in
             if let self = self {
-                if let image = response?.image {
+                if let image = try? result.get().image {
                     self.image = image
                 } else {
                     self.showAvatarLabel(with: name ?? "?", baseColor)

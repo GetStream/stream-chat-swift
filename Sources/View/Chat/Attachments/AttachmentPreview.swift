@@ -229,34 +229,35 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         
         ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
         let targetSize = CGSize(width: UIScreen.main.scale * maxWidth, height: UIScreen.main.scale * .attachmentPreviewHeight)
-        let imageRequest = ImageRequest(url: imageURL, targetSize: targetSize, contentMode: .aspectFit)
-        let modes = ImageLoadingOptions.ContentModes(success: .scaleAspectFit, failure: .center, placeholder: .center)
-        
-        let options = ImageLoadingOptions(placeholder: hasActions ? nil : UIImage.Icons.image,
-                                          failureImage: UIImage.Icons.close,
-                                          contentModes: modes)
+        let processors = [ImageProcessor.Resize(size: targetSize)]
+        let imageRequest = ImageRequest(url: imageURL, processors: processors)
         
         if let imageResponse = Nuke.ImageCache.shared.cachedResponse(for: imageRequest) {
             imageView.contentMode = .scaleAspectFit
             imageView.image = imageResponse.image
-            parse(imageResponse: imageResponse, error: nil, maskImage: maskImage, cached: true, completion)
+            parse(imageResult: .success(imageResponse), maskImage: maskImage, cached: true, completion)
         } else {
             if hasActions {
                 activityIndicatorView.startAnimating()
             }
             
+            let modes = ImageLoadingOptions.ContentModes(success: .scaleAspectFit, failure: .center, placeholder: .center)
+            
+            let options = ImageLoadingOptions(placeholder: hasActions ? nil : UIImage.Icons.image,
+                                              failureImage: UIImage.Icons.close,
+                                              contentModes: modes)
+
             imageTask = Nuke.loadImage(with: imageRequest, options: options, into: imageView) { [weak self] in
-                self?.parse(imageResponse: $0, error: $1, maskImage: maskImage, cached: false, completion)
+                self?.parse(imageResult: $0, maskImage: maskImage, cached: false, completion)
             }
         }
     }
     
-    private func parse(imageResponse: ImageResponse?,
-                       error: Error?,
+    private func parse(imageResult: Result<ImageResponse, ImagePipeline.Error>,
                        maskImage: UIImage?,
                        cached: Bool,
                        _ completion: @escaping Competion) {
-        guard let attachment = attachment, error == nil else {
+        guard let attachment = attachment, let image = try? imageResult.get().image else {
             if isLink {
                 imageView.isHidden = true
                 linkStackViewTopConstraint?.update(offset: CGFloat.messageCornerRadius)
@@ -264,7 +265,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                 heightConstraint?.deactivate()
             }
             
-            completion(self, error)
+            completion(self, imageResult.error)
             return
         }
         
@@ -275,7 +276,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         var width = attachment.isImage && !hasActions ? defaultHeight : maxWidth
         var height = defaultHeight
         
-        if let image = imageResponse?.image, image.size.height > 0 {
+        if image.size.height > 0 {
             imageView.backgroundColor = backgroundColor
             
             if attachment.isImage, !hasActions {
@@ -294,10 +295,6 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                     forceToReload()
                     return
                 }
-            }
-        } else {
-            if let error = error, let url = imageResponse?.urlResponse?.url {
-                print("⚠️", url, error)
             }
         }
         

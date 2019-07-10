@@ -316,22 +316,22 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         let modes = ImageLoadingOptions.ContentModes(success: .scaleAspectFit, failure: .center, placeholder: .center)
         let options = ImageLoadingOptions(failureImage: UIImage.Icons.close, contentModes: modes)
         
-        imageTask = Nuke.loadImage(with: url, options: options, into: imageView) { [weak self] imageResponse, error in
+        imageTask = Nuke.loadImage(with: url, options: options, into: imageView) { [weak self] result in
             if let self = self {
                 if self.imageView.frame.width > 0, self.imageView.frame.height > 0 {
-                    self.parse(imageResponse, error: error, completion: completion)
+                    self.parse(result, completion: completion)
                 } else {
-                    DispatchQueue.main.async { [weak self] in self?.parse(imageResponse, error: error, completion: completion) }
+                    DispatchQueue.main.async { [weak self] in self?.parse(result, completion: completion) }
                 }
             }
         }
     }
     
-    private func parse(_ imageResponse: ImageResponse?, error: Error?, completion: @escaping (_ error: Error?) -> Void) {
+    private func parse(_ imageResult: Result<ImageResponse, ImagePipeline.Error>, completion: @escaping (_ error: Error?) -> Void) {
         activityIndicatorView.stopAnimating()
         
-        guard let image = imageResponse?.image, image.size.width > 0 else {
-            completion(error)
+        guard let image = try? imageResult.get().image, image.size.width > 0 else {
+            completion(imageResult.error)
             return
         }
         
@@ -347,7 +347,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
             scrollView.maximumZoomScale = 1 / scale
         }
         
-        completion(error)
+        completion(nil)
     }
     
     fileprivate func viewForZooming(in scrollView: UIScrollView) -> UIView? {
