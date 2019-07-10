@@ -12,17 +12,29 @@ import Foundation
 public final class Channel: Codable, Equatable {
     /// Coding keys for the decoding.
     public enum DecodingKeys: String, CodingKey {
+        /// An channel id.
         case id
+        /// A combination of channel id and type.
         case cid
+        /// A type.
         case type
+        /// A last message date.
         case lastMessageDate = "last_message_at"
+        /// A user created by.
         case createdBy = "created_by"
+        /// A created date.
         case created = "created_at"
+        /// A channel config.
         case config
+        /// A frozen flag.
         case frozen
+        /// A name.
         case name
+        /// A image URL.
         case imageURL = "image"
+        /// An extra data.
         case extraData
+        /// Members.
         case members
     }
     
@@ -205,12 +217,8 @@ public extension Channel {
 
 /// A channel type.
 public enum ChannelType: String, Codable {
-    case unknown
-    case livestream
-    case messaging
-    case team
-    case gaming
-    case commerce
+    /// A channel type.
+    case unknown, livestream, messaging, team, gaming, commerce
     
     /// A channel type title.
     public var title: String {

@@ -91,10 +91,8 @@ public struct ComposerViewStyle: Hashable {
 extension ComposerViewStyle {
     /// A composer state.
     public enum State: Hashable {
-        case normal
-        case active
-        case edit
-        case disabled
+        /// A composer view style state.
+        case normal, active, edit, disabled
     }
     
     /// A composer style.

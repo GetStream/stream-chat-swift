@@ -178,16 +178,9 @@ public extension Attachment {
 
 /// An attachment type.
 public enum AttachmentType: String, Codable {
-    case unknown
-    case image
-    case imgur
-    case giphy
-    case video
-    case youtube
-    case product
-    case file
-    case link
-
+    /// An attachment type.
+    case unknown, image, imgur, giphy, video, youtube, product, file, link
+    
     fileprivate var isImage: Bool {
         return self == .image || self == .imgur || self == .giphy
     }
@@ -242,20 +235,8 @@ public struct AttachmentFile: Codable {
 
 /// An attachment file type.
 public enum AttachmentFileType: String, Codable {
-    case generic
-    case csv
-    case doc
-    case pdf
-    case ppt
-    case tar
-    case xls
-    case zip
-    case mp3
-    case mp4
-    case mov
-    case jpeg
-    case png
-    case gif
+    /// A file attachment type.
+    case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
     
     private static let mimeTypes: [String: AttachmentFileType] = ["application/octet-stream": .generic,
                                                                   "text/csv": .csv,

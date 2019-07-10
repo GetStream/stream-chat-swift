@@ -35,6 +35,7 @@ public enum Pagination: Codable, Equatable {
         case lessThanOrEqual = "id_lte"
     }
     
+    /// No pagination.
     case none
     
     /// The amount of items requested from the APIs.

@@ -12,12 +12,19 @@ import UIKit
 ///
 /// ViewChanges describes how a view should be updated depends on a data response.
 public enum ViewChanges: Equatable {
+    /// No changes.
     case none
+    /// Reload all views.
     case reloaded(_ row: Int, _ items: [ChatItem])
+    /// Add item at row and reload another one.
     case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool, _ items: [ChatItem])
+    /// Update items with messages.
     case itemUpdated(_ rows: [Int], [Message], _ items: [ChatItem])
+    /// Remove item at row.
     case itemRemoved(_ row: Int, _ items: [ChatItem])
+    /// Move item from row to another.
     case itemMoved(fromRow: Int, toRow: Int, _ items: [ChatItem])
+    /// Update fiiter.
     case footerUpdated
 }
 

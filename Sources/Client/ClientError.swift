@@ -10,16 +10,27 @@ import Foundation
 
 /// A client error.
 public enum ClientError: Error {
+    /// An unexpected error.
     case unexpectedError
+    /// A token is empty.
     case emptyToken
+    /// The current user is empty.
     case emptyUser
+    /// A client id is empty.
     case emptyClientId
+    /// A connection id is empty.
     case emptyConnectionId
+    /// A response bofy is empty.
     case emptyBody
+    /// An invalid URL.
     case invalidURL(_ string: String?)
+    /// A request failed with an error.
     case requestFailed(_ error: Error?)
+    /// A response client error.
     case responseError(_ responseError: ClientErrorResponse)
+    /// An encoding failed with an error.
     case encodingFailure(_ error: Error, object: Encodable)
+    /// A decoding failed with an error.
     case decodingFailure(_ error: Error)
 }
 

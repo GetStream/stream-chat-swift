@@ -12,7 +12,9 @@ import Foundation
 public struct ExtraData: Codable {
     /// A custom extra data type.
     public enum DecodableType {
+        /// A channel.
         case channel(Codable.Type)
+        /// A message.
         case message(Codable.Type)
         
         var isChannel: Bool {

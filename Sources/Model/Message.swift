@@ -229,5 +229,6 @@ extension Message {
 
 /// A message type, e.g. regular, ephemeral, reply.
 public enum MessageType: String, Codable {
+    /// A message type.
     case regular, ephemeral, error, reply, system
 }

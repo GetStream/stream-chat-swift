@@ -202,7 +202,7 @@ public struct MessageViewStyle: Hashable {
 extension MessageViewStyle {
     /// An alignment of a message for incoming or outgoing messages.
     public enum Alignment: String {
-        case left
-        case right
+        /// A message view style alignment.
+        case left, right
     }
 }

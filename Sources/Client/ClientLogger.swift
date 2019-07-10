@@ -13,11 +13,17 @@ import UIKit
 public final class ClientLogger {
     /// A client logger options.
     public enum Options {
+        /// No logs.
         case none
+        /// Only important messages and errors.
         case important
+        /// Logs for requests.
         case requests
+        /// Logs only requests headers.
         case requestsHeaders
+        /// Logs for a web socket.
         case webSocket
+        /// All logs.
         case all
         
         var isEnabled: Bool {
@@ -47,13 +53,18 @@ public final class ClientLogger {
     private var startTime: CFTimeInterval
     private let options: Options
     
-    init(icon: String, options: Options = .all) {
+    /// Init a client logger.
+    ///
+    /// - Parameters:
+    ///   - icon: a string icon.
+    ///   - options: options (see `ClientLogger.Options`).
+    public init(icon: String, options: Options = .none) {
         self.icon = icon
         self.options = options
         startTime = CACurrentMediaTime()
         lastTime = startTime
     }
-
+    
     private let logDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd/MM/yyyy HH:mm:ss.SSS"

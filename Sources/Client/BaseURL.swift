@@ -29,6 +29,7 @@ public struct BaseURL {
 extension BaseURL {
     /// A server location.
     public enum Location: String {
+        /// An US-East.
         case usEast = "us-east-1"
     }
 }

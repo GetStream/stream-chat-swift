@@ -10,10 +10,15 @@ import Foundation
 
 /// A chat item type for view elements.
 public enum ChatItem: Equatable {
+    /// A loading item.
     case loading(_ inProgress: Bool)
+    /// A status item.
     case status(_ title: String, _ subtitle: String?, _ highlighted: Bool)
+    /// A channel presenter item.
     case channelPresenter(ChannelPresenter)
+    /// A message.
     case message(Message, _ usersRead: [User])
+    /// An error.
     case error(Error)
     
     /// Check if the chat item is loading.
