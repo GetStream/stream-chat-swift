@@ -21,7 +21,7 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 
 To integrate StreamChat into your Xcode project using CocoaPods, add this entry in your `Podfile`:
 ```
-pod 'StreamChat', '~> $LATEST'
+pod 'StreamChat'
 ```
 Then run `pod install`.
 
