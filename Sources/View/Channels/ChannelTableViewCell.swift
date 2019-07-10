@@ -163,13 +163,13 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
     ///
     /// - Parameters:
     ///   - info: an info text.
-    ///   - bold: shows the info as bold.
-    public func update(info: String?, bold: Bool = false) {
+    ///   - isUnread: if true apply an unread view style.
+    public func update(info: String?, isUnread: Bool = false) {
         guard let style = style, let info = info else {
             return
         }
         
-        if bold {
+        if isUnread {
             infoLabel.font = style.messageUnreadFont
             infoLabel.textColor = style.messageUnreadColor
         } else {
