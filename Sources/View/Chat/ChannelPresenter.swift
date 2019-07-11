@@ -220,9 +220,7 @@ extension ChannelPresenter {
                 return .none
             }
             
-            let isCurrentUserMessage = Client.shared.user == message.user
-            
-            if channel.config.readEventsEnabled, !isCurrentUserMessage {
+            if channel.config.readEventsEnabled {
                 if let lastMessage = lastMessageMVar.get() {
                     unreadMessageReadMVar.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
                 } else {
@@ -235,6 +233,7 @@ extension ChannelPresenter {
             let nextRow = items.count
             let reloadRow: Int? = items.last?.message?.user == message.user ? nextRow - 1 : nil
             appendOrUpdateMessageItem(message)
+            let isCurrentUserMessage = Client.shared.user == message.user
             let viewChanges = ViewChanges.itemAdded(nextRow, reloadRow, isCurrentUserMessage, items)
             lastWebSocketEventViewChanges = viewChanges
             Notifications.shared.showIfNeeded(newMessage: message, in: channel)
