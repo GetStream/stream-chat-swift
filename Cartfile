@@ -1,0 +1,13 @@
+github "kean/Nuke"
+github "SnapKit/SnapKit" ~> 5.0
+github "kirualex/SwiftyGif"
+github "1024jp/GzipSwift"
+
+github "ReactiveX/RxSwift" ~> 4.5
+github "RxSwiftCommunity/RxStarscream"
+github "RxSwiftCommunity/RxReachability"
+github "RxSwiftCommunity/RxGesture"
+github "pixeldock/RxAppState"
+github "ashleymills/Reachability.swift"
+
+binary "https://raw.githubusercontent.com/RxSwiftCommunity/RxKeyboard/master/RxKeyboard.json"
