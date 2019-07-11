@@ -25,10 +25,6 @@ public class Presenter<T> {
     }
     
     func request(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
-        let paginationObservable = pagination == .none
-            ? loadPagination.asObserver()
-            : loadPagination.asObserver().startWith(pagination)
-        
         let connectionObservable = Client.shared.connection.connected({ [weak self] isConnected in
             if !isConnected, let self = self, !self.items.isEmpty {
                 self.items = []
@@ -36,7 +32,7 @@ public class Presenter<T> {
             }
         })
         
-        return Observable.combineLatest(paginationObservable, connectionObservable)
+        return Observable.combineLatest(loadPagination.asObserver().startWith(pagination), connectionObservable)
             .map { pagination, _ in pagination }
             .filter { [weak self] in
                 if let self = self, self.items.isEmpty, $0 != self.pageSize {

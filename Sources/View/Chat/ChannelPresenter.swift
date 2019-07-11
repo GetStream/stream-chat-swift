@@ -145,7 +145,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
 extension ChannelPresenter {
     
     private func channelEndpoint(pagination: Pagination) -> ChatEndpoint? {
-        guard parentMessage == nil, let user = Client.shared.user else {
+        guard parentMessage == nil, pagination != .none, let user = Client.shared.user else {
             return nil
         }
         

@@ -31,7 +31,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     private lazy var requestChanges: Driver<ViewChanges> = request(startPaginationWith: pageSize)
         .map { [weak self] in self?.channelsEndpoint(pagination: $0) }
         .unwrap()
-        .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
+        .flatMapLatest { Client.shared.rx.request(endpoint: $0).retry(3) }
         .map { [weak self] in self?.parseChannels($0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
