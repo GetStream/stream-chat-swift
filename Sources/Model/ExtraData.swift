@@ -62,7 +62,7 @@ extension ExtraData {
         do {
             try encode(to: encoder)
         } catch {
-            Client.shared.logger?.log(error, message: "⚠️🎩 ExtraData")
+            ClientLogger.log("🧳", error, message: "⚠️🎩 ExtraData")
         }
     }
     
@@ -81,7 +81,7 @@ extension ExtraData {
             }
             return try ExtraData(extraDataType.init(from: decoder))
         } catch {
-            Client.shared.logger?.log(error, message: "⚠️🎩 ExtraData")
+            ClientLogger.log("🧳", error, message: "⚠️🎩 ExtraData")
         }
         
         return nil

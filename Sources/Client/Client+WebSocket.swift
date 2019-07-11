@@ -18,7 +18,7 @@ extension Client {
             let jsonData = try JSONEncoder.stream.encode(jsonParameter)
             jsonString = String(data: jsonData, encoding: .utf8) ?? ""
         } catch {
-            logger?.log(error)
+            ClientLogger.log("🦄", error)
         }
         
         if jsonString.isEmpty {

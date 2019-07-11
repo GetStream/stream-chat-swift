@@ -77,7 +77,7 @@ final class WebSocket {
             
             webSocket.callbackQueue.asyncAfter(deadline: .now() + WebSocket.maxBackgroundTime, execute: goingToDisconnect)
             self.goingToDisconnect = goingToDisconnect
-            logger?.log("💜", "Background mode on")
+            ClientLogger.log("💜", "Background mode on")
         } else {
             disconnect()
         }
@@ -90,7 +90,7 @@ final class WebSocket {
         if backgroundTask != .invalid {
             UIApplication.shared.endBackgroundTask(backgroundTask)
             backgroundTask = .invalid
-            logger?.log("💜", "Background mode off")
+            ClientLogger.log("💜", "Background mode off")
         }
     }
     
@@ -159,7 +159,7 @@ extension WebSocket {
             handshakeTimer.suspend()
             
             if let error = error {
-                logger?.log(error, message: "💔😡 Disconnected by error:")
+                ClientLogger.log("🦄", error, message: "💔😡 Disconnected by error:")
                 ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
             }
             
@@ -209,7 +209,7 @@ extension WebSocket {
             consecutiveFailures = 0
             return lastMessageResponse
         } catch {
-            logger?.log(error, message: "😡 Decode response")
+            ClientLogger.log("🦄", error, message: "😡 Decode response")
             lastMessageResponse = nil
             lastMessageHashValue = 0
         }

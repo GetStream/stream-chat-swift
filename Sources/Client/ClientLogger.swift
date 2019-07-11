@@ -42,7 +42,7 @@ public final class ClientLogger {
     ///     - icon: a small icon string like a tag for messages, e.g. 🦄
     ///     - dateAndTime: a formatted string of date and time, could be empty.
     ///     - message: a message.
-    public static var logger: (_ icon: String, _ dateAndTime: String, _ message: String) -> Void = {
+    public static var logger: (_ icon: String, _ dateTime: String, _ message: String) -> Void = {
         if Client.shared.logOptions.isEnabled {
             print($0, $1.isEmpty ? "" : "[\($1)]", $2)
         }
@@ -64,13 +64,6 @@ public final class ClientLogger {
         startTime = CACurrentMediaTime()
         lastTime = startTime
     }
-    
-    private let logDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd/MM/yyyy HH:mm:ss.SSS"
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        return dateFormatter
-    }()
     
     func log(_ sessionConfiguration: URLSessionConfiguration) {
         if let httpAdditionalHeaders = sessionConfiguration.httpAdditionalHeaders as? [String: String] {
@@ -139,13 +132,13 @@ public final class ClientLogger {
         }
     }
     
-    func log(_ error: Error?, message: String? = nil, function: String = #function, line: Int = #line) {
+    static func log(_ icon: String = "", _ error: Error?, message: String? = nil, function: String = #function, line: Int = #line) {
         if let error = error {
             if let message = message {
-                log(message)
+                ClientLogger.logger(icon, "", "\(message) in \(function)[\(line)]")
             }
             
-            log("\(error) in \(function)[\(line)]")
+            ClientLogger.logger(icon, "", "\(error) in \(function)[\(line)]")
         }
     }
     
@@ -174,11 +167,15 @@ public final class ClientLogger {
     }
     
     func log(_ identifier: String, _ message: String) {
-        log("\(identifier) \(message)")
+        ClientLogger.log(icon, dateTime: Date().log, "\(identifier) \(message)")
     }
     
     func log(_ message: String) {
-        ClientLogger.logger(icon, logDateFormatter.string(from: Date()), message)
+        ClientLogger.log(icon, dateTime: Date().log, message)
+    }
+    
+    static func log(_ icon: String, dateTime: String = "", _ message: String) {
+        ClientLogger.logger(icon, dateTime, message)
     }
     
     static func showConnectionAlert(_ error: Error, jsonError: WebSocket.Error?) {
@@ -191,5 +188,19 @@ public final class ClientLogger {
             UIApplication.shared.delegate?.window??.rootViewController?.present(alert, animated: true)
         }
         #endif
+    }
+}
+
+extension Date {
+    
+    private static let logDateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd/MM/yyyy HH:mm:ss.SSS"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        return dateFormatter
+    }()
+    
+    var log: String {
+        return Date.logDateFormatter.string(from: self)
     }
 }

@@ -91,7 +91,7 @@ extension Client {
             if let response = try? result.get() {
                 self?.set(user: response.user, token: response.token)
             } else {
-                self?.logger?.log(result.error, message: "Guest Token")
+                ClientLogger.log("🐴", result.error, message: "Guest Token")
             }
         }
     }
@@ -112,6 +112,9 @@ extension Client {
     func createObservableConnection() -> Observable<WebSocket.Connection> {
         let app = UIApplication.shared
         
+        let appState = app.rx.appState.startWith(app.appState)
+            .do(onNext: { state in ClientLogger.log("📱", "App state \(state)") })
+        
         let webSocketResponse = tokenSubject.asObserver()
             .distinctUntilChanged()
             .unwrap()
@@ -120,7 +123,7 @@ extension Client {
             .flatMap { [weak self] _ -> Observable<WebSocketEvent> in self?.webSocket.webSocket.rx.response ?? .empty() }
             .do(onDispose: { [weak self] in self?.webSocket.disconnect() })
         
-        return Observable.combineLatest(app.rx.appState.startWith(app.appState),
+        return Observable.combineLatest(appState,
                                         InternetConnection.shared.isAvailableObservable,
                                         webSocketResponse)
             .map { [weak self] in self?.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }

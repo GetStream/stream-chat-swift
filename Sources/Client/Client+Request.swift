@@ -190,7 +190,7 @@ extension Client {
         logger?.log(response, data: data, forceToShowData: (httpResponse?.statusCode ?? 400) >= 400)
         
         if let error = error {
-            logger?.log(error)
+            ClientLogger.log("🐴", error)
             performInCallbackQueue { completion(.failure(.requestFailed(error))) }
             return
         }
@@ -206,7 +206,7 @@ extension Client {
             logger?.timing("Response decoded")
             performInCallbackQueue { completion(.success(response)) }
         } catch {
-            logger?.log(error)
+            ClientLogger.log("🐴", error)
             
             if let errorResponse = try? JSONDecoder.stream.decode(ClientErrorResponse.self, from: data) {
                 performInCallbackQueue { completion(.failure(.responseError(errorResponse))) }

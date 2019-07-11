@@ -39,7 +39,7 @@ final class InternetConnection {
         }
         .startWith(isAvailable)
         .distinctUntilChanged()
-        .do(onNext: { ClientLogger.logger("🕸", "", $0 ? "Available 🙋‍♂️" : "Not Available 🤷‍♂️") })
+        .do(onNext: { ClientLogger.log("🕸", $0 ? "Available 🙋‍♂️" : "Not Available 🤷‍♂️") })
         .share(replay: 1, scope: .forever)) ?? .empty()
     
     init() {
@@ -48,7 +48,7 @@ final class InternetConnection {
             .subscribe(onNext: { [weak self] state in
                 if state == .active {
                     try? self?.reachability?.startNotifier()
-                    ClientLogger.logger("🕸", "", "Notifying started 🏃‍♂️")
+                    ClientLogger.log("🕸", "Notifying started 🏃‍♂️")
                 }
             })
             .disposed(by: disposeBag)
@@ -56,6 +56,6 @@ final class InternetConnection {
     
     func stopObserving() {
         reachability?.stopNotifier()
-        ClientLogger.logger("🕸", "", "Notifying stopped 🚶‍♂️")
+        ClientLogger.log("🕸", "Notifying stopped 🚶‍♂️")
     }
 }
