@@ -1,7 +1,7 @@
-binary "https://raw.githubusercontent.com/RxSwiftCommunity/RxKeyboard/master/RxKeyboard.json" "1.0.0"
 github "1024jp/GzipSwift" "5.0.0"
 github "ReactiveX/RxSwift" "4.5.0"
 github "RxSwiftCommunity/RxGesture" "2.2.0"
+github "RxSwiftCommunity/RxKeyboard" "ad88df70676529d467943ba1605c15dfd739045e"
 github "RxSwiftCommunity/RxReachability" "1.0.0"
 github "RxSwiftCommunity/RxStarscream" "0.10.0"
 github "SnapKit/SnapKit" "5.0.0"
