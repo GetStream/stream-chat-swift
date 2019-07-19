@@ -261,6 +261,8 @@
 		8A3EA03F22D7414C00F27F8E /* Podfile.lock */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile.lock; sourceTree = SOURCE_ROOT; };
 		8A3EA04022D750A000F27F8E /* StreamChat.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChat.podspec; sourceTree = SOURCE_ROOT; };
 		8A3EA04122D750A000F27F8E /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = SOURCE_ROOT; };
+		8A40665D22E1C9D400A8E000 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = SOURCE_ROOT; };
+		8A40665E22E1C9D400A8E000 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		8A7656C522CBB18A00F1F3A4 /* InternetConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternetConnection.swift; sourceTree = "<group>"; };
 		8A91163E22C781500006FB01 /* StreamChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StreamChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A91164122C781500006FB01 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -415,6 +417,8 @@
 		8A3EA03E22D7410500F27F8E /* Package Manager */ = {
 			isa = PBXGroup;
 			children = (
+				8A40665E22E1C9D400A8E000 /* README.md */,
+				8A40665D22E1C9D400A8E000 /* releasing.md */,
 				8A3EA04122D750A000F27F8E /* Cartfile */,
 				8A3EA04022D750A000F27F8E /* StreamChat.podspec */,
 				8A3EA03F22D7414C00F27F8E /* Podfile.lock */,
@@ -427,8 +431,8 @@
 			children = (
 				8A91165322C782820006FB01 /* Sources */,
 				8A91164022C781500006FB01 /* StreamChat */,
-				8A3EA03E22D7410500F27F8E /* Package Manager */,
 				8A9DEF6A22E0BAF100D39D1E /* StreamChatSDK */,
+				8A3EA03E22D7410500F27F8E /* Package Manager */,
 				8A91163F22C781500006FB01 /* Products */,
 				B136FAACA531E4FADD0E4CE1 /* Pods */,
 				9777790C356375993062525F /* Frameworks */,

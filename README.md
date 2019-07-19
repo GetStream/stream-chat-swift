@@ -30,18 +30,10 @@ In any file you'd like to use Stream Chat in, don't forget to import the framewo
 ### Carthage
 
 To integrate StreamChat into your Xcode project using Carthage, specify it in your `Cartfile`:
-
 ```
-TODO
+github "GetStream/stream-chat-swift"
 ```
-
-### Swift Package Manager
-
-To integrate using Apple's Swift Package Manager, add the following as a dependency to your `Package.swift`:
-
-```
-TODO
-```
+Then run: `carthage update --platform iOS --new-resolver`
 
 ## Documentation
 

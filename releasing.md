@@ -10,9 +10,10 @@
 
 ### Releasing
 1. Open the project in Xcode
-2. Update the version and build number of the project:
-  - Project StreamChat → Target StreamChat → General → Version `1.0.0`
-  - Project StreamChat → Target StreamChat → General → Build (for the beta testing) `+1`
+2. Bump the version and build number of the project:
+  - Project StreamChat → Target `StreamChat` → General → Version `1.0.0`
+  - Project StreamChat → Target `StreamChat` → General → Build (for the beta testing) `+1`
+  - Project StreamChat → Target `StreamChatSDK` → General → Version `1.0.0`
 3. Open `StreamChat.podspec` file and update the version to the same as on the Xcode project: `spec.version = "1.0.0"`
 4. Commit changes to the repo as `Bump v.1.0.0`
 5. Add the tag `1.0.0` to the repo and push it to the origin.
