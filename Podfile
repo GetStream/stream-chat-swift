@@ -3,13 +3,13 @@ inhibit_all_warnings!
 
 target 'StreamChat' do
   use_frameworks!
-  pod 'RxSwift'
+  pod 'RxSwift', '~> 5.0'
   pod 'RxCocoa'
-  pod 'RxKeyboard'
-  pod 'RxStarscream'
-  pod 'RxReachability'
   pod 'RxAppState'
   pod 'RxGesture'
+  
+  pod 'ReachabilitySwift', '~> 4.3'
+  pod 'Starscream', '~> 3.0'
   pod 'SnapKit'
   pod 'Nuke'
   pod 'SwiftyGif'

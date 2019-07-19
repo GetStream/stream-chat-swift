@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 
 extension ObservableType {
-    func unwrap<T>() -> Observable<T> where E == T? {
+    func unwrap<T>() -> Observable<T> where Element == T? {
         return filter { $0 != nil }.map { $0! }
     }
 }

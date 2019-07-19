@@ -10,7 +10,6 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
-import RxKeyboard
 
 /// A composer view.
 public final class ComposerView: UIView {

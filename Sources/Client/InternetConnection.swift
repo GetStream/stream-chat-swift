@@ -9,7 +9,6 @@
 import Foundation
 import Reachability
 import RxSwift
-import RxReachability
 import RxAppState
 
 final class InternetConnection {

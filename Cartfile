@@ -2,12 +2,9 @@ github "kean/Nuke"
 github "SnapKit/SnapKit"
 github "kirualex/SwiftyGif"
 github "1024jp/GzipSwift"
+github "daltoniam/Starscream" ~> 3.0
+github "ashleymills/Reachability.swift" ~> 4.3.0
 
-github "ReactiveX/RxSwift" ~> 4.5
-github "RxSwiftCommunity/RxStarscream"
+github "ReactiveX/RxSwift" ~> 5.0
 github "RxSwiftCommunity/RxGesture"
-github "RxSwiftCommunity/RxKeyboard" "carthage-support"
 github "pixeldock/RxAppState"
-
-github "RxSwiftCommunity/RxReachability"
-github "ashleymills/Reachability.swift" ~> 4.3.1

@@ -10,8 +10,6 @@ import UIKit
 import Starscream
 import Reachability
 import RxSwift
-import RxStarscream
-import RxReachability
 import RxAppState
 
 final class WebSocket {
@@ -220,7 +218,7 @@ extension WebSocket {
 
 // MARK: - Rx
 
-extension ObservableType where E == WebSocket.Connection {
+extension ObservableType where Element == WebSocket.Connection {
     typealias ConnectionStatusHandler = (_ connected: Bool) -> Void
     
     func connected(_ connectionStatusHandler: ConnectionStatusHandler? = nil) -> Observable<Void> {

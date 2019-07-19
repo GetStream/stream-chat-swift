@@ -11,7 +11,6 @@ import Photos.PHPhotoLibrary
 import SnapKit
 import RxSwift
 import RxCocoa
-import RxKeyboard
 
 // MARK: - Composer
 
@@ -31,7 +30,7 @@ extension ChatViewController {
             .do(onNext: { [weak self] text in self?.dispatchCommands(in: text ?? "") })
             .filter { [weak self] _ in (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
             .do(onNext: { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: true) })
-            .debounce(3, scheduler: MainScheduler.instance)
+            .debounce(.seconds(3), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: false) })
             .disposed(by: disposeBag)
         
