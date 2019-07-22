@@ -13,7 +13,7 @@
         <!--Channels View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ChannelsViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ChannelsViewController" customModule="StreamChat" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -49,7 +49,7 @@
         <!--Channels View Controller-->
         <scene sceneID="tf3-xX-7NC">
             <objects>
-                <viewController id="cor-4m-0UN" customClass="ChannelsViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="cor-4m-0UN" customClass="ChannelsViewController" customModule="StreamChat" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="XIo-6h-3fA">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -107,7 +107,7 @@
         <!--Custom Chat View Controller-->
         <scene sceneID="K8d-gL-AUv">
             <objects>
-                <viewController id="e0G-IG-Gxn" customClass="CustomChatViewController" customModule="GetStreamChat" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="e0G-IG-Gxn" customClass="CustomChatViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="p7A-Vg-wGQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
