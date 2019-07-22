@@ -27,5 +27,5 @@ Pod::Spec.new do |spec|
 
   spec.dependency "RxSwift", "~> 5.0"
   spec.dependency "RxAppState", "~> 1.5"
-  spec.dependency "RxGesture", "~> 2.2"
+  spec.dependency "RxGesture", "~> 3.0"
 end
