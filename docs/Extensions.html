@@ -14,7 +14,7 @@
     <a title="Extensions  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">StreamChat Docs</a> (92% documented)</p>
+        <p><a href="index.html">StreamChat Docs</a> (89% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -86,6 +86,12 @@
                 <a href="Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/RxKeyboard.html">RxKeyboard</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/RxWebSocketDelegateProxy.html">RxWebSocketDelegateProxy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/TableView.html">TableView</a>
               </li>
               <li class="nav-group-task">
@@ -126,11 +132,17 @@
               <li class="nav-group-task">
                 <a href="Enums/ViewChanges.html">ViewChanges</a>
               </li>
+              <li class="nav-group-task">
+                <a href="Enums/WebSocketEvent.html">WebSocketEvent</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Extensions/Array.html">Array</a>
+              </li>
               <li class="nav-group-task">
                 <a href="Extensions/CGFloat.html">CGFloat</a>
               </li>
@@ -144,10 +156,16 @@
                 <a href="Extensions/DateFormatter/Stream.html">– Stream</a>
               </li>
               <li class="nav-group-task">
+                <a href="Extensions/IndexPath.html">IndexPath</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Extensions/JSONDecoder.html">JSONDecoder</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/JSONEncoder.html">JSONEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/Reactive.html">Reactive</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/Token.html">Token</a>
@@ -184,6 +202,14 @@
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/UIViewController.html">UIViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Protocols/RxKeyboardType.html">RxKeyboardType</a>
               </li>
             </ul>
           </li>
@@ -547,6 +573,37 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10Foundation9IndexPathV"></a>
+                    <a name="//apple_ref/swift/Extension/IndexPath" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10Foundation9IndexPathV">IndexPath</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="Extensions/IndexPath.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">IndexPath</span> <span class="p">:</span> <span class="kt">ReferenceConvertible</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Hashable</span><span class="p">,</span> <span class="kt">MutableCollection</span><span class="p">,</span> <span class="kt">RandomAccessCollection</span><span class="p">,</span> <span class="kt">Comparable</span><span class="p">,</span> <span class="kt">ExpressibleByArrayLiteral</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/c:objc(cs)UIColor"></a>
                     <a name="//apple_ref/swift/Extension/UIColor" class="dashAnchor"></a>
                     <a class="token" href="#/c:objc(cs)UIColor">UIColor</a>
@@ -762,10 +819,79 @@
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV"></a>
+                    <a name="//apple_ref/swift/Extension/Reactive" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV">Reactive</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="Extensions/Reactive.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">Reactive</span><span class="o">&lt;</span><span class="kt">Base</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Array%20extension%20for%20ChatItem"></a>
+                <a name="//apple_ref/swift/Section/Array extension for ChatItem" class="dashAnchor"></a>
+                <a href="#/Array%20extension%20for%20ChatItem">
+                  <h3 class="section-name">Array extension for ChatItem</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:Sa"></a>
+                    <a name="//apple_ref/swift/Extension/Array" class="dashAnchor"></a>
+                    <a class="token" href="#/s:Sa">Array</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="Extensions/Array.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">Array</span><span class="o">&lt;</span><span class="kt">Element</span><span class="o">&gt;</span> <span class="p">:</span> <span class="n">_DestructorSafeContainer</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-10)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-22)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

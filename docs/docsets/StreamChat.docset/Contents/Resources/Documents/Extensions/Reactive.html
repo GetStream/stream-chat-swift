@@ -14,7 +14,7 @@
     <a title="Reactive Extension Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (58% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (89% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -86,6 +86,12 @@
                 <a href="../Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/RxKeyboard.html">RxKeyboard</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RxWebSocketDelegateProxy.html">RxWebSocketDelegateProxy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/TableView.html">TableView</a>
               </li>
               <li class="nav-group-task">
@@ -126,11 +132,17 @@
               <li class="nav-group-task">
                 <a href="../Enums/ViewChanges.html">ViewChanges</a>
               </li>
+              <li class="nav-group-task">
+                <a href="../Enums/WebSocketEvent.html">WebSocketEvent</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
             <a href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/Array.html">Array</a>
+              </li>
               <li class="nav-group-task">
                 <a href="../Extensions/CGFloat.html">CGFloat</a>
               </li>
@@ -144,6 +156,9 @@
                 <a href="../Extensions/DateFormatter/Stream.html">– Stream</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Extensions/IndexPath.html">IndexPath</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Extensions/JSONDecoder.html">JSONDecoder</a>
               </li>
               <li class="nav-group-task">
@@ -153,10 +168,7 @@
                 <a href="../Extensions/Reactive.html">Reactive</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/String.html">String</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/TimeInterval.html">TimeInterval</a>
+                <a href="../Extensions/Token.html">Token</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
@@ -190,6 +202,14 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIViewController.html">UIViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/RxKeyboardType.html">RxKeyboardType</a>
               </li>
             </ul>
           </li>
@@ -292,10 +312,10 @@
             <a href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10StreamChat14GestureFactorya">GestureFactory</a>
+                <a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Typealiases.html#/s:10StreamChat5Tokena">Token</a>
+                <a href="../Typealiases.html#/s:10StreamChat13TokenProvidera">TokenProvider</a>
               </li>
             </ul>
           </li>
@@ -319,9 +339,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV10StreamChatSo6UIViewCRbzlE10anyGesturey0A5Cocoa12ControlEventVySo19UIGestureRecognizerCGSay0aH07FactoryVyALG_So0lM5StateV4whentGF"></a>
-                    <a name="//apple_ref/swift/Method/anyGesture(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV10StreamChatSo6UIViewCRbzlE10anyGesturey0A5Cocoa12ControlEventVySo19UIGestureRecognizerCGSay0aH07FactoryVyALG_So0lM5StateV4whentGF">anyGesture(_:)</a>
+                    <a name="/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE8responseAA10ObservableCyAD0gH5EventOGvp"></a>
+                    <a name="//apple_ref/swift/Property/response" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE8responseAA10ObservableCyAD0gH5EventOGvp">response</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -329,43 +349,151 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Reactive wrapper for multiple view gesture recognizers.
-It automatically attaches the gesture recognizers to the receiver view.
-The value the <code>Observable</code> emits is the gesture recognizer itself.</p>
-
-<p>rx.anyGesture can&rsquo;t error and is subscribed/observed on main scheduler.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">anyGesture</span><span class="p">(</span><span class="n">_</span> <span class="nv">factories</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Typealiases.html#/s:10StreamChat14GestureFactorya">GestureFactory</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">ControlEvent</span><span class="o">&lt;</span><span class="kt">GestureRecognizer</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">response</span><span class="p">:</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/WebSocketEvent.html">WebSocketEvent</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>factories</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a <code>(Factory + state)</code> collection you want to use to create the <code>GestureRecognizers</code> to add and observe</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE4textAA10ObservableCySSGvp"></a>
+                    <a name="//apple_ref/swift/Property/text" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE4textAA10ObservableCySSGvp">text</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
                       </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>a <code>ControlEvent&lt;G&gt;</code> that re-emit the gesture recognizer itself</p>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">text</span><span class="p">:</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE9connectedAA10ObservableCySbGvp"></a>
+                    <a name="//apple_ref/swift/Property/connected" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE9connectedAA10ObservableCySbGvp">connected</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">connected</span><span class="p">:</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE5write4dataAA10ObservableCyytG10Foundation4DataV_tF"></a>
+                    <a name="//apple_ref/swift/Method/write(data:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE5write4dataAA10ObservableCyytG10Foundation4DataV_tF">write(data:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">write</span><span class="p">(</span><span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">Void</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE5write4pingAA10ObservableCyytG10Foundation4DataV_tF"></a>
+                    <a name="//apple_ref/swift/Method/write(ping:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE5write4pingAA10ObservableCyytG10Foundation4DataV_tF">write(ping:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">write</span><span class="p">(</span><span class="nv">ping</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">Void</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE5write6stringAA10ObservableCyytGSS_tF"></a>
+                    <a name="//apple_ref/swift/Method/write(string:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV10StreamChat10Starscream15WebSocketClientRzlE5write6stringAA10ObservableCyytGSS_tF">write(string:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">write</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">Void</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -375,7 +503,7 @@ The value the <code>Observable</code> emits is the gesture recognizer itself.</p
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-08)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-22)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
