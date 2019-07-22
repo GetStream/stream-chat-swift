@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8AD0D5EB22E5FD4500933209 /* RxTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8ADAD2D622E5B73A009FCE34 /* RxTest.framework */; };
 		8ADAD1AE22E5B6A6009FCE34 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8ADAD1A422E5B6A6009FCE34 /* StreamChat.framework */; };
 		8ADAD1B322E5B6A6009FCE34 /* StreamChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAD1B222E5B6A6009FCE34 /* StreamChatTests.swift */; };
 		8ADAD1B522E5B6A6009FCE34 /* StreamChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADAD1A722E5B6A6009FCE34 /* StreamChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -320,7 +319,6 @@
 				8ADAD2DB22E5B73A009FCE34 /* RxBlocking.framework in Frameworks */,
 				8ADAD2E022E5B73A009FCE34 /* RxRelay.framework in Frameworks */,
 				8ADAD2D922E5B73A009FCE34 /* RxCocoa.framework in Frameworks */,
-				8AD0D5EB22E5FD4500933209 /* RxTest.framework in Frameworks */,
 				8ADAD2DC22E5B73A009FCE34 /* RxGesture.framework in Frameworks */,
 				8ADAD2E222E5B73A009FCE34 /* RxAppState.framework in Frameworks */,
 			);
@@ -838,7 +836,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftyGif.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/RxTest.framework",
 			);
 			name = Carthage;
 			outputFileListPaths = (
@@ -856,7 +853,6 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyGif.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxTest.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
