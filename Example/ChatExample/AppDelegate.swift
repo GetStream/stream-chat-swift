@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChat
 import Fabric
 import Crashlytics
 import RxSwift

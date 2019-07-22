@@ -14,8 +14,8 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8A91163D22C781500006FB01"
-               BuildableName = "StreamChat.app"
+               BlueprintIdentifier = "8ADAD1A322E5B6A6009FCE34"
+               BuildableName = "StreamChat.framework"
                BlueprintName = "StreamChat"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
@@ -28,12 +28,22 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "8ADAD1AC22E5B6A6009FCE34"
+               BuildableName = "StreamChatTests.xctest"
+               BlueprintName = "StreamChatTests"
+               ReferencedContainer = "container:StreamChat.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8A91163D22C781500006FB01"
-            BuildableName = "StreamChat.app"
+            BlueprintIdentifier = "8ADAD1A322E5B6A6009FCE34"
+            BuildableName = "StreamChat.framework"
             BlueprintName = "StreamChat"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
@@ -49,30 +59,18 @@
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
-      stopOnEveryMainThreadCheckerIssue = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8A91163D22C781500006FB01"
-            BuildableName = "StreamChat.app"
+            BlueprintIdentifier = "8ADAD1A322E5B6A6009FCE34"
+            BuildableName = "StreamChat.framework"
             BlueprintName = "StreamChat"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
-         <AdditionalOption
-            key = "MallocStackLogging"
-            value = ""
-            isEnabled = "YES">
-         </AdditionalOption>
-         <AdditionalOption
-            key = "PrefersMallocStackLoggingLite"
-            value = ""
-            isEnabled = "YES">
-         </AdditionalOption>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
@@ -81,16 +79,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8A91163D22C781500006FB01"
-            BuildableName = "StreamChat.app"
+            BlueprintIdentifier = "8ADAD1A322E5B6A6009FCE34"
+            BuildableName = "StreamChat.framework"
             BlueprintName = "StreamChat"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
