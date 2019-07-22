@@ -8,12 +8,20 @@
 
 import UIKit
 
-extension IndexPath {
+public extension IndexPath {
     
+    /// Create an `IndexPath` with a given row and section 0.
+    ///
+    /// - Parameter row: a row.
+    /// - Returns: an IndexPath(row: row, section: 0).
     static func row(_ row: Int) -> IndexPath {
         return IndexPath(row: row, section: 0)
     }
     
+    /// Create an `IndexPath` with a given item and section 0.
+    ///
+    /// - Parameter item: an item.
+    /// - Returns: an IndexPath(item: item, section: 0).
     static func item(_ item: Int) -> IndexPath {
         return IndexPath(item: item, section: 0)
     }
