@@ -13,10 +13,12 @@ import RxCocoa
 /// A channels view controller.
 open class ChannelsViewController: UIViewController {
     
-    let disposeBag = DisposeBag()
+    /// A dispose bag for rx subscriptions.
+    public let disposeBag = DisposeBag()
     /// A chat style.
     public var style = ChatViewStyle()
-    private(set) var items = [ChatItem]()
+    /// A list of table view items, e.g. channel presenters.
+    public private(set) var items = [ChatItem]()
     /// A channels presenter.
     public var channelsPresenter = ChannelsPresenter(channelType: .messaging)
     
@@ -95,18 +97,20 @@ open class ChannelsViewController: UIViewController {
     // MARK: - Show Chat
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        show(chatViewController: createChatViewController(at: indexPath.row))
+        guard indexPath.row < items.count, let channelPresenter = items[indexPath.row].channelPresenter else {
+            return
+        }
+        
+        show(chatViewController: createChatViewController(with: channelPresenter, indexPath: indexPath))
     }
     
     /// Creates a chat view controller for the selected channel cell.
     ///
-    /// - Parameter row: a selected row of a channel cell.
+    /// - Parameters:
+    ///     - channelPresenter: a channel presenter of a selected row.
+    ///     - indexPath: a selected index path.
     /// - Returns: a chat view controller.
-    open func createChatViewController(at row: Int) -> ChatViewController? {
-        guard row < items.count, let channelPresenter = items[row].channelPresenter else {
-            return nil
-        }
-        
+    open func createChatViewController(with channelPresenter: ChannelPresenter, indexPath: IndexPath) -> ChatViewController {
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style
         chatViewController.channelPresenter = channelPresenter
@@ -114,7 +118,7 @@ open class ChannelsViewController: UIViewController {
         if channelPresenter.channel.config.readEventsEnabled {
             channelPresenter.isReadUpdates.asObservable()
                 .takeUntil(chatViewController.rx.deallocated)
-                .subscribe(onNext: { [weak self] in self?.tableView.reloadRows(at: [.row(row)], with: .none) })
+                .subscribe(onNext: { [weak self] in self?.tableView.reloadRows(at: [indexPath], with: .none) })
                 .disposed(by: disposeBag)
         }
         
@@ -124,11 +128,7 @@ open class ChannelsViewController: UIViewController {
     /// Presents a chat view controller of a selected channel cell.
     ///
     /// - Parameter chatViewController: a chat view controller with a selected channel.
-    open func show(chatViewController: ChatViewController?) {
-        guard let chatViewController = chatViewController else {
-            return
-        }
-        
+    open func show(chatViewController: ChatViewController) {
         chatViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(chatViewController, animated: true)
     }
@@ -174,11 +174,11 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         }
     }
     
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
     
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard indexPath.row < items.count else {
             return .unused
         }
@@ -194,7 +194,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         return channelCell(at: indexPath, channelPresenter: channelPresenter)
     }
     
-    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row < items.count, case .loading(let inProgress) = items[indexPath.row], !inProgress {
             items[indexPath.row] = .loading(true)
             channelsPresenter.loadNext()

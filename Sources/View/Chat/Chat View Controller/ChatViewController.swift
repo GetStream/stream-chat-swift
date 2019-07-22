@@ -15,9 +15,12 @@ import RxCocoa
 open class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     /// A chat view style.
     public var style = ChatViewStyle()
-    let disposeBag = DisposeBag()
+    /// A dispose bag for rx subscriptions.
+    public let disposeBag = DisposeBag()
+    /// A list of table view items, e.g. messages.
+    public private(set) var items = [ChatItem]()
+    /// A reaction view.
     weak var reactionsView: ReactionsView?
-    private(set) var items = [ChatItem]()
     
     var scrollEnabled: Bool {
         return reactionsView == nil
@@ -266,11 +269,11 @@ extension ChatViewController {
         updateTitleReplyCount()
     }
     
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
     }
     
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard indexPath.row < items.count else {
             return .unused
         }
@@ -295,7 +298,7 @@ extension ChatViewController {
         return cell
     }
     
-    public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         guard indexPath.row < items.count else {
             return
         }
@@ -312,13 +315,13 @@ extension ChatViewController {
         }
     }
     
-    public func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if let cell = cell as? MessageTableViewCell {
             cell.free()
         }
     }
     
-    public func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+    open func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         return false
     }
 }
