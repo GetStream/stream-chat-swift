@@ -1,0 +1,105 @@
+//
+//  Client.swift
+//  StreamChat
+//
+//  Created by Alexey Bukhtin on 01/04/2019.
+//  Copyright © 2019 Stream.io Inc. All rights reserved.
+//
+
+import Foundation
+import RxSwift
+
+/// A network client.
+public final class Client {
+    /// A request completion block.
+    public typealias Completion<T: Decodable> = (Result<T, ClientError>) -> Void
+    
+    /// A client config (see `Config`).
+    public static var config = Config(apiKey: "")
+    /// A shared client.
+    public static let shared = Client()
+    
+    let apiKey: String
+    let baseURL: BaseURL
+    
+    var token: Token? {
+        didSet { tokenSubject.onNext(token) }
+    }
+    
+    let tokenSubject = BehaviorSubject<Token?>(value: nil)
+    
+    /// A web socket client.
+    public internal(set) lazy var webSocket = WebSocket(URLRequest(url: baseURL.url(.webSocket)))
+    
+    lazy var urlSession = setupURLSession(token: "")
+    private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
+    let callbackQueue: DispatchQueue?
+    private let uuid = UUID()
+    let logOptions: ClientLogger.Options
+    /// A log manager.
+    public let logger: ClientLogger?
+    /// The current user.
+    public var user: User?
+    
+    public private(set) lazy var connection = createObservableConnection()
+    
+    /// Init a network client.
+    ///
+    /// - Parameters:
+    ///     - apiKey: a Stream Chat API key.
+    ///     - baseURL: a base URL (see `BaseURL`).
+    ///     - callbackQueue: a request callback queue, default nil (some background thread).
+    ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+    public init(apiKey: String = Client.config.apiKey,
+                baseURL: BaseURL = Client.config.baseURL,
+                callbackQueue: DispatchQueue? = Client.config.callbackQueue,
+                logOptions: ClientLogger.Options = Client.config.logOptions) {
+        self.apiKey = apiKey
+        self.baseURL = baseURL
+        self.callbackQueue = callbackQueue
+        self.logOptions = logOptions
+        
+        if logOptions == .all || logOptions == .requests || logOptions == .requestsHeaders {
+            logger = ClientLogger(icon: "🐴", options: logOptions)
+        } else {
+            logger = nil
+        }
+    }
+}
+
+extension Client {
+    /// A config for a shread `Client`.
+    public struct Config {
+        /// A Stream Chat API key.
+        public let apiKey: String
+        /// A base URL (see `BaseURL`).
+        public let baseURL: BaseURL
+        /// A request callback queue, default nil (some background thread).
+        public let callbackQueue: DispatchQueue?
+        /// Enable logs (see `ClientLogger.Options`), e.g. `.all`.
+        public let logOptions: ClientLogger.Options
+        
+        /// Init a config for a shread `Client`.
+        ///
+        /// - Parameters:
+        ///     - apiKey: a Stream Chat API key.
+        ///     - baseURL: a base URL (see `BaseURL`).
+        ///     - callbackQueue: a request callback queue, default nil (some background thread).
+        ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+        public init(apiKey: String,
+                    baseURL: BaseURL = BaseURL(),
+                    callbackQueue: DispatchQueue? = nil,
+                    logOptions: ClientLogger.Options = .none) {
+            self.apiKey = apiKey
+            self.baseURL = baseURL
+            self.callbackQueue = callbackQueue
+            self.logOptions = logOptions
+        }
+    }
+    
+    enum Method: String {
+        case get = "GET"
+        case post = "POST"
+        case delete = "DELETE"
+    }
+}
