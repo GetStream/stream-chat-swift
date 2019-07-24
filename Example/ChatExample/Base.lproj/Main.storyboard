@@ -13,7 +13,7 @@
         <!--Channels View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ChannelsViewController" customModule="StreamChat" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ChannelsViewController" customModule="StreamChatUI" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -49,7 +49,7 @@
         <!--Channels View Controller-->
         <scene sceneID="tf3-xX-7NC">
             <objects>
-                <viewController id="cor-4m-0UN" customClass="ChannelsViewController" customModule="StreamChat" sceneMemberID="viewController">
+                <viewController id="cor-4m-0UN" customClass="ChannelsViewController" customModule="StreamChatUI" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="XIo-6h-3fA">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -118,7 +118,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oEb-lB-XXV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="383" y="627"/>
+            <point key="canvasLocation" x="-471" y="287"/>
         </scene>
     </scenes>
 </document>
