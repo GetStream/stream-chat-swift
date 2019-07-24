@@ -51,7 +51,6 @@
 		8ABE79B922E73A03002FFF7B /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAD23722E5B6DD009FCE34 /* Presenter.swift */; };
 		8ABE79BA22E73A03002FFF7B /* RxKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAD1C122E5B6DD009FCE34 /* RxKeyboard.swift */; };
 		8ABE79BB22E73A03002FFF7B /* Chat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8ADAD1F522E5B6DD009FCE34 /* Chat.xcassets */; };
-		8ABE79BC22E73A48002FFF7B /* ChatItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAD20422E5B6DD009FCE34 /* ChatItem.swift */; };
 		8ABE79BD22E73A63002FFF7B /* UIImage+Icons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAD1C722E5B6DD009FCE34 /* UIImage+Icons.swift */; };
 		8ABE79BE22E73A63002FFF7B /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAD1C822E5B6DD009FCE34 /* UIImage+Extensions.swift */; };
 		8ABE79BF22E73A63002FFF7B /* UIImage+Render.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAD1C922E5B6DD009FCE34 /* UIImage+Render.swift */; };
@@ -94,6 +93,7 @@
 		8AD5EC5D22E7717E005CFAC9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8ADAD2D022E5B73A009FCE34 /* Nuke.framework */; };
 		8AD5EC5E22E771E2005CFAC9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8ADAD2D822E5B73A009FCE34 /* SwiftyGif.framework */; };
 		8AD5EC5F22E771FF005CFAC9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8ADAD2CE22E5B73A009FCE34 /* RxGesture.framework */; };
+		8AD5EC6222E7AB00005CFAC9 /* ChatItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAD20422E5B6DD009FCE34 /* ChatItem.swift */; };
 		8ADAD1AE22E5B6A6009FCE34 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8ADAD1A422E5B6A6009FCE34 /* StreamChat.framework */; };
 		8ADAD1B322E5B6A6009FCE34 /* StreamChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADAD1B222E5B6A6009FCE34 /* StreamChatTests.swift */; };
 		8ADAD1B522E5B6A6009FCE34 /* StreamChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8ADAD1A722E5B6A6009FCE34 /* StreamChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -362,7 +362,6 @@
 				8ADAD1F622E5B6DD009FCE34 /* Model */,
 				8ADDC3DD22E7380100662085 /* Notifications */,
 				8ADAD1C322E5B6DD009FCE34 /* Extensions */,
-				8ABE798322E7392F002FFF7B /* Libraries */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -370,21 +369,12 @@
 		8ABE798122E738F5002FFF7B /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				8AD5EC6322E84D5B005CFAC9 /* Model */,
 				8ADAD20922E5B6DD009FCE34 /* View */,
 				8ABE79E022E73FD1002FFF7B /* Extensions */,
-				8ADAD1BF22E5B6DD009FCE34 /* Libraries */,
 				8ADAD1F522E5B6DD009FCE34 /* Chat.xcassets */,
 			);
 			path = UI;
-			sourceTree = "<group>";
-		};
-		8ABE798322E7392F002FFF7B /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				8ADAD1C222E5B6DD009FCE34 /* Reachability+Rx.swift */,
-				8ADAD1C022E5B6DD009FCE34 /* RxStarscream.swift */,
-			);
-			path = Libraries;
 			sourceTree = "<group>";
 		};
 		8ABE798A22E739B9002FFF7B /* StreamChatUI */ = {
@@ -413,9 +403,20 @@
 		8ABE79ED22E7433E002FFF7B /* Rx */ = {
 			isa = PBXGroup;
 			children = (
+				8ADAD1C222E5B6DD009FCE34 /* Reachability+Rx.swift */,
+				8ADAD1C022E5B6DD009FCE34 /* RxStarscream.swift */,
 				8ADAD1F322E5B6DD009FCE34 /* unwrap.swift */,
 			);
 			path = Rx;
+			sourceTree = "<group>";
+		};
+		8AD5EC6322E84D5B005CFAC9 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				8ADAD20422E5B6DD009FCE34 /* ChatItem.swift */,
+				8ADAD20822E5B6DD009FCE34 /* ViewChanges.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		8ADAD19A22E5B6A6009FCE34 = {
@@ -470,14 +471,6 @@
 				8ABE798122E738F5002FFF7B /* UI */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		8ADAD1BF22E5B6DD009FCE34 /* Libraries */ = {
-			isa = PBXGroup;
-			children = (
-				8ADAD1C122E5B6DD009FCE34 /* RxKeyboard.swift */,
-			);
-			path = Libraries;
 			sourceTree = "<group>";
 		};
 		8ADAD1C322E5B6DD009FCE34 /* Extensions */ = {
@@ -573,6 +566,7 @@
 		8ADAD1F022E5B6DD009FCE34 /* Rx */ = {
 			isa = PBXGroup;
 			children = (
+				8ADAD1C122E5B6DD009FCE34 /* RxKeyboard.swift */,
 				8ADAD1F122E5B6DD009FCE34 /* RxGesture+Extensions.swift */,
 				8ADAD1F222E5B6DD009FCE34 /* RxDocumentPickerViewController.swift */,
 			);
@@ -595,7 +589,6 @@
 				8ADAD20122E5B6DD009FCE34 /* Member.swift */,
 				8ADAD20222E5B6DD009FCE34 /* MessageAction.swift */,
 				8ADAD20322E5B6DD009FCE34 /* Reaction.swift */,
-				8ADAD20422E5B6DD009FCE34 /* ChatItem.swift */,
 				8ADAD20522E5B6DD009FCE34 /* Pagination.swift */,
 				8ADAD20622E5B6DD009FCE34 /* Channel+Create.swift */,
 				8ADAD20722E5B6DD009FCE34 /* Filter.swift */,
@@ -611,7 +604,6 @@
 				8ADAD22C22E5B6DD009FCE34 /* Web View */,
 				8ADAD22E22E5B6DD009FCE34 /* Image Gallery */,
 				8ADAD23022E5B6DD009FCE34 /* Style */,
-				8ADAD20822E5B6DD009FCE34 /* ViewChanges.swift */,
 				8ADAD23722E5B6DD009FCE34 /* Presenter.swift */,
 			);
 			path = View;
@@ -620,13 +612,13 @@
 		8ADAD20A22E5B6DD009FCE34 /* Chat */ = {
 			isa = PBXGroup;
 			children = (
+				8ADAD22722E5B6DD009FCE34 /* ChannelPresenter.swift */,
+				8ADAD21D22E5B6DD009FCE34 /* Chat View Controller */,
+				8ADAD21322E5B6DD009FCE34 /* Composer */,
 				8ADAD20B22E5B6DD009FCE34 /* Cells */,
 				8ADAD21222E5B6DD009FCE34 /* ChatFooterView.swift */,
-				8ADAD21322E5B6DD009FCE34 /* Composer */,
-				8ADAD21D22E5B6DD009FCE34 /* Chat View Controller */,
 				8ADAD22522E5B6DD009FCE34 /* AvatarView.swift */,
 				8ADAD22622E5B6DD009FCE34 /* ReactionsView.swift */,
-				8ADAD22722E5B6DD009FCE34 /* ChannelPresenter.swift */,
 				8ADAD22822E5B6DD009FCE34 /* Attachments */,
 			);
 			path = Chat;
@@ -1041,7 +1033,6 @@
 				8ABE79C722E73A80002FFF7B /* DismissSegue.swift in Sources */,
 				8ABE799922E73A03002FFF7B /* MessageTableViewCell.swift in Sources */,
 				8ABE799122E73A03002FFF7B /* ChannelsViewController.swift in Sources */,
-				8ABE79BC22E73A48002FFF7B /* ChatItem.swift in Sources */,
 				8ABE79BA22E73A03002FFF7B /* RxKeyboard.swift in Sources */,
 				8ABE79CF22E73A80002FFF7B /* TableView.swift in Sources */,
 				8ABE799722E73A03002FFF7B /* ReadUsersView.swift in Sources */,
@@ -1049,6 +1040,7 @@
 				8ABE79D422E73A80002FFF7B /* CGRect+Extensions.swift in Sources */,
 				8ABE799322E73A03002FFF7B /* ChannelTableViewCell.swift in Sources */,
 				8ABE79D822E73A80002FFF7B /* UITableView+Reusable.swift in Sources */,
+				8AD5EC6222E7AB00005CFAC9 /* ChatItem.swift in Sources */,
 				8ABE79B422E73A03002FFF7B /* MessageViewStyle.swift in Sources */,
 				8ABE79E822E742D8002FFF7B /* CharacterSet+Extensions.swift in Sources */,
 				8ABE79AA22E73A03002FFF7B /* ChatViewController+Cells.swift in Sources */,
