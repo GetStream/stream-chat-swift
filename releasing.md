@@ -20,7 +20,9 @@
 7. Update docs: `jazzy --podspec StreamChat.podspec --output docs/ui -a GetStream.io -u getstream.io -g https://github.com/GetStream/stream-chat-swift`
 8. Commit updated docs to the repo.
 9. Add release notes: https://github.com/GetStream/stream-chat-swift/releases
-10. Push the release to the Cocoapods: `pod trunk push GetStreamCore.podspec` and `pod trunk push GetStream.podspec`
+10. Push the release to the Cocoapods: 
+  - `pod trunk push StreamChatCore.podspec`
+  - `pod trunk push StreamChat.podspec`
 
 ```
 --------------------------------------------------------------------------------
