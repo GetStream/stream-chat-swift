@@ -8,7 +8,7 @@
 
 import UIKit
 import StreamChat
-import StreamChatUI
+import StreamChatCore
 import Fabric
 import Crashlytics
 import RxSwift

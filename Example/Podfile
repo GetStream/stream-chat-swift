@@ -3,6 +3,6 @@ inhibit_all_warnings!
 
 target 'ChatExample' do
   use_frameworks!
-  pod 'StreamChatUI'
+  pod 'StreamChat'
   pod 'Crashlytics'
 end

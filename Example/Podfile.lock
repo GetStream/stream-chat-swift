@@ -20,23 +20,23 @@ PODS:
   - SnapKit (5.0.0)
   - Starscream (3.1.0)
   - StreamChat (1.1.0):
+    - Nuke (~> 8.0)
+    - RxGesture (~> 3.0)
+    - SnapKit (~> 5.0)
+    - StreamChatCore
+    - SwiftyGif (~> 5.1)
+  - StreamChatCore (1.1.0):
     - GzipSwift (~> 5.0)
     - ReachabilitySwift (~> 4.3)
     - RxAppState (~> 1.5)
     - RxSwift (~> 5.0)
     - Starscream (~> 3.0)
-  - StreamChatUI (1.1.0):
-    - Nuke (~> 8.0)
-    - RxGesture (~> 3.0)
-    - SnapKit (~> 5.0)
-    - StreamChat (~> 1.0)
-    - SwiftyGif (~> 5.1)
   - SwiftyGif (5.1.1)
 
 DEPENDENCIES:
   - Crashlytics
   - StreamChat (from `..`)
-  - StreamChatUI (from `..`)
+  - StreamChatCore (from `..`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -57,7 +57,7 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   StreamChat:
     :path: ".."
-  StreamChatUI:
+  StreamChatCore:
     :path: ".."
 
 SPEC CHECKSUMS:
@@ -73,10 +73,10 @@ SPEC CHECKSUMS:
   RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
   SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
-  StreamChat: af2d5934702e5b8d296307e60591e9f49ecbeae6
-  StreamChatUI: 79374d65057fc5a3ed0e848d7554322e6e193173
+  StreamChat: 3968ce8c540470c73dc1c695870f6a5b1352fef6
+  StreamChatCore: 41473757f7362a2a2311753c22043923866f4453
   SwiftyGif: f7702483db93586a41f04f4927cd682852a2fa10
 
-PODFILE CHECKSUM: fbeffdb8cc902c90e5791dfaeeaca23884426da2
+PODFILE CHECKSUM: 1285fe97a80001129e4801d3e4367d36cc976189
 
 COCOAPODS: 1.7.5

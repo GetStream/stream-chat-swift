@@ -7,8 +7,8 @@
 //
 
 import UIKit
+import StreamChatCore
 import StreamChat
-import StreamChatUI
 
 class CustomChatViewController: ChatViewController {
     
