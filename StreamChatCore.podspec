@@ -1,8 +1,8 @@
 Pod::Spec.new do |spec|
-  spec.name = "StreamChat"
+  spec.name = "StreamChatCore"
   spec.version = "1.1.0"
-  spec.summary = "Stream iOS Chat"
-  spec.description = "stream-chat-swift is the official Swift client and UI for Stream Chat, a service for building chat applications."
+  spec.summary = "Stream iOS Chat Core"
+  spec.description = "stream-chat-swift is the official Swift client for Stream Chat, a service for building chat applications."
 
   spec.homepage = "https://getstream.io/chat/"
   spec.license = { :type => "BSD-3", :file => "LICENSE" }
@@ -13,14 +13,13 @@ Pod::Spec.new do |spec|
   spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
   spec.requires_arc = true
 
-  spec.source_files  = "Sources/UI/**/*.swift"
-  spec.resources = "Sources/UI/Chat.xcassets"
+  spec.source_files  = "Sources/Core/*  */*.swift"
 
   spec.framework = "Foundation", "UIKit"
 
-  spec.dependency "StreamChatCore"
-  spec.dependency "Nuke", "~> 8.0"
-  spec.dependency "SnapKit", "~> 5.0"
-  spec.dependency "SwiftyGif", "~> 5.1"
-  spec.dependency "RxGesture", "~> 3.0"
+  spec.dependency "RxSwift", "~> 5.0"
+  spec.dependency "RxAppState", "~> 1.5"
+  spec.dependency "Starscream", "~> 3.0"
+  spec.dependency "ReachabilitySwift", "~> 4.3"
+  spec.dependency "GzipSwift", "~> 5.0"
 end

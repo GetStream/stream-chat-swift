@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import StreamChat
+import StreamChatCore
 
 extension UIImage {
     /// A file types images.

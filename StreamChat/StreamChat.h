@@ -2,7 +2,7 @@
 //  StreamChat.h
 //  StreamChat
 //
-//  Created by Alexey Bukhtin on 22/07/2019.
+//  Created by Alexey Bukhtin on 25/07/2019.
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 

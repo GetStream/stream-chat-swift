@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8AD5EC8E22E9A3E8005CFAC9"
-               BuildableName = "StreamChat.framework"
-               BlueprintName = "StreamChat"
+               BlueprintIdentifier = "8AD5EC9E22E9B355005CFAC9"
+               BuildableName = "StreamChatCore.framework"
+               BlueprintName = "StreamChatCore"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8AD5EC8E22E9A3E8005CFAC9"
-            BuildableName = "StreamChat.framework"
-            BlueprintName = "StreamChat"
+            BlueprintIdentifier = "8AD5EC9E22E9B355005CFAC9"
+            BuildableName = "StreamChatCore.framework"
+            BlueprintName = "StreamChatCore"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -63,9 +63,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8AD5EC8E22E9A3E8005CFAC9"
-            BuildableName = "StreamChat.framework"
-            BlueprintName = "StreamChat"
+            BlueprintIdentifier = "8AD5EC9E22E9B355005CFAC9"
+            BuildableName = "StreamChatCore.framework"
+            BlueprintName = "StreamChatCore"
             ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

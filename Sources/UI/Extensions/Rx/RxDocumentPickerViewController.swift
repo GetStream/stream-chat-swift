@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import StreamChat
+import StreamChatCore
 import RxSwift
 import RxCocoa
 

@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import StreamChat
+import StreamChatCore
 
 /// A view changes.
 ///

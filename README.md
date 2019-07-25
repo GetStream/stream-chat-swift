@@ -26,7 +26,16 @@ pod 'StreamChat'
 ```
 Then run `pod install`.
 
-In any file you'd like to use Stream Chat in, don't forget to import the framework with `import GetStreamChat`.
+If you want to use only client side without UI, you can this entry in your `Podfile`:
+```
+pod 'StreamChatCore'
+```
+
+In any file you'd like to use Stream Chat in, don't forget to import the frameworks:
+```
+import StreamChat
+import StreamChatCore
+```
 
 ### Carthage
 
@@ -34,7 +43,9 @@ To integrate StreamChat into your Xcode project using Carthage, specify it in yo
 ```
 github "GetStream/stream-chat-swift"
 ```
-Then run: `carthage update --platform iOS --new-resolver`
+Then run: `carthage update --platform iOS --new-resolver` and you will get `StreamChat.framework` and `StreamChatCore.framework`.
+
+`StreamChat` contains  `StreamChatCore` and UI part.
 
 ## Documentation
 

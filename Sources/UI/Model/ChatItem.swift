@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import StreamChat
+import StreamChatCore
 
 /// A chat item type for view elements.
 public enum ChatItem: Equatable {
