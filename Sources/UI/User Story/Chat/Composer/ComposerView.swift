@@ -47,8 +47,8 @@ public final class ComposerView: UIView {
     var baseTextHeight = CGFloat.greatestFiniteMagnitude
     private(set) lazy var imagesCollectionView = setupImagesCollectionView()
     private(set) lazy var filesStackView = setupFilesStackView()
-    /// Picked images.
-    var uploader: Uploader?
+    /// Uploader for images and files.
+    public var uploader: Uploader?
     
     /// An editing state of the composer.
     public var isEditing: Bool = false

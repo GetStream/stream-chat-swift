@@ -43,7 +43,8 @@ extension Date {
         return DateFormatter.shortDate.string(from: self)
     }
     
-    var fileName: String {
+    /// Generates a filename from the date.
+    public var fileName: String {
         return DateFormatter.fileName.string(from: self)
     }
     

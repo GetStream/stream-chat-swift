@@ -52,7 +52,8 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         }
     }
     
-    private(set) var typingUsers: [TypingUser] = []
+    /// A list of typing users (see `TypingUser`).
+    public private(set) var typingUsers: [TypingUser] = []
     private var messageReadsToMessageId: [MessageRead: String] = [:]
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
@@ -78,9 +79,10 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         return parentMessage == nil && channel.config.repliesEnabled
     }
     
-    private(set) lazy var changes = Driver.merge(parentMessage == nil ? channelRequest : replyRequest,
-                                                 webSocketChanges,
-                                                 ephemeralChanges)
+    /// An observable view changes (see `ViewChanges`).
+    public private(set) lazy var changes = Driver.merge(parentMessage == nil ? channelRequest : replyRequest,
+                                                        webSocketChanges,
+                                                        ephemeralChanges)
     
     private lazy var channelRequest: Driver<ViewChanges> = request()
         .map { [weak self] in self?.channelEndpoint(pagination: $0) }
@@ -111,8 +113,11 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private(set) lazy var uploader = Uploader(channel: channel)
-    private(set) lazy var isReadUpdates = isReadSubject.asDriver(onErrorJustReturn: ())
+    /// Uploader for images and files.
+    public private(set) lazy var uploader = Uploader(channel: channel)
+    
+    /// An observable updates for the Read event.
+    public private(set) lazy var isReadUpdates = isReadSubject.asDriver(onErrorJustReturn: ())
     
     /// Init a presenter with a given channel.
     ///
@@ -605,7 +610,10 @@ extension ChannelPresenter {
         return typingUsers.count != count
     }
     
-    func typingUsersText() -> String? {
+    /// Creates a text for users typing.
+    ///
+    /// - Returns: a text of users typing, e.g. "<UserName> is typing...", "User1 and 5 others are typing..."
+    public func typingUsersText() -> String? {
         guard !typingUsers.isEmpty else {
             return nil
         }
@@ -727,7 +735,8 @@ extension ChannelPresenter {
         Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), emptyEventCompletion)
     }
     
-    func sendReadIfPossible() {
+    /// Send Read event if the app is active.
+    public func sendReadIfPossible() {
         guard isUnread, UIApplication.shared.appState == .active else {
             return
         }
@@ -768,7 +777,8 @@ extension ChannelPresenter {
 // MARK: - Ephemeral Message Actions
 
 extension ChannelPresenter {
-    func dispatch(action: Attachment.Action, message: Message) {
+    /// Dispatch an ephemeral message action, e.g. shuffle, send.
+    public func dispatch(action: Attachment.Action, message: Message) {
         if action.isCancelled || action.isSend {
             ephemeralSubject.onNext((nil, true))
             
@@ -797,17 +807,21 @@ struct EventResponse: Decodable {
     let event: Event
 }
 
-struct TypingUser: Equatable, Hashable {
-    static let timeout: TimeInterval = 30
+/// A typing user.
+public struct TypingUser: Equatable, Hashable {
+    /// A time interval for a users typing timeout.
+    public static let timeout: TimeInterval = 30
     
-    let user: User
-    let started = Date()
+    /// A typiong user.
+    public let user: User
+    /// A date when the user started typing.
+    public let started = Date()
     
-    static func == (lhs: TypingUser, rhs: TypingUser) -> Bool {
+    public static func == (lhs: TypingUser, rhs: TypingUser) -> Bool {
         return lhs.user == rhs.user
     }
-    
-    func hash(into hasher: inout Hasher) {
+        
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(user)
     }
 }

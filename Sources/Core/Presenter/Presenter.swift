@@ -13,10 +13,12 @@ import RxCocoa
 /// A presenter.
 public class Presenter<T> {
     
-    var items = [T]()
+    /// A list of presenter items.
+    public internal(set) var items = [T]()
     var pageSize: Pagination
     var next: Pagination
-    var isEmpty: Bool { return items.isEmpty }
+    /// Checks if presenter items are empty.
+    public var isEmpty: Bool { return items.isEmpty }
     let loadPagination = PublishSubject<Pagination>()
     
     init(pageSize: Pagination) {
@@ -45,13 +47,15 @@ public class Presenter<T> {
             .share()
     }
     
-    func reload() {
+    /// Reload items.
+    public func reload() {
         next = pageSize
         items = []
         load(pagination: pageSize)
     }
     
-    func loadNext() {
+    /// Load the next page of items.
+    public func loadNext() {
         if next != pageSize {
             load(pagination: next)
         }
