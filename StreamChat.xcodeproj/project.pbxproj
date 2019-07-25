@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A04964222E9D71400E94795 /* Chat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD322E9BA39005CFAC9 /* Chat.xcassets */; };
 		8AD5EC9422E9A3E8005CFAC9 /* StreamChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD5EC9222E9A3E8005CFAC9 /* StreamChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AD5ECA322E9B355005CFAC9 /* StreamChatCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD5ECA122E9B355005CFAC9 /* StreamChatCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AD5ECA822E9B3C4005CFAC9 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
@@ -293,9 +294,9 @@
 		8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nuke.framework; path = Carthage/Build/iOS/Nuke.framework; sourceTree = "<group>"; };
 		8AD5EDD222E9BB0C005CFAC9 /* SwiftyGif.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyGif.framework; path = Carthage/Build/iOS/SwiftyGif.framework; sourceTree = "<group>"; };
 		8AD5EDD822E9C7BC005CFAC9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChat.podspec; sourceTree = "<group>"; };
+		8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChat.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
-		8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatCore.podspec; sourceTree = "<group>"; };
+		8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatCore.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -854,6 +855,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A04964222E9D71400E94795 /* Chat.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -69,7 +69,7 @@ extension UIImage {
     static func chat(named name: String) -> UIImage {
         let name = name == "mp4" ? "mov" : name
         
-        let bundle = Bundle(for: Client.self)
+        let bundle = Bundle(for: ComposerView.self)
         return UIImage(named: name, in: bundle, compatibleWith: nil)
             ?? UIImage(named: "zip", in: bundle, compatibleWith: nil)
             ?? .init(color: UIColor.chatGray.withAlphaComponent(0.5))

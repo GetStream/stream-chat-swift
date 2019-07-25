@@ -13,7 +13,7 @@ Pod::Spec.new do |spec|
   spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
   spec.requires_arc = true
 
-  spec.source_files  = "Sources/Core/*  */*.swift"
+  spec.source_files  = "Sources/Core/**/*.swift"
 
   spec.framework = "Foundation", "UIKit"
 
