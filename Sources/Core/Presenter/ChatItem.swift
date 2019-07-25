@@ -1,13 +1,12 @@
 //
 //  ChatItem.swift
-//  StreamChat
+//  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 13/04/2019.
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
-import StreamChatCore
 
 /// A chat item type for view elements.
 public enum ChatItem: Equatable {

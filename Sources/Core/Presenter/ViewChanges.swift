@@ -1,13 +1,12 @@
 //
 //  ViewChanges.swift
-//  StreamChat
+//  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 16/05/2019.
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
-import StreamChatCore
 
 /// A view changes.
 ///

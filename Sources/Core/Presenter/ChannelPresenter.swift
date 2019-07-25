@@ -1,13 +1,12 @@
 //
 //  ChannelPresenter.swift
-//  StreamChat
+//  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 03/04/2019.
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
-import StreamChatCore
 import RxSwift
 import RxCocoa
 
@@ -44,7 +43,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     }
     
     private var lastAddedOwnMessage: Message?
-    private var lastParsedEvent: StreamChatCore.Event?
+    private var lastParsedEvent: Event?
     private var lastWebSocketEventViewChanges: ViewChanges?
     
     private lazy var unreadMessageReadMVar = MVar<MessageRead>() { [weak self] in
@@ -795,7 +794,7 @@ struct MessagesResponse: Decodable {
 }
 
 struct EventResponse: Decodable {
-    let event: StreamChatCore.Event
+    let event: Event
 }
 
 struct TypingUser: Equatable, Hashable {

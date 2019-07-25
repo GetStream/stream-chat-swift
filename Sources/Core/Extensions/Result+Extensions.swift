@@ -1,6 +1,6 @@
 //
 //  Result+Extensions.swift
-//  StreamChat
+//  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 17/04/2019.
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
