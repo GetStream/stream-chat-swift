@@ -1,9 +1,15 @@
 # stream-chat-swift
 
 [![Language: Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org)
-![Cocoapods](https://img.shields.io/cocoapods/v/StreamChat.svg)
-[![Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/badge.svg)](https://getstream.github.io/stream-chat-swift/)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+
+![StreamChatCore](https://img.shields.io/badge/Framework-StreamChatCore-blue)
+![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatCore.svg)
+[![Core Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/core/badge.svg)](https://getstream.github.io/stream-chat-swift/core)
+
+![StreamChat](https://img.shields.io/badge/Framework-StreamChat-blue)
+![Cocoapods](https://img.shields.io/cocoapods/v/StreamChat.svg)
+[![UI Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/ui/badge.svg)](https://getstream.github.io/stream-chat-swift/ui)
 
 [stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat applications.
 
@@ -51,7 +57,9 @@ Then run: `carthage update --platform iOS --new-resolver` and you will get `Stre
 
 [Official API Docs](https://getstream.io/chat/docs)
 
-[API Reference](https://getstream.github.io/stream-chat-swift/)
+[Core API Reference](https://getstream.github.io/stream-chat-swift/core)
+
+[UI API Reference](https://getstream.github.io/stream-chat-swift/ui)
 
 [Getting started tutorial](https://getstream.io/chat/ios-chat/tutorial/)
 
