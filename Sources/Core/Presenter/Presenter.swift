@@ -10,12 +10,14 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-/// A presenter.
+/// A general presenter for making requests with pagination.
 public class Presenter<T> {
     
     /// A list of presenter items.
     public internal(set) var items = [T]()
+    /// A pagination of an initial page size, e.g. .limit(25)
     var pageSize: Pagination
+    /// A pagination for the next request.
     var next: Pagination
     /// Checks if presenter items are empty.
     public var isEmpty: Bool { return items.isEmpty }

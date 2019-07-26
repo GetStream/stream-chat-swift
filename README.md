@@ -24,6 +24,11 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 
 ## Installation
 
+Stream Chat SDK consists of two frameworks: `StreamChatCore` and `StreamChat`. 
+
+- `StreamChatCore` — provide Stream Chat with models, presenters, notification manager and the client for requests and web socket events.
+- `StreamChat` — depends on the first one and implements UI with customizable styles.
+
 ### CocoaPods
 
 To integrate StreamChat into your Xcode project using CocoaPods, add this entry in your `Podfile`:
@@ -32,26 +37,45 @@ pod 'StreamChat'
 ```
 Then run `pod install`.
 
-If you want to use only client side without UI, you can this entry in your `Podfile`:
+If you want to use only `StreamChatCore`, you can add this entry in your `Podfile`:
 ```
 pod 'StreamChatCore'
 ```
 
 In any file you'd like to use Stream Chat in, don't forget to import the frameworks:
 ```
-import StreamChat
 import StreamChatCore
+```
+and for UI components:
+```
+import StreamChat
 ```
 
 ### Carthage
 
-To integrate StreamChat into your Xcode project using Carthage, specify it in your `Cartfile`:
+To integrate Stream Chat into your Xcode project using Carthage, specify it in your `Cartfile`:
 ```
 github "GetStream/stream-chat-swift"
 ```
-Then run: `carthage update --platform iOS --new-resolver` and you will get `StreamChat.framework` and `StreamChatCore.framework`.
-
-`StreamChat` contains  `StreamChatCore` and UI part.
+Then run: `carthage update --platform iOS --new-resolver`. This will build frameworks: `StreamChatCore.framework` and `StreamChat.framework` into `<Path to your Project>/Carthage/Build/iOS/` from where you can add them to your project and link them with your app target. Follow with these steps:
+- Open your Xcode project.
+- Select the project in the Navigator.
+- Select your app target.
+- Open `General` panel.
+- Click the `+` button in the `Linked Franeworks and Libraries` section.
+- Click the `Add Other...` and add `StreamChatCore.framework` in `<Path to your Project>/Carthage/Build/iOS/`.
+- Add `StreamChat.framework` if you need UI components.
+- Open `Build Phases` panel.
+- Click the `+` button and select `New Run Script Phase`.
+- Set the content to: `/usr/local/bin/carthage copy-frameworks`.   
+- Add to `Input Files`:
+  - `$(SRCROOT)/Carthage/Build/iOS/StreamChatCore.framework`
+  - `$(SRCROOT)/Carthage/Build/iOS/StreamChat.framework`
+- Add to `Output Files`:
+  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChatCore.framework`
+  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChat.framework`
+  
+  Now build your app.
 
 ## Documentation
 

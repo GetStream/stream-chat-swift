@@ -17,11 +17,24 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     
     /// A channel type.
     public let channelType: ChannelType
+    
     /// Filter channels.
+    ///
+    /// Default value:
+    /// ```
+    /// .key("type", .equal(to: channelType))
+    /// ```
     public lazy var filter: Filter = .key("type", .equal(to: channelType))
+    
     /// Sort channels.
+    ///
+    /// Default value:
+    /// ```
+    /// [Sorting(Channel.DecodingKeys.lastMessageDate.rawValue)]
+    /// ```
     public var sorting: [Sorting] = [.init(Channel.DecodingKeys.lastMessageDate.rawValue)]
-    /// Show channel statuses on a chat view controller of a selected channel.
+    
+    /// Show channel statuses in a selected chat view controller.
     public let showChannelStatuses: Bool
     /// A callback to provide an extra data for a channel.
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
