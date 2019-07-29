@@ -28,7 +28,11 @@ public class Presenter<T> {
         self.next = pageSize
     }
     
-    func request(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
+    /// Prepare a request with pagination when the web socket is connected.
+    ///
+    /// - Parameter pagination: an initial page size (see `Pagination`).
+    /// - Returns: an observable pagination for a request.
+    public func prepareRequest(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
         let connectionObservable = Client.shared.connection.connected({ [weak self] isConnected in
             if !isConnected, let self = self, !self.items.isEmpty {
                 self.items = []

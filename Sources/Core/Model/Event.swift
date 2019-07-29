@@ -10,32 +10,65 @@ import Foundation
 
 /// A web socket event type.
 public enum EventType: String, Codable {
-    case healthCheck = "health.check"
-    case messageNew = "message.new"
-    case messageRead = "message.read"
-    case messageUpdated = "message.updated"
-    case messageDeleted = "message.deleted"
-    case messageReaction = "message.reaction"
-    case userUpdated = "user.updated"
-    case userStatusChanged = "user.status.changed"
+    /// When a user status changes, e.g. online, offline, away (when subscribed to the user status 🙋‍♀️).
+    case userPresenceChanged = "user.presence.changed"
+    /// When a user starts watching a channel (when watching the channel 📺).
     case userStartWatching = "user.watching.start"
+    /// When a user stops watching a channel (when watching the channel 📺).
     case userStopWatching = "user.watching.stop"
+    /// When a user is updated (when subscribed to the user status 🙋‍♀️).
+    case userUpdated = "user.updated"
+    /// Sent when a user starts typing (when watching the channel 📺).
     case typingStart = "typing.start"
+    /// Sent when a user stops typing (when watching the channel 📺).
     case typingStop = "typing.stop"
-    case reactionNew = "reaction.new"
-    case reactionDeleted = "reaction.deleted"
-    case notificationMarkRead = "notification.mark_read"
-    case notificationMessageNew = "notification.message_new"
-    case notificationInvited = "notification.invited"
-    case notificationInviteAccepted = "notification.invite_accepted"
-    case notificationAddedToChannel = "notification.added_to_channel"
-    case notificationRemovedFromChannel = "notification.removed_from_channel"
+    /// When a new message is added on a channel (when watching the channel 📺).
+    case messageNew = "message.new"
+    /// When a message is updated (when watching the channel 📺).
+    case messageUpdated = "message.updated"
+    /// When a message is deleted (when watching the channel 📺).
+    case messageDeleted = "message.deleted"
+    /// When a channel is marked as read (when watching the channel 📺).
+    case messageRead = "message.read"
+    /// ⚠️ When a message reaction is added or deleted (when watching the channel 📺).
+    case messageReaction = "message.reaction"
+    /// ⚠️ When a member is added to a channel (when watching the channel 📺).
     case memberAdded = "member.added"
+    /// ⚠️ When a member is updated (when watching the channel 📺).
     case memberUpdated = "member.updated"
+    /// ⚠️ When a member is removed from a channel (when watching the channel 📺).
     case memberRemoved = "member.removed"
+    /// ⚠️ When a channel is updated (when watching the channel 📺).
     case channelUpdated = "channel.updated"
+    
+    /// Every 30 second to confirm that the client connection is still active (🗼).
+    case healthCheck = "health.check"
+    /// ⚠️ When the state of the connection changed (🗼).
     case connectionChanged = "connection.changed"
+    /// ⚠️ When the connection to chat servers is back online (🗼).
     case connectionRecovered = "connection.recovered"
+    
+    /// When a message is added to a channel (when clients that are not currently watching the channel ⚡️).
+    case notificationMessageNew = "notification.message_new"
+    /// When the total count of unread messages (across all channels the user is a member) changes
+    /// (when clients from the user affected by the change 📺📺).
+    case notificationMarkRead = "notification.mark_read"
+    
+    /// ⚠️ When the user is invited to join a channel (when the user invited 💌).
+    case notificationInvited = "notification.invited"
+    /// ⚠️ When the user accepts an invite (when the user invited 💌).
+    case notificationInviteAccepted = "notification.invite_accepted"
+    /// ⚠️ When the user accepts an invite (when the user invited 💌).
+    case notificationAddedToChannel = "notification.added_to_channel"
+    /// ⚠️ When a user is removed from a channel (when the user invited 💌).
+    case notificationRemovedFromChannel = "notification.removed_from_channel"
+    
+    // Webhook event types❓
+    
+    /// When a message reaction is added.
+    case reactionNew = "reaction.new"
+    /// When a message reaction deleted.
+    case reactionDeleted = "reaction.deleted"
 }
 
 /// A web socket event.
@@ -67,7 +100,7 @@ public enum Event: Decodable {
     case messageUpdated(Message)
     
     case userUpdated(User)
-    case userStatusChanged(User)
+    case userPresenceChanged(User)
     case userStartWatching(User, _ watcherCount: Int)
     case userStopWatching(User, _ watcherCount: Int)
     
@@ -117,8 +150,8 @@ public enum Event: Decodable {
         // User
         case .userUpdated:
             self = .userUpdated(try user())
-        case .userStatusChanged:
-            self = .userStatusChanged(try user())
+        case .userPresenceChanged:
+            self = .userPresenceChanged(try user())
         case .userStartWatching:
             let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
             self = .userStartWatching(try user(), watcherCount)
@@ -172,7 +205,7 @@ extension Event: Equatable {
             return message1 == message2
         case (.userUpdated(let user1), .userUpdated(let user2)):
             return user1 == user2
-        case (.userStatusChanged(let user1), .userStatusChanged(let user2)):
+        case (.userPresenceChanged(let user1), .userPresenceChanged(let user2)):
             return user1 == user2
         case (.userStartWatching(let user1, let watcherCount1), .userStartWatching(let user2, let watcherCount2)):
             return user1 == user2 && watcherCount1 == watcherCount2

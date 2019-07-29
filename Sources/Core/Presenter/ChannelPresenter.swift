@@ -24,9 +24,11 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public var messageExtraDataCallback: MessageExtraDataCallback?
     
     /// A channel (see `Channel`).
-    public private(set) var channel: Channel
+    public let channel: Channel
     /// A parent message for replies.
-    public private(set) var parentMessage: Message?
+    public let parentMessage: Message?
+    /// Query options.
+    public let queryOptions: QueryOptions
     /// An edited message.
     public var editMessage: Message?
     /// Show statuses separators, e.g. Today
@@ -84,7 +86,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
                                                         webSocketChanges,
                                                         ephemeralChanges)
     
-    private lazy var channelRequest: Driver<ViewChanges> = request()
+    private lazy var channelRequest: Driver<ViewChanges> = prepareRequest()
         .map { [weak self] in self?.channelEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0).retry(3) }
@@ -93,7 +95,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private lazy var replyRequest: Driver<ViewChanges> = request()
+    private lazy var replyRequest: Driver<ViewChanges> = prepareRequest()
         .map { [weak self] in self?.replyEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
@@ -125,9 +127,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     ///     - channel: a channel
     ///     - parentMessage: a parent message for replies
     ///     - showStatuses: shows statuses separators, e.g. Today
-    public init(channel: Channel, parentMessage: Message? = nil, showStatuses: Bool = true) {
+    public init(channel: Channel,
+                parentMessage: Message? = nil,
+                queryOptions: QueryOptions = .all,
+                showStatuses: Bool = true) {
         self.channel = channel
         self.parentMessage = parentMessage
+        self.queryOptions = queryOptions
         self.showStatuses = showStatuses
         super.init(pageSize: .messagesPageSize)
     }
@@ -137,9 +143,11 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     /// - Parameters:
     ///     - query: a channel query result with messages
     ///     - showStatuses: shows statuses separators, e.g. Today
-    public init(query: ChannelQuery, showStatuses: Bool = true) {
-        self.showStatuses = showStatuses
+    public init(query: ChannelQuery, queryOptions: QueryOptions, showStatuses: Bool = true) {
         channel = query.channel
+        parentMessage = nil
+        self.queryOptions = queryOptions
+        self.showStatuses = showStatuses
         super.init(pageSize: .messagesPageSize)
         parseQuery(query)
     }
@@ -154,7 +162,10 @@ extension ChannelPresenter {
             return nil
         }
         
-        return .channel(ChannelQuery(channel: channel, members: [Member(user: user)], pagination: pagination))
+        return .channel(ChannelQuery(channel: channel,
+                                     members: [Member(user: user)],
+                                     pagination: pagination,
+                                     options: queryOptions))
     }
     
     private func replyEndpoint(pagination: Pagination) -> ChatEndpoint? {
@@ -427,7 +438,6 @@ extension ChannelPresenter {
         let messageReads = channel.config.readEventsEnabled ? query.messageReads : []
         parse(query.messages, messageReads: messageReads, to: &items, isNextPage: isNextPage)
         self.items = items
-        channel = query.channel
         members = query.members
         
         if channel.config.readEventsEnabled {

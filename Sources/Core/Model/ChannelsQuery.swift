@@ -31,20 +31,21 @@ public struct ChannelsQuery: Encodable {
     public let pagination: Pagination
     /// A number of messages inside each channel.
     public let messageLimit: Pagination
-    let state = true
-    let watch = true
-    let presence = false
+    /// Query options.
+    public let options: QueryOptions
     
     public init(filter: Filter,
                 sort: [Sorting] = [],
                 user: User,
                 pagination: Pagination,
-                messageLimit: Pagination = .messagesPageSize) {
+                messageLimit: Pagination = .messagesPageSize,
+                options: QueryOptions) {
         self.filter = filter
         self.sort = sort
         self.user = user
         self.pagination = pagination
         self.messageLimit = messageLimit
+        self.options = options
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -52,10 +53,8 @@ public struct ChannelsQuery: Encodable {
         try container.encode(filter, forKey: .filter)
         try container.encode(sort, forKey: .sort)
         try container.encode(user, forKey: .user)
-        try container.encode(state, forKey: .state)
-        try container.encode(watch, forKey: .watch)
-        try container.encode(presence, forKey: .presence)
         try container.encode(messageLimit.limit, forKey: .messageLimit)
+        try options.encode(to: encoder)
         try pagination.encode(to: encoder)
     }
 }

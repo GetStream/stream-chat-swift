@@ -17,6 +17,10 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     
     /// A channel type.
     public let channelType: ChannelType
+    /// Query options.
+    public let queryOptions: QueryOptions
+    /// Show channel statuses in a selected chat view controller.
+    public let showChannelStatuses: Bool
     
     /// Filter channels.
     ///
@@ -34,15 +38,13 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     /// ```
     public var sorting: [Sorting] = [.init(Channel.DecodingKeys.lastMessageDate.rawValue)]
     
-    /// Show channel statuses in a selected chat view controller.
-    public let showChannelStatuses: Bool
     /// A callback to provide an extra data for a channel.
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
     /// An observable view changes (see `ViewChanges`).
     public private(set) lazy var changes = Driver.merge(requestChanges, webSocketChanges)
     
-    private lazy var requestChanges: Driver<ViewChanges> = request(startPaginationWith: pageSize)
+    private lazy var requestChanges: Driver<ViewChanges> = prepareRequest(startPaginationWith: pageSize)
         .map { [weak self] in self?.channelsEndpoint(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.rx.request(endpoint: $0).retry(3) }
@@ -59,9 +61,13 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     ///
     /// - Parameters:
     ///   - channelType: a channel type.
+    ///   - queryOptions: query options (see `QueryOptions`).
     ///   - showChannelStatuses: show channel statuses on a chat view controller of a selected channel.
-    public init(channelType: ChannelType, showChannelStatuses: Bool = true) {
+    public init(channelType: ChannelType,
+                queryOptions: QueryOptions = .all,
+                showChannelStatuses: Bool = true) {
         self.channelType = channelType
+        self.queryOptions = queryOptions
         self.showChannelStatuses = showChannelStatuses
         super.init(pageSize: .channelsPageSize)
     }
@@ -76,7 +82,8 @@ extension ChannelsPresenter {
             return ChatEndpoint.channels(ChannelsQuery(filter: filter,
                                                        sort: sorting,
                                                        user: user,
-                                                       pagination: pagination))
+                                                       pagination: pagination,
+                                                       options: queryOptions))
         }
         
         return nil
@@ -93,7 +100,7 @@ extension ChannelsPresenter {
         let row = items.count
         
         items.append(contentsOf: response.channels.map {
-            let channelPresenter = ChannelPresenter(query: $0, showStatuses: showChannelStatuses)
+            let channelPresenter = ChannelPresenter(query: $0, queryOptions: queryOptions, showStatuses: showChannelStatuses)
             
             if let channelMessageExtraDataCallback = self.channelMessageExtraDataCallback {
                 channelPresenter.messageExtraDataCallback = channelMessageExtraDataCallback($0.channel)

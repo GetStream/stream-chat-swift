@@ -30,8 +30,8 @@ public struct ChannelQuery: Codable {
     public let messageReads: [MessageRead]
     /// Unread message state by the current user.
     public let unreadMessageRead: MessageRead?
-    let state: Bool = true
-    let watch: Bool = true
+    /// A query options.
+    public let options: QueryOptions
     /// A pagination (see `Pagination`).
     public let pagination: Pagination
     
@@ -41,10 +41,11 @@ public struct ChannelQuery: Codable {
     ///     - channel: a channel.
     ///     - memebers: members of the channel.
     ///     - pagination: a pagination (see `Pagination`).
-    public init(channel: Channel, members: [Member], pagination: Pagination) {
+    public init(channel: Channel, members: [Member], pagination: Pagination, options: QueryOptions) {
         self.channel = channel
         self.members = members
         self.pagination = pagination
+        self.options = options
         messages = []
         messageReads = []
         unreadMessageRead = nil
@@ -57,6 +58,7 @@ public struct ChannelQuery: Codable {
         messages = try container.decode([Message].self, forKey: .messages)
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         pagination = .none
+        options = []
         
         if let user = Client.shared.user {
             if let lastMessage = messages.last,
@@ -73,8 +75,7 @@ public struct ChannelQuery: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(state, forKey: .state)
-        try container.encode(watch, forKey: .watch)
+        try options.encode(to: encoder)
         channel.memberIds = members.map { $0.user.id }
         try container.encode(channel, forKey: .data)
         channel.memberIds = []

@@ -35,7 +35,8 @@ PODS:
 
 DEPENDENCIES:
   - Crashlytics
-  - StreamChat
+  - StreamChat (from `..`)
+  - StreamChatCore (from `..`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -51,9 +52,13 @@ SPEC REPOS:
     - RxSwift
     - SnapKit
     - Starscream
-    - StreamChat
-    - StreamChatCore
     - SwiftyGif
+
+EXTERNAL SOURCES:
+  StreamChat:
+    :path: ".."
+  StreamChatCore:
+    :path: ".."
 
 SPEC CHECKSUMS:
   Crashlytics: 2dfd686bcb918dc10ee0e76f7f853fe42c7bd552
@@ -72,6 +77,6 @@ SPEC CHECKSUMS:
   StreamChatCore: 0830c42a0db14616c2d5495f51ffbfef8ef1a64c
   SwiftyGif: f7702483db93586a41f04f4927cd682852a2fa10
 
-PODFILE CHECKSUM: ff29c5aec05fc4c203cb5b2e3bd689038e8b6246
+PODFILE CHECKSUM: 1285fe97a80001129e4801d3e4367d36cc976189
 
 COCOAPODS: 1.7.5
