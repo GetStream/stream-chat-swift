@@ -13,13 +13,13 @@ import Foundation
 /// For example:
 /// ```
 /// // Filter channels by type:
-/// var filter: Filter<Channel.DecodingKeys> = .key(.type, .equal(to: "messaging"))
+/// var filter: Filter<Channel.DecodingKeys> = .key("type", .equal(to: "messaging"))
 /// // Filter channels by members:
-/// filter = .key(.members, .in(["jon"]))
+/// filter = .key("members", .in(["jon"]))
 /// // Filter channels by type and members:
-/// filter = .key(.type, .equal(to: "messaging")) + .key(.members, .in(["jon"]))
+/// filter = .key("type", .equal(to: "messaging")) + .key("members", .in(["jon"]))
 /// // Filter channels by type or members:
-/// filter = .key(.type, .equal(to: "messaging")) | .key(.members, .in(["jon"]))
+/// filter = .key("type", .equal(to: "messaging")) | .key("members", .in(["jon"]))
 /// ```
 public enum Filter: Encodable {
     /// Filter by a given key with a given operator (see Operator).
@@ -64,6 +64,10 @@ public extension Filter {
         case `in`([Encodable])
         /// A not in list operator.
         case notIn([Encodable])
+        /// A query operator.
+        case query(String)
+        /// An autocomplete operator.
+        case autocomplete(String)
         
         public func encode(to encoder: Encoder) throws {
             var operatorName = ""
@@ -95,6 +99,12 @@ public extension Filter {
             case .notIn(let objects):
                 operatorName = "$nin"
                 operands = objects
+            case .query(let object):
+                operatorName = "$q"
+                operand = object
+            case .autocomplete(let object):
+                operatorName = "$autocomplete"
+                operand = object
             }
             
             if !operatorName.isEmpty, let operand = operand {

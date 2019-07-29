@@ -10,30 +10,44 @@ import Foundation
 
 /// Chat endpoints.
 public enum ChatEndpoint {
+    /// Get a guest token.
     case guestToken(User)
+    /// Get a list of channels.
     case channels(ChannelsQuery)
+    /// Get a channel data.
     case channel(ChannelQuery)
+    /// Create a channel.
     case createChannel(Channel)
+    /// Get a thread data.
     case thread(Message, Pagination)
+    /// Send a message to a channel.
     case sendMessage(Message, Channel)
+    /// Send a message action.
     case sendMessageAction(MessageAction)
+    /// Delete a message.
     case deleteMessage(Message)
+    /// Send a read event.
     case sendRead(Channel)
+    /// Add a reaction to the message.
     case addReaction(_ reactionType: String, Message)
+    /// Delete a reaction from the message.
     case deleteReaction(_ reactionType: String, Message)
+    /// Send an event to a channel.
     case sendEvent(EventType, Channel)
+    /// Upload an image to a channel.
     case sendImage(_ fileName: String, _ mimeType: String, Data, Channel)
+    /// Upload a file to a channel.
     case sendFile(_ fileName: String, _ mimeType: String, Data, Channel)
+    /// Get a list of users.
+    case users(UsersQuery)
 }
 
 extension ChatEndpoint {
     var method: Client.Method {
         switch self {
-        case .channels,
-             .thread:
+        case .channels, .thread, .users:
             return .get
-        case .deleteMessage,
-             .deleteReaction:
+        case .deleteMessage, .deleteReaction:
             return .delete
         default:
             return .post
@@ -76,6 +90,8 @@ extension ChatEndpoint {
             return path(to: channel, "image")
         case .sendFile(_, _, _, let channel):
             return path(to: channel, "file")
+        case .users:
+            return "users"
         }
     }
     
@@ -88,11 +104,18 @@ extension ChatEndpoint {
     }
     
     var queryItems: [String: Encodable]? {
-        if case .channels(let query) = self {
-            return ["payload": query]
+        let payload: Encodable
+        
+        switch self {
+        case .channels(let query):
+            payload = query
+        case .users(let query):
+            payload = query
+        default:
+            return nil
         }
         
-        return nil
+        return ["payload": payload]
     }
     
     var body: Encodable? {
@@ -102,7 +125,8 @@ extension ChatEndpoint {
              .deleteMessage,
              .deleteReaction,
              .sendImage,
-             .sendFile:
+             .sendFile,
+             .users:
             return nil
         case .guestToken(let user):
             return ["user": user]
