@@ -40,41 +40,41 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private func setupChatWithDarkStyle(_ channelsViewController: ChannelsViewController) {
         channelsViewController.style = .dark
         
-        let addChannelButton = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
-        channelsViewController.navigationItem.rightBarButtonItem = addChannelButton
-        
-        addChannelButton.rx.tap
-            .subscribe(onNext: { [weak self, weak channelsViewController] _ in self?.promptChannelName(channelsViewController) })
-            .disposed(by: channelsViewController.disposeBag)
+//        let addChannelButton = UIBarButtonItem(barButtonSystemItem: .add, target: nil, action: nil)
+//        channelsViewController.navigationItem.rightBarButtonItem = addChannelButton
+//
+//        addChannelButton.rx.tap
+//            .subscribe(onNext: { [weak self, weak channelsViewController] _ in self?.promptChannelName(channelsViewController) })
+//            .disposed(by: channelsViewController.disposeBag)
     }
     
-    private func promptChannelName(_ viewController: ChannelsViewController?) {
-        let alert = UIAlertController(title: "Create a Channel", message: "Type a channel name", preferredStyle: .alert)
-        alert.addTextField()
-
-        alert.addAction(.init(title: "Create", style: .default, handler: { [weak alert, weak self] _ in
-            if let textFields = alert?.textFields?.first, let name = textFields.text {
-                self?.createChannel(name: name, for: viewController)
-            }
-        }))
-        
-        alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
-        
-        window?.rootViewController?.present(alert, animated: true)
-    }
+//    private func promptChannelName(_ viewController: ChannelsViewController?) {
+//        let alert = UIAlertController(title: "Create a Channel", message: "Type a channel name", preferredStyle: .alert)
+//        alert.addTextField()
+//
+//        alert.addAction(.init(title: "Create", style: .default, handler: { [weak alert, weak self] _ in
+//            if let textFields = alert?.textFields?.first, let name = textFields.text {
+//                self?.createChannel(name: name, for: viewController)
+//            }
+//        }))
+//        
+//        alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
+//        
+//        window?.rootViewController?.present(alert, animated: true)
+//    }
     
-    private func createChannel(name: String, for viewController: ChannelsViewController?) {
-        guard let viewController = viewController else {
-            return
-        }
-        
-        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        let id = name.lowercased().replacingOccurrences(of: " ", with: "_")
-        
-        Channel.create(id: id, name: name)
-            .subscribe(onError: { print("Create a channel error:", $0) })
-            .disposed(by: viewController.disposeBag)
-    }
+//    private func createChannel(name: String, for viewController: ChannelsViewController?) {
+//        guard let viewController = viewController else {
+//            return
+//        }
+//
+//        let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
+//        let id = name.lowercased().replacingOccurrences(of: " ", with: "_")
+//
+//        Channel.create(id: id, name: name)
+//            .subscribe(onError: { print("Create a channel error:", $0) })
+//            .disposed(by: viewController.disposeBag)
+//    }
     
     private func setupNotifications() {
         Notifications.shared.askForPermissionsIfNeeded()
