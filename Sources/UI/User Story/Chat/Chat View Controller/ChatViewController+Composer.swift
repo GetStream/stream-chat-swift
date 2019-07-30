@@ -95,7 +95,10 @@ extension ChatViewController {
         }
         
         composerView.isEnabled = false
-        channelPresenter?.send(text: text) { [weak composerView] in composerView?.reset() }
+        
+        channelPresenter?.send(text: text)
+            .subscribe(onNext: { [weak self] _ in self?.composerView.reset() })
+            .disposed(by: disposeBag)
     }
     
     private func command(in text: String) -> String? {
@@ -381,6 +384,6 @@ extension ChatViewController {
             return
         }
         
-        channelPresenter?.dispatch(action: action, message: message)
+        channelPresenter?.dispatch(action: action, message: message).subscribe().disposed(by: disposeBag)
     }
 }
