@@ -10,42 +10,71 @@ import Foundation
 
 /// Chat endpoints.
 public enum ChatEndpoint {
+    // MARK: - Client Endpoints
+    
     /// Get a guest token.
     case guestToken(User)
+    
+    // MARK: - Device Endpoints
+    
+    // case addDevice(deviceId: String, User) ⚠️
+    // case devices(User) ⚠️
+    // case removeDevice(deviceId: String) ⚠️
+    
+    // MARK: - Channels Endpoints
+    
     /// Get a list of channels.
     case channels(ChannelsQuery)
+    
+    // MARK: - Channel Endpoints
+    
     /// Get a channel data.
     case channel(ChannelQuery)
-    /// Create a channel.
-    case createChannel(Channel)
-    /// Get a thread data.
-    case thread(Message, Pagination)
     /// Send a message to a channel.
     case sendMessage(Message, Channel)
-    /// Send a message action.
-    case sendMessageAction(MessageAction)
-    /// Delete a message.
-    case deleteMessage(Message)
-    /// Send a read event.
-    case sendRead(Channel)
-    /// Add a reaction to the message.
-    case addReaction(_ reactionType: String, Message)
-    /// Delete a reaction from the message.
-    case deleteReaction(_ reactionType: String, Message)
-    /// Send an event to a channel.
-    case sendEvent(EventType, Channel)
     /// Upload an image to a channel.
     case sendImage(_ fileName: String, _ mimeType: String, Data, Channel)
     /// Upload a file to a channel.
     case sendFile(_ fileName: String, _ mimeType: String, Data, Channel)
+    /// Send a read event.
+    case sendRead(Channel)
+    /// Create a channel.
+    case createChannel(Channel)
+    
+    // MARK: - Message Endpoints
+    
+    /// Get a thread data.
+    case replies(Message, Pagination)
+    /// Send a message action.
+    case sendMessageAction(MessageAction)
+    /// Delete a message.
+    case deleteMessage(Message)
+    /// Add a reaction to the message.
+    case addReaction(_ reactionType: String, Message)
+    /// Delete a reaction from the message.
+    case deleteReaction(_ reactionType: String, Message)
+    //case flagMessage(Message) ⚠️
+    //case unflagMessage(Message) ⚠️
+    
+    // MARK: - Event Endpoints
+    
+    /// Send an event to a channel.
+    case sendEvent(EventType, Channel)
+    
+    // MARK: - User Endpoints
+    
     /// Get a list of users.
     case users(UsersQuery)
+    //case updateUser(User) ⚠️
+    //case updateUsers(User) ⚠️
+    //case muteUser(User) ⚠️
+    //case unmuteUser(User) ⚠️
 }
 
 extension ChatEndpoint {
     var method: Client.Method {
         switch self {
-        case .channels, .thread, .users:
+        case .channels, .replies, .users:
             return .get
         case .deleteMessage, .deleteReaction:
             return .delete
@@ -64,7 +93,7 @@ extension ChatEndpoint {
             return path(to: query.channel, "query")
         case .createChannel(let channel):
             return path(to: channel)
-        case .thread(let message, _):
+        case .replies(let message, _):
             return path(to: message, "replies")
             
         case let .sendMessage(message, channel):
@@ -96,7 +125,7 @@ extension ChatEndpoint {
     }
     
     var queryItem: Encodable? {
-        if case .thread(_, let pagination) = self {
+        if case .replies(_, let pagination) = self {
             return pagination
         }
         
@@ -121,7 +150,7 @@ extension ChatEndpoint {
     var body: Encodable? {
         switch self {
         case .channels,
-             .thread,
+             .replies,
              .deleteMessage,
              .deleteReaction,
              .sendImage,

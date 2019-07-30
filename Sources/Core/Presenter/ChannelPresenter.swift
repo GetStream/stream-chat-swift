@@ -87,19 +87,17 @@ public final class ChannelPresenter: Presenter<ChatItem> {
                                                         ephemeralChanges)
     
     private lazy var channelRequest: Driver<ViewChanges> = prepareRequest()
-        .map { [weak self] in self?.channelEndpoint(pagination: $0) }
-        .unwrap()
-        .flatMapLatest { Client.shared.rx.request(endpoint: $0).retry(3) }
+        .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
+        .flatMapLatest { [weak self] in (self?.channel.query(pagination: $0) ?? .empty()).retry(3) }
         .map { [weak self] in self?.parseQuery($0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .asDriver(onErrorJustReturn: .none)
     
     private lazy var replyRequest: Driver<ViewChanges> = prepareRequest()
-        .map { [weak self] in self?.replyEndpoint(pagination: $0) }
-        .unwrap()
-        .flatMapLatest { Client.shared.rx.request(endpoint: $0) }
-        .map { [weak self] in self?.parseReply($0) ?? .none }
+        .filter { [weak self] _ in self?.parentMessage != nil }
+        .flatMapLatest { [weak self] in (self?.parentMessage?.replies(pagination: $0) ?? .empty()).retry(3) }
+        .map { [weak self] in self?.parseReplies($0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
@@ -150,30 +148,6 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         self.showStatuses = showStatuses
         super.init(pageSize: .messagesPageSize)
         parseQuery(query)
-    }
-}
-
-// MARK: - Connection
-
-extension ChannelPresenter {
-    
-    private func channelEndpoint(pagination: Pagination) -> ChatEndpoint? {
-        guard parentMessage == nil, pagination != .none, let user = Client.shared.user else {
-            return nil
-        }
-        
-        return .channel(ChannelQuery(channel: channel,
-                                     members: [Member(user: user)],
-                                     pagination: pagination,
-                                     options: queryOptions))
-    }
-    
-    private func replyEndpoint(pagination: Pagination) -> ChatEndpoint? {
-        if let parentMessage = parentMessage {
-            return .thread(parentMessage, pagination)
-        }
-        
-        return nil
     }
 }
 
@@ -455,7 +429,7 @@ extension ChannelPresenter {
         return .none
     }
     
-    private func parseReply(_ messagesResponse: MessagesResponse) -> ViewChanges {
+    private func parseReplies(_ messagesResponse: MessagesResponse) -> ViewChanges {
         guard let parentMessage = parentMessage else {
             return .none
         }
@@ -809,7 +783,9 @@ struct MessageResponse: Decodable {
     let reaction: Reaction?
 }
 
-struct MessagesResponse: Decodable {
+/// A messages response.
+public struct MessagesResponse: Decodable {
+    /// A list of messages.
     let messages: [Message]
 }
 

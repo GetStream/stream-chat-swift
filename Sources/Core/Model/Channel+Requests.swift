@@ -1,5 +1,5 @@
 //
-//  Channel+Create.swift
+//  Channel+Requests.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 07/06/2019.
@@ -9,10 +9,30 @@
 import Foundation
 import RxSwift
 
-// MARK: - Create
+// MARK: - Requests
 
 public extension Channel {
     
+    /// Request for a channel data, e.g. messages, members, read states, etc
+    ///
+    /// - Parameters:
+    ///   - pagination: a pagination (see `Pagination`).
+    ///   - queryOptions: a query options. All by default (see `QueryOptions`).
+    /// - Returns: an observable channel query.
+    func query(pagination: Pagination, queryOptions: QueryOptions = .all) -> Observable<ChannelQuery> {
+        var members = [Member]()
+        
+        if members.isEmpty, let user = Client.shared.user {
+            members = [Member(user: user)]
+        }
+        
+        let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: queryOptions)
+        
+        return Client.shared.rx.request(endpoint: .channel(channelQuery))
+    }
+}
+
+extension Channel {
     /// Create a channel.
     ///
     /// - Parameters:

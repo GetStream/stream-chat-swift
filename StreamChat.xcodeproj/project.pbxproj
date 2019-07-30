@@ -16,6 +16,7 @@
 		8A04964922E9F59A00E94795 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECCE22E9BA39005CFAC9 /* Date+Extensions.swift */; };
 		8A04964F22EF1A8900E94795 /* QueryOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04964E22EF1A8900E94795 /* QueryOptions.swift */; };
 		8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965022EF4B2400E94795 /* UsersQuery.swift */; };
+		8A04965322F0910200E94795 /* Message+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965222F0910200E94795 /* Message+Requests.swift */; };
 		8AD5EC9422E9A3E8005CFAC9 /* StreamChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD5EC9222E9A3E8005CFAC9 /* StreamChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AD5ECA322E9B355005CFAC9 /* StreamChatCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD5ECA122E9B355005CFAC9 /* StreamChatCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AD5ECA822E9B3C4005CFAC9 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
@@ -46,7 +47,7 @@
 		8AD5ED5B22E9BA5A005CFAC9 /* MessageAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */; };
 		8AD5ED5C22E9BA5A005CFAC9 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */; };
 		8AD5ED5D22E9BA5A005CFAC9 /* Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */; };
-		8AD5ED5E22E9BA5A005CFAC9 /* Channel+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2B22E9BA39005CFAC9 /* Channel+Create.swift */; };
+		8AD5ED5E22E9BA5A005CFAC9 /* Channel+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2B22E9BA39005CFAC9 /* Channel+Requests.swift */; };
 		8AD5ED5F22E9BA5A005CFAC9 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */; };
 		8AD5ED6022E9BA5A005CFAC9 /* WebSocket+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Response.swift */; };
 		8AD5ED6122E9BA5A005CFAC9 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */; };
@@ -154,6 +155,7 @@
 /* Begin PBXFileReference section */
 		8A04964E22EF1A8900E94795 /* QueryOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryOptions.swift; sourceTree = "<group>"; };
 		8A04965022EF4B2400E94795 /* UsersQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersQuery.swift; sourceTree = "<group>"; };
+		8A04965222F0910200E94795 /* Message+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Requests.swift"; sourceTree = "<group>"; };
 		8AD5EC8F22E9A3E8005CFAC9 /* StreamChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD5EC9222E9A3E8005CFAC9 /* StreamChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChat.h; sourceTree = "<group>"; };
 		8AD5EC9322E9A3E8005CFAC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -265,7 +267,7 @@
 		8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAction.swift; sourceTree = "<group>"; };
 		8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pagination.swift; sourceTree = "<group>"; };
-		8AD5ED2B22E9BA39005CFAC9 /* Channel+Create.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Create.swift"; sourceTree = "<group>"; };
+		8AD5ED2B22E9BA39005CFAC9 /* Channel+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Requests.swift"; sourceTree = "<group>"; };
 		8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Response.swift"; sourceTree = "<group>"; };
 		8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
@@ -697,8 +699,9 @@
 				8AD5ED2122E9BA39005CFAC9 /* ChannelsQuery.swift */,
 				8AD5ED2022E9BA39005CFAC9 /* ChannelQuery.swift */,
 				8AD5ED2322E9BA39005CFAC9 /* Channel.swift */,
-				8AD5ED2B22E9BA39005CFAC9 /* Channel+Create.swift */,
+				8AD5ED2B22E9BA39005CFAC9 /* Channel+Requests.swift */,
 				8AD5ED2222E9BA39005CFAC9 /* Message.swift */,
+				8A04965222F0910200E94795 /* Message+Requests.swift */,
 				8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */,
 				8AD5ED2422E9BA39005CFAC9 /* MessageRead.swift */,
 				8AD5ED2722E9BA39005CFAC9 /* Member.swift */,
@@ -1059,11 +1062,12 @@
 				8A04964622E9F53900E94795 /* ChannelPresenter.swift in Sources */,
 				8AD5ED4822E9BA5A005CFAC9 /* RepeatingTimer.swift in Sources */,
 				8AD5ED5222E9BA5A005CFAC9 /* ExtraData.swift in Sources */,
+				8A04965322F0910200E94795 /* Message+Requests.swift in Sources */,
 				8AD5ED6822E9BA5A005CFAC9 /* ChatEndpoint.swift in Sources */,
 				8A04964822E9F57000E94795 /* ChatItem.swift in Sources */,
 				8AD5ED6F22E9BA5A005CFAC9 /* MultipartFormData.swift in Sources */,
 				8AD5ED7022E9BA5A005CFAC9 /* ClientURLSessionTaskDelegate.swift in Sources */,
-				8AD5ED5E22E9BA5A005CFAC9 /* Channel+Create.swift in Sources */,
+				8AD5ED5E22E9BA5A005CFAC9 /* Channel+Requests.swift in Sources */,
 				8AD5ED5D22E9BA5A005CFAC9 /* Pagination.swift in Sources */,
 				8AD5ED6622E9BA5A005CFAC9 /* Uploader.swift in Sources */,
 				8AD5ED4F22E9BA5A005CFAC9 /* Data+Extensions.swift in Sources */,
