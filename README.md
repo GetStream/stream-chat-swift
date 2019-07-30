@@ -24,10 +24,10 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 
 ## Installation
 
-Stream Chat SDK consists of two frameworks: `StreamChatCore` and `StreamChat`. 
+Stream Chat SDK consists of two frameworks: `StreamChat` and `StreamChatCore`
 
-- `StreamChatCore` — provide Stream Chat with models, presenters, notification manager and the client for requests and web socket events.
-- `StreamChat` — depends on the first one and implements UI with customizable styles.
+- `StreamChat` — the full SDK library with all UI components. Styling and deep customizations are all supported out of the box.
+- `StreamChatCore` — low-level library to use Stream Chat APIs. It includes models, presenters, notification manager and HTTP interface.
 
 ### CocoaPods
 
@@ -44,11 +44,11 @@ pod 'StreamChatCore'
 
 In any file you'd like to use Stream Chat in, don't forget to import the frameworks:
 ```
-import StreamChatCore
-```
-and for UI components:
-```
 import StreamChat
+```
+or `StreamChatCore` if you are working with the low-level client:
+```
+import StreamChatCore
 ```
 
 ### Carthage
@@ -81,9 +81,9 @@ Then run: `carthage update --platform iOS --new-resolver`. This will build frame
 
 [Official API Docs](https://getstream.io/chat/docs)
 
-[Core API Reference](https://getstream.github.io/stream-chat-swift/core)
+[SDK Reference](https://getstream.github.io/stream-chat-swift/ui)
 
-[UI API Reference](https://getstream.github.io/stream-chat-swift/ui)
+[Low level core API Reference](https://getstream.github.io/stream-chat-swift/core)
 
 [Getting started tutorial](https://getstream.io/chat/ios-chat/tutorial/)
 
