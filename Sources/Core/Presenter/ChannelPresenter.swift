@@ -623,7 +623,11 @@ extension ChannelPresenter {
     /// - Parameters:
     ///     - text: a message text
     ///     - completion: a completion blocks
-    public func send(text: String, completion: @escaping () -> Void) {
+    public func send(text: String) -> Observable<MessageResponse> {
+        guard let user = Client.shared.user else {
+            return .empty()
+        }
+        
         var text = text
         
         if text.count > channel.config.maxMessageLength {
@@ -644,17 +648,19 @@ extension ChannelPresenter {
             attachments = editMessage.attachments
         }
         
-        guard let message = Message(id: messageId,
-                                    text: text,
-                                    attachments: attachments,
-                                    extraData: extraData,
-                                    parentId: parentId,
-                                    showReplyInChannel: false) else {
-                                        return
-        }
-        
         editMessage = nil
-        Client.shared.request(endpoint: ChatEndpoint.sendMessage(message, channel), messageCompletion(completion))
+        
+        let message = Message(id: messageId,
+                              user: user,
+                              text: text,
+                              attachments: attachments,
+                              extraData: extraData,
+                              parentId: parentId,
+                              showReplyInChannel: false)
+        
+        return channel.send(message)
+            .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
+            .observeOn(MainScheduler.instance)
     }
     
     /// Delete a message.
@@ -662,13 +668,9 @@ extension ChannelPresenter {
         Client.shared.request(endpoint: ChatEndpoint.deleteMessage(message), emptyMessageCompletion)
     }
     
-    private func messageCompletion(_ completion: @escaping () -> Void) -> Client.Completion<MessageResponse> {
-        return { [weak self] result in
-            if let self = self, let response = try? result.get(), response.message.type == .ephemeral {
-                self.ephemeralSubject.onNext((response.message, self.hasEphemeralMessage))
-            }
-            
-            DispatchQueue.main.async(execute: completion)
+    private func updateEphemeralMessage(_ message: Message) {
+        if message.type == .ephemeral {
+            ephemeralSubject.onNext((message, hasEphemeralMessage))
         }
     }
 }
@@ -762,31 +764,19 @@ extension ChannelPresenter {
 
 extension ChannelPresenter {
     /// Dispatch an ephemeral message action, e.g. shuffle, send.
-    public func dispatch(action: Attachment.Action, message: Message) {
+    public func dispatch(action: Attachment.Action, message: Message) -> Observable<MessageResponse> {
         if action.isCancelled || action.isSend {
             ephemeralSubject.onNext((nil, true))
             
             if action.isCancelled {
-                return
+                return .empty()
             }
         }
         
-        let messageAction = MessageAction(channel: channel, message: message, action: action)
-        Client.shared.request(endpoint: ChatEndpoint.sendMessageAction(messageAction), messageCompletion({}))
+        return channel.send(action, for: message)
+            .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
+            .observeOn(MainScheduler.instance)
     }
-}
-
-// MARK: - Supporting structs
-
-struct MessageResponse: Decodable {
-    let message: Message
-    let reaction: Reaction?
-}
-
-/// A messages response.
-public struct MessagesResponse: Decodable {
-    /// A list of messages.
-    let messages: [Message]
 }
 
 struct EventResponse: Decodable {

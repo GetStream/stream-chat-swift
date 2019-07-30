@@ -21,3 +21,11 @@ public extension Message {
         return Client.shared.rx.request(endpoint: .replies(self, pagination))
     }
 }
+
+// MARK: - Supporting structs
+
+/// A messages response.
+public struct MessagesResponse: Decodable {
+    /// A list of messages.
+    let messages: [Message]
+}

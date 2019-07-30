@@ -13,6 +13,24 @@ import RxSwift
 
 public extension Channel {
     
+    /// Send a new message or update with a given `message.id`.
+    ///
+    /// - Parameter message: a message.
+    /// - Returns: a created/updated message response.
+    func send(_ message: Message) -> Observable<MessageResponse> {
+        return Client.shared.rx.request(endpoint: .sendMessage(message, self))
+    }
+    
+    /// Send a message action for a given ephemeral message.
+    ///
+    /// - Parameters:
+    ///   - action: an action, e.g. send, shuffle.
+    ///   - ephemeralMessage: an ephemeral message.
+    /// - Returns: a result message.
+    func send(_ action: Attachment.Action, for ephemeralMessage: Message) -> Observable<MessageResponse> {
+        return Client.shared.rx.request(endpoint: .sendMessageAction(.init(channel: self, message: ephemeralMessage, action: action)))
+    }
+    
     /// Request for a channel data, e.g. messages, members, read states, etc
     ///
     /// - Parameters:
@@ -64,4 +82,14 @@ extension Channel {
         return Client.shared.connection.connected()
             .flatMapLatest { _ in Client.shared.rx.request(endpoint: .createChannel(channel)) }
     }
+}
+
+// MARK: - Supporting structs
+
+/// A message response.
+public struct MessageResponse: Decodable {
+    /// A message.
+    let message: Message
+    /// A reaction.
+    let reaction: Reaction?
 }

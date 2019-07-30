@@ -118,16 +118,13 @@ public struct Message: Codable {
     ///   - extraData: an extra data.
     ///   - parentId: a parent message id.
     ///   - showReplyInChannel: a flag to show reply messages in a channel, not in a separate thread.
-    public init?(id: String = "",
-                 text: String,
-                 attachments: [Attachment] = [],
-                 extraData: ExtraData?,
-                 parentId: String?,
-                 showReplyInChannel: Bool) {
-        guard let user = Client.shared.user else {
-            return nil
-        }
-        
+    public init(id: String = "",
+                user: User,
+                text: String,
+                attachments: [Attachment] = [],
+                extraData: ExtraData?,
+                parentId: String?,
+                showReplyInChannel: Bool) {
         self.id = id
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel
