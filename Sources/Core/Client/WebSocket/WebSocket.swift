@@ -231,6 +231,6 @@ extension ObservableType where Element == WebSocket.Connection {
     public func connected(_ connectionStatusHandler: ConnectionStatusHandler? = nil) -> Observable<Void> {
         return self.do(onNext: { connectionStatusHandler?($0.isConnected) })
             .filter { $0.isConnected }
-            .map { _ in }
+            .map { _ in Void() }
     }
 }

@@ -75,7 +75,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         composerView.uploader = presenter.uploader
         
         presenter.changes
-            .do(onNext: { [weak presenter] _ in presenter?.sendReadIfPossible() })
+            .do(onNext: { [weak self] _ in self?.sendReadIfPossible() })
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
         
@@ -86,7 +86,6 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
             tableView.reloadData()
             tableView.scrollToBottom(animated: false)
             DispatchQueue.main.async { [weak self] in self?.tableView.scrollToBottom(animated: false) }
-            presenter.sendReadIfPossible()
         }
         
         InternetConnection.shared.isAvailableObservable
@@ -103,7 +102,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         startGifsAnimations()
-        channelPresenter?.sendReadIfPossible()
+        sendReadIfPossible()
     }
     
     open override func viewWillDisappear(_ animated: Bool) {
@@ -148,6 +147,10 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
                          subtitle: String? = nil,
                          highlighted: Bool) -> UITableViewCell? {
         return nil
+    }
+    
+    private func sendReadIfPossible() {
+        channelPresenter?.sendReadIfPossible().debug().subscribe().disposed(by: disposeBag)
     }
 }
 

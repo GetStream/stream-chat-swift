@@ -658,7 +658,7 @@ extension ChannelPresenter {
                               parentId: parentId,
                               showReplyInChannel: false)
         
-        return channel.send(message)
+        return channel.send(message: message)
             .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
     }
@@ -722,41 +722,29 @@ extension ChannelPresenter {
     }
     
     /// Send Read event if the app is active.
-    public func sendReadIfPossible() {
-        guard isUnread, UIApplication.shared.appState == .active else {
-            return
+    ///
+    /// - Returns: an observable completion.
+    public func sendReadIfPossible() -> Observable<Void> {
+        guard isUnread else {
+            return .empty()
         }
         
-        let oldUnreadMessageRead = unreadMessageReadMVar.get()
-        Client.shared.logger?.log("🎫", "Send Read. Unread from \(oldUnreadMessageRead?.lastReadDate.description ?? "false")")
-        unreadMessageReadMVar.set(nil)
+        let lastReadDate = unreadMessageReadMVar.get()?.lastReadDate.description ?? "-"
         
-        DispatchQueue.main.async { [weak self] in
-            if UIApplication.shared.appState == .active {
-                self?.sendRead(oldUnreadMessageRead: oldUnreadMessageRead)
-            } else {
-                self?.unreadMessageReadMVar.set(oldUnreadMessageRead)
-                self?.updateUnreadCount()
-            }
-        }
-    }
-    
-    private func sendRead(oldUnreadMessageRead: MessageRead?) {
-        let emptyEventCompletion: Client.Completion<EventResponse> = { [weak self] result in
-            if let self = self {
-                if let error = result.error {
-                    self.unreadMessageReadMVar.set(oldUnreadMessageRead)
-                    self.updateUnreadCount()
-                    self.isReadSubject.onError(error)
-                } else {
+        return Observable.just(())
+            .subscribeOn(MainScheduler.instance)
+            .filter { UIApplication.shared.appState == .active }
+            .do(onNext: { Client.shared.logger?.log("🎫", "Send Read. Unread from \(lastReadDate)") })
+            .flatMap { [weak self] in self?.channel.sendRead() ?? .empty() }
+            .do(onNext: { [weak self] _ in
+                if let self = self {
                     self.unreadMessageReadMVar.set(nil)
-                    Client.shared.logger?.log("🎫", "Read done.")
+                    self.updateUnreadCount()
                     self.isReadSubject.onNext(())
+                    Client.shared.logger?.log("🎫", "Read done.")
                 }
-            }
-        }
-        
-        Client.shared.request(endpoint: ChatEndpoint.sendRead(channel), emptyEventCompletion)
+            }, onError: { [weak self] error in self?.isReadSubject.onError(error) })
+            .map { _ in Void() }
     }
 }
 
@@ -773,14 +761,10 @@ extension ChannelPresenter {
             }
         }
         
-        return channel.send(action, for: message)
+        return channel.send(action: action, for: message)
             .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
     }
-}
-
-struct EventResponse: Decodable {
-    let event: Event
 }
 
 /// A typing user.

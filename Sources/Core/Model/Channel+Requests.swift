@@ -17,7 +17,7 @@ public extension Channel {
     ///
     /// - Parameter message: a message.
     /// - Returns: a created/updated message response.
-    func send(_ message: Message) -> Observable<MessageResponse> {
+    func send(message: Message) -> Observable<MessageResponse> {
         return Client.shared.rx.request(endpoint: .sendMessage(message, self))
     }
     
@@ -27,8 +27,15 @@ public extension Channel {
     ///   - action: an action, e.g. send, shuffle.
     ///   - ephemeralMessage: an ephemeral message.
     /// - Returns: a result message.
-    func send(_ action: Attachment.Action, for ephemeralMessage: Message) -> Observable<MessageResponse> {
+    func send(action: Attachment.Action, for ephemeralMessage: Message) -> Observable<MessageResponse> {
         return Client.shared.rx.request(endpoint: .sendMessageAction(.init(channel: self, message: ephemeralMessage, action: action)))
+    }
+    
+    /// Send a message read event.
+    ///
+    /// - Returns: an observable event response.
+    func sendRead() -> Observable<EventResponse> {
+        return Client.shared.rx.request(endpoint: .sendRead(self))
     }
     
     /// Request for a channel data, e.g. messages, members, read states, etc
@@ -92,4 +99,10 @@ public struct MessageResponse: Decodable {
     let message: Message
     /// A reaction.
     let reaction: Reaction?
+}
+
+/// An event response.
+public struct EventResponse: Decodable {
+    /// An event (see `Event`).
+    public let event: Event
 }
