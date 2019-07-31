@@ -12,24 +12,14 @@ import RxSwift
 /// An uploader manager.
 public final class Uploader {
     
-    /// A channel for the uploading.
-    public let channel: Channel
     /// A list of UploaderItem for the upload.
     public private(set) var items: [UploaderItem] = []
-    
-    /// Init an uploader for a given channel.
-    ///
-    /// - Parameter channel: a channel for the uploading.
-    public init(channel: Channel) {
-        self.channel = channel
-    }
     
     /// Uplode the item.
     ///
     /// - Parameter item: an uploading item.
     public func upload(item: UploaderItem) {
         items.insert(item, at: 0)
-        DispatchQueue.global(qos: .utility).async { item.upload(in: self.channel) }
     }
     
     /// Remove an uploading item and cancel the current uploading state.
@@ -37,13 +27,12 @@ public final class Uploader {
     /// - Parameter item: an uploading item for remove.
     public func remove(_ item: UploaderItem) {
         if let index = items.firstIndex(of: item) {
-            items.remove(at: index).urlSessionTask?.cancel()
+            items.remove(at: index)
         }
     }
     
     /// Remove all uploading items and cancel all uploading states.s
     public func reset() {
-        items.forEach { $0.urlSessionTask?.cancel() }
         items = []
     }
 }
@@ -57,6 +46,8 @@ public final class UploaderItem: Equatable {
         case file
     }
     
+    /// A channel for an uploading.
+    public let channel: Channel
     /// An original file URL.
     public let url: URL?
     /// An original image.
@@ -73,26 +64,10 @@ public final class UploaderItem: Equatable {
     public private(set) var attachment: Attachment? = nil
     /// An error with uploading.
     public private(set) var error: Error? = nil
-    private(set) var urlSessionTask: URLSessionTask?
     /// The last uploading progress.
     public private(set) var lastProgress: Float = 0
-    private var tryToUploadAgain: Bool = true
-    /// An observable uploading completion.
-    public let uploadingCompletion = PublishSubject<Void>()
-    
-    /// An uploading progress.
-    public private(set) lazy var uploadingProgress: Observable<Float> = Client.shared.urlSessionTaskDelegate.uploadProgress
-        .filter { [weak self] in $0.task == self?.urlSessionTask }
-        .map { [weak self] in
-            if let error = $0.error {
-                throw error
-            }
-            
-            self?.lastProgress = $0.progress
-            return $0.progress
-        }
-        .observeOn(MainScheduler.instance)
-        .takeWhile { $0 < 1 }
+    /// An observable uploading progress.
+    public private(set) lazy var uploading: Observable<ProgressResponse<FileUploadResponse>> = createUploading()
     
     /// Init an uploading item.
     ///
@@ -103,12 +78,14 @@ public final class UploaderItem: Equatable {
     ///   - fileName: a file name.
     ///   - fileType: a file type.
     ///   - fileSize: a file size.
-    public init(url: URL,
-         type: UploadingType = .file,
-         image: UIImage? = nil,
-         fileName: String? = nil,
-         fileType: AttachmentFileType? = nil,
-         fileSize: Int64 = 0) {
+    public init(channel: Channel,
+                url: URL,
+                type: UploadingType = .file,
+                image: UIImage? = nil,
+                fileName: String? = nil,
+                fileType: AttachmentFileType? = nil,
+                fileSize: Int64 = 0) {
+        self.channel = channel
         self.url = url
         self.type = type
         self.image = image
@@ -117,61 +94,51 @@ public final class UploaderItem: Equatable {
         self.fileSize = fileSize > 0 ? fileSize : url.fileSize
     }
     
-    func upload(in channel: Channel) {
-        let fileCompletion: Client.Completion<FileUploadResponse> = { [weak self] result in
-            guard let self = self else {
-                return
+    private func createUploading() -> Observable<ProgressResponse<FileUploadResponse>> {
+        let request: Observable<ProgressResponse<FileUploadResponse>>
+        
+        if type == .file || type == .video {
+            if let url = url, let data = try? Data(contentsOf: url) {
+                request = channel.sendFile(fileName: fileName, mimeType: fileType.mimeType, fileData: data)
+            } else {
+                return .error(ClientError.emptyBody)
+            }
+        } else {
+            let imageData: Data
+            var mimeType: String = fileType.mimeType
+            
+            if let url = url, let localImageData = try? Data(contentsOf: url) {
+                imageData = localImageData
+            } else if let encodedImageData = image?.jpegData(compressionQuality: 0.9) {
+                imageData = encodedImageData
+                mimeType = AttachmentFileType.jpeg.mimeType
+            } else {
+                return .error(ClientError.emptyBody)
             }
             
-            if let response = try? result.get() {
+            request = channel.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData)
+        }
+        
+        return request
+            .do(onNext: { [weak self] progressResponse in
+                self?.lastProgress = progressResponse.progress
+                
+                guard let self = self, let fileUploadResponse = progressResponse.result else {
+                    return
+                }
+                
                 if self.type == .image {
-                    self.attachment = Attachment(type: .image, title: self.fileName, imageURL: response.file)
+                    self.attachment = Attachment(type: .image, title: self.fileName, imageURL: fileUploadResponse.file)
                 } else {
                     let fileAttachment = AttachmentFile(type: self.fileType, size: self.fileSize, mimeType: self.fileType.mimeType)
                     
                     self.attachment = Attachment(type: self.type == .video ? .video : .file,
                                                  title: self.fileName,
-                                                 url: response.file,
+                                                 url: fileUploadResponse.file,
                                                  file: fileAttachment)
                 }
-                
-                self.uploadingCompletion.onCompleted()
-                
-            } else if let error = result.error {
-                if self.tryToUploadAgain {
-                    self.tryToUploadAgain = false
-                    self.upload(in: channel)
-                } else {
-                    self.error = error
-                    self.uploadingCompletion.onError(error)
-                }
-            }
-        }
-        
-        if type == .file || type == .video {
-            if let url = url, let data = try? Data(contentsOf: url) {
-                urlSessionTask = Client.shared.request(endpoint: .sendFile(fileName, fileType.mimeType, data, channel), fileCompletion)
-            } else {
-                uploadingCompletion.onError(ClientError.emptyBody)
-            }
-            
-            return
-        }
-        
-        let imageData: Data
-        var mimeType: String = fileType.mimeType
-        
-        if let url = url, let localImageData = try? Data(contentsOf: url) {
-            imageData = localImageData
-        } else  if let encodedImageData = image?.jpegData(compressionQuality: 0.9) {
-            imageData = encodedImageData
-            mimeType = AttachmentFileType.jpeg.mimeType
-        } else {
-            uploadingCompletion.onError(ClientError.emptyBody)
-            return
-        }
-        
-        urlSessionTask = Client.shared.request(endpoint: .sendImage(fileName, mimeType, imageData, channel), fileCompletion)
+            })
+            .share()
     }
     
     public static func == (lhs: UploaderItem, rhs: UploaderItem) -> Bool {
@@ -181,8 +148,4 @@ public final class UploaderItem: Equatable {
             && lhs.fileType == rhs.fileType
             && lhs.type == rhs.type
     }
-}
-
-struct FileUploadResponse: Decodable {
-    let file: URL
 }

@@ -45,17 +45,13 @@ extension ComposerView {
         if item.attachment == nil, item.error == nil {
             fileView.updateForProgress(item.lastProgress)
             
-            item.uploadingCompletion
+            item.uploading
                 .observeOn(MainScheduler.instance)
-                .subscribe(onError: { [weak fileView] error in fileView?.updateForError(error.localizedDescription) },
-                           onCompleted: { [weak self, weak fileView] in
-                            fileView?.updateForProgress(1)
-                            self?.updateSendButton()
-                })
-                .disposed(by: fileView.disposeBag)
-            
-            item.uploadingProgress
                 .do(onError: { [weak fileView] error in fileView?.updateForError(error.localizedDescription) },
+                    onCompleted: { [weak self, weak fileView] in
+                        fileView?.updateForProgress(1)
+                        self?.updateSendButton()
+                    },
                     onDispose: { [weak fileView, weak item] in
                         if let error = item?.error {
                             fileView?.updateForError(error.localizedDescription)
@@ -63,6 +59,7 @@ extension ComposerView {
                             fileView?.updateForProgress(1)
                         }
                 })
+                .map { $0.progress }
                 .bind(to: fileView.progressView.rx.progress)
                 .disposed(by: fileView.disposeBag)
             

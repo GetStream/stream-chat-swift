@@ -112,7 +112,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .asDriver(onErrorJustReturn: .none)
     
     /// Uploader for images and files.
-    public private(set) lazy var uploader = Uploader(channel: channel)
+    public private(set) lazy var uploader = Uploader()
     
     /// An observable updates for the Read event.
     public private(set) lazy var isReadUpdates = isReadSubject.asDriver(onErrorJustReturn: ())

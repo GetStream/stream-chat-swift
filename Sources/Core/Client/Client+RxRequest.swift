@@ -9,13 +9,16 @@
 import Foundation
 import RxSwift
 
+public typealias ProgressResponse<T: Decodable> = (progress: Float, result: T?)
+
 extension Client: ReactiveCompatible {}
 
 public extension Reactive where Base == Client {
+    
     /// Make an observable `Client` request.
     ///
     /// - Parameter endpoint: an endpoint (see `ChatEndpoint`).
-    /// - Returns: an observable `Result<T, ClientError>`.
+    /// - Returns: an observable result `T`.
     func request<T: Decodable>(endpoint: ChatEndpoint) -> Observable<T> {
         return .create { observer in
             let task = self.base.request(endpoint: endpoint) { (result: Result<T, ClientError>) in
@@ -29,6 +32,42 @@ public extension Reactive where Base == Client {
             }
             
             return Disposables.create { [weak task] in task?.cancel() }
+        }
+    }
+    
+    /// Make an observable `Client` request with a progress.
+    ///
+    /// - Parameter endpoint: an endpoint (see `ChatEndpoint`).
+    /// - Returns: an observable result with a progress `(progress: Float, result: T?)`.
+    func progressRequest<T: Decodable>(endpoint: ChatEndpoint) -> Observable<ProgressResponse<T>> {
+        return .create { observer in
+            var disposeBag: DisposeBag? = DisposeBag()
+            
+            let task = self.base.request(endpoint: endpoint) { (result: Result<T, ClientError>) in
+                disposeBag = nil
+                
+                switch result {
+                case .success(let value):
+                    observer.onNext((1, value))
+                    observer.onCompleted()
+                case .failure(let error):
+                    observer.onError(error)
+                }
+            }
+            
+            if let disposeBag = disposeBag {
+                self.base.urlSessionTaskDelegate.uploadProgress.asObserver()
+                    .filter { $0.task == task }
+                    .debug()
+                    .subscribe(onNext: { observer.onNext(($0.progress, nil)) },
+                               onError: { observer.onError($0) })
+                    .disposed(by: disposeBag)
+            }
+            
+            return Disposables.create { [weak task] in
+                task?.cancel()
+                disposeBag = nil
+            }
         }
     }
 }

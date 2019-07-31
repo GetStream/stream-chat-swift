@@ -349,7 +349,11 @@ extension ChatViewController {
                 return
             }
             
-            if let pickedImage = pickedImage, let uploaderItem = UploaderItem(pickedImage: pickedImage) {
+            guard let channel = self?.channelPresenter?.channel else {
+                return
+            }
+            
+            if let pickedImage = pickedImage, let uploaderItem = UploaderItem(channel: channel, pickedImage: pickedImage) {
                 self?.composerView.addImage(uploaderItem)
             }
         }
@@ -364,8 +368,8 @@ extension ChatViewController {
         documentPickerViewController.rx.didPickDocumentsAt
             .takeUntil(documentPickerViewController.rx.deallocated)
             .subscribe(onNext: { [weak self] in
-                if let self = self {
-                    $0.forEach { url in self.composerView.addFile(UploaderItem(url: url)) }
+                if let self = self, let channel = self.channelPresenter?.channel {
+                    $0.forEach { url in self.composerView.addFile(UploaderItem(channel: channel, url: url)) }
                 }
             })
             .disposed(by: disposeBag)

@@ -43,6 +43,26 @@ public extension Channel {
             .do(onNext: { _ in Client.shared.logger?.log("🎫", eventType.rawValue) })
     }
     
+    /// Upload an image to the channel.
+    ///
+    /// - Parameters:
+    ///   - fileName: a file name.
+    ///   - mimeType: a file mime type.
+    /// - Returns: an observable file upload response.
+    func sendImage(fileName: String, mimeType: String, imageData: Data) -> Observable<ProgressResponse<FileUploadResponse>> {
+        return Client.shared.rx.progressRequest(endpoint: .sendImage(fileName, mimeType, imageData, self))
+    }
+    
+    /// Upload a file to the channel.
+    ///
+    /// - Parameters:
+    ///   - fileName: a file name.
+    ///   - mimeType: a file mime type.
+    /// - Returns: an observable file upload response.
+    func sendFile(fileName: String, mimeType: String, fileData: Data) -> Observable<ProgressResponse<FileUploadResponse>> {
+        return Client.shared.rx.progressRequest(endpoint: .sendFile(fileName, mimeType, fileData, self))
+    }
+
     /// Request for a channel data, e.g. messages, members, read states, etc
     ///
     /// - Parameters:
@@ -110,4 +130,10 @@ public struct MessageResponse: Decodable {
 public struct EventResponse: Decodable {
     /// An event (see `Event`).
     public let event: Event
+}
+
+/// A file upload response.
+public struct FileUploadResponse: Decodable {
+    /// An uploaded file URL.
+    public let file: URL
 }

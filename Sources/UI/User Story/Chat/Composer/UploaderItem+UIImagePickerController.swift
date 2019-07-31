@@ -11,7 +11,7 @@ import StreamChatCore
 import Photos.PHPhotoLibrary
 
 extension UploaderItem {
-    convenience init?(pickedImage: PickedImage) {
+    convenience init?(channel: Channel, pickedImage: PickedImage) {
         guard let fileURL = pickedImage.fileURL else {
             return nil
         }
@@ -27,7 +27,8 @@ extension UploaderItem {
             fileType = AttachmentFileType(ext: ext)
         }
         
-        self.init(url: fileURL,
+        self.init(channel: channel,
+                  url: fileURL,
                   type: pickedImage.isVideo ? .video : .image,
                   image: pickedImage.image,
                   fileName: fileName,

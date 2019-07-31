@@ -100,17 +100,13 @@ extension ComposerView: UICollectionViewDataSource {
         if item.attachment == nil, item.error == nil {
             cell.updateForProgress(item.lastProgress)
             
-            item.uploadingCompletion
+            item.uploading
                 .observeOn(MainScheduler.instance)
-                .subscribe(onError: { [weak cell] _ in cell?.updateForError() },
-                           onCompleted: { [weak self, weak cell] in
-                            cell?.updateForProgress(1)
-                            self?.updateSendButton()
-                })
-                .disposed(by: cell.disposeBag)
-            
-            item.uploadingProgress
                 .do(onError: { [weak cell] error in cell?.updateForError() },
+                    onCompleted: { [weak self, weak cell] in
+                        cell?.updateForProgress(1)
+                        self?.updateSendButton()
+                    },
                     onDispose: { [weak cell, weak item] in
                         if item?.error == nil {
                             cell?.updateForProgress(1)
@@ -118,6 +114,7 @@ extension ComposerView: UICollectionViewDataSource {
                             cell?.updateForError()
                         }
                 })
+                .map { $0.progress }
                 .bind(to: cell.progressView.rx.progress)
                 .disposed(by: cell.disposeBag)
             
