@@ -150,7 +150,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     private func sendReadIfPossible() {
-        channelPresenter?.sendReadIfPossible().debug().subscribe().disposed(by: disposeBag)
+        channelPresenter?.sendReadIfPossible().subscribe().disposed(by: disposeBag)
     }
 }
 

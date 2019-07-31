@@ -17,7 +17,23 @@ public extension Message {
     ///
     /// - Returns: an observable message response.
     func delete() -> Observable<MessageResponse> {
-        return Client.shared.rx.request(endpoint: ChatEndpoint.deleteMessage(self))
+        return Client.shared.rx.request(endpoint: .deleteMessage(self))
+    }
+    
+    /// Add a reaction to the message.
+    ///
+    /// - Parameter reactionType: a reaction type.
+    /// - Returns: an observable message response.
+    func addReaction(_ reactionType: String) -> Observable<MessageResponse> {
+        return Client.shared.rx.request(endpoint: .addReaction(reactionType, self))
+    }
+    
+    /// Delete a reaction to the message.
+    ///
+    /// - Parameter reactionType: a reaction type.
+    /// - Returns: an observable message response.
+    func deleteReaction(_ reactionType: String) -> Observable<MessageResponse> {
+        return Client.shared.rx.request(endpoint: .deleteReaction(reactionType, self))
     }
     
     /// Send a request for reply messages.

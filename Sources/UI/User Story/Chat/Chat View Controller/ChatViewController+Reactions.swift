@@ -38,8 +38,20 @@ extension ChatViewController {
         }
         
         reactionsView.show(atY: y, for: message) { [weak self] emojiType in
-            self?.reactionsView = nil
-            return self?.channelPresenter?.update(reactionType: emojiType, messageId: messageId)
+            guard let self = self,
+                let messageIndex = self.channelPresenter?.items.lastIndex(whereMessageId: messageId),
+                let message = self.channelPresenter?.items[messageIndex].message else {
+                    return nil
+            }
+            
+            self.reactionsView = nil
+            let reactionExists = message.hasOwnReaction(type: emojiType)
+            
+            (reactionExists ? message.deleteReaction(emojiType) : message.addReaction(emojiType))
+                .subscribe()
+                .disposed(by: self.disposeBag)
+            
+            return !reactionExists
         }
     }
 }

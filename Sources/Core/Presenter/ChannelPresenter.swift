@@ -18,7 +18,6 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public typealias MessageExtraDataCallback =
         (_ id: String, _ text: String, _ attachments: [Attachment], _ parentId: String?) -> Codable?
     
-    private let emptyMessageCompletion: Client.Completion<MessageResponse> = { _ in }
     private let emptyEventCompletion: Client.Completion<EventResponse> = { _ in }
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
@@ -667,27 +666,6 @@ extension ChannelPresenter {
         if message.type == .ephemeral {
             ephemeralSubject.onNext((message, hasEphemeralMessage))
         }
-    }
-}
-
-// MARK: - Send Reaction
-
-extension ChannelPresenter {
-    /// Update a message reaction.
-    ///
-    /// - Parameters:
-    ///     - reactionType: a reaction type (see `Reaction`).
-    ///     - messageId: a message id.
-    public func update(reactionType: String, messageId: String) -> Bool? {
-        guard let index = items.lastIndex(whereMessageId: messageId), let message = items[index].message else {
-            return nil
-        }
-        
-        let add = !message.hasOwnReaction(type: reactionType)
-        let endpoint = add ? ChatEndpoint.addReaction(reactionType, message) : .deleteReaction(reactionType, message)
-        Client.shared.request(endpoint: endpoint, emptyMessageCompletion)
-        
-        return add
     }
 }
 
