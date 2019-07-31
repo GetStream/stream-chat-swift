@@ -1,4 +1,4 @@
-# Official SDK for [Stream Chat](https://getstream.io/chat/)
+# Official iOS SDK for [Stream Chat](https://getstream.io/chat/)
 
 [![Language: Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
