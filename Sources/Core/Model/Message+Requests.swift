@@ -13,6 +13,13 @@ import RxSwift
 
 public extension Message {
     
+    /// Delete the message.
+    ///
+    /// - Returns: an observable message response.
+    func delete() -> Observable<MessageResponse> {
+        return Client.shared.rx.request(endpoint: ChatEndpoint.deleteMessage(self))
+    }
+    
     /// Send a request for reply messages.
     ///
     /// - Parameter pagination: a pagination (see `Pagination`).

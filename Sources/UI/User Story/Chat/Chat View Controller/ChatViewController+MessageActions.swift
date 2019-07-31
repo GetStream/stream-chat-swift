@@ -8,6 +8,7 @@
 
 import UIKit
 import StreamChatCore
+import RxSwift
 
 extension ChatViewController {
     
@@ -93,7 +94,9 @@ extension ChatViewController {
         let alert = UIAlertController(title: "Delete message?", message: text, preferredStyle: .alert)
         
         alert.addAction(.init(title: "Delete", style: .destructive, handler: { [weak self] _ in
-            self?.channelPresenter?.delete(message: message)
+            if let self = self {
+                message.delete().subscribe().disposed(by: self.disposeBag)
+            }
         }))
         
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))

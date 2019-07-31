@@ -38,6 +38,8 @@ public enum ChatEndpoint {
     case sendFile(_ fileName: String, _ mimeType: String, Data, Channel)
     /// Send a read event.
     case sendRead(Channel)
+    /// Send a message action.
+    case sendMessageAction(MessageAction)
     /// Create a channel.
     case createChannel(Channel)
     
@@ -45,8 +47,6 @@ public enum ChatEndpoint {
     
     /// Get a thread data.
     case replies(Message, Pagination)
-    /// Send a message action.
-    case sendMessageAction(MessageAction)
     /// Delete a message.
     case deleteMessage(Message)
     /// Add a reaction to the message.

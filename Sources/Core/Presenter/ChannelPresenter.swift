@@ -663,11 +663,6 @@ extension ChannelPresenter {
             .observeOn(MainScheduler.instance)
     }
     
-    /// Delete a message.
-    public func delete(message: Message) {
-        Client.shared.request(endpoint: ChatEndpoint.deleteMessage(message), emptyMessageCompletion)
-    }
-    
     private func updateEphemeralMessage(_ message: Message) {
         if message.type == .ephemeral {
             ephemeralSubject.onNext((message, hasEphemeralMessage))
