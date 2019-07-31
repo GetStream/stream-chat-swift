@@ -85,7 +85,7 @@ Then run: `carthage update --platform iOS --new-resolver`. This will build frame
 
 [Low level core API Reference](https://getstream.github.io/stream-chat-swift/core)
 
-[Getting started tutorial](https://getstream.io/chat/ios-chat/tutorial/)
+[Getting started with the iOS Swift Chat tutorial](https://getstream.io/chat/ios-chat/tutorial/)
 
 ## Supported features
 
