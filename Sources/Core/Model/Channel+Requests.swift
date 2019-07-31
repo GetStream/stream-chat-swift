@@ -38,6 +38,11 @@ public extension Channel {
         return Client.shared.rx.request(endpoint: .sendRead(self))
     }
     
+    func send(eventType: EventType) -> Observable<EventResponse> {
+        return Client.shared.rx.request(endpoint: .sendEvent(eventType, self))
+            .do(onNext: { _ in Client.shared.logger?.log("🎫", eventType.rawValue) })
+    }
+    
     /// Request for a channel data, e.g. messages, members, read states, etc
     ///
     /// - Parameters:

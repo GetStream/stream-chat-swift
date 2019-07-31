@@ -28,11 +28,13 @@ extension ChatViewController {
         
         composerView.textView.rx.text
             .skip(1)
-            .do(onNext: { [weak self] text in self?.dispatchCommands(in: text ?? "") })
-            .filter { [weak self] _ in (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
-            .do(onNext: { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: true) })
+            .unwrap()
+            .do(onNext: { [weak self] in self?.dispatchCommands(in: $0) })
+            .filter { [weak self] in !$0.isBlank && (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
+            .flatMap { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: true) ?? .empty() }
             .debounce(.seconds(3), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: false) })
+            .flatMap { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: false) ?? .empty() }
+            .subscribe()
             .disposed(by: disposeBag)
         
         composerView.sendButton.rx.tap

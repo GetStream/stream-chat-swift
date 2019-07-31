@@ -11,7 +11,8 @@ import Foundation
 // MARK: - Check the string is blank
 
 extension String {
-    var isBlank: Bool {
+    /// Check if the string is empty and does not have whitespaces or newlines.
+    public var isBlank: Bool {
         return isEmpty || allSatisfy({ $0.isWhitespace })
     }
 }

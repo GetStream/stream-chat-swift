@@ -18,7 +18,6 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public typealias MessageExtraDataCallback =
         (_ id: String, _ text: String, _ attachments: [Attachment], _ parentId: String?) -> Codable?
     
-    private let emptyEventCompletion: Client.Completion<EventResponse> = { _ in }
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
     
@@ -673,51 +672,55 @@ extension ChannelPresenter {
 
 extension ChannelPresenter {
     /// Send a typing event.
-    public func sendEvent(isTyping: Bool) {
+    public func sendEvent(isTyping: Bool) -> Observable<EventResponse> {
         guard parentMessage == nil else {
-            return
+            return .empty()
         }
         
         if isTyping {
             if !startedTyping {
                 startedTyping = true
-                send(eventType: .typingStart)
+                return channel.send(eventType: .typingStart).observeOn(MainScheduler.instance)
             }
         } else if startedTyping {
             startedTyping = false
-            send(eventType: .typingStop)
+            return channel.send(eventType: .typingStop).observeOn(MainScheduler.instance)
         }
-    }
-    
-    private func send(eventType: EventType) {
-        Client.shared.logger?.log("🎫", eventType.rawValue)
-        Client.shared.request(endpoint: ChatEndpoint.sendEvent(eventType, channel), emptyEventCompletion)
+        
+        return .empty()
     }
     
     /// Send Read event if the app is active.
     ///
     /// - Returns: an observable completion.
     public func sendReadIfPossible() -> Observable<Void> {
-        guard isUnread else {
+        guard let oldUnreadMessageRead = unreadMessageReadMVar.get() else {
+            Client.shared.logger?.log("🎫", "Skip read.")
             return .empty()
         }
         
-        let lastReadDate = unreadMessageReadMVar.get()?.lastReadDate.description ?? "-"
+        unreadMessageReadMVar.set(nil)
         
         return Observable.just(())
             .subscribeOn(MainScheduler.instance)
             .filter { UIApplication.shared.appState == .active }
-            .do(onNext: { Client.shared.logger?.log("🎫", "Send Read. Unread from \(lastReadDate)") })
+            .do(onNext: { Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(oldUnreadMessageRead.lastReadDate)") })
             .flatMap { [weak self] in self?.channel.sendRead() ?? .empty() }
             .do(onNext: { [weak self] _ in
-                if let self = self {
-                    self.unreadMessageReadMVar.set(nil)
-                    self.updateUnreadCount()
-                    self.isReadSubject.onNext(())
-                    Client.shared.logger?.log("🎫", "Read done.")
-                }
-            }, onError: { [weak self] error in self?.isReadSubject.onError(error) })
+                self?.updateUnreadMessageRead(nil)
+                self?.isReadSubject.onNext(())
+                Client.shared.logger?.log("🎫", "Message Read done.")
+                }, onError: { [weak self] error in
+                    self?.updateUnreadMessageRead(oldUnreadMessageRead)
+                    self?.isReadSubject.onError(error)
+                    ClientLogger.log("🎫", error, message: "Send Message Read error.")
+            })
             .map { _ in Void() }
+    }
+    
+    private func updateUnreadMessageRead(_ messageRead: MessageRead?) {
+        unreadMessageReadMVar.set(messageRead)
+        updateUnreadCount()
     }
 }
 
