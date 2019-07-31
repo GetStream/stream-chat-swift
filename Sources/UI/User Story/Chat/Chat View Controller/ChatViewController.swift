@@ -61,7 +61,8 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
     
     /// A channel presenter.
     public var channelPresenter: ChannelPresenter?
-    
+    private var changesEnabled: Bool = false
+
     open override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = style.incomingMessage.chatBackgroundColor
@@ -75,6 +76,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         composerView.uploader = presenter.uploader
         
         presenter.changes
+            .filter { [weak self] _ in self?.changesEnabled ?? false }
             .do(onNext: { [weak self] _ in self?.sendReadIfPossible() })
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
@@ -87,6 +89,8 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
             tableView.scrollToBottom(animated: false)
             DispatchQueue.main.async { [weak self] in self?.tableView.scrollToBottom(animated: false) }
         }
+        
+        changesEnabled = true
         
         InternetConnection.shared.isAvailableObservable
             .observeOn(MainScheduler.instance)
@@ -218,7 +222,7 @@ extension ChatViewController {
             
             tableView.reloadData()
             
-            if isLoading || (scrollEnabled && needsToScroll) {
+            if row >= 0 && (isLoading || (scrollEnabled && needsToScroll)) {
                 tableView.scrollToRow(at: .row(row), at: .top, animated: false)
             }
             
