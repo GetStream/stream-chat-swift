@@ -45,9 +45,9 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public private(set) lazy var changes = Driver.merge(requestChanges, webSocketChanges)
     
     private lazy var requestChanges: Driver<ViewChanges> = prepareRequest(startPaginationWith: pageSize)
-        .map { [weak self] in self?.channelsEndpoint(pagination: $0) }
+        .map { [weak self] in self?.channelsQuery(pagination: $0) }
         .unwrap()
-        .flatMapLatest { Client.shared.rx.request(endpoint: $0).retry(3) }
+        .flatMapLatest { Channel.channels(query: $0).retry(3) }
         .map { [weak self] in self?.parseChannels($0) ?? .none }
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
@@ -77,19 +77,11 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
 
 extension ChannelsPresenter {
     
-    private func channelsEndpoint(pagination: Pagination) -> ChatEndpoint? {
-        if let user = Client.shared.user {
-            return ChatEndpoint.channels(ChannelsQuery(filter: filter,
-                                                       sort: sorting,
-                                                       user: user,
-                                                       pagination: pagination,
-                                                       options: queryOptions))
-        }
-        
-        return nil
+    private func channelsQuery(pagination: Pagination) -> ChannelsQuery {
+        return ChannelsQuery(filter: filter, sort: sorting, pagination: pagination, options: queryOptions)
     }
     
-    private func parseChannels(_ response: ChannelsResponse) -> ViewChanges {
+    private func parseChannels(_ channels: [ChannelResponse]) -> ViewChanges {
         let isNextPage = next != pageSize
         var items = isNextPage ? self.items : [ChatItem]()
         
@@ -99,7 +91,7 @@ extension ChannelsPresenter {
         
         let row = items.count
         
-        items.append(contentsOf: response.channels.map {
+        items.append(contentsOf: channels.map {
             let channelPresenter = ChannelPresenter(response: $0, queryOptions: queryOptions, showStatuses: showChannelStatuses)
             
             if let channelMessageExtraDataCallback = self.channelMessageExtraDataCallback {
@@ -109,7 +101,7 @@ extension ChannelsPresenter {
             return .channelPresenter(channelPresenter)
         })
         
-        if response.channels.count == next.limit {
+        if channels.count == next.limit {
             next = .channelsNextPageSize + .offset(next.offset + next.limit)
             items.append(.loading(false))
         } else {

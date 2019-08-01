@@ -25,8 +25,6 @@ public struct ChannelsQuery: Encodable {
     public let filter: Filter
     /// A sorting for the query (see `Filter`).
     public let sort: [Sorting]
-    /// A current user (see `Client.shread.user`).
-    public let user: User
     /// A pagination.
     public let pagination: Pagination
     /// A number of messages inside each channel.
@@ -36,13 +34,11 @@ public struct ChannelsQuery: Encodable {
     
     public init(filter: Filter,
                 sort: [Sorting] = [],
-                user: User,
                 pagination: Pagination,
                 messageLimit: Pagination = .messagesPageSize,
                 options: QueryOptions) {
         self.filter = filter
         self.sort = sort
-        self.user = user
         self.pagination = pagination
         self.messageLimit = messageLimit
         self.options = options
@@ -52,10 +48,15 @@ public struct ChannelsQuery: Encodable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(filter, forKey: .filter)
         try container.encode(sort, forKey: .sort)
-        try container.encode(user, forKey: .user)
         try container.encode(messageLimit.limit, forKey: .messageLimit)
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
+        
+        if let user = Client.shared.user {
+            try container.encode(user, forKey: .user)
+        } else {
+            throw ClientError.emptyUser
+        }
     }
 }
 
