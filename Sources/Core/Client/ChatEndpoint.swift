@@ -55,8 +55,10 @@ public enum ChatEndpoint {
     case addReaction(_ reactionType: String, Message)
     /// Delete a reaction from the message.
     case deleteReaction(_ reactionType: String, Message)
-    //case flagMessage(Message) ⚠️
-    //case unflagMessage(Message) ⚠️
+    /// Flag a message.
+    case flagMessage(Message)
+    /// Unflag a message.
+    case unflagMessage(Message)
     
     // MARK: - User Endpoints
     
@@ -124,6 +126,10 @@ extension ChatEndpoint {
             return "moderation/mute"
         case .unmuteUser:
             return "moderation/unmute"
+        case .flagMessage:
+            return "moderation/flag"
+        case .unflagMessage:
+            return "moderation/unflag"
         }
     }
     
@@ -188,6 +194,8 @@ extension ChatEndpoint {
             
         case .muteUser(let user), .unmuteUser(let user):
             return ["target_id": user.id]
+        case .flagMessage(let message), .unflagMessage(let message):
+            return ["target_message_id": message.id]
         }
     }
     

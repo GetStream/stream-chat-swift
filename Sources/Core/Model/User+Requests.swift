@@ -29,7 +29,7 @@ public extension User {
         return User.update(users: [self]).map({ $0.first }).unwrap()
     }
     
-    /// Update or create a user..
+    /// Update or create a user.
     ///
     /// - Returns: an observable updated user.
     static func update(users: [User]) -> Observable<[User]> {
