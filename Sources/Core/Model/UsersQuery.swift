@@ -42,9 +42,3 @@ public struct UsersQuery: Encodable {
         try options.encode(to: encoder)
     }
 }
-
-/// A response with a list of users.
-public struct UsersResponse: Decodable {
-    /// A list of users.
-    public let users: [User]
-}

@@ -52,7 +52,7 @@ public struct ChannelsQuery: Encodable {
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
         
-        if let user = Client.shared.user {
+        if let user = User.current {
             try container.encode(user, forKey: .user)
         } else {
             throw ClientError.emptyUser

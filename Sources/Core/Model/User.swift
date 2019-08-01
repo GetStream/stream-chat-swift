@@ -44,6 +44,11 @@ public struct User: Codable {
         return false
     }
     
+    /// The current user.
+    public static var current: User? {
+        return Client.shared.user
+    }
+    
     /// Init a user.
     ///
     /// - Parameters:

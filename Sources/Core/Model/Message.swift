@@ -80,7 +80,7 @@ public struct Message: Codable {
     
     /// Check if the message is own message of the current user.
     public var isOwn: Bool {
-        return Client.shared.user == user
+        return user.isCurrent
     }
     
     /// Check if the message could be edited.

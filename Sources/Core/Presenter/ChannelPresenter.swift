@@ -221,8 +221,7 @@ extension ChannelPresenter {
             let nextRow = items.count
             let reloadRow: Int? = items.last?.message?.user == message.user ? nextRow - 1 : nil
             appendOrUpdateMessageItem(message)
-            let isCurrentUserMessage = Client.shared.user == message.user
-            let viewChanges = ViewChanges.itemAdded(nextRow, reloadRow, isCurrentUserMessage, items)
+            let viewChanges = ViewChanges.itemAdded(nextRow, reloadRow, message.user.isCurrent, items)
             lastWebSocketEventViewChanges = viewChanges
             Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             
@@ -265,7 +264,7 @@ extension ChannelPresenter {
             
         case .messageRead(let messageRead):
             guard channel.config.readEventsEnabled,
-                let currentUser = Client.shared.user,
+                let currentUser = User.current,
                 messageRead.user != currentUser,
                 let lastAddedOwnMessage = lastAddedOwnMessage,
                 lastAddedOwnMessage.created <= messageRead.lastReadDate,
@@ -456,7 +455,7 @@ extension ChannelPresenter {
                        to items: inout [ChatItem],
                        startIndex: Int = 0,
                        isNextPage: Bool) {
-        guard let currentUser = Client.shared.user else {
+        guard let currentUser = User.current else {
             return
         }
         
@@ -622,7 +621,7 @@ extension ChannelPresenter {
     ///     - text: a message text
     ///     - completion: a completion blocks
     public func send(text: String) -> Observable<MessageResponse> {
-        guard let user = Client.shared.user else {
+        guard let currentUser = User.current else {
             return .empty()
         }
         
@@ -649,7 +648,7 @@ extension ChannelPresenter {
         editMessage = nil
         
         let message = Message(id: messageId,
-                              user: user,
+                              user: currentUser,
                               text: text,
                               attachments: attachments,
                               extraData: extraData,

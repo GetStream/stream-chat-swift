@@ -18,6 +18,7 @@
 		8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965022EF4B2400E94795 /* UsersQuery.swift */; };
 		8A04965322F0910200E94795 /* Message+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965222F0910200E94795 /* Message+Requests.swift */; };
 		8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */; };
+		8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B522F30001003BD1D5 /* User+Requests.swift */; };
 		8AD5EC9422E9A3E8005CFAC9 /* StreamChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD5EC9222E9A3E8005CFAC9 /* StreamChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AD5ECA322E9B355005CFAC9 /* StreamChatCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD5ECA122E9B355005CFAC9 /* StreamChatCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AD5ECA822E9B3C4005CFAC9 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
@@ -158,6 +159,7 @@
 		8A04965022EF4B2400E94795 /* UsersQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersQuery.swift; sourceTree = "<group>"; };
 		8A04965222F0910200E94795 /* Message+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Requests.swift"; sourceTree = "<group>"; };
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
+		8AC8C8B522F30001003BD1D5 /* User+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Requests.swift"; sourceTree = "<group>"; };
 		8AD5EC8F22E9A3E8005CFAC9 /* StreamChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD5EC9222E9A3E8005CFAC9 /* StreamChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChat.h; sourceTree = "<group>"; };
 		8AD5EC9322E9A3E8005CFAC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -709,6 +711,7 @@
 				8AD5ED2422E9BA39005CFAC9 /* MessageRead.swift */,
 				8AD5ED2722E9BA39005CFAC9 /* Member.swift */,
 				8AD5ED2622E9BA39005CFAC9 /* User.swift */,
+				8AC8C8B522F30001003BD1D5 /* User+Requests.swift */,
 				8A04965022EF4B2400E94795 /* UsersQuery.swift */,
 				8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */,
 				8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */,
@@ -1090,6 +1093,7 @@
 				8AD5ED5B22E9BA5A005CFAC9 /* MessageAction.swift in Sources */,
 				8AD5ED4422E9BA5A005CFAC9 /* String+Extensions.swift in Sources */,
 				8AD5ED4322E9BA5A005CFAC9 /* Int+Extensions.swift in Sources */,
+				8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */,
 				8AD5ED6022E9BA5A005CFAC9 /* WebSocket+Response.swift in Sources */,
 				8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */,
 				8AD5ED5922E9BA5A005CFAC9 /* User.swift in Sources */,

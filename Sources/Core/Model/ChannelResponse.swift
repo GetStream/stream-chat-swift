@@ -35,15 +35,11 @@ public struct ChannelResponse: Decodable {
         messages = try container.decode([Message].self, forKey: .messages)
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         
-        if let user = Client.shared.user {
-            if let lastMessage = messages.last,
-                let messageRead = messageReads.first(where: { $0.user == user }),
-                lastMessage.updated > messageRead.lastReadDate {
-                unreadMessageRead = messageRead
-            } else  {
-                unreadMessageRead = nil
-            }
-        } else {
+        if let lastMessage = messages.last,
+            let messageRead = messageReads.first(where: { $0.user.isCurrent }),
+            lastMessage.updated > messageRead.lastReadDate {
+            unreadMessageRead = messageRead
+        } else  {
             unreadMessageRead = nil
         }
     }

@@ -90,7 +90,7 @@ public extension Channel {
     func query(pagination: Pagination, queryOptions: QueryOptions = .all) -> Observable<ChannelResponse> {
         var members = [Member]()
         
-        if members.isEmpty, let user = Client.shared.user {
+        if members.isEmpty, let user = User.current {
             members = [Member(user: user)]
         }
         
@@ -117,7 +117,7 @@ extension Channel {
                        imageURL: URL? = nil,
                        memberIds: [String] = [],
                        extraData: Codable? = nil) -> Observable<ChannelResponse> {
-        guard let currentUser = Client.shared.user else {
+        guard let currentUser = User.current else {
             return .empty()
         }
         

@@ -62,8 +62,8 @@ public enum ChatEndpoint {
     
     /// Get a list of users.
     case users(UsersQuery)
-    //case updateUser(User) ⚠️
-    //case updateUsers(User) ⚠️
+    /// Update a user.
+    case updateUsers([User])
     //case muteUser(User) ⚠️
     //case unmuteUser(User) ⚠️
 }
@@ -116,7 +116,7 @@ extension ChatEndpoint {
             return path(to: channel, "image")
         case .sendFile(_, _, _, let channel):
             return path(to: channel, "file")
-        case .users:
+        case .users, .updateUsers:
             return "users"
         }
     }
@@ -170,6 +170,15 @@ extension ChatEndpoint {
             return ["event": ["type": event]]
         case .sendRead:
             return Empty()
+            
+        case .updateUsers(let users):
+            let usersById: [String: User] = users.reduce([:]) { usersById, user in
+                var usersById = usersById
+                usersById[user.id] = user
+                return usersById
+            }
+            
+            return ["users": usersById]
         }
     }
     

@@ -35,11 +35,7 @@ public struct Reaction: Codable, Equatable {
     
     /// Check if the reaction if by the current user.
     public var isOwn: Bool {
-        if let user = user, let currentUser = Client.shared.user, user == currentUser {
-            return true
-        }
-        
-        return false
+        return user?.isCurrent ?? false
     }
 }
 

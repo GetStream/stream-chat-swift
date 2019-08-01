@@ -83,8 +83,9 @@ final class ReactionsView: UIView {
             
             if increment > 0 {
                 if let avatarView = avatarsStackView.subviews[index].subviews.first as? AvatarView {
-                    let user = Client.shared.user
-                    avatarView.update(with: user?.avatarURL, name: user?.name, baseColor: backgroundColor?.withAlphaComponent(1))
+                    avatarView.update(with: User.current?.avatarURL,
+                                      name: User.current?.name,
+                                      baseColor: backgroundColor?.withAlphaComponent(1))
                 }
             } else {
                 avatarsStackView.subviews[index].subviews.first?.removeFromSuperview()
