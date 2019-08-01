@@ -18,6 +18,7 @@ public struct User: Codable {
         case created = "created_at"
         case updated = "updated_at"
         case lastActiveDate = "last_active"
+        case mutedUsers = "mutes"
     }
     
     /// A user id.
@@ -34,6 +35,8 @@ public struct User: Codable {
     public let lastActiveDate: Date?
     /// An indicator if a user is online.
     public let online: Bool
+    /// Muted users.
+    public internal(set) var mutedUsers: [MutedUser]
     
     /// Check if the user is the current user.
     public var isCurrent: Bool {
@@ -63,6 +66,7 @@ public struct User: Codable {
         updated = Date()
         lastActiveDate = Date()
         online = false
+        mutedUsers = []
     }
     
     public init(from decoder: Decoder) throws {
@@ -72,6 +76,7 @@ public struct User: Codable {
         updated = try container.decode(Date.self, forKey: .updated)
         lastActiveDate = try container.decodeIfPresent(Date.self, forKey: .lastActiveDate)
         online = try container.decode(Bool.self, forKey: .online)
+        mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
             self.name = name

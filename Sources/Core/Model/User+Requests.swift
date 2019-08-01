@@ -29,12 +29,41 @@ public extension User {
         return User.update(users: [self]).map({ $0.first }).unwrap()
     }
     
-    /// Update or create a user.
+    /// Update or create a user..
     ///
     /// - Returns: an observable updated user.
     static func update(users: [User]) -> Observable<[User]> {
         let request: Observable<UpdatedUsersResponse> = Client.shared.rx.request(endpoint: .updateUsers(users))
         return request.map { $0.users.values.map { $0 } }
+    }
+    
+    /// Mute the user.
+    ///
+    /// - Returns: an observable muted user.
+    func mute() -> Observable<MutedUsersResponse> {
+        return Client.shared.rx.request(endpoint: .muteUser(self))
+            .do(onNext: { Client.shared.user = $0.currentUser })
+    }
+    
+    /// Unmute the user.
+    ///
+    /// - Returns: an observable unmuted user.
+    func unmute() -> Observable<Void> {
+        let request: Observable<EmptyResponse> = Client.shared.rx.request(endpoint: .unmuteUser(self))
+        return request.map { _ in Void() }
+            // Remove unmuted user from the current user.
+            .do(onNext: {
+                if let currentUser = User.current {
+                    var currentUser = currentUser
+                    var mutedUsers = currentUser.mutedUsers
+                    
+                    if let index = mutedUsers.firstIndex(where: { $0.user.id == self.id }) {
+                        mutedUsers.remove(at: index)
+                        currentUser.mutedUsers = mutedUsers
+                        Client.shared.user = currentUser
+                    }
+                }
+            })
     }
 }
 
@@ -48,4 +77,33 @@ public struct UsersResponse: Decodable {
 public struct UpdatedUsersResponse: Decodable {
     /// A list of users by Id.
     public let users: [String: User]
+}
+
+/// A muted users response.
+public struct MutedUsersResponse: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case mutedUser = "mute"
+        case currentUser = "own_user"
+    }
+    
+    /// A muted user.
+    public let mutedUser: MutedUser
+    /// The current user.
+    public let currentUser: User
+}
+
+/// A muted user.
+public struct MutedUser: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case user = "target"
+        case created = "created_at"
+        case updated = "updated_at"
+    }
+    
+    /// A muted user.
+    public let user: User
+    /// A created date.
+    public let created: Date
+    /// A updated date.
+    public let updated: Date
 }

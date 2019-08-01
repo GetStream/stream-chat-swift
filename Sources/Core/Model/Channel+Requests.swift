@@ -104,7 +104,7 @@ extension Channel {
     /// Create a channel.
     ///
     /// - Parameters:
-    ///     - type: a channel type (see `ChannelType`).
+    ///     - type: a channel type (see `ChannelType`).1
     ///     - id: a channel id.
     ///     - name: a channel name.
     ///     - imageURL: a channel image URL.

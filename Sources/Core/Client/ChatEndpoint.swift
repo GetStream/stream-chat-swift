@@ -64,8 +64,10 @@ public enum ChatEndpoint {
     case users(UsersQuery)
     /// Update a user.
     case updateUsers([User])
-    //case muteUser(User) ⚠️
-    //case unmuteUser(User) ⚠️
+    /// Mute a use.
+    case muteUser(User)
+    /// Unmute a user.
+    case unmuteUser(User)
 }
 
 extension ChatEndpoint {
@@ -118,6 +120,10 @@ extension ChatEndpoint {
             return path(to: channel, "file")
         case .users, .updateUsers:
             return "users"
+        case .muteUser:
+            return "moderation/mute"
+        case .unmuteUser:
+            return "moderation/unmute"
         }
     }
     
@@ -179,6 +185,9 @@ extension ChatEndpoint {
             }
             
             return ["users": usersById]
+            
+        case .muteUser(let user), .unmuteUser(let user):
+            return ["target_id": user.id]
         }
     }
     
