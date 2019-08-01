@@ -13,6 +13,15 @@ import RxSwift
 
 public extension Channel {
     
+    /// Requests channels with a given query.
+    ///
+    /// - Parameter query: a channels query (see `ChannelsQuery`).
+    /// - Returns: a list of a channel response (see `ChannelResponse`).
+    static func channels(query: ChannelsQuery) -> Observable<[ChannelResponse]> {
+        let request: Observable<ChannelsResponse> = Client.shared.rx.request(endpoint: .channels(query))
+        return request.map { $0.channels }
+    }
+    
     /// Send a new message or update with a given `message.id`.
     ///
     /// - Parameter message: a message.
@@ -34,12 +43,15 @@ public extension Channel {
     /// Send a message read event.
     ///
     /// - Returns: an observable event response.
-    func sendRead() -> Observable<EventResponse> {
-        return Client.shared.rx.request(endpoint: .sendRead(self))
+    func sendRead() -> Observable<Event> {
+        let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .sendRead(self))
+        return request.map { $0.event }
     }
     
-    func send(eventType: EventType) -> Observable<EventResponse> {
-        return Client.shared.rx.request(endpoint: .sendEvent(eventType, self))
+    func send(eventType: EventType) -> Observable<Event> {
+        let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .sendEvent(eventType, self))
+        
+        return request.map { $0.event }
             .do(onNext: { _ in Client.shared.logger?.log("🎫", eventType.rawValue) })
     }
     
@@ -49,8 +61,11 @@ public extension Channel {
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
     /// - Returns: an observable file upload response.
-    func sendImage(fileName: String, mimeType: String, imageData: Data) -> Observable<ProgressResponse<FileUploadResponse>> {
-        return Client.shared.rx.progressRequest(endpoint: .sendImage(fileName, mimeType, imageData, self))
+    func sendImage(fileName: String, mimeType: String, imageData: Data) -> Observable<ProgressResponse<URL>> {
+        let request: Observable<ProgressResponse<FileUploadResponse>> =
+            Client.shared.rx.progressRequest(endpoint: .sendImage(fileName, mimeType, imageData, self))
+        
+        return request.map { ($0.progress, $0.result?.file) }
     }
     
     /// Upload a file to the channel.
@@ -59,8 +74,11 @@ public extension Channel {
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
     /// - Returns: an observable file upload response.
-    func sendFile(fileName: String, mimeType: String, fileData: Data) -> Observable<ProgressResponse<FileUploadResponse>> {
-        return Client.shared.rx.progressRequest(endpoint: .sendFile(fileName, mimeType, fileData, self))
+    func sendFile(fileName: String, mimeType: String, fileData: Data) -> Observable<ProgressResponse<URL>> {
+        let request: Observable<ProgressResponse<FileUploadResponse>> =
+            Client.shared.rx.progressRequest(endpoint: .sendFile(fileName, mimeType, fileData, self))
+        
+        return request.map { ($0.progress, $0.result?.file) }
     }
 
     /// Request for a channel data, e.g. messages, members, read states, etc
@@ -69,7 +87,7 @@ public extension Channel {
     ///   - pagination: a pagination (see `Pagination`).
     ///   - queryOptions: a query options. All by default (see `QueryOptions`).
     /// - Returns: an observable channel query.
-    func query(pagination: Pagination, queryOptions: QueryOptions = .all) -> Observable<ChannelQuery> {
+    func query(pagination: Pagination, queryOptions: QueryOptions = .all) -> Observable<ChannelResponse> {
         var members = [Member]()
         
         if members.isEmpty, let user = Client.shared.user {
@@ -98,7 +116,7 @@ extension Channel {
                        name: String? = nil,
                        imageURL: URL? = nil,
                        memberIds: [String] = [],
-                       extraData: Codable? = nil) -> Observable<ChannelQuery> {
+                       extraData: Codable? = nil) -> Observable<ChannelResponse> {
         guard let currentUser = Client.shared.user else {
             return .empty()
         }

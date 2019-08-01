@@ -100,7 +100,7 @@ extension ChannelsPresenter {
         let row = items.count
         
         items.append(contentsOf: response.channels.map {
-            let channelPresenter = ChannelPresenter(query: $0, queryOptions: queryOptions, showStatuses: showChannelStatuses)
+            let channelPresenter = ChannelPresenter(response: $0, queryOptions: queryOptions, showStatuses: showChannelStatuses)
             
             if let channelMessageExtraDataCallback = self.channelMessageExtraDataCallback {
                 channelPresenter.messageExtraDataCallback = channelMessageExtraDataCallback($0.channel)

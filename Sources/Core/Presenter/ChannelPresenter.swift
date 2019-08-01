@@ -87,7 +87,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private lazy var channelRequest: Driver<ViewChanges> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
         .flatMapLatest { [weak self] in (self?.channel.query(pagination: $0) ?? .empty()).retry(3) }
-        .map { [weak self] in self?.parseQuery($0) ?? .none }
+        .map { [weak self] in self?.parseResponse($0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .asDriver(onErrorJustReturn: .none)
@@ -139,13 +139,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     /// - Parameters:
     ///     - query: a channel query result with messages
     ///     - showStatuses: shows statuses separators, e.g. Today
-    public init(query: ChannelQuery, queryOptions: QueryOptions, showStatuses: Bool = true) {
-        channel = query.channel
+    public init(response: ChannelResponse, queryOptions: QueryOptions, showStatuses: Bool = true) {
+        channel = response.channel
         parentMessage = nil
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
         super.init(pageSize: .messagesPageSize)
-        parseQuery(query)
+        parseResponse(response)
     }
 }
 
@@ -390,7 +390,7 @@ extension ChannelPresenter {
 extension ChannelPresenter {
     
     @discardableResult
-    private func parseQuery(_ query: ChannelQuery) -> ViewChanges {
+    private func parseResponse(_ query: ChannelResponse) -> ViewChanges {
         let isNextPage = next != pageSize
         var items = isNextPage ? self.items : []
         
@@ -672,7 +672,7 @@ extension ChannelPresenter {
 
 extension ChannelPresenter {
     /// Send a typing event.
-    public func sendEvent(isTyping: Bool) -> Observable<EventResponse> {
+    public func sendEvent(isTyping: Bool) -> Observable<Event> {
         guard parentMessage == nil else {
             return .empty()
         }

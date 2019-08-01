@@ -67,7 +67,7 @@ public final class UploaderItem: Equatable {
     /// The last uploading progress.
     public private(set) var lastProgress: Float = 0
     /// An observable uploading progress.
-    public private(set) lazy var uploading: Observable<ProgressResponse<FileUploadResponse>> = createUploading()
+    public private(set) lazy var uploading: Observable<ProgressResponse<URL>> = createUploading()
     
     /// Init an uploading item.
     ///
@@ -94,8 +94,8 @@ public final class UploaderItem: Equatable {
         self.fileSize = fileSize > 0 ? fileSize : url.fileSize
     }
     
-    private func createUploading() -> Observable<ProgressResponse<FileUploadResponse>> {
-        let request: Observable<ProgressResponse<FileUploadResponse>>
+    private func createUploading() -> Observable<ProgressResponse<URL>> {
+        let request: Observable<ProgressResponse<URL>>
         
         if type == .file || type == .video {
             if let url = url, let data = try? Data(contentsOf: url) {
@@ -123,18 +123,18 @@ public final class UploaderItem: Equatable {
             .do(onNext: { [weak self] progressResponse in
                 self?.lastProgress = progressResponse.progress
                 
-                guard let self = self, let fileUploadResponse = progressResponse.result else {
+                guard let self = self, let fileURL = progressResponse.result else {
                     return
                 }
                 
                 if self.type == .image {
-                    self.attachment = Attachment(type: .image, title: self.fileName, imageURL: fileUploadResponse.file)
+                    self.attachment = Attachment(type: .image, title: self.fileName, imageURL: fileURL)
                 } else {
                     let fileAttachment = AttachmentFile(type: self.fileType, size: self.fileSize, mimeType: self.fileType.mimeType)
                     
                     self.attachment = Attachment(type: self.type == .video ? .video : .file,
                                                  title: self.fileName,
-                                                 url: fileUploadResponse.file,
+                                                 url: fileURL,
                                                  file: fileAttachment)
                 }
             })

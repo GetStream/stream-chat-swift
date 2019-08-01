@@ -64,5 +64,5 @@ public struct ChannelsQuery: Encodable {
 /// A channels query response.
 public struct ChannelsResponse: Decodable {
     /// A list of channels response (see `ChannelQuery`).
-    public let channels: [ChannelQuery]
+    public let channels: [ChannelResponse]
 }
