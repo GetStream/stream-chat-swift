@@ -52,7 +52,7 @@ public struct ExtraData: Codable {
     }
     
     public init(from decoder: Decoder) throws {
-        data = Empty()
+        data = EmptyData()
     }
 }
 

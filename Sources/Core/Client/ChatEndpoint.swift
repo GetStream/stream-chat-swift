@@ -36,6 +36,10 @@ public enum ChatEndpoint {
     case sendImage(_ fileName: String, _ mimeType: String, Data, Channel)
     /// Upload a file to a channel.
     case sendFile(_ fileName: String, _ mimeType: String, Data, Channel)
+    // Delete an uploaded image.
+    case deleteImage(URL, Channel)
+    // Delete an uploaded file.
+    case deleteFile(URL, Channel)
     /// Send a read event.
     case sendRead(Channel)
     /// Send an event to a channel.
@@ -77,7 +81,7 @@ extension ChatEndpoint {
         switch self {
         case .channels, .replies, .users:
             return .get
-        case .deleteMessage, .deleteReaction:
+        case .deleteMessage, .deleteReaction, .deleteImage, .deleteFile:
             return .delete
         default:
             return .post
@@ -119,6 +123,10 @@ extension ChatEndpoint {
         case .sendImage(_, _, _, let channel):
             return path(to: channel, "image")
         case .sendFile(_, _, _, let channel):
+            return path(to: channel, "file")
+        case .deleteImage(_, let channel):
+            return path(to: channel, "image")
+        case .deleteFile(_, let channel):
             return path(to: channel, "file")
         case .users, .updateUsers:
             return "users"
@@ -181,7 +189,9 @@ extension ChatEndpoint {
         case .sendEvent(let event, _):
             return ["event": ["type": event]]
         case .sendRead:
-            return Empty()
+            return EmptyData()
+        case .deleteImage(let url, _), .deleteFile(let url, _):
+            return ["url": url]
             
         case .updateUsers(let users):
             let usersById: [String: User] = users.reduce([:]) { usersById, user in

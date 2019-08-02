@@ -283,7 +283,8 @@ public enum AttachmentFileType: String, Codable {
         self = AttachmentFileType(rawValue: ext) ?? .generic
     }
     
-    var mimeType: String {
+    /// Returns a mime type for the file type.
+    public var mimeType: String {
         if self == .jpeg {
             return "image/jpeg"
         }

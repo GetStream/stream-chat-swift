@@ -13,15 +13,6 @@ import RxSwift
 
 public extension Channel {
     
-    /// Requests channels with a given query.
-    ///
-    /// - Parameter query: a channels query (see `ChannelsQuery`).
-    /// - Returns: a list of a channel response (see `ChannelResponse`).
-    static func channels(query: ChannelsQuery) -> Observable<[ChannelResponse]> {
-        let request: Observable<ChannelsResponse> = Client.shared.rx.request(endpoint: .channels(query))
-        return request.map { $0.channels }
-    }
-    
     /// Send a new message or update with a given `message.id`.
     ///
     /// - Parameter message: a message.
@@ -62,10 +53,7 @@ public extension Channel {
     ///   - mimeType: a file mime type.
     /// - Returns: an observable file upload response.
     func sendImage(fileName: String, mimeType: String, imageData: Data) -> Observable<ProgressResponse<URL>> {
-        let request: Observable<ProgressResponse<FileUploadResponse>> =
-            Client.shared.rx.progressRequest(endpoint: .sendImage(fileName, mimeType, imageData, self))
-        
-        return request.map { ($0.progress, $0.result?.file) }
+        return sendFile(endpoint: .sendImage(fileName, mimeType, imageData, self))
     }
     
     /// Upload a file to the channel.
@@ -75,12 +63,35 @@ public extension Channel {
     ///   - mimeType: a file mime type.
     /// - Returns: an observable file upload response.
     func sendFile(fileName: String, mimeType: String, fileData: Data) -> Observable<ProgressResponse<URL>> {
-        let request: Observable<ProgressResponse<FileUploadResponse>> =
-            Client.shared.rx.progressRequest(endpoint: .sendFile(fileName, mimeType, fileData, self))
-        
+        return sendFile(endpoint: .sendFile(fileName, mimeType, fileData, self))
+    }
+    
+    private func sendFile(endpoint: ChatEndpoint) -> Observable<ProgressResponse<URL>> {
+        let request: Observable<ProgressResponse<FileUploadResponse>> = Client.shared.rx.progressRequest(endpoint: endpoint)
         return request.map { ($0.progress, $0.result?.file) }
     }
-
+    
+    /// Delete an image with a given URL.
+    ///
+    /// - Parameter url: an image URL.
+    /// - Returns: an empty observable result.
+    func deleteImage(url: URL) -> Observable<Void> {
+        return deleteFile(endpoint: .deleteImage(url, self))
+    }
+    
+    /// Delete a file with a given URL.
+    ///
+    /// - Parameter url: a file URL.
+    /// - Returns: an empty observable result.
+    func deleteFile(url: URL) -> Observable<Void> {
+        return deleteFile(endpoint: .deleteFile(url, self))
+    }
+    
+    private func deleteFile(endpoint: ChatEndpoint) -> Observable<Void> {
+        let request: Observable<EmptyData> = Client.shared.rx.request(endpoint: endpoint)
+        return request.map { _ in Void() }
+    }
+    
     /// Request for a channel data, e.g. messages, members, read states, etc
     ///
     /// - Parameters:
@@ -97,40 +108,6 @@ public extension Channel {
         let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: queryOptions)
         
         return Client.shared.rx.request(endpoint: .channel(channelQuery))
-    }
-}
-
-extension Channel {
-    /// Create a channel.
-    ///
-    /// - Parameters:
-    ///     - type: a channel type (see `ChannelType`).1
-    ///     - id: a channel id.
-    ///     - name: a channel name.
-    ///     - imageURL: a channel image URL.
-    ///     - memberIds: members of the channel. If empty, then the current user will be added.
-    ///     - extraData: an extra data for the channel.
-    /// - Returns: an observable channel query (see `ChannelQuery`).
-    static func create(type: ChannelType = .messaging,
-                       id: String = "",
-                       name: String? = nil,
-                       imageURL: URL? = nil,
-                       memberIds: [String] = [],
-                       extraData: Codable? = nil) -> Observable<ChannelResponse> {
-        guard let currentUser = User.current else {
-            return .empty()
-        }
-        
-        var memberIds = memberIds
-        
-        if !memberIds.contains(currentUser.id) {
-            memberIds.append(currentUser.id)
-        }
-        
-        let channel = Channel(type: type, id: id, name: name, imageURL: imageURL, memberIds: memberIds, extraData: extraData)
-        
-        return Client.shared.connection.connected()
-            .flatMapLatest { _ in Client.shared.rx.request(endpoint: .createChannel(channel)) }
     }
 }
 

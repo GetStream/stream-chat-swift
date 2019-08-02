@@ -13,28 +13,11 @@ import RxSwift
 
 public extension User {
     
-    /// Requests users with a given query.
-    ///
-    /// - Parameter query: a users query (see `UsersQuery`).
-    /// - Returns: an observable list of users.
-    static func users(query: UsersQuery) -> Observable<[User]> {
-        let request: Observable<UsersResponse> = Client.shared.rx.request(endpoint: .users(query))
-        return request.map { $0.users }
-    }
-    
     /// Update or create a user.
     ///
     /// - Returns: an observable updated user.
     func update() -> Observable<User> {
-        return User.update(users: [self]).map({ $0.first }).unwrap()
-    }
-    
-    /// Update or create a user.
-    ///
-    /// - Returns: an observable updated user.
-    static func update(users: [User]) -> Observable<[User]> {
-        let request: Observable<UpdatedUsersResponse> = Client.shared.rx.request(endpoint: .updateUsers(users))
-        return request.map { $0.users.values.map { $0 } }
+        return Client.shared.update(users: [self]).map({ $0.first }).unwrap()
     }
     
     /// Mute the user.
@@ -49,7 +32,7 @@ public extension User {
     ///
     /// - Returns: an observable unmuted user.
     func unmute() -> Observable<Void> {
-        let request: Observable<EmptyResponse> = Client.shared.rx.request(endpoint: .unmuteUser(self))
+        let request: Observable<EmptyData> = Client.shared.rx.request(endpoint: .unmuteUser(self))
         return request.map { _ in Void() }
             // Remove unmuted user from the current user.
             .do(onNext: {

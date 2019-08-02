@@ -143,4 +143,5 @@ struct AnyEncodable: Encodable {
     }
 }
 
-struct Empty: Codable {}
+/// An empty request/response data.
+public struct EmptyData: Codable {}

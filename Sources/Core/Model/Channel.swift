@@ -40,10 +40,10 @@ public final class Channel: Codable, Equatable {
     
     /// Coding keys for the encoding.
     private enum EncodingKeys: String, CodingKey {
+        case id
         case name
         case imageURL = "image"
         case members
-        case messages
     }
     
     /// A channel id.
@@ -133,6 +133,11 @@ public final class Channel: Codable, Equatable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: EncodingKeys.self)
+        
+        if !id.isBlank {
+            try container.encode(id, forKey: .id)
+        }
+        
         try container.encode(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try container.encode(memberIds, forKey: .members)

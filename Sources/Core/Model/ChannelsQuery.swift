@@ -34,9 +34,9 @@ public struct ChannelsQuery: Encodable {
     
     public init(filter: Filter,
                 sort: [Sorting] = [],
-                pagination: Pagination,
+                pagination: Pagination = .channelsPageSize,
                 messageLimit: Pagination = .messagesPageSize,
-                options: QueryOptions) {
+                options: QueryOptions = .all) {
         self.filter = filter
         self.sort = sort
         self.pagination = pagination

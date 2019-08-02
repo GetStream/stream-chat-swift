@@ -103,6 +103,3 @@ extension Client {
         case delete = "DELETE"
     }
 }
-
-/// An empty response.
-public struct EmptyResponse: Decodable {}
