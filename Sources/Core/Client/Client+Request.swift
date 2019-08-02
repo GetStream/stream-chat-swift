@@ -104,7 +104,7 @@ extension Client {
             return .failure(.invalidURL(nil))
         }
         
-        if let endpointQueryItems = endpoint.queryItems {
+        if let endpointQueryItems = endpoint.jsonQueryItems {
             endpointQueryItems.forEach { (key: String, value: Encodable) in
                 if let data = try? JSONEncoder.stream.encode(AnyEncodable(value)),
                     let json = String(data: data, encoding: .utf8) {

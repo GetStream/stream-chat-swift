@@ -142,14 +142,17 @@ extension ChatEndpoint {
     }
     
     var queryItem: Encodable? {
-        if case .replies(_, let pagination) = self {
+        switch self {
+        case .replies(_, let pagination):
             return pagination
+        case .deleteImage(let url, _), .deleteFile(let url, _):
+            return ["url": url]
+        default:
+            return nil
         }
-        
-        return nil
     }
     
-    var queryItems: [String: Encodable]? {
+    var jsonQueryItems: [String: Encodable]? {
         let payload: Encodable
         
         switch self {
@@ -172,6 +175,8 @@ extension ChatEndpoint {
              .deleteReaction,
              .sendImage,
              .sendFile,
+             .deleteImage,
+             .deleteFile,
              .users:
             return nil
         case .guestToken(let user):
@@ -190,8 +195,6 @@ extension ChatEndpoint {
             return ["event": ["type": event]]
         case .sendRead:
             return EmptyData()
-        case .deleteImage(let url, _), .deleteFile(let url, _):
-            return ["url": url]
             
         case .updateUsers(let users):
             let usersById: [String: User] = users.reduce([:]) { usersById, user in
