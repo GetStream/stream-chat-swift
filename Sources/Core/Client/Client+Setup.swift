@@ -128,6 +128,11 @@ extension Client {
             .map { [weak self] in self?.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
             .unwrap()
             .distinctUntilChanged()
+            .do(onNext: { [weak self] in
+                if case .connected(_, let user) = $0 {
+                    self?.user = user
+                }
+            })
             .share(replay: 1)
     }
 }

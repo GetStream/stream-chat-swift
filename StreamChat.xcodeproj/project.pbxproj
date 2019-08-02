@@ -749,9 +749,9 @@
 		8AD5ED2E22E9BA39005CFAC9 /* WebSocket */ = {
 			isa = PBXGroup;
 			children = (
-				8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Response.swift */,
 				8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */,
 				8AD5ED3122E9BA39005CFAC9 /* WebSocket+Reconnect.swift */,
+				8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Response.swift */,
 			);
 			path = WebSocket;
 			sourceTree = "<group>";

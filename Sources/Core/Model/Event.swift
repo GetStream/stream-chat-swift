@@ -50,6 +50,8 @@ public enum EventType: String, Codable {
     
     /// When a message is added to a channel (when clients that are not currently watching the channel ⚡️).
     case notificationMessageNew = "notification.message_new"
+    /// When the user mutes someone (🙋‍♀️).
+    case notificationMutesUpdated = "notification.mutes_updated"
     /// When the total count of unread messages (across all channels the user is a member) changes
     /// (when clients from the user affected by the change 📺📺).
     case notificationMarkRead = "notification.mark_read"
@@ -110,6 +112,7 @@ public enum Event: Decodable {
     case typingStart(User)
     case typingStop(User)
     
+    case notificationMutesUpdated(User)
     case notificationMarkRead(_ unreadCount: Int, _ totalUnreadCount: Int, _ unreadChannels: Int)
     
     public init(from decoder: Decoder) throws {
@@ -174,6 +177,8 @@ public enum Event: Decodable {
             self = .reactionDeleted(reaction, try message(), try user())
             
         // Notifications
+        case .notificationMutesUpdated:
+            self = .notificationMutesUpdated(try container.decode(User.self, forKey: .me))
         case .notificationMarkRead:
             let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
             let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)

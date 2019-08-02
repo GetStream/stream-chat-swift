@@ -38,6 +38,11 @@ public final class WebSocket {
         .combineLatest(webSocket.rx.response, Client.shared.connection.connected())
         .map { [weak self] event, _ in self?.parseMessage(event) }
         .unwrap()
+        .do(onNext: {
+            if case .notificationMutesUpdated(let user) = $0.event {
+                Client.shared.user = user
+            }
+        })
         .share()
     
     init(_ urlRequest: URLRequest, logger: ClientLogger? = nil) {
