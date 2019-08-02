@@ -24,6 +24,10 @@ public extension User {
     ///
     /// - Returns: an observable muted user.
     func mute() -> Observable<MutedUsersResponse> {
+        guard !isCurrent else {
+            return .empty()
+        }
+        
         return Client.shared.rx.request(endpoint: .muteUser(self))
             .do(onNext: { Client.shared.user = $0.currentUser })
     }
@@ -32,6 +36,10 @@ public extension User {
     ///
     /// - Returns: an observable unmuted user.
     func unmute() -> Observable<Void> {
+        guard !isCurrent else {
+            return .empty()
+        }
+        
         let request: Observable<EmptyData> = Client.shared.rx.request(endpoint: .unmuteUser(self))
         return request.map { _ in Void() }
             // Remove unmuted user from the current user.

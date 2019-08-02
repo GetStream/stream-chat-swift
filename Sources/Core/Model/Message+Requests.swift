@@ -13,6 +13,8 @@ import RxSwift
 
 public extension Message {
     
+    private static var flaggedIds = [String]()
+    
     /// Delete the message.
     ///
     /// - Returns: an observable message response.
@@ -46,17 +48,47 @@ public extension Message {
     
     /// Flag a message.
     func flag() -> Observable<FlagMessageResponse> {
+        guard !user.isCurrent else {
+            return .empty()
+        }
+        
+        let messageId = id
         return flagUnflagMessage(endpoint: .flagMessage(self))
+            .do(onNext: { _ in Message.flaggedIds.append(messageId) })
     }
     
     /// Unflag a message.
     func unflag() -> Observable<FlagMessageResponse> {
+        guard !user.isCurrent else {
+            return .empty()
+        }
+        
+        let messageId = id
         return flagUnflagMessage(endpoint: .unflagMessage(self))
+            .do(onNext: { _ in
+                if let index = Message.flaggedIds.firstIndex(where: { $0 == messageId }) {
+                    Message.flaggedIds.remove(at: index)
+                }
+            })
+    }
+    
+    /// Checks if the message is flagged (locally).
+    var isFlagged: Bool {
+        return Message.flaggedIds.contains(id)
     }
     
     private func flagUnflagMessage(endpoint: ChatEndpoint) -> Observable<FlagMessageResponse> {
-        let request: Observable<[String: FlagMessageResponse]> = Client.shared.rx.request(endpoint: endpoint)
-        return request.map { $0["flag"] }.unwrap()
+        let request: Observable<FlagResponse> = Client.shared.rx.request(endpoint: endpoint)
+        return request.map { $0.flag }
+            .catchError { error -> Observable<FlagMessageResponse> in
+                if let clientError = error as? ClientError,
+                    case .responseError(let clientResponseError) = clientError,
+                    clientResponseError.message.contains("flag already exists") {
+                    return .just(FlagMessageResponse(messageId: self.id, created: Date(), updated: Date()))
+                }
+                
+                return .error(error)
+        }
     }
 }
 
@@ -68,7 +100,11 @@ public struct MessagesResponse: Decodable {
     let messages: [Message]
 }
 
-/// A flag response.
+struct FlagResponse: Decodable {
+    let flag: FlagMessageResponse
+}
+
+/// A flag message response.
 public struct FlagMessageResponse: Decodable {
     private enum CodingKeys: String, CodingKey {
         case messageId = "target_message_id"

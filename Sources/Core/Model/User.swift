@@ -52,6 +52,20 @@ public struct User: Codable {
         return Client.shared.user
     }
     
+    /// Checks if the user can be muted.
+    public var canBeMuted: Bool {
+        return !isCurrent
+    }
+    
+    /// Checks if the user is muted.
+    public var isMuted: Bool {
+        guard !isCurrent, let currentUser = User.current else {
+            return false
+        }
+        
+        return currentUser.mutedUsers.first(where: { $0.user == self }) != nil
+    }
+    
     /// Init a user.
     ///
     /// - Parameters:
