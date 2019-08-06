@@ -14,7 +14,7 @@
     <a title="ChannelsViewController Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (89% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (85% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -35,13 +35,10 @@
                 <a href="../Classes/AvatarView.html">AvatarView</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/ChannelPresenter.html">ChannelPresenter</a>
+                <a href="../Classes/Banners.html">Banners</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ChannelTableViewCell.html">ChannelTableViewCell</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/ChannelsPresenter.html">ChannelsPresenter</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ChannelsViewController.html">ChannelsViewController</a>
@@ -56,9 +53,6 @@
                 <a href="../Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Classes/RxKeyboard.html">RxKeyboard</a>
               </li>
               <li class="nav-group-task">
@@ -70,30 +64,10 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Enums.html">Enumerations</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="../Enums/ChatItem.html">ChatItem</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Enums/ViewChanges.html">ViewChanges</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
             <a href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="../Extensions/Array.html">Array</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Extensions/CGFloat.html">CGFloat</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/Date.html">Date</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Extensions/DateFormatter.html">DateFormatter</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/IndexPath.html">IndexPath</a>
@@ -254,9 +228,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat22ChannelsViewControllerC5itemsSayAA0B4ItemOGvp"></a>
+                    <a name="/s:10StreamChat22ChannelsViewControllerC5itemsXevp"></a>
                     <a name="//apple_ref/swift/Property/items" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat22ChannelsViewControllerC5itemsSayAA0B4ItemOGvp">items</a>
+                    <a class="token" href="#/s:10StreamChat22ChannelsViewControllerC5itemsXevp">items</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -271,7 +245,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">items</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/ChatItem.html">ChatItem</a></span><span class="p">]</span> <span class="p">{</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">items</span><span class="p">:</span> <span class="o">&lt;&lt;</span><span class="n">error</span> <span class="n">type</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
   <span class="k">get</span>
   <span class="p">}</span></code></pre>
 
@@ -375,9 +349,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat22ChannelsViewControllerC11channelCell2at0F9PresenterSo07UITabledG0C10Foundation9IndexPathV_AA07ChannelI0CtF"></a>
+                    <a name="/s:10StreamChat22ChannelsViewControllerC11channelCellySo07UITabledG0C10Foundation9IndexPathV_XetcACF"></a>
                     <a name="//apple_ref/swift/Method/channelCell(at:channelPresenter:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat22ChannelsViewControllerC11channelCell2at0F9PresenterSo07UITabledG0C10Foundation9IndexPathV_AA07ChannelI0CtF">channelCell(at:channelPresenter:)</a>
+                    <a class="token" href="#/s:10StreamChat22ChannelsViewControllerC11channelCellySo07UITabledG0C10Foundation9IndexPathV_XetcACF">channelCell(at:channelPresenter:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -392,7 +366,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">channelCell</span><span class="p">(</span><span class="n">at</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">,</span> <span class="nv">channelPresenter</span><span class="p">:</span> <span class="kt"><a href="../Classes/ChannelPresenter.html">ChannelPresenter</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UITableViewCell</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">channelCell</span><span class="p">(</span><span class="n">at</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">,</span> <span class="nv">channelPresenter</span><span class="p">:</span> <span class="kt">ChannelPresenter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UITableViewCell</span></code></pre>
 
                         </div>
                       </div>
@@ -413,9 +387,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat22ChannelsViewControllerC11loadingCell2at8chatItemSo07UITabledG0C10Foundation9IndexPathV_AA0bJ0OtF"></a>
+                    <a name="/s:10StreamChat22ChannelsViewControllerC11loadingCellySo07UITabledG0C10Foundation9IndexPathV_XetcACF"></a>
                     <a name="//apple_ref/swift/Method/loadingCell(at:chatItem:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat22ChannelsViewControllerC11loadingCell2at8chatItemSo07UITabledG0C10Foundation9IndexPathV_AA0bJ0OtF">loadingCell(at:chatItem:)</a>
+                    <a class="token" href="#/s:10StreamChat22ChannelsViewControllerC11loadingCellySo07UITabledG0C10Foundation9IndexPathV_XetcACF">loadingCell(at:chatItem:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -430,7 +404,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">loadingCell</span><span class="p">(</span><span class="n">at</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">,</span> <span class="nv">chatItem</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatItem.html">ChatItem</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UITableViewCell</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">loadingCell</span><span class="p">(</span><span class="n">at</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">,</span> <span class="nv">chatItem</span><span class="p">:</span> <span class="kt">ChatItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UITableViewCell</span></code></pre>
 
                         </div>
                       </div>
@@ -513,9 +487,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat22ChannelsViewControllerC06createbdE04with9indexPathAA0bdE0CAA16ChannelPresenterC_10Foundation05IndexI0VtF"></a>
+                    <a name="/s:10StreamChat22ChannelsViewControllerC06createbdE0yAA0bdE0CXe_10Foundation9IndexPathVtcACF"></a>
                     <a name="//apple_ref/swift/Method/createChatViewController(with:indexPath:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat22ChannelsViewControllerC06createbdE04with9indexPathAA0bdE0CAA16ChannelPresenterC_10Foundation05IndexI0VtF">createChatViewController(with:indexPath:)</a>
+                    <a class="token" href="#/s:10StreamChat22ChannelsViewControllerC06createbdE0yAA0bdE0CXe_10Foundation9IndexPathVtcACF">createChatViewController(with:indexPath:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -530,7 +504,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">createChatViewController</span><span class="p">(</span><span class="n">with</span> <span class="nv">channelPresenter</span><span class="p">:</span> <span class="kt"><a href="../Classes/ChannelPresenter.html">ChannelPresenter</a></span><span class="p">,</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/ChatViewController.html">ChatViewController</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="nf">createChatViewController</span><span class="p">(</span><span class="n">with</span> <span class="nv">channelPresenter</span><span class="p">:</span> <span class="kt">ChannelPresenter</span><span class="p">,</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/ChatViewController.html">ChatViewController</a></span></code></pre>
 
                         </div>
                       </div>
@@ -715,7 +689,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-25)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-06)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
