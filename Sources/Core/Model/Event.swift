@@ -60,9 +60,9 @@ public enum EventType: String, Codable {
     case notificationInvited = "notification.invited"
     /// ⚠️ When the user accepts an invite (when the user invited 💌).
     case notificationInviteAccepted = "notification.invite_accepted"
-    /// ⚠️ When the user accepts an invite (when the user invited 💌).
+    /// When the user accepts an invite (when the user invited 📺).
     case notificationAddedToChannel = "notification.added_to_channel"
-    /// ⚠️ When a user is removed from a channel (when the user invited 💌).
+    /// ⚠️ When a user is removed from a channel (when the user invited 📺).
     case notificationRemovedFromChannel = "notification.removed_from_channel"
     
     // Webhook event types❓
@@ -114,6 +114,7 @@ public enum Event: Decodable {
     
     case notificationMutesUpdated(User)
     case notificationMarkRead(_ unreadCount: Int, _ totalUnreadCount: Int, _ unreadChannels: Int)
+    case notificationAddedToChannel(Channel)
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -184,7 +185,9 @@ public enum Event: Decodable {
             let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
             let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
             self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels)
-            
+        case .notificationAddedToChannel:
+            let channel = try container.decode(Channel.self, forKey: .channel)
+            self = .notificationAddedToChannel(channel)
         default:
             throw ResponseTypeError(type: type)
         }

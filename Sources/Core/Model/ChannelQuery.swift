@@ -40,9 +40,8 @@ public struct ChannelQuery: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try options.encode(to: encoder)
-        channel.memberIds = members.map { $0.user.id }
+        channel.members = members
         try container.encode(channel, forKey: .data)
-        channel.memberIds = []
         try container.encode(pagination, forKey: .messages)
     }
 }

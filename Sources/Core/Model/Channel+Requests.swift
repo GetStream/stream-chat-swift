@@ -18,7 +18,13 @@ public extension Channel {
     /// - Parameter message: a message.
     /// - Returns: a created/updated message response.
     func send(message: Message) -> Observable<MessageResponse> {
-        return Client.shared.rx.request(endpoint: .sendMessage(message, self))
+        let request: Observable<MessageResponse> = Client.shared.rx.request(endpoint: .sendMessage(message, self))
+        
+        if isActive {
+            return request
+        }
+        
+        return query(pagination: .limit(1)).flatMap { _ in request }
     }
     
     /// Send a message action for a given ephemeral message.
@@ -99,8 +105,6 @@ public extension Channel {
     ///   - queryOptions: a query options. All by default (see `QueryOptions`).
     /// - Returns: an observable channel query.
     func query(pagination: Pagination, queryOptions: QueryOptions = .all) -> Observable<ChannelResponse> {
-        var members = [Member]()
-        
         if members.isEmpty, let user = User.current {
             members = [Member(user: user)]
         }

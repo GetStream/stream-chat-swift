@@ -46,8 +46,6 @@ public enum ChatEndpoint {
     case sendEvent(EventType, Channel)
     /// Send a message action.
     case sendMessageAction(MessageAction)
-    /// Create a channel.
-    case createChannel(Channel)
     
     // MARK: - Message Endpoints
     
@@ -96,8 +94,6 @@ extension ChatEndpoint {
             return "channels"
         case .channel(let query):
             return path(to: query.channel, "query")
-        case .createChannel(let channel):
-            return path(to: channel)
         case .replies(let message, _):
             return path(to: message, "replies")
             
@@ -183,8 +179,6 @@ extension ChatEndpoint {
             return ["user": user]
         case .channel(let query):
             return query
-        case .createChannel(let channel):
-            return channel
         case .sendMessage(let message, _):
             return ["message": message]
         case .sendMessageAction(let messageAction):

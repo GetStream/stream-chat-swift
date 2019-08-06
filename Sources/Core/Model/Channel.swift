@@ -63,9 +63,15 @@ public final class Channel: Codable, Equatable {
     public let config: Config
     let frozen: Bool
     /// A list of user ids of the channel members.
-    public internal(set) var memberIds: [String] = []
+    public internal(set) var members: [Member] = []
     /// An extra data for the channel.
     public let extraData: ExtraData?
+    
+    static private var activeChannelIds: [String] = []
+    
+    var isActive: Bool {
+        return Channel.activeChannelIds.contains(cid)
+    }
     
     /// Init a channel.
     ///
@@ -80,7 +86,7 @@ public final class Channel: Codable, Equatable {
                 id: String,
                 name: String? = nil,
                 imageURL: URL? = nil,
-                memberIds: [String] = [],
+                members: [Member] = [],
                 extraData: Codable? = nil) {
         self.id = id
         self.cid = "\(type.rawValue):\(id)"
@@ -89,7 +95,7 @@ public final class Channel: Codable, Equatable {
         self.imageURL = imageURL
         lastMessageDate = nil
         createdBy = nil
-        self.memberIds = memberIds
+        self.members = members
         frozen = false
         
         if let extraData = extraData {
@@ -127,14 +133,19 @@ public final class Channel: Codable, Equatable {
         frozen = try container.decode(Bool.self, forKey: .frozen)
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? id
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
+        members = try container.decode([Member].self, forKey: .members)
         extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isChannel }))
+        
+        if !isActive {
+            Channel.activeChannelIds.append(cid)
+        }
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: EncodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
-        try container.encode(memberIds, forKey: .members)
+        try container.encode(members.map({ $0.user.id }), forKey: .members)
         extraData?.encodeSafely(to: encoder)
     }
     

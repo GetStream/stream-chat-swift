@@ -31,7 +31,7 @@ public struct Member: Codable, Equatable {
     /// - Parameters:
     ///   - user: a user.
     ///   - role: a role.
-    public init(user: User, role: Role = .owner) {
+    public init(user: User, role: Role = .member) {
         self.user = user
         self.role = role
         created = Date()

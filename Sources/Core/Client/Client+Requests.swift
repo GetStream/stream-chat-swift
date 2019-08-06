@@ -21,37 +21,6 @@ public extension Client {
         let request: Observable<ChannelsResponse> = rx.request(endpoint: .channels(query))
         return request.map { $0.channels }
     }
-    
-    /// Create a channel.
-    ///
-    /// - Parameters:
-    ///     - type: a channel type (see `ChannelType`).1
-    ///     - id: a channel id.
-    ///     - name: a channel name.
-    ///     - imageURL: a channel image URL.
-    ///     - memberIds: members of the channel. If empty, then the current user will be added.
-    ///     - extraData: an extra data for the channel.
-    /// - Returns: an observable channel query (see `ChannelQuery`).
-    func create(type: ChannelType,
-                id: String = "",
-                name: String? = nil,
-                imageURL: URL? = nil,
-                memberIds: [String] = [],
-                extraData: Codable? = nil) -> Observable<ChannelResponse> {
-        guard let currentUser = User.current else {
-            return .empty()
-        }
-        
-        var memberIds = memberIds
-        
-        if !memberIds.contains(currentUser.id) {
-            memberIds.append(currentUser.id)
-        }
-        
-        let channel = Channel(type: type, id: id, name: name, imageURL: imageURL, memberIds: memberIds, extraData: extraData)
-        
-        return rx.request(endpoint: .createChannel(channel))
-    }
 }
 
 // MARK: - Users Requests

@@ -120,34 +120,53 @@ extension ChannelsPresenter {
         
         switch response.event {
         case .messageNew(_, _, _, let channel):
-            if let index = items.firstIndex(whereChannelId: channelId),
-                let channelPresenter = items.remove(at: index).channelPresenter {
-                channelPresenter.parseChanges(response: response)
-                items.insert(.channelPresenter(channelPresenter), at: 0)
-                return .itemMoved(fromRow: index, toRow: 0, items)
-            } else if let channel = channel {
-                let channelPresenter = ChannelPresenter(channel: channel, parentMessage: nil, showStatuses: showChannelStatuses)
-                // We need to load messages and for that we have to subscribe for changes in ChannelsViewController.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak channelPresenter] in channelPresenter?.reload() }
-                items.insert(.channelPresenter(channelPresenter), at: 0)
-                
-                // Update pagination offset.
-                if next != pageSize {
-                    next = .channelsNextPageSize + .offset(next.offset + 1)
-                }
-                
-                return .itemAdded(0, nil, false, items)
-            }
+            return parseNewMessage(response: response, from: channel)
+            
         case .messageDeleted(let message):
             if let index = items.firstIndex(whereChannelId: channelId),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseChanges(response: response)
                 return .itemUpdated([index], [message], items)
             }
+            
+        case .notificationAddedToChannel(let channel):
+            return parseNewChannel(channel: channel)
+            
         default:
             break
         }
         
         return .none
+    }
+    
+    private func parseNewMessage(response: WebSocket.Response, from channel: Channel?) -> ViewChanges {
+        if let channelId = response.channelId,
+            let index = items.firstIndex(whereChannelId: channelId),
+            let channelPresenter = items.remove(at: index).channelPresenter {
+            channelPresenter.parseChanges(response: response)
+            items.insert(.channelPresenter(channelPresenter), at: 0)
+            
+            return .itemMoved(fromRow: index, toRow: 0, items)
+        }
+        
+        if let channel = channel {
+            return parseNewChannel(channel: channel)
+        }
+        
+        return .none
+    }
+    
+    private func parseNewChannel(channel: Channel) -> ViewChanges {
+        let channelPresenter = ChannelPresenter(channel: channel, queryOptions: queryOptions, showStatuses: showChannelStatuses)
+        // We need to load messages and for that we have to subscribe for changes in ChannelsViewController.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak channelPresenter] in channelPresenter?.reload() }
+        items.insert(.channelPresenter(channelPresenter), at: 0)
+        
+        // Update pagination offset.
+        if next != pageSize {
+            next = .channelsNextPageSize + .offset(next.offset + 1)
+        }
+        
+        return .itemAdded(0, nil, false, items)
     }
 }
