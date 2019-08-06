@@ -14,11 +14,18 @@ public struct User: Codable {
         case id
         case name
         case avatarURL = "image"
+        case role
         case online
         case created = "created_at"
         case updated = "updated_at"
         case lastActiveDate = "last_active"
         case mutedUsers = "mutes"
+    }
+    
+    public enum Role: String, Codable {
+        case user
+        case admin
+        case guest
     }
     
     /// A user id.
@@ -35,6 +42,8 @@ public struct User: Codable {
     public let lastActiveDate: Date?
     /// An indicator if a user is online.
     public let online: Bool
+    /// A user role.
+    public let role: Role
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
     
@@ -66,6 +75,11 @@ public struct User: Codable {
         return currentUser.mutedUsers.first(where: { $0.user == self }) != nil
     }
     
+    /// Returns the user as a member.
+    public var asMember: Member {
+        return Member(self)
+    }
+    
     /// Init a user.
     ///
     /// - Parameters:
@@ -81,6 +95,7 @@ public struct User: Codable {
         lastActiveDate = Date()
         online = false
         mutedUsers = []
+        role = .user
     }
     
     public init(from decoder: Decoder) throws {
@@ -90,6 +105,7 @@ public struct User: Codable {
         updated = try container.decode(Date.self, forKey: .updated)
         lastActiveDate = try container.decodeIfPresent(Date.self, forKey: .lastActiveDate)
         online = try container.decode(Bool.self, forKey: .online)
+        role = try container.decode(Role.self, forKey: .role)
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {

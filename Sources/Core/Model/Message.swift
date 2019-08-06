@@ -122,9 +122,9 @@ public struct Message: Codable {
                 user: User,
                 text: String,
                 attachments: [Attachment] = [],
-                extraData: ExtraData?,
-                parentId: String?,
-                showReplyInChannel: Bool) {
+                extraData: ExtraData? = nil,
+                parentId: String? = nil,
+                showReplyInChannel: Bool = false) {
         self.id = id
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel

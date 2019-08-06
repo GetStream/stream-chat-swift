@@ -106,7 +106,7 @@ public extension Channel {
     /// - Returns: an observable channel query.
     func query(pagination: Pagination, queryOptions: QueryOptions = .all) -> Observable<ChannelResponse> {
         if members.isEmpty, let user = User.current {
-            members = [Member(user: user)]
+            members = [user.asMember]
         }
         
         let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: queryOptions)

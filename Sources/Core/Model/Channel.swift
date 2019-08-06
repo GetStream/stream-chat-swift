@@ -133,7 +133,7 @@ public final class Channel: Codable, Equatable {
         frozen = try container.decode(Bool.self, forKey: .frozen)
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? id
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
-        members = try container.decode([Member].self, forKey: .members)
+        members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isChannel }))
         
         if !isActive {
@@ -145,7 +145,7 @@ public final class Channel: Codable, Equatable {
         var container = encoder.container(keyedBy: EncodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
-        try container.encode(members.map({ $0.user.id }), forKey: .members)
+        try container.encode(members, forKey: .members)
         extraData?.encodeSafely(to: encoder)
     }
     

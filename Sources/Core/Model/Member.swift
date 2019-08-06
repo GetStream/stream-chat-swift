@@ -31,25 +31,33 @@ public struct Member: Codable, Equatable {
     /// - Parameters:
     ///   - user: a user.
     ///   - role: a role.
-    public init(user: User, role: Role = .member) {
+    public init(_ user: User) {
         self.user = user
-        self.role = role
+        role = .member
         created = Date()
         updated = Date()
     }
     
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(user.id, forKey: .user)
-        try container.encode(role, forKey: .role)
+        var container = encoder.singleValueContainer()
+        try container.encode(user.id)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        user = try container.decode(User.self, forKey: .user)
+        created = try container.decode(Date.self, forKey: .created)
+        updated = try container.decode(Date.self, forKey: .updated)
+        role = try container.decodeIfPresent(Role.self, forKey: .role) ?? .member
     }
 }
 
 public extension Member {
     /// A role.
     enum Role: String, Codable {
-        case owner
         case member
-        case user
+        case moderator
+        case admin
+        case owner
     }
 }
