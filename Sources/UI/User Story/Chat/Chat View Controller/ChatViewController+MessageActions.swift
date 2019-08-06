@@ -39,6 +39,30 @@ extension ChatViewController {
             }))
         }
         
+        if !message.user.isCurrent {
+            // Mute.
+            if message.user.canBeMuted {
+                if message.user.isMuted {
+                    alert.addAction(.init(title: "Unmute", style: .default, handler: { [weak self] _ in
+                        self?.unmute(user: message.user)
+                    }))
+                } else {
+                    alert.addAction(.init(title: "Mute", style: .default, handler: { [weak self] _ in
+                        self?.mute(user: message.user)
+                    }))
+                }
+            }
+            
+            // Flag.
+            if message.isFlagged {
+                alert.addAction(.init(title: "Unflag", style: .default, handler: { [weak self] _ in
+                    self?.unflag(message: message) }))
+            } else {
+                alert.addAction(.init(title: "Flag", style: .default, handler: { [weak self] _ in
+                    self?.flag(message: message) }))
+            }
+        }
+        
         addCopyAction(to: alert, message: message)
         
         if message.canDelete {
@@ -46,7 +70,7 @@ extension ChatViewController {
                 self?.conformDeleting(message: message)
             }))
         }
-
+        
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
         
         present(alert, animated: true)
@@ -102,5 +126,49 @@ extension ChatViewController {
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
         
         present(alert, animated: true)
+    }
+    
+    private func mute(user: User) {
+        user.mute()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                if let backgroundColor = self?.view.backgroundColor {
+                    Banners.shared.show("@\(user.name) was muted", backgroundColor: backgroundColor)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func unmute(user: User) {
+        user.unmute()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                if let backgroundColor = self?.view.backgroundColor {
+                    Banners.shared.show("@\(user.name) was unmuted", backgroundColor: backgroundColor)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func flag(message: Message) {
+        message.flag()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                if let backgroundColor = self?.view.backgroundColor {
+                    Banners.shared.show("🚩 Flagged: \(message.textOrArgs)", backgroundColor: backgroundColor)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func unflag(message: Message) {
+        message.unflag()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                if let backgroundColor = self?.view.backgroundColor {
+                    Banners.shared.show("🚩 Unflagged: \(message.textOrArgs)", backgroundColor: backgroundColor)
+                }
+            })
+            .disposed(by: disposeBag)
     }
 }

@@ -9,6 +9,10 @@
 import UIKit
 
 extension CGFloat {
+    /// The screen width (alias to `UIScreen.main.bounds.width`).
+    public static let screenWidth: CGFloat = UIScreen.main.bounds.width
+    /// The screen height (alias to `UIScreen.main.bounds.height`).
+    public static let screenHeight: CGFloat = UIScreen.main.bounds.height
     /// A top safe area value.
     public static let safeAreaTop: CGFloat = (UIApplication.shared.delegate?.window as? UIWindow)?.safeAreaInsets.top ?? 0
     /// A bottom safe area value.
@@ -143,4 +147,10 @@ extension CGFloat {
     public static let reactionsPickerButtonWidth: CGFloat = 36
     /// A message reactions picker counter height.
     public static let reactionsPickerCounterHeight: CGFloat = 20
+    
+    public static let bannerHeight: CGFloat = 40
+    public static let bannerWidth: CGFloat = .screenWidth - 2 * .messageEdgePadding
+    public static let bannerCornerRadius: CGFloat = 20
+    public static let bannerTopOffset: CGFloat = .safeAreaTop + .messageEdgePadding
+    public static let bannerMaxY: CGFloat = .bannerHeight + .bannerTopOffset + .composerHelperShadowRadius
 }

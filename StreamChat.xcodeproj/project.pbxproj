@@ -17,6 +17,8 @@
 		8A04964F22EF1A8900E94795 /* QueryOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04964E22EF1A8900E94795 /* QueryOptions.swift */; };
 		8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965022EF4B2400E94795 /* UsersQuery.swift */; };
 		8A04965322F0910200E94795 /* Message+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965222F0910200E94795 /* Message+Requests.swift */; };
+		8A104FC522F4B95B002B2DC1 /* Banners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A104FC322F49233002B2DC1 /* Banners.swift */; };
+		8AC643C422F9AC8A007373FF /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC643C122F9AAD7007373FF /* BannerView.swift */; };
 		8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */; };
 		8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B522F30001003BD1D5 /* User+Requests.swift */; };
 		8AC8C8B822F43D16003BD1D5 /* Client+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B722F43D16003BD1D5 /* Client+Requests.swift */; };
@@ -159,6 +161,8 @@
 		8A04964E22EF1A8900E94795 /* QueryOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryOptions.swift; sourceTree = "<group>"; };
 		8A04965022EF4B2400E94795 /* UsersQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersQuery.swift; sourceTree = "<group>"; };
 		8A04965222F0910200E94795 /* Message+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Requests.swift"; sourceTree = "<group>"; };
+		8A104FC322F49233002B2DC1 /* Banners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banners.swift; sourceTree = "<group>"; };
+		8AC643C122F9AAD7007373FF /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8AC8C8B522F30001003BD1D5 /* User+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Requests.swift"; sourceTree = "<group>"; };
 		8AC8C8B722F43D16003BD1D5 /* Client+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Requests.swift"; sourceTree = "<group>"; };
@@ -355,6 +359,15 @@
 			path = Presenter;
 			sourceTree = "<group>";
 		};
+		8A104FC222F4921F002B2DC1 /* Banners */ = {
+			isa = PBXGroup;
+			children = (
+				8A104FC322F49233002B2DC1 /* Banners.swift */,
+				8AC643C122F9AAD7007373FF /* BannerView.swift */,
+			);
+			path = Banners;
+			sourceTree = "<group>";
+		};
 		8AD5EC8522E9A3E8005CFAC9 = {
 			isa = PBXGroup;
 			children = (
@@ -538,6 +551,7 @@
 				8AD5ED0722E9BA39005CFAC9 /* Channels */,
 				8AD5ECD822E9BA39005CFAC9 /* Chat */,
 				8AD5EDD722E9C6CA005CFAC9 /* Views */,
+				8A104FC222F4921F002B2DC1 /* Banners */,
 				8AD5ECFC22E9BA39005CFAC9 /* Web View */,
 				8AD5ECFE22E9BA39005CFAC9 /* Image Gallery */,
 			);
@@ -1005,6 +1019,7 @@
 				8AD5EDAC22E9BA98005CFAC9 /* TableView.swift in Sources */,
 				8AD5EDA422E9BA98005CFAC9 /* UIFont+Extensions.swift in Sources */,
 				8AD5EDAF22E9BA98005CFAC9 /* UITableViewCell+Extensions.swift in Sources */,
+				8AC643C422F9AC8A007373FF /* BannerView.swift in Sources */,
 				8AD5EDB122E9BA98005CFAC9 /* CGRect+Extensions.swift in Sources */,
 				8AD5ED8622E9BA98005CFAC9 /* ChatViewController+Attachments.swift in Sources */,
 				8AD5EDB522E9BA98005CFAC9 /* UITableView+Reusable.swift in Sources */,
@@ -1013,6 +1028,7 @@
 				8AD5ED9022E9BA98005CFAC9 /* AttachmentFilePreview.swift in Sources */,
 				8AD5ED8022E9BA98005CFAC9 /* ComposerView+Files.swift in Sources */,
 				8AD5EDBA22E9BA98005CFAC9 /* String+FileType.swift in Sources */,
+				8A104FC522F4B95B002B2DC1 /* Banners.swift in Sources */,
 				8AD5ED8122E9BA98005CFAC9 /* UploaderItem+UIImagePickerController.swift in Sources */,
 				8AD5ED9322E9BA98005CFAC9 /* WebViewController.swift in Sources */,
 				8AD5EDA622E9BA98005CFAC9 /* UIImagePickerController+Extensions.swift in Sources */,
