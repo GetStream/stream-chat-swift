@@ -48,7 +48,7 @@ public final class WebSocket {
     init(_ urlRequest: URLRequest, logger: ClientLogger? = nil) {
         self.logger = logger
         webSocket = Starscream.WebSocket(request: urlRequest)
-        webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat", qos: .userInitiated)
+        webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
     }
     
     deinit {
@@ -156,7 +156,7 @@ extension WebSocket {
         
         switch event {
         case .connected:
-            logger?.log("WebSocket connected")
+            logger?.log("WebSocket connected. Waiting for the first health check message...")
             return .connecting
             
         case .disconnected(let error):

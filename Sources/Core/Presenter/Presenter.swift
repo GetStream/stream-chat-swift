@@ -33,12 +33,12 @@ public class Presenter<T> {
     /// - Parameter pagination: an initial page size (see `Pagination`).
     /// - Returns: an observable pagination for a request.
     public func prepareRequest(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
-        let connectionObservable = Client.shared.connection.connected({ [weak self] isConnected in
+        let connectionObservable = Client.shared.connection.connected { [weak self] isConnected in
             if !isConnected, let self = self, !self.items.isEmpty {
                 self.items = []
                 self.next = self.pageSize
             }
-        })
+        }
         
         return Observable.combineLatest(loadPagination.asObserver().startWith(pagination), connectionObservable)
             .map { pagination, _ in pagination }

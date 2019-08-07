@@ -36,11 +36,35 @@ public final class Client {
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
     let logOptions: ClientLogger.Options
+    
     /// A log manager.
     public let logger: ClientLogger?
     /// The current user.
     public var user: User?
     
+    /// An observable client web socket connection.
+    /// 
+    /// The connection is responsible for:
+    /// * Checking the Internet connection.
+    /// * Checking the app state, e.g. active, background.
+    /// * Connecting and reconnecting to the web sockets.
+    ///
+    /// Example of usage:
+    /// ```
+    /// // Start observing connection statuses.
+    /// Client.shared.connection
+    ///     // Filter connection statuses only for connected.
+    ///     .connected()
+    ///     // Send a message request to a channel.
+    ///     .flatMapLatest { [weak self] in
+    ///         self?.channel.send(message: "Hello world!") ?? .empty()
+    ///     }
+    ///     // Subscribe for a result.
+    ///     .subscribe(onNext: { messageResponse in
+    ///         print(messageResponse)
+    ///     })
+    ///     .disposed(by: disposeBag)
+    /// ```
     public private(set) lazy var connection = createObservableConnection()
     
     /// Init a network client.

@@ -108,7 +108,7 @@ extension Client {
 // MARK: - Connection
 
 extension Client {
-    public func createObservableConnection() -> Observable<WebSocket.Connection> {
+    func createObservableConnection() -> Observable<WebSocket.Connection> {
         let app = UIApplication.shared
         
         let appState = app.rx.appState.startWith(app.appState)
@@ -122,9 +122,7 @@ extension Client {
             .flatMap { [weak self] _ -> Observable<WebSocketEvent> in self?.webSocket.webSocket.rx.response ?? .empty() }
             .do(onDispose: { [weak self] in self?.webSocket.disconnect() })
         
-        return Observable.combineLatest(appState,
-                                        InternetConnection.shared.isAvailableObservable,
-                                        webSocketResponse)
+        return Observable.combineLatest(appState, InternetConnection.shared.isAvailableObservable, webSocketResponse)
             .map { [weak self] in self?.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
             .unwrap()
             .distinctUntilChanged()
