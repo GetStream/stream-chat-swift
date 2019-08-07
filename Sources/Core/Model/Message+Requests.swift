@@ -19,7 +19,7 @@ public extension Message {
     ///
     /// - Returns: an observable message response.
     func delete() -> Observable<MessageResponse> {
-        return Client.shared.rx.request(endpoint: .deleteMessage(self))
+        return Client.shared.rx.connectedRequest(endpoint: .deleteMessage(self))
     }
     
     /// Add a reaction to the message.
@@ -27,7 +27,7 @@ public extension Message {
     /// - Parameter reactionType: a reaction type, e.g. like.
     /// - Returns: an observable message response.
     func addReaction(_ reactionType: String) -> Observable<MessageResponse> {
-        return Client.shared.rx.request(endpoint: .addReaction(reactionType, self))
+        return Client.shared.rx.connectedRequest(endpoint: .addReaction(reactionType, self))
     }
     
     /// Delete a reaction to the message.
@@ -35,7 +35,7 @@ public extension Message {
     /// - Parameter reactionType: a reaction type, e.g. like.
     /// - Returns: an observable message response.
     func deleteReaction(_ reactionType: String) -> Observable<MessageResponse> {
-        return Client.shared.rx.request(endpoint: .deleteReaction(reactionType, self))
+        return Client.shared.rx.connectedRequest(endpoint: .deleteReaction(reactionType, self))
     }
     
     /// Send a request for reply messages.
@@ -43,7 +43,7 @@ public extension Message {
     /// - Parameter pagination: a pagination (see `Pagination`).
     /// - Returns: an observable message response.
     func replies(pagination: Pagination) -> Observable<MessagesResponse> {
-        return Client.shared.rx.request(endpoint: .replies(self, pagination))
+        return Client.shared.rx.connectedRequest(endpoint: .replies(self, pagination))
     }
     
     /// Flag a message.
@@ -55,8 +55,8 @@ public extension Message {
         }
         
         let messageId = id
-        return flagUnflagMessage(endpoint: .flagMessage(self))
-            .do(onNext: { _ in Message.flaggedIds.append(messageId) })
+        return Client.shared.connectedRequest(flagUnflagMessage(endpoint: .flagMessage(self))
+            .do(onNext: { _ in Message.flaggedIds.append(messageId) }))
     }
     
     /// Unflag a message.
@@ -68,12 +68,13 @@ public extension Message {
         }
         
         let messageId = id
-        return flagUnflagMessage(endpoint: .unflagMessage(self))
+        
+        return Client.shared.connectedRequest(flagUnflagMessage(endpoint: .unflagMessage(self))
             .do(onNext: { _ in
                 if let index = Message.flaggedIds.firstIndex(where: { $0 == messageId }) {
                     Message.flaggedIds.remove(at: index)
                 }
-            })
+            }))
     }
     
     /// Checks if the message is flagged (locally).

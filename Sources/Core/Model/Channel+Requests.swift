@@ -18,13 +18,13 @@ public extension Channel {
     /// - Parameter message: a message.
     /// - Returns: a created/updated message response.
     func send(message: Message) -> Observable<MessageResponse> {
-        let request: Observable<MessageResponse> = Client.shared.rx.request(endpoint: .sendMessage(message, self))
+        var request: Observable<MessageResponse> = Client.shared.rx.request(endpoint: .sendMessage(message, self))
         
-        if isActive {
-            return request
+        if !isActive {
+            request = query(pagination: .limit(1)).flatMap { _ in request }
         }
         
-        return query(pagination: .limit(1)).flatMap { _ in request }
+        return Client.shared.connectedRequest(request)
     }
     
     /// Send a message action for a given ephemeral message.
@@ -34,7 +34,8 @@ public extension Channel {
     ///   - ephemeralMessage: an ephemeral message.
     /// - Returns: a result message.
     func send(action: Attachment.Action, for ephemeralMessage: Message) -> Observable<MessageResponse> {
-        return Client.shared.rx.request(endpoint: .sendMessageAction(.init(channel: self, message: ephemeralMessage, action: action)))
+        let endpoint = ChatEndpoint.sendMessageAction(.init(channel: self, message: ephemeralMessage, action: action))
+        return Client.shared.rx.connectedRequest(endpoint: endpoint)
     }
     
     /// Send a message read event.
@@ -42,14 +43,14 @@ public extension Channel {
     /// - Returns: an observable event response.
     func sendRead() -> Observable<Event> {
         let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .sendRead(self))
-        return request.map { $0.event }
+        return Client.shared.connectedRequest(request.map({ $0.event }))
     }
     
     func send(eventType: EventType) -> Observable<Event> {
         let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .sendEvent(eventType, self))
         
-        return request.map { $0.event }
-            .do(onNext: { _ in Client.shared.logger?.log("🎫", eventType.rawValue) })
+        return Client.shared.connectedRequest(request.map({ $0.event })
+            .do(onNext: { _ in Client.shared.logger?.log("🎫", eventType.rawValue) }))
     }
     
     /// Upload an image to the channel.
@@ -74,7 +75,7 @@ public extension Channel {
     
     private func sendFile(endpoint: ChatEndpoint) -> Observable<ProgressResponse<URL>> {
         let request: Observable<ProgressResponse<FileUploadResponse>> = Client.shared.rx.progressRequest(endpoint: endpoint)
-        return request.map { ($0.progress, $0.result?.file) }
+        return Client.shared.connectedRequest(request.map({ ($0.progress, $0.result?.file) }))
     }
     
     /// Delete an image with a given URL.
@@ -95,7 +96,7 @@ public extension Channel {
     
     private func deleteFile(endpoint: ChatEndpoint) -> Observable<Void> {
         let request: Observable<EmptyData> = Client.shared.rx.request(endpoint: endpoint)
-        return request.map { _ in Void() }
+        return Client.shared.connectedRequest(request.map({ _ in Void() }))
     }
     
     /// Request for a channel data, e.g. messages, members, read states, etc
@@ -111,7 +112,7 @@ public extension Channel {
         
         let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: queryOptions)
         
-        return Client.shared.rx.request(endpoint: .channel(channelQuery))
+        return Client.shared.rx.connectedRequest(endpoint: .channel(channelQuery))
     }
 }
 

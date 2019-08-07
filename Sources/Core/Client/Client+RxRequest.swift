@@ -38,6 +38,14 @@ public extension Reactive where Base == Client {
         }
     }
     
+    /// Make an observable `Client` request when the client would be connected.
+    ///
+    /// - Parameter endpoint: an endpoint (see `ChatEndpoint`).
+    /// - Returns: an observable result `T`.
+    func connectedRequest<T: Decodable>(endpoint: ChatEndpoint) -> Observable<T> {
+        return self.base.connectedRequest(request(endpoint: endpoint))
+    }
+    
     /// Make an observable `Client` request with a progress.
     ///
     /// - Parameter endpoint: an endpoint (see `ChatEndpoint`).

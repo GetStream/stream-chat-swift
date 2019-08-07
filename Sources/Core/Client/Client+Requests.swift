@@ -19,7 +19,7 @@ public extension Client {
     /// - Returns: a list of a channel response (see `ChannelResponse`).
     func channels(query: ChannelsQuery) -> Observable<[ChannelResponse]> {
         let request: Observable<ChannelsResponse> = rx.request(endpoint: .channels(query))
-        return request.map { $0.channels }
+        return connectedRequest(request.map { $0.channels })
     }
 }
 
@@ -33,7 +33,7 @@ public extension Client {
     /// - Returns: an observable list of users.
     func users(query: UsersQuery) -> Observable<[User]> {
         let request: Observable<UsersResponse> = rx.request(endpoint: .users(query))
-        return request.map { $0.users }
+        return connectedRequest(request.map { $0.users })
     }
     
     /// Update or create a user.
@@ -41,7 +41,7 @@ public extension Client {
     /// - Returns: an observable updated user.
     func update(users: [User]) -> Observable<[User]> {
         let request: Observable<UpdatedUsersResponse> = rx.request(endpoint: .updateUsers(users))
-        return request.map { $0.users.values.map { $0 } }
+        return connectedRequest(request.map { $0.users.values.map { $0 } })
     }
     
     /// Update or create a user.
@@ -49,7 +49,7 @@ public extension Client {
     /// - Parameter user: a user.
     /// - Returns: an observable updated user.
     func update(user: User) -> Observable<User> {
-        return user.update()
+        return update(users: [user]).map({ $0.first }).unwrap()
     }
     
     /// Mute a user.

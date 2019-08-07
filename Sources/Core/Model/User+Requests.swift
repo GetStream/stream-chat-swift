@@ -17,7 +17,7 @@ public extension User {
     ///
     /// - Returns: an observable updated user.
     func update() -> Observable<User> {
-        return Client.shared.update(users: [self]).map({ $0.first }).unwrap()
+        return Client.shared.update(user: self)
     }
     
     /// Mute the user.
@@ -28,7 +28,7 @@ public extension User {
             return .empty()
         }
         
-        return Client.shared.rx.request(endpoint: .muteUser(self))
+        return Client.shared.rx.connectedRequest(endpoint: .muteUser(self))
             .do(onNext: { Client.shared.user = $0.currentUser })
     }
     
@@ -41,7 +41,7 @@ public extension User {
         }
         
         let request: Observable<EmptyData> = Client.shared.rx.request(endpoint: .unmuteUser(self))
-        return request.map { _ in Void() }
+        return Client.shared.connectedRequest(request.map { _ in Void() }
             // Remove unmuted user from the current user.
             .do(onNext: {
                 if let currentUser = User.current {
@@ -54,7 +54,7 @@ public extension User {
                         Client.shared.user = currentUser
                     }
                 }
-            })
+            }))
     }
 }
 
