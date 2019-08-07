@@ -133,4 +133,8 @@ extension Client {
             })
             .share(replay: 1)
     }
+    
+    func connectedRequest<T>(_ request: Observable<T>) -> Observable<T> {
+        return webSocket.isConnected ? request : connection.connected().take(1).flatMapLatest { request }
+    }
 }

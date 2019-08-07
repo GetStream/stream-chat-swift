@@ -24,7 +24,7 @@ public extension Message {
     
     /// Add a reaction to the message.
     ///
-    /// - Parameter reactionType: a reaction type.
+    /// - Parameter reactionType: a reaction type, e.g. like.
     /// - Returns: an observable message response.
     func addReaction(_ reactionType: String) -> Observable<MessageResponse> {
         return Client.shared.rx.request(endpoint: .addReaction(reactionType, self))
@@ -32,7 +32,7 @@ public extension Message {
     
     /// Delete a reaction to the message.
     ///
-    /// - Parameter reactionType: a reaction type.
+    /// - Parameter reactionType: a reaction type, e.g. like.
     /// - Returns: an observable message response.
     func deleteReaction(_ reactionType: String) -> Observable<MessageResponse> {
         return Client.shared.rx.request(endpoint: .deleteReaction(reactionType, self))
@@ -47,6 +47,8 @@ public extension Message {
     }
     
     /// Flag a message.
+    ///
+    /// - Returns: an observable flag message response.
     func flag() -> Observable<FlagMessageResponse> {
         guard !user.isCurrent else {
             return .empty()
@@ -58,6 +60,8 @@ public extension Message {
     }
     
     /// Unflag a message.
+    ///
+    /// - Returns: an observable flag message response.
     func unflag() -> Observable<FlagMessageResponse> {
         guard !user.isCurrent else {
             return .empty()

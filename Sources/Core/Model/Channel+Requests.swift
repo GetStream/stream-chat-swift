@@ -115,6 +115,65 @@ public extension Channel {
     }
 }
 
+// MARK: - Messages Requests
+
+public extension Channel {
+    
+    /// Delete a message.
+    ///
+    /// - Parameter message: a message.
+    /// - Returns: an observable message response.
+    func delete(message: Message) -> Observable<MessageResponse> {
+        return message.delete()
+    }
+    
+    /// Add a reaction to a message.
+    ///
+    /// - Parameters:
+    ///   - reactionType: a reaction type, e.g. like.
+    ///   - message: a message.
+    /// - Returns: an observable message response.
+    func addReaction(_ reactionType: String, to message: Message) -> Observable<MessageResponse> {
+        return message.addReaction(reactionType)
+    }
+    
+    /// Delete a reaction to the message.
+    ///
+    /// - Parameters:
+    ///     - reactionType: a reaction type, e.g. like.
+    ///     - message: a message.
+    /// - Returns: an observable message response.
+    func deleteReaction(_ reactionType: String, from message: Message) -> Observable<MessageResponse> {
+        return message.deleteReaction(reactionType)
+    }
+    
+    /// Send a request for reply messages.
+    ///
+    /// - Parameters:
+    ///     - parentMessage: a parent message of replies.
+    ///     - pagination: a pagination (see `Pagination`).
+    /// - Returns: an observable message response.
+    func replies(for parentMessage: Message, pagination: Pagination) -> Observable<MessagesResponse> {
+        return parentMessage.replies(pagination: pagination)
+    }
+    
+    /// Flag a message.
+    ///
+    /// - Parameter message: a message.
+    /// - Returns: an observable flag message response.
+    func flag(message: Message) -> Observable<FlagMessageResponse> {
+        return message.flag()
+    }
+    
+    /// Unflag a message.
+    ///
+    /// - Parameter message: a message.
+    /// - Returns: an observable flag message response.
+    func unflag(message: Message) -> Observable<FlagMessageResponse> {
+        return message.unflag()
+    }
+}
+
 // MARK: - Supporting structs
 
 /// A message response.

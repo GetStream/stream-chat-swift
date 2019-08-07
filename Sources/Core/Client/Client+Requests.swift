@@ -43,4 +43,28 @@ public extension Client {
         let request: Observable<UpdatedUsersResponse> = rx.request(endpoint: .updateUsers(users))
         return request.map { $0.users.values.map { $0 } }
     }
+    
+    /// Update or create a user.
+    ///
+    /// - Parameter user: a user.
+    /// - Returns: an observable updated user.
+    func update(user: User) -> Observable<User> {
+        return user.update()
+    }
+    
+    /// Mute a user.
+    ///
+    /// - Parameter user: a user.
+    /// - Returns: an observable muted user.
+    func mute(user: User) -> Observable<MutedUsersResponse> {
+        return user.mute()
+    }
+    
+    /// Unmute a user.
+    ///
+    /// - Parameter user: a user.
+    /// - Returns: an observable unmuted user.
+    func unmute(user: User) -> Observable<Void> {
+        return user.unmute()
+    }
 }

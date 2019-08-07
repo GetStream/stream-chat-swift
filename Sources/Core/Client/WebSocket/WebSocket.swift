@@ -33,6 +33,11 @@ public final class WebSocket {
         self?.webSocket.write(ping: Data())
     }
     
+    /// Check if the web socket is connected.
+    public var isConnected: Bool {
+        return lastConnectionId != nil && webSocket.isConnected
+    }
+    
     /// An observable event response.
     public private(set) lazy var response: Observable<WebSocket.Response> = Observable
         .combineLatest(webSocket.rx.response, Client.shared.connection.connected())
