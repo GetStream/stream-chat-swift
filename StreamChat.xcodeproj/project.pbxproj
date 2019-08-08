@@ -17,6 +17,8 @@
 		8A04964F22EF1A8900E94795 /* QueryOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04964E22EF1A8900E94795 /* QueryOptions.swift */; };
 		8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965022EF4B2400E94795 /* UsersQuery.swift */; };
 		8A04965322F0910200E94795 /* Message+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965222F0910200E94795 /* Message+Requests.swift */; };
+		8A0EB78C22FC608A009481E4 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78B22FC608A009481E4 /* Client+Events.swift */; };
+		8A0EB78E22FC6974009481E4 /* Channel+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78D22FC6974009481E4 /* Channel+Events.swift */; };
 		8A104FC522F4B95B002B2DC1 /* Banners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A104FC322F49233002B2DC1 /* Banners.swift */; };
 		8AC643C422F9AC8A007373FF /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC643C122F9AAD7007373FF /* BannerView.swift */; };
 		8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */; };
@@ -161,6 +163,8 @@
 		8A04964E22EF1A8900E94795 /* QueryOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryOptions.swift; sourceTree = "<group>"; };
 		8A04965022EF4B2400E94795 /* UsersQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersQuery.swift; sourceTree = "<group>"; };
 		8A04965222F0910200E94795 /* Message+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Requests.swift"; sourceTree = "<group>"; };
+		8A0EB78B22FC608A009481E4 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
+		8A0EB78D22FC6974009481E4 /* Channel+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Events.swift"; sourceTree = "<group>"; };
 		8A104FC322F49233002B2DC1 /* Banners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banners.swift; sourceTree = "<group>"; };
 		8AC643C122F9AAD7007373FF /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
@@ -718,6 +722,7 @@
 				8AD5ED1F22E9BA39005CFAC9 /* ExtraData.swift */,
 				8AD5ED2322E9BA39005CFAC9 /* Channel.swift */,
 				8AD5ED2B22E9BA39005CFAC9 /* Channel+Requests.swift */,
+				8A0EB78D22FC6974009481E4 /* Channel+Events.swift */,
 				8AD5ED2122E9BA39005CFAC9 /* ChannelsQuery.swift */,
 				8AD5ED2022E9BA39005CFAC9 /* ChannelQuery.swift */,
 				8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */,
@@ -747,6 +752,7 @@
 				8AC8C8B722F43D16003BD1D5 /* Client+Requests.swift */,
 				8AD5ED3822E9BA39005CFAC9 /* Client+RxRequest.swift */,
 				8AD5ED3B22E9BA39005CFAC9 /* Client+WebSocket.swift */,
+				8A0EB78B22FC608A009481E4 /* Client+Events.swift */,
 				8AD5ED3A22E9BA39005CFAC9 /* ClientError.swift */,
 				8AD5ED3D22E9BA39005CFAC9 /* ClientLogger.swift */,
 				8AD5ED3722E9BA39005CFAC9 /* ChatEndpoint.swift */,
@@ -1099,8 +1105,10 @@
 				8AD5ED6A22E9BA5A005CFAC9 /* Client+Request.swift in Sources */,
 				8AD5ED5022E9BA5A005CFAC9 /* Attachment.swift in Sources */,
 				8AD5ED6522E9BA5A005CFAC9 /* Client+Setup.swift in Sources */,
+				8A0EB78C22FC608A009481E4 /* Client+Events.swift in Sources */,
 				8AD5ED4622E9BA5A005CFAC9 /* URL+Media.swift in Sources */,
 				8AD5ED6122E9BA5A005CFAC9 /* WebSocket.swift in Sources */,
+				8A0EB78E22FC6974009481E4 /* Channel+Events.swift in Sources */,
 				8AD5ED5822E9BA5A005CFAC9 /* Sorting.swift in Sources */,
 				8AD5ED6C22E9BA5A005CFAC9 /* Client+WebSocket.swift in Sources */,
 				8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */,

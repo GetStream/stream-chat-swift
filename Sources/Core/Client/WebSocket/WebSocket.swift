@@ -44,7 +44,7 @@ public final class WebSocket {
         .map { [weak self] event, _ in self?.parseMessage(event) }
         .unwrap()
         .do(onNext: {
-            if case .notificationMutesUpdated(let user) = $0.event {
+            if case .notificationMutesUpdated(let user, _) = $0.event {
                 Client.shared.user = user
             }
         })

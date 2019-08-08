@@ -119,17 +119,17 @@ extension ChannelsPresenter {
         }
         
         switch response.event {
-        case .messageNew(_, _, _, let channel):
+        case .messageNew(_, _, _, let channel, _):
             return parseNewMessage(response: response, from: channel)
             
-        case .messageDeleted(let message):
+        case .messageDeleted(let message, _):
             if let index = items.firstIndex(whereChannelId: channelId),
                 let channelPresenter = items[index].channelPresenter {
-                channelPresenter.parseChanges(response: response)
+                channelPresenter.parseChanges(event: response.event)
                 return .itemUpdated([index], [message], items)
             }
             
-        case .notificationAddedToChannel(let channel):
+        case .notificationAddedToChannel(let channel, _):
             return parseNewChannel(channel: channel)
             
         default:
@@ -143,7 +143,7 @@ extension ChannelsPresenter {
         if let channelId = response.channelId,
             let index = items.firstIndex(whereChannelId: channelId),
             let channelPresenter = items.remove(at: index).channelPresenter {
-            channelPresenter.parseChanges(response: response)
+            channelPresenter.parseChanges(event: response.event)
             items.insert(.channelPresenter(channelPresenter), at: 0)
             
             return .itemMoved(fromRow: index, toRow: 0, items)

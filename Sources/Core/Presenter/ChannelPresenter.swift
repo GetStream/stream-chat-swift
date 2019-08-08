@@ -99,8 +99,8 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.webSocket.response
-        .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
+    private lazy var webSocketChanges: Driver<ViewChanges> = channel.on()
+        .map { [weak self] in self?.parseChanges(event: $0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .asDriver(onErrorJustReturn: .none)
@@ -154,22 +154,18 @@ public final class ChannelPresenter: Presenter<ChatItem> {
 extension ChannelPresenter {
     
     @discardableResult
-    func parseChanges(response: WebSocket.Response) -> ViewChanges {
-        guard response.channelId == channel.id else {
-            return .none
-        }
-        
+    func parseChanges(event: Event) -> ViewChanges {
         if let lastWebSocketEvent = lastParsedEvent,
-            response.event == lastWebSocketEvent,
+            event == lastWebSocketEvent,
             let lastViewChanges = lastWebSocketEventViewChanges {
             return lastViewChanges
         }
         
-        lastParsedEvent = response.event
+        lastParsedEvent = event
         lastWebSocketEventViewChanges = nil
         
-        switch response.event {
-        case .typingStart(let user):
+        switch event {
+        case .typingStart(let user, _):
             guard parentMessage == nil else {
                 return .none
             }
@@ -187,7 +183,7 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .typingStop(let user):
+        case .typingStop(let user, _):
             guard parentMessage == nil else {
                 return .none
             }
@@ -203,7 +199,7 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, _, _, _):
+        case .messageNew(let message, _, _, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
@@ -227,8 +223,8 @@ extension ChannelPresenter {
             
             return viewChanges
             
-        case .messageUpdated(let message),
-             .messageDeleted(let message):
+        case .messageUpdated(let message, _),
+             .messageDeleted(let message, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
@@ -240,7 +236,7 @@ extension ChannelPresenter {
                 return viewChanges
             }
             
-        case .reactionNew(let reaction, let message, _), .reactionDeleted(let reaction, let message, _):
+        case .reactionNew(let reaction, let message, _, _), .reactionDeleted(let reaction, let message, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
@@ -249,7 +245,7 @@ extension ChannelPresenter {
                 var message = message
                 
                 if reaction.isOwn, let currentMessage = items[index].message {
-                    if case .reactionDeleted = response.event {
+                    if case .reactionDeleted = event {
                         message.deleteFromOwnReactions(reaction, reactions: currentMessage.ownReactions)
                     } else {
                         message.addToOwnReactions(reaction, reactions: currentMessage.ownReactions)
@@ -262,7 +258,7 @@ extension ChannelPresenter {
                 return viewChanges
             }
             
-        case .messageRead(let messageRead):
+        case .messageRead(let messageRead, _):
             guard channel.config.readEventsEnabled,
                 let currentUser = User.current,
                 messageRead.user != currentUser,

@@ -96,26 +96,54 @@ public enum Event: Decodable {
     
     case healthCheck(_ connectionId: String, User?)
     
-    case messageRead(MessageRead)
-    case messageNew(Message, _ unreadCount: Int, _ totalUnreadCount: Int, Channel?)
-    case messageDeleted(Message)
-    case messageUpdated(Message)
+    case messageRead(MessageRead, EventType)
+    case messageNew(Message, _ unreadCount: Int, _ totalUnreadCount: Int, Channel?, EventType)
+    case messageDeleted(Message, EventType)
+    case messageUpdated(Message, EventType)
     
-    case userUpdated(User)
-    case userPresenceChanged(User)
-    case userStartWatching(User, _ watcherCount: Int)
-    case userStopWatching(User, _ watcherCount: Int)
+    case userUpdated(User, EventType)
+    case userPresenceChanged(User, EventType)
+    case userStartWatching(User, _ watcherCount: Int, EventType)
+    case userStopWatching(User, _ watcherCount: Int, EventType)
     
-    case reactionNew(Reaction, Message, User)
-    case reactionDeleted(Reaction, Message, User)
+    case reactionNew(Reaction, Message, User, EventType)
+    case reactionDeleted(Reaction, Message, User, EventType)
     
-    case typingStart(User)
-    case typingStop(User)
+    case typingStart(User, EventType)
+    case typingStop(User, EventType)
     
-    case notificationMutesUpdated(User)
-    case notificationMarkRead(_ unreadCount: Int, _ totalUnreadCount: Int, _ unreadChannels: Int)
-    case notificationAddedToChannel(Channel)
+    case notificationMutesUpdated(User, EventType)
+    case notificationMarkRead(_ unreadCount: Int, _ totalUnreadCount: Int, _ unreadChannels: Int, EventType)
+    case notificationAddedToChannel(Channel, EventType)
     
+    /// An event type.
+    public var type: EventType {
+        switch self {
+        case .messageRead(_, let type),
+             .messageNew(_, _, _, _, let type),
+             .messageDeleted(_, let type),
+             .messageUpdated(_, let type),
+             
+            .userUpdated(_, let type),
+            .userPresenceChanged(_, let type),
+            .userStartWatching(_, _, let type),
+            .userStopWatching(_, _, let type),
+            
+            .reactionNew(_, _, _, let type),
+            .reactionDeleted(_, _, _, let type),
+            
+            .typingStart(_, let type),
+            .typingStop(_, let type),
+            
+            .notificationMutesUpdated(_, let type),
+            .notificationMarkRead(_, _, _, let type),
+            .notificationAddedToChannel(_, let type):
+            return type
+        case .healthCheck:
+            return .healthCheck
+        }
+    }
+        
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(EventType.self, forKey: .type)
@@ -142,52 +170,52 @@ public enum Event: Decodable {
             let newMessage = try message()
             let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
             let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
-            self = .messageNew(newMessage, unreadCount, totalUnreadCount, channel)
+            self = .messageNew(newMessage, unreadCount, totalUnreadCount, channel, type)
         case .messageRead:
             let created = try container.decode(Date.self, forKey: .created)
-            self = .messageRead(MessageRead(user: try user(), lastReadDate: created))
+            self = .messageRead(MessageRead(user: try user(), lastReadDate: created), type)
         case .messageDeleted:
-            self = .messageDeleted(try message())
+            self = .messageDeleted(try message(), type)
         case .messageUpdated:
-            self = .messageUpdated(try message())
+            self = .messageUpdated(try message(), type)
             
         // User
         case .userUpdated:
-            self = .userUpdated(try user())
+            self = .userUpdated(try user(), type)
         case .userPresenceChanged:
-            self = .userPresenceChanged(try user())
+            self = .userPresenceChanged(try user(), type)
         case .userStartWatching:
             let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
-            self = .userStartWatching(try user(), watcherCount)
+            self = .userStartWatching(try user(), watcherCount, type)
         case .userStopWatching:
             let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
-            self = .userStopWatching(try user(), watcherCount)
+            self = .userStopWatching(try user(), watcherCount, type)
             
         // Typing
         case .typingStart:
-            self = .typingStart(try user())
+            self = .typingStart(try user(), type)
         case .typingStop:
-            self = .typingStop(try user())
+            self = .typingStop(try user(), type)
             
         // Reaction
         case .reactionNew:
             let reaction = try container.decode(Reaction.self, forKey: .reaction)
-            self = .reactionNew(reaction, try message(), try user())
+            self = .reactionNew(reaction, try message(), try user(), type)
         case .reactionDeleted:
             let reaction = try container.decode(Reaction.self, forKey: .reaction)
-            self = .reactionDeleted(reaction, try message(), try user())
+            self = .reactionDeleted(reaction, try message(), try user(), type)
             
         // Notifications
         case .notificationMutesUpdated:
-            self = .notificationMutesUpdated(try container.decode(User.self, forKey: .me))
+            self = .notificationMutesUpdated(try container.decode(User.self, forKey: .me), type)
         case .notificationMarkRead:
             let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
             let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
             let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
-            self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels)
+            self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels, type)
         case .notificationAddedToChannel:
             let channel = try container.decode(Channel.self, forKey: .channel)
-            self = .notificationAddedToChannel(channel)
+            self = .notificationAddedToChannel(channel, type)
         default:
             throw ResponseTypeError(type: type)
         }
@@ -199,36 +227,37 @@ extension Event: Equatable {
         switch (lhs, rhs) {
         case (.healthCheck, .healthCheck):
             return true
-        case (.messageRead(let messageRead1), .messageRead(let messageRead2)):
+        case (.messageRead(let messageRead1, _), .messageRead(let messageRead2, _)):
             return messageRead1 == messageRead2
-        case (.messageNew(let message1, let unreadCount1, let totalUnreadCount1, let channel1),
-              .messageNew(let message2, let unreadCount2, let totalUnreadCount2, let channel2)):
+        case (.messageNew(let message1, let unreadCount1, let totalUnreadCount1, let channel1, _),
+              .messageNew(let message2, let unreadCount2, let totalUnreadCount2, let channel2, _)):
             return message1 == message2
                 && unreadCount1 == unreadCount2
                 && totalUnreadCount1 == totalUnreadCount2
                 && channel1 == channel2
-        case (.messageDeleted(let message1), .messageDeleted(let message2)):
+        case (.messageDeleted(let message1, _), .messageDeleted(let message2, _)):
             return message1 == message2
-        case (.messageUpdated(let message1), .messageUpdated(let message2)):
+        case (.messageUpdated(let message1, _), .messageUpdated(let message2, _)):
             return message1 == message2
-        case (.userUpdated(let user1), .userUpdated(let user2)):
+        case (.userUpdated(let user1, _), .userUpdated(let user2, _)):
             return user1 == user2
-        case (.userPresenceChanged(let user1), .userPresenceChanged(let user2)):
+        case (.userPresenceChanged(let user1, _), .userPresenceChanged(let user2, _)):
             return user1 == user2
-        case (.userStartWatching(let user1, let watcherCount1), .userStartWatching(let user2, let watcherCount2)):
+        case (.userStartWatching(let user1, let watcherCount1, _), .userStartWatching(let user2, let watcherCount2, _)):
             return user1 == user2 && watcherCount1 == watcherCount2
-        case (.userStopWatching(let user1, let watcherCount1), .userStopWatching(let user2, let watcherCount2)):
+        case (.userStopWatching(let user1, let watcherCount1, _), .userStopWatching(let user2, let watcherCount2, _)):
             return user1 == user2 && watcherCount1 == watcherCount2
-        case (.reactionNew(let reaction1, let message1, let user1), .reactionNew(let reaction2, let message2, let user2)):
+        case (.reactionNew(let reaction1, let message1, let user1, _), .reactionNew(let reaction2, let message2, let user2, _)):
             return reaction1 == reaction2 && message1 == message2 && user1 == user2
-        case (.reactionDeleted(let reaction1, let message1, let user1), .reactionDeleted(let reaction2, let message2, let user2)):
+        case (.reactionDeleted(let reaction1, let message1, let user1, _),
+              .reactionDeleted(let reaction2, let message2, let user2, _)):
             return reaction1 == reaction2 && message1 == message2 && user1 == user2
-        case (.typingStart(let user1), .typingStart(let user2)):
+        case (.typingStart(let user1, _), .typingStart(let user2, _)):
             return user1 == user2
-        case (.typingStop(let user1), .typingStop(let user2)):
+        case (.typingStop(let user1, _), .typingStop(let user2, _)):
             return user1 == user2
-        case (.notificationMarkRead(let unreadCount1, let totalUnreadCount1, let unreadChannels1),
-              .notificationMarkRead(let unreadCount2, let totalUnreadCount2, let unreadChannels2)):
+        case (.notificationMarkRead(let unreadCount1, let totalUnreadCount1, let unreadChannels1, _),
+              .notificationMarkRead(let unreadCount2, let totalUnreadCount2, let unreadChannels2, _)):
             return unreadCount1 == unreadCount2 && totalUnreadCount1 == totalUnreadCount2 && unreadChannels1 == unreadChannels2
         default:
             return false
