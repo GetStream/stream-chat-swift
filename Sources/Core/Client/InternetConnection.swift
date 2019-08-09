@@ -47,15 +47,16 @@ public final class InternetConnection {
     
     /// Init InternetConnection.
     public init() {
-        UIApplication.shared.rx.appState
-            .subscribeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] state in
-                if state == .active {
-                    try? self?.reachability?.startNotifier()
-                    ClientLogger.log("🕸", "Notifying started 🏃‍♂️")
-                }
-            })
-            .disposed(by: disposeBag)
+        DispatchQueue.main.async {
+            UIApplication.shared.rx.appState
+                .subscribe(onNext: { [weak self] state in
+                    if state == .active {
+                        try? self?.reachability?.startNotifier()
+                        ClientLogger.log("🕸", "Notifying started 🏃‍♂️")
+                    }
+                })
+                .disposed(by: self.disposeBag)
+        }
     }
     
     /// Stop observing the Internet connection.
