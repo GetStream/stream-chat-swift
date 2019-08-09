@@ -17,7 +17,7 @@ public extension Channel {
     ///
     /// - Parameter eventType: an event type.
     /// - Returns: an observable event.
-    func on(_ eventType: EventType? = nil) -> Observable<Event> {
+    func onEvent(_ eventType: EventType? = nil) -> Observable<Event> {
         return Client.shared.connection.connected()
             .flatMapLatest { Client.shared.webSocket.response }
             .filter { [weak self] in self?.id == $0.channelId }

@@ -19,7 +19,7 @@ public extension Client {
     ///     - eventType: an event type.
     ///     - channelId: a channeld id (optional).
     /// - Returns: an observable event.
-    func on(_ eventType: EventType, channelId: String? = nil) -> Observable<Event> {
+    func onEvent(_ eventType: EventType, for channelId: String? = nil) -> Observable<Event> {
         return connection.connected()
             .flatMapLatest { [weak self] in self?.webSocket.response ?? .empty() }
             .filter {

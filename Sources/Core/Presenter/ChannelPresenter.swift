@@ -99,7 +99,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { $0 != .none }
         .asDriver(onErrorJustReturn: .none)
     
-    private lazy var webSocketChanges: Driver<ViewChanges> = channel.on()
+    private lazy var webSocketChanges: Driver<ViewChanges> = channel.onEvent()
         .map { [weak self] in self?.parseChanges(event: $0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
