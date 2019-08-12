@@ -382,8 +382,8 @@
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
 				8AD5EDD822E9C7BC005CFAC9 /* README.md */,
 				8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */,
-				8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */,
 				8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */,
+				8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */,
 				8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */,
 			);
 			sourceTree = "<group>";
