@@ -109,13 +109,13 @@
                 <a href="../Enums/ChannelType.html">ChannelType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ChatEndpoint.html">ChatEndpoint</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Enums/ChatItem.html">ChatItem</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ClientError.html">ClientError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/Event.html">Event</a>
@@ -128,6 +128,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/Filter/Operator.html">– Operator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/InviteAnswer.html">InviteAnswer</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/MessageType.html">MessageType</a>
@@ -215,10 +218,19 @@
                 <a href="../Structs/BaseURL/Location.html">– Location</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore19ChannelInviteAnswerV">ChannelInviteAnswer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore21ChannelInviteResponseV">ChannelInviteResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/ChannelQuery.html">ChannelQuery</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelResponse.html">ChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelUpdatedResponse.html">ChannelUpdatedResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelsQuery.html">ChannelsQuery</a>
@@ -1027,9 +1039,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore7MessageV2id4user4text11attachments9extraData8parentId18showReplyInChannelACSS_AA4UserVSSSayAA10AttachmentVGAA05ExtraJ0VSgSSSgSbtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(id:user:text:attachments:extraData:parentId:showReplyInChannel:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore7MessageV2id4user4text11attachments9extraData8parentId18showReplyInChannelACSS_AA4UserVSSSayAA10AttachmentVGAA05ExtraJ0VSgSSSgSbtcfc">init(id:user:text:attachments:extraData:parentId:showReplyInChannel:)</a>
+                    <a name="/s:14StreamChatCore7MessageV2id4text11attachments9extraData8parentId18showReplyInChannelACSS_SSSayAA10AttachmentVGAA05ExtraI0VSgSSSgSbtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(id:text:attachments:extraData:parentId:showReplyInChannel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV2id4text11attachments9extraData8parentId18showReplyInChannelACSS_SSSayAA10AttachmentVGAA05ExtraI0VSgSSSgSbtcfc">init(id:text:attachments:extraData:parentId:showReplyInChannel:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1045,7 +1057,6 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">id</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
-            <span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">,</span>
             <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Attachment.html">Attachment</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nv">extraData</span><span class="p">:</span> <span class="kt"><a href="../Structs/ExtraData.html">ExtraData</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -1266,7 +1277,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a reaction type.</p>
+                                  <p>a reaction type, e.g. like.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1316,7 +1327,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a reaction type.</p>
+                                  <p>a reaction type, e.g. like.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1404,6 +1415,10 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable flag message response.</p>
+                      </div>
                     </section>
                   </div>
                 </li>
@@ -1430,6 +1445,10 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">unflag</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/FlagMessageResponse.html">FlagMessageResponse</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable flag message response.</p>
                       </div>
                     </section>
                   </div>
@@ -1673,7 +1692,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-06)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

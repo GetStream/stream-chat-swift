@@ -109,13 +109,13 @@
                 <a href="../Enums/ChannelType.html">ChannelType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ChatEndpoint.html">ChatEndpoint</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Enums/ChatItem.html">ChatItem</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ClientError.html">ClientError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/Event.html">Event</a>
@@ -128,6 +128,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/Filter/Operator.html">– Operator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/InviteAnswer.html">InviteAnswer</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/MessageType.html">MessageType</a>
@@ -215,10 +218,19 @@
                 <a href="../Structs/BaseURL/Location.html">– Location</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore19ChannelInviteAnswerV">ChannelInviteAnswer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore21ChannelInviteResponseV">ChannelInviteResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/ChannelQuery.html">ChannelQuery</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelResponse.html">ChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelUpdatedResponse.html">ChannelUpdatedResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelsQuery.html">ChannelsQuery</a>
@@ -585,9 +597,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore7ChannelC7membersSayAA6MemberVGvp"></a>
+                    <a name="/s:14StreamChatCore7ChannelC7membersShyAA6MemberVGvp"></a>
                     <a name="//apple_ref/swift/Property/members" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore7ChannelC7membersSayAA6MemberVGvp">members</a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC7membersShyAA6MemberVGvp">members</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -602,7 +614,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">members</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Member.html">Member</a></span><span class="p">]</span> <span class="p">{</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">members</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/Member.html">Member</a></span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">get</span>
   <span class="p">}</span></code></pre>
 
@@ -831,6 +843,67 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
+                <a name="/Events"></a>
+                <a name="//apple_ref/swift/Section/Events" class="dashAnchor"></a>
+                <a href="#/Events">
+                  <h3 class="section-name">Events</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC7onEventy7RxSwift10ObservableCyAA0F0OGAA0F4TypeOSgF"></a>
+                    <a name="//apple_ref/swift/Method/onEvent(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC7onEventy7RxSwift10ObservableCyAA0F0OGAA0F4TypeOSgF">onEvent(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An observable channel event by event type.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventType</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>eventType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an event type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable event.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
                 <a name="/Requests"></a>
                 <a name="//apple_ref/swift/Section/Requests" class="dashAnchor"></a>
                 <a href="#/Requests">
@@ -838,6 +911,68 @@
                 </a>
               </div>
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC5query10pagination0E7Options7RxSwift10ObservableCyAA0D8ResponseVGAA10PaginationO_AA05QueryG0VtF"></a>
+                    <a name="//apple_ref/swift/Method/query(pagination:queryOptions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC5query10pagination0E7Options7RxSwift10ObservableCyAA0D8ResponseVGAA10PaginationO_AA05QueryG0VtF">query(pagination:queryOptions:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Request for a channel data, e.g. messages, members, read states, etc</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">query</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">,</span> <span class="nv">queryOptions</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">all</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ChannelResponse.html">ChannelResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>pagination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a pagination for messages (see <code><a href="../Enums/Pagination.html">Pagination</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>queryOptions</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a query options. All by default (see <code><a href="../Structs/QueryOptions.html">QueryOptions</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable channel response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -994,7 +1129,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Send an event.</p>
 
                       </div>
                       <div class="declaration">
@@ -1005,9 +1140,204 @@
 
                         </div>
                       </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>eventType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an event type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable event.</p>
+                      </div>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Invite%20Requests"></a>
+                <a name="//apple_ref/swift/Section/Invite Requests" class="dashAnchor"></a>
+                <a href="#/Invite%20Requests">
+                  <h3 class="section-name">Invite Requests</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC11sendInvites2to7RxSwift10ObservableCyAA0D8ResponseVGSayAA4UserVG_tF"></a>
+                    <a name="//apple_ref/swift/Method/sendInvites(to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC11sendInvites2to7RxSwift10ObservableCyAA0D8ResponseVGSayAA4UserVG_tF">sendInvites(to:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send invites to users.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">sendInvites</span><span class="p">(</span><span class="n">to</span> <span class="nv">users</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ChannelResponse.html">ChannelResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>userIds</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a list of user Ids.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable channel response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC12acceptInvite4with7RxSwift10ObservableCyAA0dF8ResponseVGAA7MessageVSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/acceptInvite(with:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC12acceptInvite4with7RxSwift10ObservableCyAA0dF8ResponseVGAA7MessageVSg_tF">acceptInvite(with:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Accept an invite to the channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">acceptInvite</span><span class="p">(</span><span class="n">with</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore21ChannelInviteResponseV">ChannelInviteResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an additional message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable channel response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC12rejectInvite4with7RxSwift10ObservableCyAA0dF8ResponseVGAA7MessageVSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/rejectInvite(with:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC12rejectInvite4with7RxSwift10ObservableCyAA0dF8ResponseVGAA7MessageVSg_tF">rejectInvite(with:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Reject an invite to the channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">rejectInvite</span><span class="p">(</span><span class="n">with</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore21ChannelInviteResponseV">ChannelInviteResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an additional message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable channel response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/File%20Requests"></a>
+                <a name="//apple_ref/swift/Section/File Requests" class="dashAnchor"></a>
+                <a href="#/File%20Requests">
+                  <h3 class="section-name">File Requests</h3>
+                </a>
+              </div>
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -1232,12 +1562,23 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Messages%20Requests"></a>
+                <a name="//apple_ref/swift/Section/Messages Requests" class="dashAnchor"></a>
+                <a href="#/Messages%20Requests">
+                  <h3 class="section-name">Messages Requests</h3>
+                </a>
+              </div>
+              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore7ChannelC5query10pagination0E7Options7RxSwift10ObservableCyAA0D8ResponseVGAA10PaginationO_AA05QueryG0VtF"></a>
-                    <a name="//apple_ref/swift/Method/query(pagination:queryOptions:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore7ChannelC5query10pagination0E7Options7RxSwift10ObservableCyAA0D8ResponseVGAA10PaginationO_AA05QueryG0VtF">query(pagination:queryOptions:)</a>
+                    <a name="/s:14StreamChatCore7ChannelC6delete7message7RxSwift10ObservableCyAA15MessageResponseVGAA0J0V_tF"></a>
+                    <a name="//apple_ref/swift/Method/delete(message:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC6delete7message7RxSwift10ObservableCyAA15MessageResponseVGAA0J0V_tF">delete(message:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1245,14 +1586,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Request for a channel data, e.g. messages, members, read states, etc</p>
+                        <p>Delete a message.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">query</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">,</span> <span class="nv">queryOptions</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">all</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ChannelResponse.html">ChannelResponse</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore15MessageResponseV">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1260,6 +1601,192 @@
                         <h4>Parameters</h4>
                         <table class="graybox">
                           <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC11addReaction_2to7RxSwift10ObservableCyAA15MessageResponseVGSS_AA0K0VtF"></a>
+                    <a name="//apple_ref/swift/Method/addReaction(_:to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC11addReaction_2to7RxSwift10ObservableCyAA15MessageResponseVGSS_AA0K0VtF">addReaction(_:to:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Add a reaction to a message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addReaction</span><span class="p">(</span><span class="n">_</span> <span class="nv">reactionType</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">to</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore15MessageResponseV">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>reactionType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction type, e.g. like.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC14deleteReaction_4from7RxSwift10ObservableCyAA15MessageResponseVGSS_AA0K0VtF"></a>
+                    <a name="//apple_ref/swift/Method/deleteReaction(_:from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC14deleteReaction_4from7RxSwift10ObservableCyAA15MessageResponseVGSS_AA0K0VtF">deleteReaction(_:from:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delete a reaction to the message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">deleteReaction</span><span class="p">(</span><span class="n">_</span> <span class="nv">reactionType</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">from</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore15MessageResponseV">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>reactionType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction type, e.g. like.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC7replies3for10pagination7RxSwift10ObservableCyAA16MessagesResponseVGAA7MessageV_AA10PaginationOtF"></a>
+                    <a name="//apple_ref/swift/Method/replies(for:pagination:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC7replies3for10pagination7RxSwift10ObservableCyAA16MessagesResponseVGAA7MessageV_AA10PaginationOtF">replies(for:pagination:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send a request for reply messages.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">replies</span><span class="p">(</span><span class="k">for</span> <span class="nv">parentMessage</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">,</span> <span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore16MessagesResponseV">MessagesResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parentMessage</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a parent message of replies.</p>
+                                </div>
+                              </td>
+                            </tr>
                             <tr>
                               <td>
                                 <code>
@@ -1272,15 +1799,53 @@
                                 </div>
                               </td>
                             </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC4flag7message7RxSwift10ObservableCyAA19FlagMessageResponseVGAA0K0V_tF"></a>
+                    <a name="//apple_ref/swift/Method/flag(message:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC4flag7message7RxSwift10ObservableCyAA19FlagMessageResponseVGAA0K0V_tF">flag(message:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Flag a message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">flag</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/FlagMessageResponse.html">FlagMessageResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
                             <tr>
                               <td>
                                 <code>
-                                <em>queryOptions</em>
+                                <em>message</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>a query options. All by default (see <code><a href="../Structs/QueryOptions.html">QueryOptions</a></code>).</p>
+                                  <p>a message.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1289,7 +1854,57 @@
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>an observable channel query.</p>
+                        <p>an observable flag message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC6unflag7message7RxSwift10ObservableCyAA19FlagMessageResponseVGAA0K0V_tF"></a>
+                    <a name="//apple_ref/swift/Method/unflag(message:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC6unflag7message7RxSwift10ObservableCyAA19FlagMessageResponseVGAA0K0V_tF">unflag(message:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unflag a message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">unflag</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/FlagMessageResponse.html">FlagMessageResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable flag message response.</p>
                       </div>
                     </section>
                   </div>
@@ -1366,7 +1981,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-06)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

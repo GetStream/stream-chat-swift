@@ -2,99 +2,15 @@
   "warnings": [
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 13,
-      "symbol": "ChatEndpoint.guestToken(_:)",
+      "line": 40,
+      "symbol": "ChatEndpoint.deleteImage(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 14,
-      "symbol": "ChatEndpoint.channels(_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 15,
-      "symbol": "ChatEndpoint.channel(_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 16,
-      "symbol": "ChatEndpoint.createChannel(_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 17,
-      "symbol": "ChatEndpoint.thread(_:_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 18,
-      "symbol": "ChatEndpoint.sendMessage(_:_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 19,
-      "symbol": "ChatEndpoint.sendMessageAction(_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 20,
-      "symbol": "ChatEndpoint.deleteMessage(_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 21,
-      "symbol": "ChatEndpoint.sendRead(_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 22,
-      "symbol": "ChatEndpoint.addReaction(_:_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 23,
-      "symbol": "ChatEndpoint.deleteReaction(_:_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 24,
-      "symbol": "ChatEndpoint.sendEvent(_:_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 25,
-      "symbol": "ChatEndpoint.sendImage(_:_:_:_:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 26,
-      "symbol": "ChatEndpoint.sendFile(_:_:_:_:)",
+      "line": 42,
+      "symbol": "ChatEndpoint.deleteFile(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
@@ -114,21 +30,21 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/Uploader.swift",
-      "line": 55,
+      "line": 44,
       "symbol": "UploaderItem.UploadingType.image",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/Uploader.swift",
-      "line": 56,
+      "line": 45,
       "symbol": "UploaderItem.UploadingType.video",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/Uploader.swift",
-      "line": 57,
+      "line": 46,
       "symbol": "UploaderItem.UploadingType.file",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
@@ -163,7 +79,7 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/WebSocket/WebSocket.swift",
-      "line": 49,
+      "line": 54,
       "symbol": "WebSocket.deinit",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -351,338 +267,212 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Channel+Requests.swift",
+      "line": 48,
+      "symbol": "Channel.send(eventType:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/ChannelsQuery.swift",
-      "line": 38,
-      "symbol": "ChannelsQuery.init(filter:sort:user:pagination:messageLimit:)",
+      "line": 35,
+      "symbol": "ChannelsQuery.init(filter:sort:pagination:messageLimit:options:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 13,
-      "symbol": "EventType.healthCheck",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 14,
-      "symbol": "EventType.messageNew",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 15,
-      "symbol": "EventType.messageRead",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 16,
-      "symbol": "EventType.messageUpdated",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 17,
-      "symbol": "EventType.messageDeleted",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 18,
-      "symbol": "EventType.messageReaction",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 19,
-      "symbol": "EventType.userUpdated",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 20,
-      "symbol": "EventType.userStatusChanged",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 21,
-      "symbol": "EventType.userStartWatching",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 22,
-      "symbol": "EventType.userStopWatching",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 23,
-      "symbol": "EventType.typingStart",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 24,
-      "symbol": "EventType.typingStop",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 25,
-      "symbol": "EventType.reactionNew",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 26,
-      "symbol": "EventType.reactionDeleted",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 27,
-      "symbol": "EventType.notificationMarkRead",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 28,
-      "symbol": "EventType.notificationMessageNew",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 29,
-      "symbol": "EventType.notificationInvited",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 30,
-      "symbol": "EventType.notificationInviteAccepted",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 31,
-      "symbol": "EventType.notificationAddedToChannel",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 32,
-      "symbol": "EventType.notificationRemovedFromChannel",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 33,
-      "symbol": "EventType.memberAdded",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 34,
-      "symbol": "EventType.memberUpdated",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 35,
-      "symbol": "EventType.memberRemoved",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 36,
-      "symbol": "EventType.channelUpdated",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 37,
-      "symbol": "EventType.connectionChanged",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 38,
-      "symbol": "EventType.connectionRecovered",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 62,
+      "line": 97,
       "symbol": "Event.healthCheck(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 64,
+      "line": 99,
       "symbol": "Event.messageRead(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 65,
+      "line": 100,
       "symbol": "Event.messageNew(_:_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 66,
+      "line": 101,
       "symbol": "Event.messageDeleted(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 67,
+      "line": 102,
       "symbol": "Event.messageUpdated(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 69,
+      "line": 104,
       "symbol": "Event.userUpdated(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 70,
-      "symbol": "Event.userStatusChanged(_:)",
+      "line": 105,
+      "symbol": "Event.userPresenceChanged(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 71,
+      "line": 106,
       "symbol": "Event.userStartWatching(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 72,
+      "line": 107,
       "symbol": "Event.userStopWatching(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 74,
+      "line": 109,
       "symbol": "Event.reactionNew(_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 75,
+      "line": 110,
       "symbol": "Event.reactionDeleted(_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 77,
+      "line": 112,
       "symbol": "Event.typingStart(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 78,
+      "line": 113,
       "symbol": "Event.typingStop(_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
-      "line": 80,
+      "line": 115,
+      "symbol": "Event.notificationMutesUpdated(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
+      "line": 116,
       "symbol": "Event.notificationMarkRead(_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Event.swift",
+      "line": 117,
+      "symbol": "Event.notificationAddedToChannel(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Filter.swift",
-      "line": 115,
+      "line": 125,
       "symbol": "Filter.+(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Filter.swift",
-      "line": 133,
+      "line": 143,
       "symbol": "Filter.+=(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Filter.swift",
-      "line": 137,
+      "line": 147,
       "symbol": "Filter.|(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Filter.swift",
-      "line": 155,
+      "line": 165,
       "symbol": "Filter.|=(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 51,
-      "symbol": "Member.Role.owner",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 52,
+      "line": 58,
       "symbol": "Member.Role.member",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 53,
-      "symbol": "Member.Role.user",
+      "line": 59,
+      "symbol": "Member.Role.moderator",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
+      "line": 60,
+      "symbol": "Member.Role.admin",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
+      "line": 61,
+      "symbol": "Member.Role.owner",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/User.swift",
+      "line": 25,
+      "symbol": "User.Role",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/User.swift",
+      "line": 26,
+      "symbol": "User.Role.user",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/User.swift",
+      "line": 27,
+      "symbol": "User.Role.admin",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/User.swift",
+      "line": 28,
+      "symbol": "User.Role.guest",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },

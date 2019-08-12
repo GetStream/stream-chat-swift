@@ -109,13 +109,13 @@
                 <a href="../Enums/ChannelType.html">ChannelType</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Enums/ChatEndpoint.html">ChatEndpoint</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Enums/ChatItem.html">ChatItem</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ClientError.html">ClientError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/Event.html">Event</a>
@@ -128,6 +128,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/Filter/Operator.html">– Operator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/InviteAnswer.html">InviteAnswer</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/MessageType.html">MessageType</a>
@@ -215,10 +218,19 @@
                 <a href="../Structs/BaseURL/Location.html">– Location</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore19ChannelInviteAnswerV">ChannelInviteAnswer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore21ChannelInviteResponseV">ChannelInviteResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/ChannelQuery.html">ChannelQuery</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelResponse.html">ChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelUpdatedResponse.html">ChannelUpdatedResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelsQuery.html">ChannelsQuery</a>
@@ -338,6 +350,114 @@
           <section class="section task-group-section">
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9EventTypeO11healthCheckyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/healthCheck" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9EventTypeO11healthCheckyA2CmF">healthCheck</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Every 30 second to confirm that the client connection is still active (🗼).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">healthCheck</span> <span class="o">=</span> <span class="s">"health.check"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9EventTypeO17connectionChangedyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/connectionChanged" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9EventTypeO17connectionChangedyA2CmF">connectionChanged</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>⚠️ When the state of the connection changed (🗼).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">connectionChanged</span> <span class="o">=</span> <span class="s">"connection.changed"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9EventTypeO19connectionRecoveredyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/connectionRecovered" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9EventTypeO19connectionRecoveredyA2CmF">connectionRecovered</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>⚠️ When the connection to chat servers is back online (🗼).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">connectionRecovered</span> <span class="o">=</span> <span class="s">"connection.recovered"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9EventTypeO14channelUpdatedyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/channelUpdated" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9EventTypeO14channelUpdatedyA2CmF">channelUpdated</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>When a channel is updated (when watching the channel 📺).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">channelUpdated</span> <span class="o">=</span> <span class="s">"channel.updated"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -675,7 +795,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>⚠️ When a member is updated (when watching the channel 📺).</p>
+                        <p>When a member is updated (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -710,114 +830,6 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="k">case</span> <span class="n">memberRemoved</span> <span class="o">=</span> <span class="s">"member.removed"</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore9EventTypeO14channelUpdatedyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/channelUpdated" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore9EventTypeO14channelUpdatedyA2CmF">channelUpdated</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>⚠️ When a channel is updated (when watching the channel 📺).</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">channelUpdated</span> <span class="o">=</span> <span class="s">"channel.updated"</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore9EventTypeO11healthCheckyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/healthCheck" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore9EventTypeO11healthCheckyA2CmF">healthCheck</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Every 30 second to confirm that the client connection is still active (🗼).</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">healthCheck</span> <span class="o">=</span> <span class="s">"health.check"</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore9EventTypeO17connectionChangedyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/connectionChanged" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore9EventTypeO17connectionChangedyA2CmF">connectionChanged</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>⚠️ When the state of the connection changed (🗼).</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">connectionChanged</span> <span class="o">=</span> <span class="s">"connection.changed"</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore9EventTypeO19connectionRecoveredyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/connectionRecovered" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore9EventTypeO19connectionRecoveredyA2CmF">connectionRecovered</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>⚠️ When the connection to chat servers is back online (🗼).</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">connectionRecovered</span> <span class="o">=</span> <span class="s">"connection.recovered"</span></code></pre>
 
                         </div>
                       </div>
@@ -919,7 +931,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>⚠️ When the user is invited to join a channel (when the user invited 💌).</p>
+                        <p>When the user is invited to join a channel (when the user invited 💌).</p>
 
                       </div>
                       <div class="declaration">
@@ -946,7 +958,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>⚠️ When the user accepts an invite (when the user invited 💌).</p>
+                        <p>When the user accepts an invite (when the user invited 💌).</p>
 
                       </div>
                       <div class="declaration">
@@ -954,6 +966,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="k">case</span> <span class="n">notificationInviteAccepted</span> <span class="o">=</span> <span class="s">"notification.invite_accepted"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9EventTypeO26notificationInviteRejectedyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/notificationInviteRejected" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9EventTypeO26notificationInviteRejectedyA2CmF">notificationInviteRejected</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>When the user reject an invite (when the user invited 💌).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">notificationInviteRejected</span> <span class="o">=</span> <span class="s">"notification.invite_rejected"</span></code></pre>
 
                         </div>
                       </div>
@@ -1073,7 +1112,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-06)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-12)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
