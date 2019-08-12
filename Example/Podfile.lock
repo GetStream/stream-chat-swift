@@ -17,15 +17,15 @@ PODS:
   - RxRelay (5.0.0):
     - RxSwift (~> 5)
   - RxSwift (5.0.0)
-  - SnapKit (5.0.0)
+  - SnapKit (5.0.1)
   - Starscream (3.1.0)
-  - StreamChat (1.1.2):
+  - StreamChat (1.2.1):
     - Nuke (~> 8.0)
     - RxGesture (~> 3.0)
     - SnapKit (~> 5.0)
     - StreamChatCore
     - SwiftyGif (~> 5.1)
-  - StreamChatCore (1.1.2):
+  - StreamChatCore (1.2.1):
     - GzipSwift (~> 5.0)
     - ReachabilitySwift (~> 4.3)
     - RxAppState (~> 1.5)
@@ -71,10 +71,10 @@ SPEC CHECKSUMS:
   RxGesture: 0cd8e37ff9a266e1c31f46bcaed6de1c536bc81e
   RxRelay: 4f7409406a51a55cd88483f21ed898c234d60f18
   RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
-  SnapKit: fd22d10eb9aff484d79a8724eab922c1ddf89bcf
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   Starscream: 08172b481e145289c4930cb567230fb55897cfa4
-  StreamChat: 7c162da1bee64173b73d38470d667d9c44fc6f67
-  StreamChatCore: 0830c42a0db14616c2d5495f51ffbfef8ef1a64c
+  StreamChat: fd529755aac76fb5c0d67f394c014da3d333fde8
+  StreamChatCore: e74bbc780a9475be21c3ed3eac42b415cd5cd5e1
   SwiftyGif: f7702483db93586a41f04f4927cd682852a2fa10
 
 PODFILE CHECKSUM: 1285fe97a80001129e4801d3e4367d36cc976189
