@@ -617,10 +617,6 @@ extension ChannelPresenter {
     ///     - text: a message text
     ///     - completion: a completion blocks
     public func send(text: String) -> Observable<MessageResponse> {
-        guard let currentUser = User.current else {
-            return .empty()
-        }
-        
         var text = text
         
         if text.count > channel.config.maxMessageLength {
@@ -644,7 +640,6 @@ extension ChannelPresenter {
         editMessage = nil
         
         let message = Message(id: messageId,
-                              user: currentUser,
                               text: text,
                               attachments: attachments,
                               extraData: extraData,

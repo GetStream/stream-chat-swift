@@ -32,11 +32,11 @@ extension Client {
     /// Send a request.
     ///
     /// - Parameters:
-    ///   - endpoint: an endpoint (see `ChatEndpoint`).
+    ///   - endpoint: an endpoint (see `Endpoint`).
     ///   - completion: a completion block.
     /// - Returns: an URLSessionDataTask that can be canncelled.
     @discardableResult
-    public func request<T: Decodable>(endpoint: ChatEndpoint, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
+    public func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
         do {
             logger?.timing("Prepare for request", reset: true)
             logger?.log(urlSession.configuration)
@@ -71,7 +71,7 @@ extension Client {
         return URLSessionDataTask()
     }
     
-    private func requestURL(for endpoint: ChatEndpoint, queryItems: [URLQueryItem]) -> Result<URL, ClientError> {
+    private func requestURL(for endpoint: Endpoint, queryItems: [URLQueryItem]) -> Result<URL, ClientError> {
         let baseURL = self.baseURL.url(.https)
         var urlComponents = URLComponents()
         urlComponents.scheme = baseURL.scheme
@@ -86,7 +86,7 @@ extension Client {
         return .success(url)
     }
     
-    private func queryItems(for endpoint: ChatEndpoint) -> Result<[URLQueryItem], ClientError> {
+    private func queryItems(for endpoint: Endpoint) -> Result<[URLQueryItem], ClientError> {
         guard let user = user else {
             return .failure(.emptyUser)
         }
@@ -137,7 +137,7 @@ extension Client {
         return .success(queryItems)
     }
     
-    private func encodeRequest(for endpoint: ChatEndpoint, url: URL) -> Result<URLRequest, ClientError> {
+    private func encodeRequest(for endpoint: Endpoint, url: URL) -> Result<URLRequest, ClientError> {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = endpoint.method.rawValue
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -164,7 +164,7 @@ extension Client {
 // MARK: - Upload files
 
 extension Client {
-    private func encodeRequestForUpload(for endpoint: ChatEndpoint, url: URL) -> Result<URLRequest, ClientError> {
+    private func encodeRequestForUpload(for endpoint: Endpoint, url: URL) -> Result<URLRequest, ClientError> {
         let multipartFormData: MultipartFormData
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = endpoint.method.rawValue

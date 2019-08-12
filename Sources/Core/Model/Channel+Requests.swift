@@ -13,6 +13,22 @@ import RxSwift
 
 public extension Channel {
     
+    /// Request for a channel data, e.g. messages, members, read states, etc
+    ///
+    /// - Parameters:
+    ///   - pagination: a pagination for messages (see `Pagination`).
+    ///   - queryOptions: a query options. All by default (see `QueryOptions`).
+    /// - Returns: an observable channel response.
+    func query(pagination: Pagination, queryOptions: QueryOptions = .all) -> Observable<ChannelResponse> {
+        if let user = User.current {
+            members.insert(user.asMember)
+        }
+        
+        let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: queryOptions)
+        
+        return Client.shared.rx.connectedRequest(endpoint: .channel(channelQuery))
+    }
+    
     /// Send a new message or update with a given `message.id`.
     ///
     /// - Parameter message: a message.
@@ -34,7 +50,7 @@ public extension Channel {
     ///   - ephemeralMessage: an ephemeral message.
     /// - Returns: a result message.
     func send(action: Attachment.Action, for ephemeralMessage: Message) -> Observable<MessageResponse> {
-        let endpoint = ChatEndpoint.sendMessageAction(.init(channel: self, message: ephemeralMessage, action: action))
+        let endpoint = Endpoint.sendMessageAction(.init(channel: self, message: ephemeralMessage, action: action))
         return Client.shared.rx.connectedRequest(endpoint: endpoint)
     }
     
@@ -46,12 +62,60 @@ public extension Channel {
         return Client.shared.connectedRequest(request.map({ $0.event }))
     }
     
+    /// Send an event.
+    ///
+    /// - Parameter eventType: an event type.
+    /// - Returns: an observable event.
     func send(eventType: EventType) -> Observable<Event> {
         let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .sendEvent(eventType, self))
         
         return Client.shared.connectedRequest(request.map({ $0.event })
             .do(onNext: { _ in Client.shared.logger?.log("🎫", eventType.rawValue) }))
     }
+}
+
+// MARK: - Invite Requests
+
+public extension Channel {
+    
+    /// Send invites to users.
+    ///
+    /// - Parameter userIds: a list of user Ids.
+    /// - Returns: an observable channel response.
+    func sendInvites(to users: [User]) -> Observable<ChannelResponse> {
+        users.forEach {
+            members.insert($0.asMember)
+            invitedUsers.insert($0)
+        }
+        
+        return query(pagination: .limit(1))
+    }
+    
+    /// Accept an invite to the channel.
+    ///
+    /// - Parameter message: an additional message.
+    /// - Returns: an observable channel response.
+    func acceptInvite(with message: Message? = nil) -> Observable<ChannelInviteResponse> {
+        return sendInviteAnswer(accept: true, reject: nil, message: message)
+    }
+    
+    /// Reject an invite to the channel.
+    ///
+    /// - Parameter message: an additional message.
+    /// - Returns: an observable channel response.
+    func rejectInvite(with message: Message? = nil) -> Observable<ChannelInviteResponse> {
+        return sendInviteAnswer(accept: nil, reject: true, message: message)
+    }
+    
+    private func sendInviteAnswer(accept: Bool?, reject: Bool?, message: Message?) -> Observable<ChannelInviteResponse> {
+        let answer = ChannelInviteAnswer(channel: self, accept: accept, reject: reject, message: message)
+        return Client.shared.rx.connectedRequest(endpoint: .inviteAnswer(answer))
+    }
+}
+
+// MARK: - File Requests
+
+public extension Channel {
     
     /// Upload an image to the channel.
     ///
@@ -73,7 +137,7 @@ public extension Channel {
         return sendFile(endpoint: .sendFile(fileName, mimeType, fileData, self))
     }
     
-    private func sendFile(endpoint: ChatEndpoint) -> Observable<ProgressResponse<URL>> {
+    private func sendFile(endpoint: Endpoint) -> Observable<ProgressResponse<URL>> {
         let request: Observable<ProgressResponse<FileUploadResponse>> = Client.shared.rx.progressRequest(endpoint: endpoint)
         return Client.shared.connectedRequest(request.map({ ($0.progress, $0.result?.file) }))
     }
@@ -94,25 +158,9 @@ public extension Channel {
         return deleteFile(endpoint: .deleteFile(url, self))
     }
     
-    private func deleteFile(endpoint: ChatEndpoint) -> Observable<Void> {
+    private func deleteFile(endpoint: Endpoint) -> Observable<Void> {
         let request: Observable<EmptyData> = Client.shared.rx.request(endpoint: endpoint)
         return Client.shared.connectedRequest(request.map({ _ in Void() }))
-    }
-    
-    /// Request for a channel data, e.g. messages, members, read states, etc
-    ///
-    /// - Parameters:
-    ///   - pagination: a pagination (see `Pagination`).
-    ///   - queryOptions: a query options. All by default (see `QueryOptions`).
-    /// - Returns: an observable channel query.
-    func query(pagination: Pagination, queryOptions: QueryOptions = .all) -> Observable<ChannelResponse> {
-        if members.isEmpty, let user = User.current {
-            members = [user.asMember]
-        }
-        
-        let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: queryOptions)
-        
-        return Client.shared.rx.connectedRequest(endpoint: .channel(channelQuery))
     }
 }
 

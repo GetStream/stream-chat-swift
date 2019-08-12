@@ -10,6 +10,16 @@ import Foundation
 
 /// A web socket event type.
 public enum EventType: String, Codable {
+    /// Every 30 second to confirm that the client connection is still active (🗼).
+    case healthCheck = "health.check"
+    /// ⚠️ When the state of the connection changed (🗼).
+    case connectionChanged = "connection.changed"
+    /// ⚠️ When the connection to chat servers is back online (🗼).
+    case connectionRecovered = "connection.recovered"
+    
+    /// When a channel is updated (when watching the channel 📺).
+    case channelUpdated = "channel.updated"
+    
     /// When a user status changes, e.g. online, offline, away (when subscribed to the user status 🙋‍♀️).
     case userPresenceChanged = "user.presence.changed"
     /// When a user starts watching a channel (when watching the channel 📺).
@@ -34,19 +44,10 @@ public enum EventType: String, Codable {
     case messageReaction = "message.reaction"
     /// ⚠️ When a member is added to a channel (when watching the channel 📺).
     case memberAdded = "member.added"
-    /// ⚠️ When a member is updated (when watching the channel 📺).
+    /// When a member is updated (when watching the channel 📺).
     case memberUpdated = "member.updated"
     /// ⚠️ When a member is removed from a channel (when watching the channel 📺).
     case memberRemoved = "member.removed"
-    /// ⚠️ When a channel is updated (when watching the channel 📺).
-    case channelUpdated = "channel.updated"
-    
-    /// Every 30 second to confirm that the client connection is still active (🗼).
-    case healthCheck = "health.check"
-    /// ⚠️ When the state of the connection changed (🗼).
-    case connectionChanged = "connection.changed"
-    /// ⚠️ When the connection to chat servers is back online (🗼).
-    case connectionRecovered = "connection.recovered"
     
     /// When a message is added to a channel (when clients that are not currently watching the channel ⚡️).
     case notificationMessageNew = "notification.message_new"
@@ -56,10 +57,13 @@ public enum EventType: String, Codable {
     /// (when clients from the user affected by the change 📺📺).
     case notificationMarkRead = "notification.mark_read"
     
-    /// ⚠️ When the user is invited to join a channel (when the user invited 💌).
+    /// When the user is invited to join a channel (when the user invited 💌).
     case notificationInvited = "notification.invited"
-    /// ⚠️ When the user accepts an invite (when the user invited 💌).
+    /// When the user accepts an invite (when the user invited 💌).
     case notificationInviteAccepted = "notification.invite_accepted"
+    /// When the user reject an invite (when the user invited 💌).
+    case notificationInviteRejected = "notification.invite_rejected"
+
     /// When the user accepts an invite (when the user invited 📺).
     case notificationAddedToChannel = "notification.added_to_channel"
     /// ⚠️ When a user is removed from a channel (when the user invited 📺).
@@ -80,6 +84,7 @@ public enum Event: Decodable {
         case type
         case me
         case user
+        case member
         case watcherCount = "watcher_count"
         case channel
         case message
@@ -96,6 +101,8 @@ public enum Event: Decodable {
     
     case healthCheck(_ connectionId: String, User?)
     
+    case channelUpdated(ChannelUpdatedResponse, EventType)
+    
     case messageRead(MessageRead, EventType)
     case messageNew(Message, _ unreadCount: Int, _ totalUnreadCount: Int, Channel?, EventType)
     case messageDeleted(Message, EventType)
@@ -105,6 +112,8 @@ public enum Event: Decodable {
     case userPresenceChanged(User, EventType)
     case userStartWatching(User, _ watcherCount: Int, EventType)
     case userStopWatching(User, _ watcherCount: Int, EventType)
+    
+    case memberUpdated(Member, EventType)
     
     case reactionNew(Reaction, Message, User, EventType)
     case reactionDeleted(Reaction, Message, User, EventType)
@@ -116,34 +125,46 @@ public enum Event: Decodable {
     case notificationMarkRead(_ unreadCount: Int, _ totalUnreadCount: Int, _ unreadChannels: Int, EventType)
     case notificationAddedToChannel(Channel, EventType)
     
+    case notificationInvited(Channel, EventType)
+    case notificationInviteAccepted(Channel, EventType)
+    case notificationInviteRejected(Channel, EventType)
+    
     /// An event type.
     public var type: EventType {
         switch self {
-        case .messageRead(_, let type),
+        case .channelUpdated(_, let type),
+             
+             .messageRead(_, let type),
              .messageNew(_, _, _, _, let type),
              .messageDeleted(_, let type),
              .messageUpdated(_, let type),
              
-            .userUpdated(_, let type),
-            .userPresenceChanged(_, let type),
-            .userStartWatching(_, _, let type),
-            .userStopWatching(_, _, let type),
-            
-            .reactionNew(_, _, _, let type),
-            .reactionDeleted(_, _, _, let type),
-            
-            .typingStart(_, let type),
-            .typingStop(_, let type),
-            
-            .notificationMutesUpdated(_, let type),
-            .notificationMarkRead(_, _, _, let type),
-            .notificationAddedToChannel(_, let type):
+             .userUpdated(_, let type),
+             .userPresenceChanged(_, let type),
+             .userStartWatching(_, _, let type),
+             .userStopWatching(_, _, let type),
+             
+             .memberUpdated(_, let type),
+             
+             .reactionNew(_, _, _, let type),
+             .reactionDeleted(_, _, _, let type),
+             
+             .typingStart(_, let type),
+             .typingStop(_, let type),
+             
+             .notificationMutesUpdated(_, let type),
+             .notificationMarkRead(_, _, _, let type),
+             .notificationAddedToChannel(_, let type),
+             
+             .notificationInvited(_, let type),
+             .notificationInviteAccepted(_, let type),
+             .notificationInviteRejected(_, let type):
             return type
         case .healthCheck:
             return .healthCheck
         }
     }
-        
+    
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(EventType.self, forKey: .type)
@@ -159,11 +180,18 @@ public enum Event: Decodable {
             return try container.decode(User.self, forKey: .user)
         }
         
+        func channel() throws -> Channel {
+            return try container.decode(Channel.self, forKey: .channel)
+        }
+        
         func message() throws -> Message {
             return try container.decode(Message.self, forKey: .message)
         }
         
         switch type {
+        // Channel
+        case .channelUpdated:
+            self = .channelUpdated(try ChannelUpdatedResponse(from: decoder), type)
         // Message
         case .messageNew, .notificationMessageNew:
             let channel = try container.decodeIfPresent(Channel.self, forKey: .channel)
@@ -191,6 +219,11 @@ public enum Event: Decodable {
             let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
             self = .userStopWatching(try user(), watcherCount, type)
             
+        // Member
+        case .memberUpdated:
+            let member = try container.decode(Member.self, forKey: .member)
+            self = .memberUpdated(member, type)
+            
         // Typing
         case .typingStart:
             self = .typingStart(try user(), type)
@@ -214,8 +247,16 @@ public enum Event: Decodable {
             let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
             self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels, type)
         case .notificationAddedToChannel:
-            let channel = try container.decode(Channel.self, forKey: .channel)
-            self = .notificationAddedToChannel(channel, type)
+            self = .notificationAddedToChannel(try channel(), type)
+            
+        // Invites
+        case .notificationInvited:
+            self = .notificationInvited(try channel(), type)
+        case .notificationInviteAccepted:
+            self = .notificationInviteAccepted(try channel(), type)
+        case .notificationInviteRejected:
+            self = .notificationInviteRejected(try channel(), type)
+            
         default:
             throw ResponseTypeError(type: type)
         }
@@ -227,6 +268,8 @@ extension Event: Equatable {
         switch (lhs, rhs) {
         case (.healthCheck, .healthCheck):
             return true
+        case (.channelUpdated(let response1, _), .channelUpdated(let response2, _)):
+            return response1 == response2
         case (.messageRead(let messageRead1, _), .messageRead(let messageRead2, _)):
             return messageRead1 == messageRead2
         case (.messageNew(let message1, let unreadCount1, let totalUnreadCount1, let channel1, _),
@@ -247,6 +290,8 @@ extension Event: Equatable {
             return user1 == user2 && watcherCount1 == watcherCount2
         case (.userStopWatching(let user1, let watcherCount1, _), .userStopWatching(let user2, let watcherCount2, _)):
             return user1 == user2 && watcherCount1 == watcherCount2
+        case (.memberUpdated(let member1, _), .memberUpdated(let member2, _)):
+            return member1 == member2
         case (.reactionNew(let reaction1, let message1, let user1, _), .reactionNew(let reaction2, let message2, let user2, _)):
             return reaction1 == reaction2 && message1 == message2 && user1 == user2
         case (.reactionDeleted(let reaction1, let message1, let user1, _),
@@ -259,6 +304,10 @@ extension Event: Equatable {
         case (.notificationMarkRead(let unreadCount1, let totalUnreadCount1, let unreadChannels1, _),
               .notificationMarkRead(let unreadCount2, let totalUnreadCount2, let unreadChannels2, _)):
             return unreadCount1 == unreadCount2 && totalUnreadCount1 == totalUnreadCount2 && unreadChannels1 == unreadChannels2
+        case (.notificationInvited(let channel1, _), .notificationInvited(let channel2, _)),
+             (.notificationInviteAccepted(let channel1, _), .notificationInviteAccepted(let channel2, _)),
+             (.notificationInviteRejected(let channel1, _), .notificationInviteRejected(let channel2, _)):
+            return channel1 == channel2
         default:
             return false
         }

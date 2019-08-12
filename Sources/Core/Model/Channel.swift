@@ -43,6 +43,7 @@ public final class Channel: Codable, Equatable {
         case name
         case imageURL = "image"
         case members
+        case invites
     }
     
     /// A channel id.
@@ -63,7 +64,9 @@ public final class Channel: Codable, Equatable {
     public let config: Config
     let frozen: Bool
     /// A list of user ids of the channel members.
-    public internal(set) var members: [Member] = []
+    public internal(set) var members = Set<Member>([])
+    /// A list of users to invite in the channel.
+    var invitedUsers = Set<User>([])
     /// An extra data for the channel.
     public let extraData: ExtraData?
     
@@ -95,7 +98,7 @@ public final class Channel: Codable, Equatable {
         self.imageURL = imageURL
         lastMessageDate = nil
         createdBy = nil
-        self.members = members
+        self.members = Set(members)
         frozen = false
         
         if let extraData = extraData {
@@ -133,7 +136,7 @@ public final class Channel: Codable, Equatable {
         frozen = try container.decode(Bool.self, forKey: .frozen)
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? id
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
-        members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
+        members = try container.decodeIfPresent(Set<Member>.self, forKey: .members) ?? Set<Member>([])
         extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isChannel }))
         
         if !isActive {
@@ -147,6 +150,10 @@ public final class Channel: Codable, Equatable {
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try container.encode(members, forKey: .members)
         extraData?.encodeSafely(to: encoder)
+        
+        if !invitedUsers.isEmpty {
+            try container.encode(invitedUsers.map({ $0.id }), forKey: .invites)
+        }
     }
     
     public static func == (lhs: Channel, rhs: Channel) -> Bool {

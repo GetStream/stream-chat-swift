@@ -82,7 +82,7 @@ public extension Message {
         return Message.flaggedIds.contains(id)
     }
     
-    private func flagUnflagMessage(endpoint: ChatEndpoint) -> Observable<FlagMessageResponse> {
+    private func flagUnflagMessage(endpoint: Endpoint) -> Observable<FlagMessageResponse> {
         let request: Observable<FlagResponse> = Client.shared.rx.request(endpoint: endpoint)
         return request.map { $0.flag }
             .catchError { error -> Observable<FlagMessageResponse> in

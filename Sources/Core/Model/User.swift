@@ -22,6 +22,8 @@ public struct User: Codable {
         case mutedUsers = "mutes"
     }
     
+    static let unknown = User(id: "", name: "")
+    
     public enum Role: String, Codable {
         case user
         case admin

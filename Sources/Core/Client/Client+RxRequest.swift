@@ -20,9 +20,9 @@ public extension Reactive where Base == Client {
     
     /// Make an observable `Client` request.
     ///
-    /// - Parameter endpoint: an endpoint (see `ChatEndpoint`).
+    /// - Parameter endpoint: an endpoint (see `Endpoint`).
     /// - Returns: an observable result `T`.
-    func request<T: Decodable>(endpoint: ChatEndpoint) -> Observable<T> {
+    func request<T: Decodable>(endpoint: Endpoint) -> Observable<T> {
         return .create { observer in
             let task = self.base.request(endpoint: endpoint) { (result: Result<T, ClientError>) in
                 switch result {
@@ -40,17 +40,17 @@ public extension Reactive where Base == Client {
     
     /// Make an observable `Client` request when the client would be connected.
     ///
-    /// - Parameter endpoint: an endpoint (see `ChatEndpoint`).
+    /// - Parameter endpoint: an endpoint (see `Endpoint`).
     /// - Returns: an observable result `T`.
-    func connectedRequest<T: Decodable>(endpoint: ChatEndpoint) -> Observable<T> {
+    func connectedRequest<T: Decodable>(endpoint: Endpoint) -> Observable<T> {
         return self.base.connectedRequest(request(endpoint: endpoint))
     }
     
     /// Make an observable `Client` request with a progress.
     ///
-    /// - Parameter endpoint: an endpoint (see `ChatEndpoint`).
+    /// - Parameter endpoint: an endpoint (see `Endpoint`).
     /// - Returns: an observable result with a progress `(progress: Float, result: T?)`.
-    func progressRequest<T: Decodable>(endpoint: ChatEndpoint) -> Observable<ProgressResponse<T>> {
+    func progressRequest<T: Decodable>(endpoint: Endpoint) -> Observable<ProgressResponse<T>> {
         return .create { observer in
             var disposeBag: DisposeBag? = DisposeBag()
             

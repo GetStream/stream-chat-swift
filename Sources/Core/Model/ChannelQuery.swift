@@ -18,7 +18,7 @@ public struct ChannelQuery: Encodable {
     /// A channel.
     public let channel: Channel
     /// Members of the channel (see `Member`).
-    public let members: [Member]
+    public let members: Set<Member>
     /// A query options.
     public let options: QueryOptions
     /// A pagination (see `Pagination`).
@@ -30,7 +30,7 @@ public struct ChannelQuery: Encodable {
     ///     - channel: a channel.
     ///     - memebers: members of the channel.
     ///     - pagination: a pagination (see `Pagination`).
-    public init(channel: Channel, members: [Member], pagination: Pagination, options: QueryOptions) {
+    public init(channel: Channel, members: Set<Member>, pagination: Pagination, options: QueryOptions) {
         self.channel = channel
         self.members = members
         self.pagination = pagination
@@ -44,4 +44,32 @@ public struct ChannelQuery: Encodable {
         try container.encode(channel, forKey: .data)
         try container.encode(pagination, forKey: .messages)
     }
+}
+
+/// An answer for an invite to a channel.
+public struct ChannelInviteAnswer: Encodable {
+    private enum CodingKeys: String, CodingKey {
+        case accept = "accept_invite"
+        case reject = "reject_invite"
+        case message
+    }
+    
+    /// A channel.
+    let channel: Channel
+    /// Accept the invite.
+    let accept: Bool?
+    /// Reject the invite.
+    let reject: Bool?
+    /// Additional message.
+    let message: Message?
+}
+
+/// An answer for an invite to a channel.
+public struct ChannelInviteResponse: Decodable {
+    /// A channel.
+    let channel: Channel
+    /// Members.
+    let members: [Member]
+    /// Accept the invite.
+    let message: Message?
 }

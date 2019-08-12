@@ -75,7 +75,7 @@ public struct Message: Codable {
     
     /// Check if the message was deleted.
     public var isDeleted: Bool {
-        return deleted != nil
+        return type == .deleted || deleted != nil
     }
     
     /// Check if the message is own message of the current user.
@@ -119,7 +119,6 @@ public struct Message: Codable {
     ///   - parentId: a parent message id.
     ///   - showReplyInChannel: a flag to show reply messages in a channel, not in a separate thread.
     public init(id: String = "",
-                user: User,
                 text: String,
                 attachments: [Attachment] = [],
                 extraData: ExtraData? = nil,
@@ -129,7 +128,7 @@ public struct Message: Codable {
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel
         type = .regular
-        self.user = user
+        user = .unknown
         created = Date()
         updated = Date()
         deleted = nil
@@ -149,7 +148,7 @@ public struct Message: Codable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(text, forKey: .text)
         extraData?.encodeSafely(to: encoder)
-
+        
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)
         }
@@ -250,5 +249,5 @@ public extension Message {
 /// A message type, e.g. regular, ephemeral, reply.
 public enum MessageType: String, Codable {
     /// A message type.
-    case regular, ephemeral, error, reply, system
+    case regular, ephemeral, error, reply, system, deleted
 }

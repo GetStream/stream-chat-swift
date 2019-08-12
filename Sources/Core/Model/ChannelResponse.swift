@@ -44,3 +44,36 @@ public struct ChannelResponse: Decodable {
         }
     }
 }
+
+/// A response for an updated channel.
+public struct ChannelUpdatedResponse: Decodable, Equatable {
+    /// A channel.
+    public let channel: Channel
+    /// A user who updated a channel.
+    public let user: User
+    /// An additional message of the update.
+    public let message: Message?
+    
+    /// Returns true if
+    public var inviteAnswer: InviteAnswer {
+        if nil != channel.members.first(where: { $0.user == user && $0.inviteAccepted != nil }) {
+            return .accepted
+        }
+        
+        if nil != channel.members.first(where: { $0.user == user && $0.inviteRejected != nil }) {
+            return .rejected
+        }
+        
+        return .notFound
+    }
+}
+
+/// An answer for an invite to join a channel.
+///
+/// - accepted: an invite accepted.
+/// - rejected: an invite rejected.
+public enum InviteAnswer: String {
+    case notFound
+    case accepted
+    case rejected
+}

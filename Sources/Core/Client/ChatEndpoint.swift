@@ -1,5 +1,5 @@
 //
-//  ChatEndpoint.swift
+//  Endpoint.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 01/04/2019.
@@ -9,7 +9,7 @@
 import Foundation
 
 /// Chat endpoints.
-public enum ChatEndpoint {
+public enum Endpoint {
     // MARK: - Client Endpoints
     
     /// Get a guest token.
@@ -46,7 +46,9 @@ public enum ChatEndpoint {
     case sendEvent(EventType, Channel)
     /// Send a message action.
     case sendMessageAction(MessageAction)
-    
+    /// Send an answer for an invite.
+    case inviteAnswer(ChannelInviteAnswer)
+
     // MARK: - Message Endpoints
     
     /// Get a thread data.
@@ -74,7 +76,7 @@ public enum ChatEndpoint {
     case unmuteUser(User)
 }
 
-extension ChatEndpoint {
+extension Endpoint {
     var method: Client.Method {
         switch self {
         case .channels, .replies, .users:
@@ -134,6 +136,8 @@ extension ChatEndpoint {
             return "moderation/flag"
         case .unflagMessage:
             return "moderation/unflag"
+        case .inviteAnswer(let answer):
+            return path(to: answer.channel)
         }
     }
     
@@ -203,6 +207,9 @@ extension ChatEndpoint {
             return ["target_id": user.id]
         case .flagMessage(let message), .unflagMessage(let message):
             return ["target_message_id": message.id]
+            
+        case .inviteAnswer(let answer):
+            return answer
         }
     }
     
