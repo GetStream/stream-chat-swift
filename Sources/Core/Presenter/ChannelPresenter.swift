@@ -734,7 +734,7 @@ extension ChannelPresenter {
 }
 
 /// A typing user.
-public struct TypingUser: Equatable, Hashable {
+public struct TypingUser: Hashable {
     /// A time interval for a users typing timeout.
     public static let timeout: TimeInterval = 30
     

@@ -9,7 +9,7 @@
 import Foundation
 
 /// A member.
-public struct Member: Codable, Equatable, Hashable {
+public struct Member: Codable {
     private enum CodingKeys: String, CodingKey {
         case user
         case role
@@ -43,8 +43,8 @@ public struct Member: Codable, Equatable, Hashable {
     public init(_ user: User) {
         self.user = user
         role = .member
-        created = Date()
-        updated = Date()
+        created = .default
+        updated = .default
         isInvited = false
         inviteAccepted = nil
         inviteRejected = nil
@@ -65,9 +65,20 @@ public struct Member: Codable, Equatable, Hashable {
         inviteRejected = try container.decodeIfPresent(Date.self, forKey: .inviteRejected)
         role = try container.decodeIfPresent(Role.self, forKey: .role) ?? .member
     }
+}
+
+extension Member: Hashable {
+    
+    public static func == (lhs: Member, rhs: Member) -> Bool {
+        return lhs.user == rhs.user
+            && lhs.created == rhs.created
+            && lhs.updated == rhs.updated
+    }
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(user)
+        hasher.combine(created)
+        hasher.combine(updated)
     }
 }
 

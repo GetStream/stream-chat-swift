@@ -9,7 +9,7 @@
 import UIKit
 
 /// A composer style.
-public struct ComposerViewStyle: Hashable {
+public struct ComposerViewStyle {
     /// A composer states type.
     ///
     /// For example:
@@ -78,14 +78,6 @@ public struct ComposerViewStyle: Hashable {
         
         return Style()
     }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(font)
-        hasher.combine(textColor)
-        hasher.combine(placeholderTextColor)
-        hasher.combine(backgroundColor)
-        hasher.combine(states)
-    }
 }
 
 extension ComposerViewStyle {
@@ -112,9 +104,35 @@ extension ComposerViewStyle {
             self.borderWidth = borderWidth
         }
         
+        public static func == (lhs: Style, rhs: Style) -> Bool {
+            return lhs.tintColor == rhs.tintColor
+                && lhs.borderWidth == rhs.borderWidth
+        }
+        
         public func hash(into hasher: inout Hasher) {
             hasher.combine(tintColor)
             hasher.combine(borderWidth)
         }
+    }
+}
+
+extension ComposerViewStyle: Hashable {
+    
+    public static func == (lhs: ComposerViewStyle, rhs: ComposerViewStyle) -> Bool {
+        return lhs.font == rhs.font
+            && lhs.textColor == rhs.textColor
+            && lhs.placeholderTextColor == rhs.placeholderTextColor
+            && lhs.backgroundColor == rhs.backgroundColor
+            && lhs.cornerRadius == rhs.cornerRadius
+            && lhs.states == rhs.states
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(font)
+        hasher.combine(textColor)
+        hasher.combine(placeholderTextColor)
+        hasher.combine(backgroundColor)
+        hasher.combine(cornerRadius)
+        hasher.combine(states)
     }
 }

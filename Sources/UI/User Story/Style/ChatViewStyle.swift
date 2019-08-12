@@ -9,7 +9,7 @@
 import UIKit
 
 /// A composition of view styles.
-public struct ChatViewStyle: Hashable {
+public struct ChatViewStyle {
     
     /// A channel view style.
     public var channel: ChannelViewStyle
@@ -62,6 +62,16 @@ public struct ChatViewStyle: Hashable {
         self.composer = composer
         self.incomingMessage = incomingMessage
         self.outgoingMessage = outgoingMessage
+    }
+}
+
+extension ChatViewStyle: Hashable {
+    
+    public static func == (lhs: ChatViewStyle, rhs: ChatViewStyle) -> Bool {
+        return lhs.channel == rhs.channel
+            && lhs.composer == rhs.composer
+            && lhs.incomingMessage == rhs.incomingMessage
+            && lhs.outgoingMessage == rhs.outgoingMessage
     }
     
     public func hash(into hasher: inout Hasher) {

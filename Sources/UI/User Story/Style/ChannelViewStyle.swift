@@ -9,7 +9,7 @@
 import UIKit
 
 /// A channel view style.
-public struct ChannelViewStyle: Hashable {
+public struct ChannelViewStyle {
     /// A background color.
     public var backgroundColor: UIColor
     /// A separator color.
@@ -75,9 +75,26 @@ public struct ChannelViewStyle: Hashable {
         self.dateFont = dateFont
         self.dateColor = dateColor
     }
+}
+
+extension ChannelViewStyle: Hashable {
     
-    public func hash(into hasher:
-        inout Hasher) {
+    public static func == (lhs: ChannelViewStyle, rhs: ChannelViewStyle) -> Bool {
+        return lhs.backgroundColor == rhs.backgroundColor
+            && lhs.separatorColor == rhs.separatorColor
+            && lhs.nameFont == rhs.nameFont
+            && lhs.nameColor == rhs.nameColor
+            && lhs.messageFont == rhs.messageFont
+            && lhs.messageColor == rhs.messageColor
+            && lhs.messageUnreadFont == rhs.messageUnreadFont
+            && lhs.messageUnreadColor == rhs.messageUnreadColor
+            && lhs.messageDeletedFont == rhs.messageDeletedFont
+            && lhs.messageDeletedColor == rhs.messageDeletedColor
+            && lhs.dateFont == rhs.dateFont
+            && lhs.dateColor == rhs.dateColor
+    }
+    
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(backgroundColor)
         hasher.combine(separatorColor)
         hasher.combine(nameFont)

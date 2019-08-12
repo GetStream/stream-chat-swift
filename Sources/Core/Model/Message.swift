@@ -129,8 +129,8 @@ public struct Message: Codable {
         self.showReplyInChannel = showReplyInChannel
         type = .regular
         user = .unknown
-        created = Date()
-        updated = Date()
+        created = .default
+        updated = .default
         deleted = nil
         self.text = text
         command = nil

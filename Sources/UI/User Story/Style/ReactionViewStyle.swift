@@ -9,7 +9,7 @@
 import UIKit
 
 /// A reaction view style.
-public struct ReactionViewStyle: Hashable {
+public struct ReactionViewStyle {
     
     /// An alignment of a reaction for incoming or outgoing messages.
     public let alignment: MessageViewStyle.Alignment
@@ -57,6 +57,21 @@ public struct ReactionViewStyle: Hashable {
         self.tailMessageCornerRadius = tailMessageCornerRadius
         tailImage = .renderTailImage(smallRadius: tailCornerRadius, bigRadius: tailMessageCornerRadius, alignment: alignment)
     }
+}
+
+extension ReactionViewStyle: Hashable {
+    
+    public static func == (lhs: ReactionViewStyle, rhs: ReactionViewStyle) -> Bool {
+        return lhs.alignment == rhs.alignment
+            && lhs.font == rhs.font
+            && lhs.textColor == rhs.textColor
+            && lhs.backgroundColor == rhs.backgroundColor
+            && lhs.chatBackgroundColor == rhs.chatBackgroundColor
+            && lhs.cornerRadius == rhs.cornerRadius
+            && lhs.tailCornerRadius == rhs.tailCornerRadius
+            && lhs.tailMessageCornerRadius == rhs.tailMessageCornerRadius
+            && lhs.tailImage == rhs.tailImage
+    }
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(alignment)
@@ -64,6 +79,9 @@ public struct ReactionViewStyle: Hashable {
         hasher.combine(textColor)
         hasher.combine(backgroundColor)
         hasher.combine(chatBackgroundColor)
+        hasher.combine(cornerRadius)
+        hasher.combine(tailCornerRadius)
+        hasher.combine(tailMessageCornerRadius)
         hasher.combine(tailImage)
     }
 }

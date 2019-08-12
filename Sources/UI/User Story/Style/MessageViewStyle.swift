@@ -9,7 +9,7 @@
 import UIKit
 
 /// A message view style.
-public struct MessageViewStyle: Hashable {
+public struct MessageViewStyle {
     
     /// An alignment of a message for incoming or outgoing messages.
     public var alignment: Alignment
@@ -180,23 +180,6 @@ public struct MessageViewStyle: Hashable {
                                                                   borderWidth: borderWidth,
                                                                   borderColor: borderColor)]
     }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(alignment)
-        hasher.combine(chatBackgroundColor)
-        hasher.combine(font)
-        hasher.combine(replyFont)
-        hasher.combine(nameFont)
-        hasher.combine(infoFont)
-        hasher.combine(textColor)
-        hasher.combine(replyColor)
-        hasher.combine(infoColor)
-        hasher.combine(backgroundColor)
-        hasher.combine(borderColor)
-        hasher.combine(borderWidth)
-        hasher.combine(cornerRadius)
-        hasher.combine(reactionViewStyle)
-    }
 }
 
 extension MessageViewStyle {
@@ -204,5 +187,46 @@ extension MessageViewStyle {
     public enum Alignment: String {
         /// A message view style alignment.
         case left, right
+    }
+}
+
+extension MessageViewStyle: Hashable {
+    
+    public static func == (lhs: MessageViewStyle, rhs: MessageViewStyle) -> Bool {
+        return lhs.alignment == rhs.alignment
+            && lhs.showCurrentUserAvatar == rhs.showCurrentUserAvatar
+            && lhs.font == rhs.font
+            && lhs.replyFont == rhs.replyFont
+            && lhs.nameFont == rhs.nameFont
+            && lhs.infoFont == rhs.infoFont
+            && lhs.textColor == rhs.textColor
+            && lhs.replyColor == rhs.replyColor
+            && lhs.infoColor == rhs.infoColor
+            && lhs.borderColor == rhs.borderColor
+            && lhs.chatBackgroundColor == rhs.chatBackgroundColor
+            && lhs.backgroundColor == rhs.backgroundColor
+            && lhs.borderWidth == rhs.borderWidth
+            && lhs.cornerRadius == rhs.cornerRadius
+            && lhs.reactionViewStyle == rhs.reactionViewStyle
+            && lhs.markdownEnabled == rhs.markdownEnabled
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(alignment)
+        hasher.combine(showCurrentUserAvatar)
+        hasher.combine(font)
+        hasher.combine(replyFont)
+        hasher.combine(nameFont)
+        hasher.combine(infoFont)
+        hasher.combine(textColor)
+        hasher.combine(replyColor)
+        hasher.combine(infoColor)
+        hasher.combine(borderColor)
+        hasher.combine(chatBackgroundColor)
+        hasher.combine(backgroundColor)
+        hasher.combine(borderWidth)
+        hasher.combine(cornerRadius)
+        hasher.combine(reactionViewStyle)
+        hasher.combine(markdownEnabled)
     }
 }

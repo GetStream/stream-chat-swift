@@ -9,7 +9,7 @@
 import Foundation
 
 /// A Channel class.
-public final class Channel: Codable, Equatable {
+public final class Channel: Codable {
     /// Coding keys for the decoding.
     public enum DecodingKeys: String, CodingKey {
         /// An channel id.
@@ -156,8 +156,16 @@ public final class Channel: Codable, Equatable {
         }
     }
     
+}
+
+extension Channel: Hashable {
+    
     public static func == (lhs: Channel, rhs: Channel) -> Bool {
         return lhs.cid == rhs.cid
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(cid)
     }
 }
 
@@ -223,6 +231,10 @@ public extension Channel {
         let set: String
         /// Args for the command.
         public let args: String
+        
+        public static func == (lhs: Command, rhs: Command) -> Bool {
+            return lhs.name == rhs.name
+        }
         
         public func hash(into hasher: inout Hasher) {
             return hasher.combine(name)

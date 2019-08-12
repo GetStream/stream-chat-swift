@@ -92,9 +92,9 @@ public struct User: Codable {
         self.id = id
         self.name = name
         self.avatarURL = avatarURL
-        created = Date()
-        updated = Date()
-        lastActiveDate = Date()
+        created = .default
+        updated = .default
+        lastActiveDate = .default
         online = false
         mutedUsers = []
         role = .user
@@ -132,7 +132,7 @@ public struct User: Codable {
     }
 }
 
-extension User: Equatable, Hashable {
+extension User: Hashable {
     
     public static func == (lhs: User, rhs: User) -> Bool {
         return lhs.id == rhs.id

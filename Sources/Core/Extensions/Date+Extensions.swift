@@ -9,6 +9,10 @@
 import Foundation
 
 extension Date {
+    static let `default` = Date()
+}
+
+extension Date {
     var isToday: Bool {
         return Calendar.current.isDateInToday(self)
     }
