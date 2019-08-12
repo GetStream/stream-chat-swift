@@ -3,20 +3,95 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8A0A7E782301AC2A0033E6D9 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */; };
+		8A0A7E792301AC2A0033E6D9 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8A0A7E7C2301AC2A0033E6D9 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */; };
+		8A0A7E7D2301AC2A0033E6D9 /* StreamChatCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8A0A7EB12301AE4E0033E6D9 /* Gzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9B2301AD330033E6D9 /* Gzip.framework */; };
+		8A0A7EB22301AE4E0033E6D9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9A2301AD330033E6D9 /* Nuke.framework */; };
+		8A0A7EB32301AE4E0033E6D9 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9E2301AD330033E6D9 /* Reachability.framework */; };
+		8A0A7EB42301AE4E0033E6D9 /* RxAppState.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA22301AD330033E6D9 /* RxAppState.framework */; };
+		8A0A7EB52301AE4E0033E6D9 /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9C2301AD330033E6D9 /* RxBlocking.framework */; };
+		8A0A7EB62301AE4E0033E6D9 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9D2301AD330033E6D9 /* RxCocoa.framework */; };
+		8A0A7EB72301AE4E0033E6D9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9F2301AD330033E6D9 /* RxGesture.framework */; };
+		8A0A7EB82301AE4E0033E6D9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA02301AD330033E6D9 /* RxRelay.framework */; };
+		8A0A7EB92301AE4E0033E6D9 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA12301AD330033E6D9 /* RxSwift.framework */; };
+		8A0A7EBA2301AE4E0033E6D9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA32301AD330033E6D9 /* SnapKit.framework */; };
+		8A0A7EBB2301AE4E0033E6D9 /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E992301AD330033E6D9 /* Starscream.framework */; };
+		8A0A7EBC2301AE4E0033E6D9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA42301AD330033E6D9 /* SwiftyGif.framework */; };
 		8AD5EC7122E88C62005CFAC9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5EC7022E88C62005CFAC9 /* AppDelegate.swift */; };
 		8AD5EC7622E88C62005CFAC9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AD5EC7422E88C62005CFAC9 /* Main.storyboard */; };
 		8AD5EC7822E88C63005CFAC9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AD5EC7722E88C63005CFAC9 /* Assets.xcassets */; };
 		8AD5EC7B22E88C63005CFAC9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AD5EC7922E88C63005CFAC9 /* LaunchScreen.storyboard */; };
 		8AD5EC8322E88D87005CFAC9 /* CustomChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5EC8222E88D87005CFAC9 /* CustomChatViewController.swift */; };
-		E621B923B7FAA36F3DE13E54 /* Pods_ChatExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D58D9E5599D21BDAACB078C /* Pods_ChatExample.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		8A0A7E742301AC1E0033E6D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8AD5EC9F22E9B355005CFAC9;
+			remoteInfo = StreamChatCore;
+		};
+		8A0A7E762301AC1E0033E6D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8AD5EC8F22E9A3E8005CFAC9;
+			remoteInfo = StreamChat;
+		};
+		8A0A7E7A2301AC2A0033E6D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8AD5EC8E22E9A3E8005CFAC9;
+			remoteInfo = StreamChat;
+		};
+		8A0A7E7E2301AC2A0033E6D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8AD5EC9E22E9B355005CFAC9;
+			remoteInfo = StreamChatCore;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8A0A7E802301AC2A0033E6D9 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				8A0A7E792301AC2A0033E6D9 /* StreamChat.framework in Embed Frameworks */,
+				8A0A7E7D2301AC2A0033E6D9 /* StreamChatCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		2D58D9E5599D21BDAACB078C /* Pods_ChatExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A0A7E6B2301AA060033E6D9 /* StreamChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreamChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A0A7E6D2301AA060033E6D9 /* StreamChatCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = StreamChatCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = StreamChat.xcodeproj; path = ../StreamChat.xcodeproj; sourceTree = "<group>"; };
+		8A0A7E992301AD330033E6D9 /* Starscream.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Starscream.framework; path = ../Carthage/Build/iOS/Starscream.framework; sourceTree = "<group>"; };
+		8A0A7E9A2301AD330033E6D9 /* Nuke.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nuke.framework; path = ../Carthage/Build/iOS/Nuke.framework; sourceTree = "<group>"; };
+		8A0A7E9B2301AD330033E6D9 /* Gzip.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Gzip.framework; path = ../Carthage/Build/iOS/Gzip.framework; sourceTree = "<group>"; };
+		8A0A7E9C2301AD330033E6D9 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = ../Carthage/Build/iOS/RxBlocking.framework; sourceTree = "<group>"; };
+		8A0A7E9D2301AD330033E6D9 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = ../Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
+		8A0A7E9E2301AD330033E6D9 /* Reachability.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Reachability.framework; path = ../Carthage/Build/iOS/Reachability.framework; sourceTree = "<group>"; };
+		8A0A7E9F2301AD330033E6D9 /* RxGesture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxGesture.framework; path = ../Carthage/Build/iOS/RxGesture.framework; sourceTree = "<group>"; };
+		8A0A7EA02301AD330033E6D9 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = ../Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
+		8A0A7EA12301AD330033E6D9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = ../Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
+		8A0A7EA22301AD330033E6D9 /* RxAppState.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAppState.framework; path = ../Carthage/Build/iOS/RxAppState.framework; sourceTree = "<group>"; };
+		8A0A7EA32301AD330033E6D9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = ../Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
+		8A0A7EA42301AD330033E6D9 /* SwiftyGif.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyGif.framework; path = ../Carthage/Build/iOS/SwiftyGif.framework; sourceTree = "<group>"; };
 		8AD5EC6D22E88C62005CFAC9 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD5EC7022E88C62005CFAC9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8AD5EC7522E88C62005CFAC9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -25,8 +100,6 @@
 		8AD5EC7C22E88C63005CFAC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AD5EC8222E88D87005CFAC9 /* CustomChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomChatViewController.swift; sourceTree = "<group>"; };
 		8AD5EC8422E88DBC005CFAC9 /* ChatExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChatExample.entitlements; sourceTree = "<group>"; };
-		AB2006F48BB8EF58E241C795 /* Pods-ChatExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatExample.debug.xcconfig"; path = "Target Support Files/Pods-ChatExample/Pods-ChatExample.debug.xcconfig"; sourceTree = "<group>"; };
-		BD5194B687656D299C580F46 /* Pods-ChatExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatExample.release.xcconfig"; path = "Target Support Files/Pods-ChatExample/Pods-ChatExample.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,36 +107,62 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E621B923B7FAA36F3DE13E54 /* Pods_ChatExample.framework in Frameworks */,
+				8A0A7EB12301AE4E0033E6D9 /* Gzip.framework in Frameworks */,
+				8A0A7EB22301AE4E0033E6D9 /* Nuke.framework in Frameworks */,
+				8A0A7EB32301AE4E0033E6D9 /* Reachability.framework in Frameworks */,
+				8A0A7EB42301AE4E0033E6D9 /* RxAppState.framework in Frameworks */,
+				8A0A7EB52301AE4E0033E6D9 /* RxBlocking.framework in Frameworks */,
+				8A0A7EB62301AE4E0033E6D9 /* RxCocoa.framework in Frameworks */,
+				8A0A7EB72301AE4E0033E6D9 /* RxGesture.framework in Frameworks */,
+				8A0A7EB82301AE4E0033E6D9 /* RxRelay.framework in Frameworks */,
+				8A0A7EB92301AE4E0033E6D9 /* RxSwift.framework in Frameworks */,
+				8A0A7EBA2301AE4E0033E6D9 /* SnapKit.framework in Frameworks */,
+				8A0A7EBB2301AE4E0033E6D9 /* Starscream.framework in Frameworks */,
+				8A0A7EBC2301AE4E0033E6D9 /* SwiftyGif.framework in Frameworks */,
+				8A0A7E782301AC2A0033E6D9 /* StreamChat.framework in Frameworks */,
+				8A0A7E7C2301AC2A0033E6D9 /* StreamChatCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		57959469EDD91DCC76F5C390 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				AB2006F48BB8EF58E241C795 /* Pods-ChatExample.debug.xcconfig */,
-				BD5194B687656D299C580F46 /* Pods-ChatExample.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		67207A8BAB4C7C19D8CDF9E0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2D58D9E5599D21BDAACB078C /* Pods_ChatExample.framework */,
+				8A0A7E9B2301AD330033E6D9 /* Gzip.framework */,
+				8A0A7E9A2301AD330033E6D9 /* Nuke.framework */,
+				8A0A7E9E2301AD330033E6D9 /* Reachability.framework */,
+				8A0A7EA22301AD330033E6D9 /* RxAppState.framework */,
+				8A0A7E9C2301AD330033E6D9 /* RxBlocking.framework */,
+				8A0A7E9D2301AD330033E6D9 /* RxCocoa.framework */,
+				8A0A7E9F2301AD330033E6D9 /* RxGesture.framework */,
+				8A0A7EA02301AD330033E6D9 /* RxRelay.framework */,
+				8A0A7EA12301AD330033E6D9 /* RxSwift.framework */,
+				8A0A7EA32301AD330033E6D9 /* SnapKit.framework */,
+				8A0A7E992301AD330033E6D9 /* Starscream.framework */,
+				8A0A7EA42301AD330033E6D9 /* SwiftyGif.framework */,
+				8A0A7E6B2301AA060033E6D9 /* StreamChat.framework */,
+				8A0A7E6D2301AA060033E6D9 /* StreamChatCore.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8A0A7E702301AC1E0033E6D9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */,
+				8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		8AD5EC6422E88C62005CFAC9 = {
 			isa = PBXGroup;
 			children = (
+				8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */,
 				8AD5EC6F22E88C62005CFAC9 /* ChatExample */,
 				8AD5EC6E22E88C62005CFAC9 /* Products */,
-				57959469EDD91DCC76F5C390 /* Pods */,
 				67207A8BAB4C7C19D8CDF9E0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -97,15 +196,17 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8AD5EC7F22E88C63005CFAC9 /* Build configuration list for PBXNativeTarget "ChatExample" */;
 			buildPhases = (
-				6FCCA03BCCE70FCC4084E1AB /* [CP] Check Pods Manifest.lock */,
 				8AD5EC6922E88C62005CFAC9 /* Sources */,
 				8AD5EC6A22E88C62005CFAC9 /* Frameworks */,
 				8AD5EC6B22E88C62005CFAC9 /* Resources */,
-				626B77539D9DB47CFA94C509 /* [CP] Embed Pods Frameworks */,
+				8A0A7E802301AC2A0033E6D9 /* Embed Frameworks */,
+				8A0A7EBD2301B2FA0033E6D9 /* Carthage */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8A0A7E7B2301AC2A0033E6D9 /* PBXTargetDependency */,
+				8A0A7E7F2301AC2A0033E6D9 /* PBXTargetDependency */,
 			);
 			name = ChatExample;
 			productName = ChatExample;
@@ -143,12 +244,35 @@
 			mainGroup = 8AD5EC6422E88C62005CFAC9;
 			productRefGroup = 8AD5EC6E22E88C62005CFAC9 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 8A0A7E702301AC1E0033E6D9 /* Products */;
+					ProjectRef = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				8AD5EC6C22E88C62005CFAC9 /* ChatExample */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = StreamChatCore.framework;
+			remoteRef = 8A0A7E742301AC1E0033E6D9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = StreamChat.framework;
+			remoteRef = 8A0A7E762301AC1E0033E6D9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8AD5EC6B22E88C62005CFAC9 /* Resources */ = {
@@ -164,24 +288,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		626B77539D9DB47CFA94C509 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ChatExample/Pods-ChatExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ChatExample/Pods-ChatExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ChatExample/Pods-ChatExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6FCCA03BCCE70FCC4084E1AB /* [CP] Check Pods Manifest.lock */ = {
+		8A0A7EBD2301B2FA0033E6D9 /* Carthage */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -189,19 +296,39 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
+				"$(SRCROOT)/../Carthage/Build/iOS/RxCocoa.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/Gzip.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/RxBlocking.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/Reachability.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/RxRelay.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/Starscream.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/RxAppState.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/RxSwift.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/Nuke.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/SnapKit.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/SwiftyGif.framework",
+                "$(SRCROOT)/../Carthage/Build/iOS/RxGesture.framework",
 			);
-			name = "[CP] Check Pods Manifest.lock";
+			name = Carthage;
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ChatExample-checkManifestLockResult.txt",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Gzip.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxBlocking.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Reachability.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Starscream.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxAppState.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Nuke.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyGif.framework",
+                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxGesture",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -216,6 +343,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8A0A7E7B2301AC2A0033E6D9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = StreamChat;
+			targetProxy = 8A0A7E7A2301AC2A0033E6D9 /* PBXContainerItemProxy */;
+		};
+		8A0A7E7F2301AC2A0033E6D9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = StreamChatCore;
+			targetProxy = 8A0A7E7E2301AC2A0033E6D9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		8AD5EC7422E88C62005CFAC9 /* Main.storyboard */ = {
@@ -355,12 +495,13 @@
 		};
 		8AD5EC8022E88C63005CFAC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AB2006F48BB8EF58E241C795 /* Pods-ChatExample.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ChatExample/ChatExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/iOS";
 				INFOPLIST_FILE = ChatExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -375,12 +516,13 @@
 		};
 		8AD5EC8122E88C63005CFAC9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BD5194B687656D299C580F46 /* Pods-ChatExample.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = ChatExample/ChatExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../Carthage/Build/iOS";
 				INFOPLIST_FILE = ChatExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

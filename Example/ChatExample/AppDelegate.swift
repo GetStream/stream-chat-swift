@@ -9,8 +9,8 @@
 import UIKit
 import StreamChat
 import StreamChatCore
-import Fabric
-import Crashlytics
+//import Fabric
+//import Crashlytics
 import RxSwift
 import RxCocoa
 
@@ -25,7 +25,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .none)
         Client.shared.set(user: .user2, token: .token2)
         
-        Fabric.with([Crashlytics.self])
+//        Fabric.with([Crashlytics.self])
         setupNotifications()
         
         if let tabBarController = window?.rootViewController as? UITabBarController,
