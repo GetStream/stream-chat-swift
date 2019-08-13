@@ -38,6 +38,7 @@ public final class ComposerView: UIView {
     /// An `UITextView`.
     /// You have to use the `text` property to change the value of the text view.
     public private(set) lazy var textView = setupTextView()
+    var textViewTopConstraint: Constraint?
     var toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
     var imagesAddAction: AttachmentCollectionViewCell.TapAction?
     private var previousTextBeforeReset: NSAttributedString?
@@ -186,9 +187,7 @@ public final class ComposerView: UIView {
         
         textView.snp.makeConstraints { make in
             make.left.equalTo(attachmentButton.snp.right)
-            make.top.greaterThanOrEqualTo(imagesCollectionView.snp.bottom).offset(textViewPadding).priority(999)
-            make.top.greaterThanOrEqualTo(filesStackView.snp.bottom).offset(textViewPadding).priority(998)
-            make.top.equalToSuperview().offset(textViewPadding).priority(997)
+            textViewTopConstraint = make.top.equalToSuperview().offset(textViewPadding).priority(999).constraint
             make.bottom.equalToSuperview().offset(-textViewPadding)
             make.right.equalTo(sendButton.snp.left)
         }

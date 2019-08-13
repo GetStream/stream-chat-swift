@@ -27,7 +27,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         return reactionsView == nil
     }
     
-    private(set) lazy var composerView = createComposerView()
+    public private(set) lazy var composerView = createComposerView()
     private(set) lazy var composerEditingHelperView = createComposerEditingHelperView()
     private(set) lazy var composerCommandsView = createComposerCommandsView()
     private(set) lazy var composerAddFileView = createComposerAddFileView()

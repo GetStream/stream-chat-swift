@@ -23,7 +23,7 @@ final class ChatFooterView: UIView {
         avatarView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(CGFloat.messageSpacing).priority(999)
             make.bottom.equalToSuperview().offset(-CGFloat.messageSpacing).priority(999)
-            make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
+            make.left.equalToSuperview().offset(CGFloat.messageEdgePadding).priority(999)
         }
         
         return avatarView
@@ -46,8 +46,8 @@ final class ChatFooterView: UIView {
         
         label.snp.makeConstraints { make in
             make.centerY.equalTo(avatarView.snp.centerY)
-            make.left.equalTo(avatarView.snp.right).offset(CGFloat.messageInnerPadding)
-            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            make.left.equalTo(avatarView.snp.right).offset(CGFloat.messageInnerPadding).priority(999)
+            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding).priority(999)
         }
         
         return label

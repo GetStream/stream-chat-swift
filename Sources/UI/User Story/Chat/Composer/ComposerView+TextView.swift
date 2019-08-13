@@ -51,19 +51,24 @@ extension ComposerView {
         textView.isScrollEnabled = height == CGFloat.composerMaxHeight
         imagesCollectionView.isHidden = isUploaderImagesEmpty
         filesStackView.isHidden = isUploaderFilesEmpty
+        var textViewTopOffset = textViewPadding
         
         if !imagesCollectionView.isHidden {
             height += .composerAttachmentsHeight
+            textViewTopOffset += .composerAttachmentsHeight
         }
         
         if !filesStackView.isHidden {
-            height += .composerFileHeight * CGFloat(filesStackView.arrangedSubviews.count)
+            let filesHeight = CGFloat.composerFileHeight * CGFloat(filesStackView.arrangedSubviews.count)
+            height += filesHeight
+            textViewTopOffset += filesHeight
         }
         
         updateToolBarHeight()
         
         if heightConstraint.layoutConstraints.first?.constant != height {
             heightConstraint.update(offset: height)
+            textViewTopConstraint?.update(offset: textViewTopOffset)
             setNeedsLayout()
             layoutIfNeeded()
         }
