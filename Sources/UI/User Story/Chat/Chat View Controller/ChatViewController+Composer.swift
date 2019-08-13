@@ -88,7 +88,7 @@ extension ChatViewController {
         let text = composerView.text.trimmingCharacters(in: .whitespacesAndNewlines)
         let isMessageEditing = channelPresenter?.editMessage != nil
         
-        if command(in: text) != nil || isMessageEditing {
+        if findCommand(in: text) != nil || isMessageEditing {
             view.endEditing(true)
         }
         
@@ -103,12 +103,12 @@ extension ChatViewController {
             .disposed(by: disposeBag)
     }
     
-    private func command(in text: String) -> String? {
+    private func findCommand(in text: String) -> String? {
         guard text.count > 1, text.hasPrefix("/") else {
             return nil
         }
         
-        let command: String
+        var command: String
         
         if let spaceIndex = text.firstIndex(of: " ") {
             command = String(text.prefix(upTo: spaceIndex))
@@ -116,14 +116,17 @@ extension ChatViewController {
             command = text
         }
         
-        return command.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .init(charactersIn: "/"))
+        command = command.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: .init(charactersIn: "/"))
+        
+        return command.isBlank ? nil : command
     }
     
-    private func createComposerHelperContainerView(title: String, closeButtonIsHidden: Bool = false) -> ComposerHelperContainerView {
+    public func createComposerHelperContainerView(title: String,
+                                                  closeButtonIsHidden: Bool = false) -> ComposerHelperContainerView {
         let container = ComposerHelperContainerView()
         container.backgroundColor = style.incomingMessage.textColor.isDark ? .white : .chatDarkGray
         container.titleLabel.text = title
-        container.add(for: composerView)
+        container.add(to: composerView)
         container.isHidden = true
         container.closeButton.isHidden = closeButtonIsHidden
         return container
@@ -184,25 +187,27 @@ extension ChatViewController {
             return
         }
         
-        let hide = filterCommands(with: text)
-        
         // Show composer helper container.
         if text.count == 1, let first = text.first, first == "/" {
             hideAddFileView()
-            showCommands(resetForcedHidden: true)
+            showCommands()
             return
         }
         
-        if hide || text.first != "/" {
-            showCommands(show: false)
-        } else {
+        if textHasCommand(text) {
             hideAddFileView()
             showCommands()
+        } else {
+            showCommands(show: false)
         }
     }
     
-    func filterCommands(with text: String) -> Bool {
-        guard let command = command(in: text) else {
+    func textHasCommand(_ text: String) -> Bool {
+        guard !text.isBlank, text.first == "/" else {
+            return false
+        }
+        
+        guard let command = findCommand(in: text) else {
             composerCommandsView.containerView.arrangedSubviews.forEach { $0.isHidden = false }
             return false
         }
@@ -217,15 +222,15 @@ extension ChatViewController {
             }
         }
         
-        return !visible
+        return visible
     }
     
-    private func showCommands(show: Bool = true, resetForcedHidden: Bool = false) {
-        composerCommandsView.animate(show: show, resetForcedHidden: resetForcedHidden)
+    private func showCommands(show: Bool = true) {
+        composerCommandsView.animate(show: show)
         composerView.textView.autocorrectionType = show ? .no : .default
         
         if composerEditingHelperView.isHidden == false {
-            composerEditingHelperView.moveContainerViewPosition(abouveView: show ? composerCommandsView : nil)
+            composerEditingHelperView.moveContainerViewPosition(aboveView: show ? composerCommandsView : nil)
         }
     }
     
@@ -324,7 +329,7 @@ extension ChatViewController {
             composerAddFileView.animate(show: true)
             
             if composerEditingHelperView.isHidden == false {
-                composerEditingHelperView.moveContainerViewPosition(abouveView: composerAddFileView)
+                composerEditingHelperView.moveContainerViewPosition(aboveView: composerAddFileView)
             }
         }
     }

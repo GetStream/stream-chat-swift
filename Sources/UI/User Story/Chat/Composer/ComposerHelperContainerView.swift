@@ -9,11 +9,16 @@
 import UIKit
 import SnapKit
 
-final class ComposerHelperContainerView: UIView {
+/// A container view for composer view to show more actions or commands.
+public final class ComposerHelperContainerView: UIView {
     
     private(set) var shouldBeShown: Bool = false
-    var forcedHidden = false
-    var isEnabled = true
+    
+    /// Enables animations to show the container view.
+    public var isEnabled = true
+    
+    private lazy var hiddenTransform = CGAffineTransform(translationX: 0,
+                                                         y: frame.height > 0 ? frame.height : UIScreen.main.bounds.height / 2)
     
     private(set) lazy var titleLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -71,7 +76,12 @@ final class ComposerHelperContainerView: UIView {
         }
     }
     
-    func add(for composerView: ComposerView) {
+    /// Add to a composer view.
+    ///
+    /// - Note: The composer view should have a parent view.
+    ///
+    /// - Parameter composerView: a composer view.
+    public func add(to composerView: ComposerView) {
         guard let parent = composerView.superview else {
             return
         }
@@ -88,7 +98,13 @@ final class ComposerHelperContainerView: UIView {
         moveContainerViewPosition()
     }
     
-    func moveContainerViewPosition(abouveView view: UIView? = nil) {
+    /// Move the container view on the top of a given bottom view.
+    ///
+    /// - Note: It will make the bottom constraint equals to the top constraint of a given view.
+    ///         If a given view is nil, then the container view will move back to the position above the composer view.
+    ///
+    /// - Parameter view: a bottom view.
+    public func moveContainerViewPosition(aboveView view: UIView? = nil) {
         guard let view = view ?? self.composerView else {
             return
         }
@@ -103,37 +119,24 @@ final class ComposerHelperContainerView: UIView {
         }
     }
     
-    func animate(show: Bool, resetForcedHidden: Bool = false) {
-        guard isEnabled else {
-            return
-        }
-        
-        if resetForcedHidden {
-            forcedHidden = false
-        }
-        
-        if show, forcedHidden {
-            shouldBeShown = false
-            return
-        }
-        
-        guard shouldBeShown != show else {
+    /// Show or hide the container view.
+    ///
+    /// - Parameter show: an action to show or hide the container view.
+    public func animate(show: Bool) {
+        guard (isEnabled || !show), shouldBeShown != show else {
             return
         }
         
         removeAllAnimations()
         shouldBeShown = show
         
-        let height = frame.height > 0 ? frame.height : UIScreen.main.bounds.height / 2
-        let hiddenTransform = CGAffineTransform(translationX: 0, y: height)
-        
         if show {
             transform = hiddenTransform
+            isHidden = false
         }
         
-        UIView.animateSmoothly(withDuration: 0.4, animations: {
-            self.isHidden = false
-            self.transform = show ? .identity : hiddenTransform
+        UIView.animateSmoothly(withDuration: 0.5, options: .curveLinear, animations: {
+            self.transform = show ? .identity : self.hiddenTransform
         }, completion: { _ in
             self.isHidden = !self.shouldBeShown
         })

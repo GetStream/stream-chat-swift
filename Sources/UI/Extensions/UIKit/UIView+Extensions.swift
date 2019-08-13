@@ -41,7 +41,7 @@ extension UIView {
         
         snp.makeConstraints { $0.center.equalToSuperview() }
     }
-
+    
     func makeEdgesEqualToSafeAreaSuperview(superview parent: UIView? = nil) {
         parent?.addSubview(self)
         
@@ -174,10 +174,10 @@ extension UIView {
     
     @discardableResult
     static func animateSmoothly(withDuration duration: TimeInterval,
-                              usingSpringWithDamping dampingRatio: CGFloat = 1,
-                              initialSpringVelocity velocity: CGFloat = 0,
-                              options: AnimationOptions = [],
-                              animations: @escaping Animations) -> Chain {
+                                usingSpringWithDamping dampingRatio: CGFloat = 1,
+                                initialSpringVelocity velocity: CGFloat = 0,
+                                options: AnimationOptions = [],
+                                animations: @escaping Animations) -> Chain {
         return Chain(duration: duration,
                      dampingRatio: dampingRatio,
                      velocity: velocity,
@@ -186,12 +186,12 @@ extension UIView {
     }
     
     static func animateSmoothly(withDuration duration: TimeInterval,
-                              delay: TimeInterval = 0,
-                              usingSpringWithDamping dampingRatio: CGFloat = 1,
-                              initialSpringVelocity velocity: CGFloat = 0,
-                              options: AnimationOptions = [],
-                              animations: @escaping Animations,
-                              completion: @escaping AnimationsCompletion) {
+                                delay: TimeInterval = 0,
+                                usingSpringWithDamping dampingRatio: CGFloat = 1,
+                                initialSpringVelocity velocity: CGFloat = 0,
+                                options: AnimationOptions = [],
+                                animations: @escaping Animations,
+                                completion: @escaping AnimationsCompletion) {
         UIView.animate(withDuration: duration,
                        delay: delay,
                        usingSpringWithDamping: dampingRatio,
