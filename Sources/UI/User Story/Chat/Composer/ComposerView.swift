@@ -97,7 +97,8 @@ public final class ComposerView: UIView {
         return button
     }()
     
-    private(set) lazy var attachmentButton: UIButton = {
+    /// An attachment button.
+    public private(set) lazy var attachmentButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage.Icons.plus, for: .normal)
         button.snp.makeConstraints { $0.width.equalTo(CGFloat.composerButtonWidth).priority(999) }
@@ -193,10 +194,15 @@ public final class ComposerView: UIView {
         textView.backgroundColor = backgroundColor
         
         textView.snp.makeConstraints { make in
-            make.left.equalTo(attachmentButton.snp.right)
             textViewTopConstraint = make.top.equalToSuperview().offset(textViewPadding).priority(999).constraint
             make.bottom.equalToSuperview().offset(-textViewPadding)
             make.right.equalTo(sendButton.snp.left)
+            
+            if attachmentButton.isHidden {
+                make.left.equalToSuperview().offset(textViewPadding)
+            } else {
+                make.left.equalTo(attachmentButton.snp.right).offset(-textView.textContainer.lineFragmentPadding)
+            }
         }
         
         textView.setContentCompressionResistancePriority(.required, for: .vertical)

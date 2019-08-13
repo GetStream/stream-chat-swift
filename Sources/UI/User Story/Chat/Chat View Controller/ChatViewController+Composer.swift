@@ -33,6 +33,14 @@ extension ChatViewController {
     }
     
     func setupComposerView() {
+        if composerAddFileView == nil {
+            composerView.attachmentButton.isHidden = true
+        } else {
+            composerView.attachmentButton.rx.tap
+                .subscribe(onNext: { [weak self] in self?.showAddFileView() })
+                .disposed(by: disposeBag)
+        }
+        
         composerView.addToSuperview(view)
         
         composerView.textView.rx.text
@@ -48,10 +56,6 @@ extension ChatViewController {
         
         composerView.sendButton.rx.tap
             .subscribe(onNext: { [weak self] in self?.send() })
-            .disposed(by: disposeBag)
-        
-        composerView.attachmentButton.rx.tap
-            .subscribe(onNext: { [weak self] in self?.showAddFileView() })
             .disposed(by: disposeBag)
         
         RxKeyboard.instance.visibleHeight
