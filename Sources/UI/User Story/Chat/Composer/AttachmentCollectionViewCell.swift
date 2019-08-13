@@ -12,8 +12,10 @@ import RxSwift
 import RxCocoa
 import RxGesture
 
-final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
-    typealias TapAction = (_ gestureRecognizer: UIGestureRecognizer) -> Void
+/// An image attachment collection view cell.
+public final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
+    /// An action for a plus button.
+    public typealias TapAction = (_ gestureRecognizer: UIGestureRecognizer) -> Void
     
     private(set) var disposeBag = DisposeBag()
     let imageView = UIImageView(frame: .zero)
@@ -39,7 +41,7 @@ final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
         reset()
     }
     
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }

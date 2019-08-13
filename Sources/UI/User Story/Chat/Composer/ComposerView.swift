@@ -40,14 +40,21 @@ public final class ComposerView: UIView {
     public private(set) lazy var textView = setupTextView()
     var textViewTopConstraint: Constraint?
     var toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
-    var imagesAddAction: AttachmentCollectionViewCell.TapAction?
+    
+    /// An action for a plus button in the images attachments collection view.
+    public var imagesAddAction: AttachmentCollectionViewCell.TapAction?
+    
     private var previousTextBeforeReset: NSAttributedString?
     private let disposeBag = DisposeBag()
     private(set) weak var heightConstraint: Constraint?
     private weak var bottomConstraint: Constraint?
     var baseTextHeight = CGFloat.greatestFiniteMagnitude
-    private(set) lazy var imagesCollectionView = setupImagesCollectionView()
-    private(set) lazy var filesStackView = setupFilesStackView()
+    
+    /// An images collection view.
+    public private(set) lazy var imagesCollectionView = setupImagesCollectionView()
+    /// A files stack view.
+    public private(set) lazy var filesStackView = setupFilesStackView()
+    
     /// Uploader for images and files.
     public var uploader: Uploader?
     
@@ -178,7 +185,7 @@ public final class ComposerView: UIView {
             make.left.right.equalToSuperview()
             make.top.equalToSuperview()
         }
-
+        
         // Add text view.
         addSubview(textView)
         updateTextHeightIfNeeded()

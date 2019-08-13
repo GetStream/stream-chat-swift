@@ -69,7 +69,6 @@ public extension Reactive where Base == Client {
             if let disposeBag = disposeBag {
                 self.base.urlSessionTaskDelegate.uploadProgress.asObserver()
                     .filter { $0.task == task }
-                    .debug()
                     .subscribe(onNext: { observer.onNext(($0.progress, nil)) },
                                onError: { observer.onError($0) })
                     .disposed(by: disposeBag)

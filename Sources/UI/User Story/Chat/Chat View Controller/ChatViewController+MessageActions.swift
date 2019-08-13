@@ -81,7 +81,13 @@ extension ChatViewController {
         channelPresenter?.editMessage = message
         composerView.isEditing = true
         composerView.textView.becomeFirstResponder()
-        composerEditingHelperView.sendToBack(for: [composerAddFileView, composerCommandsView])
+        
+        if let composerAddFileView = composerAddFileView {
+            composerEditingHelperView.sendToBack(for: [composerAddFileView, composerCommandsView])
+        } else {
+            composerEditingHelperView.sendToBack(for: [composerCommandsView])
+        }
+        
         composerEditingHelperView.animate(show: true)
     }
     

@@ -15,6 +15,15 @@ import RxCocoa
 
 // MARK: - Composer
 
+public extension ChatViewController {
+    enum ComposerAddFileType {
+        case photo
+        case camera
+        case file
+        case custom(icon: UIImage?, title: String, ComposerAddFileView.SourceType, ComposerAddFileView.Action)
+    }
+}
+
 extension ChatViewController {
     
     func createComposerView() -> ComposerView {
@@ -248,64 +257,77 @@ extension ChatViewController {
 
 extension ChatViewController {
     
-    func createComposerAddFileView() -> ComposerHelperContainerView {
-        let container = createComposerHelperContainerView(title: "Add a file")
+    /// Creates a add files container view for the composer view when the add button ⊕ is tapped.
+    ///
+    /// - Returns: a container helper view.
+    open func createComposerAddFileView(title: String) -> ComposerHelperContainerView? {
+        guard !composerAddFileTypes.isEmpty else {
+            return nil
+        }
+        
+        let container = createComposerHelperContainerView(title: title)
         
         container.closeButton.rx.tap
             .subscribe(onNext: { [weak self] _ in self?.hideAddFileView() })
             .disposed(by: disposeBag)
         
-        if UIImagePickerController.hasPermissionDescription(for: .savedPhotosAlbum),
-            UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-            addButtonsToAddFileView(container,
-                                    icon: UIImage.Icons.images,
-                                    title: "Upload a photo or video",
-                                    sourceType: .photo(.savedPhotosAlbum)) { [weak self] in
-                                        self?.showImagePicker(composerAddFileViewSourceType: $0)
+        composerAddFileTypes.forEach { type in
+            switch type {
+            case .photo:
+                if UIImagePickerController.hasPermissionDescription(for: .savedPhotosAlbum),
+                    UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
+                    addButtonToAddFileView(container,
+                                           icon: UIImage.Icons.images,
+                                           title: "Upload a photo or video",
+                                           sourceType: .photo(.savedPhotosAlbum)) { [weak self] in
+                                            self?.showImagePicker(composerAddFileViewSourceType: $0)
+                    }
+                    
+                    composerView.imagesAddAction = { [weak self] _ in
+                        self?.showImagePicker(composerAddFileViewSourceType: .photo(.savedPhotosAlbum))
+                    }
+                }
+            case .camera:
+                if UIImagePickerController.hasPermissionDescription(for: .camera),
+                    UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    addButtonToAddFileView(container,
+                                           icon: UIImage.Icons.camera,
+                                           title: "Upload from a camera",
+                                           sourceType: .photo(.camera)) { [weak self] in
+                                            self?.showImagePicker(composerAddFileViewSourceType: $0)
+                    }
+                }
+            case .file:
+                addButtonToAddFileView(container,
+                                       icon: UIImage.Icons.file,
+                                       title: "Upload a file",
+                                       sourceType: .file) { [weak self] _ in
+                                        self?.showDocumentPicker()
+                }
+            case let .custom(icon, title, sourceType, action):
+                addButtonToAddFileView(container,
+                                       icon: icon,
+                                       title: title,
+                                       sourceType: sourceType,
+                                       action: action)
             }
-            
-            composerView.imagesAddAction = { [weak self] _ in
-                self?.showImagePicker(composerAddFileViewSourceType: .photo(.savedPhotosAlbum))
-            }
-        }
-        
-        if UIImagePickerController.hasPermissionDescription(for: .camera),
-            UIImagePickerController.isSourceTypeAvailable(.camera) {
-            addButtonsToAddFileView(container,
-                                    icon: UIImage.Icons.camera,
-                                    title: "Upload from a camera",
-                                    sourceType: .photo(.camera)) { [weak self] in
-                                        self?.showImagePicker(composerAddFileViewSourceType: $0)
-            }
-        }
-        
-        addButtonsToAddFileView(container, icon: UIImage.Icons.file, title: "Upload a file", sourceType: .file) { [weak self] _ in
-            self?.showDocumentPicker()
         }
         
         return container
     }
     
-    private func addButtonsToAddFileView(_ container: ComposerHelperContainerView,
-                                         icon: UIImage,
-                                         title: String,
-                                         sourceType: ComposerAddFileView.SourceType,
-                                         action: @escaping ComposerAddFileView.Action) {
+    private func addButtonToAddFileView(_ container: ComposerHelperContainerView,
+                                        icon: UIImage?,
+                                        title: String,
+                                        sourceType: ComposerAddFileView.SourceType,
+                                        action: @escaping ComposerAddFileView.Action) {
         let view = ComposerAddFileView(icon: icon, title: title, sourceType: sourceType, action: action)
         view.backgroundColor = container.backgroundColor
         container.containerView.addArrangedSubview(view)
-        
-        view.rx.tapGesture().when(.recognized)
-            .subscribe(onNext: { [weak view] _ in
-                if let view = view {
-                    view.action(view.sourceType)
-                }
-            })
-            .disposed(by: self.disposeBag)
     }
     
     private func showAddFileView() {
-        guard !composerAddFileView.containerView.arrangedSubviews.isEmpty else {
+        guard let composerAddFileView = composerAddFileView, !composerAddFileView.containerView.arrangedSubviews.isEmpty else {
             return
         }
         
@@ -324,7 +346,7 @@ extension ChatViewController {
         let subviews = composerAddFileView.containerView.arrangedSubviews.filter { $0.isHidden == false }
         
         if subviews.count == 1, let first = subviews.first as? ComposerAddFileView {
-            first.action(first.sourceType)
+            first.tap()
         } else {
             composerAddFileView.animate(show: true)
             
@@ -335,6 +357,10 @@ extension ChatViewController {
     }
     
     private func hideAddFileView() {
+        guard let composerAddFileView = composerAddFileView else {
+            return
+        }
+        
         composerAddFileView.animate(show: false)
         composerCommandsView.containerView.arrangedSubviews.forEach { $0.isHidden = false }
         
@@ -392,7 +418,7 @@ extension ChatViewController {
         
         guard let attachment = message.attachments.first,
             let action = attachment.actions.first(where: { $0.text == buttonText }) else {
-            return
+                return
         }
         
         channelPresenter?.dispatch(action: action, message: message).subscribe().disposed(by: disposeBag)
