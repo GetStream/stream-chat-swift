@@ -23,7 +23,7 @@ extension ComposerView {
     }
     
     var textViewPadding: CGFloat {
-        return (CGFloat.composerHeight - baseTextHeight) / 2
+        return baseTextHeight == .greatestFiniteMagnitude ? 0 : ((style?.height ?? .composerHeight) - baseTextHeight) / 2
     }
     
     private var textViewContentSize: CGSize {
@@ -34,7 +34,7 @@ extension ComposerView {
     func updateTextHeightIfNeeded() {
         if baseTextHeight == .greatestFiniteMagnitude {
             let text = textView.attributedText
-            textView.attributedText = attributedText(text: "T")
+            textView.attributedText = attributedText(text: "Stream")
             baseTextHeight = textViewContentSize.height.rounded()
             textView.attributedText = text
         }
@@ -43,11 +43,11 @@ extension ComposerView {
     }
     
     private func updateTextHeight(_ height: CGFloat) {
-        guard let heightConstraint = heightConstraint else {
+        guard let heightConstraint = heightConstraint, let style = style else {
             return
         }
         
-        var height = min(max(height + 2 * textViewPadding, CGFloat.composerHeight), CGFloat.composerMaxHeight)
+        var height = min(max(height + 2 * textViewPadding, style.height), CGFloat.composerMaxHeight)
         textView.isScrollEnabled = height == CGFloat.composerMaxHeight
         imagesCollectionView.isHidden = imageUploaderItems.isEmpty
         filesStackView.isHidden = isUploaderFilesEmpty

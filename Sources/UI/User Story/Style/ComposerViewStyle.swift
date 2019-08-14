@@ -30,6 +30,10 @@ public struct ComposerViewStyle {
     public var backgroundColor: UIColor
     /// A corner radius.
     public var cornerRadius: CGFloat
+    /// A composer height.
+    public var height: CGFloat
+    /// Edge insets.
+    public var edgeInsets: UIEdgeInsets
     
     /// Composer states.
     ///
@@ -56,6 +60,8 @@ public struct ComposerViewStyle {
                 placeholderTextColor: UIColor = .chatGray,
                 backgroundColor: UIColor = .clear,
                 cornerRadius: CGFloat = .composerCornerRadius,
+                height: CGFloat = .composerHeight,
+                edgeInsets: UIEdgeInsets = .all(.messageEdgePadding),
                 states: States = [.active: .init(tintColor: .chatLightBlue, borderWidth: 2),
                                   .edit: .init(tintColor: .chatGreen, borderWidth: 2),
                                   .disabled: .init(tintColor: .chatGray, borderWidth: 2)]) {
@@ -64,6 +70,8 @@ public struct ComposerViewStyle {
         self.placeholderTextColor = placeholderTextColor
         self.backgroundColor = backgroundColor
         self.cornerRadius = cornerRadius
+        self.height = height
+        self.edgeInsets = edgeInsets
         self.states = states
     }
     

@@ -39,7 +39,11 @@ public final class ComposerView: UIView {
     /// You have to use the `text` property to change the value of the text view.
     public private(set) lazy var textView = setupTextView()
     var textViewTopConstraint: Constraint?
-    var toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
+    
+    lazy var toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width,
+                                               height: (style?.height ?? .composerHeight)
+                                                + (style?.edgeInsets.bottom ?? .messageEdgePadding)
+                                                + .messageEdgePadding))
     
     /// An action for a plus button in the images attachments collection view.
     /// If it's nil, it will not be shown in the images collection view.
@@ -142,11 +146,11 @@ public final class ComposerView: UIView {
         view.addSubview(self)
         
         snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
-            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
-            heightConstraint = make.height.equalTo(CGFloat.composerHeight).constraint
+            make.left.equalToSuperview().offset(style.edgeInsets.left)
+            make.right.equalToSuperview().offset(-style.edgeInsets.right)
+            heightConstraint = make.height.equalTo(style.height).constraint
             let bottomMargin = view.safeAreaLayoutGuide.snp.bottomMargin
-            bottomConstraint = make.bottom.equalTo(bottomMargin).offset(-CGFloat.messageBottomPadding).constraint
+            bottomConstraint = make.bottom.equalTo(bottomMargin).offset(-style.edgeInsets.bottom).constraint
         }
         
         // Apply style.
@@ -160,7 +164,7 @@ public final class ComposerView: UIView {
         addSubview(attachmentButton)
         
         attachmentButton.snp.makeConstraints { make in
-            make.height.equalTo(CGFloat.composerHeight)
+            make.height.equalTo(style.height)
             make.left.equalToSuperview()
             make.bottom.equalToSuperview()
         }
@@ -169,7 +173,7 @@ public final class ComposerView: UIView {
         addSubview(sendButton)
         
         sendButton.snp.makeConstraints { make in
-            make.height.equalTo(CGFloat.composerHeight)
+            make.height.equalTo(style.height)
             make.right.bottom.equalToSuperview()
         }
         
@@ -235,7 +239,7 @@ public final class ComposerView: UIView {
                     return
                 }
                 
-                let bottom: CGFloat = .messageEdgePadding
+                let bottom: CGFloat = style.edgeInsets.bottom
                     + max(0, height - (height > 0 ? parentView.safeAreaBottomOffset + self.toolBar.frame.height : 0))
                 
                 self.bottomConstraint?.update(offset: -bottom)
