@@ -49,7 +49,15 @@ public struct Attachment: Codable {
         return type.isImage && text == nil
     }
     
-    init(type: AttachmentType, title: String, url: URL? = nil, imageURL: URL? = nil, file: AttachmentFile? = nil) {
+    /// Init an attachment.
+    ///
+    /// - Parameters:
+    ///   - type: an attachment type.
+    ///   - title: a title.
+    ///   - url: an url.
+    ///   - imageURL: an preview image url.
+    ///   - file: a file description.
+    public init(type: AttachmentType, title: String, url: URL? = nil, imageURL: URL? = nil, file: AttachmentFile? = nil) {
         self.type = type
         self.url = url
         self.imageURL = imageURL

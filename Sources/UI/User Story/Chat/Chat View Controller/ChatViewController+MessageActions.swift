@@ -82,13 +82,13 @@ extension ChatViewController {
         composerView.isEditing = true
         composerView.textView.becomeFirstResponder()
         
-        if let composerAddFileView = composerAddFileView {
-            composerEditingHelperView.sendToBack(for: [composerAddFileView, composerCommandsView])
+        if let composerAddFileContainerView = composerAddFileContainerView {
+            composerEditingContainerView.sendToBack(for: [composerAddFileContainerView, composerCommandsContainerView])
         } else {
-            composerEditingHelperView.sendToBack(for: [composerCommandsView])
+            composerEditingContainerView.sendToBack(for: [composerCommandsContainerView])
         }
         
-        composerEditingHelperView.animate(show: true)
+        composerEditingContainerView.animate(show: true)
     }
     
     private func addCopyAction(to alert: UIAlertController, message: Message) {

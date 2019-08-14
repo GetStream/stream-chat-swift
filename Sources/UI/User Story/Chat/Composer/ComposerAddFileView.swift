@@ -79,7 +79,7 @@ public final class ComposerAddFileView: UIView {
             if let iconImageView = iconImageView {
                 make.left.equalTo(iconImageView.snp.right).offset(CGFloat.composerHelperButtonEdgePadding)
             } else {
-                make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
+                make.left.equalToSuperview().offset(CGFloat.composerHelperTitleEdgePadding)
             }
         }
         

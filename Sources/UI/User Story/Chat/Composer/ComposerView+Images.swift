@@ -14,7 +14,7 @@ import RxCocoa
 
 // MARK: - Images Collection View
 
-extension ComposerView: UICollectionViewDataSource {
+extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func setupImagesCollectionView() -> UICollectionView {
         let collectionViewLayout = UICollectionViewFlowLayout()
@@ -31,13 +31,17 @@ extension ComposerView: UICollectionViewDataSource {
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.alwaysBounceHorizontal = true
         collectionView.dataSource = self
+        collectionView.delegate = self
         collectionView.register(cellType: AttachmentCollectionViewCell.self)
         collectionView.snp.makeConstraints { $0.height.equalTo(CGFloat.composerAttachmentsHeight) }
         
         return collectionView
     }
     
-    func addImage(_ item: UploaderItem) {
+    /// Add an image upload item for message attachments.
+    ///
+    /// - Parameter item: an image upload item.
+    public func addImageUploaderItem(_ item: UploaderItem) {
         guard let uploader = uploader else {
             return
         }
@@ -45,48 +49,47 @@ extension ComposerView: UICollectionViewDataSource {
         uploader.upload(item: item)
         updateImagesCollectionView()
         
-        if !isUploaderImagesEmpty {
+        if !imageUploaderItems.isEmpty {
             imagesCollectionView.scrollToItem(at: .item(0), at: .right, animated: false)
         }
     }
     
     func updateImagesCollectionView() {
+        imageUploaderItems = uploader?.items.filter({ $0.type != .file }) ?? []
         imagesCollectionView.reloadData()
-        imagesCollectionView.isHidden = isUploaderImagesEmpty
+        imagesCollectionView.isHidden = imageUploaderItems.isEmpty
         updateTextHeightIfNeeded()
         updateSendButton()
         updateStyleState()
         updateToolBarHeight()
     }
     
-    var isUploaderImagesEmpty: Bool {
-        return (uploader?.items.firstIndex(where: { $0.type != .file })) == nil
-    }
-    
-    var imagesItems: [UploaderItem] {
-        return uploader?.items.filter({ $0.type != .file }) ?? []
+    private func uploaderItem(at indexPath: IndexPath) -> UploaderItem? {
+        let imageIndex = indexPath.item - (imagesAddAction == nil ? 0 : 1)
+        
+        guard imageIndex >= 0, imageIndex < imageUploaderItems.count else {
+            return nil
+        }
+        
+        return imageUploaderItems[imageIndex]
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isUploaderImagesEmpty ? 0 : imagesItems.count + (imagesAddAction == nil ? 0 : 1)
+        return imageUploaderItems.isEmpty ? 0 : imageUploaderItems.count + (imagesAddAction == nil ? 0 : 1)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(for: indexPath) as AttachmentCollectionViewCell
         
-        if indexPath.item == 0, let imagesAddAction = imagesAddAction {
-            cell.updatePlusButton(tintColor: style?.textColor, action: imagesAddAction)
-            return cell
-        }
-        
-        let imageIndex = indexPath.item - (imagesAddAction == nil ? 0 : 1)
-        let imagesItems = self.imagesItems
-        
-        guard imageIndex < imagesItems.count else {
+        guard let item = uploaderItem(at: indexPath) else {
+            if indexPath.item == 0, let imagesAddAction = imagesAddAction {
+                cell.updatePlusButton(tintColor: style?.textColor, action: imagesAddAction)
+                return cell
+            }
+            
             return .unused
         }
         
-        let item = imagesItems[imageIndex]
         cell.imageView.image = item.image
         
         cell.updateRemoveButton(tintColor: style?.textColor) { [weak self] in
@@ -123,5 +126,21 @@ extension ComposerView: UICollectionViewDataSource {
         }
         
         return cell
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if let cell = cell as? AttachmentCollectionViewCell,
+            let item = uploaderItem(at: indexPath),
+            let gifData = item.gifData {
+            cell.startGifAnimation(with: gifData)
+        }
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView,
+                               didEndDisplaying cell: UICollectionViewCell,
+                               forItemAt indexPath: IndexPath) {
+        if let cell = cell as? AttachmentCollectionViewCell {
+            cell.removeGifAnimation()
+        }
     }
 }

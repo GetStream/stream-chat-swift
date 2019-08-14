@@ -42,6 +42,7 @@ public final class ComposerView: UIView {
     var toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width, height: .messagesToComposerPadding))
     
     /// An action for a plus button in the images attachments collection view.
+    /// If it's nil, it will not be shown in the images collection view.
     public var imagesAddAction: AttachmentCollectionViewCell.TapAction?
     
     private var previousTextBeforeReset: NSAttributedString?
@@ -52,6 +53,7 @@ public final class ComposerView: UIView {
     
     /// An images collection view.
     public private(set) lazy var imagesCollectionView = setupImagesCollectionView()
+    var imageUploaderItems: [UploaderItem] = []
     /// A files stack view.
     public private(set) lazy var filesStackView = setupFilesStackView()
     
@@ -201,7 +203,13 @@ public final class ComposerView: UIView {
             if attachmentButton.isHidden {
                 make.left.equalToSuperview().offset(textViewPadding)
             } else {
-                make.left.equalTo(attachmentButton.snp.right).offset(-textView.textContainer.lineFragmentPadding)
+                var offset = textView.textContainer.lineFragmentPadding
+                
+                if let borderWidth = style.states[.active]?.borderWidth, borderWidth > 0 {
+                    offset += borderWidth
+                }
+                
+                make.left.equalTo(attachmentButton.snp.right).offset(-offset)
             }
         }
         
@@ -273,6 +281,7 @@ public final class ComposerView: UIView {
         previousTextBeforeReset = textView.attributedText
         textView.attributedText = attributedText()
         uploader?.reset()
+        imageUploaderItems = []
         updatePlaceholder()
         filesStackView.isHidden = true
         filesStackView.removeAllArrangedSubviews()
@@ -304,7 +313,7 @@ public final class ComposerView: UIView {
     
     func updateStyleState() {
         styleState = !textView.isFirstResponder
-            && isUploaderImagesEmpty
+            && imageUploaderItems.isEmpty
             && isUploaderFilesEmpty
             && text.isEmpty ? .normal : (isEditing ? .edit : .active)
     }

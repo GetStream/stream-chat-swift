@@ -47,11 +47,13 @@ public final class UploaderItem: Equatable {
     }
     
     /// A channel for an uploading.
-    public let channel: Channel
+    public let channel: Channel?
     /// An original file URL.
     public let url: URL?
     /// An original image.
     public let image: UIImage?
+    /// A gif data of the image.
+    public let gifData: Data?
     /// A file name.
     public let fileName: String
     /// A file type.
@@ -75,6 +77,7 @@ public final class UploaderItem: Equatable {
     ///   - url: an original file URL.
     ///   - type: an uploading type.
     ///   - image: an original image.
+    ///   - gifData: a original gif image data.
     ///   - fileName: a file name.
     ///   - fileType: a file type.
     ///   - fileSize: a file size.
@@ -82,6 +85,7 @@ public final class UploaderItem: Equatable {
                 url: URL,
                 type: UploadingType = .file,
                 image: UIImage? = nil,
+                gifData: Data? = nil,
                 fileName: String? = nil,
                 fileType: AttachmentFileType? = nil,
                 fileSize: Int64 = 0) {
@@ -89,12 +93,52 @@ public final class UploaderItem: Equatable {
         self.url = url
         self.type = type
         self.image = image
+        self.gifData = gifData
         self.fileName = fileName ?? url.lastPathComponent
         self.fileType = fileType ?? AttachmentFileType(ext: url.pathExtension)
         self.fileSize = fileSize > 0 ? fileSize : url.fileSize
     }
     
+    /// Init an uploader item with a given uploaded image attachment.
+    ///
+    /// - Parameters:
+    ///     - attachment: an uploaded attachment.
+    ///     - previewImage: a preview of the uploaded image.
+    ///     - previewImageGifData: a preview of the uploaded gif image data.
+    public init(attachment: Attachment, previewImage image: UIImage, previewImageGifData gifData: Data? = nil) {
+        channel = nil
+        url = attachment.url
+        type = .image
+        self.image = image
+        self.gifData = gifData
+        fileName = ""
+        fileType = gifData == nil ? .generic : .gif
+        fileSize = 0
+        self.attachment = attachment
+    }
+    
+    /// Init an uploader item with a given uploaded file.
+    ///
+    /// - Parameters:
+    ///   - attachment: an uploaded file attachment.
+    ///   - fileName: an uploaded file name.
+    public init(attachment: Attachment, fileName: String) {
+        channel = nil
+        url = attachment.url
+        type = .file
+        image = nil
+        gifData = nil
+        self.fileName = fileName
+        fileType = attachment.file?.type ?? .generic
+        fileSize = attachment.file?.size ?? 0
+        self.attachment = attachment
+    }
+    
     private func createUploading() -> Observable<ProgressResponse<URL>> {
+        guard let channel = channel else {
+            return .empty()
+        }
+        
         let request: Observable<ProgressResponse<URL>>
         
         if type == .file || type == .video {
@@ -107,7 +151,10 @@ public final class UploaderItem: Equatable {
             let imageData: Data
             var mimeType: String = fileType.mimeType
             
-            if let url = url, let localImageData = try? Data(contentsOf: url) {
+            if let gifData = gifData {
+                imageData = gifData
+                mimeType = AttachmentFileType.gif.mimeType
+            } else if let url = url, let localImageData = try? Data(contentsOf: url) {
                 imageData = localImageData
             } else if let encodedImageData = image?.jpegData(compressionQuality: 0.9) {
                 imageData = encodedImageData

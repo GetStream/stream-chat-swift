@@ -19,7 +19,10 @@ extension ComposerView {
         return stackView
     }
     
-    func addFile(_ item: UploaderItem) {
+    /// Add a file upload item for message attachments.
+    ///
+    /// - Parameter item: a file upload item.
+    public func addFileUploaderItem(_ item: UploaderItem) {
         guard let uploader = uploader else {
             return
         }

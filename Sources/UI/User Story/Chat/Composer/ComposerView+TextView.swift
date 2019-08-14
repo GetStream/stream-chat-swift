@@ -49,7 +49,7 @@ extension ComposerView {
         
         var height = min(max(height + 2 * textViewPadding, CGFloat.composerHeight), CGFloat.composerMaxHeight)
         textView.isScrollEnabled = height == CGFloat.composerMaxHeight
-        imagesCollectionView.isHidden = isUploaderImagesEmpty
+        imagesCollectionView.isHidden = imageUploaderItems.isEmpty
         filesStackView.isHidden = isUploaderFilesEmpty
         var textViewTopOffset = textViewPadding
         

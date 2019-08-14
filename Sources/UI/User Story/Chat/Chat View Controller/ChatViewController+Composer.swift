@@ -33,15 +33,15 @@ extension ChatViewController {
     }
     
     func setupComposerView() {
-        if composerAddFileView == nil {
+        composerView.addToSuperview(view)
+        
+        if composerAddFileContainerView == nil {
             composerView.attachmentButton.isHidden = true
         } else {
             composerView.attachmentButton.rx.tap
                 .subscribe(onNext: { [weak self] in self?.showAddFileView() })
                 .disposed(by: disposeBag)
         }
-        
-        composerView.addToSuperview(view)
         
         composerView.textView.rx.text
             .skip(1)
@@ -91,7 +91,7 @@ extension ChatViewController {
         showCommandsIfNeeded(for: trimmedText)
         
         // Send command by <Return> key.
-        if composerCommandsView.shouldBeShown, text.contains("\n"), trimmedText.contains(" ") {
+        if composerCommandsContainerView.shouldBeShown, text.contains("\n"), trimmedText.contains(" ") {
             composerView.textView.text = trimmedText
             send()
         }
@@ -106,7 +106,7 @@ extension ChatViewController {
         }
         
         if isMessageEditing {
-            composerEditingHelperView.animate(show: false)
+            composerEditingContainerView.animate(show: false)
         }
         
         composerView.isEnabled = false
@@ -149,7 +149,7 @@ extension ChatViewController {
 // MARK: - Composer Edit
 
 extension ChatViewController {
-    func createComposerEditingHelperView() -> ComposerHelperContainerView {
+    func createComposerEditingContainerView() -> ComposerHelperContainerView {
         let container = createComposerHelperContainerView(title: "Edit message")
         
         container.closeButton.rx.tap
@@ -158,7 +158,7 @@ extension ChatViewController {
                     self.channelPresenter?.editMessage = nil
                     self.composerView.reset()
                     self.hideAddFileView()
-                    self.composerEditingHelperView.animate(show: false)
+                    self.composerEditingContainerView.animate(show: false)
                     
                     if self.composerView.textView.isFirstResponder {
                         self.composerView.textView.resignFirstResponder()
@@ -175,7 +175,7 @@ extension ChatViewController {
 
 extension ChatViewController {
     
-    func createComposerCommandsView() -> ComposerHelperContainerView {
+    func createComposerCommandsContainerView() -> ComposerHelperContainerView {
         let container = createComposerHelperContainerView(title: "Commands", closeButtonIsHidden: true)
         container.isEnabled = !(channelPresenter?.channel.config.commands.isEmpty ?? true)
         
@@ -196,7 +196,7 @@ extension ChatViewController {
     }
     
     private func showCommandsIfNeeded(for text: String) {
-        guard composerCommandsView.isEnabled else {
+        guard composerCommandsContainerView.isEnabled else {
             return
         }
         
@@ -221,14 +221,14 @@ extension ChatViewController {
         }
         
         guard let command = findCommand(in: text) else {
-            composerCommandsView.containerView.arrangedSubviews.forEach { $0.isHidden = false }
+            composerCommandsContainerView.containerView.arrangedSubviews.forEach { $0.isHidden = false }
             return false
         }
         
         var visible = false
         let hasSpace = text.contains(" ")
         
-        composerCommandsView.containerView.arrangedSubviews.forEach {
+        composerCommandsContainerView.containerView.arrangedSubviews.forEach {
             if let commandView = $0 as? ComposerCommandView {
                 commandView.isHidden = hasSpace ? commandView.command != command : !commandView.command.hasPrefix(command)
                 visible = visible || !commandView.isHidden
@@ -239,11 +239,11 @@ extension ChatViewController {
     }
     
     private func showCommands(show: Bool = true) {
-        composerCommandsView.animate(show: show)
+        composerCommandsContainerView.animate(show: show)
         composerView.textView.autocorrectionType = show ? .no : .default
         
-        if composerEditingHelperView.isHidden == false {
-            composerEditingHelperView.moveContainerViewPosition(aboveView: show ? composerCommandsView : nil)
+        if composerEditingContainerView.isHidden == false {
+            composerEditingContainerView.moveContainerViewPosition(aboveView: show ? composerCommandsContainerView : nil)
         }
     }
     
@@ -264,7 +264,7 @@ extension ChatViewController {
     /// Creates a add files container view for the composer view when the add button ⊕ is tapped.
     ///
     /// - Returns: a container helper view.
-    open func createComposerAddFileView(title: String) -> ComposerHelperContainerView? {
+    open func createComposerAddFileContainerView(title: String) -> ComposerHelperContainerView? {
         guard !composerAddFileTypes.isEmpty else {
             return nil
         }
@@ -331,45 +331,47 @@ extension ChatViewController {
     }
     
     private func showAddFileView() {
-        guard let composerAddFileView = composerAddFileView, !composerAddFileView.containerView.arrangedSubviews.isEmpty else {
+        guard let composerAddFileContainerView = composerAddFileContainerView,
+            !composerAddFileContainerView.containerView.arrangedSubviews.isEmpty else {
             return
         }
         
         showCommands(show: false)
         
-        composerAddFileView.containerView.arrangedSubviews.forEach { subview in
+        composerAddFileContainerView.containerView.arrangedSubviews.forEach { subview in
             if let addFileView = subview as? ComposerAddFileView {
                 if case .file = addFileView.sourceType {
-                    addFileView.isHidden = !composerView.isUploaderImagesEmpty
+                    addFileView.isHidden = !composerView.imageUploaderItems.isEmpty
                 } else {
                     addFileView.isHidden = !composerView.isUploaderFilesEmpty
                 }
             }
         }
         
-        let subviews = composerAddFileView.containerView.arrangedSubviews.filter { $0.isHidden == false }
+        let subviews = composerAddFileContainerView.containerView.arrangedSubviews.filter { $0.isHidden == false }
         
         if subviews.count == 1, let first = subviews.first as? ComposerAddFileView {
             first.tap()
         } else {
-            composerAddFileView.animate(show: true)
+            composerAddFileContainerView.animate(show: true)
             
-            if composerEditingHelperView.isHidden == false {
-                composerEditingHelperView.moveContainerViewPosition(aboveView: composerAddFileView)
+            if composerEditingContainerView.isHidden == false {
+                composerEditingContainerView.moveContainerViewPosition(aboveView: composerAddFileContainerView)
             }
         }
     }
     
-    private func hideAddFileView() {
-        guard let composerAddFileView = composerAddFileView else {
+    /// Hide add file view.
+    public func hideAddFileView() {
+        guard let composerAddFileContainerView = composerAddFileContainerView else {
             return
         }
         
-        composerAddFileView.animate(show: false)
-        composerCommandsView.containerView.arrangedSubviews.forEach { $0.isHidden = false }
+        composerAddFileContainerView.animate(show: false)
+        composerCommandsContainerView.containerView.arrangedSubviews.forEach { $0.isHidden = false }
         
-        if composerEditingHelperView.isHidden == false {
-            composerEditingHelperView.moveContainerViewPosition()
+        if composerEditingContainerView.isHidden == false {
+            composerEditingContainerView.moveContainerViewPosition()
         }
     }
     
@@ -389,7 +391,7 @@ extension ChatViewController {
             }
             
             if let pickedImage = pickedImage, let uploaderItem = UploaderItem(channel: channel, pickedImage: pickedImage) {
-                self?.composerView.addImage(uploaderItem)
+                self?.composerView.addImageUploaderItem(uploaderItem)
             }
         }
         
@@ -404,7 +406,7 @@ extension ChatViewController {
             .takeUntil(documentPickerViewController.rx.deallocated)
             .subscribe(onNext: { [weak self] in
                 if let self = self, let channel = self.channelPresenter?.channel {
-                    $0.forEach { url in self.composerView.addFile(UploaderItem(channel: channel, url: url)) }
+                    $0.forEach { url in self.composerView.addFileUploaderItem(UploaderItem(channel: channel, url: url)) }
                 }
             })
             .disposed(by: disposeBag)

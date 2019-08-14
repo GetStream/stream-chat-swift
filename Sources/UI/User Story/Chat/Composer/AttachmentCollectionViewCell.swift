@@ -11,6 +11,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import RxGesture
+import SwiftyGif
 
 /// An image attachment collection view cell.
 public final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable {
@@ -79,6 +80,18 @@ public final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable 
         progressView.isHidden = true
         progressView.progress = 0
         disposeBag = DisposeBag()
+        removeGifAnimation()
+    }
+    
+    func startGifAnimation(with gifData: Data) {
+        if let animatedImage = try? UIImage(gifData: gifData, levelOfIntegrity: 0.4) {
+            imageView.setGifImage(animatedImage)
+        }
+    }
+    
+    func removeGifAnimation() {
+        imageView.stopAnimating()
+        imageView.gifImage = nil
     }
     
     func updateForProgress(_ progress: Float) {
@@ -103,7 +116,7 @@ public final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable 
     func updateRemoveButton(tintColor: UIColor?, action: @escaping () -> Void) {
         if let tintColor = tintColor {
             removeButton.tintColor = tintColor
-            removeButton.backgroundColor = tintColor.oppositeBlackAndWhite.withAlphaComponent(0.5)
+            removeButton.backgroundColor = tintColor.oppositeBlackAndWhite.withAlphaComponent(0.4)
         }
         
         removeButton.rx.tap.subscribe(onNext: action).disposed(by: disposeBag)

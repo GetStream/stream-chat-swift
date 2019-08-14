@@ -1,7 +1,7 @@
 github "1024jp/GzipSwift" "5.0.0"
 github "ReactiveX/RxSwift" "5.0.1"
 github "RxSwiftCommunity/RxGesture" "3.0.0"
-github "SnapKit/SnapKit" "5.0.0"
+github "SnapKit/SnapKit" "5.0.1"
 github "ashleymills/Reachability.swift" "v4.3.1"
 github "daltoniam/Starscream" "3.1.0"
 github "kean/Nuke" "8.0.1"
