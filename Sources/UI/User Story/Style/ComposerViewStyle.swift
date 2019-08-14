@@ -28,6 +28,8 @@ public struct ComposerViewStyle {
     public var placeholderTextColor: UIColor
     /// A background color.
     public var backgroundColor: UIColor
+    /// A background color for a helper container, e.g. att attachments menu, commands suggestions.
+    public var helperContainerBackgroundColor: UIColor
     /// A corner radius.
     public var cornerRadius: CGFloat
     /// A composer height.
@@ -60,6 +62,7 @@ public struct ComposerViewStyle {
                 textColor: UIColor = .black,
                 placeholderTextColor: UIColor = .chatGray,
                 backgroundColor: UIColor = .clear,
+                helperContainerBackgroundColor: UIColor = .white,
                 cornerRadius: CGFloat = .composerCornerRadius,
                 height: CGFloat = .composerHeight,
                 edgeInsets: UIEdgeInsets = .all(.messageEdgePadding),
@@ -71,6 +74,7 @@ public struct ComposerViewStyle {
         self.textColor = textColor
         self.placeholderTextColor = placeholderTextColor
         self.backgroundColor = backgroundColor
+        self.helperContainerBackgroundColor = helperContainerBackgroundColor
         self.cornerRadius = cornerRadius
         self.height = height
         self.edgeInsets = edgeInsets

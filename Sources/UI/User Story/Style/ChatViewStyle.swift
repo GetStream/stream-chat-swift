@@ -26,6 +26,7 @@ public struct ChatViewStyle {
                                                 nameColor: .white,
                                                 messageUnreadColor: .white),
                       composer: ComposerViewStyle(textColor: .white,
+                                                  helperContainerBackgroundColor: .chatDarkGray,
                                                   states: [.active: .init(tintColor: .chatBlue, borderWidth: 2),
                                                            .edit: .init(tintColor: .chatGreen, borderWidth: 2),
                                                            .disabled: .init(tintColor: .chatGray, borderWidth: 2)]),
