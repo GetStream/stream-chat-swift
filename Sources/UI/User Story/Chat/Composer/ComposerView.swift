@@ -26,6 +26,7 @@ public final class ComposerView: UIView {
                 layer.borderColor = styleState.tintColor.cgColor
                 textView.tintColor = styleState.tintColor
                 sendButton.tintColor = styleState.tintColor
+                sendButton.setTitleColor(styleState.tintColor, for: .normal)
                 attachmentButton.tintColor = styleState.tintColor
             }
         }
@@ -97,12 +98,20 @@ public final class ComposerView: UIView {
     public private(set) lazy var sendButton: UIButton = {
         let button = UIButton(frame: .zero)
         button.setImage(UIImage.Icons.send, for: .normal)
-        button.snp.makeConstraints { $0.width.equalTo(CGFloat.composerButtonWidth).priority(999) }
         button.isHidden = true
         button.backgroundColor = backgroundColor
+        button.titleLabel?.font = .chatMediumBold
+        
+        button.snp.makeConstraints {
+            sendButtonWidthConstraint = $0.width.equalTo(CGFloat.composerButtonWidth).priority(999).constraint
+        }
+        
         return button
     }()
     
+    private var sendButtonWidthConstraint: Constraint?
+    private var sendButtonRightConstraint: Constraint?
+
     /// An attachment button.
     public private(set) lazy var attachmentButton: UIButton = {
         let button = UIButton(type: .custom)
@@ -174,7 +183,8 @@ public final class ComposerView: UIView {
         
         sendButton.snp.makeConstraints { make in
             make.height.equalTo(style.height)
-            make.right.bottom.equalToSuperview()
+            make.bottom.equalToSuperview()
+            sendButtonRightConstraint = make.right.equalToSuperview().constraint
         }
         
         // Images Collection View.
@@ -320,5 +330,36 @@ public final class ComposerView: UIView {
             && imageUploaderItems.isEmpty
             && isUploaderFilesEmpty
             && text.isEmpty ? .normal : (isEditing ? .edit : .active)
+    }
+}
+
+// MARK: - Setup Send Button
+
+extension ComposerView {
+    
+    /// Replace send button image with a new image.
+    ///
+    /// - Parameters:
+    ///   - image: a new send button image.
+    ///   - buttonWidth: update the button width (optional).
+    public func setSendButtonImage(_ image: UIImage, buttonWidth: CGFloat? = nil) {
+        sendButton.setImage(image, for: .normal)
+        
+        if let buttonWidth = buttonWidth {
+            sendButtonWidthConstraint?.update(offset: max(buttonWidth, image.size.width))
+        }
+    }
+    
+    /// Replace send button image with a title.
+    ///
+    /// - Parameters:
+    ///   - title: a send button title
+    ///   - rightEdgeOffset: a right edge inset for the title (optional).
+    public func setSendButtonTitle(_ title: String, rightEdgeOffset: CGFloat = .messageEdgePadding) {
+        sendButton.setImage(nil, for: .normal)
+        sendButton.setTitle(title, for: .normal)
+        sendButtonWidthConstraint?.deactivate()
+        sendButtonWidthConstraint = nil
+        sendButtonRightConstraint?.update(offset: -rightEdgeOffset)
     }
 }
