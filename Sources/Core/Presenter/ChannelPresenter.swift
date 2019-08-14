@@ -617,12 +617,6 @@ extension ChannelPresenter {
     ///     - text: a message text
     ///     - completion: a completion blocks
     public func send(text: String) -> Observable<MessageResponse> {
-        var text = text
-        
-        if text.count > channel.config.maxMessageLength {
-            text = String(text.prefix(channel.config.maxMessageLength))
-        }
-        
         let messageId = editMessage?.id ?? ""
         var attachments = uploader.items.compactMap({ $0.attachment })
         let parentId = parentMessage?.id

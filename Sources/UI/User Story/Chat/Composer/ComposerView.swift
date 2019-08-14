@@ -26,8 +26,13 @@ public final class ComposerView: UIView {
                 layer.borderColor = styleState.tintColor.cgColor
                 textView.tintColor = styleState.tintColor
                 sendButton.tintColor = styleState.tintColor
-                sendButton.setTitleColor(styleState.tintColor, for: .normal)
                 attachmentButton.tintColor = styleState.tintColor
+                
+                if self.styleState == .edit {
+                    sendButton.setTitleColor(styleState.tintColor, for: .normal)
+                } else if self.styleState == .active {
+                    sendButton.setTitleColor(styleState.tintColor, for: .normal)
+                }
             }
         }
     }
@@ -98,7 +103,6 @@ public final class ComposerView: UIView {
     public private(set) lazy var sendButton: UIButton = {
         let button = UIButton(frame: .zero)
         button.setImage(UIImage.Icons.send, for: .normal)
-        button.isHidden = true
         button.backgroundColor = backgroundColor
         button.titleLabel?.font = .chatMediumBold
         
@@ -179,6 +183,11 @@ public final class ComposerView: UIView {
         }
         
         // Add buttons.
+        sendButton.isHidden = style.sendButtonVisibility == .whenActive
+        sendButton.isEnabled = style.sendButtonVisibility == .whenActive
+        sendButton.setTitleColor(style.style(with: .active).tintColor, for: .normal)
+        sendButton.setTitleColor(style.style(with: .disabled).tintColor, for: .disabled)
+        
         addSubview(sendButton)
         
         sendButton.snp.makeConstraints { make in
@@ -306,7 +315,10 @@ public final class ComposerView: UIView {
     /// Toggle `isUserInteractionEnabled` states for all child views.
     public var isEnabled: Bool = true {
         didSet {
-            sendButton.isEnabled = isEnabled
+            if let style = style {
+                sendButton.isEnabled = style.sendButtonVisibility == .whenActive ? isEnabled : false
+            }
+            
             attachmentButton.isEnabled = isEnabled
             imagesCollectionView.isUserInteractionEnabled = isEnabled
             imagesCollectionView.alpha = isEnabled ? 1 : 0.5
@@ -322,7 +334,16 @@ public final class ComposerView: UIView {
     
     func updateSendButton() {
         let isAnyFileUploaded = uploader?.items.first(where: { $0.attachment != nil }) != nil
-        sendButton.isHidden = text.count == 0 && !isAnyFileUploaded
+        
+        if let style = style {
+            let isHidden = text.count == 0 && !isAnyFileUploaded
+            
+            if style.sendButtonVisibility == .whenActive {
+                sendButton.isHidden = isHidden
+            } else {
+                sendButton.isEnabled = !isHidden
+            }
+        }
     }
     
     func updateStyleState() {

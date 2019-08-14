@@ -81,3 +81,12 @@ extension ChatViewStyle: Hashable {
         hasher.combine(outgoingMessage)
     }
 }
+
+/// A chat style visibility type.
+///
+/// - always: show an element always visible, even if it disabled.
+/// - whenActive: an element will be hidden until it will change own state to active.
+public enum ChatViewStyleVisibility {
+    case always
+    case whenActive
+}

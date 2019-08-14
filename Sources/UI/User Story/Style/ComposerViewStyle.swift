@@ -34,6 +34,8 @@ public struct ComposerViewStyle {
     public var height: CGFloat
     /// Edge insets.
     public var edgeInsets: UIEdgeInsets
+    /// A send button visibility.
+    public var sendButtonVisibility: ChatViewStyleVisibility
     
     /// Composer states.
     ///
@@ -44,7 +46,6 @@ public struct ComposerViewStyle {
     ///  .disabled: .init(tintColor: .chatGray, borderWidth: 2)]
     /// ```
     public var states: [State: Style]
-    
     
     /// Init a composer style.
     ///
@@ -62,6 +63,7 @@ public struct ComposerViewStyle {
                 cornerRadius: CGFloat = .composerCornerRadius,
                 height: CGFloat = .composerHeight,
                 edgeInsets: UIEdgeInsets = .all(.messageEdgePadding),
+                sendButtonVisibility: ChatViewStyleVisibility = .whenActive,
                 states: States = [.active: .init(tintColor: .chatLightBlue, borderWidth: 2),
                                   .edit: .init(tintColor: .chatGreen, borderWidth: 2),
                                   .disabled: .init(tintColor: .chatGray, borderWidth: 2)]) {
@@ -72,6 +74,7 @@ public struct ComposerViewStyle {
         self.cornerRadius = cornerRadius
         self.height = height
         self.edgeInsets = edgeInsets
+        self.sendButtonVisibility = sendButtonVisibility
         self.states = states
     }
     
