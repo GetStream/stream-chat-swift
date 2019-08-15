@@ -272,6 +272,10 @@ extension ChatViewController {
             UIView.performWithoutAnimation {
                 tableView.deleteRows(at: [.row(row)], with: .none)
             }
+            
+        case .error(let message):
+            Banners.shared.show(message, delay: 5, backgroundColor: .messageErrorBackground, borderColor: .messageErrorBorder)
+            
         case .footerUpdated:
             updateFooterView()
         }

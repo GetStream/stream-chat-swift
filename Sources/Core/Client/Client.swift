@@ -56,8 +56,8 @@ public final class Client {
     ///     // Filter connection statuses only for connected.
     ///     .connected()
     ///     // Send a message request to a channel.
-    ///     .flatMapLatest { [weak self] in
-    ///         self?.channel.send(message: "Hello world!") ?? .empty()
+    ///     .flatMapLatest {
+    ///         // Make a request here.
     ///     }
     ///     // Subscribe for a result.
     ///     .subscribe(onNext: { messageResponse in
@@ -65,6 +65,27 @@ public final class Client {
     ///     })
     ///     .disposed(by: disposeBag)
     /// ```
+    ///
+    /// All requests from the client or a channel are wrapped with connection events.
+    /// You can do requests directly.
+    ///
+    /// For example:
+    /// ```
+    /// // Find all channels with type `messaging`.
+    /// let channelsQuery = ChannelsQuery(filter: .key("type", .equal(to: "messaging")))
+    /// Client.shared.channels(query: channelsQuery)
+    ///     // Here we will get channels when web socket will be connected.
+    ///     // Select the first channel.
+    ///     .map { $0.first }
+    ///     .unwrap()
+    ///     // Send a message to the first channel.
+    ///     .flatMapLatest { $0.send(message: Message(text: "Hi!")) }
+    ///     .subscribe(onNext: { result in
+    ///         print(result)
+    ///     })
+    ///     .disposed(by: disposeBag)
+    /// ```
+    ///
     public private(set) lazy var connection = createObservableConnection()
     
     /// Init a network client.

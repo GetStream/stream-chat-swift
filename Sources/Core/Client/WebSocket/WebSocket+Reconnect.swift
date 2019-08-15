@@ -17,7 +17,7 @@ extension WebSocket {
         let error: Error
     }
     
-    struct Error: Decodable {
+    struct Error: Swift.Error, Decodable {
         private enum CodingKeys: String, CodingKey {
             case code
             case message
@@ -33,16 +33,24 @@ extension WebSocket {
 extension WebSocket {
     
     func willReconnectAfterError(_ error: Swift.Error) -> Bool {
-        if let lastJSONError = lastJSONError, lastJSONError.code == 1000 {
-            return false
-        }
-        
-        if let wsError = error as? WSError, wsError.code == 1000 {
+        if isStopError(error) {
             return false
         }
         
         if InternetConnection.shared.isAvailable {
             reconnect()
+            return true
+        }
+        
+        return false
+    }
+    
+    func isStopError(_ error: Swift.Error) -> Bool {
+        if let lastJSONError = lastJSONError, lastJSONError.code == 1000 {
+            return true
+        }
+        
+        if let wsError = error as? WSError, wsError.code == 1000 {
             return true
         }
         

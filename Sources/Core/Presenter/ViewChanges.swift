@@ -26,6 +26,8 @@ public enum ViewChanges: Equatable {
     case itemMoved(fromRow: Int, toRow: Int, _ items: [ChatItem])
     /// Update fiiter.
     case footerUpdated
+    /// Error message.
+    case error(String)
 }
 
 extension ViewChanges: CustomStringConvertible {
@@ -45,6 +47,8 @@ extension ViewChanges: CustomStringConvertible {
             return "<itemMoved\(items.count): \(fromRow) -> \(toRow)>"
         case .footerUpdated:
             return "<footerUpdated>"
+        case .error(let message):
+            return "<error: \(message)>"
         }
     }
 }

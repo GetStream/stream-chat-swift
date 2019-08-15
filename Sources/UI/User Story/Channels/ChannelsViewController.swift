@@ -170,6 +170,9 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             self.items = items
             tableView.reloadData()
             
+        case .error(let message):
+            Banners.shared.show(message, delay: 5, backgroundColor: .messageErrorBackground, borderColor: .messageErrorBorder)
+            
         case .none, .footerUpdated:
             return
         }

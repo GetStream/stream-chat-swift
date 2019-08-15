@@ -42,7 +42,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
     /// An observable view changes (see `ViewChanges`).
-    public private(set) lazy var changes = Driver.merge(requestChanges, webSocketChanges)
+    public private(set) lazy var changes = Driver.merge(requestChanges, webSocketChanges, connectionErrors)
     
     private lazy var requestChanges: Driver<ViewChanges> = prepareRequest(startPaginationWith: pageSize)
         .map { [weak self] in self?.channelsQuery(pagination: $0) }

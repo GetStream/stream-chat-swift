@@ -82,7 +82,8 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     /// An observable view changes (see `ViewChanges`).
     public private(set) lazy var changes = Driver.merge(parentMessage == nil ? channelRequest : replyRequest,
                                                         webSocketChanges,
-                                                        ephemeralChanges)
+                                                        ephemeralChanges,
+                                                        connectionErrors)
     
     private lazy var channelRequest: Driver<ViewChanges> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
@@ -349,7 +350,7 @@ extension ChannelPresenter {
         }
         
         switch changes {
-        case .none, .footerUpdated:
+        case .none, .footerUpdated, .error:
             return changes
             
         case let .reloaded(row, items):

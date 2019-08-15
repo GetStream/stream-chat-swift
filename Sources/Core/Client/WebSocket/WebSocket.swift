@@ -110,7 +110,7 @@ public final class WebSocket {
         if webSocket.isConnected {
             handshakeTimer.suspend()
             webSocket.disconnect()
-            logger?.log("💔", "Disconnected")
+            logger?.log("💔", "Disconnected deliberately")
         }
         
         cancelBackgroundWork()
@@ -169,12 +169,24 @@ extension WebSocket {
             handshakeTimer.suspend()
             
             if let error = error {
-                ClientLogger.log("🦄", error, message: "💔😡 Disconnected by error:")
+                var errorMessage = "💔😡 Disconnected by error"
+                
+                if let lastJSONError = lastJSONError {
+                    errorMessage += ": \(lastJSONError)"
+                }
+                
+                ClientLogger.log("🦄", error, message: errorMessage)
                 ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
-            }
-            
-            if let error = error, willReconnectAfterError(error) {
-                consecutiveFailures += 1
+                
+                if willReconnectAfterError(error) {
+                    consecutiveFailures += 1
+                } else {
+                    consecutiveFailures = 0
+                    
+                    if let lastJSONError = lastJSONError, isStopError(error) {
+                        return .disconnected(lastJSONError)
+                    }
+                }
             } else {
                 consecutiveFailures = 0
             }
