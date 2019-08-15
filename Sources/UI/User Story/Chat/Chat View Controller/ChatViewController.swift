@@ -79,7 +79,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         
         presenter.changes
             .filter { [weak self] _ in self?.changesEnabled ?? false }
-            .do(onNext: { [weak self] _ in self?.sendReadIfPossible() })
+            .do(onNext: { [weak self] _ in self?.markReadIfPossible() })
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
         
@@ -108,7 +108,7 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
     open override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         startGifsAnimations()
-        sendReadIfPossible()
+        markReadIfPossible()
     }
     
     open override func viewWillDisappear(_ animated: Bool) {
@@ -155,8 +155,8 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         return nil
     }
     
-    private func sendReadIfPossible() {
-        channelPresenter?.sendReadIfPossible().subscribe().disposed(by: disposeBag)
+    private func markReadIfPossible() {
+        channelPresenter?.markReadIfPossible().subscribe().disposed(by: disposeBag)
     }
 }
 

@@ -54,11 +54,11 @@ public extension Channel {
         return Client.shared.rx.connectedRequest(endpoint: endpoint)
     }
     
-    /// Send a message read event.
+    /// Mark messages in the channel as readed.
     ///
     /// - Returns: an observable event response.
-    func sendRead() -> Observable<Event> {
-        let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .sendRead(self))
+    func markRead() -> Observable<Event> {
+        let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .markRead(self))
         return Client.shared.connectedRequest(request.map({ $0.event }))
     }
     

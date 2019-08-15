@@ -678,7 +678,7 @@ extension ChannelPresenter {
     /// Send Read event if the app is active.
     ///
     /// - Returns: an observable completion.
-    public func sendReadIfPossible() -> Observable<Void> {
+    public func markReadIfPossible() -> Observable<Void> {
         guard let oldUnreadMessageRead = unreadMessageReadMVar.get() else {
             Client.shared.logger?.log("🎫", "Skip read.")
             return .empty()
@@ -690,7 +690,7 @@ extension ChannelPresenter {
             .subscribeOn(MainScheduler.instance)
             .filter { UIApplication.shared.appState == .active }
             .do(onNext: { Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(oldUnreadMessageRead.lastReadDate)") })
-            .flatMap { [weak self] in self?.channel.sendRead() ?? .empty() }
+            .flatMap { [weak self] in self?.channel.markRead() ?? .empty() }
             .do(onNext: { [weak self] _ in
                 self?.updateUnreadMessageRead(nil)
                 self?.isReadSubject.onNext(())

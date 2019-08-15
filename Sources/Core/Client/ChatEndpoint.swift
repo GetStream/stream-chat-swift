@@ -41,7 +41,7 @@ public enum Endpoint {
     // Delete an uploaded file.
     case deleteFile(URL, Channel)
     /// Send a read event.
-    case sendRead(Channel)
+    case markRead(Channel)
     /// Send an event to a channel.
     case sendEvent(EventType, Channel)
     /// Send a message action.
@@ -110,7 +110,7 @@ extension Endpoint {
             return path(to: messageAction.message, "action")
         case .deleteMessage(let message):
             return path(to: message)
-        case .sendRead(let channel):
+        case .markRead(let channel):
             return path(to: channel, "read")
         case .addReaction(_, let message):
             return path(to: message, "reaction")
@@ -191,7 +191,7 @@ extension Endpoint {
             return ["reaction": ["type": reactionType]]
         case .sendEvent(let event, _):
             return ["event": ["type": event]]
-        case .sendRead:
+        case .markRead:
             return EmptyData()
             
         case .updateUsers(let users):
