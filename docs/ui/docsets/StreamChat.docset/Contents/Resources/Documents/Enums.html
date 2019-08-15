@@ -14,7 +14,7 @@
     <a title="Enumerations  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">StreamChat Docs</a> (89% documented)</p>
+        <p><a href="index.html">StreamChat Docs</a> (84% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -32,16 +32,16 @@
             <a href="Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="Classes/AttachmentCollectionViewCell.html">AttachmentCollectionViewCell</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/AvatarView.html">AvatarView</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/ChannelPresenter.html">ChannelPresenter</a>
+                <a href="Classes/Banners.html">Banners</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/ChannelTableViewCell.html">ChannelTableViewCell</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes/ChannelsPresenter.html">ChannelsPresenter</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/ChannelsViewController.html">ChannelsViewController</a>
@@ -50,13 +50,22 @@
                 <a href="Classes/ChatViewController.html">ChatViewController</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/ChatViewController/ComposerAddFileType.html">– ComposerAddFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ComposerAddFileView.html">ComposerAddFileView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ComposerAddFileView/SourceType.html">– SourceType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ComposerHelperContainerView.html">ComposerHelperContainerView</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/ComposerView.html">ComposerView</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Classes.html#/s:10StreamChat9PresenterC">Presenter</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/RxKeyboard.html">RxKeyboard</a>
@@ -73,10 +82,7 @@
             <a href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Enums/ChatItem.html">ChatItem</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Enums/ViewChanges.html">ViewChanges</a>
+                <a href="Enums/ChatViewStyleVisibility.html">ChatViewStyleVisibility</a>
               </li>
             </ul>
           </li>
@@ -84,16 +90,7 @@
             <a href="Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a href="Extensions/Array.html">Array</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="Extensions/CGFloat.html">CGFloat</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Extensions/Date.html">Date</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="Extensions/DateFormatter.html">DateFormatter</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/IndexPath.html">IndexPath</a>
@@ -106,6 +103,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/UIDocumentPickerViewController.html">UIDocumentPickerViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/UIEdgeInsets.html">UIEdgeInsets</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/UIFont.html">UIFont</a>
@@ -142,6 +142,9 @@
           <li class="nav-group-name">
             <a href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Protocols.html#/s:10StreamChat33ComposerAddFileCustomSourceIdTypeP">ComposerAddFileCustomSourceIdType</a>
+              </li>
               <li class="nav-group-task">
                 <a href="Protocols/RxKeyboardType.html">RxKeyboardType</a>
               </li>
@@ -194,9 +197,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat0B4ItemO"></a>
-                    <a name="//apple_ref/swift/Enum/ChatItem" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat0B4ItemO">ChatItem</a>
+                    <a name="/s:10StreamChat0B19ViewStyleVisibilityO"></a>
+                    <a name="//apple_ref/swift/Enum/ChatViewStyleVisibility" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat0B19ViewStyleVisibilityO">ChatViewStyleVisibility</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -204,49 +207,20 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A chat item type for view elements.</p>
+                        <p>A chat style visibility type.</p>
 
-                        <a href="Enums/ChatItem.html" class="slightly-smaller">See more</a>
+<ul>
+<li>always: show an element always visible, even if it disabled.</li>
+<li>whenActive: an element will be hidden until it will change own state to active.</li>
+</ul>
+
+                        <a href="Enums/ChatViewStyleVisibility.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ChatItem</span> <span class="p">:</span> <span class="kt">Equatable</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:10StreamChat11ViewChangesO"></a>
-                    <a name="//apple_ref/swift/Enum/ViewChanges" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat11ViewChangesO">ViewChanges</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A view changes.</p>
-
-<p>ViewChanges describes how a view should be updated depends on a data response.</p>
-
-                        <a href="Enums/ViewChanges.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ViewChanges</span> <span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ChatViewStyleVisibility</span></code></pre>
 
                         </div>
                       </div>
@@ -258,7 +232,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-07-25)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-15)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

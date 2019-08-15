@@ -14,7 +14,7 @@
     <a title="ComposerViewStyle Structure Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (85% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (84% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -32,6 +32,9 @@
             <a href="../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Classes/AttachmentCollectionViewCell.html">AttachmentCollectionViewCell</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/AvatarView.html">AvatarView</a>
               </li>
               <li class="nav-group-task">
@@ -47,6 +50,18 @@
                 <a href="../Classes/ChatViewController.html">ChatViewController</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/ChatViewController/ComposerAddFileType.html">– ComposerAddFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ComposerAddFileView.html">ComposerAddFileView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ComposerAddFileView/SourceType.html">– SourceType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ComposerHelperContainerView.html">ComposerHelperContainerView</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/ComposerView.html">ComposerView</a>
               </li>
               <li class="nav-group-task">
@@ -60,6 +75,14 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/WebViewController.html">WebViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/ChatViewStyleVisibility.html">ChatViewStyleVisibility</a>
               </li>
             </ul>
           </li>
@@ -80,6 +103,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIDocumentPickerViewController.html">UIDocumentPickerViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIEdgeInsets.html">UIEdgeInsets</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIFont.html">UIFont</a>
@@ -116,6 +142,9 @@
           <li class="nav-group-name">
             <a href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols.html#/s:10StreamChat33ComposerAddFileCustomSourceIdTypeP">ComposerAddFileCustomSourceIdType</a>
+              </li>
               <li class="nav-group-task">
                 <a href="../Protocols/RxKeyboardType.html">RxKeyboardType</a>
               </li>
@@ -161,7 +190,7 @@
             <h1>ComposerViewStyle</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ComposerViewStyle</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ComposerViewStyle</span></code></pre>
 
                 </div>
               </div>
@@ -315,6 +344,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10StreamChat17ComposerViewStyleV30helperContainerBackgroundColorSo7UIColorCvp"></a>
+                    <a name="//apple_ref/swift/Property/helperContainerBackgroundColor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV30helperContainerBackgroundColorSo7UIColorCvp">helperContainerBackgroundColor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A background color for a helper container, e.g. att attachments menu, commands suggestions.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">helperContainerBackgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10StreamChat17ComposerViewStyleV12cornerRadius12CoreGraphics7CGFloatVvp"></a>
                     <a name="//apple_ref/swift/Property/cornerRadius" class="dashAnchor"></a>
                     <a class="token" href="#/s:10StreamChat17ComposerViewStyleV12cornerRadius12CoreGraphics7CGFloatVvp">cornerRadius</a>
@@ -333,6 +389,87 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">cornerRadius</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat17ComposerViewStyleV6height12CoreGraphics7CGFloatVvp"></a>
+                    <a name="//apple_ref/swift/Property/height" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV6height12CoreGraphics7CGFloatVvp">height</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A composer height.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">height</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat17ComposerViewStyleV10edgeInsetsSo06UIEdgeG0Vvp"></a>
+                    <a name="//apple_ref/swift/Property/edgeInsets" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV10edgeInsetsSo06UIEdgeG0Vvp">edgeInsets</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Edge insets.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">edgeInsets</span><span class="p">:</span> <span class="kt">UIEdgeInsets</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat17ComposerViewStyleV20sendButtonVisibilityAA0bdeH0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/sendButtonVisibility" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV20sendButtonVisibilityAA0bdeH0Ovp">sendButtonVisibility</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A send button visibility.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">sendButtonVisibility</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatViewStyleVisibility.html">ChatViewStyleVisibility</a></span></code></pre>
 
                         </div>
                       </div>
@@ -375,9 +512,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat17ComposerViewStyleV4font9textColor015placeholderTextH0010backgroundH012cornerRadius6statesACSo6UIFontC_So7UIColorCA2M12CoreGraphics7CGFloatVSDyAC5StateOAC0E0VGtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(font:textColor:placeholderTextColor:backgroundColor:cornerRadius:states:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV4font9textColor015placeholderTextH0010backgroundH012cornerRadius6statesACSo6UIFontC_So7UIColorCA2M12CoreGraphics7CGFloatVSDyAC5StateOAC0E0VGtcfc">init(font:textColor:placeholderTextColor:backgroundColor:cornerRadius:states:)</a>
+                    <a name="/s:10StreamChat17ComposerViewStyleV4font9textColor015placeholderTextH0010backgroundH0025helperContainerBackgroundH012cornerRadius6height10edgeInsets20sendButtonVisibility6statesACSo6UIFontC_So7UIColorCA3Q12CoreGraphics7CGFloatVATSo06UIEdgeS0VAA0bdeV0OSDyAC5StateOAC0E0VGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(font:textColor:placeholderTextColor:backgroundColor:helperContainerBackgroundColor:cornerRadius:height:edgeInsets:sendButtonVisibility:states:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV4font9textColor015placeholderTextH0010backgroundH0025helperContainerBackgroundH012cornerRadius6height10edgeInsets20sendButtonVisibility6statesACSo6UIFontC_So7UIColorCA3Q12CoreGraphics7CGFloatVATSo06UIEdgeS0VAA0bdeV0OSDyAC5StateOAC0E0VGtcfc">init(font:textColor:placeholderTextColor:backgroundColor:helperContainerBackgroundColor:cornerRadius:height:edgeInsets:sendButtonVisibility:states:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -396,7 +533,11 @@
             <span class="nv">textColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">black</span><span class="p">,</span>
             <span class="nv">placeholderTextColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span>
             <span class="nv">backgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">clear</span><span class="p">,</span>
+            <span class="nv">helperContainerBackgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">white</span><span class="p">,</span>
             <span class="nv">cornerRadius</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="o">.</span><span class="n">composerCornerRadius</span><span class="p">,</span>
+            <span class="nv">height</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="o">.</span><span class="n">composerHeight</span><span class="p">,</span>
+            <span class="nv">edgeInsets</span><span class="p">:</span> <span class="kt">UIEdgeInsets</span> <span class="o">=</span> <span class="o">.</span><span class="nf">all</span><span class="p">(</span><span class="o">.</span><span class="n">messageEdgePadding</span><span class="p">),</span>
+            <span class="nv">sendButtonVisibility</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatViewStyleVisibility.html">ChatViewStyleVisibility</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">whenActive</span><span class="p">,</span>
             <span class="nv">states</span><span class="p">:</span> <span class="kt"><a href="../Structs/ComposerViewStyle.html#/s:10StreamChat17ComposerViewStyleV6Statesa">States</a></span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="nv">active</span><span class="p">:</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">tintColor</span><span class="p">:</span> <span class="o">.</span><span class="n">chatLightBlue</span><span class="p">,</span> <span class="nv">borderWidth</span><span class="p">:</span> <span class="mi">2</span><span class="p">),</span>
                               <span class="o">.</span><span class="nv">edit</span><span class="p">:</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">tintColor</span><span class="p">:</span> <span class="o">.</span><span class="n">chatGreen</span><span class="p">,</span> <span class="nv">borderWidth</span><span class="p">:</span> <span class="mi">2</span><span class="p">),</span>
                               <span class="o">.</span><span class="nv">disabled</span><span class="p">:</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">tintColor</span><span class="p">:</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span> <span class="nv">borderWidth</span><span class="p">:</span> <span class="mi">2</span><span class="p">)])</span></code></pre>
@@ -535,32 +676,6 @@
                     </section>
                   </div>
                 </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:SH4hash4intoys6HasherVz_tF"></a>
-                    <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:SH4hash4intoys6HasherVz_tF">hash(into:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -623,10 +738,66 @@
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SQ2eeoiySbx_xtFZ"></a>
+                    <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SQ2eeoiySbx_xtFZ">==(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">ComposerViewStyle</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">ComposerViewStyle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SH4hash4intoys6HasherVz_tF"></a>
+                    <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SH4hash4intoys6HasherVz_tF">hash(into:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-12)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-15)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

@@ -14,7 +14,7 @@
     <a title="ComposerView Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (85% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (84% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -32,6 +32,9 @@
             <a href="../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Classes/AttachmentCollectionViewCell.html">AttachmentCollectionViewCell</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/AvatarView.html">AvatarView</a>
               </li>
               <li class="nav-group-task">
@@ -47,6 +50,18 @@
                 <a href="../Classes/ChatViewController.html">ChatViewController</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/ChatViewController/ComposerAddFileType.html">– ComposerAddFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ComposerAddFileView.html">ComposerAddFileView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ComposerAddFileView/SourceType.html">– SourceType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ComposerHelperContainerView.html">ComposerHelperContainerView</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/ComposerView.html">ComposerView</a>
               </li>
               <li class="nav-group-task">
@@ -60,6 +75,14 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/WebViewController.html">WebViewController</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/ChatViewStyleVisibility.html">ChatViewStyleVisibility</a>
               </li>
             </ul>
           </li>
@@ -80,6 +103,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIDocumentPickerViewController.html">UIDocumentPickerViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIEdgeInsets.html">UIEdgeInsets</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIFont.html">UIFont</a>
@@ -116,6 +142,9 @@
           <li class="nav-group-name">
             <a href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols.html#/s:10StreamChat33ComposerAddFileCustomSourceIdTypeP">ComposerAddFileCustomSourceIdType</a>
+              </li>
               <li class="nav-group-task">
                 <a href="../Protocols/RxKeyboardType.html">RxKeyboardType</a>
               </li>
@@ -229,6 +258,88 @@ You have to use the <code><a href="../Classes/ComposerView.html#/s:10StreamChat1
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10StreamChat12ComposerViewC15imagesAddActionySo19UIGestureRecognizerCcSgvp"></a>
+                    <a name="//apple_ref/swift/Property/imagesAddAction" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat12ComposerViewC15imagesAddActionySo19UIGestureRecognizerCcSgvp">imagesAddAction</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An action for a plus button in the images attachments collection view.
+If it&rsquo;s nil, it will not be shown in the images collection view.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">imagesAddAction</span><span class="p">:</span> <span class="kt"><a href="../Classes/AttachmentCollectionViewCell.html">AttachmentCollectionViewCell</a></span><span class="o">.</span><span class="kt">TapAction</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat12ComposerViewC016imagesCollectionD0So012UICollectionD0Cvp"></a>
+                    <a name="//apple_ref/swift/Property/imagesCollectionView" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat12ComposerViewC016imagesCollectionD0So012UICollectionD0Cvp">imagesCollectionView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An images collection view.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="kd">lazy</span> <span class="k">var</span> <span class="nv">imagesCollectionView</span><span class="p">:</span> <span class="kt">UICollectionView</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat12ComposerViewC010filesStackD0So07UIStackD0Cvp"></a>
+                    <a name="//apple_ref/swift/Property/filesStackView" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat12ComposerViewC010filesStackD0So07UIStackD0Cvp">filesStackView</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A files stack view.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="kd">lazy</span> <span class="k">var</span> <span class="nv">filesStackView</span><span class="p">:</span> <span class="kt">UIStackView</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10StreamChat12ComposerViewC8uploaderXevp"></a>
                     <a name="//apple_ref/swift/Property/uploader" class="dashAnchor"></a>
                     <a class="token" href="#/s:10StreamChat12ComposerViewC8uploaderXevp">uploader</a>
@@ -329,6 +440,33 @@ You have to use the <code><a href="../Classes/ComposerView.html#/s:10StreamChat1
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="kd">lazy</span> <span class="k">var</span> <span class="nv">sendButton</span><span class="p">:</span> <span class="kt">UIButton</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat12ComposerViewC16attachmentButtonSo8UIButtonCvp"></a>
+                    <a name="//apple_ref/swift/Property/attachmentButton" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat12ComposerViewC16attachmentButtonSo8UIButtonCvp">attachmentButton</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An attachment button.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="kd">lazy</span> <span class="k">var</span> <span class="nv">attachmentButton</span><span class="p">:</span> <span class="kt">UIButton</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -535,6 +673,56 @@ You have to use the <code><a href="../Classes/ComposerView.html#/s:10StreamChat1
               </ul>
             </div>
             <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat12ComposerViewC19addFileUploaderItemyyXecACF"></a>
+                    <a name="//apple_ref/swift/Method/addFileUploaderItem(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat12ComposerViewC19addFileUploaderItemyyXecACF">addFileUploaderItem(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Add a file upload item for message attachments.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">addFileUploaderItem</span><span class="p">(</span><span class="n">_</span> <span class="nv">item</span><span class="p">:</span> <span class="kt">UploaderItem</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>item</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a file upload item.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
               <div class="task-name-container">
                 <a name="/Images%20Collection%20View"></a>
                 <a name="//apple_ref/swift/Section/Images Collection View" class="dashAnchor"></a>
@@ -543,6 +731,52 @@ You have to use the <code><a href="../Classes/ComposerView.html#/s:10StreamChat1
                 </a>
               </div>
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat12ComposerViewC20addImageUploaderItemyyXecACF"></a>
+                    <a name="//apple_ref/swift/Method/addImageUploaderItem(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat12ComposerViewC20addImageUploaderItemyyXecACF">addImageUploaderItem(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Add an image upload item for message attachments.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">addImageUploaderItem</span><span class="p">(</span><span class="n">_</span> <span class="nv">item</span><span class="p">:</span> <span class="kt">UploaderItem</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>item</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an image upload item.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -591,6 +825,62 @@ You have to use the <code><a href="../Classes/ComposerView.html#/s:10StreamChat1
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">collectionView</span><span class="p">(</span><span class="n">_</span> <span class="nv">collectionView</span><span class="p">:</span> <span class="kt">UICollectionView</span><span class="p">,</span> <span class="n">cellForItemAt</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UICollectionViewCell</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@StreamChat@objc(cs)ComposerView(im)collectionView:willDisplayCell:forItemAtIndexPath:"></a>
+                    <a name="//apple_ref/swift/Method/collectionView(_:willDisplay:forItemAt:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@StreamChat@objc(cs)ComposerView(im)collectionView:willDisplayCell:forItemAtIndexPath:">collectionView(_:willDisplay:forItemAt:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">collectionView</span><span class="p">(</span><span class="n">_</span> <span class="nv">collectionView</span><span class="p">:</span> <span class="kt">UICollectionView</span><span class="p">,</span> <span class="n">willDisplay</span> <span class="nv">cell</span><span class="p">:</span> <span class="kt">UICollectionViewCell</span><span class="p">,</span> <span class="n">forItemAt</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@StreamChat@objc(cs)ComposerView(im)collectionView:didEndDisplayingCell:forItemAtIndexPath:"></a>
+                    <a name="//apple_ref/swift/Method/collectionView(_:didEndDisplaying:forItemAt:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@StreamChat@objc(cs)ComposerView(im)collectionView:didEndDisplayingCell:forItemAtIndexPath:">collectionView(_:didEndDisplaying:forItemAt:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">collectionView</span><span class="p">(</span><span class="n">_</span> <span class="nv">collectionView</span><span class="p">:</span> <span class="kt">UICollectionView</span><span class="p">,</span>
+                           <span class="n">didEndDisplaying</span> <span class="nv">cell</span><span class="p">:</span> <span class="kt">UICollectionViewCell</span><span class="p">,</span>
+                           <span class="n">forItemAt</span> <span class="nv">indexPath</span><span class="p">:</span> <span class="kt">IndexPath</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -691,10 +981,137 @@ You have to use the <code><a href="../Classes/ComposerView.html#/s:10StreamChat1
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Setup%20Send%20Button"></a>
+                <a name="//apple_ref/swift/Section/Setup Send Button" class="dashAnchor"></a>
+                <a href="#/Setup%20Send%20Button">
+                  <h3 class="section-name">Setup Send Button</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat12ComposerViewC18setSendButtonImage_11buttonWidthySo7UIImageC_12CoreGraphics7CGFloatVSgtF"></a>
+                    <a name="//apple_ref/swift/Method/setSendButtonImage(_:buttonWidth:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat12ComposerViewC18setSendButtonImage_11buttonWidthySo7UIImageC_12CoreGraphics7CGFloatVSgtF">setSendButtonImage(_:buttonWidth:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Replace send button image with a new image.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">setSendButtonImage</span><span class="p">(</span><span class="n">_</span> <span class="nv">image</span><span class="p">:</span> <span class="kt">UIImage</span><span class="p">,</span> <span class="nv">buttonWidth</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>image</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a new send button image.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>buttonWidth</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>update the button width (optional).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat12ComposerViewC18setSendButtonTitle_15rightEdgeOffsetySS_12CoreGraphics7CGFloatVtF"></a>
+                    <a name="//apple_ref/swift/Method/setSendButtonTitle(_:rightEdgeOffset:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat12ComposerViewC18setSendButtonTitle_15rightEdgeOffsetySS_12CoreGraphics7CGFloatVtF">setSendButtonTitle(_:rightEdgeOffset:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Replace send button image with a title.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">setSendButtonTitle</span><span class="p">(</span><span class="n">_</span> <span class="nv">title</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">rightEdgeOffset</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="o">.</span><span class="n">messageEdgePadding</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>title</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a send button title</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>rightEdgeOffset</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a right edge inset for the title (optional).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-12)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-15)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

@@ -233,21 +233,21 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Attachment.swift",
-      "line": 179,
+      "line": 187,
       "symbol": "Attachment.ActionType.button",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Attachment.swift",
-      "line": 184,
+      "line": 192,
       "symbol": "Attachment.ActionStyle.default",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Attachment.swift",
-      "line": 185,
+      "line": 193,
       "symbol": "Attachment.ActionStyle.primary",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
@@ -457,28 +457,28 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 77,
+      "line": 88,
       "symbol": "Member.Role.member",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 78,
+      "line": 89,
       "symbol": "Member.Role.moderator",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 79,
+      "line": 90,
       "symbol": "Member.Role.admin",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 80,
+      "line": 91,
       "symbol": "Member.Role.owner",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
