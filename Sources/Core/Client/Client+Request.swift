@@ -215,6 +215,10 @@ extension Client {
             ClientLogger.log("🐴", error)
             
             if let errorResponse = try? JSONDecoder.stream.decode(ClientErrorResponse.self, from: data) {
+                if errorResponse.message.contains("was deactivated") {
+                    webSocket.disconnect()
+                }
+                
                 performInCallbackQueue { completion(.failure(.responseError(errorResponse))) }
             } else {
                 performInCallbackQueue { completion(.failure(.decodingFailure(error))) }

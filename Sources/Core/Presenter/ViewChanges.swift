@@ -27,7 +27,7 @@ public enum ViewChanges: Equatable {
     /// Update fiiter.
     case footerUpdated
     /// Error message.
-    case error(String)
+    case error(AnyError)
 }
 
 extension ViewChanges: CustomStringConvertible {
@@ -47,8 +47,8 @@ extension ViewChanges: CustomStringConvertible {
             return "<itemMoved\(items.count): \(fromRow) -> \(toRow)>"
         case .footerUpdated:
             return "<footerUpdated>"
-        case .error(let message):
-            return "<error: \(message)>"
+        case .error(let error):
+            return "<error: \(error.localizedDescription)>"
         }
     }
 }

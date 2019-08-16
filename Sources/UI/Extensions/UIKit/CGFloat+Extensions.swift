@@ -148,9 +148,9 @@ extension CGFloat {
     /// A message reactions picker counter height.
     public static let reactionsPickerCounterHeight: CGFloat = 20
     
-    public static let bannerHeight: CGFloat = 40
+    public static let bannerHeight: CGFloat = 60
     public static let bannerWidth: CGFloat = .screenWidth - 2 * .messageEdgePadding
-    public static let bannerCornerRadius: CGFloat = 20
+    public static let bannerCornerRadius: CGFloat = 10
     public static let bannerTopOffset: CGFloat = .safeAreaTop + .messageEdgePadding
     public static let bannerMaxY: CGFloat = .bannerHeight + .bannerTopOffset + .composerHelperShadowRadius
 }

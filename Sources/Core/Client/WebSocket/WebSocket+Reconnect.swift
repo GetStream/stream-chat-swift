@@ -17,16 +17,20 @@ extension WebSocket {
         let error: Error
     }
     
-    struct Error: Swift.Error, Decodable {
+    /// A web socket event error.
+    public struct Error: Swift.Error, Decodable {
         private enum CodingKeys: String, CodingKey {
             case code
             case message
             case statusCode = "StatusCode"
         }
         
-        let code: Int
-        let message: String
-        let statusCode: Int
+        /// An error code.
+        public let code: Int
+        /// An error message.
+        public let message: String
+        /// A status code.
+        public let statusCode: Int
     }
 }
 

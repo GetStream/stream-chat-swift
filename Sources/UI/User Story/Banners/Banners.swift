@@ -13,7 +13,7 @@ import RxAppState
 
 /// A banners manager.
 public final class Banners {
-    struct BannerItem {
+    struct BannerItem: Equatable {
         let delay: TimeInterval
         let title: String
         let backgroundColor: UIColor
@@ -25,6 +25,7 @@ public final class Banners {
     
     private static let hiddenTransform = CGAffineTransform(translationX: 0, y: -.bannerMaxY)
     private var items = [BannerItem]()
+    private var currentItem: BannerItem?
     private let disposeBag = DisposeBag()
     
     lazy var window: UIWindow = {
@@ -71,10 +72,18 @@ public final class Banners {
     
     private func showNext() {
         guard !items.isEmpty, window.isHidden else {
+            currentItem = nil
             return
         }
         
         let bannerItem = items.remove(at: 0)
+        
+        if bannerItem == currentItem {
+            showNext()
+            return
+        }
+        
+        currentItem = bannerItem
         let bannerView = BannerView(frame: window.bounds)
         bannerView.update(with: bannerItem)
         window.addSubview(bannerView)
@@ -100,5 +109,44 @@ public final class Banners {
                                         self.showNext()
                         })
         })
+    }
+}
+
+// MARK: - Extensions
+
+public extension Banners {
+    
+    /// Shows error message.
+    ///
+    /// - Parameter errorMessage: an error message.
+    func show(errorMessage: String) {
+        show(errorMessage,
+             delay: errorMessage.count > 100 ? 7 : 5,
+             backgroundColor: .messageErrorBackground,
+             borderColor: .messageErrorBorder)
+    }
+    
+    /// Shows error.
+    ///
+    /// - Parameter error: an error.
+    func show(error: Error) {
+        var error = error
+        var message = error.localizedDescription
+        
+        if let anyError = (error as? AnyError)?.error {
+            error = anyError
+        }
+        
+        if let clientError = (error as? ClientError)?.error {
+            error = clientError
+        }
+        
+        if let clientErrorResponse = error as? ClientErrorResponse {
+            message = "Error #\(clientErrorResponse.code): \(clientErrorResponse.message)"
+        } else if let websocketError = error as? WebSocket.Error {
+            message = "Error #\(websocketError.code): \(websocketError.message)"
+        }
+        
+        show(errorMessage: message)
     }
 }

@@ -273,8 +273,8 @@ extension ChatViewController {
                 tableView.deleteRows(at: [.row(row)], with: .none)
             }
             
-        case .error(let message):
-            Banners.shared.show(message, delay: 5, backgroundColor: .messageErrorBackground, borderColor: .messageErrorBorder)
+        case .error(let error):
+            Banners.shared.show(error: error)
             
         case .footerUpdated:
             updateFooterView()

@@ -50,12 +50,12 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         .flatMapLatest { Client.shared.channels(query: $0).retry(3) }
         .map { [weak self] in self?.parseChannels($0) ?? .none }
         .filter { $0 != .none }
-        .asDriver(onErrorJustReturn: .none)
+        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
     private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.webSocket.response
         .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
         .filter { $0 != .none }
-        .asDriver(onErrorJustReturn: .none)
+        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
     /// Init a channels presenter.
     ///
@@ -119,7 +119,7 @@ extension ChannelsPresenter {
         }
         
         switch response.event {
-        case .messageNew(_, _, _, let channel, _):
+        case .messageNew(_, _, _, _, let channel, _):
             return parseNewMessage(response: response, from: channel)
             
         case .messageDeleted(let message, _):

@@ -91,26 +91,26 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .map { [weak self] in self?.parseResponse($0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
-        .asDriver(onErrorJustReturn: .none)
+        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
     private lazy var replyRequest: Driver<ViewChanges> = prepareRequest()
         .filter { [weak self] _ in self?.parentMessage != nil }
         .flatMapLatest { [weak self] in (self?.parentMessage?.replies(pagination: $0) ?? .empty()).retry(3) }
         .map { [weak self] in self?.parseReplies($0) ?? .none }
         .filter { $0 != .none }
-        .asDriver(onErrorJustReturn: .none)
+        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
     private lazy var webSocketChanges: Driver<ViewChanges> = channel.onEvent()
         .map { [weak self] in self?.parseChanges(event: $0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
-        .asDriver(onErrorJustReturn: .none)
+        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
     private lazy var ephemeralChanges: Driver<ViewChanges> = ephemeralSubject
         .skip(1)
         .map { [weak self] in self?.parseEphemeralChanges($0) ?? .none }
         .filter { $0 != .none }
-        .asDriver(onErrorJustReturn: .none)
+        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
     /// Uploader for images and files.
     public private(set) lazy var uploader = Uploader()
@@ -200,7 +200,7 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, _, _, _, _):
+        case .messageNew(let message, _, _, _, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
@@ -741,7 +741,7 @@ public struct TypingUser: Hashable {
     public static func == (lhs: TypingUser, rhs: TypingUser) -> Bool {
         return lhs.user == rhs.user
     }
-        
+    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(user)
     }

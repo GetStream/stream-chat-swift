@@ -83,6 +83,7 @@ public final class ComposerHelperContainerView: UIView {
     /// - Parameter composerView: a composer view.
     public func add(to composerView: ComposerView) {
         guard let parent = composerView.superview else {
+            print("⚠️ ComposerView doen't have a parent view", #file, #line)
             return
         }
         

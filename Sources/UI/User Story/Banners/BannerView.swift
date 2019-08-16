@@ -14,7 +14,7 @@ final class BannerView: UIView {
     
     lazy var label: UILabel = {
         let label = UILabel(frame: .zero)
-        label.numberOfLines = 1
+        label.numberOfLines = 3
         label.font = .chatMediumMedium
         label.textAlignment = .center
         addSubview(label)
@@ -32,7 +32,7 @@ final class BannerView: UIView {
         super.init(frame: frame)
         layer.cornerRadius = .bannerCornerRadius
         layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOffset = .zero
+        layer.shadowOffset = CGSize(width: 0, height: .composerHelperShadowRadius / 4)
         layer.shadowRadius = .composerHelperShadowRadius
         layer.shadowOpacity = Float(CGFloat.composerHelperShadowOpacity)
         backgroundColor = .white
@@ -46,6 +46,10 @@ final class BannerView: UIView {
         backgroundColor = bannerItem.backgroundColor
         label.textColor = bannerItem.backgroundColor.isDark ? .white : .black
         label.text = bannerItem.title
+        
+        if bannerItem.title.count > 100 {
+            label.font = .chatSmallMedium
+        }
         
         if let borderColor = bannerItem.borderColor {
             layer.borderColor = borderColor.cgColor
