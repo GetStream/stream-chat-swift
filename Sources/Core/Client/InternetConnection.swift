@@ -47,6 +47,10 @@ public final class InternetConnection {
     
     /// Init InternetConnection.
     public init() {
+        guard !isTests() else {
+            return
+        }
+        
         DispatchQueue.main.async {
             UIApplication.shared.rx.appState
                 .subscribe(onNext: { [weak self] state in

@@ -35,7 +35,7 @@ public struct User: Codable {
     /// A user name.
     public let name: String
     /// An avatar URL.
-    public let avatarURL: URL?
+    public var avatarURL: URL?
     /// A created date.
     public let created: Date
     /// An updated date.

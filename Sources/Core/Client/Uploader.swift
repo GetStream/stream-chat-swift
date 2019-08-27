@@ -145,7 +145,7 @@ public final class UploaderItem: Equatable {
             if let url = url, let data = try? Data(contentsOf: url) {
                 request = channel.sendFile(fileName: fileName, mimeType: fileType.mimeType, fileData: data)
             } else {
-                return .error(ClientError.emptyBody)
+                return .error(ClientError.emptyBody(description: "For file at URL: \(url?.absoluteString ?? "<unknown>")"))
             }
         } else {
             let imageData: Data
@@ -160,7 +160,11 @@ public final class UploaderItem: Equatable {
                 imageData = encodedImageData
                 mimeType = AttachmentFileType.jpeg.mimeType
             } else {
-                return .error(ClientError.emptyBody)
+                let errorDescription = "For image: gifData = \(gifData == nil ? "no" : "yes"), "
+                    + "URL = \(url?.absoluteString ?? "<none>"), "
+                    + "image data: \(image?.description ?? "<none>")"
+                
+                return .error(ClientError.emptyBody(description: errorDescription))
             }
             
             request = channel.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData)

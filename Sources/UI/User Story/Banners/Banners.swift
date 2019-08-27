@@ -131,7 +131,7 @@ public extension Banners {
     /// - Parameter error: an error.
     func show(error: Error) {
         var error = error
-        var message = error.localizedDescription
+        var message = "\(error)"
         
         if let anyError = (error as? AnyError)?.error {
             error = anyError
@@ -143,8 +143,6 @@ public extension Banners {
         
         if let clientErrorResponse = error as? ClientErrorResponse {
             message = "Error #\(clientErrorResponse.code): \(clientErrorResponse.message)"
-        } else if let websocketError = error as? WebSocket.Error {
-            message = "Error #\(websocketError.code): \(websocketError.message)"
         }
         
         show(errorMessage: message)

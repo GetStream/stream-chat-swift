@@ -162,10 +162,10 @@ public final class ClientLogger {
                            line: Int = #line) {
         if let error = error {
             if let message = message {
-                ClientLogger.logger(icon, "", "\(message) in \(function)[\(line)]")
+                ClientLogger.logger("\(icon)❌", "", "\(message) in \(function)[\(line)]")
             }
             
-            ClientLogger.logger(icon, "", "\(error) in \(function)[\(line)]")
+            ClientLogger.logger("\(icon)❌", "", "\(error) in \(function)[\(line)]")
         }
     }
     
@@ -199,7 +199,7 @@ public final class ClientLogger {
         do {
             log(identifier, try data.prettyPrintedJSONString())
         } catch {
-            log(identifier, error.localizedDescription)
+            log(identifier, "\(error)")
         }
     }
     
@@ -229,9 +229,9 @@ public final class ClientLogger {
         ClientLogger.logger(icon, dateTime, message)
     }
     
-    static func showConnectionAlert(_ error: Error, jsonError: WebSocket.Error?) {
+    static func showConnectionAlert(_ error: Error, jsonError: ClientErrorResponse?) {
         #if DEBUG
-        let jsonError = jsonError ?? WebSocket.Error(code: 0, message: "<unknown>", statusCode: 0)
+        let jsonError = jsonError ?? ClientErrorResponse(code: 0, message: "<unknown>", statusCode: 0)
         let message = "\(jsonError.message)\n\nCode: \(jsonError.code)\nStatus Code: \(jsonError.statusCode)\n\n\(error)"
         DispatchQueue.main.async {
             let alert = UIAlertController(title: "Connection Error", message: message, preferredStyle: .alert)

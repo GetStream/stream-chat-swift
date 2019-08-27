@@ -65,7 +65,7 @@ extension Client {
         } catch let error as ClientError {
             completion(.failure(error))
         } catch {
-            completion(.failure(.unexpectedError))
+            completion(.failure(.unexpectedError(description: "\(error)")))
         }
         
         return URLSessionDataTask()
@@ -80,7 +80,7 @@ extension Client {
         urlComponents.queryItems = queryItems
         
         guard let url = urlComponents.url?.appendingPathComponent(endpoint.path) else {
-            return .failure(.invalidURL(endpoint.path))
+            return .failure(.invalidURL("For \(urlComponents) with appending path \(endpoint.path)"))
         }
         
         return .success(url)
@@ -106,9 +106,14 @@ extension Client {
         
         if let endpointQueryItems = endpoint.jsonQueryItems {
             endpointQueryItems.forEach { (key: String, value: Encodable) in
-                if let data = try? JSONEncoder.stream.encode(AnyEncodable(value)),
-                    let json = String(data: data, encoding: .utf8) {
-                    queryItems.append(URLQueryItem(name: key, value: json))
+                do {
+                    let data = try JSONEncoder.stream.encode(AnyEncodable(value))
+                    
+                    if let json = String(data: data, encoding: .utf8) {
+                        queryItems.append(URLQueryItem(name: key, value: json))
+                    }
+                } catch {
+                    ClientLogger.log("🐴", error, message: "Encode jsonQueryItems")
                 }
             }
         }
@@ -174,7 +179,7 @@ extension Client {
              .sendFile(let fileName, let mimeType, let data, _):
             multipartFormData = MultipartFormData(data, fileName: fileName, mimeType: mimeType)
         default:
-            return .failure(.unexpectedError)
+            return .failure(.unexpectedError(description: "Encoding unexpected endpoint \(endpoint) for a file uploading."))
         }
         
         let data = multipartFormData.multipartFormData
@@ -202,7 +207,10 @@ extension Client {
         }
         
         guard let data = data, !data.isEmpty else {
-            performInCallbackQueue { completion(.failure(.emptyBody)) }
+            performInCallbackQueue {
+                completion(.failure(.emptyBody(description: "Request to \(response?.url?.absoluteString ?? "<unknown URL>")")))
+            }
+            
             return
         }
         

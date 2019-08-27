@@ -17,7 +17,7 @@ public final class WebSocket {
     private static let maxBackgroundTime: TimeInterval = 300
     
     let webSocket: Starscream.WebSocket
-    private(set) var lastJSONError: Error?
+    private(set) var lastJSONError: ClientErrorResponse?
     private(set) var lastConnectionId: String?
     private(set) var consecutiveFailures: TimeInterval = 0
     let logger: ClientLogger?

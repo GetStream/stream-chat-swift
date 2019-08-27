@@ -48,7 +48,7 @@ extension ViewChanges: CustomStringConvertible {
         case .footerUpdated:
             return "<footerUpdated>"
         case .error(let error):
-            return "<error: \(error.localizedDescription)>"
+            return "<error: \(error)>"
         }
     }
 }

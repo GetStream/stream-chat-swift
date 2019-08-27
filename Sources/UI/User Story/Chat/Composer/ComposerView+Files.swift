@@ -50,14 +50,14 @@ extension ComposerView {
             
             item.uploading
                 .observeOn(MainScheduler.instance)
-                .do(onError: { [weak fileView] error in fileView?.updateForError(error.localizedDescription) },
+                .do(onError: { [weak fileView] error in fileView?.updateForError("\(error)") },
                     onCompleted: { [weak self, weak fileView] in
                         fileView?.updateForProgress(1)
                         self?.updateSendButton()
                     },
                     onDispose: { [weak fileView, weak item] in
                         if let error = item?.error {
-                            fileView?.updateForError(error.localizedDescription)
+                            fileView?.updateForError("\(error)")
                         } else {
                             fileView?.updateForProgress(1)
                         }
@@ -67,7 +67,7 @@ extension ComposerView {
                 .disposed(by: fileView.disposeBag)
             
         } else if let error = item.error {
-            fileView.updateForError(error.localizedDescription)
+            fileView.updateForError("\(error)")
         }
         
         uploader.upload(item: item)

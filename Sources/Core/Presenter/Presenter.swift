@@ -25,7 +25,7 @@ public class Presenter<T> {
     
     private(set) lazy var connectionErrors: Driver<ViewChanges> = Client.shared.connection
         .map { connection -> ViewChanges? in
-            if case .disconnected(let error) = connection, let webSocketError = error as? WebSocket.Error {
+            if case .disconnected(let error) = connection, let webSocketError = error as? ClientErrorResponse {
                 return .error(AnyError(error: webSocketError))
             }
             

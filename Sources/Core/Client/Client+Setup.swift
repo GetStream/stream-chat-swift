@@ -19,6 +19,7 @@ extension Client {
     ///     - user: the current user (see `User`).
     ///     - token: a Stream Chat API token.
     public func set(user: User, token: Token) {
+        webSocket.disconnect()
         self.user = user
         setup(token: token)
     }
@@ -111,8 +112,15 @@ extension Client {
     func createObservableConnection() -> Observable<WebSocket.Connection> {
         let app = UIApplication.shared
         
-        let appState = app.rx.appState.startWith(app.appState)
-            .do(onNext: { state in ClientLogger.log("📱", "App state \(state)") })
+        let appState = isTests()
+            ? .just(.active)
+            : app.rx.appState
+                .startWith(app.appState)
+                .do(onNext: { state in ClientLogger.log("📱", "App state \(state)") })
+        
+        let internetIsAvailable: Observable<Bool> = isTests()
+            ? .just(true)
+            : InternetConnection.shared.isAvailableObservable
         
         let webSocketResponse = tokenSubject.asObserver()
             .distinctUntilChanged()
@@ -122,7 +130,7 @@ extension Client {
             .flatMap { [weak self] _ -> Observable<WebSocketEvent> in self?.webSocket.webSocket.rx.response ?? .empty() }
             .do(onDispose: { [weak self] in self?.webSocket.disconnect() })
         
-        return Observable.combineLatest(appState, InternetConnection.shared.isAvailableObservable, webSocketResponse)
+        return Observable.combineLatest(appState, internetIsAvailable, webSocketResponse)
             .map { [weak self] in self?.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
             .unwrap()
             .distinctUntilChanged()

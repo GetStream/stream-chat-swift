@@ -9,19 +9,17 @@
 import Foundation
 
 /// A client error.
-public enum ClientError: Error {
+public enum ClientError: LocalizedError {
     /// An unexpected error.
-    case unexpectedError
+    case unexpectedError(description: String)
     /// A token is empty.
     case emptyToken
     /// The current user is empty.
     case emptyUser
-    /// A client id is empty.
-    case emptyClientId
     /// A connection id is empty.
     case emptyConnectionId
     /// A response bofy is empty.
-    case emptyBody
+    case emptyBody(description: String)
     /// An invalid URL.
     case invalidURL(_ string: String?)
     /// A request failed with an error.
@@ -48,10 +46,41 @@ public enum ClientError: Error {
             return nil
         }
     }
+    
+    public var errorDescription: String? {
+        switch self {
+        case .unexpectedError(let description):
+            return "Unexpected error: \(description)"
+        case .emptyToken:
+            return "A Client Token is empty"
+        case .emptyUser:
+            return "The current Client user is empty"
+        case .emptyConnectionId:
+            return "A Web Socket connection id is empty. Authorization missed"
+        case .emptyBody(let description):
+            return "A request or response body data is empty: \(description)"
+        case .invalidURL(let url):
+            return "An invalide URL: \(url ?? "<unknown>")"
+            
+        case .requestFailed(let error):
+            if let error = error {
+                return "A request failed: \(error)"
+            }
+            
+            return "A request failed with unknown error"
+            
+        case .responseError(let error):
+            return "A response failed: \(error)"
+        case .encodingFailure(let error, let object):
+            return "A encoding failed: \(error) for object: \(object)"
+        case .decodingFailure(let error):
+            return "A decoding failed: \(error)"
+        }
+    }
 }
 
 /// A parsed server response error.
-public struct ClientErrorResponse: Error, Decodable {
+public struct ClientErrorResponse: LocalizedError, Decodable {
     private enum CodingKeys: String, CodingKey {
         case code
         case message
@@ -64,6 +93,10 @@ public struct ClientErrorResponse: Error, Decodable {
     public let message: String
     /// A status code.
     public let statusCode: Int
+    
+    public var errorDescription: String? {
+        return "Client JSON Error \(code): \(message) (Status code: \(statusCode))."
+    }
 }
 
 /// A wrapper for any Error.
