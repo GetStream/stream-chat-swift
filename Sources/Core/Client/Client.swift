@@ -29,7 +29,7 @@ public final class Client {
     let tokenSubject = BehaviorSubject<Token?>(value: nil)
     
     /// A web socket client.
-    public internal(set) lazy var webSocket = WebSocket(URLRequest(url: baseURL.url(.webSocket)))
+    public internal(set) lazy var webSocket = WebSocket()
     
     lazy var urlSession = setupURLSession(token: "")
     private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
@@ -109,6 +109,19 @@ public final class Client {
         } else {
             logger = nil
         }
+    }
+    
+    func reset() {
+        guard user != nil else {
+            return
+        }
+        
+        logger?.log("Reset Client User, Token, URLSession and WebSocket.")
+        user = nil
+        token = nil
+        urlSession = setupURLSession(token: "")
+        webSocket.disconnect()
+        webSocket = WebSocket()
     }
 }
 

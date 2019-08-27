@@ -20,6 +20,30 @@ extension Token {
     public static let development: Token = "development"
     /// A guest token.
     public static let guest: Token = "guest"
+    
+    var isValid: Bool {
+        return payload != nil
+    }
+    
+    var payload: [String: String]? {
+        let parts = split(separator: ".")
+        
+        if parts.count == 3,
+            let payloadData = jwtDecodeBase64(String(parts[1])),
+            let json = (try? JSONSerialization.jsonObject(with: payloadData)) as? [String: String] {
+            return json
+        }
+        
+        return nil
+    }
+    
+    private func jwtDecodeBase64(_ input: String) -> Data? {
+        let removeEndingCount = input.count % 4
+        let ending = removeEndingCount > 0 ? String(repeating: "=", count: 4 - removeEndingCount) : ""
+        let base64 = input.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/") + ending
+        
+        return Data(base64Encoded: base64)
+    }
 }
 
 // MARK: - Token response

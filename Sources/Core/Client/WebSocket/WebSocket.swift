@@ -56,11 +56,20 @@ public final class WebSocket {
         webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
     }
     
+    init() {
+        webSocket = .init(url: BaseURL.placeholderURL)
+        logger = nil
+    }
+    
     deinit {
         disconnect()
     }
     
     func connect() {
+        guard webSocket.currentURL != BaseURL.placeholderURL else {
+            return
+        }
+        
         if webSocket.isConnected || isReconnecting {
            return
         }
@@ -105,6 +114,10 @@ public final class WebSocket {
     }
     
     func disconnect() {
+        guard webSocket.currentURL != BaseURL.placeholderURL else {
+            return
+        }
+        
         lastConnectionId = nil
         
         if webSocket.isConnected {

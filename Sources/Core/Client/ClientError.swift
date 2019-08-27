@@ -14,6 +14,8 @@ public enum ClientError: LocalizedError {
     case unexpectedError(description: String)
     /// A token is empty.
     case emptyToken
+    /// A token is invalid.
+    case tokenInvalid(description: String)
     /// The current user is empty.
     case emptyUser
     /// A connection id is empty.
@@ -53,6 +55,8 @@ public enum ClientError: LocalizedError {
             return "Unexpected error: \(description)"
         case .emptyToken:
             return "A Client Token is empty"
+        case .tokenInvalid(let description):
+            return "Token is invalid: \(description)"
         case .emptyUser:
             return "The current Client user is empty"
         case .emptyConnectionId:

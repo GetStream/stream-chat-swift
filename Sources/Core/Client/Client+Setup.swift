@@ -19,7 +19,7 @@ extension Client {
     ///     - user: the current user (see `User`).
     ///     - token: a Stream Chat API token.
     public func set(user: User, token: Token) {
-        webSocket.disconnect()
+        reset()
         self.user = user
         setup(token: token)
     }
@@ -53,12 +53,14 @@ extension Client {
     ///   - user: the current user (see `User`).
     ///   - tokenProvider: a token provider.
     public func set(user: User, _ tokenProvider: TokenProvider) {
+        reset()
         self.user = user
         tokenProvider { self.setup(token: $0) }
     }
     
     private func setup(token: Token) {
         guard let user = user else {
+            logger?.log("❌ User is empty. Skip Token setup.")
             return
         }
         
@@ -77,6 +79,14 @@ extension Client {
             }
         }
         
+        logger?.log("👤 \(user.name): \(user.id)")
+        logger?.log("🀄️ Token: \(token)")
+        
+        if let error = checkUserAndToken(token) {
+            ClientLogger.log("🐴", error)
+            return
+        }
+        
         urlSession = setupURLSession(token: token)
         webSocket = setupWebSocket(user: user, token: token)
         self.token = token
@@ -86,6 +96,8 @@ extension Client {
         guard let user = user else {
             return
         }
+        
+        logger?.log("Sending a request for a Guest Token...")
         
         request(endpoint: .guestToken(user)) { [weak self] (result: Result<TokenResponse, ClientError>) in
             if let response = try? result.get() {
@@ -104,12 +116,32 @@ extension Client {
         
         return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.\(json.base64EncodedString()).devtoken" // {"alg": "HS256", "typ": "JWT"}
     }
+    
+    private func checkUserAndToken(_ token: Token) -> ClientError? {
+        guard let user = user else {
+            return ClientError.emptyUser
+        }
+        
+        guard token.isValid, let payload = token.payload else {
+            return ClientError.tokenInvalid(description: "Token is invalid or Token payload is invalid")
+        }
+        
+        if payload["user_id"] == user.id {
+            return nil
+        }
+        
+        return ClientError.tokenInvalid(description: "Token payload user_id doesn't equal to the client user id")
+    }
 }
 
 // MARK: - Connection
 
 extension Client {
     func createObservableConnection() -> Observable<WebSocket.Connection> {
+        if let token = token, let error = checkUserAndToken(token) {
+            return .error(error)
+        }
+        
         let app = UIApplication.shared
         
         let appState = isTests()
