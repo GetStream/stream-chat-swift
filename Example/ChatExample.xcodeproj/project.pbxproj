@@ -28,6 +28,7 @@
 		8AD5EC7822E88C63005CFAC9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AD5EC7722E88C63005CFAC9 /* Assets.xcassets */; };
 		8AD5EC7B22E88C63005CFAC9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AD5EC7922E88C63005CFAC9 /* LaunchScreen.storyboard */; };
 		8AD5EC8322E88D87005CFAC9 /* CustomChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5EC8222E88D87005CFAC9 /* CustomChatViewController.swift */; };
+		8AECE0FA23155FDE00B6CEE0 /* DarkChannelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AECE0F923155FDE00B6CEE0 /* DarkChannelsViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8AD5EC9E22E9B355005CFAC9;
 			remoteInfo = StreamChatCore;
+		};
+		8AECE0FC23155FDF00B6CEE0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8A559D21230D937B00E66096;
+			remoteInfo = StreamChatCoreTests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -100,6 +108,7 @@
 		8AD5EC7C22E88C63005CFAC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AD5EC8222E88D87005CFAC9 /* CustomChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomChatViewController.swift; sourceTree = "<group>"; };
 		8AD5EC8422E88DBC005CFAC9 /* ChatExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChatExample.entitlements; sourceTree = "<group>"; };
+		8AECE0F923155FDE00B6CEE0 /* DarkChannelsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarkChannelsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -153,6 +162,7 @@
 			children = (
 				8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */,
 				8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */,
+				8AECE0FD23155FDF00B6CEE0 /* StreamChatCoreTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -180,6 +190,7 @@
 			children = (
 				8AD5EC7022E88C62005CFAC9 /* AppDelegate.swift */,
 				8AD5EC8222E88D87005CFAC9 /* CustomChatViewController.swift */,
+				8AECE0F923155FDE00B6CEE0 /* DarkChannelsViewController.swift */,
 				8AD5EC7422E88C62005CFAC9 /* Main.storyboard */,
 				8AD5EC7722E88C63005CFAC9 /* Assets.xcassets */,
 				8AD5EC7922E88C63005CFAC9 /* LaunchScreen.storyboard */,
@@ -272,6 +283,13 @@
 			remoteRef = 8A0A7E762301AC1E0033E6D9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		8AECE0FD23155FDF00B6CEE0 /* StreamChatCoreTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = StreamChatCoreTests.xctest;
+			remoteRef = 8AECE0FC23155FDF00B6CEE0 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -297,34 +315,34 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/../Carthage/Build/iOS/RxCocoa.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/Gzip.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/RxBlocking.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/Reachability.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/RxRelay.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/Starscream.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/RxAppState.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/RxSwift.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/Nuke.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/SnapKit.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/SwiftyGif.framework",
-                "$(SRCROOT)/../Carthage/Build/iOS/RxGesture.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/Gzip.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/RxBlocking.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/Reachability.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/RxRelay.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/Starscream.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/RxAppState.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/Nuke.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/SnapKit.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/SwiftyGif.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/RxGesture.framework",
 			);
 			name = Carthage;
 			outputFileListPaths = (
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Gzip.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxBlocking.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Reachability.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Starscream.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxAppState.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Nuke.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyGif.framework",
-                "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxGesture",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Gzip.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxBlocking.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Reachability.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Starscream.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxAppState.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Nuke.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyGif.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxGesture",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -339,6 +357,7 @@
 			files = (
 				8AD5EC7122E88C62005CFAC9 /* AppDelegate.swift in Sources */,
 				8AD5EC8322E88D87005CFAC9 /* CustomChatViewController.swift in Sources */,
+				8AECE0FA23155FDE00B6CEE0 /* DarkChannelsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
