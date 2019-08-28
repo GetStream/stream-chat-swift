@@ -154,12 +154,21 @@ extension Client {
             ? .just(true)
             : InternetConnection.shared.isAvailableObservable
         
-        let webSocketResponse = tokenSubject.asObserver()
+        let webSocketResponse = tokenSubject.asObserver().map { $0?.isValid ?? false }
             .distinctUntilChanged()
-            .unwrap()
             .observeOn(MainScheduler.instance)
-            .do(onNext: { [weak self] _ in self?.webSocket.connect() })
-            .flatMap { [weak self] _ -> Observable<WebSocketEvent> in self?.webSocket.webSocket.rx.response ?? .empty() }
+            .do(onNext: { [weak self] isTokenValid in
+                if isTokenValid {
+                    self?.webSocket.connect()
+                }
+            })
+            .flatMap { [weak self] isTokenValid -> Observable<WebSocketEvent> in
+                if isTokenValid {
+                    return self?.webSocket.webSocket.rx.response ?? .empty()
+                }
+                
+                return .just(.disconnected(nil))
+            }
             .do(onDispose: { [weak self] in self?.webSocket.disconnect() })
         
         return Observable.combineLatest(appState, internetIsAvailable, webSocketResponse)

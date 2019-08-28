@@ -50,14 +50,18 @@ public final class WebSocket {
         })
         .share()
     
+    private let webSocketInitiated: Bool
+    
     init(_ urlRequest: URLRequest, logger: ClientLogger? = nil) {
         self.logger = logger
         webSocket = Starscream.WebSocket(request: urlRequest)
         webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
+        webSocketInitiated = true
     }
     
     init() {
         webSocket = .init(url: BaseURL.placeholderURL)
+        webSocketInitiated = false
         logger = nil
     }
     
@@ -66,7 +70,7 @@ public final class WebSocket {
     }
     
     func connect() {
-        guard webSocket.currentURL != BaseURL.placeholderURL else {
+        guard webSocketInitiated else {
             return
         }
         
@@ -114,7 +118,7 @@ public final class WebSocket {
     }
     
     func disconnect() {
-        guard webSocket.currentURL != BaseURL.placeholderURL else {
+        guard webSocketInitiated else {
             return
         }
         
@@ -135,6 +139,10 @@ public final class WebSocket {
 extension WebSocket {
     
     func parseConnection(appState: AppState, isInternetAvailable: Bool, event: WebSocketEvent) -> Connection? {
+        guard webSocketInitiated else {
+            return .notConnected
+        }
+        
         guard isInternetAvailable else {
             cancelBackgroundWork()
             lastConnectionId = nil
