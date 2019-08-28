@@ -7,17 +7,23 @@
 //
 
 import UIKit
+import StreamChatCore
 import StreamChat
 
 final class DarkChannelsViewController: ChannelsViewController {
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        style = .dark
+        setup()
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        setup()
+    }
+    
+    func setup() {
+//        Client.shared.set(user: .user1, token: .token1)
         style = .dark
     }
 }

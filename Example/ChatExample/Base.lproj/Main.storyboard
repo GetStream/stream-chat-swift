@@ -81,7 +81,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Of-ZP-Ztv">
                                         <rect key="frame" x="0.0" y="60" width="196" height="30"/>
-                                        <state key="normal" title="SHow Chat (#general)"/>
+                                        <state key="normal" title="Show Chat (#general)"/>
                                         <connections>
                                             <segue destination="Z71-Wp-boH" kind="presentation" id="Z6X-IU-Iab"/>
                                         </connections>
@@ -187,7 +187,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="Z6X-IU-Iab"/>
-        <segue reference="2D1-zN-YI0"/>
+        <segue reference="ChK-wq-97q"/>
         <segue reference="seW-P6-fEX"/>
     </inferredMetricsTieBreakers>
 </document>

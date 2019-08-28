@@ -45,13 +45,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 // MARK: - Test Data
-
+    
 extension User {
-    fileprivate static let user1 = User(id: "broken-waterfall-5", name: "Jon Snow", avatarURL: URL(string: "https://bit.ly/2u9Vc0r"))
-    fileprivate static let user2 = User(id: "noisy-mountain-3", name: "Noisy mountain")
+    static let user1 = User(id: "broken-waterfall-5", name: "Jon Snow", avatarURL: URL(string: "https://bit.ly/2u9Vc0r"))
+    static let user2 = User(id: "noisy-mountain-3", name: "Noisy mountain")
 }
 
 extension Token {
-    fileprivate static let token1 = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
-    fileprivate static let token2 = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoibm9pc3ktbW91bnRhaW4tMyJ9.GAhzrzo8SsDn_RGzX4Fob5bZB0nKXXPKya8okbr9WB0"
+    static let token1 = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
+    static let token2 = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoibm9pc3ktbW91bnRhaW4tMyJ9.GAhzrzo8SsDn_RGzX4Fob5bZB0nKXXPKya8okbr9WB0"
 }
