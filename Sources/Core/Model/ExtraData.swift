@@ -16,7 +16,9 @@ public struct ExtraData: Codable {
         case channel(Codable.Type)
         /// A message.
         case message(Codable.Type)
-        
+        /// An attachment.
+        case attachment(Codable.Type)
+
         var isChannel: Bool {
             if case .channel = self {
                 return true
@@ -27,6 +29,14 @@ public struct ExtraData: Codable {
         
         var isMessage: Bool {
             if case .message = self {
+                return true
+            }
+            
+            return false
+        }
+        
+        var isAttachment: Bool {
+            if case .attachment = self {
                 return true
             }
             
@@ -64,7 +74,7 @@ extension ExtraData {
         do {
             try encode(to: encoder)
         } catch {
-            ClientLogger.log("🧳", error, message: "⚠️🎩 ExtraData")
+            ClientLogger.log("🧳", error, message: "⚠️🎩 when encoding an extra data: \(encoder)")
         }
     }
     
@@ -73,17 +83,17 @@ extension ExtraData {
             return nil
         }
         
+        let extraDataType: Codable.Type
+        
+        switch decodableType {
+        case .channel(let codableType), .message(let codableType), .attachment(let codableType):
+            extraDataType = codableType
+        }
+        
         do {
-            let extraDataType: Codable.Type
-            
-            switch decodableType {
-            case .channel(let codableType),
-                 .message(let codableType):
-                extraDataType = codableType
-            }
             return try ExtraData(extraDataType.init(from: decoder))
         } catch {
-            ClientLogger.log("🧳", error, message: "⚠️🎩 ExtraData")
+            ClientLogger.log("🧳", error, message: "⚠️🎩 failed decoding extra data: \(extraDataType)")
         }
         
         return nil

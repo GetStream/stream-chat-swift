@@ -43,6 +43,8 @@ public struct Attachment: Codable {
     public let imageURL: URL?
     /// A file description (see `AttachmentFile`).
     public let file: AttachmentFile?
+    /// An extra data for the attachment.
+    public let extraData: ExtraData?
     
     /// Check if the attachment is an image.
     public var isImage: Bool {
@@ -57,7 +59,13 @@ public struct Attachment: Codable {
     ///   - url: an url.
     ///   - imageURL: an preview image url.
     ///   - file: a file description.
-    public init(type: AttachmentType, title: String, url: URL? = nil, imageURL: URL? = nil, file: AttachmentFile? = nil) {
+    ///   - extraData: an extra data.
+    public init(type: AttachmentType,
+                title: String,
+                url: URL? = nil,
+                imageURL: URL? = nil,
+                file: AttachmentFile? = nil,
+                extraData: Codable? = nil) {
         self.type = type
         self.url = url
         self.imageURL = imageURL
@@ -66,6 +74,12 @@ public struct Attachment: Codable {
         text = nil
         author = nil
         actions = []
+        
+        if let extraData = extraData {
+            self.extraData = ExtraData(extraData)
+        } else {
+            self.extraData = nil
+        }
     }
     
     public init(from decoder: Decoder) throws {
@@ -112,6 +126,7 @@ public struct Attachment: Codable {
         self.type = type
         file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
         actions = try container.decodeIfPresent([Action].self, forKey: .actions) ?? []
+        extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isAttachment }))
     }
     
     /// Image upload:
@@ -136,6 +151,7 @@ public struct Attachment: Codable {
         try container.encodeIfPresent(url, forKey: .assetURL)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try file?.encode(to: encoder)
+        extraData?.encodeSafely(to: encoder)
     }
     
     private static func fixedURL(_ urlString: String?) -> URL? {

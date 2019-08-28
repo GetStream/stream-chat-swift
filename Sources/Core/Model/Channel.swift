@@ -32,8 +32,6 @@ public final class Channel: Codable {
         case name
         /// A image URL.
         case imageURL = "image"
-        /// An extra data.
-        case extraData
         /// Members.
         case members
     }

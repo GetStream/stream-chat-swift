@@ -28,7 +28,6 @@ public struct Message: Codable {
         case latestReactions = "latest_reactions"
         case ownReactions = "own_reactions"
         case reactionCounts = "reaction_counts"
-        case extraData
     }
     
     /// A message id.
@@ -121,7 +120,7 @@ public struct Message: Codable {
     public init(id: String = "",
                 text: String,
                 attachments: [Attachment] = [],
-                extraData: ExtraData? = nil,
+                extraData: Codable? = nil,
                 parentId: String? = nil,
                 showReplyInChannel: Bool = false) {
         self.id = id
@@ -141,7 +140,12 @@ public struct Message: Codable {
         latestReactions = []
         ownReactions = []
         reactionCounts = nil
-        self.extraData = extraData
+        
+        if let extraData = extraData {
+            self.extraData = ExtraData(extraData)
+        } else {
+            self.extraData = nil
+        }
     }
     
     public func encode(to encoder: Encoder) throws {
