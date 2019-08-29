@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// An extra data wrapper.
+/// An extra data container.
 public struct ExtraData: Codable {
     /// A custom extra data type.
     public enum DecodableType {
