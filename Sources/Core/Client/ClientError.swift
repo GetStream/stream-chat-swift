@@ -64,7 +64,7 @@ public enum ClientError: LocalizedError {
         case .emptyBody(let description):
             return "A request or response body data is empty: \(description)"
         case .invalidURL(let url):
-            return "An invalide URL: \(url ?? "<unknown>")"
+            return "An invalid URL: \(url ?? "<unknown>")"
             
         case .requestFailed(let error):
             if let error = error {
@@ -115,4 +115,10 @@ public struct AnyError: Error, Equatable {
     public static func == (lhs: AnyError, rhs: AnyError) -> Bool {
         return lhs.error.localizedDescription == rhs.error.localizedDescription
     }
+}
+
+/// An encoding error
+public enum EncodingError: Error {
+    /// Field with this value can't be encoded
+    case valueUnsupported
 }
