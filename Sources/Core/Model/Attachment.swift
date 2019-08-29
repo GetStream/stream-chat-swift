@@ -108,10 +108,11 @@ public struct Attachment: Codable {
             ?? container.decodeIfPresent(String.self, forKey: .titleLink)
             ?? container.decodeIfPresent(String.self, forKey: .ogURL))
         
-        let typeString = try? container.decode(String.self, forKey: .type)
         let type: AttachmentType
-        
-        if let typeString = typeString, let existsType = AttachmentType(rawValue: typeString) {
+
+        if let typeString = try? container.decode(String.self, forKey: .type) {
+            let existsType = AttachmentType(rawValue: typeString)
+
             if existsType == .video, let url = url, url.absoluteString.contains("youtube") {
                 type = .youtube
             } else {
@@ -211,9 +212,81 @@ public extension Attachment {
 }
 
 /// An attachment type.
-public enum AttachmentType: String, Codable {
+public enum AttachmentType: RawRepresentable, Codable, Equatable {
     /// An attachment type.
-    case unknown, image, imgur, giphy, video, youtube, product, file, link
+    case unknown
+    case custom(type: String)
+    case image
+    case imgur
+    case giphy
+    case video
+    case youtube
+    case product
+    case file
+    case link
+
+    public var rawValue: String? {
+        switch self {
+        case .unknown:
+            return nil
+        case .custom(type: let raw):
+            return raw
+        case .image:
+            return "image"
+        case .imgur:
+            return "imgur"
+        case .giphy:
+            return "giphy"
+        case .video:
+            return "video"
+        case .youtube:
+            return "youtube"
+        case .product:
+            return "product"
+        case .file:
+            return "file"
+        case .link:
+            return "link"
+        }
+    }
+
+    public init(rawValue: String?) {
+        switch rawValue {
+        case "image":
+            self = .image
+        case "imgur":
+            self = .imgur
+        case "giphy":
+            self = .giphy
+        case "video":
+            self = .video
+        case "youtube":
+            self = .youtube
+        case "product":
+            self = .product
+        case "file":
+            self = .file
+        case "link":
+            self = .link
+        case .some(let raw) where !raw.isEmpty:
+            self = .custom(type: raw)
+        default:
+            self = .unknown
+        }
+    }
+
+    public init(from decoder: Decoder) throws {
+        let rawValue = try decoder.singleValueContainer().decode(String.self)
+        self = AttachmentType(rawValue: rawValue)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        guard self != .unknown else {
+            throw ClientError.encodingFailure(EncodingError.valueUnsupported, object: self)
+        }
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
     
     fileprivate var isImage: Bool {
         return self == .image || self == .imgur || self == .giphy

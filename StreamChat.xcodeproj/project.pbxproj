@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		465D64C2231808A2006BAE42 /* AttachmentTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */; };
 		8A04964222E9D71400E94795 /* Chat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD322E9BA39005CFAC9 /* Chat.xcassets */; };
 		8A04964422E9F52D00E94795 /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED0622E9BA39005CFAC9 /* Presenter.swift */; };
 		8A04964522E9F53200E94795 /* ChannelsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED0922E9BA39005CFAC9 /* ChannelsPresenter.swift */; };
@@ -178,6 +179,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentTypeTests.swift; sourceTree = "<group>"; };
 		8A04964E22EF1A8900E94795 /* QueryOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryOptions.swift; sourceTree = "<group>"; };
 		8A04965022EF4B2400E94795 /* UsersQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersQuery.swift; sourceTree = "<group>"; };
 		8A04965222F0910200E94795 /* Message+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Requests.swift"; sourceTree = "<group>"; };
@@ -386,6 +388,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		46EA815F23196308008ABC04 /* Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */,
+			);
+			path = "Unit Tests";
+			sourceTree = "<group>";
+		};
 		8A04964322E9F51C00E94795 /* Presenter */ = {
 			isa = PBXGroup;
 			children = (
@@ -410,6 +420,7 @@
 		8A559D22230D937C00E66096 /* StreamChatCoreTests */ = {
 			isa = PBXGroup;
 			children = (
+				46EA815F23196308008ABC04 /* Unit Tests */,
 				8A6F69CE230EB75300B8CC1F /* Integration Tests */,
 				8A6F69D0230ECCB600B8CC1F /* Extensions */,
 				8A559D25230D937C00E66096 /* Info.plist */,
@@ -1086,6 +1097,7 @@
 				8AD0A9942314252700B8EB97 /* ClientSetupTests.swift in Sources */,
 				8AD0A9962314394200B8EB97 /* ChannelTests.swift in Sources */,
 				8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */,
+				465D64C2231808A2006BAE42 /* AttachmentTypeTests.swift in Sources */,
 				8A559D24230D937C00E66096 /* ClientRequestsTests.swift in Sources */,
 				8A6F69D4230ECD7300B8CC1F /* TestCase.swift in Sources */,
 			);
