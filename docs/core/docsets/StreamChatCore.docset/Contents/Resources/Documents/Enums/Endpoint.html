@@ -14,7 +14,7 @@
     <a title="Endpoint Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (90% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (88% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -115,6 +115,9 @@
                 <a href="../Enums/ClientError.html">ClientError</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/EncodingError.html">EncodingError</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
@@ -137,6 +140,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/Pagination.html">Pagination</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ReactionType.html">ReactionType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ViewChanges.html">ViewChanges</a>
@@ -196,6 +202,9 @@
           <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/AnyError.html">AnyError</a>
+              </li>
               <li class="nav-group-task">
                 <a href="../Structs/Attachment.html">Attachment</a>
               </li>
@@ -598,9 +607,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore8EndpointO8sendReadyAcA7ChannelCcACmF"></a>
-                    <a name="//apple_ref/swift/Element/sendRead(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore8EndpointO8sendReadyAcA7ChannelCcACmF">sendRead(_:)</a>
+                    <a name="/s:14StreamChatCore8EndpointO8markReadyAcA7ChannelCcACmF"></a>
+                    <a name="//apple_ref/swift/Element/markRead(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore8EndpointO8markReadyAcA7ChannelCcACmF">markRead(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -615,7 +624,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">sendRead</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">markRead</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -771,9 +780,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore8EndpointO11addReactionyACSS_AA7MessageVtcACmF"></a>
+                    <a name="/s:14StreamChatCore8EndpointO11addReactionyAcA0F4TypeO_AA7MessageVtcACmF"></a>
                     <a name="//apple_ref/swift/Element/addReaction(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore8EndpointO11addReactionyACSS_AA7MessageVtcACmF">addReaction(_:_:)</a>
+                    <a class="token" href="#/s:14StreamChatCore8EndpointO11addReactionyAcA0F4TypeO_AA7MessageVtcACmF">addReaction(_:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -788,7 +797,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">addReaction</span><span class="p">(</span><span class="nv">_</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">addReaction</span><span class="p">(</span><span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">,</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -798,9 +807,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore8EndpointO14deleteReactionyACSS_AA7MessageVtcACmF"></a>
+                    <a name="/s:14StreamChatCore8EndpointO14deleteReactionyAcA0F4TypeO_AA7MessageVtcACmF"></a>
                     <a name="//apple_ref/swift/Element/deleteReaction(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore8EndpointO14deleteReactionyACSS_AA7MessageVtcACmF">deleteReaction(_:_:)</a>
+                    <a class="token" href="#/s:14StreamChatCore8EndpointO14deleteReactionyAcA0F4TypeO_AA7MessageVtcACmF">deleteReaction(_:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -815,7 +824,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">deleteReaction</span><span class="p">(</span><span class="nv">_</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">deleteReaction</span><span class="p">(</span><span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">,</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1000,7 +1009,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-15)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-02)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

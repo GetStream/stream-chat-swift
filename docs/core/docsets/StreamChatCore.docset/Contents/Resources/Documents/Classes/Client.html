@@ -14,7 +14,7 @@
     <a title="Client Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (90% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (88% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -115,6 +115,9 @@
                 <a href="../Enums/ClientError.html">ClientError</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/EncodingError.html">EncodingError</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
@@ -137,6 +140,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/Pagination.html">Pagination</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ReactionType.html">ReactionType</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ViewChanges.html">ViewChanges</a>
@@ -196,6 +202,9 @@
           <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/AnyError.html">AnyError</a>
+              </li>
               <li class="nav-group-task">
                 <a href="../Structs/Attachment.html">Attachment</a>
               </li>
@@ -541,12 +550,31 @@
     <span class="c1">// Filter connection statuses only for connected.</span>
     <span class="o">.</span><span class="nf">connected</span><span class="p">()</span>
     <span class="c1">// Send a message request to a channel.</span>
-    <span class="o">.</span><span class="n">flatMapLatest</span> <span class="p">{</span> <span class="p">[</span><span class="k">weak</span> <span class="k">self</span><span class="p">]</span> <span class="k">in</span>
-        <span class="k">self</span><span class="p">?</span><span class="o">.</span><span class="n">channel</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="s">"Hello world!"</span><span class="p">)</span> <span class="p">??</span> <span class="o">.</span><span class="nf">empty</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">flatMapLatest</span> <span class="p">{</span>
+        <span class="c1">// Make a request here.</span>
     <span class="p">}</span>
     <span class="c1">// Subscribe for a result.</span>
     <span class="o">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="nv">onNext</span><span class="p">:</span> <span class="p">{</span> <span class="n">messageResponse</span> <span class="k">in</span>
         <span class="nf">print</span><span class="p">(</span><span class="n">messageResponse</span><span class="p">)</span>
+    <span class="p">})</span>
+    <span class="o">.</span><span class="nf">disposed</span><span class="p">(</span><span class="nv">by</span><span class="p">:</span> <span class="n">disposeBag</span><span class="p">)</span>
+</code></pre>
+
+<p>All requests from the client or a channel are wrapped with connection events.
+You can do requests directly.</p>
+
+<p>For example:</p>
+<pre class="highlight swift"><code><span class="c1">// Find all channels with type `messaging`.</span>
+<span class="k">let</span> <span class="nv">channelsQuery</span> <span class="o">=</span> <span class="kt">ChannelsQuery</span><span class="p">(</span><span class="nv">filter</span><span class="p">:</span> <span class="o">.</span><span class="nf">key</span><span class="p">(</span><span class="s">"type"</span><span class="p">,</span> <span class="o">.</span><span class="nf">equal</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="s">"messaging"</span><span class="p">)))</span>
+<span class="kt">Client</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">channels</span><span class="p">(</span><span class="nv">query</span><span class="p">:</span> <span class="n">channelsQuery</span><span class="p">)</span>
+    <span class="c1">// Here we will get channels when web socket will be connected.</span>
+    <span class="c1">// Select the first channel.</span>
+    <span class="o">.</span><span class="n">map</span> <span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="n">first</span> <span class="p">}</span>
+    <span class="o">.</span><span class="nf">unwrap</span><span class="p">()</span>
+    <span class="c1">// Send a message to the first channel.</span>
+    <span class="o">.</span><span class="n">flatMapLatest</span> <span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">Message</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="s">"Hi!"</span><span class="p">))</span> <span class="p">}</span>
+    <span class="o">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="nv">onNext</span><span class="p">:</span> <span class="p">{</span> <span class="n">result</span> <span class="k">in</span>
+        <span class="nf">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
     <span class="p">})</span>
     <span class="o">.</span><span class="nf">disposed</span><span class="p">(</span><span class="nv">by</span><span class="p">:</span> <span class="n">disposeBag</span><span class="p">)</span>
 </code></pre>
@@ -1277,7 +1305,7 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-08-15)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-02)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
