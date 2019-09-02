@@ -63,6 +63,8 @@ extension WebSocket {
     private var delayForReconnect: TimeInterval {
         let maxDelay: TimeInterval = min(500 + consecutiveFailures * 2000, 25000) / 1000
         let minDelay: TimeInterval = min(max(250, (consecutiveFailures - 1) * 2000), 25000) / 1000
+        consecutiveFailures += 1
+        
         return minDelay + TimeInterval.random(in: 0...(maxDelay - minDelay))
     }
 }

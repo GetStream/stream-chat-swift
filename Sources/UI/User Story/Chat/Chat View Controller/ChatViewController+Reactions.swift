@@ -37,7 +37,7 @@ extension ChatViewController {
             y += .reactionsHeight / 2
         }
         
-        reactionsView.show(atY: y, for: message) { [weak self] emojiType in
+        reactionsView.show(atY: y, for: message) { [weak self] reactionType in
             guard let self = self,
                 let messageIndex = self.channelPresenter?.items.lastIndex(whereMessageId: messageId),
                 let message = self.channelPresenter?.items[messageIndex].message else {
@@ -45,9 +45,9 @@ extension ChatViewController {
             }
             
             self.reactionsView = nil
-            let reactionExists = message.hasOwnReaction(type: emojiType)
+            let reactionExists = message.hasOwnReaction(type: reactionType)
             
-            (reactionExists ? message.deleteReaction(emojiType) : message.addReaction(emojiType))
+            (reactionExists ? message.deleteReaction(reactionType) : message.addReaction(reactionType))
                 .subscribe(onError: {
                     Banners.shared.show(error: $0)
                 })

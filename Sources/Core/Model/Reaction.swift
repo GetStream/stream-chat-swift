@@ -10,12 +10,41 @@ import Foundation
 
 // MARK: - Reaction
 
+/// A reaction type.
+public enum ReactionType: String, Codable, Hashable, CaseIterable {
+    // A like reaction 👍.
+    case like
+    // A love reaction ❤️.
+    case love
+    // A haha reaction 😂.
+    case haha
+    // A wow reaction 😲.
+    case wow
+    // A sad reaction 😔.
+    case sad
+    // A angry reaction 😠.
+    case angry
+    
+    /// An reaction type as emoji.
+    public var emoji: String {
+        switch self {
+        case .like: return "👍"
+        case .love: return "❤️"
+        case .haha: return "😂"
+        case .wow: return "😲"
+        case .sad: return "😔"
+        case .angry: return "😠"
+        }
+    }
+    
+    /// A list of reactions as emoji's.
+    public static var emojies: [String] {
+        return ReactionType.allCases.map { $0.emoji }
+    }
+}
+
 /// A reaction for a message.
 public struct Reaction: Codable, Equatable {
-    /// A list of reactions in emoji.
-    public static let emoji = ["👍", "❤️", "😂", "😲", "😔", "😠"]
-    /// A list of reation types.
-    public static let emojiTypes = ["like", "love", "haha", "wow", "sad", "angry"]
     
     private enum CodingKeys: String, CodingKey {
         case type
@@ -25,7 +54,7 @@ public struct Reaction: Codable, Equatable {
     }
     
     /// A reaction type.
-    public let type: String
+    public let type: ReactionType
     /// A user of the reaction.
     public let user: User?
     /// A created date.
@@ -44,47 +73,53 @@ public struct Reaction: Codable, Equatable {
 /// A reaction counts.
 public struct ReactionCounts: Decodable {
     /// Reaction counts by reaction types.
-    public private(set) var counts: [String: Int]
+    public private(set) var counts: [ReactionType: Int]
+    
     /// A joined reaction types and counts.
     public private(set) var string: String
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        counts = try container.decode([String: Int].self)
         string = ""
+        let rawCounts = try container.decode([String: Int].self)
+        var counts = [ReactionType: Int]()
+        
+        rawCounts.forEach { key, count in
+            if let reactionType = ReactionType(rawValue: key) {
+                counts[reactionType] = count
+            }
+        }
+        
+        self.counts = counts
         string = joinToString()
     }
     
     /// Init a reaction counts with 1 for a given reaction type.
-    init(reactionType: String) {
+    init(reactionType: ReactionType) {
         counts = [reactionType: 1]
-        
-        if let index = Reaction.emojiTypes.firstIndex(of: reactionType) {
-            string = "\(Reaction.emoji[index])1"
-        } else {
-            string = ""
-        }
+        string = ""
+        string = joinToString()
     }
     
     private func joinToString() -> String {
-        let count = counts.values.reduce(0, { $0 + $1 })
-        let countKeys = counts.keys
-        var emoji = ""
-        
         guard !counts.isEmpty else {
             return ""
         }
         
-        Reaction.emojiTypes.enumerated().forEach { index, key in
-            if countKeys.contains(key) {
-                emoji += Reaction.emoji[index]
+        let count = counts.values.reduce(0, { $0 + $1 })
+        let countKeys = counts.keys
+        var emoji = ""
+        
+        ReactionType.allCases.forEach { type in
+            if countKeys.contains(type) {
+                emoji += type.emoji
             }
         }
         
         return emoji.appending(count.shortString())
     }
     
-    mutating func update(type: String, increment: Int) {
+    mutating func update(type: ReactionType, increment: Int) {
         let count = increment + (counts[type] ?? 0)
         
         if count <= 0 {

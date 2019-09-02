@@ -26,7 +26,7 @@ public extension Message {
     ///
     /// - Parameter reactionType: a reaction type, e.g. like.
     /// - Returns: an observable message response.
-    func addReaction(_ reactionType: String) -> Observable<MessageResponse> {
+    func addReaction(_ reactionType: ReactionType) -> Observable<MessageResponse> {
         return Client.shared.rx.connectedRequest(endpoint: .addReaction(reactionType, self))
     }
     
@@ -34,7 +34,7 @@ public extension Message {
     ///
     /// - Parameter reactionType: a reaction type, e.g. like.
     /// - Returns: an observable message response.
-    func deleteReaction(_ reactionType: String) -> Observable<MessageResponse> {
+    func deleteReaction(_ reactionType: ReactionType) -> Observable<MessageResponse> {
         return Client.shared.rx.connectedRequest(endpoint: .deleteReaction(reactionType, self))
     }
     

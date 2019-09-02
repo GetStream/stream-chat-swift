@@ -19,7 +19,7 @@ public final class WebSocket {
     let webSocket: Starscream.WebSocket
     private(set) var lastJSONError: ClientErrorResponse?
     private(set) var lastConnectionId: String?
-    private(set) var consecutiveFailures: TimeInterval = 0
+    var consecutiveFailures: TimeInterval = 0
     let logger: ClientLogger?
     var isReconnecting = false
     private var goingToDisconnect: DispatchWorkItem?
@@ -199,9 +199,7 @@ extension WebSocket {
                 ClientLogger.log("🦄", error, message: errorMessage)
                 ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
                 
-                if willReconnectAfterError(error) {
-                    consecutiveFailures += 1
-                } else {
+                if !willReconnectAfterError(error) {
                     consecutiveFailures = 0
                     
                     if let lastJSONError = lastJSONError, isStopError(error) {

@@ -211,7 +211,7 @@ public extension Message {
     ///
     /// - Parameter type: a reaction type.
     /// - Returns: true if the message has a reaction type.
-    func hasOwnReaction(type: String) -> Bool {
+    func hasOwnReaction(type: ReactionType) -> Bool {
         return !ownReactions.isEmpty && ownReactions.firstIndex(where: { $0.type == type }) != nil
     }
     
