@@ -253,48 +253,8 @@ public final class ComposerView: UIView {
         // Observe the keyboard moving.
         RxKeyboard.instance.visibleHeight
             .skip(1)
-            .drive(onNext: { [weak self] height in
-                guard let self = self, let parentView = self.superview else {
-                    return
-                }
-                
-                let bottom: CGFloat = style.edgeInsets.bottom
-                    + max(0, height - (height > 0 ? parentView.safeAreaBottomOffset + self.toolBar.frame.height : 0))
-                
-                self.bottomConstraint?.update(offset: -bottom)
-                
-                if height == 0 {
-                    self.textView.resignFirstResponder()
-                }
-                
-                DispatchQueue.main.async {
-                    if self.styleState != .disabled {
-                        self.updateStyleState()
-                    }
-                }
-            })
+            .drive(onNext: { [weak self] in self?.updateBottomConstraint(with: $0) })
             .disposed(by: disposeBag)
-    }
-    
-    private func addBlurredBackground(blurEffectStyle: UIBlurEffect.Style) {
-        let isDark = blurEffectStyle == .dark
-        
-        guard !UIAccessibility.isReduceTransparencyEnabled else {
-            backgroundColor = isDark ? .chatDarkGray : .chatComposer
-            return
-        }
-        
-        let blurEffect = UIBlurEffect(style: blurEffectStyle)
-        let blurView = UIVisualEffectView(effect: blurEffect)
-        blurView.isUserInteractionEnabled = false
-        insertSubview(blurView, at: 0)
-        blurView.makeEdgesEqualToSuperview()
-        
-        let adjustingView = UIView(frame: .zero)
-        adjustingView.isUserInteractionEnabled = false
-        adjustingView.backgroundColor = .init(white: isDark ? 1 : 0, alpha: isDark ? 0.25 : 0.1)
-        insertSubview(adjustingView, at: 0)
-        adjustingView.makeEdgesEqualToSuperview()
     }
     
     /// Reset states of all child views and clear all added/generated data.
@@ -351,6 +311,47 @@ public final class ComposerView: UIView {
             && imageUploaderItems.isEmpty
             && isUploaderFilesEmpty
             && text.isEmpty ? .normal : (isEditing ? .edit : .active)
+    }
+}
+
+extension ComposerView {
+    
+    private func addBlurredBackground(blurEffectStyle: UIBlurEffect.Style) {
+        let isDark = blurEffectStyle == .dark
+        
+        guard !UIAccessibility.isReduceTransparencyEnabled else {
+            backgroundColor = isDark ? .chatDarkGray : .chatComposer
+            return
+        }
+        
+        let blurEffect = UIBlurEffect(style: blurEffectStyle)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.isUserInteractionEnabled = false
+        insertSubview(blurView, at: 0)
+        blurView.makeEdgesEqualToSuperview()
+        
+        let adjustingView = UIView(frame: .zero)
+        adjustingView.isUserInteractionEnabled = false
+        adjustingView.backgroundColor = .init(white: isDark ? 1 : 0, alpha: isDark ? 0.25 : 0.1)
+        insertSubview(adjustingView, at: 0)
+        adjustingView.makeEdgesEqualToSuperview()
+    }
+    
+    private func updateBottomConstraint(with keyboardHeight: CGFloat) {
+        let bottom: CGFloat = (style?.edgeInsets.bottom ?? 0)
+            + max(0, keyboardHeight - (keyboardHeight > 0 ? .safeAreaBottom + toolBar.frame.height : 0))
+        
+        bottomConstraint?.update(offset: -bottom)
+        
+        if keyboardHeight == 0 {
+            textView.resignFirstResponder()
+        }
+        
+        DispatchQueue.main.async {
+            if self.styleState != .disabled {
+                self.updateStyleState()
+            }
+        }
     }
 }
 
