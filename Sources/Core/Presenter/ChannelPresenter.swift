@@ -21,8 +21,14 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
     
+    private let channelId: String
+    private let channelMVar = MVar<Channel>()
+    
     /// A channel (see `Channel`).
-    public let channel: Channel
+    public var channel: Channel {
+        return channelMVar.get(defaultValue: Channel(id: channelId))
+    }
+    
     /// A parent message for replies.
     public let parentMessage: Message?
     /// Query options.
@@ -128,7 +134,8 @@ public final class ChannelPresenter: Presenter<ChatItem> {
                 parentMessage: Message? = nil,
                 queryOptions: QueryOptions = .all,
                 showStatuses: Bool = true) {
-        self.channel = channel
+        channelId = channel.id
+        channelMVar.set(channel)
         self.parentMessage = parentMessage
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
@@ -141,7 +148,8 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     ///     - query: a channel query result with messages
     ///     - showStatuses: shows statuses separators, e.g. Today
     public init(response: ChannelResponse, queryOptions: QueryOptions, showStatuses: Bool = true) {
-        channel = response.channel
+        channelId = response.channel.id
+        channelMVar.set(response.channel)
         parentMessage = nil
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
@@ -200,10 +208,14 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, _, _, _, _, _):
+        case .messageNew(let message, _, _, _, let messageNewChannel, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
+            
+            if let messageNewChannel = messageNewChannel {
+                channelMVar.set(messageNewChannel)
+            }   
             
             if channel.config.readEventsEnabled {
                 if let lastMessage = lastMessageMVar.get() {
@@ -387,6 +399,7 @@ extension ChannelPresenter {
     
     @discardableResult
     private func parseResponse(_ query: ChannelResponse) -> ViewChanges {
+        channelMVar.set(query.channel)
         let isNextPage = next != pageSize
         var items = isNextPage ? self.items : []
         
