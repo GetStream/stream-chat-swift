@@ -155,6 +155,14 @@ open class ChatViewController: UIViewController, UITableViewDataSource, UITableV
         return nil
     }
     
+    /// Presents error using Banner. You can override this method in order to change error presentation.
+    ///
+    /// - Parameters:
+    ///   - error: error to be presented.
+    open func presentError(_ error: AnyError) {
+        Banners.shared.show(error: error)
+    }
+
     private func markReadIfPossible() {
         channelPresenter?.markReadIfPossible().subscribe().disposed(by: disposeBag)
     }
@@ -274,7 +282,7 @@ extension ChatViewController {
             }
             
         case .error(let error):
-            Banners.shared.show(error: error)
+            presentError(error)
             
         case .footerUpdated:
             updateFooterView()
