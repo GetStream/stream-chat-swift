@@ -48,9 +48,7 @@ extension ChatViewController {
             let reactionExists = message.hasOwnReaction(type: reactionType)
             
             (reactionExists ? message.deleteReaction(reactionType) : message.addReaction(reactionType))
-                .subscribe(onError: {
-                    Banners.shared.show(error: $0)
-                })
+                .subscribe(onError: { [weak self] in self?.show(error: $0) })
                 .disposed(by: self.disposeBag)
             
             return !reactionExists

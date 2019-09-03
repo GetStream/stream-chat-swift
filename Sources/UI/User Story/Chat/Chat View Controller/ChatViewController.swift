@@ -13,7 +13,7 @@ import RxSwift
 import RxCocoa
 
 /// A chat view controller of a channel.
-open class ChatViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+open class ChatViewController: ViewController, UITableViewDataSource, UITableViewDelegate {
     /// A chat view style.
     public var style = ChatViewStyle()
     /// A dispose bag for rx subscriptions.
@@ -274,7 +274,7 @@ extension ChatViewController {
             }
             
         case .error(let error):
-            Banners.shared.show(error: error)
+            show(error: error)
             
         case .footerUpdated:
             updateFooterView()

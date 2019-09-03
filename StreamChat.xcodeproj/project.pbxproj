@@ -33,6 +33,7 @@
 		8AD0A99223141D2400B8EB97 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A99123141D2400B8EB97 /* Tests.swift */; };
 		8AD0A9942314252700B8EB97 /* ClientSetupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A9932314252700B8EB97 /* ClientSetupTests.swift */; };
 		8AD0A9962314394200B8EB97 /* ChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A9952314394200B8EB97 /* ChannelTests.swift */; };
+		8AD54F1C231E91E500364657 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD54F1B231E91E500364657 /* ViewController.swift */; };
 		8AD5EC9422E9A3E8005CFAC9 /* StreamChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD5EC9222E9A3E8005CFAC9 /* StreamChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AD5ECA322E9B355005CFAC9 /* StreamChatCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AD5ECA122E9B355005CFAC9 /* StreamChatCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8AD5ECA822E9B3C4005CFAC9 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
@@ -134,7 +135,6 @@
 		8AD5EDA722E9BA98005CFAC9 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECB722E9BA39005CFAC9 /* UIColor+Extensions.swift */; };
 		8AD5EDA822E9BA98005CFAC9 /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECB822E9BA39005CFAC9 /* UIDevice+Extensions.swift */; };
 		8AD5EDA922E9BA98005CFAC9 /* UIViewController+ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBA22E9BA39005CFAC9 /* UIViewController+ImagePicker.swift */; };
-		8AD5EDAA22E9BA98005CFAC9 /* UIViewController+DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBB22E9BA39005CFAC9 /* UIViewController+DocumentPicker.swift */; };
 		8AD5EDAB22E9BA98005CFAC9 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBC22E9BA39005CFAC9 /* UIViewController+Extensions.swift */; };
 		8AD5EDAC22E9BA98005CFAC9 /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBD22E9BA39005CFAC9 /* TableView.swift */; };
 		8AD5EDAD22E9BA98005CFAC9 /* UIStackView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBE22E9BA39005CFAC9 /* UIStackView+Extensions.swift */; };
@@ -199,6 +199,7 @@
 		8AD0A99123141D2400B8EB97 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		8AD0A9932314252700B8EB97 /* ClientSetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSetupTests.swift; sourceTree = "<group>"; };
 		8AD0A9952314394200B8EB97 /* ChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTests.swift; sourceTree = "<group>"; };
+		8AD54F1B231E91E500364657 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		8AD5EC8F22E9A3E8005CFAC9 /* StreamChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD5EC9222E9A3E8005CFAC9 /* StreamChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChat.h; sourceTree = "<group>"; };
 		8AD5EC9322E9A3E8005CFAC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -217,7 +218,6 @@
 		8AD5ECB722E9BA39005CFAC9 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ECB822E9BA39005CFAC9 /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ECBA22E9BA39005CFAC9 /* UIViewController+ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+ImagePicker.swift"; sourceTree = "<group>"; };
-		8AD5ECBB22E9BA39005CFAC9 /* UIViewController+DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+DocumentPicker.swift"; sourceTree = "<group>"; };
 		8AD5ECBC22E9BA39005CFAC9 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ECBD22E9BA39005CFAC9 /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 		8AD5ECBE22E9BA39005CFAC9 /* UIStackView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Extensions.swift"; sourceTree = "<group>"; };
@@ -584,7 +584,6 @@
 			isa = PBXGroup;
 			children = (
 				8AD5ECBA22E9BA39005CFAC9 /* UIViewController+ImagePicker.swift */,
-				8AD5ECBB22E9BA39005CFAC9 /* UIViewController+DocumentPicker.swift */,
 				8AD5ECBC22E9BA39005CFAC9 /* UIViewController+Extensions.swift */,
 			);
 			path = UIViewController;
@@ -636,6 +635,7 @@
 				8A104FC222F4921F002B2DC1 /* Banners */,
 				8AD5ECFC22E9BA39005CFAC9 /* Web View */,
 				8AD5ECFE22E9BA39005CFAC9 /* Image Gallery */,
+				8AD54F1B231E91E500364657 /* ViewController.swift */,
 			);
 			path = "User Story";
 			sourceTree = "<group>";
@@ -1115,6 +1115,7 @@
 				8AD5ED7C22E9BA98005CFAC9 /* ComposerView+Images.swift in Sources */,
 				8AD5EDBD22E9BA98005CFAC9 /* RxKeyboard.swift in Sources */,
 				8AD5ED8222E9BA98005CFAC9 /* ComposerFileView.swift in Sources */,
+				8AD54F1C231E91E500364657 /* ViewController.swift in Sources */,
 				8AD5ED8F22E9BA98005CFAC9 /* AttachmentFileType+Extensions.swift in Sources */,
 				8AD5ED8A22E9BA98005CFAC9 /* ChatViewController+MessageActions.swift in Sources */,
 				8AD5ED7622E9BA98005CFAC9 /* MessageTableViewCell+Attachments.swift in Sources */,
@@ -1161,7 +1162,6 @@
 				8AD5ED8122E9BA98005CFAC9 /* UploaderItem+UIImagePickerController.swift in Sources */,
 				8AD5ED9322E9BA98005CFAC9 /* WebViewController.swift in Sources */,
 				8AD5EDA622E9BA98005CFAC9 /* UIImagePickerController+Extensions.swift in Sources */,
-				8AD5EDAA22E9BA98005CFAC9 /* UIViewController+DocumentPicker.swift in Sources */,
 				8AD5ED9822E9BA98005CFAC9 /* ChannelViewStyle.swift in Sources */,
 				8AD5EDB022E9BA98005CFAC9 /* UILabel+Extensions.swift in Sources */,
 				8AD5ED9922E9BA98005CFAC9 /* ChatViewStyle.swift in Sources */,

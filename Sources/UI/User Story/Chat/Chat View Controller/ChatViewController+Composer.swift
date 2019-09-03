@@ -115,7 +115,7 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self] _ in self?.composerView.reset() },
                        onError: { [weak self] in
                         self?.composerView.reset()
-                        Banners.shared.show(error: $0)
+                        self?.show(error: $0)
             })
             .disposed(by: disposeBag)
     }

@@ -139,7 +139,7 @@ extension ChatViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
-                    Banners.shared.show("@\(user.name) was muted", backgroundColor: backgroundColor)
+                    self?.showBanner("@\(user.name) was muted", backgroundColor: backgroundColor)
                 }
             })
             .disposed(by: disposeBag)
@@ -150,7 +150,7 @@ extension ChatViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
-                    Banners.shared.show("@\(user.name) was unmuted", backgroundColor: backgroundColor)
+                    self?.showBanner("@\(user.name) was unmuted", backgroundColor: backgroundColor)
                 }
             })
             .disposed(by: disposeBag)
@@ -161,7 +161,7 @@ extension ChatViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
-                    Banners.shared.show("🚩 Flagged: \(message.textOrArgs)", backgroundColor: backgroundColor)
+                    self?.showBanner("🚩 Flagged: \(message.textOrArgs)", backgroundColor: backgroundColor)
                 }
             })
             .disposed(by: disposeBag)
@@ -172,7 +172,7 @@ extension ChatViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
-                    Banners.shared.show("🚩 Unflagged: \(message.textOrArgs)", backgroundColor: backgroundColor)
+                    self?.showBanner("🚩 Unflagged: \(message.textOrArgs)", backgroundColor: backgroundColor)
                 }
             })
             .disposed(by: disposeBag)

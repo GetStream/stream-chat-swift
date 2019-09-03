@@ -12,7 +12,7 @@ import RxSwift
 import RxCocoa
 
 /// A channels view controller.
-open class ChannelsViewController: UIViewController {
+open class ChannelsViewController: ViewController {
     
     /// A dispose bag for rx subscriptions.
     public let disposeBag = DisposeBag()
@@ -171,7 +171,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             tableView.reloadData()
             
         case .error(let error):
-            Banners.shared.show(error: error)
+            show(error: error)
             
         case .none, .footerUpdated:
             return
