@@ -15,6 +15,8 @@
 
 You can sign up for a Stream account at [https://getstream.io/chat/get_started/](https://getstream.io/chat/get_started/).
 
+![Stream Chat](https://getstream.imgix.net/images/ios-chat-tutorial/iphone_chat_art@2x.png?auto=format,enhance)
+
 ## Requirements
 
 - iOS 11
