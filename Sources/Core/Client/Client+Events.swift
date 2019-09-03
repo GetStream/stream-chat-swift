@@ -19,7 +19,7 @@ public extension Client {
     ///     - eventType: an event type.
     ///     - channelId: a channeld id (optional).
     /// - Returns: an observable event.
-    func onEvent(_ eventType: EventType? = nil, for channelId: String? = nil) -> Observable<Event> {
+    func onEvent(_ eventType: EventType? = nil, channelId: String? = nil) -> Observable<Event> {
         return webSocket.response
             .filter {
                 if let channelId = channelId {

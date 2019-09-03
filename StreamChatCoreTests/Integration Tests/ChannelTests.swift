@@ -98,19 +98,6 @@ final class ChannelTests: TestCase {
                     return nil
                 }
                 .unwrap()
-                .flatMapLatest { $0.deleteReaction(.like) }
-                .map { response -> Message? in
-                    if let reactionCounts = response.message.reactionCounts {
-                        XCTAssertEqual(reactionCounts.counts, [ReactionType.love: 1])
-                        XCTAssertEqual(reactionCounts.string, "\(ReactionType.love.emoji)1")
-                        return response.message
-                    }
-                    
-                    XCTFail("Failed to delete a reaction")
-                    
-                    return nil
-                }
-                .unwrap()
                 .flatMapLatest { $0.deleteReaction(.love) }
                 .map { response -> Message? in
                     XCTAssertNil(response.message.reactionCounts)

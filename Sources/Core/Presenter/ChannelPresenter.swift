@@ -106,7 +106,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { $0 != .none }
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
-    private lazy var webSocketChanges: Driver<ViewChanges> = channel.onEvent()
+    private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.onEvent(channelId: channelId)
         .map { [weak self] in self?.parseChanges(event: $0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
@@ -215,7 +215,7 @@ extension ChannelPresenter {
             
             if let messageNewChannel = messageNewChannel {
                 channelMVar.set(messageNewChannel)
-            }   
+            }
             
             if channel.config.readEventsEnabled {
                 if let lastMessage = lastMessageMVar.get() {

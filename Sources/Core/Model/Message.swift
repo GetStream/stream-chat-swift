@@ -181,8 +181,14 @@ public struct Message: Codable {
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         latestReactions = try container.decode([Reaction].self, forKey: .latestReactions)
         ownReactions = try container.decode([Reaction].self, forKey: .ownReactions)
-        reactionCounts = try container.decodeIfPresent(ReactionCounts.self, forKey: .reactionCounts)
         extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isMessage }))
+        
+        if let reactionCounts = try container.decodeIfPresent(ReactionCounts.self, forKey: .reactionCounts),
+            !reactionCounts.counts.isEmpty {
+            self.reactionCounts = reactionCounts
+        } else {
+            reactionCounts = nil
+        }
     }
     
     private func checkIfTextAsAttachmentURL(_ text: String) -> Bool {
