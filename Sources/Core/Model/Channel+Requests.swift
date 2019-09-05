@@ -211,6 +211,10 @@ public extension Channel {
     /// - Parameter message: a message.
     /// - Returns: an observable flag message response.
     func flag(message: Message) -> Observable<FlagMessageResponse> {
+        guard config.flagsEnabled else {
+            return .empty()
+        }
+        
         return message.flag()
     }
     
@@ -219,6 +223,10 @@ public extension Channel {
     /// - Parameter message: a message.
     /// - Returns: an observable flag message response.
     func unflag(message: Message) -> Observable<FlagMessageResponse> {
+        guard config.flagsEnabled else {
+            return .empty()
+        }
+        
         return message.unflag()
     }
 }

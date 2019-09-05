@@ -105,21 +105,7 @@ public final class Channel: Codable {
             self.extraData = nil
         }
         
-        config = Config(name: "",
-                        automodBehavior: "",
-                        automodEnabled: "",
-                        reactionsEnabled: false,
-                        typingEventsEnabled: false,
-                        readEventsEnabled: false,
-                        connectEventsEnabled: false,
-                        repliesEnabled: false,
-                        searchEnabled: false,
-                        mutesEnabled: false,
-                        messageRetention: "",
-                        maxMessageLength: 0,
-                        commands: [],
-                        created: Date(),
-                        updated: Date())
+        config = Config()
     }
     
     required public init(from decoder: Decoder) throws {
@@ -173,9 +159,6 @@ public extension Channel {
     /// A channel config.
     struct Config: Decodable {
         private enum CodingKeys: String, CodingKey {
-            case name
-            case automodBehavior = "automod_behavior"
-            case automodEnabled = "automod"
             case reactionsEnabled = "reactions"
             case typingEventsEnabled = "typing_events"
             case readEventsEnabled = "read_events"
@@ -191,9 +174,6 @@ public extension Channel {
         }
         
         
-        let name: String
-        let automodBehavior: String
-        let automodEnabled: String
         /// If users are allowed to add reactions to messages. Enabled by default.
         public let reactionsEnabled: Bool
         /// Controls if typing indicators are shown. Enabled by default.
@@ -208,6 +188,8 @@ public extension Channel {
         public let searchEnabled: Bool
         /// Determines if users are able to mute other users. Enabled by default.
         public let mutesEnabled: Bool
+        /// Determines if users are able to flag messages. Enabled by default.
+        public let flagsEnabled: Bool
         /// A number of days or infinite. Infinite by default.
         public let messageRetention: String
         /// The max message length. 5000 by default.
@@ -218,6 +200,39 @@ public extension Channel {
         public let created: Date
         /// A channel updated date.
         public let updated: Date
+        
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            reactionsEnabled = try container.decode(Bool.self, forKey: .reactionsEnabled)
+            typingEventsEnabled = try container.decode(Bool.self, forKey: .typingEventsEnabled)
+            readEventsEnabled = try container.decode(Bool.self, forKey: .readEventsEnabled)
+            connectEventsEnabled = try container.decode(Bool.self, forKey: .connectEventsEnabled)
+            repliesEnabled = try container.decode(Bool.self, forKey: .repliesEnabled)
+            searchEnabled = try container.decode(Bool.self, forKey: .searchEnabled)
+            mutesEnabled = try container.decode(Bool.self, forKey: .mutesEnabled)
+            messageRetention = try container.decode(String.self, forKey: .messageRetention)
+            maxMessageLength = try container.decode(Int.self, forKey: .maxMessageLength)
+            commands = try container.decodeIfPresent([Command].self, forKey: .commands) ?? []
+            flagsEnabled = commands.first(where: { $0.name.contains("flag") }) != nil
+            created = try container.decode(Date.self, forKey: .created)
+            updated = try container.decode(Date.self, forKey: .updated)
+        }
+        
+        init() {
+            reactionsEnabled = false
+            typingEventsEnabled = false
+            readEventsEnabled = false
+            connectEventsEnabled = false
+            repliesEnabled = false
+            searchEnabled = false
+            mutesEnabled = false
+            flagsEnabled = false
+            messageRetention = ""
+            maxMessageLength = 0
+            commands = []
+            created = Date()
+            updated = Date()
+        }
     }
     
     /// A command in a message, e.g. /giphy.

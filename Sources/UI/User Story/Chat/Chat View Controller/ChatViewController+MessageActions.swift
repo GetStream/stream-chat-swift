@@ -41,7 +41,7 @@ extension ChatViewController {
         
         if !message.user.isCurrent {
             // Mute.
-            if message.user.canBeMuted {
+            if presenter.channel.config.mutesEnabled {
                 if message.user.isMuted {
                     alert.addAction(.init(title: "Unmute", style: .default, handler: { [weak self] _ in
                         self?.unmute(user: message.user)
@@ -54,12 +54,14 @@ extension ChatViewController {
             }
             
             // Flag.
-            if message.isFlagged {
-                alert.addAction(.init(title: "Unflag", style: .default, handler: { [weak self] _ in
-                    self?.unflag(message: message) }))
-            } else {
-                alert.addAction(.init(title: "Flag", style: .default, handler: { [weak self] _ in
-                    self?.flag(message: message) }))
+            if presenter.channel.config.flagsEnabled {
+                if message.isFlagged {
+                    alert.addAction(.init(title: "Unflag", style: .default, handler: { [weak self] _ in
+                        self?.unflag(message: message) }))
+                } else {
+                    alert.addAction(.init(title: "Flag", style: .default, handler: { [weak self] _ in
+                        self?.flag(message: message) }))
+                }
             }
         }
         
