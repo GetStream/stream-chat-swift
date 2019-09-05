@@ -213,7 +213,7 @@ public extension Channel {
         /// The max message length. 5000 by default.
         public let maxMessageLength: Int
         /// An array of commands, e.g. /giphy.
-        public let commands: [Command]
+        public let commands: [Command]?
         /// A channel created date.
         public let created: Date
         /// A channel updated date.

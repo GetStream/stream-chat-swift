@@ -181,10 +181,10 @@ extension ChatViewController {
     
     func createComposerCommandsContainerView() -> ComposerHelperContainerView {
         let container = createComposerHelperContainerView(title: "Commands", closeButtonIsHidden: true)
-        container.isEnabled = !(channelPresenter?.channel.config.commands.isEmpty ?? true)
+        container.isEnabled = !(channelPresenter?.channel.config.commands?.isEmpty ?? true)
         
         if container.isEnabled, let channelConfig = channelPresenter?.channel.config {
-            channelConfig.commands.forEach { command in
+            channelConfig.commands?.forEach { command in
                 let view = ComposerCommandView(frame: .zero)
                 view.backgroundColor = container.backgroundColor
                 view.update(command: command.name, args: command.args, description: command.description)
