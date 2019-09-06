@@ -64,7 +64,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     /// A channel presenter.
     public var channelPresenter: ChannelPresenter?
     private var changesEnabled: Bool = false
-
+    
     open override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = style.incomingMessage.chatBackgroundColor
@@ -78,18 +78,20 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         composerView.uploader = presenter.uploader
         
         presenter.changes
-            .filter { [weak self] _ in self?.changesEnabled ?? false }
-            .do(onNext: { [weak self] _ in self?.markReadIfPossible() })
+            .filter { [weak self] _ in
+                if let self = self {
+                    return self.changesEnabled && self.isVisible
+                }
+                
+                return false
+            }
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
         
         if presenter.isEmpty {
             channelPresenter?.reload()
         } else {
-            items = presenter.items
-            tableView.reloadData()
-            tableView.scrollToBottom(animated: false)
-            DispatchQueue.main.async { [weak self] in self?.tableView.scrollToBottom(animated: false) }
+            refreshTableView(scrollToBottom: true, animated: false)
         }
         
         changesEnabled = true
@@ -118,6 +120,21 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     
     open override var preferredStatusBarStyle: UIStatusBarStyle {
         return style.incomingMessage.textColor.isDark ? .default : .lightContent
+    }
+    
+    /// Refresh table view cells with presenter items.
+    ///
+    /// - Parameters:
+    ///   - scrollToBottom: scroll the table view to the bottom cell after refresh, if true
+    ///   - animated: scroll to the bottom cell animated, if true
+    open func refreshTableView(scrollToBottom: Bool, animated: Bool) {
+        items = presenter.items
+        tableView.reloadData()
+        
+        if scrollToBottom {
+            tableView.scrollToBottom(animated: animated)
+            DispatchQueue.main.async { [weak self] in self?.tableView.scrollToBottom(animated: animated) }
+        }
     }
     
     /// A message cell to insert in a particular location of the table view.
@@ -205,9 +222,7 @@ extension ChatViewController {
 extension ChatViewController {
     
     private func updateTableView(with changes: ViewChanges) {
-        guard isViewLoaded else {
-            return
-        }
+        markReadIfPossible()
         
         switch changes {
         case .none, .itemMoved:

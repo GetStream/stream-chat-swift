@@ -10,7 +10,12 @@ import UIKit
 
 /// A general view controller.
 open class ViewController: UIViewController {
-
+    
+    /// Checks if the view controller’s view is visible for updates or not.
+    open var isVisible: Bool {
+        return viewIfLoaded?.window != nil
+    }
+    
     // MARK: - Banners
     
     /// Shows a banner with a given title.
