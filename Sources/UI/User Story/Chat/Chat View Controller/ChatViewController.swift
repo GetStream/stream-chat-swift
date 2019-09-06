@@ -128,6 +128,10 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     ///   - scrollToBottom: scroll the table view to the bottom cell after refresh, if true
     ///   - animated: scroll to the bottom cell animated, if true
     open func refreshTableView(scrollToBottom: Bool, animated: Bool) {
+        guard let presenter = channelPresenter else {
+            return
+        }
+        
         items = presenter.items
         tableView.reloadData()
         
