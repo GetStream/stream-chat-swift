@@ -14,7 +14,7 @@ import RxBlocking
 final class ChannelTests: TestCase {
     
     let channel = Channel(id: "integration")
-
+    
     func testQuery() {
         do {
             let response = try channel.query(pagination: .limit(1))
@@ -28,7 +28,7 @@ final class ChannelTests: TestCase {
             }
         } catch {
             XCTFail("\(error)")
-        }
+        }   
     }
     
     func testSendAndDeleteMessage() {

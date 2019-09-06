@@ -12,18 +12,29 @@ import Foundation
 
 /// A reaction type.
 public enum ReactionType: String, Codable, Hashable, CaseIterable {
-    // A like reaction 👍.
+    /// A like reaction 👍.
     case like
-    // A love reaction ❤️.
+    /// A love reaction ❤️.
     case love
-    // A haha reaction 😂.
+    /// A haha reaction 😂.
     case haha
-    // A wow reaction 😲.
+    /// A wow reaction 😲.
     case wow
-    // A sad reaction 😔.
+    /// A sad reaction 😔.
     case sad
-    // A angry reaction 😠.
+    /// A angry reaction 😠.
     case angry
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        
+        if let value = try? container.decode(String.self),
+            let type = ReactionType(rawValue: value) {
+            self = type
+        } else {
+            self = .like
+        }
+    }
     
     /// An reaction type as emoji.
     public var emoji: String {
