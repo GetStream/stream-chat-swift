@@ -39,9 +39,10 @@ public final class WebSocket {
     }
     
     /// An observable event response.
-    public private(set) lazy var response: Observable<WebSocket.Response> = Observable
-        .combineLatest(webSocket.rx.response, Client.shared.connection.connected())
-        .map { [weak self] event, _ in self?.parseMessage(event) }
+    public private(set) lazy var response: Observable<WebSocket.Response> = Observable.just(())
+        .observeOn(MainScheduler.instance)
+        .flatMapLatest { Client.shared.webSocket.webSocket.rx.response }
+        .map { [weak self] in self?.parseMessage($0) }
         .unwrap()
         .do(onNext: {
             if case .notificationMutesUpdated(let user, _) = $0.event {

@@ -52,27 +52,17 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private var lastParsedEvent: Event?
     private var lastWebSocketEventViewChanges: ViewChanges?
     
-    private lazy var unreadMessageReadMVar = MVar<MessageRead>() { [weak self] in
-        if $0 == nil {
-            self?.unreadCountMVar.set(0)
-        }
-    }
+    private lazy var unreadMessageReadMVar = MVar<MessageRead>()
     
     /// A list of typing users (see `TypingUser`).
     public private(set) var typingUsers: [TypingUser] = []
     private var messageReadsToMessageId: [MessageRead: String] = [:]
     private let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     private let isReadSubject = PublishSubject<Void>()
-    private let unreadCountMVar = MVar(0)
     
     /// Check if the channel has unread messages.
     public var isUnread: Bool {
         return channel.config.readEventsEnabled && unreadMessageReadMVar.get() != nil
-    }
-    
-    /// A number of unread messages in the channel.
-    public var unreadCount: Int {
-        return channel.config.readEventsEnabled ? unreadCountMVar.get(defaultValue: 0) : 0
     }
     
     /// Check if the channel has ephemeral message, e.g. Giphy preview.
@@ -223,8 +213,6 @@ extension ChannelPresenter {
                 } else {
                     unreadMessageReadMVar.set(MessageRead(user: message.user, lastReadDate: message.updated))
                 }
-                
-                unreadCountMVar += 1
             }
             
             let nextRow = items.count
@@ -421,10 +409,6 @@ extension ChannelPresenter {
         self.items = items
         members = query.members
         
-        if channel.config.readEventsEnabled {
-            updateUnreadCount()
-        }
-        
         if self.items.count > 0 {
             if isNextPage {
                 return .reloaded(max(items.count - currentCount - 1, 0), items)
@@ -561,27 +545,6 @@ extension ChannelPresenter {
             items.remove(at: lastIndex)
         }
     }
-    
-    private func updateUnreadCount() {
-        guard let unreadMessageRead = unreadMessageReadMVar.get() else {
-            unreadCountMVar.set(0)
-            return
-        }
-        
-        var count = 0
-        
-        for item in items.reversed() {
-            if let message = item.message {
-                if message.created > unreadMessageRead.lastReadDate {
-                    count += 1
-                } else {
-                    break
-                }
-            }
-        }
-        
-        unreadCountMVar.set(count)
-    }
 }
 
 // MARK: - Helpers
@@ -704,20 +667,15 @@ extension ChannelPresenter {
             .do(onNext: { Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(oldUnreadMessageRead.lastReadDate)") })
             .flatMap { [weak self] in self?.channel.markRead() ?? .empty() }
             .do(onNext: { [weak self] _ in
-                self?.updateUnreadMessageRead(nil)
+                self?.unreadMessageReadMVar.set(nil)
                 self?.isReadSubject.onNext(())
                 Client.shared.logger?.log("🎫", "Message Read done.")
                 }, onError: { [weak self] error in
-                    self?.updateUnreadMessageRead(oldUnreadMessageRead)
+                    self?.unreadMessageReadMVar.set(oldUnreadMessageRead)
                     self?.isReadSubject.onError(error)
                     ClientLogger.log("🎫", error, message: "Send Message Read error.")
             })
             .map { _ in Void() }
-    }
-    
-    private func updateUnreadMessageRead(_ messageRead: MessageRead?) {
-        unreadMessageReadMVar.set(messageRead)
-        updateUnreadCount()
     }
 }
 

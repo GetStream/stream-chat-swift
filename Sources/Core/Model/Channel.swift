@@ -74,6 +74,8 @@ public final class Channel: Codable {
         return Channel.activeChannelIds.contains(cid)
     }
     
+    var unreadCountMVar = MVar(0)
+    
     /// Init a channel.
     ///
     /// - Parameters:

@@ -13,14 +13,34 @@ import RxSwift
 
 public extension Client {
     
-    /// An observable event by event type.
+    /// Observe a list of event types.
     ///
     /// - Parameters:
     ///     - eventType: an event type.
     ///     - channelId: a channeld id (optional).
     /// - Returns: an observable event.
-    func onEvent(_ eventType: EventType? = nil, channelId: String? = nil) -> Observable<Event> {
-        return webSocket.response
+    func onEvent(_ eventType: EventType, channelId: String? = nil) -> Observable<Event> {
+        return onEvent([eventType], channelId: channelId)
+    }
+    
+    /// Observe a list of events with a given channel id (optional).
+    ///
+    /// - Parameters:
+    ///     - eventType: an event type (optional).
+    ///     - channelId: a channeld id (optional).
+    /// - Returns: an observable events.
+    func onEvent(_ eventTypes: [EventType] = [], channelId: String? = nil) -> Observable<Event> {
+        let events: Observable<WebSocket.Response>
+        
+        if let channelId = channelId {
+            events = Channel(id: channelId).query(pagination: .limit(1), queryOptions: .watch)
+                .flatMapLatest { _ in Client.shared.webSocket.response }
+        } else {
+            events = webSocket.response
+        }
+        
+        return connection.connected()
+            .flatMapLatest { events }
             .filter {
                 if let channelId = channelId {
                     if let eventChannelId = $0.channelId {
@@ -33,13 +53,7 @@ public extension Client {
                 return true
             }
             .map { $0.event }
-            .filter {
-                if let eventType = eventType {
-                    return $0.type == eventType
-                }
-                
-                return $0.type != .healthCheck
-            }
+            .filter { (eventTypes.isEmpty && $0.type != .healthCheck) || eventTypes.contains($0.type) }
             .share()
     }
 }

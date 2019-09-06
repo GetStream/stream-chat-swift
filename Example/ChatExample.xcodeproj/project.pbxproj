@@ -23,6 +23,7 @@
 		8A0A7EBA2301AE4E0033E6D9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA32301AD330033E6D9 /* SnapKit.framework */; };
 		8A0A7EBB2301AE4E0033E6D9 /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E992301AD330033E6D9 /* Starscream.framework */; };
 		8A0A7EBC2301AE4E0033E6D9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA42301AD330033E6D9 /* SwiftyGif.framework */; };
+		8AD54F1F231FDC6600364657 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD54F1E231FDC6600364657 /* RootViewController.swift */; };
 		8AD5EC7122E88C62005CFAC9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5EC7022E88C62005CFAC9 /* AppDelegate.swift */; };
 		8AD5EC7622E88C62005CFAC9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8AD5EC7422E88C62005CFAC9 /* Main.storyboard */; };
 		8AD5EC7822E88C63005CFAC9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8AD5EC7722E88C63005CFAC9 /* Assets.xcassets */; };
@@ -100,6 +101,7 @@
 		8A0A7EA22301AD330033E6D9 /* RxAppState.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAppState.framework; path = ../Carthage/Build/iOS/RxAppState.framework; sourceTree = "<group>"; };
 		8A0A7EA32301AD330033E6D9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = ../Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		8A0A7EA42301AD330033E6D9 /* SwiftyGif.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyGif.framework; path = ../Carthage/Build/iOS/SwiftyGif.framework; sourceTree = "<group>"; };
+		8AD54F1E231FDC6600364657 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		8AD5EC6D22E88C62005CFAC9 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD5EC7022E88C62005CFAC9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8AD5EC7522E88C62005CFAC9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -189,8 +191,9 @@
 			isa = PBXGroup;
 			children = (
 				8AD5EC7022E88C62005CFAC9 /* AppDelegate.swift */,
-				8AD5EC8222E88D87005CFAC9 /* CustomChatViewController.swift */,
+				8AD54F1E231FDC6600364657 /* RootViewController.swift */,
 				8AECE0F923155FDE00B6CEE0 /* DarkChannelsViewController.swift */,
+				8AD5EC8222E88D87005CFAC9 /* CustomChatViewController.swift */,
 				8AD5EC7422E88C62005CFAC9 /* Main.storyboard */,
 				8AD5EC7722E88C63005CFAC9 /* Assets.xcassets */,
 				8AD5EC7922E88C63005CFAC9 /* LaunchScreen.storyboard */,
@@ -357,6 +360,7 @@
 			files = (
 				8AD5EC7122E88C62005CFAC9 /* AppDelegate.swift in Sources */,
 				8AD5EC8322E88D87005CFAC9 /* CustomChatViewController.swift in Sources */,
+				8AD54F1F231FDC6600364657 /* RootViewController.swift in Sources */,
 				8AECE0FA23155FDE00B6CEE0 /* DarkChannelsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -529,7 +533,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.ChatExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -550,7 +554,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.ChatExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
