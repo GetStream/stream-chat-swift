@@ -75,10 +75,22 @@ public extension Client {
     
     /// Add a device for Push Notifications.
     ///
+    /// - Parameter deviceData: a Push Notifications device identifier data.
+    /// - Returns: an observable completion.
+    func addDevice(deviceData: Data) -> Observable<EmptyData> {
+        guard !deviceData.isEmpty, let deviceId = String(data: deviceData, encoding: .utf8) else {
+            return .empty()
+        }
+        
+        return addDevice(deviceId: deviceId)
+    }
+    
+    /// Add a device for Push Notifications.
+    ///
     /// - Parameter deviceId: a Push Notifications device identifier.
-    /// - Returns: an observable empty data.
+    /// - Returns: an observable completion.
     func addDevice(deviceId: String) -> Observable<EmptyData> {
-        guard let user = User.current else {
+        guard let user = User.current, !user.devices.contains(where: { $0.id == deviceId }) else {
             return .empty()
         }
         

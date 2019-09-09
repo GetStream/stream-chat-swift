@@ -33,7 +33,8 @@ public final class Notifications: NSObject {
     
     var logger: ClientLogger?
     
-    var logsEnabled: Bool = false {
+    /// Enable logs for Notifications.
+    public var logsEnabled: Bool = false {
         didSet {
             logger = logsEnabled ? ClientLogger(icon: "🗞") : nil
         }
@@ -75,7 +76,6 @@ public final class Notifications: NSObject {
                 self.logger?.log("👍 Notifications authorized (\(settings.authorizationStatus.rawValue))")
             }
         }
-        
     }
     
     /// Ask permissions to make notifications work.
@@ -83,7 +83,7 @@ public final class Notifications: NSObject {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { didAllow, error in
             if didAllow {
                 self.authorizationStatus = .authorized
-                self.logger?.log("👍 User has accepter notifications")
+                self.logger?.log("👍 User has accepted notifications")
             } else if let error = error {
                 self.logger?.log("❌ User has declined notifications \(error)")
             } else {
