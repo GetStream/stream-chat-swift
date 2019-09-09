@@ -17,9 +17,12 @@ public enum Endpoint {
     
     // MARK: - Device Endpoints
     
-    // case addDevice(deviceId: String, User) ⚠️
-    // case devices(User) ⚠️
-    // case removeDevice(deviceId: String) ⚠️
+    /// Add a device with a given identifier for Push Notifications.
+    case addDevice(deviceId: String, User)
+    /// Get a list of devices.
+    case devices(User)
+    /// Remove a device with a given identifier.
+    case removeDevice(deviceId: String, User)
     
     // MARK: - Channels Endpoints
     
@@ -79,9 +82,9 @@ public enum Endpoint {
 extension Endpoint {
     var method: Client.Method {
         switch self {
-        case .channels, .replies, .users:
+        case .channels, .replies, .users, .devices:
             return .get
-        case .deleteMessage, .deleteReaction, .deleteImage, .deleteFile:
+        case .removeDevice, .deleteMessage, .deleteReaction, .deleteImage, .deleteFile:
             return .delete
         default:
             return .post
@@ -92,6 +95,10 @@ extension Endpoint {
         switch self {
         case .guestToken:
             return "guest"
+        case .addDevice,
+             .devices,
+             .removeDevice:
+            return "devices"
         case .channels:
             return "channels"
         case .channel(let query):
@@ -181,6 +188,12 @@ extension Endpoint {
             return nil
         case .guestToken(let user):
             return ["user": user]
+        case .addDevice(deviceId: let deviceId, let user):
+            return ["id": deviceId, "push_provider": "apn", "user_id": user.id]
+        case .devices(let user):
+            return ["user_id": user.id]
+        case .removeDevice(deviceId: let deviceId, let user):
+            return ["id": deviceId, "user_id": user.id]
         case .channel(let query):
             return query
         case .sendMessage(let message, _):

@@ -21,6 +21,7 @@
 		8A0EB78C22FC608A009481E4 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78B22FC608A009481E4 /* Client+Events.swift */; };
 		8A0EB78E22FC6974009481E4 /* Channel+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78D22FC6974009481E4 /* Channel+Events.swift */; };
 		8A104FC522F4B95B002B2DC1 /* Banners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A104FC322F49233002B2DC1 /* Banners.swift */; };
+		8A34DED42322A92C00271BBF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A34DED32322A92C00271BBF /* Device.swift */; };
 		8A559D24230D937C00E66096 /* ClientRequestsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A559D23230D937C00E66096 /* ClientRequestsTests.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
@@ -186,6 +187,7 @@
 		8A0EB78B22FC608A009481E4 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		8A0EB78D22FC6974009481E4 /* Channel+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Events.swift"; sourceTree = "<group>"; };
 		8A104FC322F49233002B2DC1 /* Banners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banners.swift; sourceTree = "<group>"; };
+		8A34DED32322A92C00271BBF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A559D23230D937C00E66096 /* ClientRequestsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRequestsTests.swift; sourceTree = "<group>"; };
 		8A559D25230D937C00E66096 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -818,6 +820,7 @@
 				8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */,
 				8AD5ED2522E9BA39005CFAC9 /* Sorting.swift */,
 				8A04964E22EF1A8900E94795 /* QueryOptions.swift */,
+				8A34DED32322A92C00271BBF /* Device.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1199,6 +1202,7 @@
 				8AD5ED4D22E9BA5A005CFAC9 /* Reachability+Rx.swift in Sources */,
 				8AD5ED6E22E9BA5A005CFAC9 /* ClientLogger.swift in Sources */,
 				8AD5ED6222E9BA5A005CFAC9 /* WebSocket+Reconnect.swift in Sources */,
+				8A34DED42322A92C00271BBF /* Device.swift in Sources */,
 				8AD5ED5122E9BA5A005CFAC9 /* Event.swift in Sources */,
 				8AD5ED6D22E9BA5A005CFAC9 /* Token.swift in Sources */,
 				8AD5ED6322E9BA5A005CFAC9 /* InternetConnection.swift in Sources */,

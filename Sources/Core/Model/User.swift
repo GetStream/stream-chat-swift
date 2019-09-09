@@ -19,6 +19,7 @@ public struct User: Codable {
         case created = "created_at"
         case updated = "updated_at"
         case lastActiveDate = "last_active"
+        case devices
         case mutedUsers = "mutes"
     }
     
@@ -46,6 +47,8 @@ public struct User: Codable {
     public let online: Bool
     /// A user role.
     public let role: Role
+    /// A list of devices.
+    public internal(set) var devices: [Device]
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
     
@@ -92,12 +95,13 @@ public struct User: Codable {
         self.id = id
         self.name = name
         self.avatarURL = avatarURL
+        role = .user
         created = .default
         updated = .default
         lastActiveDate = .default
         online = false
+        devices = []
         mutedUsers = []
-        role = .user
     }
     
     public init(from decoder: Decoder) throws {
@@ -108,6 +112,7 @@ public struct User: Codable {
         lastActiveDate = try container.decodeIfPresent(Date.self, forKey: .lastActiveDate)
         online = try container.decode(Bool.self, forKey: .online)
         role = try container.decode(Role.self, forKey: .role)
+        devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
