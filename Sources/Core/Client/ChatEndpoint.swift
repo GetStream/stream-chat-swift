@@ -150,6 +150,8 @@ extension Endpoint {
     
     var queryItem: Encodable? {
         switch self {
+        case .removeDevice(deviceId: let deviceId, let user):
+            return ["id": deviceId, "user_id": user.id]
         case .replies(_, let pagination):
             return pagination
         case .deleteImage(let url, _), .deleteFile(let url, _):
@@ -176,7 +178,8 @@ extension Endpoint {
     
     var body: Encodable? {
         switch self {
-        case .channels,
+        case .removeDevice,
+             .channels,
              .replies,
              .deleteMessage,
              .deleteReaction,
@@ -192,8 +195,6 @@ extension Endpoint {
             return ["id": deviceId, "push_provider": "apn", "user_id": user.id]
         case .devices(let user):
             return ["user_id": user.id]
-        case .removeDevice(deviceId: let deviceId, let user):
-            return ["id": deviceId, "user_id": user.id]
         case .channel(let query):
             return query
         case .sendMessage(let message, _):

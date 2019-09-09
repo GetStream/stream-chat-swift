@@ -58,63 +58,6 @@ public extension User {
     }
 }
 
-// MARK: - Devices
-
-public extension User {
-    
-    /// Add a device for Push Notifications.
-    ///
-    /// - Parameter deviceId: a Push Notifications device identifier.
-    /// - Returns: an observable empty data.
-    func addDevice(deviceId: String) -> Observable<EmptyData> {
-        return Client.shared.rx.connectedRequest(endpoint: .addDevice(deviceId: deviceId, self))
-            .do(onNext: { _ in
-                var user = self
-                user.devices.append(Device(deviceId))
-                Client.shared.user = user
-                Client.shared.logger?.log("📱", "Device added with id: \(deviceId)")
-            })
-    }
-    
-    /// Request a list if devices.
-    ///
-    /// - Returns: an observable list of devices.
-    func requestDevices() -> Observable<DevicesResponse> {
-        return Client.shared.rx.connectedRequest(endpoint: .devices(self))
-            .do(onNext: { response in
-                var user = self
-                user.devices = response.devices
-                Client.shared.user = user
-                Client.shared.logger?.log("📱", "Devices updated")
-            })
-    }
-    
-    /// Remove a device.
-    ///
-    /// - Parameter deviceId: a Push Notifications device identifier.
-    /// - Returns: an observable empty data.
-    func removeDevice(deviceId: String) -> Observable<EmptyData> {
-        return Client.shared.connection.connected()
-            .flatMapLatest { _ -> Observable<EmptyData> in
-                if self.devices.firstIndex(where: { $0.id == deviceId }) != nil {
-                    return Client.shared.rx.connectedRequest(endpoint: .removeDevice(deviceId: deviceId, self))
-                }
-                
-                Client.shared.logger?.log("📱", "Device id not found")
-                
-                return .empty()
-            }
-            .do(onNext: { _ in
-                if let index = self.devices.firstIndex(where: { $0.id == deviceId }) {
-                    var user = self
-                    user.devices.remove(at: index)
-                    Client.shared.user = user
-                    Client.shared.logger?.log("📱", "Device removed with id: \(deviceId)")
-                }
-            })
-    }
-}
-
 /// A response with a list of users.
 public struct UsersResponse: Decodable {
     /// A list of users.
