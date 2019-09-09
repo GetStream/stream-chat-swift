@@ -53,10 +53,15 @@ public final class InternetConnection {
         
         DispatchQueue.main.async {
             UIApplication.shared.rx.appState
-                .subscribe(onNext: { [weak self] state in
+                .subscribe(onNext: { [unowned self] state in
                     if state == .active {
-                        try? self?.reachability?.startNotifier()
-                        ClientLogger.log("🕸", "Notifying started 🏃‍♂️")
+                        do {
+                            try self.reachability?.startNotifier()
+                            ClientLogger.log("🕸", "Notifying started 🏃‍♂️")
+                        } catch {
+                            let message = "InternetConnection tried to start notifying when app state became active."
+                            ClientLogger.log("🕸", error, message: message)
+                        }
                     }
                 })
                 .disposed(by: self.disposeBag)

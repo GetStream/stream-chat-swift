@@ -99,9 +99,9 @@ extension Client {
         
         logger?.log("Sending a request for a Guest Token...")
         
-        request(endpoint: .guestToken(user)) { [weak self] (result: Result<TokenResponse, ClientError>) in
+        request(endpoint: .guestToken(user)) { [unowned self] (result: Result<TokenResponse, ClientError>) in
             if let response = try? result.get() {
-                self?.set(user: response.user, token: response.token)
+                self.set(user: response.user, token: response.token)
             } else {
                 ClientLogger.log("🐴", result.error, message: "Guest Token")
             }
@@ -157,27 +157,23 @@ extension Client {
         let webSocketResponse = tokenSubject.asObserver().map { $0?.isValid ?? false }
             .distinctUntilChanged()
             .observeOn(MainScheduler.instance)
-            .do(onNext: { [weak self] isTokenValid in
+            .flatMap { [unowned self] isTokenValid -> Observable<WebSocketEvent> in
                 if isTokenValid {
-                    self?.webSocket.connect()
-                }
-            })
-            .flatMap { [weak self] isTokenValid -> Observable<WebSocketEvent> in
-                if isTokenValid {
-                    return self?.webSocket.webSocket.rx.response ?? .empty()
+                    self.webSocket.connect()
+                    return self.webSocket.webSocket.rx.response
                 }
                 
                 return .just(.disconnected(nil))
             }
-            .do(onDispose: { [weak self] in self?.webSocket.disconnect() })
+            .do(onDispose: { [unowned self] in self.webSocket.disconnect() })
         
         return Observable.combineLatest(appState, internetIsAvailable, webSocketResponse)
-            .map { [weak self] in self?.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
+            .map { [unowned self] in self.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
             .unwrap()
             .distinctUntilChanged()
-            .do(onNext: { [weak self] in
+            .do(onNext: { [unowned self] in
                 if case .connected(_, let user) = $0 {
-                    self?.user = user
+                    self.user = user
                 }
             })
             .share(replay: 1)

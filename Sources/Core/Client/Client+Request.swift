@@ -53,8 +53,8 @@ extension Client {
                 logger?.timing("Sending request...")
             }
             
-            task = urlSession.dataTask(with: urlRequest) { [weak self] in
-                self?.parse(data: $0, response: $1, error: $2, completion: completion)
+            task = urlSession.dataTask(with: urlRequest) { [unowned self] in
+                self.parse(data: $0, response: $1, error: $2, completion: completion)
             }
             
             logger?.log(task.currentRequest ?? urlRequest)
