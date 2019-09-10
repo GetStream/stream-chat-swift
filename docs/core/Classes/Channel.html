@@ -14,7 +14,7 @@
     <a title="Channel Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (88% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (89% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -249,6 +249,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ClientErrorResponse.html">ClientErrorResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Device.html">Device</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/DevicesResponse.html">DevicesResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a>
@@ -679,7 +685,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">messaging</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span><span class="p">,</span>
             <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">imageURL</span><span class="p">:</span> <span class="kt">URL</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -836,9 +842,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore7ChannelC7onEventy7RxSwift10ObservableCyAA0F0OGAA0F4TypeOSgF"></a>
+                    <a name="/s:14StreamChatCore7ChannelC7onEventy7RxSwift10ObservableCyAA0F0OGAA0F4TypeOF"></a>
                     <a name="//apple_ref/swift/Method/onEvent(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore7ChannelC7onEventy7RxSwift10ObservableCyAA0F0OGAA0F4TypeOSgF">onEvent(_:)</a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC7onEventy7RxSwift10ObservableCyAA0F0OGAA0F4TypeOF">onEvent(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -846,14 +852,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>An observable channel event by event type.</p>
+                        <p>Observe channel events.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventType</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventType</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -878,7 +884,105 @@
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>an observable event.</p>
+                        <p>observable events.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC7onEventy7RxSwift10ObservableCyAA0F0OGSayAA0F4TypeOGF"></a>
+                    <a name="//apple_ref/swift/Method/onEvent(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC7onEventy7RxSwift10ObservableCyAA0F0OGSayAA0F4TypeOGF">onEvent(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Observe a list of events with a given channel id (optional).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>eventType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an event type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>observable events.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Events2"></a>
+                <a name="//apple_ref/swift/Section/Events" class="dashAnchor"></a>
+                <a href="#/Events2">
+                  <h3 class="section-name">Events</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC11unreadCount7RxCocoa14SharedSequenceVyAE21DriverSharingStrategyVSiGvp"></a>
+                    <a name="//apple_ref/swift/Property/unreadCount" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC11unreadCount7RxCocoa14SharedSequenceVyAE21DriverSharingStrategyVSiGvp">unreadCount</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Observe an unread count of messages in the channel.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Be sure the current user is a member of the channel.
+
+</div>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    100 is the maximum unread count of messages.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">unreadCount</span><span class="p">:</span> <span class="kt">Driver</span><span class="o">&lt;</span><span class="kt">Int</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -914,7 +1018,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">query</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">,</span> <span class="nv">queryOptions</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">all</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ChannelResponse.html">ChannelResponse</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">query</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">,</span> <span class="nv">queryOptions</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ChannelResponse.html">ChannelResponse</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -2020,7 +2124,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-02)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-10)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

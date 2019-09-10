@@ -14,7 +14,7 @@
     <a title="Client Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (88% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (89% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -249,6 +249,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ClientErrorResponse.html">ClientErrorResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Device.html">Device</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/DevicesResponse.html">DevicesResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a>
@@ -690,9 +696,9 @@ You can do requests directly.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC7onEvent_3for7RxSwift10ObservableCyAA0F0OGAA0F4TypeOSg_SSSgtF"></a>
-                    <a name="//apple_ref/swift/Method/onEvent(_:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC7onEvent_3for7RxSwift10ObservableCyAA0F0OGAA0F4TypeOSg_SSSgtF">onEvent(_:for:)</a>
+                    <a name="/s:14StreamChatCore6ClientC7onEventy7RxSwift10ObservableCyAA0F0OGAA0F4TypeOF"></a>
+                    <a name="//apple_ref/swift/Method/onEvent(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC7onEventy7RxSwift10ObservableCyAA0F0OGAA0F4TypeOF">onEvent(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -700,14 +706,14 @@ You can do requests directly.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>An observable event by event type.</p>
+                        <p>Observe a list of event types.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventType</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="k">for</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventType</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -727,15 +733,53 @@ You can do requests directly.</p>
                                 </div>
                               </td>
                             </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable event.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC7onEventy7RxSwift10ObservableCyAA0F0OGSayAA0F4TypeOGF"></a>
+                    <a name="//apple_ref/swift/Method/onEvent(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC7onEventy7RxSwift10ObservableCyAA0F0OGSayAA0F4TypeOGF">onEvent(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Observe a list of events.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
                             <tr>
                               <td>
                                 <code>
-                                <em>channelId</em>
+                                <em>eventTypes</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>a channeld id (optional).</p>
+                                  <p>a list of event types.</p>
                                 </div>
                               </td>
                             </tr>
@@ -744,7 +788,155 @@ You can do requests directly.</p>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>an observable event.</p>
+                        <p>an observable events.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC7onEvent_11channelType0G2Id7RxSwift10ObservableCyAA0F0OGAA0fH0O_AA07ChannelH0OSStF"></a>
+                    <a name="//apple_ref/swift/Method/onEvent(_:channelType:channelId:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC7onEvent_11channelType0G2Id7RxSwift10ObservableCyAA0F0OGAA0fH0O_AA07ChannelH0OSStF">onEvent(_:channelType:channelId:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Observe a list of events with a given channel type and id.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventType</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">,</span> <span class="nv">channelType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>eventType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an of event type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channelType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channelId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel id.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable events.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC7onEvent_11channelType0G2Id7RxSwift10ObservableCyAA0F0OGSayAA0fH0OG_AA07ChannelH0OSStF"></a>
+                    <a name="//apple_ref/swift/Method/onEvent(_:channelType:channelId:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC7onEvent_11channelType0G2Id7RxSwift10ObservableCyAA0F0OGSayAA0fH0OG_AA07ChannelH0OSStF">onEvent(_:channelType:channelId:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Observe a list of events with a given channel type and id.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span> <span class="nv">channelType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>eventTypes</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a list of event types.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channelType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channelId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel id.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable events.</p>
                       </div>
                     </section>
                   </div>
@@ -1123,6 +1315,198 @@ You can do requests directly.</p>
             </div>
             <div class="task-group">
               <div class="task-name-container">
+                <a name="/Devices"></a>
+                <a name="//apple_ref/swift/Section/Devices" class="dashAnchor"></a>
+                <a href="#/Devices">
+                  <h3 class="section-name">Devices</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC9addDevice10deviceData7RxSwift10ObservableCyAA05EmptyH0VG10Foundation0H0V_tF"></a>
+                    <a name="//apple_ref/swift/Method/addDevice(deviceData:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC9addDevice10deviceData7RxSwift10ObservableCyAA05EmptyH0VG10Foundation0H0V_tF">addDevice(deviceData:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Add a device for Push Notifications.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addDevice</span><span class="p">(</span><span class="nv">deviceData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>deviceData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a Push Notifications device identifier data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable completion.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC9addDevice8deviceId7RxSwift10ObservableCyAA9EmptyDataVGSS_tF"></a>
+                    <a name="//apple_ref/swift/Method/addDevice(deviceId:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC9addDevice8deviceId7RxSwift10ObservableCyAA9EmptyDataVGSS_tF">addDevice(deviceId:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Add a device for Push Notifications.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addDevice</span><span class="p">(</span><span class="nv">deviceId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>deviceId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a Push Notifications device identifier.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable completion.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC14requestDevices7RxSwift10ObservableCyAA0F8ResponseVGyF"></a>
+                    <a name="//apple_ref/swift/Method/requestDevices()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC14requestDevices7RxSwift10ObservableCyAA0F8ResponseVGyF">requestDevices()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Request a list if devices.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">requestDevices</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/DevicesResponse.html">DevicesResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable list of devices.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC12removeDevice8deviceId7RxSwift10ObservableCyAA9EmptyDataVGSS_tF"></a>
+                    <a name="//apple_ref/swift/Method/removeDevice(deviceId:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC12removeDevice8deviceId7RxSwift10ObservableCyAA9EmptyDataVGSS_tF">removeDevice(deviceId:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Remove a device.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">removeDevice</span><span class="p">(</span><span class="nv">deviceId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>deviceId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a Push Notifications device identifier.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable empty data.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
                 <a name="/Setup"></a>
                 <a name="//apple_ref/swift/Section/Setup" class="dashAnchor"></a>
                 <a href="#/Setup">
@@ -1305,7 +1689,7 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-02)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-10)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
