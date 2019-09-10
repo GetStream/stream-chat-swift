@@ -90,6 +90,8 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         
         if presenter.isEmpty {
             channelPresenter?.reload()
+        } else {
+            refreshTableView(scrollToBottom: true, animated: false)
         }
         
         changesEnabled = true
@@ -109,7 +111,11 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         super.viewWillAppear(animated)
         startGifsAnimations()
         markReadIfPossible()
-        refreshTableView(scrollToBottom: true, animated: false)
+        
+        if let presenter = channelPresenter, presenter.items != items {
+            let scrollToBottom = scrollEnabled && tableView.bottomContentOffset < .chatBottomThreshold
+            refreshTableView(scrollToBottom: scrollToBottom, animated: false)
+        }
     }
     
     open override func viewWillDisappear(_ animated: Bool) {

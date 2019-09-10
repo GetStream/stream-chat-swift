@@ -15,8 +15,6 @@ public final class ClientLogger {
     public enum Options {
         /// No logs.
         case none
-        /// Only important messages and errors.
-        case important
         /// Logs for requests.
         case requests
         /// Logs only requests headers.
