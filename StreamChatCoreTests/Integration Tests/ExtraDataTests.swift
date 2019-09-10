@@ -15,7 +15,7 @@ final class ExtraDataTests: TestCase {
     
     let meta = Meta(meta: "test")
     
-    lazy var channel = Channel(id: "extra", extraData: meta)
+    lazy var channel = Channel(type: .messaging, id: "extra", extraData: meta)
     
     lazy var message = Message(text: "Check my link!", attachments: [attachment], extraData: meta)
     

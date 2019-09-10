@@ -13,7 +13,7 @@ import RxBlocking
 
 final class ChannelTests: TestCase {
     
-    let channel = Channel(id: "integration")
+    let channel = Channel(type: .messaging, id: "integration")
     
     func testQuery() {
         do {

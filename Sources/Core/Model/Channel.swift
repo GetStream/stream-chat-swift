@@ -85,7 +85,7 @@ public final class Channel: Codable {
     ///     - imageURL: an image url of the channel.
     ///     - memberIds: a list of user ids of the channel members.
     ///     - extraData: an `Codable` object with extra data of the channel.
-    public init(type: ChannelType = .messaging,
+    public init(type: ChannelType,
                 id: String,
                 name: String? = nil,
                 imageURL: URL? = nil,

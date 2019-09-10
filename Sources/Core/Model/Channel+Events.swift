@@ -28,10 +28,13 @@ public extension Channel {
     /// - Returns: observable events.
     func onEvent(_ eventTypes: [EventType] = []) -> Observable<Event> {
         return Client.shared.connection.connected()
-            .map { [weak self] in self?.id }
-            .unwrap()
-            // Start watching the channel.
-            .flatMapLatest { Channel(id: $0).query(pagination: .limit(1), queryOptions: .watch) }
+            .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
+                if let self = self {
+                    return Channel(type: self.type, id: self.id).query(pagination: .limit(1), queryOptions: .watch)
+                }
+                
+                return .empty()
+            }
             .flatMapLatest { _ in Client.shared.webSocket.response }
             .filter { [weak self] in
                 if let self = self, let channelId = $0.channelId {
@@ -54,10 +57,14 @@ extension Channel {
     /// - Note: 100 is the maximum unread count of messages.
     public var unreadCount: Driver<Int> {
         return Client.shared.connection.connected()
-            .map { [weak self] in self?.id }
-            .unwrap()
             // Request channel messages and messageRead's.
-            .flatMapLatest { Channel(id: $0).query(pagination: .limit(100), queryOptions: [.state, .watch]) }
+            .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
+                if let self = self {
+                    return Channel(type: self.type, id: self.id).query(pagination: .limit(100), queryOptions: [.state, .watch])
+                }
+                
+                return .empty()
+            }
             // Check if the channel has read events enabled.
             .filter { $0.channel.config.readEventsEnabled }
             // Update the initial number of unread messages.

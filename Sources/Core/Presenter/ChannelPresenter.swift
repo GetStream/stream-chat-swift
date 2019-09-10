@@ -21,12 +21,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
     
+    private let channelType: ChannelType
     private let channelId: String
     private let channelMVar = MVar<Channel>()
     
     /// A channel (see `Channel`).
     public var channel: Channel {
-        return channelMVar.get(defaultValue: Channel(id: channelId))
+        return channelMVar.get(defaultValue: Channel(type: channelType, id: channelId))
     }
     
     /// A parent message for replies.
@@ -100,7 +101,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { $0 != .none }
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
-    private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.onEvent(channelId: channelId)
+    private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.onEvent(channelType: channelType, channelId: channelId)
         .map { [weak self] in self?.parseChanges(event: $0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
@@ -125,6 +126,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     ///     - parentMessage: a parent message for replies
     ///     - showStatuses: shows statuses separators, e.g. Today
     public init(channel: Channel, parentMessage: Message? = nil, queryOptions: QueryOptions = .all, showStatuses: Bool = true) {
+        channelType = channel.type
         channelId = channel.id
         channelMVar.set(channel)
         self.parentMessage = parentMessage
@@ -139,6 +141,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     ///     - query: a channel query result with messages
     ///     - showStatuses: shows statuses separators, e.g. Today
     public init(response: ChannelResponse, queryOptions: QueryOptions, showStatuses: Bool = true) {
+        channelType = response.channel.type
         channelId = response.channel.id
         channelMVar.set(response.channel)
         parentMessage = nil
