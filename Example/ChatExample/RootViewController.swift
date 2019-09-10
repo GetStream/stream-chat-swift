@@ -15,14 +15,13 @@ final class RootViewController: UIViewController {
 
     @IBOutlet weak var badgeLabel: UILabel!
     let disposeBag = DisposeBag()
-    let channel = Channel(id: "general")
+    let channel = Channel(type: .messaging, id: "general")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         channel.unreadCount
             .drive(onNext: { [weak self] count in
-                self?.badgeLabel.isHidden = count == 0
                 self?.badgeLabel.text = String(count)
                 UIApplication.shared.applicationIconBadgeNumber = count
             })

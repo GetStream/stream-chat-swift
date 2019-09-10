@@ -16,6 +16,7 @@ import RxCocoa
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    let disposeBag = DisposeBag()
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -27,6 +28,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func setupNotifications() {
+        Notifications.shared.logsEnabled = true
         Notifications.shared.askForPermissionsIfNeeded()
         
         Notifications.shared.openNewMessage = { [weak self] messageId, channelId in
@@ -41,6 +43,12 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 channelsViewController.show(chatViewController: chatViewController)
             }
         }
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Client.shared.addDevice(deviceData: deviceToken)
+            .subscribe()
+            .disposed(by: disposeBag)
     }
 }
 

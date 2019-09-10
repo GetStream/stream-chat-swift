@@ -14,7 +14,7 @@ class CustomChatViewController: ChatViewController {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        let channel = Channel(id: "general", name: "General")
+        let channel = Channel(type: .messaging, id: "general")
         channelPresenter = ChannelPresenter(channel: channel)
     }
     
