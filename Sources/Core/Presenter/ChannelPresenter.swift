@@ -38,9 +38,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     /// Show statuses separators, e.g. Today
     public private(set) var showStatuses = true
     
-    var members: [Member] = []
     private var startedTyping = false
-    
     private let lastMessageMVar = MVar<Message>()
     
     /// The last parsed message from WebSocket events.
@@ -83,7 +81,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     private lazy var channelRequest: Driver<ViewChanges> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
-        .flatMapLatest { [weak self] in (self?.channel.query(pagination: $0) ?? .empty()).retry(3) }
+        .flatMapLatest { [weak self] pagination -> Observable<ChannelResponse> in
+            if let self = self {
+                return self.channel.query(pagination: pagination, queryOptions: self.queryOptions).retry(3)
+            }
+            
+            return .empty()
+        }
         .map { [weak self] in self?.parseResponse($0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
@@ -120,10 +124,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     ///     - channel: a channel
     ///     - parentMessage: a parent message for replies
     ///     - showStatuses: shows statuses separators, e.g. Today
-    public init(channel: Channel,
-                parentMessage: Message? = nil,
-                queryOptions: QueryOptions = .all,
-                showStatuses: Bool = true) {
+    public init(channel: Channel, parentMessage: Message? = nil, queryOptions: QueryOptions = .all, showStatuses: Bool = true) {
         channelId = channel.id
         channelMVar.set(channel)
         self.parentMessage = parentMessage
@@ -407,7 +408,6 @@ extension ChannelPresenter {
         let messageReads = channel.config.readEventsEnabled ? query.messageReads : []
         parse(query.messages, messageReads: messageReads, to: &items, isNextPage: isNextPage)
         self.items = items
-        members = query.members
         
         if self.items.count > 0 {
             if isNextPage {

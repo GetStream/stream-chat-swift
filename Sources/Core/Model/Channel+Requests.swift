@@ -19,7 +19,7 @@ public extension Channel {
     ///   - pagination: a pagination for messages (see `Pagination`).
     ///   - queryOptions: a query options. All by default (see `QueryOptions`).
     /// - Returns: an observable channel response.
-    func query(pagination: Pagination, queryOptions: QueryOptions = .all) -> Observable<ChannelResponse> {
+    func query(pagination: Pagination, queryOptions: QueryOptions = []) -> Observable<ChannelResponse> {
         if let user = User.current {
             members.insert(user.asMember)
         }
