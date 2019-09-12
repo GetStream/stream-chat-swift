@@ -17,6 +17,8 @@ public final class WebSocket {
     private static let maxBackgroundTime: TimeInterval = 300
     
     let webSocket: Starscream.WebSocket
+    let stayConnectedInBackground: Bool
+    
     private(set) var lastJSONError: ClientErrorResponse?
     private(set) var lastConnectionId: String?
     var consecutiveFailures: TimeInterval = 0
@@ -53,7 +55,8 @@ public final class WebSocket {
     
     private let webSocketInitiated: Bool
     
-    init(_ urlRequest: URLRequest, logger: ClientLogger? = nil) {
+    init(_ urlRequest: URLRequest, stayConnectedInBackground: Bool = true, logger: ClientLogger? = nil) {
+        self.stayConnectedInBackground = stayConnectedInBackground
         self.logger = logger
         webSocket = Starscream.WebSocket(request: urlRequest)
         webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
@@ -63,6 +66,7 @@ public final class WebSocket {
     init() {
         webSocket = .init(url: BaseURL.placeholderURL)
         webSocketInitiated = false
+        stayConnectedInBackground = false
         logger = nil
     }
     
@@ -85,6 +89,11 @@ public final class WebSocket {
     }
     
     func disconnectInBackground() {
+        guard stayConnectedInBackground else {
+            disconnect()
+            return
+        }
+        
         guard backgroundTask == .invalid else {
             return
         }

@@ -42,7 +42,7 @@ extension Client {
             logger?.log("⚠️", "Bad URL")
         }
         
-        return WebSocket(URLRequest(url: url ?? wsURL), logger: logger)
+        return WebSocket(URLRequest(url: url ?? wsURL), stayConnectedInBackground: stayConnectedInBackground, logger: logger)
     }
 }
 

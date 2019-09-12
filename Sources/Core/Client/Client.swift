@@ -21,6 +21,7 @@ public final class Client {
     
     let apiKey: String
     let baseURL: BaseURL
+    let stayConnectedInBackground: Bool
     
     var token: Token? {
         didSet { tokenSubject.onNext(token) }
@@ -60,8 +61,8 @@ public final class Client {
     ///         // Make a request here.
     ///     }
     ///     // Subscribe for a result.
-    ///     .subscribe(onNext: { messageResponse in
-    ///         print(messageResponse)
+    ///     .subscribe(onNext: { response in
+    ///         // Handle the reponse.
     ///     })
     ///     .disposed(by: disposeBag)
     /// ```
@@ -94,14 +95,18 @@ public final class Client {
     ///     - apiKey: a Stream Chat API key.
     ///     - baseURL: a base URL (see `BaseURL`).
     ///     - callbackQueue: a request callback queue, default nil (some background thread).
+    ///     - stayConnectedInBackground: when the app will go to the background,
+    ///                                  start a background task to stay connected for 5 min
     ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
     public init(apiKey: String = Client.config.apiKey,
                 baseURL: BaseURL = Client.config.baseURL,
                 callbackQueue: DispatchQueue? = Client.config.callbackQueue,
+                stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
                 logOptions: ClientLogger.Options = Client.config.logOptions) {
         self.apiKey = apiKey
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue
+        self.stayConnectedInBackground = stayConnectedInBackground
         self.logOptions = logOptions
         
         if logOptions == .all || logOptions == .requests || logOptions == .requestsHeaders {
@@ -134,6 +139,8 @@ extension Client {
         public let baseURL: BaseURL
         /// A request callback queue, default nil (some background thread).
         public let callbackQueue: DispatchQueue?
+        /// When the app will go to the background, start a background task to stay connected for 5 min.
+        public let stayConnectedInBackground: Bool
         /// Enable logs (see `ClientLogger.Options`), e.g. `.all`.
         public let logOptions: ClientLogger.Options
         
@@ -143,14 +150,18 @@ extension Client {
         ///     - apiKey: a Stream Chat API key.
         ///     - baseURL: a base URL (see `BaseURL`).
         ///     - callbackQueue: a request callback queue, default nil (some background thread).
+        ///     - stayConnectedInBackground: when the app will go to the background,
+        ///                                  start a background task to stay connected for 5 min
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init(apiKey: String,
                     baseURL: BaseURL = BaseURL(),
                     callbackQueue: DispatchQueue? = nil,
+                    stayConnectedInBackground: Bool = true,
                     logOptions: ClientLogger.Options = .none) {
             self.apiKey = apiKey
             self.baseURL = baseURL
             self.callbackQueue = callbackQueue
+            self.stayConnectedInBackground = stayConnectedInBackground
             self.logOptions = logOptions
         }
     }
