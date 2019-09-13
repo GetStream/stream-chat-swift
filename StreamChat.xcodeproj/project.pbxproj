@@ -42,7 +42,7 @@
 		8AD5ED4422E9BA5A005CFAC9 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED0E22E9BA39005CFAC9 /* String+Extensions.swift */; };
 		8AD5ED4522E9BA5A005CFAC9 /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED0F22E9BA39005CFAC9 /* Result+Extensions.swift */; };
 		8AD5ED4622E9BA5A005CFAC9 /* URL+Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1022E9BA39005CFAC9 /* URL+Media.swift */; };
-		8AD5ED4722E9BA5A005CFAC9 /* MVar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1222E9BA39005CFAC9 /* MVar.swift */; };
+		8AD5ED4722E9BA5A005CFAC9 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1222E9BA39005CFAC9 /* Atomic.swift */; };
 		8AD5ED4822E9BA5A005CFAC9 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1322E9BA39005CFAC9 /* RepeatingTimer.swift */; };
 		8AD5ED4922E9BA5A005CFAC9 /* UIApplication+AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1422E9BA39005CFAC9 /* UIApplication+AppState.swift */; };
 		8AD5ED4A22E9BA5A005CFAC9 /* Codable+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1522E9BA39005CFAC9 /* Codable+Extensions.swift */; };
@@ -289,7 +289,7 @@
 		8AD5ED0E22E9BA39005CFAC9 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ED0F22E9BA39005CFAC9 /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ED1022E9BA39005CFAC9 /* URL+Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Media.swift"; sourceTree = "<group>"; };
-		8AD5ED1222E9BA39005CFAC9 /* MVar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MVar.swift; sourceTree = "<group>"; };
+		8AD5ED1222E9BA39005CFAC9 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		8AD5ED1322E9BA39005CFAC9 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
 		8AD5ED1422E9BA39005CFAC9 /* UIApplication+AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+AppState.swift"; sourceTree = "<group>"; };
 		8AD5ED1522E9BA39005CFAC9 /* Codable+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Codable+Extensions.swift"; sourceTree = "<group>"; };
@@ -779,7 +779,7 @@
 		8AD5ED1122E9BA39005CFAC9 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				8AD5ED1222E9BA39005CFAC9 /* MVar.swift */,
+				8AD5ED1222E9BA39005CFAC9 /* Atomic.swift */,
 				8AD5ED1322E9BA39005CFAC9 /* RepeatingTimer.swift */,
 			);
 			path = Utils;
@@ -1215,7 +1215,7 @@
 				8AD5ED5522E9BA5A005CFAC9 /* Message.swift in Sources */,
 				8AD5ED6422E9BA5A005CFAC9 /* BaseURL.swift in Sources */,
 				8AD5ED4B22E9BA5A005CFAC9 /* Dictionary+Extensions.swift in Sources */,
-				8AD5ED4722E9BA5A005CFAC9 /* MVar.swift in Sources */,
+				8AD5ED4722E9BA5A005CFAC9 /* Atomic.swift in Sources */,
 				8A04964922E9F59A00E94795 /* Date+Extensions.swift in Sources */,
 				8A04964522E9F53200E94795 /* ChannelsPresenter.swift in Sources */,
 				8A04964622E9F53900E94795 /* ChannelPresenter.swift in Sources */,

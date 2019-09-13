@@ -75,8 +75,8 @@ extension Channel {
             .flatMapLatest { [weak self] _ in
                 Client.shared.webSocket.response
                     .filter { self?.updateUnreadCount($0) ?? false }
-                    .map { _ in self?.unreadCountMVar.get() }
-                    .startWith(self?.unreadCountMVar.get())
+                    .map { _ in self?.unreadCountAtomic.get() }
+                    .startWith(self?.unreadCountAtomic.get())
                     .unwrap()
             }
             .startWith(0)
@@ -87,7 +87,7 @@ extension Channel {
     
     func setupUnreadCount(_ channelResponse: ChannelResponse) {
         guard let unreadMessageRead = channelResponse.unreadMessageRead else {
-            unreadCountMVar.set(0)
+            unreadCountAtomic.set(0)
             return
         }
         
@@ -101,7 +101,7 @@ extension Channel {
             }
         }
         
-        unreadCountMVar.set(count)
+        unreadCountAtomic.set(count)
     }
     
     func updateUnreadCount(_ response: WebSocket.Response) -> Bool {
@@ -110,12 +110,12 @@ extension Channel {
         }
         
         if case .messageNew = response.event {
-            unreadCountMVar += 1
+            unreadCountAtomic += 1
             return true
         }
         
         if case .messageRead(let messageRead, _) = response.event, messageRead.user.isCurrent {
-            unreadCountMVar.set(0)
+            unreadCountAtomic.set(0)
             return true
         }
         
@@ -146,7 +146,7 @@ extension Channel {
                     return .empty()
                 }
                 
-                self.onlineUsersMVar.set(onlineUsers)
+                self.onlineUsersAtomic.set(onlineUsers)
                 
                 // Subscribe for user presence changes.
                 return Client.shared.onEvent(.userPresenceChanged)
@@ -155,7 +155,7 @@ extension Channel {
                             return []
                         }
                         
-                        var onlineUsers = self.onlineUsersMVar.get(defaultValue: [])
+                        var onlineUsers = self.onlineUsersAtomic.get(defaultValue: [])
                         
                         if user.online {
                             if !onlineUsers.contains(user) {
@@ -167,7 +167,7 @@ extension Channel {
                             }
                         }
                         
-                        self.onlineUsersMVar.set(onlineUsers)
+                        self.onlineUsersAtomic.set(onlineUsers)
                         
                         return onlineUsers
                     }

@@ -1,5 +1,5 @@
 //
-//  MVar.swift
+//  Atomic.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 25/06/2019.
@@ -9,15 +9,15 @@
 import Foundation
 
 /// A mutable thread safe variable.
-public final class MVar<T> {
+public final class Atomic<T> {
     /// A didSet callback type.
     public typealias DidSetCallback = (T?) -> Void
     
-    private let queue = DispatchQueue(label: "io.getstream.Chat.MVar", qos: .utility, attributes: .concurrent)
+    private let queue = DispatchQueue(label: "io.getstream.Chat.Atomic", qos: .utility, attributes: .concurrent)
     private var value: T?
     private var didSet: DidSetCallback?
     
-    /// Init a MVar.
+    /// Init a Atomic.
     ///
     /// - Parameters:
     ///   - value: an initial value.
@@ -53,15 +53,15 @@ public final class MVar<T> {
 
 // MARK: - Helper Operator
 
-public extension MVar where T == Int {
+public extension Atomic where T == Int {
     
-    static func += (lhs: MVar<T>, rhs: T) {
+    static func += (lhs: Atomic<T>, rhs: T) {
         if let currentValue = lhs.get() {
             lhs.set(currentValue + rhs)
         }
     }
     
-    static func -= (lhs: MVar<T>, rhs: T) {
+    static func -= (lhs: Atomic<T>, rhs: T) {
         if let currentValue = lhs.get() {
             lhs.set(currentValue - rhs)
         }

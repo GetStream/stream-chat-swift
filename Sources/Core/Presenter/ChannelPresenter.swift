@@ -23,11 +23,11 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     private let channelType: ChannelType
     private let channelId: String
-    private let channelMVar = MVar<Channel>()
+    private let channelAtomic = Atomic<Channel>()
     
     /// A channel (see `Channel`).
     public var channel: Channel {
-        return channelMVar.get(defaultValue: Channel(type: channelType, id: channelId))
+        return channelAtomic.get(defaultValue: Channel(type: channelType, id: channelId))
     }
     
     /// A parent message for replies.
@@ -40,18 +40,18 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public private(set) var showStatuses = true
     
     private var startedTyping = false
-    private let lastMessageMVar = MVar<Message>()
+    private let lastMessageAtomic = Atomic<Message>()
     
     /// The last parsed message from WebSocket events.
     public var lastMessage: Message? {
-        return lastMessageMVar.get()
+        return lastMessageAtomic.get()
     }
     
     private var lastAddedOwnMessage: Message?
     private var lastParsedEvent: Event?
     private var lastWebSocketEventViewChanges: ViewChanges?
     
-    private lazy var unreadMessageReadMVar = MVar<MessageRead>()
+    private lazy var unreadMessageReadAtomic = Atomic<MessageRead>()
     
     /// A list of typing users (see `TypingUser`).
     public private(set) var typingUsers: [TypingUser] = []
@@ -61,7 +61,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     /// Check if the channel has unread messages.
     public var isUnread: Bool {
-        return channel.config.readEventsEnabled && unreadMessageReadMVar.get() != nil
+        return channel.config.readEventsEnabled && unreadMessageReadAtomic.get() != nil
     }
     
     /// Check if the channel has ephemeral message, e.g. Giphy preview.
@@ -128,7 +128,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public init(channel: Channel, parentMessage: Message? = nil, queryOptions: QueryOptions = .all, showStatuses: Bool = true) {
         channelType = channel.type
         channelId = channel.id
-        channelMVar.set(channel)
+        channelAtomic.set(channel)
         self.parentMessage = parentMessage
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
@@ -143,7 +143,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public init(response: ChannelResponse, queryOptions: QueryOptions, showStatuses: Bool = true) {
         channelType = response.channel.type
         channelId = response.channel.id
-        channelMVar.set(response.channel)
+        channelAtomic.set(response.channel)
         parentMessage = nil
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
@@ -208,14 +208,14 @@ extension ChannelPresenter {
             }
             
             if let messageNewChannel = messageNewChannel {
-                channelMVar.set(messageNewChannel)
+                channelAtomic.set(messageNewChannel)
             }
             
             if channel.config.readEventsEnabled {
-                if let lastMessage = lastMessageMVar.get() {
-                    unreadMessageReadMVar.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
+                if let lastMessage = lastMessageAtomic.get() {
+                    unreadMessageReadAtomic.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
                 } else {
-                    unreadMessageReadMVar.set(MessageRead(user: message.user, lastReadDate: message.updated))
+                    unreadMessageReadAtomic.set(MessageRead(user: message.user, lastReadDate: message.updated))
                 }
             }
             
@@ -311,7 +311,7 @@ extension ChannelPresenter {
     }
     
     private func appendOrUpdateMessageItem(_ message: Message, at index: Int = -1) {
-        lastMessageMVar.set(message)
+        lastMessageAtomic.set(message)
         
         if index == -1 {
             if message.isOwn {
@@ -391,7 +391,7 @@ extension ChannelPresenter {
     
     @discardableResult
     private func parseResponse(_ query: ChannelResponse) -> ViewChanges {
-        channelMVar.set(query.channel)
+        channelAtomic.set(query.channel)
         let isNextPage = next != pageSize
         var items = isNextPage ? self.items : []
         
@@ -400,7 +400,7 @@ extension ChannelPresenter {
         }
         
         if channel.config.readEventsEnabled {
-            unreadMessageReadMVar.set(query.unreadMessageRead)
+            unreadMessageReadAtomic.set(query.unreadMessageRead)
             
             if !isNextPage {
                 messageReadsToMessageId = [:]
@@ -484,7 +484,7 @@ extension ChannelPresenter {
                 ownMessagesIndexes.append(index)
             }
             
-            lastMessageMVar.set(message)
+            lastMessageAtomic.set(message)
             items.insert(.message(message, []), at: index)
             index += 1
         }
@@ -657,12 +657,12 @@ extension ChannelPresenter {
     ///
     /// - Returns: an observable completion.
     public func markReadIfPossible() -> Observable<Void> {
-        guard let oldUnreadMessageRead = unreadMessageReadMVar.get() else {
+        guard let oldUnreadMessageRead = unreadMessageReadAtomic.get() else {
             Client.shared.logger?.log("🎫", "Skip read.")
             return .empty()
         }
         
-        unreadMessageReadMVar.set(nil)
+        unreadMessageReadAtomic.set(nil)
         
         return Observable.just(())
             .subscribeOn(MainScheduler.instance)
@@ -670,11 +670,11 @@ extension ChannelPresenter {
             .do(onNext: { Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(oldUnreadMessageRead.lastReadDate)") })
             .flatMap { [weak self] in self?.channel.markRead() ?? .empty() }
             .do(onNext: { [weak self] _ in
-                self?.unreadMessageReadMVar.set(nil)
+                self?.unreadMessageReadAtomic.set(nil)
                 self?.isReadSubject.onNext(())
                 Client.shared.logger?.log("🎫", "Message Read done.")
                 }, onError: { [weak self] error in
-                    self?.unreadMessageReadMVar.set(oldUnreadMessageRead)
+                    self?.unreadMessageReadAtomic.set(oldUnreadMessageRead)
                     self?.isReadSubject.onError(error)
                     ClientLogger.log("🎫", error, message: "Send Message Read error.")
             })

@@ -74,8 +74,8 @@ public final class Channel: Codable {
         return Channel.activeChannelIds.contains(cid)
     }
     
-    var unreadCountMVar = MVar(0)
-    var onlineUsersMVar = MVar<[User]>([])
+    var unreadCountAtomic = Atomic(0)
+    var onlineUsersAtomic = Atomic<[User]>([])
     
     /// Init a channel.
     ///
