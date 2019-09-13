@@ -63,7 +63,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="50" translatesAutoresizingMaskIntoConstraints="NO" id="fQM-5J-VyU">
-                                <rect key="frame" x="109" y="248.5" width="157" height="190"/>
+                                <rect key="frame" x="109" y="214.5" width="157" height="258"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lMz-sX-zDG">
                                         <rect key="frame" x="23.5" y="0.0" width="110" height="30"/>
@@ -89,13 +89,19 @@
                                             <segue destination="Z71-Wp-boH" kind="presentation" id="Z6X-IU-Iab"/>
                                         </connections>
                                     </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Online: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LML-Ms-XJg">
+                                        <rect key="frame" x="48" y="240" width="61.5" height="18"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                             </stackView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eTn-JY-iPB">
-                                <rect key="frame" x="266" y="410.5" width="16" height="16"/>
+                                <rect key="frame" x="266" y="376.5" width="16" height="16"/>
                                 <color key="backgroundColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="16" id="Jsh-lg-vjv"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="16" id="Jsh-lg-vjv"/>
                                     <constraint firstAttribute="height" constant="16" id="vuK-pc-5Dk"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="9"/>
@@ -108,7 +114,7 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DARK MODE    " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="11f-PJ-qcd">
-                                <rect key="frame" x="154" y="358.5" width="67" height="16"/>
+                                <rect key="frame" x="154" y="324.5" width="67" height="16"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="16" id="jhD-Tj-2Um"/>
@@ -136,6 +142,7 @@
                     </view>
                     <connections>
                         <outlet property="badgeLabel" destination="eTn-JY-iPB" id="e9E-76-dq3"/>
+                        <outlet property="onlinelabel" destination="LML-Ms-XJg" id="Lgb-US-mZB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2JN-fl-ghF" userLabel="First Responder" sceneMemberID="firstResponder"/>

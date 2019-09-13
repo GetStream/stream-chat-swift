@@ -22,7 +22,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .all)
-        Client.shared.set(user: .user2, token: .token2)
+        Client.shared.set(user: .user1, token: .token1)
         setupNotifications()
         return true
     }
