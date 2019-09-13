@@ -32,7 +32,7 @@ public struct ChannelResponse: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(Channel.self, forKey: .channel)
         members = try container.decode([Member].self, forKey: .members)
-        channel.members = Set(members)
+        channel.members = members
         messages = try container.decode([Message].self, forKey: .messages)
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         

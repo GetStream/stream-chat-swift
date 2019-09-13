@@ -62,9 +62,9 @@ public final class Channel: Codable {
     public let config: Config
     let frozen: Bool
     /// A list of user ids of the channel members.
-    public internal(set) var members = Set<Member>([])
+    public internal(set) var members = [Member]()
     /// A list of users to invite in the channel.
-    var invitedUsers = Set<User>([])
+    var invitedUsers = [User]()
     /// An extra data for the channel.
     public let extraData: ExtraData?
     
@@ -99,7 +99,7 @@ public final class Channel: Codable {
         self.imageURL = imageURL
         lastMessageDate = nil
         createdBy = nil
-        self.members = Set(members)
+        self.members = members
         frozen = false
         
         if let extraData = extraData {
@@ -124,7 +124,6 @@ public final class Channel: Codable {
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? id
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
         extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isChannel }))
-        members = Set<Member>([])
         
         if !isActive {
             Channel.activeChannelIds.append(cid)
@@ -143,6 +142,19 @@ public final class Channel: Codable {
         }
     }
     
+    /// Add a member to the channel.
+    ///
+    /// - Parameter member: a member
+    public func addMember(_ member: Member) {
+        if members.first(where: { $0.user.id == member.user.id }) == nil {
+            members.append(member)
+        }
+    }
+    
+    func addInvitedUser(_ user: User) {
+        addMember(user.asMember)
+        invitedUsers.append(user)
+    }
 }
 
 extension Channel: Hashable {

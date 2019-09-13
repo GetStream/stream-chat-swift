@@ -21,7 +21,7 @@ public extension Channel {
     /// - Returns: an observable channel response.
     func query(pagination: Pagination = .none, options: QueryOptions = []) -> Observable<ChannelResponse> {
         if let user = User.current {
-            members.insert(user.asMember)
+            addMember(user.asMember)
         }
         
         let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: options)
@@ -83,11 +83,7 @@ public extension Channel {
     /// - Parameter userIds: a list of user Ids.
     /// - Returns: an observable channel response.
     func sendInvites(to users: [User]) -> Observable<ChannelResponse> {
-        users.forEach {
-            members.insert($0.asMember)
-            invitedUsers.insert($0)
-        }
-        
+        users.forEach { addInvitedUser($0) }    
         return query()
     }
     
