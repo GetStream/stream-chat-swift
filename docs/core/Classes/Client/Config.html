@@ -32,6 +32,9 @@
             <a href="../../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../../Classes/Atomic.html">Atomic</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../Classes/Channel.html">Channel</a>
               </li>
               <li class="nav-group-task">
@@ -63,9 +66,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../../Classes/InternetConnection.html">InternetConnection</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../../Classes/MVar.html">MVar</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../Classes/Notifications.html">Notifications</a>
@@ -449,6 +449,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore6ClientC6ConfigV25stayConnectedInBackgroundSbvp"></a>
+                    <a name="//apple_ref/swift/Property/stayConnectedInBackground" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC6ConfigV25stayConnectedInBackgroundSbvp">stayConnectedInBackground</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>When the app will go to the background, start a background task to stay connected for 5 min.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">stayConnectedInBackground</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore6ClientC6ConfigV10logOptionsAA0D6LoggerC0G0Ovp"></a>
                     <a name="//apple_ref/swift/Property/logOptions" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore6ClientC6ConfigV10logOptionsAA0D6LoggerC0G0Ovp">logOptions</a>
@@ -476,9 +503,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC6ConfigV6apiKey7baseURL13callbackQueue10logOptionsAESS_AA04BaseI0VSo17OS_dispatch_queueCSgAA0D6LoggerC0M0Otcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:callbackQueue:logOptions:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC6ConfigV6apiKey7baseURL13callbackQueue10logOptionsAESS_AA04BaseI0VSo17OS_dispatch_queueCSgAA0D6LoggerC0M0Otcfc">init(apiKey:baseURL:callbackQueue:logOptions:)</a>
+                    <a name="/s:14StreamChatCore6ClientC6ConfigV6apiKey7baseURL13callbackQueue25stayConnectedInBackground10logOptionsAESS_AA04BaseI0VSo17OS_dispatch_queueCSgSbAA0D6LoggerC0Q0Otcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:callbackQueue:stayConnectedInBackground:logOptions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC6ConfigV6apiKey7baseURL13callbackQueue25stayConnectedInBackground10logOptionsAESS_AA04BaseI0VSo17OS_dispatch_queueCSgSbAA0D6LoggerC0Q0Otcfc">init(apiKey:baseURL:callbackQueue:stayConnectedInBackground:logOptions:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -496,6 +523,7 @@
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">apiKey</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">baseURL</span><span class="p">:</span> <span class="kt"><a href="../../Structs/BaseURL.html">BaseURL</a></span> <span class="o">=</span> <span class="kt"><a href="../../Structs/BaseURL.html">BaseURL</a></span><span class="p">(),</span>
             <span class="nv">callbackQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">stayConnectedInBackground</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nv">logOptions</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span> <span class="o">=</span> <span class="o">.</span><span class="k">none</span><span class="p">)</span></code></pre>
 
                         </div>
@@ -543,6 +571,19 @@
                             <tr>
                               <td>
                                 <code>
+                                <em>stayConnectedInBackground</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>when the app will go to the background,
+                         start a background task to stay connected for 5 min</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>logOptions</em>
                                 </code>
                               </td>
@@ -563,7 +604,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-10)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-13)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

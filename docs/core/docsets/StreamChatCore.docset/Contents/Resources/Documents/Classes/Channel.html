@@ -32,6 +32,9 @@
             <a href="../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Classes/Atomic.html">Atomic</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/Channel.html">Channel</a>
               </li>
               <li class="nav-group-task">
@@ -63,9 +66,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/InternetConnection.html">InternetConnection</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/MVar.html">MVar</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/Notifications.html">Notifications</a>
@@ -943,10 +943,10 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Events2"></a>
-                <a name="//apple_ref/swift/Section/Events" class="dashAnchor"></a>
-                <a href="#/Events2">
-                  <h3 class="section-name">Events</h3>
+                <a name="/Unread%20Count"></a>
+                <a name="//apple_ref/swift/Section/Unread Count" class="dashAnchor"></a>
+                <a href="#/Unread%20Count">
+                  <h3 class="section-name">Unread Count</h3>
                 </a>
               </div>
               <ul>
@@ -991,6 +991,49 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
+                <a name="/Users%20Presence"></a>
+                <a name="//apple_ref/swift/Section/Users Presence" class="dashAnchor"></a>
+                <a href="#/Users%20Presence">
+                  <h3 class="section-name">Users Presence</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7ChannelC11onlineUsers7RxCocoa14SharedSequenceVyAE21DriverSharingStrategyVSayAA4UserVGGvp"></a>
+                    <a name="//apple_ref/swift/Property/onlineUsers" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC11onlineUsers7RxCocoa14SharedSequenceVyAE21DriverSharingStrategyVSayAA4UserVGGvp">onlineUsers</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Online users in the channel.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Be sure users are members of the channel.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">onlineUsers</span><span class="p">:</span> <span class="kt">Driver</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
                 <a name="/Requests"></a>
                 <a name="//apple_ref/swift/Section/Requests" class="dashAnchor"></a>
                 <a href="#/Requests">
@@ -1001,9 +1044,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore7ChannelC5query10pagination0E7Options7RxSwift10ObservableCyAA0D8ResponseVGAA10PaginationO_AA05QueryG0VtF"></a>
-                    <a name="//apple_ref/swift/Method/query(pagination:queryOptions:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore7ChannelC5query10pagination0E7Options7RxSwift10ObservableCyAA0D8ResponseVGAA10PaginationO_AA05QueryG0VtF">query(pagination:queryOptions:)</a>
+                    <a name="/s:14StreamChatCore7ChannelC5query10pagination7options7RxSwift10ObservableCyAA0D8ResponseVGAA10PaginationO_AA12QueryOptionsVtF"></a>
+                    <a name="//apple_ref/swift/Method/query(pagination:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC5query10pagination7options7RxSwift10ObservableCyAA0D8ResponseVGAA10PaginationO_AA12QueryOptionsVtF">query(pagination:options:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1018,7 +1061,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">query</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">,</span> <span class="nv">queryOptions</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ChannelResponse.html">ChannelResponse</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">query</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">none</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ChannelResponse.html">ChannelResponse</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1041,7 +1084,7 @@
                             <tr>
                               <td>
                                 <code>
-                                <em>queryOptions</em>
+                                <em>options</em>
                                 </code>
                               </td>
                               <td>
@@ -2124,7 +2167,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-10)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-13)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

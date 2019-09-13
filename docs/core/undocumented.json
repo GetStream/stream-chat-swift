@@ -72,7 +72,7 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/WebSocket/WebSocket.swift",
-      "line": 69,
+      "line": 73,
       "symbol": "WebSocket.deinit",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -225,16 +225,16 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Extensions/Utils/MVar.swift",
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Extensions/Utils/Atomic.swift",
       "line": 58,
-      "symbol": "MVar.+=(_:_:)",
+      "symbol": "Atomic.+=(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Extensions/Utils/MVar.swift",
+      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Extensions/Utils/Atomic.swift",
       "line": 64,
-      "symbol": "MVar.-=(_:_:)",
+      "symbol": "Atomic.-=(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
@@ -527,28 +527,28 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 88,
+      "line": 86,
       "symbol": "Member.Role.member",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 89,
+      "line": 87,
       "symbol": "Member.Role.moderator",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 90,
+      "line": 88,
       "symbol": "Member.Role.admin",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Member.swift",
-      "line": 91,
+      "line": 89,
       "symbol": "Member.Role.owner",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"

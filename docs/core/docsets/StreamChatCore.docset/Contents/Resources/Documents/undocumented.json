@@ -2,14 +2,14 @@
   "warnings": [
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 40,
+      "line": 43,
       "symbol": "Endpoint.deleteImage(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/ChatEndpoint.swift",
-      "line": 42,
+      "line": 45,
       "symbol": "Endpoint.deleteFile(_:_:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
@@ -72,7 +72,7 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Client/WebSocket/WebSocket.swift",
-      "line": 68,
+      "line": 69,
       "symbol": "WebSocket.deinit",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -324,21 +324,21 @@
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/ChannelResponse.swift",
-      "line": 76,
+      "line": 77,
       "symbol": "InviteAnswer.notFound",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/ChannelResponse.swift",
-      "line": 77,
+      "line": 78,
       "symbol": "InviteAnswer.accepted",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/ChannelResponse.swift",
-      "line": 78,
+      "line": 79,
       "symbol": "InviteAnswer.rejected",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
@@ -554,71 +554,29 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Reaction.swift",
-      "line": 16,
-      "symbol": "ReactionType.like",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Reaction.swift",
-      "line": 18,
-      "symbol": "ReactionType.love",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Reaction.swift",
-      "line": 20,
-      "symbol": "ReactionType.haha",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Reaction.swift",
-      "line": 22,
-      "symbol": "ReactionType.wow",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Reaction.swift",
-      "line": 24,
-      "symbol": "ReactionType.sad",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/Reaction.swift",
-      "line": 26,
-      "symbol": "ReactionType.angry",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/User.swift",
-      "line": 27,
+      "line": 28,
       "symbol": "User.Role",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/User.swift",
-      "line": 28,
+      "line": 29,
       "symbol": "User.Role.user",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/User.swift",
-      "line": 29,
+      "line": 30,
       "symbol": "User.Role.admin",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/alexey/Developer/stream-chat-swift/Sources/Core/Model/User.swift",
-      "line": 30,
+      "line": 31,
       "symbol": "User.Role.guest",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
