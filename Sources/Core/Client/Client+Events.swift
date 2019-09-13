@@ -55,7 +55,7 @@ public extension Client {
         let events: Observable<WebSocket.Response>
         
         if let channelId = channelId {
-            events = Channel(type: channelType, id: channelId).query(pagination: .limit(1), queryOptions: .watch)
+            events = Channel(type: channelType, id: channelId).query(options: .watch)
                 .flatMapLatest { _ in Client.shared.webSocket.response }
         } else {
             events = webSocket.response

@@ -17,14 +17,14 @@ public extension Channel {
     ///
     /// - Parameters:
     ///   - pagination: a pagination for messages (see `Pagination`).
-    ///   - queryOptions: a query options. All by default (see `QueryOptions`).
+    ///   - options: a query options. All by default (see `QueryOptions`).
     /// - Returns: an observable channel response.
-    func query(pagination: Pagination, queryOptions: QueryOptions = []) -> Observable<ChannelResponse> {
+    func query(pagination: Pagination = .none, options: QueryOptions = []) -> Observable<ChannelResponse> {
         if let user = User.current {
             members.insert(user.asMember)
         }
         
-        let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: queryOptions)
+        let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: options)
         
         return Client.shared.rx.connectedRequest(endpoint: .channel(channelQuery))
     }
@@ -37,7 +37,7 @@ public extension Channel {
         var request: Observable<MessageResponse> = Client.shared.rx.request(endpoint: .sendMessage(message, self))
         
         if !isActive {
-            request = query(pagination: .limit(1)).flatMap { _ in request }
+            request = query().flatMap { _ in request }
         }
         
         return Client.shared.connectedRequest(request)
@@ -88,7 +88,7 @@ public extension Channel {
             invitedUsers.insert($0)
         }
         
-        return query(pagination: .limit(1))
+        return query()
     }
     
     /// Accept an invite to the channel.

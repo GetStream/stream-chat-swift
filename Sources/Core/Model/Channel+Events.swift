@@ -30,7 +30,7 @@ public extension Channel {
         return Client.shared.connection.connected()
             .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
                 if let self = self {
-                    return Channel(type: self.type, id: self.id).query(pagination: .limit(1), queryOptions: .watch)
+                    return Channel(type: self.type, id: self.id).query(options: .watch)
                 }
                 
                 return .empty()
@@ -49,6 +49,8 @@ public extension Channel {
     }
 }
 
+// MARK: - Unread Count
+
 extension Channel {
     
     /// Observe an unread count of messages in the channel.
@@ -60,7 +62,7 @@ extension Channel {
             // Request channel messages and messageRead's.
             .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
                 if let self = self {
-                    return Channel(type: self.type, id: self.id).query(pagination: .limit(100), queryOptions: [.state, .watch])
+                    return Channel(type: self.type, id: self.id).query(pagination: .limit(100), options: [.state, .watch])
                 }
                 
                 return .empty()
@@ -74,12 +76,12 @@ extension Channel {
                 Client.shared.webSocket.response
                     .filter { self?.updateUnreadCount($0) ?? false }
                     .map { _ in self?.unreadCountMVar.get() }
-                    .startWith(self?.unreadCountMVar.get(defaultValue: 0))
+                    .startWith(self?.unreadCountMVar.get())
                     .unwrap()
             }
-            .do(onDispose: { [weak self] in self?.unreadCountMVar.set(0) })
             .startWith(0)
             .distinctUntilChanged()
+            .share(replay: 1)
             .asDriver(onErrorJustReturn: 0)
     }
     
@@ -118,5 +120,68 @@ extension Channel {
         }
         
         return false
+    }
+}
+
+// MARK: - Users Presence
+
+extension Channel {
+    
+    /// Online users in the channel.
+    /// - Note: Be sure users are members of the channel.
+    public var onlineUsers: Driver<[User]> {
+        return Client.shared.connection.connected()
+            // Request channel for members.
+            .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
+                if let self = self {
+                    return Channel(type: self.type, id: self.id).query(options: .presence)
+                }
+                
+                return .empty()
+            }
+            // Map members to online users.
+            .map { $0.members.filter({ $0.user.online }).map({ $0.user }) }
+            .flatMapLatest{ [weak self] onlineUsers -> Observable<[User]> in
+                guard let self = self else {
+                    return .empty()
+                }
+                
+                self.onlineUsersMVar.set(onlineUsers)
+                
+                // Subscribe for user presence changes.
+                return Client.shared.onEvent(.userPresenceChanged)
+                    .map { [weak self] event -> [User] in
+                        guard let self = self, case .userPresenceChanged(let user, _) = event else {
+                            return []
+                        }
+                        
+                        var onlineUsers = self.onlineUsersMVar.get(defaultValue: [])
+                        
+                        if user.online {
+                            if !onlineUsers.contains(user) {
+                                onlineUsers.insert(user, at: 0)
+                            }
+                        } else {
+                            if let index = onlineUsers.firstIndex(of: user) {
+                                onlineUsers.remove(at: index)
+                            }
+                        }
+                        
+                        self.onlineUsersMVar.set(onlineUsers)
+                        
+                        return onlineUsers
+                    }
+                    .startWith(onlineUsers)
+            }
+            .map { onlineUsers in
+                if let currentUser = User.current {
+                    return onlineUsers.filter({ $0 != currentUser })
+                }
+                
+                return []
+            }
+            .distinctUntilChanged()
+            .share(replay: 1)
+            .asDriver(onErrorJustReturn: [])
     }
 }

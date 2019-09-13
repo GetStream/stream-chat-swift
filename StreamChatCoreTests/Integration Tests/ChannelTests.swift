@@ -17,7 +17,7 @@ final class ChannelTests: TestCase {
     
     func testQuery() {
         do {
-            let response = try channel.query(pagination: .limit(1))
+            let response = try channel.query()
                 .toBlocking()
                 .toArray()
             

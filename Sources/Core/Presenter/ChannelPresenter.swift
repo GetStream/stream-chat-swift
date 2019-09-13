@@ -84,7 +84,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
         .flatMapLatest { [weak self] pagination -> Observable<ChannelResponse> in
             if let self = self {
-                return self.channel.query(pagination: pagination, queryOptions: self.queryOptions).retry(3)
+                return self.channel.query(pagination: pagination, options: self.queryOptions).retry(3)
             }
             
             return .empty()

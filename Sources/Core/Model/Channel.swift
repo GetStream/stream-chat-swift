@@ -75,6 +75,7 @@ public final class Channel: Codable {
     }
     
     var unreadCountMVar = MVar(0)
+    var onlineUsersMVar = MVar<[User]>([])
     
     /// Init a channel.
     ///
