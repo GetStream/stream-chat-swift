@@ -40,9 +40,9 @@ public struct Member: Codable {
     /// - Parameters:
     ///   - user: a user.
     ///   - role: a role.
-    public init(_ user: User) {
+    public init(_ user: User, role: Role = .member) {
         self.user = user
-        role = .member
+        self.role = role
         created = .default
         updated = .default
         isInvited = false
@@ -71,8 +71,6 @@ extension Member: Hashable {
     
     public static func == (lhs: Member, rhs: Member) -> Bool {
         return lhs.user == rhs.user
-            && lhs.created == rhs.created
-            && lhs.updated == rhs.updated
     }
     
     public func hash(into hasher: inout Hasher) {
