@@ -95,16 +95,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         }
         
         changesEnabled = true
-        
-        InternetConnection.shared.isAvailableObservable
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] in
-                if let self = self {
-                    self.updateFooterView()
-                    self.composerView.isEnabled = $0
-                }
-            })
-            .disposed(by: disposeBag)
+        setupFooterUpdates()
     }
     
     open override func viewWillAppear(_ animated: Bool) {
@@ -179,6 +170,19 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
                          subtitle: String? = nil,
                          highlighted: Bool) -> UITableViewCell? {
         return nil
+    }
+    
+    /// Setup Footer updates for environement updates.
+    open func setupFooterUpdates() {
+        Client.shared.connection
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] connection in
+                if let self = self {
+                    self.updateFooterView()
+                    self.composerView.isEnabled = connection.isConnected
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     private func markReadIfPossible() {
