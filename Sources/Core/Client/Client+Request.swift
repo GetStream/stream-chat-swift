@@ -9,7 +9,8 @@
 import Foundation
 
 extension Client {
-    static let version: String = Bundle(for: Client.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+    /// A Stream Chat version.
+    public static let version: String = Bundle(for: Client.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
     
     func setupURLSession(token: Token) -> URLSession {
         let config = URLSessionConfiguration.default
