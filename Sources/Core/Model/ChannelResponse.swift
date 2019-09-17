@@ -32,7 +32,7 @@ public struct ChannelResponse: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(Channel.self, forKey: .channel)
         members = try container.decode([Member].self, forKey: .members)
-        channel.members = members
+        channel.members = Set(members)
         messages = try container.decode([Message].self, forKey: .messages)
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         
@@ -43,6 +43,21 @@ public struct ChannelResponse: Decodable {
         } else  {
             unreadMessageRead = nil
         }
+    }
+    
+    /// Init a channel response.
+    /// - Note: This constructor is using for creating a channel response from a local database.
+    ///
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - members: members of the channel.
+    ///   - messages: messages in the channel.
+    public init(channel: Channel, members: [Member], messages: [Message]) {
+        self.channel = channel
+        self.members = members
+        self.messages = messages
+        messageReads = []
+        unreadMessageRead = nil
     }
 }
 

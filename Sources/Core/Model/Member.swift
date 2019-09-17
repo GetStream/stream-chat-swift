@@ -75,8 +75,6 @@ extension Member: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(user)
-        hasher.combine(created)
-        hasher.combine(updated)
     }
 }
 

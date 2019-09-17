@@ -18,7 +18,7 @@ public struct ChannelQuery: Encodable {
     /// A channel.
     public let channel: Channel
     /// Members of the channel (see `Member`).
-    public let members: [Member]
+    public let members: Set<Member>
     /// A query options.
     public let options: QueryOptions
     /// A pagination (see `Pagination`).
@@ -30,7 +30,7 @@ public struct ChannelQuery: Encodable {
     ///     - channel: a channel.
     ///     - memebers: members of the channel.
     ///     - pagination: a pagination (see `Pagination`).
-    public init(channel: Channel, members: [Member], pagination: Pagination, options: QueryOptions) {
+    public init(channel: Channel, members: Set<Member>, pagination: Pagination, options: QueryOptions) {
         self.channel = channel
         self.members = members
         self.pagination = pagination
