@@ -21,12 +21,17 @@ public extension Channel {
     /// - Returns: an observable channel response.
     func query(pagination: Pagination = .none, options: QueryOptions = []) -> Observable<ChannelResponse> {
         if let user = User.current {
-            addMember(user.asMember)
+            members.insert(user.asMember)
         }
         
         let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: options)
         
         return Client.shared.rx.connectedRequest(endpoint: .channel(channelQuery))
+            .do(onNext: { channelResponse in
+                if options.contains(.state) {
+                    Client.shared.database?.add(channelResponses: [channelResponse])
+                }
+            })
     }
     
     /// Send a new message or update with a given `message.id`.

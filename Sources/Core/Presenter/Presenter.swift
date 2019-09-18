@@ -39,31 +39,6 @@ public class Presenter<T> {
         self.next = pageSize
     }
     
-    /// Prepare a request with pagination when the web socket is connected.
-    ///
-    /// - Parameter pagination: an initial page size (see `Pagination`).
-    /// - Returns: an observable pagination for a request.
-    public func prepareRequest(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
-        let connectionObservable = Client.shared.connection.connected { [weak self] isConnected in
-            if !isConnected, let self = self, !self.items.isEmpty {
-                self.items = []
-                self.next = self.pageSize
-            }
-        }
-        
-        return Observable.combineLatest(loadPagination.asObserver().startWith(pagination), connectionObservable)
-            .map { pagination, _ in pagination }
-            .filter { [weak self] in
-                if let self = self, self.items.isEmpty, $0 != self.pageSize {
-                    DispatchQueue.main.async { self.loadPagination.onNext(self.pageSize) }
-                    return false
-                }
-                
-                return true
-            }
-            .share()
-    }
-    
     /// Reload items.
     public func reload() {
         next = pageSize
@@ -80,5 +55,76 @@ public class Presenter<T> {
     
     private func load(pagination: Pagination) {
         loadPagination.onNext(pagination)
+    }
+}
+
+// MARK: - Requests
+
+extension Presenter {
+    /// Prepare a request with pagination when the web socket is connected.
+    ///
+    /// - Parameter pagination: an initial page size (see `Pagination`).
+    /// - Returns: an observable pagination for a request.
+    public func prepareRequest(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
+        let connectionObservable: Observable<Void> = Client.shared.connection
+            .do(onNext: { [weak self] connection in
+                if !connection.isConnected,
+                    let self = self,
+                    !self.items.isEmpty,
+                    (Client.shared.database == nil || InternetConnection.shared.isAvailable) {
+                    self.items = []
+                    self.next = self.pageSize
+                }
+            })
+            .filter { $0.isConnected } // Client.shared.database != nil ||
+            .map { _ in Void() }
+        
+        return Observable.combineLatest(loadPagination.asObserver().startWith(pagination), connectionObservable)
+            .map { pagination, _ in pagination }
+            .filter { [weak self] in
+                if let self = self, self.items.isEmpty, $0 != self.pageSize {
+                    DispatchQueue.main.async { self.loadPagination.onNext(self.pageSize) }
+                    return false
+                }
+                
+                return true
+            }
+            .share()
+    }
+}
+
+// MARK: - Database
+
+extension Presenter {
+    
+    /// Prepare a fetch request from a local database with pagination.
+    ///
+    /// - Returns: an observable pagination for a fetching data from a local database.
+    public func prepareDatabaseFetch() -> Observable<Pagination> {
+        guard Client.shared.database != nil else {
+            return .empty()
+        }
+        
+        return Observable.combineLatest(loadPagination.asObserver(),
+                                        InternetConnection.shared.isAvailableObservable.filter({ !$0 }))
+            .map { pagination, _ in pagination }
+            .filter { [weak self] in $0 != .none && (self?.shouldMakeDatabaseFetch(with: $0) ?? false) }
+            .share()
+    }
+    
+    private func shouldMakeDatabaseFetch(with pagination: Pagination) -> Bool {
+        // Reset fetch, if items empty, but pagination is not for the first page.
+        if items.isEmpty, pagination != pageSize {
+            DispatchQueue.main.async { self.loadPagination.onNext(self.pageSize) }
+            return false
+        }
+        
+        // Reset fetch, if items are not empty, but pagination if for the first page.
+        if !items.isEmpty, pagination == pageSize {
+            DispatchQueue.main.async { self.reload() }
+            return false
+        }
+        
+        return true
     }
 }
