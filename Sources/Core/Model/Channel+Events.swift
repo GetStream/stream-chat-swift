@@ -62,7 +62,8 @@ extension Channel {
             // Request channel messages and messageRead's.
             .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
                 if let self = self {
-                    return Channel(type: self.type, id: self.id).query(pagination: .limit(100), options: [.state, .watch])
+                    return Channel(type: self.type, id: self.id)
+                        .query(pagination: .limit(100), options: [.state, .watch])
                 }
                 
                 return .empty()

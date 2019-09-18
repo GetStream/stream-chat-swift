@@ -48,7 +48,6 @@ public final class Notifications: NSObject {
             self.clear()
             
             UIApplication.shared.rx.appState
-                .observeOn(MainScheduler.instance)
                 .filter { $0 == .active }
                 .subscribe(onNext: { [weak self] _ in self?.clear() })
                 .disposed(by: self.disposeBag)

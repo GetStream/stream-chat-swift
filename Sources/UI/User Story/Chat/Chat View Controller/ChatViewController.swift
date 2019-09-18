@@ -104,7 +104,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         markReadIfPossible()
         
         if let presenter = channelPresenter, presenter.items != items {
-            let scrollToBottom = scrollEnabled && tableView.bottomContentOffset < .chatBottomThreshold
+            let scrollToBottom = items.isEmpty || (scrollEnabled && tableView.bottomContentOffset < .chatBottomThreshold)
             refreshTableView(scrollToBottom: scrollToBottom, animated: false)
         }
     }
@@ -176,6 +176,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     open func setupFooterUpdates() {
         Client.shared.connection
             .observeOn(MainScheduler.instance)
+            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] connection in
                 if let self = self {
                     self.updateFooterView()

@@ -52,7 +52,7 @@ public struct ChannelResponse: Decodable {
     ///   - channel: a channel.
     ///   - members: members of the channel.
     ///   - messages: messages in the channel.
-    public init(channel: Channel, members: [Member], messages: [Message]) {
+    public init(channel: Channel, members: [Member] = [], messages: [Message] = []) {
         self.channel = channel
         self.members = members
         self.messages = messages
