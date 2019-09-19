@@ -22,14 +22,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .all)
-        Client.shared.set(user: .user1, token: .token1)
+        
+        Client.shared.set(user: .user2, token: .token2)
         setupNotifications()
+        
         return true
     }
     
     private func setupNotifications() {
         Notifications.shared.logsEnabled = true
-        Notifications.shared.askForPermissionsIfNeeded()
         
         Notifications.shared.openNewMessage = { [weak self] messageId, channelId in
             if let tabBarController = self?.window?.rootViewController as? UITabBarController,
@@ -46,9 +47,19 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        Client.shared.addDevice(deviceData: deviceToken)
+        print("🗞📱", "App did register for remote notifications with DeviceToken")
+        
+        Client.shared.addDevice(deviceToken: deviceToken)
             .subscribe()
             .disposed(by: disposeBag)
+    }
+    
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("🗞❌", error)
+    }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("🗞📮", userInfo)
     }
 }
 

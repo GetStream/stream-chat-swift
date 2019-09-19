@@ -14,16 +14,11 @@ final class DarkChannelsViewController: ChannelsViewController {
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        setup()
+        style = .dark
     }
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        setup()
-    }
-    
-    func setup() {
-//        Client.shared.set(user: .user1, token: .token1)
         style = .dark
     }
 }

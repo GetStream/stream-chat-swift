@@ -134,13 +134,29 @@
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jrn-MT-IQv">
                                 <rect key="frame" x="231" y="448" width="51" height="31"/>
                             </switch>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="m0F-4j-1LB">
+                                <rect key="frame" x="92.5" y="606" width="190" height="31"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push  Notifications:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MVq-bk-kzB">
+                                        <rect key="frame" x="0.0" y="0.0" width="133" height="31"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="H0k-lx-tmL">
+                                        <rect key="frame" x="141" y="0.0" width="51" height="31"/>
+                                    </switch>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="eTn-JY-iPB" firstAttribute="leading" secondItem="5Of-ZP-Ztv" secondAttribute="trailing" id="7eh-gI-RGo"/>
+                            <constraint firstItem="pUb-7p-fIc" firstAttribute="bottom" secondItem="m0F-4j-1LB" secondAttribute="bottom" constant="30" id="FcR-4s-JMC"/>
                             <constraint firstItem="eTn-JY-iPB" firstAttribute="centerY" secondItem="5Of-ZP-Ztv" secondAttribute="centerY" constant="-5" id="Jfi-ED-ACl"/>
                             <constraint firstItem="fQM-5J-VyU" firstAttribute="centerY" secondItem="pUb-7p-fIc" secondAttribute="centerY" id="LrA-ZU-J9k"/>
                             <constraint firstItem="jrn-MT-IQv" firstAttribute="leading" secondItem="LML-Ms-XJg" secondAttribute="trailing" constant="10" id="P2u-mj-ZvA"/>
+                            <constraint firstItem="m0F-4j-1LB" firstAttribute="centerX" secondItem="pUb-7p-fIc" secondAttribute="centerX" id="TVt-Ny-RUQ"/>
                             <constraint firstItem="jQp-EN-Voh" firstAttribute="centerY" secondItem="5Of-ZP-Ztv" secondAttribute="centerY" id="bEW-cC-JuG"/>
                             <constraint firstItem="jQp-EN-Voh" firstAttribute="leading" secondItem="eTn-JY-iPB" secondAttribute="trailing" constant="5" id="byg-HF-7xt"/>
                             <constraint firstItem="11f-PJ-qcd" firstAttribute="top" secondItem="Try-iz-4dr" secondAttribute="bottom" id="fIy-gd-L0P"/>
@@ -153,6 +169,7 @@
                     <connections>
                         <outlet property="badgeLabel" destination="eTn-JY-iPB" id="e9E-76-dq3"/>
                         <outlet property="badgeSwitch" destination="jQp-EN-Voh" id="ICQ-KT-RZ0"/>
+                        <outlet property="notificationsSwitch" destination="H0k-lx-tmL" id="MCi-8p-JQM"/>
                         <outlet property="onlineSwitch" destination="jrn-MT-IQv" id="cmf-96-hY1"/>
                         <outlet property="onlinelabel" destination="LML-Ms-XJg" id="Lgb-US-mZB"/>
                     </connections>

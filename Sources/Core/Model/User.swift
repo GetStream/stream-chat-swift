@@ -49,6 +49,8 @@ public struct User: Codable {
     public let role: Role
     /// A list of devices.
     public internal(set) var devices: [Device]
+    /// A list of devices.
+    public internal(set) var currentDevice: Device?
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
     

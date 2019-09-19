@@ -72,6 +72,7 @@ public final class Notifications: NSObject {
             } else if settings.authorizationStatus == .denied {
                 self.logger?.log("❌ Notifications denied")
             } else {
+                self.registerForPushNotifications()
                 self.logger?.log("👍 Notifications authorized (\(settings.authorizationStatus.rawValue))")
             }
         }
@@ -82,6 +83,7 @@ public final class Notifications: NSObject {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { didAllow, error in
             if didAllow {
                 self.authorizationStatus = .authorized
+                self.registerForPushNotifications()
                 self.logger?.log("👍 User has accepted notifications")
             } else if let error = error {
                 self.logger?.log("❌ User has declined notifications \(error)")
@@ -89,6 +91,14 @@ public final class Notifications: NSObject {
                 self.logger?.log("❌ User has declined notifications: unknown reason")
             }
         }
+    }
+    
+    private func registerForPushNotifications() {
+        DispatchQueue.main.async {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+        
+        logger?.log("Register for remote notifications")
     }
 }
 

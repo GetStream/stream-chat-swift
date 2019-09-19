@@ -17,6 +17,7 @@ final class RootViewController: UIViewController {
     @IBOutlet weak var badgeSwitch: UISwitch!
     @IBOutlet weak var onlinelabel: UILabel!
     @IBOutlet weak var onlineSwitch: UISwitch!
+    @IBOutlet weak var notificationsSwitch: UISwitch!
     
     let disposeBag = DisposeBag()
     var badgeDisposeBag = DisposeBag()
@@ -25,6 +26,7 @@ final class RootViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNotifications()
         
         badgeSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in
@@ -72,5 +74,23 @@ final class RootViewController: UIViewController {
                 self?.onlinelabel.text = "Online: \(userNames)"
             })
             .disposed(by: onlineDisposeBag)
+    }
+    
+    func setupNotifications() {
+        notificationsSwitch.rx.isOn.changed
+            .flatMapLatest { isOn -> Observable<Void> in
+                if isOn {
+                    Notifications.shared.askForPermissionsIfNeeded()
+                    return .empty()
+                }
+                
+                if let device = User.current?.currentDevice {
+                    return Client.shared.removeDevice(deviceId: device.id)
+                }
+                
+                return .empty()
+            }
+            .subscribe()
+            .disposed(by: disposeBag)
     }
 }

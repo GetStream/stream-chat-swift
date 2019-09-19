@@ -77,7 +77,7 @@ public extension Client {
     ///
     /// - Parameter deviceToken: a device token.
     /// - Returns: an observable completion.
-    func addDevice(deviceToken: Data) -> Observable<EmptyData> {
+    func addDevice(deviceToken: Data) -> Observable<Void> {
         guard !deviceToken.isEmpty else {
             return .empty()
         }
@@ -90,20 +90,32 @@ public extension Client {
     ///
     /// - Parameter deviceId: a Push Notifications device identifier.
     /// - Returns: an observable completion.
-    func addDevice(deviceId: String) -> Observable<EmptyData> {
-        guard let user = User.current, !user.devices.contains(where: { $0.id == deviceId }) else {
+    func addDevice(deviceId: String) -> Observable<Void> {
+        guard let user = user else {
+            return .empty()
+        }
+        
+        let device = Device(deviceId)
+        
+        guard !user.devices.contains(where: { $0.id == deviceId }) else {
+            if user.currentDevice == nil {
+                var user = user
+                user.currentDevice = device
+                self.user = user
+            }
+            
             return .empty()
         }
         
         return Client.shared.rx.connectedRequest(endpoint: .addDevice(deviceId: deviceId, user))
             .do(onNext: { [unowned self] _ in
-                if let currentUser = User.current {
-                    var user = currentUser
-                    user.devices.append(Device(deviceId))
-                    self.user = user
-                    self.logger?.log("📱", "Device added with id: \(deviceId)")
-                }
+                var user = user
+                user.devices.append(device)
+                user.currentDevice = device
+                self.user = user
+                self.logger?.log("📱", "Device added with id: \(deviceId)")
             })
+            .map { (_: EmptyData) in Void() }
     }
     
     /// Request a list if devices.
@@ -129,7 +141,7 @@ public extension Client {
     ///
     /// - Parameter deviceId: a Push Notifications device identifier.
     /// - Returns: an observable empty data.
-    func removeDevice(deviceId: String) -> Observable<EmptyData> {
+    func removeDevice(deviceId: String) -> Observable<Void> {
         return Client.shared.connection.connected()
             .flatMapLatest { [unowned self] _ -> Observable<EmptyData> in
                 if let user = User.current, user.devices.firstIndex(where: { $0.id == deviceId }) != nil {
@@ -140,7 +152,8 @@ public extension Client {
                 
                 return .empty()
             }
-            .do(onNext: { [unowned self] _ in
+            .map { _ in Void() }
+            .do(onNext: { [unowned self] in
                 if let currentUser = User.current, let index = currentUser.devices.firstIndex(where: { $0.id == deviceId }) {
                     var user = currentUser
                     user.devices.remove(at: index)
