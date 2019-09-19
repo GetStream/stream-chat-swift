@@ -139,8 +139,10 @@ public final class WebSocket {
             logger?.log("💔", "Disconnected deliberately")
         }
         
-        if UIApplication.shared.appState == .background {
-            InternetConnection.shared.stopObserving()
+        DispatchQueue.main.async {
+            if UIApplication.shared.appState == .background {
+                InternetConnection.shared.stopObserving()
+            }
         }
         
         cancelBackgroundWork()
