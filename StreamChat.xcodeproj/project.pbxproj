@@ -27,6 +27,7 @@
 		8A0EB78E22FC6974009481E4 /* Channel+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78D22FC6974009481E4 /* Channel+Events.swift */; };
 		8A104FC522F4B95B002B2DC1 /* Banners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A104FC322F49233002B2DC1 /* Banners.swift */; };
 		8A150E9F232A8D8400330562 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A150E9E232A8D8400330562 /* Database.swift */; };
+		8A2BE6092334E0ED00D6E684 /* EscapeBridgingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */; };
 		8A34DED42322A92C00271BBF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A34DED32322A92C00271BBF /* Device.swift */; };
 		8A559D24230D937C00E66096 /* ClientRequestsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A559D23230D937C00E66096 /* ClientRequestsTests.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
@@ -37,6 +38,7 @@
 		8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */; };
 		8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B522F30001003BD1D5 /* User+Requests.swift */; };
 		8AC8C8B822F43D16003BD1D5 /* Client+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B722F43D16003BD1D5 /* Client+Requests.swift */; };
+		8ACB784C2333F1FB00C640FA /* TestDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACB784B2333F1FB00C640FA /* TestDatabase.swift */; };
 		8AD0A99223141D2400B8EB97 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A99123141D2400B8EB97 /* Tests.swift */; };
 		8AD0A9942314252700B8EB97 /* ClientSetupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A9932314252700B8EB97 /* ClientSetupTests.swift */; };
 		8AD0A9962314394200B8EB97 /* ChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A9952314394200B8EB97 /* ChannelTests.swift */; };
@@ -199,6 +201,7 @@
 		8A0EB78D22FC6974009481E4 /* Channel+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Events.swift"; sourceTree = "<group>"; };
 		8A104FC322F49233002B2DC1 /* Banners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banners.swift; sourceTree = "<group>"; };
 		8A150E9E232A8D8400330562 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscapeBridgingUI.swift; sourceTree = "<group>"; };
 		8A34DED32322A92C00271BBF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A559D23230D937C00E66096 /* ClientRequestsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRequestsTests.swift; sourceTree = "<group>"; };
@@ -210,6 +213,7 @@
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8AC8C8B522F30001003BD1D5 /* User+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Requests.swift"; sourceTree = "<group>"; };
 		8AC8C8B722F43D16003BD1D5 /* Client+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Requests.swift"; sourceTree = "<group>"; };
+		8ACB784B2333F1FB00C640FA /* TestDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDatabase.swift; sourceTree = "<group>"; };
 		8AD0A99123141D2400B8EB97 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		8AD0A9932314252700B8EB97 /* ClientSetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSetupTests.swift; sourceTree = "<group>"; };
 		8AD0A9952314394200B8EB97 /* ChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTests.swift; sourceTree = "<group>"; };
@@ -478,6 +482,7 @@
 			isa = PBXGroup;
 			children = (
 				8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */,
+				8ACB784B2333F1FB00C640FA /* TestDatabase.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -575,6 +580,7 @@
 				8AD5ECC822E9BA39005CFAC9 /* URL+Media.swift */,
 				8AD5ECC922E9BA39005CFAC9 /* CharacterSet+Extensions.swift */,
 				8AD5ECCA22E9BA39005CFAC9 /* Bundle+Extensions.swift */,
+				8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1132,6 +1138,7 @@
 			files = (
 				8A83394A2317D6FD001CBD9A /* ExtraDataTests.swift in Sources */,
 				8AD0A9942314252700B8EB97 /* ClientSetupTests.swift in Sources */,
+				8ACB784C2333F1FB00C640FA /* TestDatabase.swift in Sources */,
 				8AD0A9962314394200B8EB97 /* ChannelTests.swift in Sources */,
 				8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */,
 				465D64C2231808A2006BAE42 /* AttachmentTypeTests.swift in Sources */,
@@ -1164,6 +1171,7 @@
 				8AD5ED7522E9BA98005CFAC9 /* MessageTableViewCell+EnrichMessage.swift in Sources */,
 				8AD5ED9422E9BA98005CFAC9 /* MediaGalleryViewController.swift in Sources */,
 				8AD5EDA322E9BA98005CFAC9 /* UIEdgeInsets+Extensions.swift in Sources */,
+				8A2BE6092334E0ED00D6E684 /* EscapeBridgingUI.swift in Sources */,
 				8AD5ED7A22E9BA98005CFAC9 /* ChatFooterView.swift in Sources */,
 				8AD5ED7822E9BA98005CFAC9 /* MessageTableViewCell+Updates.swift in Sources */,
 				8AD5ED8322E9BA98005CFAC9 /* ComposerView.swift in Sources */,

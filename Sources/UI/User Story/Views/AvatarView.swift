@@ -11,7 +11,7 @@ import SnapKit
 import Nuke
 
 /// A view with a user avatar or user name intials.
-public final class AvatarView: UIImageView, Reusable {
+public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
     
     private var imageTask: ImageTask?
     
