@@ -147,9 +147,9 @@ extension Client {
         let appState = isTests()
             ? .just(.active)
             : app.rx.appState
-                .startWith(app.appState)
                 .filter { $0 != .inactive }
                 .distinctUntilChanged()
+                .startWith(app.appState)
                 .do(onNext: { state in ClientLogger.log("📱", "App state \(state)") })
         
         let internetIsAvailable: Observable<Bool> = isTests()

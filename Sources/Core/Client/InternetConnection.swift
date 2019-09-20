@@ -55,27 +55,25 @@ public final class InternetConnection {
     
     /// Init InternetConnection.
     public init() {
-        guard !isTests() else {
-            return
+        if !isTests() {
+            DispatchQueue.main.async { self.startObserving() }
         }
-        
-        DispatchQueue.main.async {
-            UIApplication.shared.rx.appState
-                .filter { $0 != .inactive }
-                .distinctUntilChanged()
-                .subscribe(onNext: { [unowned self] state in
-                    if state == .active {
-                        do {
-                            try self.reachability?.startNotifier()
-                            ClientLogger.log("🕸", "Notifying started 🏃‍♂️")
-                        } catch {
-                            let message = "InternetConnection tried to start notifying when app state became active."
-                            ClientLogger.log("🕸", error, message: message)
-                        }
-                    }
-                })
-                .disposed(by: self.disposeBag)
-        }
+    }
+    
+    private func startObserving() {
+        UIApplication.shared.rx.appState
+            .startWith(UIApplication.shared.appState)
+            .filter { $0 == .active }
+            .subscribe(onNext: { [unowned self] _ in
+                do {
+                    try self.reachability?.startNotifier()
+                    ClientLogger.log("🕸", "Notifying started 🏃‍♂️")
+                } catch {
+                    let message = "InternetConnection tried to start notifying when app state became active."
+                    ClientLogger.log("🕸", error, message: message)
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     /// Stop observing the Internet connection.
