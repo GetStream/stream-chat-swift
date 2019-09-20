@@ -12,50 +12,27 @@ import RxSwift
 
 public final class TestDatabase: Database {
     public var user: User?
-    var channelResponses: [ChannelResponse] = []
-    var channelResponsePage1: ChannelResponse?
-    var channelResponsePage2: ChannelResponse?
+    var messages: [String: [Message]] = [:]
     
-    public func channels(_ query: ChannelsQuery) -> Observable<[ChannelResponse]> {
+    public func channels(_ query: ChannelsQuery) -> Observable<[CbhannelResponse]> {
         print("🗄🗄🗄 fetch channels", query)
-        
-        if channelResponses.isEmpty {
-            return .empty()
-        }
-        
-        return .just(channelResponses)
+        return .empty()
     }
     
     public func channel(channelType: ChannelType, channelId: String, pagination: Pagination) -> Observable<ChannelResponse> {
         print("🗄 fetch channel:", channelType, channelId, pagination)
         
-        if let channelResponse = channelResponsePage1 {
-            return .just(pagination == Pagination.messagesPageSize
-                ? channelResponse
-                : ChannelResponse(channel: channelResponse.channel))
-        }
-        
-        return .empty()
+        return .just(ChannelResponse(channel: Channel(type: channelType, id: channelId),
+                                     messages: messages[channelId, default: []]))
     }
     
-    public func add(channelResponses: [ChannelResponse]) {
-        if channelResponses.isEmpty || channelResponsePage1 != nil {
+    public func add(messages: [Message], for channel: Channel) {
+        if messages.isEmpty {
             return
         }
         
-        print("🗄 added, responses: ", channelResponses.count, "first channel messages:", channelResponses[0].messages.count)
-        
-        if let channelResponse = channelResponses.first, channelResponses.count == 1 {
-            if channelResponsePage1 == nil {
-                channelResponsePage1 = channelResponse
-            } else if channelResponsePage2 == nil {
-                channelResponsePage2 = channelResponse
-            }
-        }
-        
-        if !channelResponses.isEmpty {
-            self.channelResponses = channelResponses
-        }
+        print("🗄 added messages:", messages.count, "for channel:", channel.cid)
+        self.messages[channel.id, default: []].append(contentsOf: messages)
     }
     
     public init() {}

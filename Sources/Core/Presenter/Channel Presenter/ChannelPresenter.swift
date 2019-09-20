@@ -76,13 +76,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     /// An observable view changes (see `ViewChanges`).
     public private(set) lazy var changes =
-        Driver.merge(parentMessage == nil ? parsedChannelResponse(channelRequest) : replyRequest,
-                     parentMessage == nil ? parsedChannelResponse(channelDatabaseFetch) : .empty(),
+        Driver.merge(parentMessage == nil ? parsedChannelResponse(messagesRequest) : repliesRequest,
+                     parentMessage == nil ? parsedChannelResponse(messagesDatabaseFetch) : .empty(),
                      webSocketChanges,
                      ephemeralChanges,
                      connectionErrors)
     
-    private lazy var channelRequest: Observable<ChannelResponse> = prepareRequest()
+    private lazy var messagesRequest: Observable<ChannelResponse> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
         .flatMapLatest { [weak self] pagination -> Observable<ChannelResponse> in
             if let self = self {
@@ -90,15 +90,15 @@ public final class ChannelPresenter: Presenter<ChatItem> {
             }
             
             return .empty()
-        }
+    }
     
-    private lazy var channelDatabaseFetch: Observable<ChannelResponse> = prepareDatabaseFetch()
+    private lazy var messagesDatabaseFetch: Observable<ChannelResponse> = prepareDatabaseFetch()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
         .flatMapLatest { [weak self] pagination -> Observable<ChannelResponse> in
             self?.channel.fetch(pagination: pagination) ?? .empty()
-        }
+    }
     
-    private lazy var replyRequest: Driver<ViewChanges> = prepareRequest()
+    private lazy var repliesRequest: Driver<ViewChanges> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
         .flatMapLatest { [weak self] in (self?.parentMessage?.replies(pagination: $0) ?? .empty()).retry(3) }
         .map { [weak self] in self?.parseReplies($0) ?? .none }

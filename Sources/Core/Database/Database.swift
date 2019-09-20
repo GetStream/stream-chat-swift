@@ -29,9 +29,10 @@ public protocol Database {
     /// - Returns: an observable channel response.
     func channel(channelType: ChannelType, channelId: String, pagination: Pagination) -> Observable<ChannelResponse>
     
-    /// Add channel responses to a database.        
+    /// Add messages for a channel to a local database.
     ///
-    /// - Parameter channelResponses: channel responses.
-    /// - Returns: an observable completion.
-    func add(channelResponses: [ChannelResponse])
+    /// - Parameters:
+    ///   - messages: messages of a channel
+    ///   - channel: a channel
+    func add(messages: [Message], for channel: Channel)
 }

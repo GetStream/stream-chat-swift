@@ -21,7 +21,7 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="wHQ-SN-6cp">
-                        <barButtonItem key="rightBarButtonItem" title="Logout" id="eFn-1a-W3H">
+                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="eFn-1a-W3H">
                             <connections>
                                 <segue destination="aEe-dp-x44" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="6oS-c0-L1x"/>
                             </connections>
@@ -43,7 +43,7 @@
                         <viewLayoutGuide key="safeArea" id="t9p-1J-lU0"/>
                     </view>
                     <navigationItem key="navigationItem" id="tyC-kY-Be8">
-                        <barButtonItem key="rightBarButtonItem" title="Logout" id="xsm-do-D8r">
+                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="xsm-do-D8r">
                             <connections>
                                 <segue destination="Jpg-eB-15H" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="a5b-Jp-cN7"/>
                             </connections>
@@ -62,11 +62,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="50" translatesAutoresizingMaskIntoConstraints="NO" id="fQM-5J-VyU">
-                                <rect key="frame" x="109" y="214.5" width="157" height="258"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="fQM-5J-VyU">
+                                <rect key="frame" x="16" y="40" width="343" height="246"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lMz-sX-zDG">
-                                        <rect key="frame" x="23.5" y="0.0" width="110" height="30"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="110" height="30"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Show Channels"/>
                                         <connections>
@@ -74,7 +74,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Try-iz-4dr">
-                                        <rect key="frame" x="23.5" y="80" width="110" height="30"/>
+                                        <rect key="frame" x="0.0" y="60" width="110" height="30"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Show Channels"/>
                                         <connections>
@@ -82,15 +82,21 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Of-ZP-Ztv">
-                                        <rect key="frame" x="0.0" y="160" width="157" height="30"/>
+                                        <rect key="frame" x="0.0" y="120" width="157" height="30"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Show Chat (#general)"/>
                                         <connections>
                                             <segue destination="Z71-Wp-boH" kind="presentation" id="Z6X-IU-Iab"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Online: —" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LML-Ms-XJg">
-                                        <rect key="frame" x="45" y="240" width="67" height="18"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Online users: &lt;Disabled&gt;" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LML-Ms-XJg">
+                                        <rect key="frame" x="0.0" y="180" width="172" height="18"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push  Notifications:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MVq-bk-kzB">
+                                        <rect key="frame" x="0.0" y="228" width="133" height="18"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -98,7 +104,7 @@
                                 </subviews>
                             </stackView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="–" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eTn-JY-iPB">
-                                <rect key="frame" x="266" y="376.5" width="16" height="16"/>
+                                <rect key="frame" x="173" y="162" width="16" height="16"/>
                                 <color key="backgroundColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="16" id="Jsh-lg-vjv"/>
@@ -114,7 +120,7 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DARK MODE    " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="11f-PJ-qcd">
-                                <rect key="frame" x="154" y="324.5" width="67" height="16"/>
+                                <rect key="frame" x="136" y="107" width="67" height="16"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="16" id="jhD-Tj-2Um"/>
@@ -129,40 +135,31 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jQp-EN-Voh">
-                                <rect key="frame" x="287" y="374" width="51" height="31"/>
+                                <rect key="frame" x="310" y="159.5" width="51" height="31"/>
                             </switch>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jrn-MT-IQv">
-                                <rect key="frame" x="231" y="448" width="51" height="31"/>
+                                <rect key="frame" x="310" y="213.5" width="51" height="31"/>
                             </switch>
-                            <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="m0F-4j-1LB">
-                                <rect key="frame" x="92.5" y="606" width="190" height="31"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push  Notifications:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MVq-bk-kzB">
-                                        <rect key="frame" x="0.0" y="0.0" width="133" height="31"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="H0k-lx-tmL">
-                                        <rect key="frame" x="141" y="0.0" width="51" height="31"/>
-                                    </switch>
-                                </subviews>
-                            </stackView>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="H0k-lx-tmL">
+                                <rect key="frame" x="310" y="261.5" width="51" height="31"/>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="jrn-MT-IQv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="LML-Ms-XJg" secondAttribute="trailing" constant="10" id="21z-y7-4iv"/>
+                            <constraint firstItem="11f-PJ-qcd" firstAttribute="leading" secondItem="Try-iz-4dr" secondAttribute="trailing" constant="10" id="4ic-pP-d1B"/>
                             <constraint firstItem="eTn-JY-iPB" firstAttribute="leading" secondItem="5Of-ZP-Ztv" secondAttribute="trailing" id="7eh-gI-RGo"/>
-                            <constraint firstItem="pUb-7p-fIc" firstAttribute="bottom" secondItem="m0F-4j-1LB" secondAttribute="bottom" constant="30" id="FcR-4s-JMC"/>
+                            <constraint firstItem="jQp-EN-Voh" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" id="JHC-nQ-XuY"/>
                             <constraint firstItem="eTn-JY-iPB" firstAttribute="centerY" secondItem="5Of-ZP-Ztv" secondAttribute="centerY" constant="-5" id="Jfi-ED-ACl"/>
-                            <constraint firstItem="fQM-5J-VyU" firstAttribute="centerY" secondItem="pUb-7p-fIc" secondAttribute="centerY" id="LrA-ZU-J9k"/>
-                            <constraint firstItem="jrn-MT-IQv" firstAttribute="leading" secondItem="LML-Ms-XJg" secondAttribute="trailing" constant="10" id="P2u-mj-ZvA"/>
-                            <constraint firstItem="m0F-4j-1LB" firstAttribute="centerX" secondItem="pUb-7p-fIc" secondAttribute="centerX" id="TVt-Ny-RUQ"/>
+                            <constraint firstItem="H0k-lx-tmL" firstAttribute="centerY" secondItem="MVq-bk-kzB" secondAttribute="centerY" id="JiW-cq-VUP"/>
+                            <constraint firstItem="H0k-lx-tmL" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" id="UPl-Cd-D6W"/>
+                            <constraint firstItem="fQM-5J-VyU" firstAttribute="trailing" secondItem="jrn-MT-IQv" secondAttribute="trailing" id="Y6b-uF-Qxa"/>
+                            <constraint firstItem="fQM-5J-VyU" firstAttribute="leading" secondItem="pUb-7p-fIc" secondAttribute="leading" constant="16" id="Yjs-jQ-l1d"/>
+                            <constraint firstItem="pUb-7p-fIc" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" constant="16" id="Ztz-Qr-06v"/>
+                            <constraint firstItem="11f-PJ-qcd" firstAttribute="centerY" secondItem="Try-iz-4dr" secondAttribute="centerY" id="aut-4i-Eio"/>
                             <constraint firstItem="jQp-EN-Voh" firstAttribute="centerY" secondItem="5Of-ZP-Ztv" secondAttribute="centerY" id="bEW-cC-JuG"/>
-                            <constraint firstItem="jQp-EN-Voh" firstAttribute="leading" secondItem="eTn-JY-iPB" secondAttribute="trailing" constant="5" id="byg-HF-7xt"/>
-                            <constraint firstItem="11f-PJ-qcd" firstAttribute="top" secondItem="Try-iz-4dr" secondAttribute="bottom" id="fIy-gd-L0P"/>
-                            <constraint firstItem="fQM-5J-VyU" firstAttribute="centerX" secondItem="pUb-7p-fIc" secondAttribute="centerX" id="hET-j0-jDJ"/>
                             <constraint firstItem="jrn-MT-IQv" firstAttribute="centerY" secondItem="LML-Ms-XJg" secondAttribute="centerY" id="hcw-6a-JAC"/>
-                            <constraint firstItem="11f-PJ-qcd" firstAttribute="centerX" secondItem="Try-iz-4dr" secondAttribute="centerX" id="qVg-ek-e6s"/>
+                            <constraint firstItem="fQM-5J-VyU" firstAttribute="top" secondItem="pUb-7p-fIc" secondAttribute="top" constant="20" id="kzp-2e-gOF"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="pUb-7p-fIc"/>
                     </view>
@@ -176,7 +173,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2JN-fl-ghF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-660" y="-61.619190404797607"/>
+            <point key="canvasLocation" x="-551" y="-62"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="NqH-ND-qBY">
@@ -208,7 +205,7 @@
                         <viewLayoutGuide key="safeArea" id="AC2-xq-vHg"/>
                     </view>
                     <navigationItem key="navigationItem" id="M29-wa-tVT">
-                        <barButtonItem key="rightBarButtonItem" title="Logout" id="2ar-d7-vJl">
+                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="2ar-d7-vJl">
                             <connections>
                                 <segue destination="Z71-Wp-boH" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="qnB-bf-sHX"/>
                             </connections>

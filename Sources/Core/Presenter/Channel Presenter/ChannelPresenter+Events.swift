@@ -82,6 +82,7 @@ extension ChannelPresenter {
             appendOrUpdateMessageItem(message)
             let viewChanges = ViewChanges.itemAdded(nextRow, reloadRow, message.user.isCurrent, items)
             lastWebSocketEventViewChanges = viewChanges
+            Client.shared.database?.add(messages: [message], for: channel)
             Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             
             return viewChanges

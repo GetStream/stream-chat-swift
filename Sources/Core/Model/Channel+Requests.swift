@@ -29,7 +29,7 @@ public extension Channel {
         return Client.shared.rx.connectedRequest(endpoint: .channel(channelQuery))
             .do(onNext: { channelResponse in
                 if options.contains(.state) {
-                    Client.shared.database?.add(channelResponses: [channelResponse])
+                    Client.shared.database?.add(messages: channelResponse.messages, for: channelResponse.channel)
                 }
             })
     }

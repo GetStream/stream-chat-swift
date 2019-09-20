@@ -184,6 +184,8 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
                 }
             })
             .disposed(by: disposeBag)
+        
+        updateFooterView()
     }
     
     private func markReadIfPossible() {

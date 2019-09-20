@@ -34,6 +34,7 @@ final class RootViewController: UIViewController {
                     self?.subscribeForUnreadCount()
                 } else {
                     self?.badgeDisposeBag = DisposeBag()
+                    self?.badgeLabel.text = "–"
                 }
             })
             .disposed(by: disposeBag)
@@ -44,6 +45,7 @@ final class RootViewController: UIViewController {
                     self?.subscribeForOnlineUsers()
                 } else {
                     self?.onlineDisposeBag = DisposeBag()
+                    self?.onlinelabel.text = "Online users: <Disabled>"
                 }
             })
             .disposed(by: disposeBag)
@@ -60,18 +62,26 @@ final class RootViewController: UIViewController {
     
     func subscribeForOnlineUsers() {
         channel.onlineUsers
+            .startWith([User(id: "", name: "")])
             .drive(onNext: { [weak self] users in
-                var userNames = "—"
+                if users.count == 1, users[0].id.isEmpty {
+                    self?.onlinelabel.text = "Online users: <Loading...>"
+                    return
+                }
+                
+                var userNames = "<Nobody>"
                 
                 if users.count == 1 {
                     userNames = users[0].name
                 } else if users.count == 2 {
                     userNames = "\(users[0].name) and \(users[1].name)"
-                } else if users.count > 2 {
-                    userNames = "\(users[0].name) and \(users.count - 1) others"
+                } else if users.count == 3 {
+                    userNames = "\(users[0].name), \(users[1].name) and \(users[2].name)"
+                } else if users.count > 3 {
+                    userNames = "\(users[0].name), \(users[1].name), \(users[2].name) and \(users.count - 3) others"
                 }
                 
-                self?.onlinelabel.text = "Online: \(userNames)"
+                self?.onlinelabel.text = "Online users: \(userNames)"
             })
             .disposed(by: onlineDisposeBag)
     }
