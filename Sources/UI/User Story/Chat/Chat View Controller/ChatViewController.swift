@@ -20,6 +20,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     public let disposeBag = DisposeBag()
     /// A list of table view items, e.g. messages.
     public private(set) var items = [ChatItem]()
+    private var isItemsValid = false
     /// A reaction view.
     weak var reactionsView: ReactionsView?
     
@@ -80,6 +81,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         presenter.changes
             .filter { [weak self] _ in
                 if let self = self {
+                    self.isItemsValid = self.isItemsValid && self.isVisible
                     return self.changesEnabled && self.isVisible
                 }
                 
@@ -94,6 +96,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             refreshTableView(scrollToBottom: true, animated: false)
         }
         
+        isItemsValid = true
         changesEnabled = true
         setupFooterUpdates()
     }
@@ -103,7 +106,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         startGifsAnimations()
         markReadIfPossible()
         
-        if let presenter = channelPresenter, presenter.items != items {
+        if let presenter = channelPresenter, (!isItemsValid || presenter.items != items) {
             let scrollToBottom = items.isEmpty || (scrollEnabled && tableView.bottomContentOffset < .chatBottomThreshold)
             refreshTableView(scrollToBottom: scrollToBottom, animated: false)
         }
@@ -128,6 +131,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             return
         }
         
+        isItemsValid = true
         items = presenter.items
         tableView.reloadData()
         
