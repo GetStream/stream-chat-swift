@@ -110,6 +110,10 @@ extension ChannelPresenter {
         
         // Add chat items for messages.
         messages.enumerated().forEach { messageIndex, message in
+            if parentMessage == nil, message.parentId != nil {
+                return
+            }
+            
             if showStatuses, !yesterdayStatusAdded, message.created.isYesterday {
                 yesterdayStatusAdded = true
                 items.insert(.status(ChatItem.statusYesterdayTitle,
