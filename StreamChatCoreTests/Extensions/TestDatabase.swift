@@ -10,11 +10,16 @@ import Foundation
 import RxSwift
 @testable import StreamChatCore
 
-public final class TestDatabase: Database {
+public final class TestDatabase {
     public var user: User?
     var messages: [String: [Message]] = [:]
+    var replies: [String: [Message]] = [:]
     
-    public func channels(_ query: ChannelsQuery) -> Observable<[CbhannelResponse]> {
+    public init() {}
+}
+
+extension TestDatabase: Database {
+    public func channels(_ query: ChannelsQuery) -> Observable<[ChannelResponse]> {
         print("🗄🗄🗄 fetch channels", query)
         return .empty()
     }
@@ -35,5 +40,19 @@ public final class TestDatabase: Database {
         self.messages[channel.id, default: []].append(contentsOf: messages)
     }
     
-    public init() {}
+    public func replies(for message: Message, pagination: Pagination) -> Observable<[Message]> {
+        return .just(replies[message.id, default: []])
+    }
+    
+    public func add(replies: [Message], for message: Message) {
+        self.replies[message.id] = replies
+    }
+    
+    public func set(members: [Member], for channel: Channel) {}
+    
+    public func add(member: Member, for channel: Channel) {}
+    
+    public func remove(member: Member, from channel: Channel) {}
+    
+    public func update(member: Member, from channel: Channel) {}
 }

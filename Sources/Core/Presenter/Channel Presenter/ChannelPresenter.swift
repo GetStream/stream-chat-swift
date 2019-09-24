@@ -75,12 +75,12 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     }
     
     /// An observable view changes (see `ViewChanges`).
-    public private(set) lazy var changes =
-        Driver.merge(parentMessage == nil ? parsedChannelResponse(messagesRequest) : repliesRequest,
-                     parentMessage == nil ? parsedChannelResponse(messagesDatabaseFetch) : .empty(),
-                     webSocketChanges,
-                     ephemeralChanges,
-                     connectionErrors)
+    public private(set) lazy var changes = Driver
+        .merge(parentMessage == nil ? parsedChannelResponse(messagesRequest) : parsedRepliesResponse(repliesRequest),
+               parentMessage == nil ? parsedChannelResponse(messagesDatabaseFetch) : parsedRepliesResponse(repliesDatabaseFetch),
+               webSocketChanges,
+               ephemeralChanges,
+               connectionErrors)
     
     private lazy var messagesRequest: Observable<ChannelResponse> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
@@ -98,12 +98,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
             self?.channel.fetch(pagination: pagination) ?? .empty()
     }
     
-    private lazy var repliesRequest: Driver<ViewChanges> = prepareRequest()
+    private lazy var repliesRequest: Observable<[Message]> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
         .flatMapLatest { [weak self] in (self?.parentMessage?.replies(pagination: $0) ?? .empty()).retry(3) }
-        .map { [weak self] in self?.parseReplies($0) ?? .none }
-        .filter { $0 != .none }
-        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+    
+    private lazy var repliesDatabaseFetch: Observable<[Message]> = prepareDatabaseFetch()
+        .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
+        .flatMapLatest { [weak self] in self?.parentMessage?.fetchReplies(pagination: $0) ?? .empty() }
     
     private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.onEvent(channelType: channelType, channelId: channelId)
         .map { [weak self] in self?.parseChanges(event: $0) ?? .none }

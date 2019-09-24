@@ -29,7 +29,10 @@ public extension Channel {
         return Client.shared.rx.connectedRequest(endpoint: .channel(channelQuery))
             .do(onNext: { channelResponse in
                 if options.contains(.state) {
-                    Client.shared.database?.add(messages: channelResponse.messages, for: channelResponse.channel)
+                    if let database = Client.shared.database {
+                        database.add(messages: channelResponse.messages, for: channelResponse.channel)
+                        database.set(members: channelResponse.members, for: channelResponse.channel)
+                    }
                 }
             })
     }
@@ -203,7 +206,7 @@ public extension Channel {
     ///     - parentMessage: a parent message of replies.
     ///     - pagination: a pagination (see `Pagination`).
     /// - Returns: an observable message response.
-    func replies(for parentMessage: Message, pagination: Pagination) -> Observable<MessagesResponse> {
+    func replies(for parentMessage: Message, pagination: Pagination) -> Observable<[Message]> {
         return parentMessage.replies(pagination: pagination)
     }
     

@@ -42,8 +42,18 @@ public extension Message {
     ///
     /// - Parameter pagination: a pagination (see `Pagination`).
     /// - Returns: an observable message response.
-    func replies(pagination: Pagination) -> Observable<MessagesResponse> {
+    func replies(pagination: Pagination) -> Observable<[Message]> {
         return Client.shared.rx.connectedRequest(endpoint: .replies(self, pagination))
+            .map { (response: MessagesResponse) -> [Message] in response.messages }
+            .do(onNext: { Client.shared.database?.add(replies: $0, for: self) })
+    }
+    
+    /// Fetch a reply messages from a database.
+    ///
+    /// - Parameter pagination: a pagination (see `Pagination`).
+    /// - Returns: an observable message response.
+    func fetchReplies(pagination: Pagination) -> Observable<[Message]> {
+        return Client.shared.database?.replies(for: self, pagination: pagination) ?? .empty()
     }
     
     /// Flag a message.

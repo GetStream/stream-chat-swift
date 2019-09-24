@@ -105,13 +105,13 @@ public final class Client {
                 baseURL: BaseURL = Client.config.baseURL,
                 callbackQueue: DispatchQueue? = Client.config.callbackQueue,
                 stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
-//                database: Database? = Client.config.database,
+                database: Database? = Client.config.database,
                 logOptions: ClientLogger.Options = Client.config.logOptions) {
         self.apiKey = apiKey
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue
         self.stayConnectedInBackground = stayConnectedInBackground
-        self.database = nil
+        self.database = database
         self.logOptions = logOptions
         
         if logOptions == .all || logOptions == .requests || logOptions == .requestsHeaders {
@@ -164,13 +164,13 @@ extension Client {
                     baseURL: BaseURL = BaseURL(),
                     callbackQueue: DispatchQueue? = nil,
                     stayConnectedInBackground: Bool = true,
-//                    database: Database? = nil,
+                    database: Database? = nil,
                     logOptions: ClientLogger.Options = .none) {
             self.apiKey = apiKey
             self.baseURL = baseURL
             self.callbackQueue = callbackQueue
             self.stayConnectedInBackground = stayConnectedInBackground
-            self.database = nil
+            self.database = database
             self.logOptions = logOptions
         }
     }

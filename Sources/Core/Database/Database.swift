@@ -29,10 +29,53 @@ public protocol Database {
     /// - Returns: an observable channel response.
     func channel(channelType: ChannelType, channelId: String, pagination: Pagination) -> Observable<ChannelResponse>
     
-    /// Add messages for a channel to a local database.
+    /// Fetch message replies.
+    ///
+    /// - Parameters:
+    ///   - message: a parent message.
+    ///   - pagination: a pagination.
+    /// - Returns: an observable messages.
+    func replies(for message: Message, pagination: Pagination) -> Observable<[Message]>
+    
+    /// Add messages for a channel.
     ///
     /// - Parameters:
     ///   - messages: messages of a channel
     ///   - channel: a channel
     func add(messages: [Message], for channel: Channel)
+    
+    /// Add replies for a message.
+    ///
+    /// - Parameters:
+    ///   - messages: replies.
+    ///   - message: a parent message.
+    func add(replies: [Message], for message: Message)
+    
+    /// Set members for a channel.
+    ///
+    /// - Parameters:
+    ///   - members: members of a channel
+    ///   - channel: a channel
+    func set(members: [Member], for channel: Channel)
+    
+    /// Add a new member for a channel.
+    ///
+    /// - Parameters:
+    ///   - member: a new member of a channel
+    ///   - channel: a channel
+    func add(member: Member, for channel: Channel)
+    
+    /// Remove a member from a channel.
+    ///
+    /// - Parameters:
+    ///   - member: a member of a channel
+    ///   - channel: a channel
+    func remove(member: Member, from channel: Channel)
+    
+    /// Update a member in a channel.
+    ///
+    /// - Parameters:
+    ///   - member: a member of a channel
+    ///   - channel: a channel
+    func update(member: Member, from channel: Channel)
 }
