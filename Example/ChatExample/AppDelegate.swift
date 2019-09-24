@@ -21,7 +21,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .all)
+        Client.config = .init(apiKey: "qk4nn7rpcn75",
+                              database: TestDatabase(),
+                              logOptions: .all)
         
         Client.shared.set(user: .user2, token: .token2)
         setupNotifications()
