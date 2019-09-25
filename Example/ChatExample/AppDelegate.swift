@@ -11,6 +11,7 @@ import StreamChat
 import StreamChatCore
 import RxSwift
 import RxCocoa
+import UserNotifications
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -32,6 +33,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func setupNotifications() {
+        UNUserNotificationCenter.current().delegate = self
+        
         Notifications.shared.logsEnabled = true
         
         Notifications.shared.openNewMessage = { [weak self] messageId, channelId in
@@ -62,6 +65,18 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("🗞📮", userInfo)
+    }
+}
+
+// MARK: - Notifications
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    public func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                       didReceive response: UNNotificationResponse,
+                                       withCompletionHandler completionHandler: @escaping () -> Void) {
+        if Notifications.shared.canHandle(response: response) {
+           Notifications.shared.handleNotificationAction(response: response)
+        }
+        completionHandler()
     }
 }
 
