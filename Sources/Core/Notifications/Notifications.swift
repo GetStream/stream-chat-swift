@@ -112,7 +112,7 @@ extension Notifications {
         content.body = message.textOrArgs
         content.sound = UNNotificationSound.default
         messagesBadgeNumber += 1
-        content.badge = (UIApplication.shared.applicationIconBadgeNumber + messagesBadgeNumber) as NSNumber
+        content.badge = (UIApplication.shared.applicationIconBadgeNumber + 1) as NSNumber
         
         content.userInfo = [NotificationUserInfoKeys.messageId.rawValue: message.id,
                             NotificationUserInfoKeys.channelId.rawValue: channel.id]
