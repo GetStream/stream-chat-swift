@@ -26,7 +26,7 @@ public final class Notifications: NSObject {
     
     let disposeBag = DisposeBag()
     var authorizationStatus: UNAuthorizationStatus = .notDetermined
-    var iconBadgeNumber: Int = 0
+    var messagesBadgeNumber: Int = 0
     
     /// A callback to open a chat view controller with a given message id and channel id.
     public var openNewMessage: OpenNewMessageCallback?
@@ -38,28 +38,6 @@ public final class Notifications: NSObject {
         didSet {
             logger = logsEnabled ? ClientLogger(icon: "🗞") : nil
         }
-    }
-    
-    override init() {
-        super.init()
-        UNUserNotificationCenter.current().delegate = self
-
-        DispatchQueue.main.async {
-            self.clear()
-            
-            UIApplication.shared.rx.appState
-                .filter { $0 == .active }
-                .subscribe(onNext: { [weak self] _ in self?.clear() })
-                .disposed(by: self.disposeBag)
-        }
-    }
-    
-    func clear() {
-        iconBadgeNumber = 0
-        UIApplication.shared.applicationIconBadgeNumber = 0
-        let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.removeAllDeliveredNotifications()
-        notificationCenter.removeAllPendingNotificationRequests()
     }
     
     /// Ask for permissions for notifications.
@@ -133,8 +111,8 @@ extension Notifications {
         content.title = channel.name
         content.body = message.textOrArgs
         content.sound = UNNotificationSound.default
-        iconBadgeNumber += 1
-        content.badge = iconBadgeNumber as NSNumber
+        messagesBadgeNumber += 1
+        content.badge = (UIApplication.shared.applicationIconBadgeNumber + messagesBadgeNumber) as NSNumber
         
         content.userInfo = [NotificationUserInfoKeys.messageId.rawValue: message.id,
                             NotificationUserInfoKeys.channelId.rawValue: channel.id]
@@ -159,16 +137,27 @@ extension Notifications {
 
 // MARK: - Handle Actions
 
-extension Notifications: UNUserNotificationCenterDelegate {
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                       didReceive response: UNNotificationResponse,
-                                       withCompletionHandler completionHandler: @escaping () -> Void) {
+extension Notifications {
+    public func messageDataFrom(notificationResponse response: UNNotificationResponse) -> (messageId: String, channelId: String)? {
         if let userInfo = response.notification.request.content.userInfo as? [String: String],
             let messageId = userInfo[NotificationUserInfoKeys.messageId.rawValue],
             let chanellId = userInfo[NotificationUserInfoKeys.channelId.rawValue] {
-            openNewMessage?(messageId, chanellId)
+            return (messageId, chanellId)
+        }
+        return nil
+    }
+    
+    public func canHandle(response: UNNotificationResponse) -> Bool {
+        return messageDataFrom(notificationResponse: response) != nil
+    }
+    
+    @discardableResult
+    public func handleNotificationAction(response: UNNotificationResponse) -> Bool {
+        guard let (messageId, chanellId) = messageDataFrom(notificationResponse: response) else {
+            return false
         }
         
-        completionHandler()
+        openNewMessage?(messageId, chanellId)
+        return true
     }
 }
