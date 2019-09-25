@@ -25,12 +25,12 @@ extension Token {
         return payload != nil
     }
     
-    var payload: [String: String]? {
+    var payload: [String: Any]? {
         let parts = split(separator: ".")
         
         if parts.count == 3,
             let payloadData = jwtDecodeBase64(String(parts[1])),
-            let json = (try? JSONSerialization.jsonObject(with: payloadData)) as? [String: String] {
+            let json = (try? JSONSerialization.jsonObject(with: payloadData)) as? [String: Any] {
             return json
         }
         
