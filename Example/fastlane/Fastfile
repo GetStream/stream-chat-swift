@@ -17,8 +17,8 @@ lane :beta do
   
   # build your iOS app
   build_app(
-    scheme: "StreamChat",
-    workspace: "StreamChat.xcworkspace",
+    scheme: "ChatExample",
+#    workspace: "StreamChat.xcworkspace",
     include_bitcode: true,
     export_method: "ad-hoc",
     export_options: {iCloudContainerEnvironment: "Production"}
