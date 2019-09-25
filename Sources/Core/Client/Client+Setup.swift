@@ -126,7 +126,7 @@ extension Client {
             return ClientError.tokenInvalid(description: "Token is invalid or Token payload is invalid")
         }
         
-        if payload["user_id"] == user.id {
+        if let userId = payload["user_id"] as? String, userId == user.id {
             return nil
         }
         
