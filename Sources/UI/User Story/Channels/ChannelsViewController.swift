@@ -21,7 +21,7 @@ open class ChannelsViewController: ViewController {
     /// A list of table view items, e.g. channel presenters.
     public private(set) var items = [ChatItem]()
     /// A channels presenter.
-    public var channelsPresenter = ChannelsPresenter(channelType: .messaging)
+    open var channelsPresenter = ChannelsPresenter(channelType: .messaging)
     
     /// A table view of channels.
     public private(set) lazy var tableView: UITableView = {
