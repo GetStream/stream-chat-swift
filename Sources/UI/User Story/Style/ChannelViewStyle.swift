@@ -18,6 +18,10 @@ public struct ChannelViewStyle {
     public var nameFont: UIFont
     /// A channel name color.
     public var nameColor: UIColor
+    /// A channel name font.
+    public var nameUnreadFont: UIFont
+    /// A channel name color.
+    public var nameUnreadColor: UIColor
     /// A last message font.
     public var messageFont: UIFont
     /// A last message text color.
@@ -42,6 +46,8 @@ public struct ChannelViewStyle {
     ///   - separatorColor: a separator color.
     ///   - nameFont: a channel name font.
     ///   - nameColor: a channel name color.
+    ///   - nameUnreadFont: a channel unread name font.
+    ///   - nameUnreadColor: a channel unread name color.
     ///   - messageFont: a last message font.
     ///   - messageColor: a last message text color.
     ///   - messageUnreadFont: a last unread message font.
@@ -53,7 +59,9 @@ public struct ChannelViewStyle {
     public init(backgroundColor: UIColor = .white,
                 separatorColor: UIColor = .chatSeparator,
                 nameFont: UIFont = .chatXRegularMedium,
-                nameColor: UIColor = .black,
+                nameColor: UIColor = .chatGray,
+                nameUnreadFont: UIFont = .chatXRegularMedium,
+                nameUnreadColor: UIColor = .black,
                 messageFont: UIFont = .chatMedium,
                 messageColor: UIColor = .chatGray,
                 messageUnreadFont: UIFont = .chatMediumMedium,
@@ -66,6 +74,8 @@ public struct ChannelViewStyle {
         self.separatorColor = separatorColor
         self.nameFont = nameFont
         self.nameColor = nameColor
+        self.nameUnreadFont = nameUnreadFont
+        self.nameUnreadColor = nameUnreadColor
         self.messageFont = messageFont
         self.messageColor = messageColor
         self.messageUnreadFont = messageUnreadFont
@@ -84,6 +94,8 @@ extension ChannelViewStyle: Hashable {
             && lhs.separatorColor == rhs.separatorColor
             && lhs.nameFont == rhs.nameFont
             && lhs.nameColor == rhs.nameColor
+            && lhs.nameUnreadFont == rhs.nameUnreadFont
+            && lhs.nameUnreadColor == rhs.nameUnreadColor
             && lhs.messageFont == rhs.messageFont
             && lhs.messageColor == rhs.messageColor
             && lhs.messageUnreadFont == rhs.messageUnreadFont
@@ -99,6 +111,8 @@ extension ChannelViewStyle: Hashable {
         hasher.combine(separatorColor)
         hasher.combine(nameFont)
         hasher.combine(nameColor)
+        hasher.combine(nameUnreadFont)
+        hasher.combine(nameUnreadColor)
         hasher.combine(messageFont)
         hasher.combine(messageColor)
         hasher.combine(messageUnreadFont)

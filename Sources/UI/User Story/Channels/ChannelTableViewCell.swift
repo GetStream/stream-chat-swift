@@ -149,9 +149,13 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         }
         
         if isUnread {
+            nameLabel.font = style.nameUnreadFont
+            nameLabel.textColor = style.nameUnreadColor
             messageLabel.font = style.messageUnreadFont
             messageLabel.textColor = style.messageUnreadColor
         } else {
+            nameLabel.font = style.nameFont
+            nameLabel.textColor = style.nameColor
             messageLabel.font = style.messageFont
             messageLabel.textColor = style.messageColor
         }
