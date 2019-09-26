@@ -62,6 +62,12 @@ public struct ChannelResponse: Decodable {
 }
 
 /// A response for an updated channel.
+public struct ChannelDeletedResponse: Decodable {
+    /// A channel.
+    public let channel: Channel
+}
+
+/// A response for an updated channel.
 public struct ChannelUpdatedResponse: Decodable, Equatable {
     /// A channel.
     public let channel: Channel

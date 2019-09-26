@@ -15,6 +15,29 @@ final class ChannelTests: TestCase {
     
     let channel = Channel(type: .messaging, id: "integration")
     
+    func testCreateDelete() {
+        let randomChannelId = "new_channel_\(Int.random(in: 1000...9999))"
+        
+        do {
+            let channel = Channel(type: .messaging, id: randomChannelId)
+            let channelResponse = try channel.create()
+                .toBlocking()
+                .toArray()
+            
+            XCTAssertEqual(channelResponse.count, 1)
+            XCTAssertEqual(channelResponse[0].channel, channel)
+            
+            let deletedResponse = try channelResponse[0].channel.delete()
+                .toBlocking()
+                .toArray()
+            
+            XCTAssertEqual(deletedResponse.count, 1)
+            XCTAssertTrue(deletedResponse[0].channel.isDeleted)
+        } catch {
+            XCTFail("\(error)")
+        }
+    }
+    
     func testQuery() {
         do {
             let response = try channel.query()

@@ -29,7 +29,6 @@
 		8A149202233A64F0007B2DB8 /* TestDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACB784B2333F1FB00C640FA /* TestDatabase.swift */; };
 		8A150E9F232A8D8400330562 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A150E9E232A8D8400330562 /* Database.swift */; };
 		8A2BE6092334E0ED00D6E684 /* EscapeBridgingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */; };
-		8A2BE60A2335148F00D6E684 /* TestDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACB784B2333F1FB00C640FA /* TestDatabase.swift */; };
 		8A34DED42322A92C00271BBF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A34DED32322A92C00271BBF /* Device.swift */; };
 		8A559D24230D937C00E66096 /* ClientRequestsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A559D23230D937C00E66096 /* ClientRequestsTests.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
@@ -1139,7 +1138,6 @@
 			files = (
 				8A83394A2317D6FD001CBD9A /* ExtraDataTests.swift in Sources */,
 				8AD0A9942314252700B8EB97 /* ClientSetupTests.swift in Sources */,
-				8A2BE60A2335148F00D6E684 /* TestDatabase.swift in Sources */,
 				8AD0A9962314394200B8EB97 /* ChannelTests.swift in Sources */,
 				8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */,
 				465D64C2231808A2006BAE42 /* AttachmentTypeTests.swift in Sources */,

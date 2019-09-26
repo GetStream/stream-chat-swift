@@ -33,6 +33,8 @@ public enum Endpoint {
     
     /// Get a channel data.
     case channel(ChannelQuery)
+    /// Delete a channel.
+    case deleteChannel(Channel)
     /// Send a message to a channel.
     case sendMessage(Message, Channel)
     /// Upload an image to a channel.
@@ -84,7 +86,7 @@ extension Endpoint {
         switch self {
         case .channels, .replies, .users, .devices:
             return .get
-        case .removeDevice, .deleteMessage, .deleteReaction, .deleteImage, .deleteFile:
+        case .removeDevice, .deleteChannel, .deleteMessage, .deleteReaction, .deleteImage, .deleteFile:
             return .delete
         default:
             return .post
@@ -103,6 +105,8 @@ extension Endpoint {
             return "channels"
         case .channel(let query):
             return path(to: query.channel, "query")
+        case .deleteChannel(let channel):
+            return path(to: channel)
         case .replies(let message, _):
             return path(to: message, "replies")
             
@@ -180,6 +184,7 @@ extension Endpoint {
         switch self {
         case .removeDevice,
              .channels,
+             .deleteChannel,
              .replies,
              .deleteMessage,
              .deleteReaction,

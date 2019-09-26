@@ -66,10 +66,8 @@ public enum EventType: String, Codable {
 
     /// When the user accepts an invite (when the user invited 📺).
     case notificationAddedToChannel = "notification.added_to_channel"
-    /// ⚠️ When a user is removed from a channel (when the user invited 📺).
+    /// When a user is removed from a channel (when the user invited 📺).
     case notificationRemovedFromChannel = "notification.removed_from_channel"
-    
-    // Webhook event types❓
     
     /// When a message reaction is added.
     case reactionNew = "reaction.new"
@@ -123,7 +121,9 @@ public enum Event: Decodable {
     
     case notificationMutesUpdated(User, EventType)
     case notificationMarkRead(_ unreadCount: Int, _ totalUnreadCount: Int, _ unreadChannels: Int, EventType)
+    
     case notificationAddedToChannel(Channel, EventType)
+    case notificationRemovedFromChannel(Channel, EventType)
     
     case notificationInvited(Channel, EventType)
     case notificationInviteAccepted(Channel, EventType)
@@ -154,7 +154,9 @@ public enum Event: Decodable {
              
              .notificationMutesUpdated(_, let type),
              .notificationMarkRead(_, _, _, let type),
+             
              .notificationAddedToChannel(_, let type),
+             .notificationRemovedFromChannel(_, let type),
              
              .notificationInvited(_, let type),
              .notificationInviteAccepted(_, let type),
@@ -247,8 +249,12 @@ public enum Event: Decodable {
             let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
             let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
             self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels, type)
+            
+        // Channel
         case .notificationAddedToChannel:
             self = .notificationAddedToChannel(try channel(), type)
+        case .notificationRemovedFromChannel:
+            self = .notificationRemovedFromChannel(try channel(), type)
             
         // Invites
         case .notificationInvited:

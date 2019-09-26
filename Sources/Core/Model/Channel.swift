@@ -24,6 +24,8 @@ public final class Channel: Codable {
         case createdBy = "created_by"
         /// A created date.
         case created = "created_at"
+        /// A deleted date.
+        case deleted = "deleted_at"
         /// A channel config.
         case config
         /// A frozen flag.
@@ -56,6 +58,10 @@ public final class Channel: Codable {
     public var imageURL: URL?
     /// The last message date.  
     public let lastMessageDate: Date?
+    /// A channel created date.
+    public let created: Date
+    /// A channel deleted date.
+    public let deleted: Date?
     /// A creator of the channel.
     public let createdBy: User?
     /// A config.
@@ -67,6 +73,11 @@ public final class Channel: Codable {
     var invitedUsers = Set<User>([])
     /// An extra data for the channel.
     public let extraData: ExtraData?
+    
+    /// Check if the channel was deleted.
+    public var isDeleted: Bool {
+        return deleted != nil
+    }
     
     static private var activeChannelIds: [String] = []
     
@@ -98,6 +109,8 @@ public final class Channel: Codable {
         self.name = name ?? id
         self.imageURL = imageURL
         lastMessageDate = nil
+        created = Date()
+        deleted = nil
         createdBy = nil
         self.members = Set(members)
         frozen = false
@@ -117,8 +130,11 @@ public final class Channel: Codable {
         self.id = id
         cid = try container.decode(String.self, forKey: .cid)
         type = try container.decode(ChannelType.self, forKey: .type)
-        config = try container.decode(Config.self, forKey: .config)
+        let config = try container.decode(Config.self, forKey: .config)
+        self.config = config
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
+        created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created
+        deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
         createdBy = try container.decodeIfPresent(User.self, forKey: .createdBy)
         frozen = try container.decode(Bool.self, forKey: .frozen)
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? id

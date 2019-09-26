@@ -13,6 +13,14 @@ import RxSwift
 
 public extension Channel {
     
+    /// Create a channel.
+    ///
+    /// - Parameter options: a query options for a new channel, e.g. watch channel events, presence of users.
+    /// - Returns: an observable channel response.
+    func create(options: QueryOptions = []) -> Observable<ChannelResponse> {
+        return query(options: options)
+    }
+    
     /// Request for a channel data, e.g. messages, members, read states, etc
     ///
     /// - Parameters:
@@ -35,6 +43,13 @@ public extension Channel {
                     }
                 }
             })
+    }
+    
+    /// Delete the channel.
+    ///
+    /// - Returns: an observable completion.
+    func delete() -> Observable<ChannelDeletedResponse> {
+        return Client.shared.rx.connectedRequest(endpoint: .deleteChannel(self))
     }
     
     /// Send a new message or update with a given `message.id`.
