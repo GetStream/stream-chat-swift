@@ -88,6 +88,7 @@ extension ChatViewStyle: Hashable {
 /// - always: show an element always visible, even if it disabled.
 /// - whenActive: an element will be hidden until it will change own state to active.
 public enum ChatViewStyleVisibility {
+    case none
     case always
     case whenActive
 }

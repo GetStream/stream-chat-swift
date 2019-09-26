@@ -113,6 +113,11 @@ public final class ComposerView: UIView {
         return button
     }()
     
+    let sendButtonVisibilityBehaviorSubject = BehaviorSubject<(isHidden: Bool, isEnabled: Bool)>(value: (false, false))
+    /// An observable sendButton visibility state.
+    public private(set) lazy var sendButtonVisibility = sendButtonVisibilityBehaviorSubject
+        .distinctUntilChanged { lhs, rhs -> Bool in lhs.0 == rhs.0 && lhs.1 == rhs.1 }
+    
     private var sendButtonWidthConstraint: Constraint?
     private var sendButtonRightConstraint: Constraint?
 
@@ -183,17 +188,20 @@ public final class ComposerView: UIView {
         }
         
         // Add buttons.
-        sendButton.isHidden = style.sendButtonVisibility == .whenActive
-        sendButton.isEnabled = style.sendButtonVisibility == .whenActive
-        sendButton.setTitleColor(style.style(with: .active).tintColor, for: .normal)
-        sendButton.setTitleColor(style.style(with: .disabled).tintColor, for: .disabled)
-        
-        addSubview(sendButton)
-        
-        sendButton.snp.makeConstraints { make in
-            make.height.equalTo(style.height)
-            make.bottom.equalToSuperview()
-            sendButtonRightConstraint = make.right.equalToSuperview().constraint
+        if style.sendButtonVisibility != .none {
+            sendButton.isHidden = style.sendButtonVisibility == .whenActive
+            sendButton.isEnabled = style.sendButtonVisibility == .whenActive
+            sendButton.setTitleColor(style.style(with: .active).tintColor, for: .normal)
+            sendButton.setTitleColor(style.style(with: .disabled).tintColor, for: .disabled)
+            sendButtonVisibilityBehaviorSubject.onNext((sendButton.isHidden, sendButton.isEnabled))
+            
+            addSubview(sendButton)
+            
+            sendButton.snp.makeConstraints { make in
+                make.height.equalTo(style.height)
+                make.bottom.equalToSuperview()
+                sendButtonRightConstraint = make.right.equalToSuperview().constraint
+            }
         }
         
         // Images Collection View.
@@ -221,7 +229,12 @@ public final class ComposerView: UIView {
         textView.snp.makeConstraints { make in
             textViewTopConstraint = make.top.equalToSuperview().offset(textViewPadding).priority(999).constraint
             make.bottom.equalToSuperview().offset(-textViewPadding)
-            make.right.equalTo(sendButton.snp.left)
+            
+            if sendButton.superview == nil {
+                make.right.equalToSuperview()
+            } else {
+                make.right.equalTo(sendButton.snp.left)
+            }
             
             if attachmentButton.isHidden {
                 make.left.equalToSuperview().offset(textViewPadding)
@@ -277,6 +290,7 @@ public final class ComposerView: UIView {
         didSet {
             if let style = style {
                 sendButton.isEnabled = style.sendButtonVisibility == .whenActive ? isEnabled : false
+                sendButtonVisibilityBehaviorSubject.onNext((sendButton.isHidden, sendButton.isEnabled))
             }
             
             attachmentButton.isEnabled = isEnabled
@@ -303,6 +317,8 @@ public final class ComposerView: UIView {
             } else {
                 sendButton.isEnabled = !isHidden
             }
+            
+            sendButtonVisibilityBehaviorSubject.onNext((sendButton.isHidden, sendButton.isEnabled))
         }
     }
     

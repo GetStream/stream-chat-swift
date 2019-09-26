@@ -97,7 +97,8 @@ extension ChatViewController {
         }
     }
     
-    private func send() {
+    /// Send a message.
+    public func send() {
         let text = composerView.text.trimmingCharacters(in: .whitespacesAndNewlines)
         let isMessageEditing = channelPresenter?.editMessage != nil
         
