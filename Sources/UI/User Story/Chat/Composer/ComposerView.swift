@@ -231,7 +231,7 @@ public final class ComposerView: UIView {
             make.bottom.equalToSuperview().offset(-textViewPadding)
             
             if sendButton.superview == nil {
-                make.right.equalToSuperview()
+                make.right.equalToSuperview().offset(-textViewPadding)
             } else {
                 make.right.equalTo(sendButton.snp.left)
             }
