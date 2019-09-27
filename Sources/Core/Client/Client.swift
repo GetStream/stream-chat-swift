@@ -121,7 +121,7 @@ public final class Client {
         }
     }
     
-    func reset() {
+    public func reset() {
         guard user != nil else {
             return
         }
