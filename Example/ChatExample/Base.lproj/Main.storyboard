@@ -43,6 +43,11 @@
                         <viewLayoutGuide key="safeArea" id="t9p-1J-lU0"/>
                     </view>
                     <navigationItem key="navigationItem" id="tyC-kY-Be8">
+                        <barButtonItem key="leftBarButtonItem" systemItem="add" id="ReZ-CX-KNT">
+                            <connections>
+                                <action selector="addChannel:" destination="cor-4m-0UN" id="RDJ-f0-p0g"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="stop" id="xsm-do-D8r">
                             <connections>
                                 <segue destination="Jpg-eB-15H" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="a5b-Jp-cN7"/>
@@ -256,8 +261,8 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="elX-bx-MbU"/>
+        <segue reference="a5b-Jp-cN7"/>
         <segue reference="Z6X-IU-Iab"/>
-        <segue reference="seW-P6-fEX"/>
+        <segue reference="6oS-c0-L1x"/>
     </inferredMetricsTieBreakers>
 </document>
