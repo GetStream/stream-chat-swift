@@ -17,8 +17,10 @@ public enum EventType: String, Codable {
     /// ⚠️ When the connection to chat servers is back online (🗼).
     case connectionRecovered = "connection.recovered"
     
-    /// When a channel is updated (when watching the channel 📺).
+    /// When a channel was updated (when watching the channel 📺).
     case channelUpdated = "channel.updated"
+    /// When a channel was deleted (when watching the channel 📺).
+    case channelDeleted = "channel.deleted"
     
     /// When a user status changes, e.g. online, offline, away (when subscribed to the user status 🙋‍♀️).
     case userPresenceChanged = "user.presence.changed"
@@ -26,30 +28,30 @@ public enum EventType: String, Codable {
     case userStartWatching = "user.watching.start"
     /// When a user stops watching a channel (when watching the channel 📺).
     case userStopWatching = "user.watching.stop"
-    /// When a user is updated (when subscribed to the user status 🙋‍♀️).
+    /// When a user was updated (when subscribed to the user status 🙋‍♀️).
     case userUpdated = "user.updated"
     /// Sent when a user starts typing (when watching the channel 📺).
     case typingStart = "typing.start"
     /// Sent when a user stops typing (when watching the channel 📺).
     case typingStop = "typing.stop"
-    /// When a new message is added on a channel (when watching the channel 📺).
+    /// When a new message was added on a channel (when watching the channel 📺).
     case messageNew = "message.new"
-    /// When a message is updated (when watching the channel 📺).
+    /// When a message was updated (when watching the channel 📺).
     case messageUpdated = "message.updated"
-    /// When a message is deleted (when watching the channel 📺).
+    /// When a message was deleted (when watching the channel 📺).
     case messageDeleted = "message.deleted"
-    /// When a channel is marked as read (when watching the channel 📺).
+    /// When a channel was marked as read (when watching the channel 📺).
     case messageRead = "message.read"
-    /// ⚠️ When a message reaction is added or deleted (when watching the channel 📺).
+    /// ⚠️ When a message reaction was added or deleted (when watching the channel 📺).
     case messageReaction = "message.reaction"
-    /// ⚠️ When a member is added to a channel (when watching the channel 📺).
+    /// ⚠️ When a member was added to a channel (when watching the channel 📺).
     case memberAdded = "member.added"
-    /// When a member is updated (when watching the channel 📺).
+    /// When a member was updated (when watching the channel 📺).
     case memberUpdated = "member.updated"
-    /// ⚠️ When a member is removed from a channel (when watching the channel 📺).
+    /// ⚠️ When a member was removed from a channel (when watching the channel 📺).
     case memberRemoved = "member.removed"
     
-    /// When a message is added to a channel (when clients that are not currently watching the channel ⚡️).
+    /// When a message was added to a channel (when clients that are not currently watching the channel ⚡️).
     case notificationMessageNew = "notification.message_new"
     /// When the user mutes someone (🙋‍♀️).
     case notificationMutesUpdated = "notification.mutes_updated"
@@ -57,7 +59,7 @@ public enum EventType: String, Codable {
     /// (when clients from the user affected by the change 📺📺).
     case notificationMarkRead = "notification.mark_read"
     
-    /// When the user is invited to join a channel (when the user invited 💌).
+    /// When the user was invited to join a channel (when the user invited 💌).
     case notificationInvited = "notification.invited"
     /// When the user accepts an invite (when the user invited 💌).
     case notificationInviteAccepted = "notification.invite_accepted"
@@ -66,10 +68,10 @@ public enum EventType: String, Codable {
 
     /// When the user accepts an invite (when the user invited 📺).
     case notificationAddedToChannel = "notification.added_to_channel"
-    /// When a user is removed from a channel (when the user invited 📺).
+    /// When a user was removed from a channel (when the user invited 📺).
     case notificationRemovedFromChannel = "notification.removed_from_channel"
     
-    /// When a message reaction is added.
+    /// When a message reaction was added.
     case reactionNew = "reaction.new"
     /// When a message reaction deleted.
     case reactionDeleted = "reaction.deleted"
@@ -100,6 +102,7 @@ public enum Event: Decodable {
     case healthCheck(_ connectionId: String, User?)
     
     case channelUpdated(ChannelUpdatedResponse, EventType)
+    case channelDeleted(Channel, EventType)
     
     case messageRead(MessageRead, EventType)
     case messageNew(Message, _ unreadCount: Int, _ unreadChannels: Int, _ totalUnreadCount: Int, Channel?, EventType)
@@ -133,6 +136,7 @@ public enum Event: Decodable {
     public var type: EventType {
         switch self {
         case .channelUpdated(_, let type),
+             .channelDeleted(_, let type),
              
              .messageRead(_, let type),
              .messageNew(_, _, _, _, _, let type),
@@ -194,6 +198,9 @@ public enum Event: Decodable {
         // Channel
         case .channelUpdated:
             self = .channelUpdated(try ChannelUpdatedResponse(from: decoder), type)
+        case .channelDeleted:
+            self = .channelDeleted(try channel(), type)
+            
         // Message
         case .messageNew, .notificationMessageNew:
             let newMessage = try message()

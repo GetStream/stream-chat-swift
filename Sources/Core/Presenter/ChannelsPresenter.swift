@@ -115,6 +115,10 @@ extension ChannelsPresenter {
     
     private func parseChanges(response: WebSocket.Response) -> ViewChanges {
         guard let channelId = response.channelId else {
+            if case .notificationAddedToChannel(let channel, _) = response.event {
+                return parseNewChannel(channel: channel)
+            }
+            
             return .none
         }
         
@@ -129,8 +133,11 @@ extension ChannelsPresenter {
                 return .itemUpdated([index], [message], items)
             }
             
-        case .notificationAddedToChannel(let channel, _):
-            return parseNewChannel(channel: channel)
+        case .channelDeleted(let channel, _):
+            if let index = items.firstIndex(whereChannelId: channel.id) {
+                items.remove(at: index)
+                return .itemRemoved(index, items)
+            }
             
         default:
             break
@@ -157,6 +164,10 @@ extension ChannelsPresenter {
     }
     
     private func parseNewChannel(channel: Channel) -> ViewChanges {
+        guard items.firstIndex(whereChannelId: channel.id) == nil else {
+            return .none
+        }
+        
         let channelPresenter = ChannelPresenter(channel: channel, queryOptions: queryOptions, showStatuses: showChannelStatuses)
         // We need to load messages and for that we have to subscribe for changes in ChannelsViewController.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak channelPresenter] in channelPresenter?.reload() }
