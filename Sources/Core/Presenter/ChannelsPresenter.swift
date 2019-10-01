@@ -23,20 +23,10 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public let showChannelStatuses: Bool
     
     /// Filter channels.
-    ///
-    /// Default value:
-    /// ```
-    /// .key("type", .equal(to: channelType))
-    /// ```
-    public lazy var filter: Filter = .key("type", .equal(to: channelType))
+    public let filter: Filter
     
     /// Sort channels.
-    ///
-    /// Default value:
-    /// ```
-    /// [Sorting(Channel.DecodingKeys.lastMessageDate.rawValue)]
-    /// ```
-    public var sorting: [Sorting] = [.init(Channel.DecodingKeys.lastMessageDate.rawValue)]
+    public let sorting: [Sorting]
     
     /// A callback to provide an extra data for a channel.
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
@@ -61,14 +51,28 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     ///
     /// - Parameters:
     ///   - channelType: a channel type.
+    ///   - filter: a channel filter. Default is where the current user is a member.
+    ///   - sorting: a channel sorting. Default is by a last message date.
     ///   - queryOptions: query options (see `QueryOptions`).
     ///   - showChannelStatuses: show channel statuses on a chat view controller of a selected channel.
     public init(channelType: ChannelType,
+                filter: Filter? = nil,
+                sorting: [Sorting]? = nil,
                 queryOptions: QueryOptions = .all,
                 showChannelStatuses: Bool = true) {
         self.channelType = channelType
         self.queryOptions = queryOptions
         self.showChannelStatuses = showChannelStatuses
+        self.sorting = sorting ?? [.init(Channel.DecodingKeys.lastMessageDate.rawValue)]
+        
+        if let filter = filter {
+            self.filter = filter
+        } else if let currentUser = User.current {
+            self.filter = .key("members", .in([currentUser.id]))
+        } else {
+            self.filter = .key("type", .equal(to: channelType))
+        }
+        
         super.init(pageSize: .channelsPageSize)
     }
 }
