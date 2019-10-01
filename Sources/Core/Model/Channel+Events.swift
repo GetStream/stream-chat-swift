@@ -30,7 +30,7 @@ public extension Channel {
         return Client.shared.connection.connected()
             .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
                 if let self = self {
-                    return Channel(type: self.type, id: self.id).query(options: .watch)
+                    return self.query(options: .watch)
                 }
                 
                 return .empty()
