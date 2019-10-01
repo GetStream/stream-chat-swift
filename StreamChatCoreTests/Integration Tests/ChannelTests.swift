@@ -60,7 +60,7 @@ final class ChannelTests: TestCase {
         expectRequest("Connected with guest token") { [unowned self] test in
             self.channel.onEvent(.messageNew)
                 .map { event -> Message? in
-                    if case .messageNew(let message, _, _, _, _, _) = event {
+                    if case .messageNew(let message, _, _, _, _) = event {
                         XCTAssertEqual(message.text, messageText)
                         
                         return message
