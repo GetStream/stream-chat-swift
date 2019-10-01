@@ -22,7 +22,7 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
     }()
     
     /// A last message label.
-    private let messageLabel: UILabel = {
+    public let messageLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatMedium
         return label
