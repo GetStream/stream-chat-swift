@@ -78,8 +78,8 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public private(set) lazy var changes = Driver
         .merge(parentMessage == nil ? parsedChannelResponse(messagesRequest) : parsedRepliesResponse(repliesRequest),
                parentMessage == nil ? parsedChannelResponse(messagesDatabaseFetch) : parsedRepliesResponse(repliesDatabaseFetch),
-               webSocketChanges,
-               ephemeralChanges,
+               webSocketEvents,
+               ephemeralMessageEvents,
                connectionErrors)
     
     private lazy var messagesRequest: Observable<ChannelResponse> = prepareRequest()
@@ -106,16 +106,16 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
         .flatMapLatest { [weak self] in self?.parentMessage?.fetchReplies(pagination: $0) ?? .empty() }
     
-    private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.onEvent(channelType: channelType, channelId: channelId)
-        .map { [weak self] in self?.parseChanges(event: $0) ?? .none }
+    private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.onEvent(channel: channel)
+        .map { [weak self] in self?.parseEvents(event: $0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
         .filter { $0 != .none }
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
-    private lazy var ephemeralChanges: Driver<ViewChanges> = ephemeralSubject
+    private lazy var ephemeralMessageEvents: Driver<ViewChanges> = ephemeralSubject
         .skip(1)
-        .map { [weak self] in self?.parseEphemeralChanges($0) ?? .none }
+        .map { [weak self] in self?.parseEphemeralMessageEvents($0) ?? .none }
         .filter { $0 != .none }
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
@@ -237,11 +237,13 @@ extension ChannelPresenter {
             .filter { UIApplication.shared.appState == .active }
             .do(onNext: { Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(oldUnreadMessageRead.lastReadDate)") })
             .flatMap { [weak self] in self?.channel.markRead() ?? .empty() }
-            .do(onNext: { [weak self] _ in
-                self?.unreadMessageReadAtomic.set(nil)
-                self?.isReadSubject.onNext(())
-                Client.shared.logger?.log("🎫", "Message Read done.")
-                }, onError: { [weak self] error in
+            .do(
+                onNext: { [weak self] _ in
+                    self?.unreadMessageReadAtomic.set(nil)
+                    self?.isReadSubject.onNext(())
+                    Client.shared.logger?.log("🎫", "Message Read done.")
+                },
+                onError: { [weak self] error in
                     self?.unreadMessageReadAtomic.set(oldUnreadMessageRead)
                     self?.isReadSubject.onError(error)
                     ClientLogger.log("🎫", error, message: "Send Message Read error.")

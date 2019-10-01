@@ -18,7 +18,7 @@ public extension Client {
     /// - Parameter eventType: an event type.
     /// - Returns: an observable event.
     func onEvent(_ eventType: EventType) -> Observable<Event> {
-        return onEvents([eventType], channelType: .messaging, channelId: nil)
+        return onEvents([eventType])
     }
     
     /// Observe a list of events.
@@ -26,37 +26,34 @@ public extension Client {
     /// - Parameter eventTypes: a list of event types.
     /// - Returns: an observable events.
     func onEvent(_ eventTypes: [EventType] = []) -> Observable<Event> {
-        return onEvents(eventTypes, channelType: .messaging, channelId: nil)
+        return onEvents(eventTypes)
     }
     
     /// Observe a list of events with a given channel type and id.
     ///
     /// - Parameters:
     ///   - eventType: an of event type.
-    ///   - channelType: a channel type.
-    ///   - channelId: a channel id.
+    ///   - channel: a channel for filtering events.
     /// - Returns: an observable events.
-    func onEvent(_ eventType: EventType, channelType: ChannelType, channelId: String) -> Observable<Event> {
-        return onEvents([eventType], channelType: channelType, channelId: channelId)
+    func onEvent(_ eventType: EventType, channel: Channel) -> Observable<Event> {
+        return onEvents([eventType], channel: channel)
     }
     
     /// Observe a list of events with a given channel type and id.
     ///
     /// - Parameters:
     ///   - eventTypes: a list of event types.
-    ///   - channelType: a channel type.
-    ///   - channelId: a channel id.
+    ///   - channel: a channel for filtering events.
     /// - Returns: an observable events.
-    func onEvent(_ eventTypes: [EventType] = [], channelType: ChannelType, channelId: String) -> Observable<Event> {
-        return onEvents(eventTypes, channelType: channelType, channelId: channelId)
+    func onEvent(_ eventTypes: [EventType] = [], channel: Channel) -> Observable<Event> {
+        return onEvents(eventTypes, channel: channel)
     }
     
-    private func onEvents(_ eventTypes: [EventType], channelType: ChannelType, channelId: String?) -> Observable<Event> {
+    private func onEvents(_ eventTypes: [EventType], channel: Channel? = nil) -> Observable<Event> {
         let events: Observable<WebSocket.Response>
         
-        if let channelId = channelId {
-            events = Channel(type: channelType, id: channelId).query(options: .watch)
-                .flatMapLatest { _ in Client.shared.webSocket.response }
+        if let channel = channel {
+            events = channel.query(options: .watch).flatMapLatest { _ in Client.shared.webSocket.response }
         } else {
             events = webSocket.response
         }
@@ -64,9 +61,9 @@ public extension Client {
         return connection.connected()
             .flatMapLatest { events }
             .filter {
-                if let channelId = channelId {
+                if let channel = channel {
                     if let eventChannelId = $0.channelId {
-                        return channelType == $0.channelType && channelId == eventChannelId
+                        return channel.type == $0.channelType && channel.id == eventChannelId
                     }
                     
                     return false

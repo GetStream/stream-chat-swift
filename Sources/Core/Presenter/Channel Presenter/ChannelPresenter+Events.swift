@@ -15,7 +15,7 @@ import RxCocoa
 extension ChannelPresenter {
     
     @discardableResult
-    func parseChanges(event: Event) -> ViewChanges {
+    func parseEvents(event: Event) -> ViewChanges {
         if let lastWebSocketEvent = lastParsedEvent,
             event == lastWebSocketEvent,
             let lastViewChanges = lastWebSocketEventViewChanges {
@@ -60,7 +60,7 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, _, _, _, let messageNewChannel, _):
+        case .messageNew(let message, _, _, let messageNewChannel, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
@@ -69,12 +69,14 @@ extension ChannelPresenter {
                 channelAtomic.set(messageNewChannel)
             }
             
-            if channel.config.readEventsEnabled {
+            if channel.config.readEventsEnabled, !message.user.isCurrent {
                 if let lastMessage = lastMessageAtomic.get() {
                     unreadMessageReadAtomic.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
                 } else {
                     unreadMessageReadAtomic.set(MessageRead(user: message.user, lastReadDate: message.updated))
                 }
+            } else {
+                unreadMessageReadAtomic.set(nil)
             }
             
             let nextRow = items.count

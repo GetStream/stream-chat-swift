@@ -200,6 +200,14 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/Database.html">Database</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -225,6 +233,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/BaseURL/Location.html">– Location</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelDeletedResponse.html">ChannelDeletedResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs.html#/s:14StreamChatCore19ChannelInviteAnswerV">ChannelInviteAnswer</a>
@@ -449,6 +460,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore6ClientC8databaseAA8Database_pSgvp"></a>
+                    <a name="//apple_ref/swift/Property/database" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC8databaseAA8Database_pSgvp">database</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A databse for an offline mode.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">database</span><span class="p">:</span> <span class="kt"><a href="../Protocols/Database.html">Database</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore6ClientC9webSocketAA03WebF0Cvp"></a>
                     <a name="//apple_ref/swift/Property/webSocket" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore6ClientC9webSocketAA03WebF0Cvp">webSocket</a>
@@ -600,9 +638,9 @@ You can do requests directly.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC6apiKey7baseURL13callbackQueue25stayConnectedInBackground10logOptionsACSS_AA04BaseH0VSo17OS_dispatch_queueCSgSbAA0D6LoggerC0P0Otcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:callbackQueue:stayConnectedInBackground:logOptions:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC6apiKey7baseURL13callbackQueue25stayConnectedInBackground10logOptionsACSS_AA04BaseH0VSo17OS_dispatch_queueCSgSbAA0D6LoggerC0P0Otcfc">init(apiKey:baseURL:callbackQueue:stayConnectedInBackground:logOptions:)</a>
+                    <a name="/s:14StreamChatCore6ClientC6apiKey7baseURL13callbackQueue25stayConnectedInBackground8database10logOptionsACSS_AA04BaseH0VSo17OS_dispatch_queueCSgSbAA8Database_pSgAA0D6LoggerC0Q0Otcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:callbackQueue:stayConnectedInBackground:database:logOptions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC6apiKey7baseURL13callbackQueue25stayConnectedInBackground8database10logOptionsACSS_AA04BaseH0VSo17OS_dispatch_queueCSgSbAA8Database_pSgAA0D6LoggerC0Q0Otcfc">init(apiKey:baseURL:callbackQueue:stayConnectedInBackground:database:logOptions:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -621,6 +659,7 @@ You can do requests directly.</p>
             <span class="nv">baseURL</span><span class="p">:</span> <span class="kt"><a href="../Structs/BaseURL.html">BaseURL</a></span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:14StreamChatCore6ClientC6configAC6ConfigVvpZ">config</a></span><span class="o">.</span><span class="n">baseURL</span><span class="p">,</span>
             <span class="nv">callbackQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:14StreamChatCore6ClientC6configAC6ConfigVvpZ">config</a></span><span class="o">.</span><span class="n">callbackQueue</span><span class="p">,</span>
             <span class="nv">stayConnectedInBackground</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:14StreamChatCore6ClientC6configAC6ConfigVvpZ">config</a></span><span class="o">.</span><span class="n">stayConnectedInBackground</span><span class="p">,</span>
+            <span class="nv">database</span><span class="p">:</span> <span class="kt"><a href="../Protocols/Database.html">Database</a></span><span class="p">?</span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:14StreamChatCore6ClientC6configAC6ConfigVvpZ">config</a></span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:14StreamChatCore6ClientC8databaseAA8Database_pSgvp">database</a></span><span class="p">,</span>
             <span class="nv">logOptions</span><span class="p">:</span> <span class="kt"><a href="../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="n"><a href="../Classes/Client.html#/s:14StreamChatCore6ClientC6configAC6ConfigVvpZ">config</a></span><span class="o">.</span><span class="n">logOptions</span><span class="p">)</span></code></pre>
 
                         </div>
@@ -810,9 +849,9 @@ You can do requests directly.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC7onEvent_11channelType0G2Id7RxSwift10ObservableCyAA0F0OGAA0fH0O_AA07ChannelH0OSStF"></a>
-                    <a name="//apple_ref/swift/Method/onEvent(_:channelType:channelId:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC7onEvent_11channelType0G2Id7RxSwift10ObservableCyAA0F0OGAA0fH0O_AA07ChannelH0OSStF">onEvent(_:channelType:channelId:)</a>
+                    <a name="/s:14StreamChatCore6ClientC7onEvent_7channel7RxSwift10ObservableCyAA0F0OGAA0F4TypeO_AA7ChannelCtF"></a>
+                    <a name="//apple_ref/swift/Method/onEvent(_:channel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC7onEvent_7channel7RxSwift10ObservableCyAA0F0OGAA0F4TypeO_AA7ChannelCtF">onEvent(_:channel:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -827,7 +866,7 @@ You can do requests directly.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventType</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">,</span> <span class="nv">channelType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventType</span><span class="p">:</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">,</span> <span class="nv">channel</span><span class="p">:</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -850,24 +889,12 @@ You can do requests directly.</p>
                             <tr>
                               <td>
                                 <code>
-                                <em>channelType</em>
+                                <em>channel</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>a channel type.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>channelId</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a channel id.</p>
+                                  <p>a channel for filtering events.</p>
                                 </div>
                               </td>
                             </tr>
@@ -884,9 +911,9 @@ You can do requests directly.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC7onEvent_11channelType0G2Id7RxSwift10ObservableCyAA0F0OGSayAA0fH0OG_AA07ChannelH0OSStF"></a>
-                    <a name="//apple_ref/swift/Method/onEvent(_:channelType:channelId:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC7onEvent_11channelType0G2Id7RxSwift10ObservableCyAA0F0OGSayAA0fH0OG_AA07ChannelH0OSStF">onEvent(_:channelType:channelId:)</a>
+                    <a name="/s:14StreamChatCore6ClientC7onEvent_7channel7RxSwift10ObservableCyAA0F0OGSayAA0F4TypeOG_AA7ChannelCtF"></a>
+                    <a name="//apple_ref/swift/Method/onEvent(_:channel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC7onEvent_7channel7RxSwift10ObservableCyAA0F0OGSayAA0F4TypeOG_AA7ChannelCtF">onEvent(_:channel:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -901,7 +928,7 @@ You can do requests directly.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span> <span class="nv">channelType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span><span class="p">,</span> <span class="nv">channelId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">onEvent</span><span class="p">(</span><span class="n">_</span> <span class="nv">eventTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span> <span class="nv">channel</span><span class="p">:</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -924,24 +951,12 @@ You can do requests directly.</p>
                             <tr>
                               <td>
                                 <code>
-                                <em>channelType</em>
+                                <em>channel</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>a channel type.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>channelId</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a channel id.</p>
+                                  <p>a channel for filtering events.</p>
                                 </div>
                               </td>
                             </tr>
@@ -959,6 +974,33 @@ You can do requests directly.</p>
             </div>
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC7versionSSvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/version" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC7versionSSvpZ">version</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A Stream Chat version.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">version</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -1339,9 +1381,9 @@ You can do requests directly.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC9addDevice10deviceData7RxSwift10ObservableCyAA05EmptyH0VG10Foundation0H0V_tF"></a>
-                    <a name="//apple_ref/swift/Method/addDevice(deviceData:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC9addDevice10deviceData7RxSwift10ObservableCyAA05EmptyH0VG10Foundation0H0V_tF">addDevice(deviceData:)</a>
+                    <a name="/s:14StreamChatCore6ClientC9addDevice11deviceToken7RxSwift10ObservableCyytG10Foundation4DataV_tF"></a>
+                    <a name="//apple_ref/swift/Method/addDevice(deviceToken:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC9addDevice11deviceToken7RxSwift10ObservableCyytG10Foundation4DataV_tF">addDevice(deviceToken:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1356,7 +1398,7 @@ You can do requests directly.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addDevice</span><span class="p">(</span><span class="nv">deviceData</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addDevice</span><span class="p">(</span><span class="nv">deviceToken</span><span class="p">:</span> <span class="kt">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">Void</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1367,12 +1409,12 @@ You can do requests directly.</p>
                             <tr>
                               <td>
                                 <code>
-                                <em>deviceData</em>
+                                <em>deviceToken</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>a Push Notifications device identifier data.</p>
+                                  <p>a device token.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1389,9 +1431,9 @@ You can do requests directly.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC9addDevice8deviceId7RxSwift10ObservableCyAA9EmptyDataVGSS_tF"></a>
+                    <a name="/s:14StreamChatCore6ClientC9addDevice8deviceId7RxSwift10ObservableCyytGSS_tF"></a>
                     <a name="//apple_ref/swift/Method/addDevice(deviceId:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC9addDevice8deviceId7RxSwift10ObservableCyAA9EmptyDataVGSS_tF">addDevice(deviceId:)</a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC9addDevice8deviceId7RxSwift10ObservableCyytGSS_tF">addDevice(deviceId:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1406,7 +1448,7 @@ You can do requests directly.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addDevice</span><span class="p">(</span><span class="nv">deviceId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addDevice</span><span class="p">(</span><span class="nv">deviceId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">Void</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1470,9 +1512,9 @@ You can do requests directly.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC12removeDevice8deviceId7RxSwift10ObservableCyAA9EmptyDataVGSS_tF"></a>
+                    <a name="/s:14StreamChatCore6ClientC12removeDevice8deviceId7RxSwift10ObservableCyytGSS_tF"></a>
                     <a name="//apple_ref/swift/Method/removeDevice(deviceId:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC12removeDevice8deviceId7RxSwift10ObservableCyAA9EmptyDataVGSS_tF">removeDevice(deviceId:)</a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC12removeDevice8deviceId7RxSwift10ObservableCyytGSS_tF">removeDevice(deviceId:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1487,7 +1529,7 @@ You can do requests directly.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">removeDevice</span><span class="p">(</span><span class="nv">deviceId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">removeDevice</span><span class="p">(</span><span class="nv">deviceId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">Void</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1703,7 +1745,7 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-13)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-01)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

@@ -17,8 +17,8 @@ public extension Channel {
     ///
     /// - Parameter options: a query options for a new channel, e.g. watch channel events, presence of users.
     /// - Returns: an observable channel response.
-    func create(options: QueryOptions = []) -> Observable<ChannelResponse> {
-        return query(options: options)
+    func create(options: QueryOptions = .watch) -> Observable<ChannelResponse> {
+        return query(pagination: .messagesPageSize, options: options)
     }
     
     /// Request for a channel data, e.g. messages, members, read states, etc

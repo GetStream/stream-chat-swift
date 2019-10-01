@@ -23,6 +23,9 @@ open class ChannelsViewController: ViewController {
     /// A channels presenter.
     open var channelsPresenter = ChannelsPresenter(channelType: .messaging)
     
+    /// Enables to delete a channel by a swipe.
+    public var deleteChannelBySwipe = false
+    
     /// A table view of channels.
     public private(set) lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
@@ -51,6 +54,18 @@ open class ChannelsViewController: ViewController {
         channelsPresenter.changes
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
+    }
+    
+    /// Returns a channel presenter at a given index path.
+    ///
+    /// - Parameter indexPath: an index path
+    /// - Returns: a channel presenter (See `ChannelPresenter`).
+    public func channelPresenter(at indexPath: IndexPath) -> ChannelPresenter? {
+        if indexPath.row < items.count, case .channelPresenter(let channelPresenter) = items[indexPath.row] {
+            return channelPresenter
+        }
+        
+        return nil
     }
     
     // MARK: - Channel Cell
@@ -98,7 +113,7 @@ open class ChannelsViewController: ViewController {
     // MARK: - Show Chat
     
     open func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.row < items.count, let channelPresenter = items[indexPath.row].channelPresenter else {
+        guard let channelPresenter = channelPresenter(at: indexPath) else {
             return
         }
         
@@ -143,15 +158,6 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         switch changes {
         case let .itemAdded(row, _, _, items):
             self.items = items
-            
-            // Load messages for a new channel.
-            if let channelPresenter = items[row].channelPresenter {
-                channelPresenter.changes.asObservable()
-                    .take(1)
-                    .subscribe(onNext: { [weak self] _ in self?.tableView.reloadData() })
-                    .disposed(by: disposeBag)
-            }
-            
             tableView.insertRows(at: [.row(row)], with: .none)
             
         case let .itemMoved(fromRow: row1, toRow: row2, items):
@@ -166,7 +172,14 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             self.items = items
             tableView.reloadRows(at: rows.map({ .row($0) }), with: .none)
             
-        case .reloaded(_, let items), .itemRemoved(_, let items):
+        case .itemRemoved(let row, let items):
+            self.items = items
+            
+            tableView.performBatchUpdates({
+                tableView.deleteRows(at: [.row(row)], with: .none)
+            })
+            
+        case .reloaded(_, let items):
             self.items = items
             tableView.reloadData()
             
@@ -203,5 +216,21 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             items[indexPath.row] = .loading(true)
             channelsPresenter.loadNext()
         }
+    }
+    
+    open func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        guard deleteChannelBySwipe, let channelPresenter = channelPresenter(at: indexPath) else {
+            return false
+        }
+        
+        return channelPresenter.channel.createdBy?.isCurrent ?? false
+    }
+    
+    open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        guard editingStyle == .delete, let channelPresenter = channelPresenter(at: indexPath) else {
+            return
+        }
+        
+        channelPresenter.channel.delete().subscribe().disposed(by: disposeBag)
     }
 }

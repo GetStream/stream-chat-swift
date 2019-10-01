@@ -200,6 +200,14 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/Database.html">Database</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -225,6 +233,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/BaseURL/Location.html">– Location</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelDeletedResponse.html">ChannelDeletedResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs.html#/s:14StreamChatCore19ChannelInviteAnswerV">ChannelInviteAnswer</a>
@@ -459,7 +470,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When a channel is updated (when watching the channel 📺).</p>
+                        <p>When a channel was updated (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -467,6 +478,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="k">case</span> <span class="n">channelUpdated</span> <span class="o">=</span> <span class="s">"channel.updated"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9EventTypeO14channelDeletedyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/channelDeleted" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9EventTypeO14channelDeletedyA2CmF">channelDeleted</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>When a channel was deleted (when watching the channel 📺).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">channelDeleted</span> <span class="o">=</span> <span class="s">"channel.deleted"</span></code></pre>
 
                         </div>
                       </div>
@@ -567,7 +605,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When a user is updated (when subscribed to the user status 🙋‍♀️).</p>
+                        <p>When a user was updated (when subscribed to the user status 🙋‍♀️).</p>
 
                       </div>
                       <div class="declaration">
@@ -648,7 +686,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When a new message is added on a channel (when watching the channel 📺).</p>
+                        <p>When a new message was added on a channel (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -675,7 +713,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When a message is updated (when watching the channel 📺).</p>
+                        <p>When a message was updated (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -702,7 +740,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When a message is deleted (when watching the channel 📺).</p>
+                        <p>When a message was deleted (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -729,7 +767,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When a channel is marked as read (when watching the channel 📺).</p>
+                        <p>When a channel was marked as read (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -756,7 +794,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>⚠️ When a message reaction is added or deleted (when watching the channel 📺).</p>
+                        <p>⚠️ When a message reaction was added or deleted (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -783,7 +821,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>⚠️ When a member is added to a channel (when watching the channel 📺).</p>
+                        <p>⚠️ When a member was added to a channel (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -810,7 +848,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When a member is updated (when watching the channel 📺).</p>
+                        <p>When a member was updated (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -837,7 +875,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>⚠️ When a member is removed from a channel (when watching the channel 📺).</p>
+                        <p>⚠️ When a member was removed from a channel (when watching the channel 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -864,7 +902,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When a message is added to a channel (when clients that are not currently watching the channel ⚡️).</p>
+                        <p>When a message was added to a channel (when clients that are not currently watching the channel ⚡️).</p>
 
                       </div>
                       <div class="declaration">
@@ -946,7 +984,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When the user is invited to join a channel (when the user invited 💌).</p>
+                        <p>When the user was invited to join a channel (when the user invited 💌).</p>
 
                       </div>
                       <div class="declaration">
@@ -1054,7 +1092,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>⚠️ When a user is removed from a channel (when the user invited 📺).</p>
+                        <p>When a user was removed from a channel (when the user invited 📺).</p>
 
                       </div>
                       <div class="declaration">
@@ -1081,7 +1119,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When a message reaction is added.</p>
+                        <p>When a message reaction was added.</p>
 
                       </div>
                       <div class="declaration">
@@ -1127,7 +1165,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-13)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-01)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

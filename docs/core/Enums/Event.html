@@ -200,6 +200,14 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/Database.html">Database</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -225,6 +233,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/BaseURL/Location.html">– Location</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelDeletedResponse.html">ChannelDeletedResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs.html#/s:14StreamChatCore19ChannelInviteAnswerV">ChannelInviteAnswer</a>
@@ -422,6 +433,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore5EventO14channelDeletedyAcA7ChannelC_AA0D4TypeOtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/channelDeleted(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore5EventO14channelDeletedyAcA7ChannelC_AA0D4TypeOtcACmF">channelDeleted(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">channelDeleted</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore5EventO11messageReadyAcA07MessageF0V_AA0D4TypeOtcACmF"></a>
                     <a name="//apple_ref/swift/Element/messageRead(_:_:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore5EventO11messageReadyAcA07MessageF0V_AA0D4TypeOtcACmF">messageRead(_:_:)</a>
@@ -449,9 +487,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore5EventO10messageNewyAcA7MessageV_S3iAA7ChannelCSgAA0D4TypeOtcACmF"></a>
-                    <a name="//apple_ref/swift/Element/messageNew(_:_:_:_:_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore5EventO10messageNewyAcA7MessageV_S3iAA7ChannelCSgAA0D4TypeOtcACmF">messageNew(_:_:_:_:_:_:)</a>
+                    <a name="/s:14StreamChatCore5EventO10messageNewyAcA7MessageV_S2iAA7ChannelCSgAA0D4TypeOtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/messageNew(_:_:_:_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore5EventO10messageNewyAcA7MessageV_S2iAA7ChannelCSgAA0D4TypeOtcACmF">messageNew(_:_:_:_:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -466,7 +504,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">messageNew</span><span class="p">(</span><span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">?,</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">messageNew</span><span class="p">(</span><span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">?,</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -800,9 +838,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore5EventO20notificationMarkReadyACSi_S2iAA0D4TypeOtcACmF"></a>
+                    <a name="/s:14StreamChatCore5EventO20notificationMarkReadyAcA7ChannelCSg_S2iAA0D4TypeOtcACmF"></a>
                     <a name="//apple_ref/swift/Element/notificationMarkRead(_:_:_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore5EventO20notificationMarkReadyACSi_S2iAA0D4TypeOtcACmF">notificationMarkRead(_:_:_:_:)</a>
+                    <a class="token" href="#/s:14StreamChatCore5EventO20notificationMarkReadyAcA7ChannelCSg_S2iAA0D4TypeOtcACmF">notificationMarkRead(_:_:_:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -817,7 +855,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">notificationMarkRead</span><span class="p">(</span><span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">notificationMarkRead</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">?,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -845,6 +883,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">notificationAddedToChannel</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore5EventO30notificationRemovedFromChannelyAcA0H0C_AA0D4TypeOtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/notificationRemovedFromChannel(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore5EventO30notificationRemovedFromChannelyAcA0H0C_AA0D4TypeOtcACmF">notificationRemovedFromChannel(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">notificationRemovedFromChannel</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/EventType.html">EventType</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1020,7 +1085,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-13)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-01)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
