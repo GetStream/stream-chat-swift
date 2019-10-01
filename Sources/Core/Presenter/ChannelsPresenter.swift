@@ -53,7 +53,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
     private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.webSocket.response
-        .map { [weak self] in self?.parseChanges(response: $0) ?? .none }
+        .map { [weak self] in self?.parseEvents(response: $0) ?? .none }
         .filter { $0 != .none }
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
@@ -113,32 +113,44 @@ extension ChannelsPresenter {
         return isNextPage ? .reloaded(row, items) : .reloaded(0, items)
     }
     
-    private func parseChanges(response: WebSocket.Response) -> ViewChanges {
+    private func parseEvents(response: WebSocket.Response) -> ViewChanges {
         guard let channelId = response.channelId else {
-            if case .notificationAddedToChannel(let channel, _) = response.event {
-                return parseNewChannel(channel: channel)
-            }
-            
-            return .none
+            return parseNotifications(response: response)
         }
         
         switch response.event {
-        case .messageNew(_, _, _, _, let channel, _):
+        case .channelDeleted:
+            if let index = items.firstIndex(whereChannelId: channelId) {
+                items.remove(at: index)
+                return .itemRemoved(index, items)
+            }
+        case .messageNew(_, _, _, let channel, _):
             return parseNewMessage(response: response, from: channel)
-            
         case .messageDeleted(let message, _):
             if let index = items.firstIndex(whereChannelId: channelId),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseChanges(event: response.event)
                 return .itemUpdated([index], [message], items)
             }
-            
-        case .channelDeleted(let channel, _):
-            if let index = items.firstIndex(whereChannelId: channel.id) {
-                items.remove(at: index)
-                return .itemRemoved(index, items)
+        default:
+            break
+        }
+        
+        return .none
+    }
+    
+    private func parseNotifications(response: WebSocket.Response) -> ViewChanges {
+        switch response.event {
+        case .notificationAddedToChannel(let channel, _):
+            return parseNewChannel(channel: channel)
+        case .notificationMarkRead(let channel, let unreadCount, _, _):
+            if unreadCount == 0,
+                let channel = channel,
+                let index = items.firstIndex(whereChannelId: channel.id),
+                let channelPresenter = items[index].channelPresenter {
+                channelPresenter.unreadMessageReadAtomic.set(nil)
+                return .itemUpdated([index], [], items)
             }
-            
         default:
             break
         }

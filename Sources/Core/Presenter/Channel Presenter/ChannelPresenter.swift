@@ -237,11 +237,13 @@ extension ChannelPresenter {
             .filter { UIApplication.shared.appState == .active }
             .do(onNext: { Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(oldUnreadMessageRead.lastReadDate)") })
             .flatMap { [weak self] in self?.channel.markRead() ?? .empty() }
-            .do(onNext: { [weak self] _ in
-                self?.unreadMessageReadAtomic.set(nil)
-                self?.isReadSubject.onNext(())
-                Client.shared.logger?.log("🎫", "Message Read done.")
-                }, onError: { [weak self] error in
+            .do(
+                onNext: { [weak self] _ in
+                    self?.unreadMessageReadAtomic.set(nil)
+                    self?.isReadSubject.onNext(())
+                    Client.shared.logger?.log("🎫", "Message Read done.")
+                },
+                onError: { [weak self] error in
                     self?.unreadMessageReadAtomic.set(oldUnreadMessageRead)
                     self?.isReadSubject.onError(error)
                     ClientLogger.log("🎫", error, message: "Send Message Read error.")

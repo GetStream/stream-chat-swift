@@ -53,6 +53,11 @@ public extension Channel {
 
 extension Channel {
     
+    /// An observable isUnread state of the channel.
+    public var isUnread: Driver<Bool> {
+        return unreadCount.map { $0 > 0 }
+    }
+    
     /// Observe an unread count of messages in the channel.
     ///
     /// - Note: Be sure the current user is a member of the channel.
@@ -105,8 +110,20 @@ extension Channel {
         unreadCountAtomic.set(count)
     }
     
+    /// Update the unread count if needed.
+    ///
+    /// - Parameter response: a web socket event.
+    /// - Returns: true, if unread count was updated.
+    @discardableResult
     func updateUnreadCount(_ response: WebSocket.Response) -> Bool {
         guard response.channelId == id else {
+            if case .notificationMarkRead(let notificationChannel, let unreadCount, _, _) = response.event,
+                let channel = notificationChannel,
+                channel.id == id {
+                unreadCountAtomic.set(unreadCount)
+                return true
+            }
+            
             return false
         }
         

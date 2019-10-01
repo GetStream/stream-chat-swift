@@ -89,9 +89,8 @@ public enum Event: Decodable {
         case channel
         case message
         case reaction
-        case unreadCount = "unread_count"
+        case unreadCount = "total_unread_count"
         case unreadChannels = "unread_channels"
-        case totalUnreadCount = "total_unread_count"
         case created = "created_at"
     }
     
@@ -105,7 +104,7 @@ public enum Event: Decodable {
     case channelDeleted(Channel, EventType)
     
     case messageRead(MessageRead, EventType)
-    case messageNew(Message, _ unreadCount: Int, _ unreadChannels: Int, _ totalUnreadCount: Int, Channel?, EventType)
+    case messageNew(Message, _ unreadCount: Int, _ unreadChannels: Int, Channel?, EventType)
     case messageDeleted(Message, EventType)
     case messageUpdated(Message, EventType)
     
@@ -123,7 +122,7 @@ public enum Event: Decodable {
     case typingStop(User, EventType)
     
     case notificationMutesUpdated(User, EventType)
-    case notificationMarkRead(_ unreadCount: Int, _ totalUnreadCount: Int, _ unreadChannels: Int, EventType)
+    case notificationMarkRead(Channel?, _ unreadCount: Int, _ unreadChannels: Int, EventType)
     
     case notificationAddedToChannel(Channel, EventType)
     case notificationRemovedFromChannel(Channel, EventType)
@@ -139,7 +138,7 @@ public enum Event: Decodable {
              .channelDeleted(_, let type),
              
              .messageRead(_, let type),
-             .messageNew(_, _, _, _, _, let type),
+             .messageNew(_, _, _, _, let type),
              .messageDeleted(_, let type),
              .messageUpdated(_, let type),
              
@@ -206,9 +205,8 @@ public enum Event: Decodable {
             let newMessage = try message()
             let unreadCount = try container.decodeIfPresent(Int.self, forKey: .unreadCount) ?? 0
             let unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels) ?? 0
-            let totalUnreadCount = try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount) ?? 0
             let channel = try container.decodeIfPresent(Channel.self, forKey: .channel)
-            self = .messageNew(newMessage, unreadCount, unreadChannels, totalUnreadCount, channel, type)
+            self = .messageNew(newMessage, unreadCount, unreadChannels, channel, type)
         case .messageRead:
             let created = try container.decode(Date.self, forKey: .created)
             self = .messageRead(MessageRead(user: try user(), lastReadDate: created), type)
@@ -254,8 +252,7 @@ public enum Event: Decodable {
         case .notificationMarkRead:
             let unreadCount = try container.decode(Int.self, forKey: .unreadCount)
             let unreadChannels = try container.decode(Int.self, forKey: .unreadChannels)
-            let totalUnreadCount = try container.decode(Int.self, forKey: .totalUnreadCount)
-            self = .notificationMarkRead(unreadCount, totalUnreadCount, unreadChannels, type)
+            self = .notificationMarkRead(try? channel(), unreadCount, unreadChannels, type)
             
         // Channel
         case .notificationAddedToChannel:
@@ -286,12 +283,11 @@ extension Event: Equatable {
             return response1 == response2
         case (.messageRead(let messageRead1, _), .messageRead(let messageRead2, _)):
             return messageRead1 == messageRead2
-        case (.messageNew(let message1, let unreadCount1, let unreadChannels1, let totalUnreadCount1, let channel1, _),
-              .messageNew(let message2, let unreadCount2, let unreadChannels2, let totalUnreadCount2, let channel2, _)):
+        case (.messageNew(let message1, let unreadCount1, let unreadChannels1, let channel1, _),
+              .messageNew(let message2, let unreadCount2, let unreadChannels2, let channel2, _)):
             return message1 == message2
                 && unreadCount1 == unreadCount2
                 && unreadChannels1 == unreadChannels2
-                && totalUnreadCount1 == totalUnreadCount2
                 && channel1 == channel2
         case (.messageDeleted(let message1, _), .messageDeleted(let message2, _)):
             return message1 == message2
@@ -316,9 +312,9 @@ extension Event: Equatable {
             return user1 == user2
         case (.typingStop(let user1, _), .typingStop(let user2, _)):
             return user1 == user2
-        case (.notificationMarkRead(let unreadCount1, let totalUnreadCount1, let unreadChannels1, _),
-              .notificationMarkRead(let unreadCount2, let totalUnreadCount2, let unreadChannels2, _)):
-            return unreadCount1 == unreadCount2 && totalUnreadCount1 == totalUnreadCount2 && unreadChannels1 == unreadChannels2
+        case (.notificationMarkRead(let channel1, let unreadCount1, let unreadChannels1, _),
+              .notificationMarkRead(let channel2, let unreadCount2, let unreadChannels2, _)):
+            return channel1 == channel2 && unreadCount1 == unreadCount2 && unreadChannels1 == unreadChannels2
         case (.notificationInvited(let channel1, _), .notificationInvited(let channel2, _)),
              (.notificationInviteAccepted(let channel1, _), .notificationInviteAccepted(let channel2, _)),
              (.notificationInviteRejected(let channel1, _), .notificationInviteRejected(let channel2, _)):
