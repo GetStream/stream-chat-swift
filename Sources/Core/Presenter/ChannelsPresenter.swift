@@ -42,9 +42,9 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
     /// An observable view changes (see `ViewChanges`).
-    public private(set) lazy var changes = Driver.merge(requestChanges, webSocketChanges, connectionErrors)
+    public private(set) lazy var changes = Driver.merge(requestChannels, webSocketEvents, connectionErrors)
     
-    private lazy var requestChanges: Driver<ViewChanges> = prepareRequest(startPaginationWith: pageSize)
+    private lazy var requestChannels: Driver<ViewChanges> = prepareRequest(startPaginationWith: pageSize)
         .map { [weak self] in self?.channelsQuery(pagination: $0) }
         .unwrap()
         .flatMapLatest { Client.shared.channels(query: $0).retry(3) }
@@ -52,7 +52,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         .filter { $0 != .none }
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
-    private lazy var webSocketChanges: Driver<ViewChanges> = Client.shared.webSocket.response
+    private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.webSocket.response
         .map { [weak self] in self?.parseEvents(response: $0) ?? .none }
         .filter { $0 != .none }
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
@@ -129,7 +129,7 @@ extension ChannelsPresenter {
         case .messageDeleted(let message, _):
             if let index = items.firstIndex(whereChannelId: channelId),
                 let channelPresenter = items[index].channelPresenter {
-                channelPresenter.parseChanges(event: response.event)
+                channelPresenter.parseEvents(event: response.event)
                 return .itemUpdated([index], [message], items)
             }
         default:
@@ -162,7 +162,7 @@ extension ChannelsPresenter {
         if let channelId = response.channelId,
             let index = items.firstIndex(whereChannelId: channelId),
             let channelPresenter = items.remove(at: index).channelPresenter {
-            channelPresenter.parseChanges(event: response.event)
+            channelPresenter.parseEvents(event: response.event)
             items.insert(.channelPresenter(channelPresenter), at: 0)
             
             return .itemMoved(fromRow: index, toRow: 0, items)

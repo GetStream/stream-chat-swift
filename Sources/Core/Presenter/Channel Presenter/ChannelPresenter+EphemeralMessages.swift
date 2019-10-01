@@ -13,7 +13,7 @@ import RxSwift
 
 extension ChannelPresenter {
     
-    func parseEphemeralChanges(_ ephemeralType: EphemeralType) -> ViewChanges {
+    func parseEphemeralMessageEvents(_ ephemeralType: EphemeralType) -> ViewChanges {
         if let message = ephemeralType.message {
             var items = self.items
             let row = items.count
