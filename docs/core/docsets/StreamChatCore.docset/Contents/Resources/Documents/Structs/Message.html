@@ -200,6 +200,14 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/Database.html">Database</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -225,6 +233,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/BaseURL/Location.html">– Location</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelDeletedResponse.html">ChannelDeletedResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs.html#/s:14StreamChatCore19ChannelInviteAnswerV">ChannelInviteAnswer</a>
@@ -1359,9 +1370,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore7MessageV7replies10pagination7RxSwift10ObservableCyAA16MessagesResponseVGAA10PaginationO_tF"></a>
+                    <a name="/s:14StreamChatCore7MessageV7replies10pagination7RxSwift10ObservableCySayACGGAA10PaginationO_tF"></a>
                     <a name="//apple_ref/swift/Method/replies(pagination:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore7MessageV7replies10pagination7RxSwift10ObservableCyAA16MessagesResponseVGAA10PaginationO_tF">replies(pagination:)</a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV7replies10pagination7RxSwift10ObservableCySayACGGAA10PaginationO_tF">replies(pagination:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1376,7 +1387,57 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">replies</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore16MessagesResponseV">MessagesResponse</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">replies</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">Message</span><span class="p">]</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>pagination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a pagination (see <code><a href="../Enums/Pagination.html">Pagination</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV12fetchReplies10pagination7RxSwift10ObservableCySayACGGAA10PaginationO_tF"></a>
+                    <a name="//apple_ref/swift/Method/fetchReplies(pagination:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV12fetchReplies10pagination7RxSwift10ObservableCySayACGGAA10PaginationO_tF">fetchReplies(pagination:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Fetch a reply messages from a database.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchReplies</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">Message</span><span class="p">]</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1707,7 +1768,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-09-13)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-01)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
