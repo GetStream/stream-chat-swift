@@ -127,8 +127,8 @@ extension Channel {
             return false
         }
         
-        if case .messageNew = response.event {
-            unreadCountAtomic += 1
+        if case .messageNew(_, let unreadCount, _, _, _) = response.event {
+            unreadCountAtomic.set(unreadCount)
             return true
         }
         
