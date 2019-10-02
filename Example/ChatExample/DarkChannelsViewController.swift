@@ -25,6 +25,11 @@ final class DarkChannelsViewController: ChannelsViewController {
     func setup() {
         deleteChannelBySwipe = true
         style = .dark
+        title = "My channels"
+        
+        if let currentUser = User.current {
+            channelsPresenter = ChannelsPresenter(channelType: .messaging, filter: .key("members", .in([currentUser.id])))
+        }
     }
     
     @IBAction func addChannel(_ sender: Any) {
