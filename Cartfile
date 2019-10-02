@@ -7,4 +7,4 @@ github "ashleymills/Reachability.swift" ~> 4.3.0
 
 github "ReactiveX/RxSwift" ~> 5.0
 github "RxSwiftCommunity/RxGesture"
-github "pixeldock/RxAppState"
+github "pixeldock/RxAppState" ~> 1.5.3
