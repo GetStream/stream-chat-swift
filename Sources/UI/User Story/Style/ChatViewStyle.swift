@@ -23,7 +23,8 @@ public struct ChatViewStyle {
     /// A dark chat view style.
     public static let dark =
         ChatViewStyle(channel: ChannelViewStyle(backgroundColor: .chatSuperDarkGray,
-                                                nameColor: .white,
+                                                nameColor: .chatGray,
+                                                nameUnreadColor: .white,
                                                 messageUnreadColor: .white),
                       composer: ComposerViewStyle(textColor: .white,
                                                   helperContainerBackgroundColor: .chatDarkGray,
