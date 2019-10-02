@@ -28,6 +28,7 @@ final class RootViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNotifications()
+        navigationController?.navigationBar.prefersLargeTitles = true
         
         versionLabel.text = "Stream Swift SDK v.\(Client.version)"
         
