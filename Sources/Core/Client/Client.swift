@@ -120,8 +120,13 @@ public final class Client {
             logger = nil
         }
     }
-    
-    public func reset() {
+
+    /// Disconnect from Stream and reset the current user.
+    ///
+    /// Resets and removes the user/token pair as well as relevant network connections.
+    ///
+    /// - Note: To restore the connection, use `Client.set(user:, token:)` to set a valid user/token pair.
+    public func disconnect() {
         guard user != nil else {
             return
         }

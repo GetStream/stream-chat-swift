@@ -19,7 +19,7 @@ extension Client {
     ///     - user: the current user (see `User`).
     ///     - token: a Stream Chat API token.
     public func set(user: User, token: Token) {
-        reset()
+        disconnect()
         self.user = user
         setup(token: token)
     }
@@ -53,7 +53,7 @@ extension Client {
     ///   - user: the current user (see `User`).
     ///   - tokenProvider: a token provider.
     public func set(user: User, _ tokenProvider: TokenProvider) {
-        reset()
+        disconnect()
         self.user = user
         tokenProvider { self.setup(token: $0) }
     }
