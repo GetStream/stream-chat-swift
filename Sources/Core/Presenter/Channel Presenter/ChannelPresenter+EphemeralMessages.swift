@@ -62,6 +62,9 @@ extension ChannelPresenter {
             var items = items
             items.append(.message(ephemeralMessage, []))
             return .itemMoved(fromRow: fromRow, toRow: toRow, items)
+            
+        case .disconnected:
+            return .none
         }
     }
 }

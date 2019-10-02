@@ -29,6 +29,10 @@ public class Presenter<T> {
                 return .error(AnyError(error: webSocketError))
             }
             
+            if case .notConnected = connection {
+                return .disconnected
+            }
+            
             return nil
         }
         .unwrap()

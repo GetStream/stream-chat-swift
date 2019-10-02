@@ -207,7 +207,13 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         case .error(let error):
             show(error: error)
             
-        case .none, .footerUpdated:
+        case .disconnected:
+            if User.current == nil {
+                reset()
+            }
+            
+        case .none,
+             .footerUpdated:
             return
         }
     }

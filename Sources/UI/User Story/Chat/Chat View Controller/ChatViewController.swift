@@ -308,11 +308,14 @@ extension ChatViewController {
                 tableView.deleteRows(at: [.row(row)], with: .none)
             }
             
-        case .error(let error):
-            show(error: error)
-            
         case .footerUpdated:
             updateFooterView()
+            
+        case .disconnected:
+            return
+                
+        case .error(let error):
+            show(error: error)
         }
         
         updateTitleReplyCount()
