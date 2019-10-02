@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wm7-Ii-BZP">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wm7-Ii-BZP">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -15,7 +13,7 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ChannelsViewController" customModule="StreamChat" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -48,12 +46,22 @@
                                 <action selector="addChannel:" destination="cor-4m-0UN" id="RDJ-f0-p0g"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="xsm-do-D8r">
-                            <connections>
-                                <segue destination="Jpg-eB-15H" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="a5b-Jp-cN7"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="stop" id="xsm-do-D8r">
+                                <connections>
+                                    <segue destination="Jpg-eB-15H" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="a5b-Jp-cN7"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Logout" id="mJn-gs-i29">
+                                <connections>
+                                    <action selector="logout:" destination="cor-4m-0UN" id="Mvb-hZ-55D"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
+                    <connections>
+                        <outlet property="logoutButton" destination="mJn-gs-i29" id="bao-Vn-4mA"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qob-9V-kbc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -68,7 +76,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="fQM-5J-VyU">
-                                <rect key="frame" x="16" y="84" width="343" height="250"/>
+                                <rect key="frame" x="16" y="64" width="343" height="250"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lMz-sX-zDG">
                                         <rect key="frame" x="0.0" y="0.0" width="128" height="30"/>
@@ -143,7 +151,7 @@
                                 </constraints>
                             </stackView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="–" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eTn-JY-iPB">
-                                <rect key="frame" x="158" y="208" width="16" height="16"/>
+                                <rect key="frame" x="158" y="188" width="16" height="16"/>
                                 <color key="backgroundColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="16" id="Jsh-lg-vjv"/>
@@ -159,7 +167,7 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DARK MODE" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="11f-PJ-qcd">
-                                <rect key="frame" x="241" y="152" width="72" height="16"/>
+                                <rect key="frame" x="241" y="132" width="72" height="16"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="72" id="i8J-3r-nDA"/>
@@ -175,10 +183,10 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jQp-EN-Voh">
-                                <rect key="frame" x="310" y="205.5" width="51" height="31"/>
+                                <rect key="frame" x="310" y="185.5" width="51" height="31"/>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OkG-5O-emD">
-                                <rect key="frame" x="265.5" y="206.5" width="39.5" height="29"/>
+                                <rect key="frame" x="265.5" y="186.5" width="39.5" height="29"/>
                                 <string key="text">unread
 badge</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -186,19 +194,19 @@ badge</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jrn-MT-IQv">
-                                <rect key="frame" x="310" y="260.5" width="51" height="31"/>
+                                <rect key="frame" x="310" y="240.5" width="51" height="31"/>
                             </switch>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="H0k-lx-tmL">
-                                <rect key="frame" x="310" y="309.5" width="51" height="31"/>
+                                <rect key="frame" x="310" y="289.5" width="51" height="31"/>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="It doesn't hold the state and to disable Push notifications you need to toggle it twice." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B0u-JV-sSq">
-                                <rect key="frame" x="16" y="339" width="283" height="29"/>
+                                <rect key="frame" x="16" y="319" width="283" height="29"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7rg-Xd-yMa">
-                                <rect key="frame" x="0.0" y="383" width="375" height="1"/>
+                                <rect key="frame" x="0.0" y="363" width="375" height="1"/>
                                 <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="b5l-qn-iGf"/>
@@ -261,7 +269,7 @@ badge</string>
                     <tabBarItem key="tabBarItem" systemItem="contacts" id="d2I-aW-uJk"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="rGP-f5-wYZ">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -278,7 +286,7 @@ badge</string>
             <objects>
                 <viewController id="e0G-IG-Gxn" customClass="CustomChatViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="p7A-Vg-wGQ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="AC2-xq-vHg"/>
@@ -302,7 +310,7 @@ badge</string>
                     <tabBarItem key="tabBarItem" systemItem="mostViewed" id="Uhp-Gu-8p3"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Fap-uP-7Ox">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -321,7 +329,7 @@ badge</string>
                     <toolbarItems/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="fub-QL-sHd">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -339,7 +347,7 @@ badge</string>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="wm7-Ii-BZP" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="KhY-db-khs">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -353,7 +361,7 @@ badge</string>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="elX-bx-MbU"/>
+        <segue reference="a5b-Jp-cN7"/>
         <segue reference="Z6X-IU-Iab"/>
         <segue reference="seW-P6-fEX"/>
     </inferredMetricsTieBreakers>

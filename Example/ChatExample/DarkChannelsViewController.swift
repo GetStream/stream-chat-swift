@@ -12,6 +12,8 @@ import StreamChat
 
 final class DarkChannelsViewController: ChannelsViewController {
     
+    @IBOutlet weak var logoutButton: UIBarButtonItem!
+    
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         setup()
@@ -26,7 +28,10 @@ final class DarkChannelsViewController: ChannelsViewController {
         deleteChannelBySwipe = true
         style = .dark
         title = "My channels"
-        
+        setupPresenter()
+    }
+    
+    func setupPresenter() {
         if let currentUser = User.current {
             channelsPresenter = ChannelsPresenter(channelType: .messaging, filter: .key("members", .in([currentUser.id])))
         }
@@ -44,5 +49,16 @@ final class DarkChannelsViewController: ChannelsViewController {
                 print($0)
             })
             .disposed(by: disposeBag)
+    }
+    
+    @IBAction func logout(_ sender: Any) {
+        if logoutButton.title == "Logout" {
+            Client.shared.disconnect()
+            logoutButton.title = "Login"
+        } else if let delegate = UIApplication.shared.delegate as? AppDelegate {
+            delegate.setupUser()
+            setupPresenter()
+            logoutButton.title = "Logout"
+        }
     }
 }

@@ -25,10 +25,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                               database: TestDatabase(),
                               logOptions: .all)
         
-        Client.shared.set(user: .user2, token: .token2)
+        setupUser()
         setupNotifications()
         
         return true
+    }
+    
+    func setupUser() {
+        Client.shared.set(user: .user2, token: .token2)
     }
     
     private func setupNotifications() {
