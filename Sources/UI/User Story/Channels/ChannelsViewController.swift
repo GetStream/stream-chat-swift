@@ -15,13 +15,22 @@ import RxCocoa
 open class ChannelsViewController: ViewController {
     
     /// A dispose bag for rx subscriptions.
-    public let disposeBag = DisposeBag()
+    public var disposeBag = DisposeBag()
     /// A chat style.
     public var style = ChatViewStyle()
     /// A list of table view items, e.g. channel presenters.
     public private(set) var items = [ChatItem]()
+    
     /// A channels presenter.
-    open var channelsPresenter = ChannelsPresenter(channelType: .messaging)
+    open var channelsPresenter = ChannelsPresenter(channelType: .messaging) {
+        didSet {
+            reset()
+            
+            if isVisible {
+                setupChannelsPresenter()
+            }
+        }
+    }
     
     /// Enables to delete a channel by a swipe.
     public var deleteChannelBySwipe = false
@@ -46,11 +55,23 @@ open class ChannelsViewController: ViewController {
         super.viewDidLoad()
         hideBackButtonTitle()
         view.backgroundColor = style.channel.backgroundColor
+        setupChannelsPresenter()
         
         if title == nil {
             title = channelsPresenter.channelType.title
         }
+    }
+    
+    private func reset() {
+        disposeBag = DisposeBag()
+        items = []
         
+        if isVisible {
+            tableView.reloadData()
+        }
+    }
+    
+    private func setupChannelsPresenter() {
         channelsPresenter.changes
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
