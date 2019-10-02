@@ -23,7 +23,7 @@ public struct ChannelsQuery: Encodable {
     
     /// A filter for the query (see `Filter`).
     public let filter: Filter
-    /// A sorting for the query (see `Filter`).
+    /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting]
     /// A pagination.
     public let pagination: Pagination
@@ -46,8 +46,15 @@ public struct ChannelsQuery: Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(filter, forKey: .filter)
-        try container.encode(sort, forKey: .sort)
+        
+        if case .none = filter {} else {
+            try container.encode(filter, forKey: .filter)
+        }
+        
+        if !sort.isEmpty {
+            try container.encode(sort, forKey: .sort)
+        }
+        
         try container.encode(messageLimit.limit, forKey: .messageLimit)
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)

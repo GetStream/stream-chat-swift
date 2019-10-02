@@ -72,7 +72,7 @@ public struct ChannelUpdatedResponse: Decodable, Equatable {
     /// A channel.
     public let channel: Channel
     /// A user who updated a channel.
-    public let user: User
+    public let user: User?
     /// An additional message of the update.
     public let message: Message?
     

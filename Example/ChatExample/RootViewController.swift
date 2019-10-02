@@ -18,6 +18,7 @@ final class RootViewController: UIViewController {
     @IBOutlet weak var onlinelabel: UILabel!
     @IBOutlet weak var onlineSwitch: UISwitch!
     @IBOutlet weak var notificationsSwitch: UISwitch!
+    @IBOutlet weak var versionLabel: UILabel!
     
     let disposeBag = DisposeBag()
     var badgeDisposeBag = DisposeBag()
@@ -27,6 +28,9 @@ final class RootViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNotifications()
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        versionLabel.text = "Stream Swift SDK v.\(Client.version)"
         
         badgeSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in
@@ -45,7 +49,7 @@ final class RootViewController: UIViewController {
                     self?.subscribeForOnlineUsers()
                 } else {
                     self?.onlineDisposeBag = DisposeBag()
-                    self?.onlinelabel.text = "Online users: <Disabled>"
+                    self?.onlinelabel.text = "Online members: <Disabled>"
                 }
             })
             .disposed(by: disposeBag)
@@ -65,7 +69,7 @@ final class RootViewController: UIViewController {
             .startWith([User(id: "", name: "")])
             .drive(onNext: { [weak self] users in
                 if users.count == 1, users[0].id.isEmpty {
-                    self?.onlinelabel.text = "Online users: <Loading...>"
+                    self?.onlinelabel.text = "Online members: <Loading...>"
                     return
                 }
                 
@@ -81,7 +85,7 @@ final class RootViewController: UIViewController {
                     userNames = "\(users[0].name), \(users[1].name), \(users[2].name) and \(users.count - 3) others"
                 }
                 
-                self?.onlinelabel.text = "Online users: \(userNames)"
+                self?.onlinelabel.text = "Online: \(userNames)"
             })
             .disposed(by: onlineDisposeBag)
     }
