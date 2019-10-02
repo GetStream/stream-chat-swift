@@ -134,7 +134,6 @@ public final class Client {
         logger?.log("Reset Client User, Token, URLSession and WebSocket.")
         user = nil
         urlSession = setupURLSession(token: "")
-        webSocket.disconnect()
         webSocket = WebSocket()
         token = nil
     }

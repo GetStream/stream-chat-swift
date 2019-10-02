@@ -74,6 +74,15 @@ public final class WebSocket {
         disconnect()
     }
     
+    func connectIfPossible() {
+        guard InternetConnection.shared.isAvailable else {
+            disconnectedNoInternet()
+            return
+        }
+        
+        connect()
+    }
+    
     func connect() {
         guard webSocketInitiated else {
             return
@@ -159,8 +168,7 @@ extension WebSocket {
         }
         
         guard isInternetAvailable else {
-            cancelBackgroundWork()
-            lastConnectionId = nil
+            disconnectedNoInternet()
             return .notConnected
         }
         
@@ -201,37 +209,49 @@ extension WebSocket {
             return .connecting
             
         case .disconnected(let error):
-            logger?.log("💔🤔 Disconnected")
-            handshakeTimer.suspend()
-            
-            if let error = error {
-                var errorMessage = "💔😡 Disconnected by error"
-                
-                if let lastJSONError = lastJSONError {
-                    errorMessage += ": \(lastJSONError)"
-                }
-                
-                ClientLogger.log("🦄", error, message: errorMessage)
-                ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
-                
-                if !willReconnectAfterError(error) {
-                    consecutiveFailures = 0
-                    
-                    if let lastJSONError = lastJSONError, isStopError(error) {
-                        return .disconnected(lastJSONError)
-                    }
-                }
-            } else {
-                consecutiveFailures = 0
-            }
-            
-            return .notConnected
+            return disconnected(error)
             
         default:
             break
         }
         
         return nil
+    }
+    
+    private func disconnectedNoInternet() {
+        logger?.log("💔🕸", "Skip connecting")
+        cancelBackgroundWork()
+        handshakeTimer.suspend()
+        lastConnectionId = nil
+        consecutiveFailures = 0
+    }
+    
+    private func disconnected(_ error: Error? = nil) -> Connection {
+        logger?.log("💔🤔 Disconnected")
+        handshakeTimer.suspend()
+        
+        if let error = error {
+            var errorMessage = "💔😡 Disconnected by error"
+            
+            if let lastJSONError = lastJSONError {
+                errorMessage += ": \(lastJSONError)"
+            }
+            
+            ClientLogger.log("🦄", error, message: errorMessage)
+            ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
+            
+            if !willReconnectAfterError(error) {
+                consecutiveFailures = 0
+                
+                if let lastJSONError = lastJSONError, isStopError(error) {
+                    return .disconnected(lastJSONError)
+                }
+            }
+        } else {
+            consecutiveFailures = 0
+        }
+        
+        return .notConnected
     }
     
     private func parseMessage(_ event: WebSocketEvent) -> Response? {

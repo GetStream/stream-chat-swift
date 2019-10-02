@@ -56,7 +56,7 @@ extension WebSocket {
         
         webSocket.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
             self?.isReconnecting = false
-            self?.connect()
+            self?.connectIfPossible()
         }
     }
     
