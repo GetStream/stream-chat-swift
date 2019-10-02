@@ -22,6 +22,8 @@ import Foundation
 /// filter = .key("type", .equal(to: "messaging")) | .key("members", .in(["jon"]))
 /// ```
 public enum Filter: Encodable {
+    /// No filter.
+    case none
     /// Filter by a given key with a given operator (see Operator).
     case key(String, Operator)
     /// Filter with all filters (like `and`).
@@ -33,6 +35,8 @@ public enum Filter: Encodable {
     
     public func encode(to encoder: Encoder) throws {
         switch self {
+        case .none:
+            break
         case .key(let key, let `operator`):
             try [key: `operator`].encode(to: encoder)
         case .and(let filters):

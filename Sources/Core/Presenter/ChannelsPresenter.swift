@@ -23,9 +23,19 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public let showChannelStatuses: Bool
     
     /// Filter channels.
+    ///
+    /// For example, in your channels view controller:
+    /// ```
+    /// if let currentUser = User.current {
+    ///     channelPresenter = .init(channelType: .messaging,
+    ///                              filter: .key("members", .in([currentUser.id])))
+    /// }
+    /// ```
     public let filter: Filter
-    
+        
     /// Sort channels.
+    ///
+    /// By default channels will be sorted by the last message date.
     public let sorting: [Sorting]
     
     /// A callback to provide an extra data for a channel.
@@ -51,28 +61,20 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     ///
     /// - Parameters:
     ///   - channelType: a channel type.
-    ///   - filter: a channel filter. Default is where the current user is a member.
-    ///   - sorting: a channel sorting. Default is by a last message date.
+    ///   - filter: a channel filter.
+    ///   - sorting: a channel sorting. By default channels will be sorted by the last message date.
     ///   - queryOptions: query options (see `QueryOptions`).
     ///   - showChannelStatuses: show channel statuses on a chat view controller of a selected channel.
     public init(channelType: ChannelType,
-                filter: Filter? = nil,
-                sorting: [Sorting]? = nil,
+                filter: Filter = .none,
+                sorting: [Sorting] = [],
                 queryOptions: QueryOptions = .all,
                 showChannelStatuses: Bool = true) {
         self.channelType = channelType
         self.queryOptions = queryOptions
         self.showChannelStatuses = showChannelStatuses
-        self.sorting = sorting ?? [.init(Channel.DecodingKeys.lastMessageDate.rawValue)]
-        
-        if let filter = filter {
-            self.filter = filter
-        } else if let currentUser = User.current {
-            self.filter = .key("members", .in([currentUser.id]))
-        } else {
-            self.filter = .key("type", .equal(to: channelType))
-        }
-        
+        self.filter = filter
+        self.sorting = sorting
         super.init(pageSize: .channelsPageSize)
     }
 }
