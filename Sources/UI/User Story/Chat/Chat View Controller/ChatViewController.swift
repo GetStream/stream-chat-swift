@@ -15,7 +15,7 @@ import RxCocoa
 /// A chat view controller of a channel.
 open class ChatViewController: ViewController, UITableViewDataSource, UITableViewDelegate {
     /// A chat view style.
-    public var style = ChatViewStyle()
+    open var style = ChatViewStyle()
     /// A dispose bag for rx subscriptions.
     public let disposeBag = DisposeBag()
     /// A list of table view items, e.g. messages.
