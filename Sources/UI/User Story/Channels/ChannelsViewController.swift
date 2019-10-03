@@ -16,8 +16,15 @@ open class ChannelsViewController: ViewController {
     
     /// A dispose bag for rx subscriptions.
     public var disposeBag = DisposeBag()
+    
     /// A chat style.
-    public var style = ChatViewStyle()
+    public lazy var style = defaultStyle
+    
+    /// A default chat style. This is useful for subclasses.
+    open var defaultStyle: ChatViewStyle {
+        return .default
+    }
+    
     /// A list of table view items, e.g. channel presenters.
     public private(set) var items = [ChatItem]()
     

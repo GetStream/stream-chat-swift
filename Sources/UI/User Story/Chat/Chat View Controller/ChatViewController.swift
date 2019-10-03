@@ -14,8 +14,15 @@ import RxCocoa
 
 /// A chat view controller of a channel.
 open class ChatViewController: ViewController, UITableViewDataSource, UITableViewDelegate {
-    /// A chat view style.
-    public var style = ChatViewStyle()
+    
+    /// A chat style.
+    public lazy var style = defaultStyle
+    
+    /// A default chat style. This is useful for subclasses.
+    open var defaultStyle: ChatViewStyle {
+        return .default
+    }
+    
     /// A dispose bag for rx subscriptions.
     public let disposeBag = DisposeBag()
     /// A list of table view items, e.g. messages.
@@ -28,8 +35,16 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         return reactionsView == nil
     }
     
+    /// A composer view.
     public private(set) lazy var composerView = createComposerView()
-    public var composerAddFileTypes: [ComposerAddFileType] = [.photo, .camera, .file]
+    
+    /// Attachments file types for thw composer view.
+    public lazy var composerAddFileTypes = defaultComposerAddFileTypes
+    
+    /// Default attachments file types for thw composer view. This is useful for subclasses.
+    public var defaultComposerAddFileTypes: [ComposerAddFileType]  {
+        return [.photo, .camera, .file]
+    }
     
     private(set) lazy var composerEditingContainerView = createComposerEditingContainerView()
     private(set) lazy var composerCommandsContainerView = createComposerCommandsContainerView()
