@@ -13,7 +13,7 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ChannelsViewController" customModule="StreamChat" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -83,7 +83,7 @@
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Show all channels"/>
                                         <connections>
-                                            <segue destination="aEe-dp-x44" kind="presentation" id="seW-P6-fEX"/>
+                                            <segue destination="aEe-dp-x44" kind="presentation" modalPresentationStyle="fullScreen" id="seW-P6-fEX"/>
                                         </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NfR-jx-apB">
@@ -98,7 +98,7 @@
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Show my messaging channels"/>
                                         <connections>
-                                            <segue destination="Jpg-eB-15H" kind="presentation" id="elX-bx-MbU"/>
+                                            <segue destination="Jpg-eB-15H" kind="presentation" modalPresentationStyle="fullScreen" id="elX-bx-MbU"/>
                                         </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gbU-nu-nAs">
@@ -113,7 +113,7 @@
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Show #general chat"/>
                                         <connections>
-                                            <segue destination="Z71-Wp-boH" kind="presentation" id="Z6X-IU-Iab"/>
+                                            <segue destination="Z71-Wp-boH" kind="presentation" modalPresentationStyle="fullScreen" id="Z6X-IU-Iab"/>
                                         </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qr4-mI-Aca">
@@ -269,7 +269,7 @@ badge</string>
                     <tabBarItem key="tabBarItem" systemItem="contacts" id="d2I-aW-uJk"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="rGP-f5-wYZ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -286,7 +286,7 @@ badge</string>
             <objects>
                 <viewController id="e0G-IG-Gxn" customClass="CustomChatViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="p7A-Vg-wGQ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="647"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="AC2-xq-vHg"/>
@@ -310,7 +310,7 @@ badge</string>
                     <tabBarItem key="tabBarItem" systemItem="mostViewed" id="Uhp-Gu-8p3"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Fap-uP-7Ox">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -361,7 +361,7 @@ badge</string>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="a5b-Jp-cN7"/>
+        <segue reference="elX-bx-MbU"/>
         <segue reference="Z6X-IU-Iab"/>
         <segue reference="seW-P6-fEX"/>
     </inferredMetricsTieBreakers>
