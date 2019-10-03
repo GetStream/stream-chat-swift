@@ -11,6 +11,9 @@ import StreamChatCore
 import StreamChat
 
 final class DarkChannelsViewController: ChannelsViewController {
+    override var style: ChatViewStyle {
+        return .dark
+    }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -24,7 +27,6 @@ final class DarkChannelsViewController: ChannelsViewController {
     
     func setup() {
         deleteChannelBySwipe = true
-        style = .dark
         title = "My channels"
         
         if let currentUser = User.current {
