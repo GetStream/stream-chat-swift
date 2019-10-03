@@ -17,7 +17,7 @@ open class ChannelsViewController: ViewController {
     /// A dispose bag for rx subscriptions.
     public let disposeBag = DisposeBag()
     /// A chat style.
-    public var style: ChatViewStyle {
+    open var style: ChatViewStyle {
         return .default
     }
     /// A list of table view items, e.g. channel presenters.

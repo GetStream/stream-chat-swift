@@ -29,7 +29,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     }
     
     public private(set) lazy var composerView = createComposerView()
-    public var composerAddFileTypes: [ComposerAddFileType] {
+    open var composerAddFileTypes: [ComposerAddFileType] {
         return [.photo, .camera, .file]
     }
     
