@@ -60,8 +60,12 @@ public extension Channel {
         var request: Observable<MessageResponse> = Client.shared.rx.request(endpoint: .sendMessage(message, self))
         
         if !isActive {
-            request = query().flatMap { _ in request }
+            request = query().flatMapLatest { _ in request }
         }
+        
+        request = request
+            .do(onNext: { _ in Client.shared.logger?.log("🎫", "Send Message Read. For a new message of the current user.") })
+            .flatMapLatest { [weak self] response in self?.markRead().map { _ in response } ?? .just(response) }
         
         return Client.shared.connectedRequest(request)
     }

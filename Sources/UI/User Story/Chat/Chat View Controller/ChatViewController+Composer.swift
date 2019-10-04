@@ -51,9 +51,9 @@ extension ChatViewController {
             .unwrap()
             .do(onNext: { [weak self] in self?.dispatchCommands(in: $0) })
             .filter { [weak self] in !$0.isBlank && (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
-            .flatMap { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: true) ?? .empty() }
+            .flatMapLatest { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: true) ?? .empty() }
             .debounce(.seconds(3), scheduler: MainScheduler.instance)
-            .flatMap { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: false) ?? .empty() }
+            .flatMapLatest { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: false) ?? .empty() }
             .subscribe()
             .disposed(by: disposeBag)
         

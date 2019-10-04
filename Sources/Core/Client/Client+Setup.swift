@@ -159,7 +159,7 @@ extension Client {
         let webSocketResponse = tokenSubject.asObserver().map { $0?.isValid ?? false }
             .distinctUntilChanged()
             .observeOn(MainScheduler.instance)
-            .flatMap { [unowned self] isTokenValid -> Observable<WebSocketEvent> in
+            .flatMapLatest { [unowned self] isTokenValid -> Observable<WebSocketEvent> in
                 if isTokenValid {
                     self.webSocket.connect()
                     return self.webSocket.webSocket.rx.response

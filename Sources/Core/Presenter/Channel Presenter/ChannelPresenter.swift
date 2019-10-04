@@ -191,7 +191,6 @@ extension ChannelPresenter {
         
         return channel.send(message: message)
             .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
-            .flatMapLatest { [weak self] response in self?.markRead().map { response } ?? .just(response) }
             .observeOn(MainScheduler.instance)
     }
 }
@@ -231,19 +230,13 @@ extension ChannelPresenter {
             return .empty()
         }
         
-        return markRead(unreadMessageRead)
-    }
-    
-    func markRead(_ unreadMessageRead: MessageRead? = nil) -> Observable<Void> {
         unreadMessageReadAtomic.set(nil)
         
         return Observable.just(())
             .subscribeOn(MainScheduler.instance)
             .filter { UIApplication.shared.appState == .active }
-            .do(onNext: {
-                Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(unreadMessageRead?.lastReadDate ?? Date())")
-            })
-            .flatMap { [weak self] in self?.channel.markRead() ?? .empty() }
+            .do(onNext: { Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(unreadMessageRead.lastReadDate)") })
+            .flatMapLatest { [weak self] in self?.channel.markRead() ?? .empty() }
             .do(
                 onNext: { [weak self] _ in
                     self?.unreadMessageReadAtomic.set(nil)
