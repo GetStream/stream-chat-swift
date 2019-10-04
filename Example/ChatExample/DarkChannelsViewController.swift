@@ -42,16 +42,30 @@ final class DarkChannelsViewController: ChannelsViewController {
     
     @IBAction func addChannel(_ sender: Any) {
         let number = Int.random(in: 100...999)
-        let channel = Channel(type: .messaging, id: "new_channel_\(number)", name: "Channel \(number)")
+        
+        let channel = Channel(type: .messaging,
+                              id: "new_channel_\(number)",
+                              name: "Channel \(number)",
+                              members: [User.user1.asMember, User.user2.asMember])
         
         channel.create()
             .flatMapLatest({ channelResponse in
-                channelResponse.channel.send(message: Message(text: "A new channel created"))
+                channelResponse.channel.send(message: Message(text: "A new channel #\(number) created"))
             })
             .subscribe(onNext: {
                 print($0)
             })
             .disposed(by: disposeBag)
+    }
+    
+    override func channelCell(at indexPath: IndexPath, channelPresenter: ChannelPresenter) -> UITableViewCell {
+        let cell = super.channelCell(at: indexPath, channelPresenter: channelPresenter)
+        
+        if let cell = cell as? ChannelTableViewCell {
+            cell.nameLabel.text = "\(cell.nameLabel.text ?? "") (\(channelPresenter.channel.members.count))"
+        }
+        
+        return cell
     }
     
     @IBAction func logout(_ sender: Any) {

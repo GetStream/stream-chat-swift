@@ -37,6 +37,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func setupNotifications() {
         Notifications.shared.logsEnabled = true
+        Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
         
         Notifications.shared.showNewMessage = { [weak self] messageReference in
             if let tabBarController = self?.window?.rootViewController as? UITabBarController,
