@@ -18,18 +18,31 @@ public final class Notifications: NSObject {
         case messageId
     }
     
-    /// A callback type to open a chat view controller with a given message id and channel id.
-    public typealias OpenNewMessageCallback = (_ messageId: String, _ channelId: String) -> Void
+    /// A message reference: channel id + message id.
+    public typealias MessageReference = (channelId: String, messageId: String)
+    
+    /// A callback type to open a chat view controller with a given message reference.
+    public typealias ShowNewMessageCallback = (MessageReference) -> Void
     
     /// A shared instance of notifications manager.
     public static let shared = Notifications()
     
-    let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
     var authorizationStatus: UNAuthorizationStatus = .notDetermined
-    var iconBadgeNumber: Int = 0
     
     /// A callback to open a chat view controller with a given message id and channel id.
-    public var openNewMessage: OpenNewMessageCallback?
+    public var showNewMessage: ShowNewMessageCallback?
+    
+    /// Enablde clearing application icon badge number when app become active.
+    public var clearApplicationIconBadgeNumberOnAppActive = false {
+        didSet {
+            if clearApplicationIconBadgeNumberOnAppActive {
+                observeActiveAppStateForClearing()
+            } else {
+                disposeBag = DisposeBag()
+            }
+        }
+    }
     
     var logger: ClientLogger?
     
@@ -42,24 +55,10 @@ public final class Notifications: NSObject {
     
     override init() {
         super.init()
-        UNUserNotificationCenter.current().delegate = self
-
-        DispatchQueue.main.async {
-            self.clear()
-            
-            UIApplication.shared.rx.appState
-                .filter { $0 == .active }
-                .subscribe(onNext: { [weak self] _ in self?.clear() })
-                .disposed(by: self.disposeBag)
+        
+        if UNUserNotificationCenter.current().delegate == nil {
+            UNUserNotificationCenter.current().delegate = self
         }
-    }
-    
-    func clear() {
-        iconBadgeNumber = 0
-        UIApplication.shared.applicationIconBadgeNumber = 0
-        let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.removeAllDeliveredNotifications()
-        notificationCenter.removeAllPendingNotificationRequests()
     }
     
     /// Ask for permissions for notifications.
@@ -133,8 +132,7 @@ extension Notifications {
         content.title = channel.name
         content.body = message.textOrArgs
         content.sound = UNNotificationSound.default
-        iconBadgeNumber += 1
-        content.badge = iconBadgeNumber as NSNumber
+        content.badge = (UIApplication.shared.applicationIconBadgeNumber + 1) as NSNumber
         
         content.userInfo = [NotificationUserInfoKeys.messageId.rawValue: message.id,
                             NotificationUserInfoKeys.channelId.rawValue: channel.id]
@@ -157,18 +155,52 @@ extension Notifications {
     }
 }
 
-// MARK: - Handle Actions
+// MARK: - UNUserNotificationCenterDelegate
 
 extension Notifications: UNUserNotificationCenterDelegate {
+    
     public func userNotificationCenter(_ center: UNUserNotificationCenter,
                                        didReceive response: UNNotificationResponse,
                                        withCompletionHandler completionHandler: @escaping () -> Void) {
-        if let userInfo = response.notification.request.content.userInfo as? [String: String],
-            let messageId = userInfo[NotificationUserInfoKeys.messageId.rawValue],
-            let chanellId = userInfo[NotificationUserInfoKeys.channelId.rawValue] {
-            openNewMessage?(messageId, chanellId)
+        if let messageReference = Notifications.parseMessageReference(notificationResponse: response) {
+            showNewMessage?(messageReference)
         }
         
         completionHandler()
+    }
+    
+    /// Parse a notification response user info for a message reference.
+    ///
+    /// - Parameter response: a message reference (see `MessageReference`).
+    public static func parseMessageReference(notificationResponse response: UNNotificationResponse) -> MessageReference? {
+        guard let userInfo = response.notification.request.content.userInfo as? [String: String],
+            let messageId = userInfo[NotificationUserInfoKeys.messageId.rawValue],
+            let chanellId = userInfo[NotificationUserInfoKeys.channelId.rawValue] else {
+                return nil
+        }
+        
+        return (chanellId, messageId)
+    }
+}
+
+// MARK: - Clearing App Icon Badge Number
+
+extension Notifications {
+    
+    func observeActiveAppStateForClearing() {
+        DispatchQueue.main.async {
+            self.clear()
+            
+            UIApplication.shared.rx.appState
+                .filter { $0 == .active }
+                .subscribe(onNext: { [weak self] _ in self?.clear() })
+                .disposed(by: self.disposeBag)
+        }
+    }
+    
+    func clear() {
+        UIApplication.shared.applicationIconBadgeNumber = 0
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
     }
 }
