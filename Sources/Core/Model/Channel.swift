@@ -140,7 +140,7 @@ public final class Channel: Codable {
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? id
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
         extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isChannel }))
-        members = Set<Member>([])
+        members = Set<Member>((try? container.decodeIfPresent([Member].self, forKey: .members)) ?? [])
         
         if !isActive {
             Channel.activeChannelIds.append(cid)
