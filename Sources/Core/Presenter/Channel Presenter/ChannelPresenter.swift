@@ -94,9 +94,9 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     private lazy var messagesDatabaseFetch: Observable<ChannelResponse> = prepareDatabaseFetch()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
-        .flatMapLatest { [weak self] pagination -> Observable<ChannelResponse> in
+        .flatMapLatest({ [weak self] pagination -> Observable<ChannelResponse> in
             self?.channel.fetch(pagination: pagination) ?? .empty()
-    }
+        })
     
     private lazy var repliesRequest: Observable<[Message]> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
@@ -158,7 +158,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     }
 }
 
-// MARK: - Send/Delete Message
+// MARK: - Send Message
 
 extension ChannelPresenter {
     /// Create a message by sending a text.
@@ -191,6 +191,7 @@ extension ChannelPresenter {
         
         return channel.send(message: message)
             .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
+            .flatMapLatest { [weak self] response in self?.markRead().map { response } ?? .just(response) }
             .observeOn(MainScheduler.instance)
     }
 }
@@ -225,17 +226,23 @@ extension ChannelPresenter {
             return .empty()
         }
         
-        guard let oldUnreadMessageRead = unreadMessageReadAtomic.get() else {
-            Client.shared.logger?.log("🎫", "Skip read.")
+        guard let unreadMessageRead = unreadMessageReadAtomic.get() else {
+            Client.shared.logger?.log("🎫", "Skip read. No unreadMessageRead.")
             return .empty()
         }
         
+        return markRead(unreadMessageRead)
+    }
+    
+    func markRead(_ unreadMessageRead: MessageRead? = nil) -> Observable<Void> {
         unreadMessageReadAtomic.set(nil)
         
         return Observable.just(())
             .subscribeOn(MainScheduler.instance)
             .filter { UIApplication.shared.appState == .active }
-            .do(onNext: { Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(oldUnreadMessageRead.lastReadDate)") })
+            .do(onNext: {
+                Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(unreadMessageRead?.lastReadDate ?? Date())")
+            })
             .flatMap { [weak self] in self?.channel.markRead() ?? .empty() }
             .do(
                 onNext: { [weak self] _ in
@@ -244,7 +251,7 @@ extension ChannelPresenter {
                     Client.shared.logger?.log("🎫", "Message Read done.")
                 },
                 onError: { [weak self] error in
-                    self?.unreadMessageReadAtomic.set(oldUnreadMessageRead)
+                    self?.unreadMessageReadAtomic.set(unreadMessageRead)
                     self?.isReadSubject.onError(error)
                     ClientLogger.log("🎫", error, message: "Send Message Read error.")
             })
