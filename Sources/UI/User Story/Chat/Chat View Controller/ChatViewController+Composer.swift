@@ -24,6 +24,8 @@ public extension ChatViewController {
     }
 }
 
+// MARK: Setup
+
 extension ChatViewController {
     
     func createComposerView() -> ComposerView {
@@ -75,6 +77,19 @@ extension ChatViewController {
             .disposed(by: disposeBag)
     }
     
+    private func dispatchCommands(in text: String) {
+        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        showCommandsIfNeeded(for: trimmedText)
+        
+        // Send command by <Return> key.
+        if composerCommandsContainerView.shouldBeShown, text.contains("\n"), trimmedText.contains(" ") {
+            composerView.textView.text = trimmedText
+            send()
+        }
+    }
+    
+    // MARK: Keyboard Events
+    
     private func updateTableViewContentInsetForKeyboardHeight(_ height: CGFloat) {
         height > 0 ? tableView.saveContentInsetState() : tableView.resetContentInsetState()
         let bottom = .messagesToComposerPadding + max(0, height - (height > 0 ? tableView.oldAdjustedContentInset.bottom : 0))
@@ -87,16 +102,7 @@ extension ChatViewController {
         tableView.contentOffset = contentOffset
     }
     
-    private func dispatchCommands(in text: String) {
-        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        showCommandsIfNeeded(for: trimmedText)
-        
-        // Send command by <Return> key.
-        if composerCommandsContainerView.shouldBeShown, text.contains("\n"), trimmedText.contains(" ") {
-            composerView.textView.text = trimmedText
-            send()
-        }
-    }
+    // MARK: Send Message
     
     /// Send a message.
     public func send() {
