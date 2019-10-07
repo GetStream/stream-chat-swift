@@ -7,12 +7,16 @@
 //
 
 import UIKit
+import RxSwift
 
 /// Channel table view cell.
 public final class ChannelTableViewCell: UITableViewCell, Reusable {
     
     /// An avatar view.
     public let avatarView: AvatarView = AvatarView(cornerRadius: 20)
+    
+    /// A dispose bag for the cell.
+    public private(set) var disposeBag = DisposeBag()
     
     /// A channel name label.
     public let nameLabel: UILabel = {
@@ -128,6 +132,7 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         dateLabel.text = nil
         messageLabel.text = nil
         infoLabel.text = nil
+        disposeBag = DisposeBag()
     }
     
     /// Update the channel cell with a message text.

@@ -76,11 +76,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     /// An observable view changes (see `ViewChanges`).
     public private(set) lazy var changes = Driver
-        .merge(parentMessage == nil ? parsedChannelResponse(messagesRequest) : parsedRepliesResponse(repliesRequest),
+        .merge(parentMessage == nil ? parsedMessagesRequest : parsedRepliesResponse(repliesRequest),
                parentMessage == nil ? parsedChannelResponse(messagesDatabaseFetch) : parsedRepliesResponse(repliesDatabaseFetch),
                webSocketEvents,
                ephemeralMessageEvents,
                connectionErrors)
+    
+    lazy var parsedMessagesRequest = parsedChannelResponse(messagesRequest)
     
     private lazy var messagesRequest: Observable<ChannelResponse> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }

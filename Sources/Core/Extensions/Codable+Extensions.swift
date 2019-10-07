@@ -143,5 +143,5 @@ struct AnyEncodable: Encodable {
     }
 }
 
-/// An empty request/response data.
-public struct EmptyData: Codable {}
+/// ⚠️ Should be internal. Map this value to Void().
+struct EmptyData: Codable {}

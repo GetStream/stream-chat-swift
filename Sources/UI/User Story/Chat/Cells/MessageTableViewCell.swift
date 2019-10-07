@@ -12,7 +12,7 @@ import SnapKit
 import Nuke
 import RxSwift
 
-final class MessageTableViewCell: UITableViewCell, Reusable {
+public final class MessageTableViewCell: UITableViewCell, Reusable {
     typealias ReactionAction = (_ cell: UITableViewCell) -> Void
     typealias TapAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
     typealias AttachmentTapAction = (_ attachment: Attachment, _ at: Int, _ attachments: [Attachment]) -> Void
@@ -21,7 +21,8 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
     
     // MARK: - Properties
     
-    private(set) var disposeBag = DisposeBag()
+    /// A dispose bag for the cell.
+    public private(set) var disposeBag = DisposeBag()
     
     let avatarView = AvatarView(cornerRadius: .messageAvatarRadius)
     
@@ -120,7 +121,7 @@ final class MessageTableViewCell: UITableViewCell, Reusable {
         }
     }
     
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }

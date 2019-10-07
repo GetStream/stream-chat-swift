@@ -45,11 +45,33 @@ public extension Channel {
             })
     }
     
+    /// Stop watching the channel for events.
+    func stopWatching() -> Observable<Void> {
+        return Client.shared.rx.request(endpoint: .stopWatching(self))
+            .map { (_: EmptyData) in Void() }
+    }
+    
     /// Delete the channel.
     ///
     /// - Returns: an observable completion.
     func delete() -> Observable<ChannelDeletedResponse> {
         return Client.shared.rx.connectedRequest(endpoint: .deleteChannel(self))
+    }
+    
+    /// Hide the channel from queryChannels for the user until a message is added.
+    ///
+    /// - Parameter user: the current user.
+    func hide(for user: User? = nil) -> Observable<Void> {
+        return Client.shared.rx.connectedRequest(endpoint: .hideChannel(self, user))
+            .flatMapLatest { (_: EmptyData) in self.stopWatching() }
+    }
+    
+    /// Removes the hidden status for a channel.
+    ///
+    /// - Parameter user: the current user.
+    func show(for user: User? = nil) -> Observable<Void> {
+        return Client.shared.rx.connectedRequest(endpoint: .showChannel(self, user))
+            .map { (_: EmptyData) in Void() }
     }
     
     /// Send a new message or update with a given `message.id`.

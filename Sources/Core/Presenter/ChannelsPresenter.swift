@@ -42,7 +42,10 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
     /// An observable view changes (see `ViewChanges`).
-    public private(set) lazy var changes = Driver.merge(requestChannels, webSocketEvents, connectionErrors)
+    public private(set) lazy var changes = Driver.merge(requestChannels,
+                                                        webSocketEvents,
+                                                        actions.asDriver(onErrorJustReturn: .none),
+                                                        connectionErrors)
     
     private lazy var requestChannels: Driver<ViewChanges> = prepareRequest(startPaginationWith: pageSize)
         .map { [weak self] in self?.channelsQuery(pagination: $0) }
@@ -53,9 +56,11 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
     private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.webSocket.response
-        .map { [weak self] in self?.parseEvents(response: $0) ?? .none }
+        .flatMap { [weak self] in self?.parseEvents(response: $0) ?? .empty() }
         .filter { $0 != .none }
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+    
+    private let actions = PublishSubject<ViewChanges>()
     
     /// Init a channels presenter.
     ///
@@ -77,16 +82,45 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         self.sorting = sorting
         super.init(pageSize: .channelsPageSize)
     }
-}
-
-// MARK: - Parsing
-
-extension ChannelsPresenter {
     
     private func channelsQuery(pagination: Pagination) -> ChannelsQuery {
         return ChannelsQuery(filter: filter, sort: sorting, pagination: pagination, options: queryOptions)
     }
+}
+
+// MARK: - Actions
+
+public extension ChannelsPresenter {
     
+    /// Hide a channel and remove a channel presenter from items.
+    ///
+    /// - Parameter channelPresenter: a channel presenter.
+    func hide(_ channelPresenter: ChannelPresenter) -> Driver<Void> {
+        return channelPresenter.channel
+            .hide(for: User.current)
+            .map { _ in Void() }
+            .do(onNext: { [weak self] _ in self?.removeFromItems(channelPresenter) })
+            .asDriver(onErrorJustReturn: ())
+    }
+    
+    private func removeFromItems(_ channelPresenter: ChannelPresenter) {
+        guard let index = items.firstIndex(whereChannelId: channelPresenter.channel.id) else {
+            return
+        }
+        
+        // Update pagination offset.
+        if next != pageSize {
+            next = .channelsNextPageSize + .offset(next.offset - 1)
+        }
+        
+        items.remove(at: index)
+        actions.onNext(.itemRemoved(index, items))
+    }
+}
+
+// MARK: - Response Parsing
+
+extension ChannelsPresenter {
     private func parseChannels(_ channels: [ChannelResponse]) -> ViewChanges {
         let isNextPage = next != pageSize
         var items = isNextPage ? self.items : [ChatItem]()
@@ -118,8 +152,12 @@ extension ChannelsPresenter {
         
         return isNextPage ? .reloaded(row, items) : .reloaded(0, items)
     }
-    
-    private func parseEvents(response: WebSocket.Response) -> ViewChanges {
+}
+
+// MARK: - WebSocket Events Parsing
+
+extension ChannelsPresenter {
+    private func parseEvents(response: WebSocket.Response) -> Observable<ViewChanges> {
         guard let channelId = response.channelId else {
             return parseNotifications(response: response)
         }
@@ -128,7 +166,7 @@ extension ChannelsPresenter {
         case .channelDeleted:
             if let index = items.firstIndex(whereChannelId: channelId) {
                 items.remove(at: index)
-                return .itemRemoved(index, items)
+                return .just(.itemRemoved(index, items))
             }
         case .messageNew(_, _, _, let channel, _):
             return parseNewMessage(response: response, from: channel)
@@ -136,16 +174,16 @@ extension ChannelsPresenter {
             if let index = items.firstIndex(whereChannelId: channelId),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseEvents(event: response.event)
-                return .itemUpdated([index], [message], items)
+                return .just(.itemUpdated([index], [message], items))
             }
         default:
             break
         }
         
-        return .none
+        return .just(.none)
     }
     
-    private func parseNotifications(response: WebSocket.Response) -> ViewChanges {
+    private func parseNotifications(response: WebSocket.Response) -> Observable<ViewChanges> {
         switch response.event {
         case .notificationAddedToChannel(let channel, _):
             return parseNewChannel(channel: channel)
@@ -155,47 +193,55 @@ extension ChannelsPresenter {
                 let index = items.firstIndex(whereChannelId: channel.id),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.unreadMessageReadAtomic.set(nil)
-                return .itemUpdated([index], [], items)
+                return .just(.itemUpdated([index], [], items))
             }
         default:
             break
         }
         
-        return .none
+        return .just(.none)
     }
     
-    private func parseNewMessage(response: WebSocket.Response, from channel: Channel?) -> ViewChanges {
+    private func parseNewMessage(response: WebSocket.Response, from channel: Channel?) -> Observable<ViewChanges> {
         if let channelId = response.channelId,
             let index = items.firstIndex(whereChannelId: channelId),
             let channelPresenter = items.remove(at: index).channelPresenter {
             channelPresenter.parseEvents(event: response.event)
             items.insert(.channelPresenter(channelPresenter), at: 0)
             
-            return .itemMoved(fromRow: index, toRow: 0, items)
+            return .just(.itemMoved(fromRow: index, toRow: 0, items))
         }
         
         if let channel = channel {
             return parseNewChannel(channel: channel)
         }
         
-        return .none
+        return .just(.none)
     }
     
-    private func parseNewChannel(channel: Channel) -> ViewChanges {
+    private func parseNewChannel(channel: Channel) -> Observable<ViewChanges> {
         guard items.firstIndex(whereChannelId: channel.id) == nil else {
-            return .none
+            return .just(.none)
         }
         
         let channelPresenter = ChannelPresenter(channel: channel, queryOptions: queryOptions, showStatuses: showChannelStatuses)
+        
         // We need to load messages and for that we have to subscribe for changes in ChannelsViewController.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak channelPresenter] in channelPresenter?.reload() }
-        items.insert(.channelPresenter(channelPresenter), at: 0)
-        
-        // Update pagination offset.
-        if next != pageSize {
-            next = .channelsNextPageSize + .offset(next.offset + 1)
-        }
-        
-        return .itemAdded(0, nil, false, items)
+        return channelPresenter.parsedMessagesRequest.asObservable()
+            .take(1)
+            .map({ [weak self] _ -> ViewChanges in
+                guard let self = self else {
+                    return .none
+                }
+                
+                self.items.insert(.channelPresenter(channelPresenter), at: 0)
+                
+                // Update pagination offset.
+                if self.next != self.pageSize {
+                    self.next = .channelsNextPageSize + .offset(self.next.offset + 1)
+                }
+                
+                return .itemAdded(0, nil, false, self.items)
+            })
     }
 }

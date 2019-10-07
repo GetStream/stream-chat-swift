@@ -33,8 +33,14 @@ public enum Endpoint {
     
     /// Get a channel data.
     case channel(ChannelQuery)
+    /// Stop watching a channel.
+    case stopWatching(Channel)
     /// Delete a channel.
     case deleteChannel(Channel)
+    /// Hide a channel.
+    case hideChannel(Channel, User?)
+    /// Show a channel if it was hidden.
+    case showChannel(Channel, User?)
     /// Send a message to a channel.
     case sendMessage(Message, Channel)
     /// Upload an image to a channel.
@@ -105,8 +111,14 @@ extension Endpoint {
             return "channels"
         case .channel(let query):
             return path(to: query.channel, "query")
+        case .stopWatching(let channel):
+            return path(to: channel, "stop-watching")
         case .deleteChannel(let channel):
             return path(to: channel)
+        case .showChannel(let channel, _):
+            return path(to: channel, "show")
+        case .hideChannel(let channel, _):
+            return path(to: channel, "hide")
         case .replies(let message, _):
             return path(to: message, "replies")
             
@@ -194,24 +206,42 @@ extension Endpoint {
              .deleteFile,
              .users:
             return nil
+            
+        case .stopWatching,
+             .markRead:
+            return EmptyData()
+            
         case .guestToken(let user):
             return ["user": user]
+            
         case .addDevice(deviceId: let deviceId, let user):
             return ["id": deviceId, "push_provider": "apn", "user_id": user.id]
+            
         case .devices(let user):
             return ["user_id": user.id]
+            
         case .channel(let query):
             return query
+            
+        case .showChannel(_, let user),
+             .hideChannel(_, let user):
+            if let user = user {
+                return ["user_id": user.id]
+            }
+            
+            return nil
+            
         case .sendMessage(let message, _):
             return ["message": message]
+            
         case .sendMessageAction(let messageAction):
             return messageAction
+            
         case .addReaction(let reactionType, _):
             return ["reaction": ["type": reactionType.rawValue]]
+            
         case .sendEvent(let event, _):
             return ["event": ["type": event]]
-        case .markRead:
-            return EmptyData()
             
         case .updateUsers(let users):
             let usersById: [String: User] = users.reduce([:]) { usersById, user in
@@ -224,6 +254,7 @@ extension Endpoint {
             
         case .muteUser(let user), .unmuteUser(let user):
             return ["target_id": user.id]
+            
         case .flagMessage(let message), .unflagMessage(let message):
             return ["target_message_id": message.id]
             

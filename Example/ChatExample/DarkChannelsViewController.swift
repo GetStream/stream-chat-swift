@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxGesture
 import StreamChatCore
 import StreamChat
 
@@ -63,6 +65,14 @@ final class DarkChannelsViewController: ChannelsViewController {
         
         if let cell = cell as? ChannelTableViewCell {
             cell.nameLabel.text = "\(cell.nameLabel.text ?? "") (\(channelPresenter.channel.members.count))"
+            
+            cell.rx.longPressGesture().when(.began)
+                .subscribe(onNext: { [weak self, weak channelPresenter] _ in
+                    if let self = self, let channelPresenter = channelPresenter {
+                        self.showMenu(for: channelPresenter)
+                    }
+                })
+                .disposed(by: cell.disposeBag)
         }
         
         return cell
@@ -77,5 +87,18 @@ final class DarkChannelsViewController: ChannelsViewController {
             setupPresenter()
             logoutButton.title = "Logout"
         }
+    }
+    
+    func showMenu(for channelPresenter: ChannelPresenter) {
+        let alertController = UIAlertController(title: channelPresenter.channel.name, message: nil, preferredStyle: .actionSheet)
+        alertController.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
+        
+        alertController.addAction(.init(title: "Hide", style: .default, handler: { [weak self] _ in
+            if let self = self {
+                self.channelsPresenter.hide(channelPresenter).drive().disposed(by: self.disposeBag)
+            }
+        }))
+        
+        present(alertController, animated: true)
     }
 }
