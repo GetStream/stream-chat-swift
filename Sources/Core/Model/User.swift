@@ -21,6 +21,8 @@ public struct User: Codable {
         case lastActiveDate = "last_active"
         case devices
         case mutedUsers = "mutes"
+        case messagesUnreadCount = "unread_count"
+        case channelsUnreadCount = "unread_channels"
     }
     
     static let unknown = User(id: "", name: "")
@@ -53,6 +55,8 @@ public struct User: Codable {
     public internal(set) var currentDevice: Device?
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
+    let messagesUnreadCount: Int
+    let channelsUnreadCount: Int
     
     /// Check if the user is the current user.
     public var isCurrent: Bool {
@@ -104,6 +108,8 @@ public struct User: Codable {
         online = false
         devices = []
         mutedUsers = []
+        messagesUnreadCount = 0
+        channelsUnreadCount = 0
     }
     
     public init(from decoder: Decoder) throws {
@@ -116,6 +122,8 @@ public struct User: Codable {
         role = try container.decode(Role.self, forKey: .role)
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
+        messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
+        channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
             self.name = name

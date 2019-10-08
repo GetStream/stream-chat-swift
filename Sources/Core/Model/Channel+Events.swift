@@ -87,7 +87,6 @@ extension Channel {
             }
             .startWith(0)
             .distinctUntilChanged()
-            .share(replay: 1)
             .asDriver(onErrorJustReturn: 0)
     }
     
@@ -199,7 +198,6 @@ extension Channel {
                 return []
             }
             .distinctUntilChanged()
-            .share(replay: 1)
             .asDriver(onErrorJustReturn: [])
     }
 }

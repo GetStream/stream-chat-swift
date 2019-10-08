@@ -89,7 +89,7 @@ public enum Event: Decodable {
         case channel
         case message
         case reaction
-        case unreadCount = "total_unread_count"
+        case unreadCount = "unread_count"
         case unreadChannels = "unread_channels"
         case created = "created_at"
     }

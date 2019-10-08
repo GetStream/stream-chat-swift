@@ -191,6 +191,7 @@ extension WebSocket {
                 let user = healthCheckUser {
                 lastConnectionId = connectionId
                 handshakeTimer.resume()
+                Client.shared.unreadCountAtomic.set((user.channelsUnreadCount, user.messagesUnreadCount))
                 logger?.log("🥰 Connected")
                 return .connected(connectionId, user)
             } else if lastJSONError != nil {

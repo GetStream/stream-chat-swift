@@ -83,7 +83,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="fQM-5J-VyU">
-                                <rect key="frame" x="16" y="64" width="343" height="250"/>
+                                <rect key="frame" x="16" y="64" width="343" height="299"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lMz-sX-zDG">
                                         <rect key="frame" x="0.0" y="0.0" width="128" height="30"/>
@@ -130,21 +130,34 @@
                                             <constraint firstAttribute="height" constant="1" id="w5I-Ww-kht"/>
                                         </constraints>
                                     </view>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total unread count: &lt;Disabled&gt;" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tp6-sE-CBi">
+                                        <rect key="frame" x="0.0" y="183" width="215" height="18"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p8S-Fb-tWu">
+                                        <rect key="frame" x="0.0" y="216" width="343" height="1"/>
+                                        <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="RCM-pe-Xap"/>
+                                        </constraints>
+                                    </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Online members: &lt;Disabled&gt;" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LML-Ms-XJg">
-                                        <rect key="frame" x="0.0" y="183" width="199" height="18"/>
+                                        <rect key="frame" x="0.0" y="232" width="199" height="18"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mr8-ak-oSo">
-                                        <rect key="frame" x="0.0" y="216" width="343" height="1"/>
+                                        <rect key="frame" x="0.0" y="265" width="343" height="1"/>
                                         <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="2lJ-fr-F2c"/>
                                         </constraints>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push  notifications:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MVq-bk-kzB">
-                                        <rect key="frame" x="0.0" y="232" width="130.5" height="18"/>
+                                        <rect key="frame" x="0.0" y="281" width="130.5" height="18"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -155,6 +168,7 @@
                                     <constraint firstItem="gbU-nu-nAs" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="FUK-FQ-UjH"/>
                                     <constraint firstItem="NfR-jx-apB" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="W57-dd-fAC"/>
                                     <constraint firstItem="Mr8-ak-oSo" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="Z3W-3U-xbk"/>
+                                    <constraint firstItem="p8S-Fb-tWu" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="e2b-zi-XFR"/>
                                 </constraints>
                             </stackView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="–" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eTn-JY-iPB">
@@ -201,19 +215,22 @@ badge</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jrn-MT-IQv">
-                                <rect key="frame" x="310" y="240.5" width="51" height="31"/>
-                            </switch>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="H0k-lx-tmL">
                                 <rect key="frame" x="310" y="289.5" width="51" height="31"/>
                             </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="H0k-lx-tmL">
+                                <rect key="frame" x="310" y="338.5" width="51" height="31"/>
+                            </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1lG-cg-5R8">
+                                <rect key="frame" x="310" y="240.5" width="51" height="31"/>
+                            </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="It doesn't hold the state and to disable Push notifications you need to toggle it twice." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B0u-JV-sSq">
-                                <rect key="frame" x="16" y="319" width="283" height="29"/>
+                                <rect key="frame" x="16" y="368" width="283" height="29"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7rg-Xd-yMa">
-                                <rect key="frame" x="0.0" y="363" width="375" height="1"/>
+                                <rect key="frame" x="0.0" y="412" width="375" height="1"/>
                                 <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="b5l-qn-iGf"/>
@@ -236,6 +253,7 @@ Stream Swift SDK v.1.0.0</string>
                             <constraint firstItem="7rg-Xd-yMa" firstAttribute="leading" secondItem="5vB-qP-Wuo" secondAttribute="leading" id="BrI-Wb-SCz"/>
                             <constraint firstItem="OkG-5O-emD" firstAttribute="centerY" secondItem="jQp-EN-Voh" secondAttribute="centerY" id="EtX-0u-umn"/>
                             <constraint firstItem="B0u-JV-sSq" firstAttribute="leading" secondItem="MVq-bk-kzB" secondAttribute="leading" id="G4B-f4-p79"/>
+                            <constraint firstItem="1lG-cg-5R8" firstAttribute="centerY" secondItem="tp6-sE-CBi" secondAttribute="centerY" id="I6Y-59-cBo"/>
                             <constraint firstItem="jQp-EN-Voh" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" id="JHC-nQ-XuY"/>
                             <constraint firstItem="eTn-JY-iPB" firstAttribute="centerY" secondItem="5Of-ZP-Ztv" secondAttribute="centerY" constant="-5" id="Jfi-ED-ACl"/>
                             <constraint firstItem="H0k-lx-tmL" firstAttribute="centerY" secondItem="MVq-bk-kzB" secondAttribute="centerY" id="JiW-cq-VUP"/>
@@ -252,6 +270,7 @@ Stream Swift SDK v.1.0.0</string>
                             <constraint firstItem="fQM-5J-VyU" firstAttribute="top" secondItem="pUb-7p-fIc" secondAttribute="top" constant="20" id="bmR-kQ-ZPs"/>
                             <constraint firstItem="jrn-MT-IQv" firstAttribute="centerY" secondItem="LML-Ms-XJg" secondAttribute="centerY" id="hcw-6a-JAC"/>
                             <constraint firstItem="B0u-JV-sSq" firstAttribute="top" secondItem="MVq-bk-kzB" secondAttribute="bottom" constant="5" id="qS7-8L-5W1"/>
+                            <constraint firstItem="1lG-cg-5R8" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" id="qTd-Gz-MV4"/>
                             <constraint firstItem="pUb-7p-fIc" firstAttribute="bottom" secondItem="Fyw-02-BDi" secondAttribute="bottom" constant="20" id="vik-Ho-cFz"/>
                             <constraint firstItem="7rg-Xd-yMa" firstAttribute="top" secondItem="B0u-JV-sSq" secondAttribute="bottom" constant="15" id="zGc-6l-Vej"/>
                         </constraints>
@@ -264,6 +283,8 @@ Stream Swift SDK v.1.0.0</string>
                         <outlet property="notificationsSwitch" destination="H0k-lx-tmL" id="MCi-8p-JQM"/>
                         <outlet property="onlineSwitch" destination="jrn-MT-IQv" id="cmf-96-hY1"/>
                         <outlet property="onlinelabel" destination="LML-Ms-XJg" id="Lgb-US-mZB"/>
+                        <outlet property="totalUnreadCountLabel" destination="tp6-sE-CBi" id="Kfe-Qa-uQ7"/>
+                        <outlet property="totalUnreadCountSwitch" destination="1lG-cg-5R8" id="4Mk-4p-lEG"/>
                         <outlet property="versionLabel" destination="Fyw-02-BDi" id="n0D-xi-gJO"/>
                     </connections>
                 </viewController>
@@ -485,7 +506,7 @@ Stream Swift SDK v.1.0.0</string>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="Z6X-IU-Iab"/>
-        <segue reference="a5b-Jp-cN7"/>
+        <segue reference="elX-bx-MbU"/>
         <segue reference="seW-P6-fEX"/>
     </inferredMetricsTieBreakers>
 </document>

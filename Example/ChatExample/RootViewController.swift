@@ -13,6 +13,8 @@ import StreamChatCore
 
 final class RootViewController: UIViewController {
     
+    @IBOutlet weak var totalUnreadCountLabel: UILabel!
+    @IBOutlet weak var totalUnreadCountSwitch: UISwitch!
     @IBOutlet weak var badgeLabel: UILabel!
     @IBOutlet weak var badgeSwitch: UISwitch!
     @IBOutlet weak var onlinelabel: UILabel!
@@ -21,6 +23,7 @@ final class RootViewController: UIViewController {
     @IBOutlet weak var versionLabel: UILabel!
     
     let disposeBag = DisposeBag()
+    var totalUnreadCountDisposeBag = DisposeBag()
     var badgeDisposeBag = DisposeBag()
     var onlineDisposeBag = DisposeBag()
     let channel = Channel(type: .messaging, id: "general")
@@ -29,7 +32,7 @@ final class RootViewController: UIViewController {
         super.viewDidLoad()
         setupNotifications()
         navigationController?.navigationBar.prefersLargeTitles = true
-                
+        
         if let user = User.current {
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: user.name.capitalized,
                                                                 style: .plain,
@@ -41,6 +44,17 @@ final class RootViewController: UIViewController {
         }
         
         versionLabel.text = "Demo Project\nStream Swift SDK v.\(Client.version)"
+        
+        totalUnreadCountSwitch.rx.isOn.changed
+            .subscribe(onNext: { [weak self] isOn in
+                if isOn {
+                    self?.subscribeForTotalUnreadCount()
+                } else {
+                    self?.totalUnreadCountDisposeBag = DisposeBag()
+                    self?.totalUnreadCountLabel.text = "Total unread count: <Disabled>"
+                }
+            })
+            .disposed(by: disposeBag)
         
         badgeSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in
@@ -65,11 +79,19 @@ final class RootViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    func subscribeForTotalUnreadCount() {
+        Client.shared.unreadCount
+            .drive(onNext: { [weak self] unreadCount in
+                self?.totalUnreadCountLabel.text = "Unread channels \(unreadCount.0), messages: \(unreadCount.1)"
+                UIApplication.shared.applicationIconBadgeNumber = unreadCount.messages
+            })
+            .disposed(by: totalUnreadCountDisposeBag)
+    }
+    
     func subscribeForUnreadCount() {
         channel.unreadCount
-            .drive(onNext: { [weak self] count in
-                self?.badgeLabel.text = "\(count == 100 ? "99+" : String(count))  "
-                UIApplication.shared.applicationIconBadgeNumber = count
+            .drive(onNext: { [weak self] unreadCount in
+                self?.badgeLabel.text = "\(unreadCount == 100 ? "99+" : String(unreadCount))  "
             })
             .disposed(by: badgeDisposeBag)
     }
@@ -102,7 +124,7 @@ final class RootViewController: UIViewController {
     
     func setupNotifications() {
         notificationsSwitch.rx.isOn.changed
-            .flatMapLatest { isOn -> Observable<Void> in
+            .flatMapLatest({ isOn -> Observable<Void> in
                 if isOn {
                     Notifications.shared.askForPermissionsIfNeeded()
                     return .empty()
@@ -113,7 +135,7 @@ final class RootViewController: UIViewController {
                 }
                 
                 return .empty()
-            }
+            })
             .subscribe()
             .disposed(by: disposeBag)
     }

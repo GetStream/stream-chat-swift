@@ -46,6 +46,8 @@ public final class Client {
     /// The current user.
     public var user: User?
     
+    var unreadCountAtomic = Atomic<UnreadCount>((0, 0))
+    
     /// An observable client web socket connection.
     /// 
     /// The connection is responsible for:
