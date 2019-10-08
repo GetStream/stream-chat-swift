@@ -41,11 +41,18 @@
                         <viewLayoutGuide key="safeArea" id="t9p-1J-lU0"/>
                     </view>
                     <navigationItem key="navigationItem" id="tyC-kY-Be8">
-                        <barButtonItem key="leftBarButtonItem" systemItem="add" id="ReZ-CX-KNT">
-                            <connections>
-                                <action selector="addChannel:" destination="cor-4m-0UN" id="RDJ-f0-p0g"/>
-                            </connections>
-                        </barButtonItem>
+                        <leftBarButtonItems>
+                            <barButtonItem systemItem="add" id="ReZ-CX-KNT">
+                                <connections>
+                                    <action selector="addChannel:" destination="cor-4m-0UN" id="RDJ-f0-p0g"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Show #g" id="bU8-rk-nfS">
+                                <connections>
+                                    <action selector="showGeneral:" destination="cor-4m-0UN" id="7pm-A7-n2K"/>
+                                </connections>
+                            </barButtonItem>
+                        </leftBarButtonItems>
                         <rightBarButtonItems>
                             <barButtonItem systemItem="stop" id="xsm-do-D8r">
                                 <connections>
@@ -478,7 +485,7 @@ Stream Swift SDK v.1.0.0</string>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="Z6X-IU-Iab"/>
-        <segue reference="elX-bx-MbU"/>
+        <segue reference="a5b-Jp-cN7"/>
         <segue reference="seW-P6-fEX"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -105,4 +105,17 @@ final class DarkChannelsViewController: ChannelsViewController {
         
         present(alertController, animated: true)
     }
+    
+    @IBAction func showGeneral(_ sender: UIBarButtonItem) {
+        let channel = Channel(type: .messaging, id: "general")
+        sender.isEnabled = false
+        
+        channel.show()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                sender.isEnabled = true
+                self?.channelsPresenter.reload()
+            })
+            .disposed(by: disposeBag)
+    }
 }

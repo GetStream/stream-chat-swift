@@ -61,7 +61,7 @@ public extension Channel {
     /// Hide the channel from queryChannels for the user until a message is added.
     ///
     /// - Parameter user: the current user.
-    func hide(for user: User? = nil) -> Observable<Void> {
+    func hide(for user: User? = User.current) -> Observable<Void> {
         return Client.shared.rx.connectedRequest(endpoint: .hideChannel(self, user))
             .flatMapLatest { (_: EmptyData) in self.stopWatching() }
     }
@@ -69,7 +69,11 @@ public extension Channel {
     /// Removes the hidden status for a channel.
     ///
     /// - Parameter user: the current user.
-    func show(for user: User? = nil) -> Observable<Void> {
+    func show(for user: User? = User.current) -> Observable<Void> {
+        guard let user = user else {
+            return .empty()
+        }
+        
         return Client.shared.rx.connectedRequest(endpoint: .showChannel(self, user))
             .map { (_: EmptyData) in Void() }
     }
