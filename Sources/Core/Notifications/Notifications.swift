@@ -175,11 +175,11 @@ extension Notifications: UNUserNotificationCenterDelegate {
     public static func parseMessageReference(notificationResponse response: UNNotificationResponse) -> MessageReference? {
         guard let userInfo = response.notification.request.content.userInfo as? [String: String],
             let messageId = userInfo[NotificationUserInfoKeys.messageId.rawValue],
-            let chanellId = userInfo[NotificationUserInfoKeys.channelId.rawValue] else {
+            let channelId = userInfo[NotificationUserInfoKeys.channelId.rawValue] else {
                 return nil
         }
         
-        return (chanellId, messageId)
+        return (channelId, messageId)
     }
 }
 
