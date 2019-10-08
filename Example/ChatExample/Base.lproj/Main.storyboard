@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wm7-Ii-BZP">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wm7-Ii-BZP">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -212,8 +212,10 @@ badge</string>
                                     <constraint firstAttribute="height" constant="1" id="b5l-qn-iGf"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Stream Swift SDK v.1.0.0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fyw-02-BDi">
-                                <rect key="frame" x="118.5" y="632.5" width="138.5" height="14.5"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fyw-02-BDi">
+                                <rect key="frame" x="118.5" y="618" width="138.5" height="29"/>
+                                <string key="text">Demo Project
+Stream Swift SDK v.1.0.0</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -352,12 +354,108 @@ badge</string>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="0IT-ko-SLg" kind="relationship" relationship="rootViewController" id="hrg-IT-6og"/>
+                        <segue destination="ILk-9W-cdO" kind="relationship" relationship="rootViewController" id="bFo-Tt-rt5"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="o9A-3q-hDw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1281" y="-63"/>
+            <point key="canvasLocation" x="-2020" y="-63"/>
+        </scene>
+        <!--Login-->
+        <scene sceneID="FcB-TZ-bNa">
+            <objects>
+                <viewController id="ILk-9W-cdO" customClass="LoginViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="mWs-yd-frq">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="efb-oB-Elc">
+                                <rect key="frame" x="16" y="64" width="343" height="152"/>
+                                <subviews>
+                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vdR-lO-ZcN">
+                                        <rect key="frame" x="0.0" y="0.0" width="174" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                        <state key="normal" title="Test User #1 (Jon Snow)"/>
+                                        <connections>
+                                            <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="NCF-EU-18h"/>
+                                        </connections>
+                                    </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1sr-Xf-5Ga">
+                                        <rect key="frame" x="0.0" y="45" width="343" height="1"/>
+                                        <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="dV5-HI-qCc"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ajg-K2-RrU">
+                                        <rect key="frame" x="0.0" y="61" width="192" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                        <state key="normal" title="Test User #2 (Steep Moon)"/>
+                                        <connections>
+                                            <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="FCd-Vp-jlt"/>
+                                        </connections>
+                                    </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="upo-Ap-0Rf">
+                                        <rect key="frame" x="0.0" y="106" width="343" height="1"/>
+                                        <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="rBK-Mb-tmS"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SCf-XQ-rtk">
+                                        <rect key="frame" x="0.0" y="122" width="187" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                        <state key="normal" title="Test User #3 (Spring Unit)"/>
+                                        <connections>
+                                            <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="gDX-da-TCu"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="upo-Ap-0Rf" firstAttribute="width" secondItem="efb-oB-Elc" secondAttribute="width" id="oEN-mi-5Au"/>
+                                    <constraint firstItem="1sr-Xf-5Ga" firstAttribute="width" secondItem="efb-oB-Elc" secondAttribute="width" id="oeI-pg-JH6"/>
+                                </constraints>
+                            </stackView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2e-bX-RrE">
+                                <rect key="frame" x="0.0" y="231" width="375" height="1"/>
+                                <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="1" id="jV7-Av-0Eh"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qkx-nf-WiO">
+                                <rect key="frame" x="118.5" y="618" width="138.5" height="29"/>
+                                <string key="text">Demo Project
+Stream Swift SDK v.1.0.0</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="R2e-bX-RrE" firstAttribute="top" secondItem="efb-oB-Elc" secondAttribute="bottom" constant="15" id="76d-H9-bu9"/>
+                            <constraint firstItem="R2e-bX-RrE" firstAttribute="leading" secondItem="mWs-yd-frq" secondAttribute="leading" id="7hh-SD-zIL"/>
+                            <constraint firstItem="efb-oB-Elc" firstAttribute="leading" secondItem="gGL-YF-wXz" secondAttribute="leading" constant="16" id="9cD-l8-fdy"/>
+                            <constraint firstItem="qkx-nf-WiO" firstAttribute="centerX" secondItem="gGL-YF-wXz" secondAttribute="centerX" id="Ahj-nO-yCX"/>
+                            <constraint firstItem="efb-oB-Elc" firstAttribute="top" secondItem="gGL-YF-wXz" secondAttribute="top" constant="20" id="EK4-eb-883"/>
+                            <constraint firstItem="gGL-YF-wXz" firstAttribute="trailing" secondItem="efb-oB-Elc" secondAttribute="trailing" constant="16" id="o0m-gG-MBq"/>
+                            <constraint firstItem="gGL-YF-wXz" firstAttribute="bottom" secondItem="qkx-nf-WiO" secondAttribute="bottom" constant="20" id="veE-mH-nNt"/>
+                            <constraint firstAttribute="trailing" secondItem="R2e-bX-RrE" secondAttribute="trailing" id="vxo-3H-n0Q"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="gGL-YF-wXz"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Login" largeTitleDisplayMode="always" id="n63-Bd-bXJ">
+                        <barButtonItem key="backBarButtonItem" title="Logout" id="a3A-MZ-TuC"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="versionLabel" destination="qkx-nf-WiO" id="0Dx-7r-bP1"/>
+                        <segue destination="0IT-ko-SLg" kind="show" identifier="RootViewController" id="KhR-fH-fGN"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Uee-d6-hqm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1271" y="-63"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="2hy-ym-0fX">
@@ -365,6 +463,7 @@ badge</string>
                 <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="rzG-dX-Wof" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="k8B-25-9Jc">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
@@ -378,7 +477,7 @@ badge</string>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="qnB-bf-sHX"/>
+        <segue reference="Z6X-IU-Iab"/>
         <segue reference="elX-bx-MbU"/>
         <segue reference="seW-P6-fEX"/>
     </inferredMetricsTieBreakers>

@@ -29,8 +29,18 @@ final class RootViewController: UIViewController {
         super.viewDidLoad()
         setupNotifications()
         navigationController?.navigationBar.prefersLargeTitles = true
+                
+        if let user = User.current {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: user.name.capitalized,
+                                                                style: .plain,
+                                                                target: nil,
+                                                                action: nil)
+        } else {
+            navigationController?.popViewController(animated: true)
+            return
+        }
         
-        versionLabel.text = "Stream Swift SDK v.\(Client.version)"
+        versionLabel.text = "Demo Project\nStream Swift SDK v.\(Client.version)"
         
         badgeSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in

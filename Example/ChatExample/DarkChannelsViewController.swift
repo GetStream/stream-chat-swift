@@ -48,7 +48,9 @@ final class DarkChannelsViewController: ChannelsViewController {
         let channel = Channel(type: .messaging,
                               id: "new_channel_\(number)",
                               name: "Channel \(number)",
-                              members: [User.user1.asMember, User.user2.asMember])
+                              members: [User.user1.asMember,
+                                        User.user2.asMember,
+                                        User.user3.asMember])
         
         channel.create()
             .flatMapLatest({ channelResponse in
@@ -82,8 +84,10 @@ final class DarkChannelsViewController: ChannelsViewController {
         if logoutButton.title == "Logout" {
             Client.shared.disconnect()
             logoutButton.title = "Login"
-        } else if let delegate = UIApplication.shared.delegate as? AppDelegate {
-            delegate.setupUser()
+        } else if let delegate = UIApplication.shared.delegate as? AppDelegate,
+            let navigationController = delegate.window?.rootViewController as? UINavigationController,
+            let loginViewController = navigationController.viewControllers.first as? LoginViewController {
+            loginViewController.login()
             setupPresenter()
             logoutButton.title = "Logout"
         }
