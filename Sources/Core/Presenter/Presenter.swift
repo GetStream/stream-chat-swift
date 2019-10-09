@@ -15,12 +15,15 @@ public class Presenter<T> {
     
     /// A list of presenter items.
     public internal(set) var items = [T]()
-    /// A pagination of an initial page size, e.g. .limit(25)
-    var pageSize: Pagination
+    /// A pagination of an initial page size, e.g. `.limit(25)`
+    public internal(set) var pageSize: Pagination
     /// A pagination for the next request.
-    var next: Pagination
+    public internal(set) var next: Pagination
+    /// Checks if the presenter can load more items.
+    public var hasNextPage: Bool { return next != pageSize }
     /// Checks if presenter items are empty.
     public var isEmpty: Bool { return items.isEmpty }
+    
     let loadPagination = PublishSubject<Pagination>()
     
     private(set) lazy var connectionErrors: Driver<ViewChanges> = Client.shared.connection
@@ -52,7 +55,7 @@ public class Presenter<T> {
     
     /// Load the next page of items.
     public func loadNext() {
-        if next != pageSize {
+        if hasNextPage {
             load(pagination: next)
         }
     }
