@@ -88,10 +88,10 @@ public extension Array where Element == ChatItem {
     ///
     /// - Parameter channelId: a channelId of a searching `ChatItem` of a channel presenter.
     /// - Returns: an index of an `ChatItem` with a channel presenter.
-    func firstIndex(whereChannelId channelId: String) -> Int? {
+    func firstIndex(whereChannelId channelId: String, channelType: ChannelType) -> Int? {
         return lastIndex(where: { item -> Bool in
             if case .channelPresenter(let channelPresenter) = item {
-                return channelPresenter.channel.id == channelId
+                return channelPresenter.channel.id == channelId && channelPresenter.channel.type == channelType
             }
             
             return false

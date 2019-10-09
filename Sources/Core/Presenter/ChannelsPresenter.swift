@@ -106,7 +106,8 @@ public extension ChannelsPresenter {
     }
     
     private func removeFromItems(_ channelPresenter: ChannelPresenter) {
-        guard let index = items.firstIndex(whereChannelId: channelPresenter.channel.id) else {
+        guard let index = items.firstIndex(whereChannelId: channelPresenter.channel.id,
+                                           channelType: channelPresenter.channel.type) else {
             return
         }
         
@@ -166,14 +167,14 @@ extension ChannelsPresenter {
         
         switch response.event {
         case .channelDeleted:
-            if let index = items.firstIndex(whereChannelId: channelId) {
+            if let index = items.firstIndex(whereChannelId: channelId, channelType: response.channelType) {
                 items.remove(at: index)
                 return .itemRemoved(index, items)
             }
         case .messageNew(_, _, _, let channel, _):
             return parseNewMessage(response: response, from: channel)
         case .messageDeleted(let message, _):
-            if let index = items.firstIndex(whereChannelId: channelId),
+            if let index = items.firstIndex(whereChannelId: channelId, channelType: response.channelType),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseEvents(event: response.event)
                 return .itemUpdated([index], [message], items)
@@ -192,7 +193,7 @@ extension ChannelsPresenter {
         case .notificationMarkRead(let channel, let unreadCount, _, _):
             if unreadCount == 0,
                 let channel = channel,
-                let index = items.firstIndex(whereChannelId: channel.id),
+                let index = items.firstIndex(whereChannelId: channel.id, channelType: channel.type),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.unreadMessageReadAtomic.set(nil)
                 return .itemUpdated([index], [], items)
@@ -206,7 +207,7 @@ extension ChannelsPresenter {
     
     private func parseNewMessage(response: WebSocket.Response, from channel: Channel?) -> ViewChanges {
         if let channelId = response.channelId,
-            let index = items.firstIndex(whereChannelId: channelId),
+            let index = items.firstIndex(whereChannelId: channelId, channelType: response.channelType),
             let channelPresenter = items.remove(at: index).channelPresenter {
             channelPresenter.parseEvents(event: response.event)
             items.insert(.channelPresenter(channelPresenter), at: 0)
@@ -222,7 +223,7 @@ extension ChannelsPresenter {
     }
     
     private func parseNewChannel(channel: Channel) -> ViewChanges {
-        guard items.firstIndex(whereChannelId: channel.id) == nil else {
+        guard items.firstIndex(whereChannelId: channel.id, channelType: channel.type) == nil else {
             return .none
         }
         
@@ -245,7 +246,8 @@ extension ChannelsPresenter {
             .subscribe(onNext: { [weak self, weak channelPresenter] _ in
                 guard let self = self,
                     let channelPresenter = channelPresenter,
-                    let index = self.items.firstIndex(whereChannelId: channelPresenter.channel.id) else {
+                    let index = self.items.firstIndex(whereChannelId: channelPresenter.channel.id,
+                                                      channelType: channelPresenter.channel.type) else {
                     return
                 }
                 
