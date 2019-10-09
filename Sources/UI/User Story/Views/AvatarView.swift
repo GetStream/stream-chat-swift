@@ -84,12 +84,10 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
     }
     
     private func showAvatarLabel(with name: String, _ baseColor: UIColor) {
-        if name.contains(" ") {
-            let words = name.split(separator: " ")
-            
-            if let a = String(describing: words[0]).first, let b = String(describing: words[1]).first {
-                avatarLabel.text = String(a).appending(String(b)).uppercased()
-            }
+        let words = name.split(separator: " ")
+        
+        if words.count == 2, let a = String(describing: words[0]).first, let b = String(describing: words[1]).first {
+            avatarLabel.text = String(a).appending(String(b)).uppercased()
         } else {
             avatarLabel.text = name.first?.uppercased()
         }
