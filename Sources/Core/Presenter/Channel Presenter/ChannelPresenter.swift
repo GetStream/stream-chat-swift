@@ -223,7 +223,7 @@ extension ChannelPresenter {
     ///
     /// - Returns: an observable completion.
     public func markReadIfPossible() -> Observable<Void> {
-        guard InternetConnection.shared.isAvailable else {
+        guard InternetConnection.shared.isAvailable, channel.config.readEventsEnabled else {
             return .empty()
         }
         
