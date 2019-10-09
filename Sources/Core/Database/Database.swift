@@ -14,11 +14,15 @@ public protocol Database {
     /// A user owner of the database.
     var user: User? { get set }
     
+    // MARK: Channels
+    
     /// Fetch channels and messages from a database.
     ///
     /// - Parameter query: a channels query
     /// - Returns: an observable channels response.
     func channels(_ query: ChannelsQuery) -> Observable<[ChannelResponse]>
+    
+    // MARK: Channel
     
     /// Fetch channel messages.
     ///
@@ -50,6 +54,8 @@ public protocol Database {
     ///   - messages: replies.
     ///   - message: a parent message.
     func add(replies: [Message], for message: Message)
+    
+    // MARK: Members
     
     /// Set members for a channel.
     ///

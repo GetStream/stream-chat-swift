@@ -23,7 +23,7 @@ public final class Client {
     let baseURL: BaseURL
     let stayConnectedInBackground: Bool
     
-    /// A databse for an offline mode.
+    /// A database for an offline mode.
     public let database: Database?
     
     var token: Token? {
