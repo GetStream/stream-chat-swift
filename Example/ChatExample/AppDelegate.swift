@@ -11,6 +11,7 @@ import StreamChat
 import StreamChatCore
 import RxSwift
 import RxCocoa
+//import Firebase
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,6 +27,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                               logOptions: .all)
         
         setupNotifications()
+//        FirebaseApp.configure()
         
         return true
     }
@@ -38,7 +40,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             if let tabBarController = self?.window?.rootViewController as? UITabBarController,
                 let navigationViewController = tabBarController.viewControllers?.first as? UINavigationController,
                 let channelsViewController = navigationViewController.viewControllers.first as? ChannelsViewController,
-                let channelIndex = channelsViewController.items.firstIndex(whereChannelId: messageReference.channelId),
+                let channelIndex = channelsViewController.items.firstIndex(whereChannelId: messageReference.channelId,
+                                                                           channelType: messageReference.channelType),
                 let channelPresenter = channelsViewController.items[channelIndex].channelPresenter {
                 channelsViewController.navigationController?.viewControllers = [channelsViewController]
                 let chatViewController = channelsViewController.createChatViewController(with: channelPresenter,
