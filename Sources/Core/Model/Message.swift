@@ -116,12 +116,14 @@ public struct Message: Codable {
     ///   - attachments: attachments (see `Attachment`).
     ///   - extraData: an extra data.
     ///   - parentId: a parent message id.
+    ///   - mentionedUsers: a list of mentioned users.
     ///   - showReplyInChannel: a flag to show reply messages in a channel, not in a separate thread.
     public init(id: String = "",
                 text: String,
                 attachments: [Attachment] = [],
                 extraData: Codable? = nil,
                 parentId: String? = nil,
+                mentionedUsers: [User] = [],
                 showReplyInChannel: Bool = false) {
         self.id = id
         self.parentId = parentId
@@ -135,7 +137,7 @@ public struct Message: Codable {
         command = nil
         args = nil
         self.attachments = attachments
-        mentionedUsers = []
+        self.mentionedUsers = mentionedUsers
         replyCount = 0
         latestReactions = []
         ownReactions = []
@@ -160,6 +162,10 @@ public struct Message: Codable {
         if parentId != nil {
             try container.encode(parentId, forKey: .parentId)
             try container.encode(showReplyInChannel, forKey: .showReplyInChannel)
+        }
+        
+        if !mentionedUsers.isEmpty {
+            try container.encode(mentionedUsers.map({ $0.id }), forKey: .mentionedUsers)
         }
     }
     

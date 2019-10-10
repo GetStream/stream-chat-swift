@@ -54,7 +54,7 @@ extension MessageTableViewCell {
         let boldFont = style.font.withTraits(.traitBold)
         
         if !mentionedUsersNames.isEmpty {
-            addAttributes(to: attributedText, text: text, for: mentionedUsersNames, attributes: [.font: boldFont])
+            addAttributes(to: attributedText, text: text.lowercased(), for: mentionedUsersNames, attributes: [.font: boldFont])
         }
         
         guard style.markdownEnabled, text.rangeOfCharacter(from: .markdown) != nil else {
@@ -85,8 +85,16 @@ extension MessageTableViewCell {
                                for mentionedUsersNames: [String],
                                attributes: [NSAttributedString.Key : Any]) {
         mentionedUsersNames.forEach { name in
-            if let range = text.range(of: name) {
-                attributedText.addAttributes(attributes, range: text.nsRange(from: range))
+            if let range = text.range(of: name.lowercased()) {
+                let nsRange = text.nsRange(from: range)
+                attributedText.replaceCharacters(in: nsRange, with: name)
+                attributedText.addAttributes(attributes, range: nsRange)
+                
+                // Add a shadow for `@`.
+                if let style = style, nsRange.location > 0 {
+                    let atRange = NSRange(location: nsRange.location - 1, length: 1)
+                    attributedText.addAttributes([.foregroundColor: style.textColor.withAlphaComponent(0.5)], range: atRange)
+                }
             }
         }
     }

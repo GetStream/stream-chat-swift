@@ -183,12 +183,25 @@ extension ChannelPresenter {
         }
         
         editMessage = nil
+        var mentionedUsers = [User]()
+        
+        // Add mentiond users
+        if !text.isEmpty, text.contains("@"), !channel.members.isEmpty {
+            let text = text.lowercased()
+            
+            channel.members.forEach { member in
+                if text.contains("@\(member.user.name.lowercased())") {
+                    mentionedUsers.append(member.user)
+                }
+            }
+        }
         
         let message = Message(id: messageId,
                               text: text,
                               attachments: attachments,
                               extraData: extraData,
                               parentId: parentId,
+                              mentionedUsers: mentionedUsers,
                               showReplyInChannel: false)
         
         return channel.send(message: message)
