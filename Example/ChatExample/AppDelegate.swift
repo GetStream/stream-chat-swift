@@ -11,7 +11,6 @@ import StreamChat
 import StreamChatCore
 import RxSwift
 import RxCocoa
-//import Firebase
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,7 +26,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                               logOptions: .all)
         
         setupNotifications()
-//        FirebaseApp.configure()
         
         return true
     }

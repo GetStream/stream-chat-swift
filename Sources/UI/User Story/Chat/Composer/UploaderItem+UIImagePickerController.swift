@@ -12,13 +12,16 @@ import Photos.PHPhotoLibrary
 
 extension UploaderItem {
     convenience init?(channel: Channel, pickedImage: PickedImage) {
-        guard let fileURL = pickedImage.fileURL else {
+        guard pickedImage.fileURL != nil || pickedImage.image != nil else {
             return nil
         }
         
         let fileName = pickedImage.fileName
-        let ext = fileURL.pathExtension.lowercased()
-        var fileType = AttachmentFileType(ext: ext)
+        var fileType = AttachmentFileType.generic
+        
+        if let fileURL = pickedImage.fileURL {
+            fileType = AttachmentFileType(ext: fileURL.pathExtension.lowercased())
+        }
         
         if fileType == .generic, let dot = fileName.lastIndex(of: ".") {
             let ext = String(fileName.suffix(from: dot))
@@ -28,7 +31,7 @@ extension UploaderItem {
         }
         
         self.init(channel: channel,
-                  url: fileURL,
+                  url: pickedImage.fileURL,
                   type: pickedImage.isVideo ? .video : .image,
                   image: pickedImage.image,
                   fileName: fileName,

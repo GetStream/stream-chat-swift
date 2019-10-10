@@ -82,7 +82,7 @@ public final class UploaderItem: Equatable {
     ///   - fileType: a file type.
     ///   - fileSize: a file size.
     public init(channel: Channel,
-                url: URL,
+                url: URL?,
                 type: UploadingType = .file,
                 image: UIImage? = nil,
                 gifData: Data? = nil,
@@ -94,9 +94,23 @@ public final class UploaderItem: Equatable {
         self.type = type
         self.image = image
         self.gifData = gifData
-        self.fileName = fileName ?? url.lastPathComponent
-        self.fileType = fileType ?? AttachmentFileType(ext: url.pathExtension)
-        self.fileSize = fileSize > 0 ? fileSize : url.fileSize
+        self.fileSize = fileSize > 0 ? fileSize : (url?.fileSize ?? 0)
+        
+        if let fileName = fileName {
+            self.fileName = fileName
+        } else if let url = url {
+            self.fileName = url.lastPathComponent
+        } else {
+            self.fileName = "unknown.jpeg"
+        }
+        
+        if let fileType = fileType {
+            self.fileType = fileType
+        } else if let url = url {
+            self.fileType = AttachmentFileType(ext: url.pathExtension.lowercased())
+        } else {
+            self.fileType = .jpeg
+        }
     }
     
     /// Init an uploader item with a given uploaded image attachment.
