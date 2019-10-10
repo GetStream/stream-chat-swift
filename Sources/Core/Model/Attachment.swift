@@ -84,13 +84,9 @@ public struct Attachment: Codable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        author = try container.decodeIfPresent(String.self, forKey: .author)
-        
-        if let text = try container.decodeIfPresent(String.self, forKey: .text) {
-            self.text = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        } else {
-            text = nil
-        }
+        let author = try container.decodeIfPresent(String.self, forKey: .author)
+        self.author = author
+        var text = try container.decodeIfPresent(String.self, forKey: .text)?.trimmingCharacters(in: .whitespacesAndNewlines)
         
         title = (try container.decodeIfPresent(String.self, forKey: .title)
             ?? container.decodeIfPresent(String.self, forKey: .fallback)
@@ -113,8 +109,15 @@ public struct Attachment: Codable {
         if let typeString = try? container.decode(String.self, forKey: .type) {
             let existsType = AttachmentType(rawValue: typeString)
 
-            if existsType == .video, let url = url, url.absoluteString.contains("youtube") {
-                type = .youtube
+            if existsType == .video {
+                if author == "GIPHY" {
+                    type = .giphy
+                    text = nil
+                } else if let url = url, url.absoluteString.contains("youtube") {
+                    type = .youtube
+                } else {
+                    type = existsType
+                }
             } else {
                 type = existsType
             }
@@ -125,6 +128,7 @@ public struct Attachment: Codable {
         }
         
         self.type = type
+        self.text = text
         file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
         actions = try container.decodeIfPresent([Action].self, forKey: .actions) ?? []
         extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isAttachment }))
@@ -174,6 +178,8 @@ public struct Attachment: Codable {
     }
 }
 
+// MARK: - Attachment Action
+
 public extension Attachment {
     /// An attachment action, e.g. send, shuffle.
     struct Action: Decodable {
@@ -210,6 +216,8 @@ public extension Attachment {
         case primary
     }
 }
+
+// MARK: - Attachment Type
 
 /// An attachment type.
 public enum AttachmentType: RawRepresentable, Codable, Equatable {
@@ -293,6 +301,8 @@ public enum AttachmentType: RawRepresentable, Codable, Equatable {
     }
 }
 
+// MARK: - Attachment File
+
 /// An attachment file description.
 public struct AttachmentFile: Codable {
     private enum CodingKeys: String, CodingKey {
@@ -339,6 +349,8 @@ public struct AttachmentFile: Codable {
         try container.encodeIfPresent(mimeType, forKey: .mimeType)
     }
 }
+
+// MARK: - Attachment File Type
 
 /// An attachment file type.
 public enum AttachmentFileType: String, Codable {

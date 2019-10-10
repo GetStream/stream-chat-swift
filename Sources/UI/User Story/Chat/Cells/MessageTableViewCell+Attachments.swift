@@ -44,8 +44,9 @@ extension MessageTableViewCell {
             }
             
             let preview: AttachmentPreviewProtocol
+            let isFileAttachment = attachment.type == .file
             
-            if attachment.type == .file || attachment.type == .video {
+            if isFileAttachment {
                 preview = createAttachmentFilePreview(with: attachment, style: style)
             } else {
                 preview = createAttachmentPreview(with: attachment,
@@ -58,7 +59,7 @@ extension MessageTableViewCell {
             attachmentPreviews.append(preview)
             
             // File preview.
-            if attachment.type == .file || attachment.type == .video {
+            if isFileAttachment {
                 preview.update(maskImage: backgroundImageForAttachment(at: index)) { _, _ in }
                 addGetures(preview, nil)
             } else if let preview = preview as? AttachmentPreview {
