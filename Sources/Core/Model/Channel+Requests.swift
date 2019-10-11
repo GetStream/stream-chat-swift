@@ -14,11 +14,9 @@ import RxSwift
 public extension Channel {
     
     /// Create a channel.
-    ///
-    /// - Parameter options: a query options for a new channel, e.g. watch channel events, presence of users.
     /// - Returns: an observable channel response.
-    func create(options: QueryOptions = .watch) -> Observable<ChannelResponse> {
-        return query(pagination: .messagesPageSize, options: options)
+    func create() -> Observable<ChannelResponse> {
+        return query(options: .watch)
     }
     
     /// Request for a channel data, e.g. messages, members, read states, etc

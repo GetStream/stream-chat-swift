@@ -26,10 +26,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     let channelAtomic = Atomic<Channel>()
     
     /// A channel (see `Channel`).
-    public var channel: Channel {
-        return channelAtomic.get(defaultValue: Channel(type: channelType, id: channelId))
-    }
-    
+    public var channel: Channel { return channelAtomic.get(defaultValue: .unused) }
     /// A parent message for replies.
     public let parentMessage: Message?
     /// Query options.
@@ -75,12 +72,33 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     }
     
     /// An observable view changes (see `ViewChanges`).
-    public private(set) lazy var changes = Driver
-        .merge(parentMessage == nil ? parsedMessagesRequest : parsedRepliesResponse(repliesRequest),
-               parentMessage == nil ? parsedChannelResponse(messagesDatabaseFetch) : parsedRepliesResponse(repliesDatabaseFetch),
-               webSocketEvents,
-               ephemeralMessageEvents,
-               connectionErrors)
+    public private(set) lazy var changes =
+        (channel.id.isEmpty
+            // Get a channel with a generated channel id.
+            ? channel.query()
+                .map({ [weak self] channelResponse -> Void in
+                    // Update the current channel.
+                    self?.channelAtomic.set(channelResponse.channel)
+                    return Void()
+                })
+                .asDriver(onErrorJustReturn: ())
+            : Driver.just(()))
+            // Merge all view changes from all sources.
+            .flatMapLatest({ [weak self] _ -> Driver<ViewChanges> in
+                guard let self = self else {
+                    return .empty()
+                }
+                
+                return Driver.merge(
+                    self.parentMessage == nil ? self.parsedMessagesRequest : self.parsedRepliesResponse(self.repliesRequest),
+                    self.parentMessage == nil
+                        ? self.parsedChannelResponse(self.messagesDatabaseFetch)
+                        : self.parsedRepliesResponse(self.repliesDatabaseFetch),
+                    self.webSocketEvents,
+                    self.ephemeralMessageEvents,
+                    self.connectionErrors
+                )
+            })
     
     lazy var parsedMessagesRequest = parsedChannelResponse(messagesRequest)
     

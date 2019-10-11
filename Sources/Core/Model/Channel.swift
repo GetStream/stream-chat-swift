@@ -95,11 +95,11 @@ public final class Channel: Codable {
     public convenience init(type: ChannelType, with member: Member, extraData: Codable? = nil) {
         var members = [member]
         
-        if let currentUser = User.current, member != currentUser.asMember {
+        if let currentUser = User.current, member.user != currentUser {
             members.append(currentUser.asMember)
         }
         
-        self.init(type: type, id: "", members: members, extraData: extraData)
+        self.init(type: type, id: "", name: member.user.name, members: members, extraData: extraData)
     }
     
     /// Init a channel.
@@ -135,8 +135,16 @@ public final class Channel: Codable {
             self.extraData = nil
         }
         
-        if (id.isEmpty && members.count < 2) || type == .unknown {
-            ClientLogger.log("❌", "Created a bad channel id: \(id) type: \(type), members: \(members)")
+        if type == .unknown {
+            ClientLogger.log("❌", "Created a bad channel unknown type")
+        }
+
+        if id.isEmpty, members.count < 2, let currentUser = User.current {
+            if let anotherMember = members.first, anotherMember.user != currentUser {
+                return
+            }
+            
+            ClientLogger.log("❌", "Created a bad channel without id and without members")
         }
     }
     
@@ -305,4 +313,8 @@ public enum ChannelType: String, Codable {
     public var title: String {
         return rawValue.capitalized
     }
+}
+
+extension Channel {
+    static let unused = Channel(type: .messaging, id: "5h0u1d-n3v3r-b3-u5'd")
 }
