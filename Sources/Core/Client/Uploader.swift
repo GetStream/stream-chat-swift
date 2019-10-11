@@ -74,6 +74,7 @@ public final class UploaderItem: Equatable {
     /// Init an uploading item.
     ///
     /// - Parameters:
+    ///   - channel: a channel for the uploading.
     ///   - url: an original file URL.
     ///   - type: an uploading type.
     ///   - image: an original image.

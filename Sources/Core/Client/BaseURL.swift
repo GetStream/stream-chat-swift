@@ -37,8 +37,9 @@ public struct BaseURL: CustomStringConvertible {
             }
         }
         
-        baseURL = URL(string: "https:\(urlString)")!
-        wsURL = URL(string: "wss:\(urlString)")!
+        urlString = urlString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        baseURL = URL(string: "https://\(urlString)/")!
+        wsURL = URL(string: "wss://\(urlString)/")!
     }
 }
 
