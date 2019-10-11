@@ -19,8 +19,8 @@ You can sign up for a Stream account at [https://getstream.io/chat/get_started/]
 
 ## Requirements
 
-- iOS 11
-- Xcode 10.2
+- iOS 11+
+- Xcode 10.2+
 - Swift 5
 - CocoaPods 1.7+
 
