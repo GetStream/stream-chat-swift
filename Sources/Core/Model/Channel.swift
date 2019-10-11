@@ -88,14 +88,27 @@ public final class Channel: Codable {
     var unreadCountAtomic = Atomic(0)
     var onlineUsersAtomic = Atomic<[User]>([])
     
+    /// Init a channel 1-by-1 with another member.
+    /// - Parameter type: a channel type.
+    /// - Parameter member: an another member.
+    /// - Parameter extraData: an `Codable` object with extra data of the channel.
+    public convenience init(type: ChannelType, with member: Member, extraData: Codable? = nil) {
+        var members = [member]
+        
+        if let currentUser = User.current, member != currentUser.asMember {
+            members.append(currentUser.asMember)
+        }
+        
+        self.init(type: type, id: "", members: members, extraData: extraData)
+    }
+    
     /// Init a channel.
-    ///
     /// - Parameters:
     ///     - type: a channel type (`ChannelType`).
     ///     - id: a channel id.
     ///     - name: a channel name.
     ///     - imageURL: an image url of the channel.
-    ///     - memberIds: a list of user ids of the channel members.
+    ///     - members: a list of members.
     ///     - extraData: an `Codable` object with extra data of the channel.
     public init(type: ChannelType,
                 id: String,
@@ -114,6 +127,7 @@ public final class Channel: Codable {
         createdBy = nil
         self.members = Set(members)
         frozen = false
+        config = Config()
         
         if let extraData = extraData {
             self.extraData = ExtraData(extraData)
@@ -121,7 +135,9 @@ public final class Channel: Codable {
             self.extraData = nil
         }
         
-        config = Config()
+        if (id.isEmpty && members.count < 2) || type == .unknown {
+            ClientLogger.log("❌", "Created a bad channel id: \(id) type: \(type), members: \(members)")
+        }
     }
     
     required public init(from decoder: Decoder) throws {

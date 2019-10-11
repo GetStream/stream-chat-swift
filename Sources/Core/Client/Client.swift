@@ -118,6 +118,7 @@ public final class Client {
         
         if logOptions == .all || logOptions == .requests || logOptions == .requestsHeaders {
             logger = ClientLogger(icon: "🐴", options: logOptions)
+            DispatchQueue.main.async { self.logger?.log("🕸", "Base URL: \(baseURL)") }
         } else {
             logger = nil
         }
