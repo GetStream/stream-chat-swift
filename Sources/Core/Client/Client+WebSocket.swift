@@ -25,11 +25,10 @@ extension Client {
             logger?.log("⚠️", "JSON payload URL is empty")
         }
         
-        let wsURL = baseURL.url(.webSocket)
         var urlComponents = URLComponents()
-        urlComponents.scheme = wsURL.scheme
-        urlComponents.host = wsURL.host
-        urlComponents.path = wsURL.path.appending("connect")
+        urlComponents.scheme = baseURL.wsURL.scheme
+        urlComponents.host = baseURL.wsURL.host
+        urlComponents.path = baseURL.wsURL.path.appending("connect")
         
         urlComponents.queryItems = [URLQueryItem(name: "json", value: jsonString),
                                     URLQueryItem(name: "api_key", value: apiKey),
@@ -42,7 +41,9 @@ extension Client {
             logger?.log("⚠️", "Bad URL")
         }
         
-        return WebSocket(URLRequest(url: url ?? wsURL), stayConnectedInBackground: stayConnectedInBackground, logger: logger)
+        return WebSocket(URLRequest(url: url ?? baseURL.wsURL),
+                         stayConnectedInBackground: stayConnectedInBackground,
+                         logger: logger)
     }
 }
 

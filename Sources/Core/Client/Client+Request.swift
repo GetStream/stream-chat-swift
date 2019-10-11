@@ -73,11 +73,10 @@ extension Client {
     }
     
     private func requestURL(for endpoint: Endpoint, queryItems: [URLQueryItem]) -> Result<URL, ClientError> {
-        let baseURL = self.baseURL.url(.https)
         var urlComponents = URLComponents()
-        urlComponents.scheme = baseURL.scheme
-        urlComponents.host = baseURL.host
-        urlComponents.path = baseURL.path
+        urlComponents.scheme = baseURL.baseURL.scheme
+        urlComponents.host = baseURL.baseURL.host
+        urlComponents.path = baseURL.baseURL.path
         urlComponents.queryItems = queryItems
         
         guard let url = urlComponents.url?.appendingPathComponent(endpoint.path) else {

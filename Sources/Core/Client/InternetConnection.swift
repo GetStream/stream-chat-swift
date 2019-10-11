@@ -17,7 +17,7 @@ public final class InternetConnection {
     public static let shared = InternetConnection()
     
     private let disposeBag = DisposeBag()
-    private lazy var reachability = Reachability(hostname: Client.shared.baseURL.url(.webSocket).host ?? "getstream.io")
+    private lazy var reachability = Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
     
     /// Check if the Internet is available.
     public var isAvailable: Bool {

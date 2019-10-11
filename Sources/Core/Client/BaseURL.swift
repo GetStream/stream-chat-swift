@@ -9,39 +9,45 @@
 import Foundation
 
 /// A base URL for the `Client`.
-public struct BaseURL {
+public struct BaseURL: CustomStringConvertible {
     static let placeholderURL = URL(string: "https://getstream.io")!
     
-    private let urlString: String
+    let baseURL: URL
+    let wsURL: URL
+    
+    public var description: String { return baseURL.absoluteString }
     
     /// Create a base URL.
-    ///
-    /// - Parameter location: a server location.
-    public init(location: Location = .usEast) {
-        urlString = "//chat\(location.rawValue.isEmpty ? "" : "-")\(location.rawValue).stream-io-api.com/"
+    /// - Parameter serverLocation: a Stream Chat server location.
+    public init(serverLocation: ServerLocation = .usEast) {
+        self.init(customURL: URL(string: serverLocation.rawValue)!)
     }
     
-    func url(_ scheme: ClientScheme) -> URL {
-        return URL(string: scheme.rawValue.appending(":").appending(urlString)) ?? URL(fileURLWithPath: "/")
+    /// Init with a custom server URL.
+    ///
+    /// - Parameter url: an URL
+    public init(customURL url: URL) {
+        var urlString = url.absoluteString
+        
+        // Remove a scheme prefix.
+        for prefix in ["https:", "http:", "wss:", "ws:"] {
+            if urlString.hasPrefix(prefix) {
+                urlString = String(urlString.suffix(urlString.count - prefix.count))
+                break
+            }
+        }
+        
+        baseURL = URL(string: "https:\(urlString)")!
+        wsURL = URL(string: "wss:\(urlString)")!
     }
 }
+
+// MARK: - Base URL Location
 
 extension BaseURL {
     /// A server location.
-    public enum Location: String {
+    public enum ServerLocation: String {
         /// An US-East.
-        case usEast = "us-east-1"
+        case usEast = "https://chat-us-east-1.stream-io-api.com/"
     }
-}
-
-extension BaseURL: CustomStringConvertible {
-    public var description: String {
-        return urlString
-    }
-}
-
-/// An url scheme.
-enum ClientScheme: String {
-    case https = "https"
-    case webSocket = "wss"
 }
