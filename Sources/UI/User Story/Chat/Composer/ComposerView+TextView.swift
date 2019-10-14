@@ -47,8 +47,18 @@ extension ComposerView {
             return
         }
         
-        var height = min(max(height + 2 * textViewPadding, style.height), CGFloat.composerMaxHeight)
-        textView.isScrollEnabled = height == CGFloat.composerMaxHeight
+        var maxHeight = CGFloat.composerMaxHeight
+        
+        if !imagesCollectionView.isHidden {
+            maxHeight -= .composerAttachmentsHeight
+        }
+        
+        if !filesStackView.isHidden {
+            let filesHeight = CGFloat.composerFileHeight * CGFloat(filesStackView.arrangedSubviews.count)
+            maxHeight -= filesHeight
+        }
+        
+        var height = min(max(height + 2 * textViewPadding, style.height), maxHeight)
         imagesCollectionView.isHidden = imageUploaderItems.isEmpty
         filesStackView.isHidden = isUploaderFilesEmpty
         var textViewTopOffset = textViewPadding
@@ -64,18 +74,27 @@ extension ComposerView {
             textViewTopOffset += filesHeight
         }
         
-        updateToolBarHeight()
+        textView.isScrollEnabled = height >= CGFloat.composerMaxHeight
         
         if heightConstraint.layoutConstraints.first?.constant != height {
             heightConstraint.update(offset: height)
+            setNeedsLayout()
+            layoutIfNeeded()
+        }
+        
+        if textViewTopConstraint?.layoutConstraints.first?.constant != textViewTopOffset {
             textViewTopConstraint?.update(offset: textViewTopOffset)
             setNeedsLayout()
             layoutIfNeeded()
         }
+        
+        updateToolBarHeight()
     }
     
     func updateToolBarHeight() {
-        let height = CGFloat.messagesToComposerPadding + (imagesCollectionView.isHidden ? 0 : .composerAttachmentsHeight)
+        let height = (heightConstraint?.layoutConstraints.first?.constant ?? 0)
+            + (style?.edgeInsets.top ?? 0)
+            + (style?.edgeInsets.bottom ?? 0)
         
         guard toolBar.frame.height != height else {
             return

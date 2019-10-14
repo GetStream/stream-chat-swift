@@ -366,6 +366,10 @@ extension ChatViewController {
         if subviews.count == 1, let first = subviews.first as? ComposerAddFileView {
             first.tap()
         } else {
+            if composerView.textView.frame.height > (.composerMaxHeight / 2) {
+                composerView.textView.resignFirstResponder()
+            }
+            
             composerAddFileContainerView.animate(show: true)
             
             if composerEditingContainerView.isHidden == false {

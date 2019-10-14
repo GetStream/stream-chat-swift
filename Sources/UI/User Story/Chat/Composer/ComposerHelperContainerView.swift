@@ -92,7 +92,7 @@ public final class ComposerHelperContainerView: UIView {
         
         snp.makeConstraints { make in
             make.left.right.bottom.equalToSuperview()
-            make.top.greaterThanOrEqualTo(parent.safeAreaLayoutGuide.snp.topMargin).offset(CGFloat.composerHelperShadowRadius * 2)
+            make.top.greaterThanOrEqualTo(parent.safeAreaLayoutGuide.snp.topMargin).offset(CGFloat.composerHelperShadowRadius)
         }
         
         moveContainerViewPosition()
