@@ -129,9 +129,23 @@ extension Notifications {
             return
         }
         
+        var body = message.textOrArgs
+        
+        if body.isEmpty, let attachment = message.attachments.first {
+            body = attachment.title
+            
+            if body.isEmpty, let text = attachment.text {
+                body = text
+            }
+            
+            if body.isEmpty, let file = attachment.file {
+                body = "A \(file.type.rawValue) file \(file.sizeString)"
+            }
+        }
+        
         let content = UNMutableNotificationContent()
-        content.title = channel.name
-        content.body = message.textOrArgs
+        content.title = "\(message.user.name) @ \(channel.name)"
+        content.body = body
         content.sound = UNNotificationSound.default
         content.badge = (UIApplication.shared.applicationIconBadgeNumber + 1) as NSNumber
         
