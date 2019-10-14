@@ -159,11 +159,7 @@ public final class ClientLogger {
                            function: String = #function,
                            line: Int = #line) {
         if let error = error {
-            if let message = message {
-                ClientLogger.logger("\(icon)❌", "", "\(message) in \(function)[\(line)]")
-            }
-            
-            ClientLogger.logger("\(icon)❌", "", "\(error) in \(function)[\(line)]")
+            ClientLogger.logger("\(icon)❌", "", "\(message ?? "") \(error) in \(function)[\(line)]")
         }
     }
     
