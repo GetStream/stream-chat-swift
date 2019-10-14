@@ -136,7 +136,7 @@ extension Notifications {
         content.badge = (UIApplication.shared.applicationIconBadgeNumber + 1) as NSNumber
         
         content.userInfo = [NotificationUserInfoKeys.channelId.rawValue: channel.id,
-                            NotificationUserInfoKeys.channelType.rawValue: channel.type,
+                            NotificationUserInfoKeys.channelType.rawValue: channel.type.rawValue,
                             NotificationUserInfoKeys.messageId.rawValue: message.id]
         
         // TODO: Add attchament image or video. The url should refer to a file.
