@@ -183,8 +183,8 @@ public extension ComposerView {
             make.left.equalToSuperview().offset(style.edgeInsets.left)
             make.right.equalToSuperview().offset(-style.edgeInsets.right)
             heightConstraint = make.height.equalTo(style.height).constraint
-            let bottomMargin = view.safeAreaLayoutGuide.snp.bottomMargin
-            bottomConstraint = make.bottom.equalTo(bottomMargin).offset(-style.edgeInsets.bottom).constraint
+            make.bottom.lessThanOrEqualTo(view.safeAreaLayoutGuide.snp.bottomMargin).offset(-style.edgeInsets.bottom)
+            bottomConstraint = make.bottom.equalToSuperview().priority(999).constraint
         }
         
         // Apply style.
@@ -243,7 +243,7 @@ public extension ComposerView {
         textView.backgroundColor = backgroundColor
         
         textView.snp.makeConstraints { make in
-            textViewTopConstraint = make.top.equalToSuperview().offset(textViewPadding).priority(999).constraint
+            textViewTopConstraint = make.top.equalToSuperview().offset(textViewPadding).priority(990).constraint
             make.bottom.equalToSuperview().offset(-textViewPadding)
             
             if sendButton.superview == nil {
@@ -336,7 +336,7 @@ public extension ComposerView {
 private extension ComposerView {
     func updateBottomConstraint(with keyboardHeight: CGFloat) {
         let bottom: CGFloat = (style?.edgeInsets.bottom ?? 0)
-            + max(0, keyboardHeight - (keyboardHeight > 0 ? .safeAreaBottom + toolBar.frame.height : 0))
+            + max(0, keyboardHeight - (keyboardHeight > 0 ? toolBar.frame.height : 0))
         
         bottomConstraint?.update(offset: -bottom)
         
