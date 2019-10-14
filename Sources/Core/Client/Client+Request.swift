@@ -201,7 +201,12 @@ extension Client {
         logger?.log(response, data: data, forceToShowData: (httpResponse?.statusCode ?? 400) >= 400)
         
         if let error = error {
-            ClientLogger.log("🐴", error)
+            if (error as NSError).code == NSURLErrorCancelled {
+                logger?.log("A request was cancelled: \(error)")
+            } else {
+                ClientLogger.log("🐴", error)
+            }
+            
             performInCallbackQueue { completion(.failure(.requestFailed(error))) }
             return
         }
