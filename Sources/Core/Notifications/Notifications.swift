@@ -21,9 +21,13 @@ public final class Notifications: NSObject {
     
     /// A message reference: channel id + message id.
     public typealias MessageReference = (channelId: String, channelType: ChannelType, messageId: String)
-    
+    /// A custom local notification content.
+    public typealias LocalNotificationContent = (Message, Channel) -> UNNotificationContent
     /// A callback type to open a chat view controller with a given message reference.
     public typealias ShowNewMessageCallback = (MessageReference) -> Void
+    
+    /// A callback to create a custom local notification for a new message when the app in the background.
+    public var localNotificationContent: LocalNotificationContent?
     
     /// A shared instance of notifications manager.
     public static let shared = Notifications()
@@ -129,6 +133,16 @@ extension Notifications {
             return
         }
         
+        let content = createLocalNotificationContent(newMessage: message, in: channel)
+        let request = UNNotificationRequest(identifier: message.id, content: content, trigger: nil)
+        UNUserNotificationCenter.current().add(request)
+    }
+    
+    private func createLocalNotificationContent(newMessage message: Message, in channel: Channel) -> UNNotificationContent {
+        if let localNotificationContent = localNotificationContent {
+            return localNotificationContent(message, channel)
+        }
+        
         var body = message.textOrArgs
         
         if body.isEmpty, let attachment = message.attachments.first {
@@ -143,16 +157,6 @@ extension Notifications {
             }
         }
         
-        let content = UNMutableNotificationContent()
-        content.title = "\(message.user.name) @ \(channel.name)"
-        content.body = body
-        content.sound = UNNotificationSound.default
-        content.badge = (UIApplication.shared.applicationIconBadgeNumber + 1) as NSNumber
-        
-        content.userInfo = [NotificationUserInfoKeys.channelId.rawValue: channel.id,
-                            NotificationUserInfoKeys.channelType.rawValue: channel.type.rawValue,
-                            NotificationUserInfoKeys.messageId.rawValue: message.id]
-        
         // TODO: Add attchament image or video. The url should refer to a file.
         //  1. Download image.
         //  2. Save to NSTemporaryDirectory() + "notifications" + message id
@@ -166,8 +170,17 @@ extension Notifications {
         //         content.attachments = [notificationAttachment]
         //    }
         
-        let request = UNNotificationRequest(identifier: message.id, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+        let content = UNMutableNotificationContent()
+        content.title = "\(message.user.name) @ \(channel.name)"
+        content.body = body
+        content.sound = UNNotificationSound.default
+        content.badge = (UIApplication.shared.applicationIconBadgeNumber + 1) as NSNumber
+        
+        content.userInfo = [NotificationUserInfoKeys.channelId.rawValue: channel.id,
+                            NotificationUserInfoKeys.channelType.rawValue: channel.type.rawValue,
+                            NotificationUserInfoKeys.messageId.rawValue: message.id]
+        
+        return content
     }
 }
 
