@@ -52,10 +52,21 @@ extension Client {
     /// - Parameters:
     ///   - user: the current user (see `User`).
     ///   - tokenProvider: a token provider.
-    public func set(user: User, _ tokenProvider: TokenProvider) {
+    public func set(user: User, _ tokenProvider: @escaping TokenProvider) {
         disconnect()
         self.user = user
-        tokenProvider { self.setup(token: $0) }
+        self.tokenProvider = tokenProvider
+        touchTokenProvider()
+    }
+    
+    @discardableResult
+    func touchTokenProvider() -> Bool {
+        if let tokenProvider = tokenProvider {
+            tokenProvider { [weak self] in self?.setup(token: $0) }
+            return true
+        }
+        
+        return false
     }
     
     private func setup(token: Token) {
@@ -156,8 +167,9 @@ extension Client {
             ? .just(true)
             : InternetConnection.shared.isAvailableObservable
         
-        let webSocketResponse = tokenSubject.asObserver().map { $0?.isValid ?? false }
+        let webSocketResponse = tokenSubject.asObserver()
             .distinctUntilChanged()
+            .map { $0?.isValid ?? false }
             .observeOn(MainScheduler.instance)
             .flatMapLatest { [unowned self] isTokenValid -> Observable<WebSocketEvent> in
                 if isTokenValid {

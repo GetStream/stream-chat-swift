@@ -85,6 +85,8 @@ public enum ClientError: LocalizedError {
 
 /// A parsed server response error.
 public struct ClientErrorResponse: LocalizedError, Decodable {
+    static let tokenExpiredErrorCode = 40
+    
     private enum CodingKeys: String, CodingKey {
         case code
         case message

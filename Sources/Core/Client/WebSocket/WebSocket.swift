@@ -210,13 +210,22 @@ extension WebSocket {
             return .connecting
             
         case .disconnected(let error):
-            return disconnected(error)
+            return isTokenExpired() ? nil : disconnected(error)
             
         default:
             break
         }
         
         return nil
+    }
+    
+    private func isTokenExpired() -> Bool {
+        guard let lastJSONError = lastJSONError else {
+            return false
+        }
+        
+        let isTokenExpired = lastJSONError.code == ClientErrorResponse.tokenExpiredErrorCode
+        return isTokenExpired && Client.shared.touchTokenProvider()
     }
     
     private func disconnectedNoInternet() {
