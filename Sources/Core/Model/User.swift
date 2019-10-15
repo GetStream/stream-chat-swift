@@ -16,6 +16,7 @@ public struct User: Codable {
         case avatarURL = "image"
         case role
         case online
+        case isBanned = "banned"
         case created = "created_at"
         case updated = "updated_at"
         case lastActiveDate = "last_active"
@@ -47,6 +48,8 @@ public struct User: Codable {
     public let lastActiveDate: Date?
     /// An indicator if a user is online.
     public let online: Bool
+    /// An indicator if a user was banned.
+    public let isBanned: Bool
     /// A user role.
     public let role: Role
     /// A list of devices.
@@ -110,6 +113,7 @@ public struct User: Codable {
         mutedUsers = []
         messagesUnreadCount = 0
         channelsUnreadCount = 0
+        isBanned = false
     }
     
     public init(from decoder: Decoder) throws {
@@ -119,6 +123,7 @@ public struct User: Codable {
         updated = try container.decode(Date.self, forKey: .updated)
         lastActiveDate = try container.decodeIfPresent(Date.self, forKey: .lastActiveDate)
         online = try container.decode(Bool.self, forKey: .online)
+        isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         role = try container.decode(Role.self, forKey: .role)
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
