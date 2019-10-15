@@ -170,7 +170,13 @@ open class ChannelsViewController: ViewController {
         if channelPresenter.channel.config.readEventsEnabled {
             channelPresenter.isReadUpdates.asObservable()
                 .takeUntil(chatViewController.rx.deallocated)
-                .subscribe(onNext: { [weak self] in self?.tableView.reloadRows(at: [indexPath], with: .none) })
+                .subscribe(onNext: { [weak self] in
+                    if let self = self,
+                        let indexPathsForVisibleRows = self.tableView.indexPathsForVisibleRows,
+                        indexPathsForVisibleRows.contains(indexPath) {
+                        self.tableView.reloadRows(at: [indexPath], with: .none)
+                    }
+                })
                 .disposed(by: disposeBag)
         }
         
