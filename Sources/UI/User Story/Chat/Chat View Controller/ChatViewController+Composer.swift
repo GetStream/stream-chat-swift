@@ -278,7 +278,7 @@ extension ChatViewController {
     ///
     /// - Returns: a container helper view.
     open func createComposerAddFileContainerView(title: String) -> ComposerHelperContainerView? {
-        guard !composerAddFileTypes.isEmpty else {
+        guard let presenter = channelPresenter, presenter.channel.config.uploadsEnabled, !composerAddFileTypes.isEmpty else {
             return nil
         }
         

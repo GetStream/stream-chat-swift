@@ -210,6 +210,7 @@ public extension Channel {
             case typingEventsEnabled = "typing_events"
             case readEventsEnabled = "read_events"
             case connectEventsEnabled = "connect_events"
+            case uploadsEnabled = "uploads"
             case repliesEnabled = "replies"
             case searchEnabled = "search"
             case mutesEnabled = "mutes"
@@ -229,6 +230,8 @@ public extension Channel {
         public let readEventsEnabled: Bool
         /// Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
         let connectEventsEnabled: Bool
+        /// Enables uploads.
+        public let uploadsEnabled: Bool
         /// Enables message threads and replies. Enabled by default.
         public let repliesEnabled: Bool
         /// Controls if messages should be searchable (this is a premium feature). Disabled by default.
@@ -254,6 +257,7 @@ public extension Channel {
             typingEventsEnabled = try container.decode(Bool.self, forKey: .typingEventsEnabled)
             readEventsEnabled = try container.decode(Bool.self, forKey: .readEventsEnabled)
             connectEventsEnabled = try container.decode(Bool.self, forKey: .connectEventsEnabled)
+            uploadsEnabled = try container.decodeIfPresent(Bool.self, forKey: .uploadsEnabled) ?? false
             repliesEnabled = try container.decode(Bool.self, forKey: .repliesEnabled)
             searchEnabled = try container.decode(Bool.self, forKey: .searchEnabled)
             mutesEnabled = try container.decode(Bool.self, forKey: .mutesEnabled)
@@ -270,6 +274,7 @@ public extension Channel {
             typingEventsEnabled = false
             readEventsEnabled = false
             connectEventsEnabled = false
+            uploadsEnabled = false
             repliesEnabled = false
             searchEnabled = false
             mutesEnabled = false
