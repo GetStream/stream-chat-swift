@@ -419,9 +419,9 @@ Stream Swift SDK v.1.0.0</string>
                                 <rect key="frame" x="16" y="70" width="802" height="152"/>
                                 <subviews>
                                     <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vdR-lO-ZcN">
-                                        <rect key="frame" x="0.0" y="0.0" width="174" height="30"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="246" height="30"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                        <state key="normal" title="Test User #1 (Jon Snow)"/>
+                                        <state key="normal" title="⚔️ Jon Snow (broken-waterfall-5)"/>
                                         <connections>
                                             <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="NCF-EU-18h"/>
                                         </connections>
@@ -434,9 +434,9 @@ Stream Swift SDK v.1.0.0</string>
                                         </constraints>
                                     </view>
                                     <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ajg-K2-RrU">
-                                        <rect key="frame" x="0.0" y="61" width="192" height="30"/>
+                                        <rect key="frame" x="0.0" y="61" width="230" height="30"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                        <state key="normal" title="Test User #2 (Steep Moon)"/>
+                                        <state key="normal" title="🌙 Steep Moon (steep-moon-9)"/>
                                         <connections>
                                             <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="FCd-Vp-jlt"/>
                                         </connections>
@@ -449,9 +449,9 @@ Stream Swift SDK v.1.0.0</string>
                                         </constraints>
                                     </view>
                                     <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SCf-XQ-rtk">
-                                        <rect key="frame" x="0.0" y="122" width="187" height="30"/>
+                                        <rect key="frame" x="0.0" y="122" width="217" height="30"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                        <state key="normal" title="Test User #3 (Spring Unit)"/>
+                                        <state key="normal" title="🍁 Spring Unit (spring-unit-2)"/>
                                         <connections>
                                             <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="gDX-da-TCu"/>
                                         </connections>

@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import StreamChatCore
+import StreamChat
 
 final class RootViewController: UIViewController {
     
@@ -85,6 +86,11 @@ final class RootViewController: UIViewController {
     
     func subscribeForTotalUnreadCount() {
         Client.shared.unreadCount
+            .do(onNext: { _ in
+                if let currentUser = User.current, currentUser.isBanned {
+                    Banners.shared.show("You are banned")
+                }
+            })
             .drive(onNext: { [weak self] unreadCount in
                 self?.totalUnreadCountLabel.text = "Unread channels \(unreadCount.0), messages: \(unreadCount.1)"
                 UIApplication.shared.applicationIconBadgeNumber = unreadCount.messages
