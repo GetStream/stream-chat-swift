@@ -340,7 +340,13 @@ public struct AttachmentFile: Codable {
             type = .generic
         }
         
-        size = try container.decodeIfPresent(Int64.self, forKey: .size) ?? 0
+        if let size = try? container.decodeIfPresent(Int64.self, forKey: .size) {
+            self.size = size
+        } else if let floatSize = try? container.decodeIfPresent(Float64.self, forKey: .size) {
+            size = Int64(floatSize.rounded())
+        } else {
+            size = 0
+        }
     }
     
     public func encode(to encoder: Encoder) throws {
