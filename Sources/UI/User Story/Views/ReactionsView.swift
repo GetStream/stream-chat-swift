@@ -33,11 +33,18 @@ final class ReactionsView: UIView {
         return view
     }()
     
-    func show(atY y: CGFloat, for message: Message, completion: @escaping Completion) {
+    func show(at point: CGPoint, for message: Message, completion: @escaping Completion) {
         addSubview(reactionsView)
-        let x = (UIScreen.main.bounds.width - .messageTextMaxWidth) / 2
-        let y = max(safeAreaTopOffset + .reactionsPickerAvatarRadius + .messageEdgePadding, y - .reactionsPickerCornerRadius)
-        reactionsView.frame = CGRect(x: x, y: y, width: .messageTextMaxWidth, height: .reactionsPickerCornerHeight)
+        
+        var x: CGFloat = (.screenWidth - .attachmentPreviewMaxWidth) / 2
+        
+        if UIDevice.isPad {
+            x = max(min(point.x, .screenWidth - .messageTextPaddingWithAvatar - .attachmentPreviewMaxWidth),
+                    .messageTextPaddingWithAvatar)
+        }
+        
+        let y = max(safeAreaTopOffset + .reactionsPickerAvatarRadius + .messageEdgePadding, point.y - .reactionsPickerCornerRadius)
+        reactionsView.frame = CGRect(x: x, y: y, width: .attachmentPreviewMaxWidth, height: .reactionsPickerCornerHeight)
         reactionsView.transform = .init(scaleX: 0.5, y: 0.5)
         reactionCounts = message.reactionCounts?.counts
         alpha = 0

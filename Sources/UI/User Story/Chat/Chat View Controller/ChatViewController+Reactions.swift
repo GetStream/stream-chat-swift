@@ -13,12 +13,12 @@ import SnapKit
 extension ChatViewController {
     
     func update(cell: MessageTableViewCell, forReactionsIn message: Message) {
-        cell.update(reactionCounts: message.reactionCounts) { [weak self] cell in
-            self?.showReactions(from: cell, in: message)
+        cell.update(reactionCounts: message.reactionCounts) { [weak self] cell, locationInView in
+            self?.showReactions(from: cell, in: message, locationInView: locationInView)
         }
     }
     
-    func showReactions(from cell: UITableViewCell, in message: Message, locationInView: CGPoint? = nil) {
+    func showReactions(from cell: UITableViewCell, in message: Message, locationInView: CGPoint) {
         if reactionsView != nil {
             reactionsView?.removeFromSuperview()
         }
@@ -29,15 +29,11 @@ extension ChatViewController {
         reactionsView.reactionsView.backgroundColor = style.incomingMessage.reactionViewStyle.backgroundColor
         reactionsView.makeEdgesEqualToSuperview(superview: view)
         self.reactionsView = reactionsView
-        var y = tableView.convert(cell.frame, to: view).origin.y
         
-        if let locationInView = locationInView {
-            y += locationInView.y
-        } else {
-            y += .reactionsHeight / 2
-        }
+        let x = locationInView.x - .attachmentPreviewMaxWidth / 2
+        let y = tableView.convert(cell.frame, to: view).origin.y + locationInView.y
         
-        reactionsView.show(atY: y, for: message) { [weak self] reactionType in
+        reactionsView.show(at: CGPoint(x: x, y: y), for: message) { [weak self] reactionType in
             guard let self = self,
                 let messageIndex = self.channelPresenter?.items.lastIndex(whereMessageId: messageId),
                 let message = self.channelPresenter?.items[messageIndex].message else {

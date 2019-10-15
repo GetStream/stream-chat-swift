@@ -92,8 +92,6 @@ extension CGFloat {
     public static let messageVerticalInset: CGFloat = 5
     /// A message text padding with avatar,
     public static let messageTextPaddingWithAvatar: CGFloat = .messageEdgePadding + .messageAvatarSize + .messageInnerPadding
-    /// A message text max width.
-    public static let messageTextMaxWidth: CGFloat = UIScreen.main.bounds.width - 2 * .messageTextPaddingWithAvatar
     
     /// A message read users avatar border width.
     public static let messageReadUsersAvatarBorderWidth: CGFloat = 1
@@ -111,6 +109,12 @@ extension CGFloat {
     public static let attachmentPreviewHeight: CGFloat = 150
     /// A message attachment preview max height.
     public static let attachmentPreviewMaxHeight: CGFloat = 220
+    
+    /// An attachment preview max width.
+    public static let attachmentPreviewMaxWidth: CGFloat = UIDevice.isPad
+        ? (4 * .attachmentPreviewMaxHeight / 3).rounded()
+        : UIScreen.main.bounds.width - 2 * .messageTextPaddingWithAvatar
+    
     /// A message attachment preview action button height.
     public static let attachmentPreviewActionButtonHeight: CGFloat = 2 * .messageCornerRadius
     /// A message attachment file preview height.

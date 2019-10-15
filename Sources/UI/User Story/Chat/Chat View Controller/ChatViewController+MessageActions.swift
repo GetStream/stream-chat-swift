@@ -12,7 +12,7 @@ import RxSwift
 
 extension ChatViewController {
     
-    func showMenu(from cell: UITableViewCell, for message: Message, locationInView: CGPoint? = nil) {
+    func showMenu(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) {
         guard let presenter = channelPresenter else {
             return
         }

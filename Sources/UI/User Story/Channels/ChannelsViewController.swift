@@ -145,7 +145,15 @@ open class ChannelsViewController: ViewController {
             return
         }
         
-        show(chatViewController: createChatViewController(with: channelPresenter, indexPath: indexPath))
+        let chatViewController = createChatViewController(with: channelPresenter, indexPath: indexPath)
+        
+        if let splitViewController = splitViewController {
+            let navigationController = UINavigationController(rootViewController: chatViewController)
+            navigationController.navigationBar.barStyle = self.navigationController?.navigationBar.barStyle ?? .default
+            splitViewController.showDetailViewController(navigationController, sender: self)
+        } else {
+            show(chatViewController: chatViewController)
+        }
     }
     
     /// Creates a chat view controller for the selected channel cell.

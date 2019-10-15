@@ -19,6 +19,9 @@ extension UIDevice {
         case inches65
     }
     
+    static let isPhone = UIDevice.current.userInterfaceIdiom == .phone
+    static let isPad = UIDevice.current.userInterfaceIdiom == .pad
+    
     var phoneScreenSize: ScreenSize {
         guard userInterfaceIdiom == .phone else {
             return .unknown

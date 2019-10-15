@@ -120,9 +120,9 @@ extension MessageTableViewCell {
         
         reactionsOverlayView.rx.tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { [weak self] _ in
+            .subscribe(onNext: { [weak self] gesture in
                 if let self = self {
-                    action(self)
+                    action(self, gesture.location(in: self.reactionsOverlayView))
                 }
             })
             .disposed(by: disposeBag)

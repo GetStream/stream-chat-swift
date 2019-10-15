@@ -13,6 +13,8 @@ import StreamChatCore
 
 final class RootViewController: UIViewController {
     
+    @IBOutlet weak var splitViewButton: UIButton!
+    @IBOutlet weak var splitViewSeparator: UIView!
     @IBOutlet weak var totalUnreadCountLabel: UILabel!
     @IBOutlet weak var totalUnreadCountSwitch: UISwitch!
     @IBOutlet weak var badgeLabel: UILabel!
@@ -30,6 +32,8 @@ final class RootViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        splitViewButton.isHidden = UIDevice.current.userInterfaceIdiom == .phone
+        splitViewSeparator.isHidden = UIDevice.current.userInterfaceIdiom == .phone
         setupNotifications()
         navigationController?.navigationBar.prefersLargeTitles = true
         

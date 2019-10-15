@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wm7-Ii-BZP">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+    <device id="ipad11_0rounded" orientation="portrait" layout="fullscreen" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
@@ -13,7 +13,7 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ChannelsViewController" customModule="StreamChat" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -35,7 +35,7 @@
             <objects>
                 <viewController id="cor-4m-0UN" customClass="DarkChannelsViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="XIo-6h-3fA">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="t9p-1J-lU0"/>
@@ -72,18 +72,18 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qob-9V-kbc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1134" y="-63"/>
+            <point key="canvasLocation" x="1156" y="-62"/>
         </scene>
         <!--Stream Chat-->
         <scene sceneID="nEO-1d-ppa">
             <objects>
                 <viewController id="0IT-ko-SLg" customClass="RootViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="5vB-qP-Wuo">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="fQM-5J-VyU">
-                                <rect key="frame" x="16" y="64" width="343" height="299"/>
+                                <rect key="frame" x="16" y="70" width="802" height="360"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lMz-sX-zDG">
                                         <rect key="frame" x="0.0" y="0.0" width="128" height="30"/>
@@ -94,7 +94,7 @@
                                         </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NfR-jx-apB">
-                                        <rect key="frame" x="0.0" y="45" width="343" height="1"/>
+                                        <rect key="frame" x="0.0" y="45" width="802" height="1"/>
                                         <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="aJG-im-NEt"/>
@@ -105,59 +105,74 @@
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Show my messaging channels"/>
                                         <connections>
-                                            <segue destination="Jpg-eB-15H" kind="presentation" modalPresentationStyle="fullScreen" id="elX-bx-MbU"/>
+                                            <segue destination="Jpg-eB-15H" kind="presentation" modalPresentationStyle="fullScreen" id="qta-yE-T30"/>
+                                        </connections>
+                                    </button>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Is3-cY-vA9">
+                                        <rect key="frame" x="0.0" y="106" width="802" height="1"/>
+                                        <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="xac-Wl-l6s"/>
+                                        </constraints>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uBn-vP-Vku">
+                                        <rect key="frame" x="0.0" y="122" width="263" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
+                                        <state key="normal" title="Show split view of channels and chat"/>
+                                        <connections>
+                                            <segue destination="FA6-rb-JLu" kind="presentation" modalPresentationStyle="fullScreen" id="gPS-K7-ckQ"/>
                                         </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gbU-nu-nAs">
-                                        <rect key="frame" x="0.0" y="106" width="343" height="1"/>
+                                        <rect key="frame" x="0.0" y="167" width="802" height="1"/>
                                         <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="W39-gf-ApT"/>
                                         </constraints>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Of-ZP-Ztv">
-                                        <rect key="frame" x="0.0" y="122" width="142" height="30"/>
+                                        <rect key="frame" x="0.0" y="183" width="142" height="30"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Show #general chat"/>
                                         <connections>
-                                            <segue destination="rzG-dX-Wof" kind="presentation" modalPresentationStyle="fullScreen" id="Z6X-IU-Iab"/>
+                                            <segue destination="Z71-Wp-boH" kind="presentation" modalPresentationStyle="fullScreen" id="x9o-K0-tAV"/>
                                         </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="qr4-mI-Aca">
-                                        <rect key="frame" x="0.0" y="167" width="343" height="1"/>
+                                        <rect key="frame" x="0.0" y="228" width="802" height="1"/>
                                         <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="w5I-Ww-kht"/>
                                         </constraints>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total unread count: &lt;Disabled&gt;" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tp6-sE-CBi">
-                                        <rect key="frame" x="0.0" y="183" width="215" height="18"/>
+                                        <rect key="frame" x="0.0" y="244" width="215" height="18"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p8S-Fb-tWu">
-                                        <rect key="frame" x="0.0" y="216" width="343" height="1"/>
+                                        <rect key="frame" x="0.0" y="277" width="802" height="1"/>
                                         <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="RCM-pe-Xap"/>
                                         </constraints>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Online members: &lt;Disabled&gt;" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LML-Ms-XJg">
-                                        <rect key="frame" x="0.0" y="232" width="199" height="18"/>
+                                        <rect key="frame" x="0.0" y="293" width="199" height="18"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mr8-ak-oSo">
-                                        <rect key="frame" x="0.0" y="265" width="343" height="1"/>
+                                        <rect key="frame" x="0.0" y="326" width="802" height="1"/>
                                         <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="2lJ-fr-F2c"/>
                                         </constraints>
                                     </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push  notifications:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MVq-bk-kzB">
-                                        <rect key="frame" x="0.0" y="281" width="130.5" height="18"/>
+                                        <rect key="frame" x="0.0" y="342" width="130.5" height="18"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -167,12 +182,13 @@
                                     <constraint firstItem="qr4-mI-Aca" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="63B-qm-Ywr"/>
                                     <constraint firstItem="gbU-nu-nAs" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="FUK-FQ-UjH"/>
                                     <constraint firstItem="NfR-jx-apB" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="W57-dd-fAC"/>
+                                    <constraint firstItem="Is3-cY-vA9" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="XmS-Ge-9cD"/>
                                     <constraint firstItem="Mr8-ak-oSo" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="Z3W-3U-xbk"/>
                                     <constraint firstItem="p8S-Fb-tWu" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="e2b-zi-XFR"/>
                                 </constraints>
                             </stackView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="–" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eTn-JY-iPB">
-                                <rect key="frame" x="158" y="188" width="16" height="16"/>
+                                <rect key="frame" x="158" y="255" width="16" height="16"/>
                                 <color key="backgroundColor" name="systemRedColor" catalog="System" colorSpace="catalog"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="16" id="Jsh-lg-vjv"/>
@@ -188,7 +204,7 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DARK MODE" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="11f-PJ-qcd">
-                                <rect key="frame" x="241" y="132" width="72" height="16"/>
+                                <rect key="frame" x="241" y="138" width="72" height="16"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="72" id="i8J-3r-nDA"/>
@@ -204,10 +220,10 @@
                                 </userDefinedRuntimeAttributes>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jQp-EN-Voh">
-                                <rect key="frame" x="310" y="185.5" width="51" height="31"/>
+                                <rect key="frame" x="769" y="252.5" width="51" height="31"/>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OkG-5O-emD">
-                                <rect key="frame" x="265.5" y="186.5" width="39.5" height="29"/>
+                                <rect key="frame" x="724.5" y="253.5" width="39.5" height="29"/>
                                 <string key="text">unread
 badge</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -215,29 +231,29 @@ badge</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jrn-MT-IQv">
-                                <rect key="frame" x="310" y="289.5" width="51" height="31"/>
+                                <rect key="frame" x="769" y="356.5" width="51" height="31"/>
                             </switch>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="H0k-lx-tmL">
-                                <rect key="frame" x="310" y="338.5" width="51" height="31"/>
+                                <rect key="frame" x="769" y="405.5" width="51" height="31"/>
                             </switch>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1lG-cg-5R8">
-                                <rect key="frame" x="310" y="240.5" width="51" height="31"/>
+                                <rect key="frame" x="769" y="307.5" width="51" height="31"/>
                             </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="It doesn't hold the state and to disable Push notifications you need to toggle it twice." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B0u-JV-sSq">
-                                <rect key="frame" x="16" y="368" width="283" height="29"/>
+                                <rect key="frame" x="16" y="435" width="742" height="14.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7rg-Xd-yMa">
-                                <rect key="frame" x="0.0" y="412" width="375" height="1"/>
+                                <rect key="frame" x="0.0" y="464.5" width="834" height="1"/>
                                 <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="b5l-qn-iGf"/>
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fyw-02-BDi">
-                                <rect key="frame" x="118.5" y="618" width="138.5" height="29"/>
+                                <rect key="frame" x="348" y="1125" width="138.5" height="29"/>
                                 <string key="text">Demo Project
 Stream Swift SDK v.1.0.0</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -283,6 +299,8 @@ Stream Swift SDK v.1.0.0</string>
                         <outlet property="notificationsSwitch" destination="H0k-lx-tmL" id="MCi-8p-JQM"/>
                         <outlet property="onlineSwitch" destination="jrn-MT-IQv" id="cmf-96-hY1"/>
                         <outlet property="onlinelabel" destination="LML-Ms-XJg" id="Lgb-US-mZB"/>
+                        <outlet property="splitViewButton" destination="uBn-vP-Vku" id="gHC-eV-Gpl"/>
+                        <outlet property="splitViewSeparator" destination="gbU-nu-nAs" id="9QM-AO-y8F"/>
                         <outlet property="totalUnreadCountLabel" destination="tp6-sE-CBi" id="Kfe-Qa-uQ7"/>
                         <outlet property="totalUnreadCountSwitch" destination="1lG-cg-5R8" id="4Mk-4p-lEG"/>
                         <outlet property="versionLabel" destination="Fyw-02-BDi" id="n0D-xi-gJO"/>
@@ -299,7 +317,7 @@ Stream Swift SDK v.1.0.0</string>
                     <tabBarItem key="tabBarItem" systemItem="contacts" id="d2I-aW-uJk"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="rGP-f5-wYZ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -315,8 +333,8 @@ Stream Swift SDK v.1.0.0</string>
         <scene sceneID="K8d-gL-AUv">
             <objects>
                 <viewController id="e0G-IG-Gxn" customClass="CustomChatViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="p7A-Vg-wGQ">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                    <view key="view" contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" id="p7A-Vg-wGQ">
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="AC2-xq-vHg"/>
@@ -324,14 +342,14 @@ Stream Swift SDK v.1.0.0</string>
                     <navigationItem key="navigationItem" id="M29-wa-tVT">
                         <barButtonItem key="rightBarButtonItem" systemItem="stop" id="2ar-d7-vJl">
                             <connections>
-                                <segue destination="rzG-dX-Wof" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="qnB-bf-sHX"/>
+                                <segue destination="Z71-Wp-boH" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="Ko2-1P-TID"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oEb-lB-XXV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2072.8000000000002" y="680.5097451274363"/>
+            <point key="canvasLocation" x="1155" y="700"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="FFK-m4-8Eg">
@@ -340,7 +358,7 @@ Stream Swift SDK v.1.0.0</string>
                     <tabBarItem key="tabBarItem" systemItem="mostViewed" id="Uhp-Gu-8p3"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Fap-uP-7Ox">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -350,7 +368,7 @@ Stream Swift SDK v.1.0.0</string>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PRt-da-fZL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1320.8" y="680.5097451274363"/>
+            <point key="canvasLocation" x="383" y="700"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="OsV-rf-E6A">
@@ -359,7 +377,7 @@ Stream Swift SDK v.1.0.0</string>
                     <toolbarItems/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="fub-QL-sHd">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -377,7 +395,7 @@ Stream Swift SDK v.1.0.0</string>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="wm7-Ii-BZP" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="KhY-db-khs">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="50"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -394,11 +412,11 @@ Stream Swift SDK v.1.0.0</string>
             <objects>
                 <viewController id="ILk-9W-cdO" customClass="LoginViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="mWs-yd-frq">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="efb-oB-Elc">
-                                <rect key="frame" x="16" y="64" width="343" height="152"/>
+                                <rect key="frame" x="16" y="70" width="802" height="152"/>
                                 <subviews>
                                     <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vdR-lO-ZcN">
                                         <rect key="frame" x="0.0" y="0.0" width="174" height="30"/>
@@ -409,7 +427,7 @@ Stream Swift SDK v.1.0.0</string>
                                         </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1sr-Xf-5Ga">
-                                        <rect key="frame" x="0.0" y="45" width="343" height="1"/>
+                                        <rect key="frame" x="0.0" y="45" width="802" height="1"/>
                                         <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="dV5-HI-qCc"/>
@@ -424,7 +442,7 @@ Stream Swift SDK v.1.0.0</string>
                                         </connections>
                                     </button>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="upo-Ap-0Rf">
-                                        <rect key="frame" x="0.0" y="106" width="343" height="1"/>
+                                        <rect key="frame" x="0.0" y="106" width="802" height="1"/>
                                         <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="rBK-Mb-tmS"/>
@@ -445,14 +463,14 @@ Stream Swift SDK v.1.0.0</string>
                                 </constraints>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2e-bX-RrE">
-                                <rect key="frame" x="0.0" y="231" width="375" height="1"/>
+                                <rect key="frame" x="0.0" y="237" width="834" height="1"/>
                                 <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="jV7-Av-0Eh"/>
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qkx-nf-WiO">
-                                <rect key="frame" x="118.5" y="618" width="138.5" height="29"/>
+                                <rect key="frame" x="348" y="1125" width="138.5" height="29"/>
                                 <string key="text">Demo Project
 Stream Swift SDK v.1.0.0</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
@@ -485,28 +503,77 @@ Stream Swift SDK v.1.0.0</string>
             </objects>
             <point key="canvasLocation" x="-1271" y="-63"/>
         </scene>
-        <!--Tab Bar Controller-->
-        <scene sceneID="2hy-ym-0fX">
+        <!--View Controller-->
+        <scene sceneID="EmI-uS-62Y">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="rzG-dX-Wof" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="k8B-25-9Jc">
-                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    </tabBar>
-                    <connections>
-                        <segue destination="Z71-Wp-boH" kind="relationship" relationship="viewControllers" id="x4V-vX-mKE"/>
-                    </connections>
-                </tabBarController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="yWn-do-Ou1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <viewController id="ktU-Ws-qAf" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="PjD-mA-bIH">
+                        <rect key="frame" x="0.0" y="0.0" width="834" height="1194"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="Shr-GQ-OMs"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="I6z-Pp-X2m" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="381.60000000000002" y="680.5097451274363"/>
+            <point key="canvasLocation" x="381" y="2235"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="j7N-Mj-2ab">
+            <objects>
+                <navigationController id="b1U-65-eBR" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="4ao-wT-PUR">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="fhh-5U-mC0" kind="relationship" relationship="rootViewController" id="afC-gb-o8m"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="8Lh-i8-Tlb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="383" y="1497"/>
+        </scene>
+        <!--Channels View Controller-->
+        <scene sceneID="fwn-Ct-Cgi">
+            <objects>
+                <viewController id="fhh-5U-mC0" customClass="ChannelsViewController" customModule="StreamChat" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Utd-fS-PdW">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="1194"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="6tl-WC-y6O"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="F0z-Za-xQD">
+                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="VRQ-Kr-nYb">
+                            <connections>
+                                <segue destination="FA6-rb-JLu" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="K8u-bE-z8R"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="osK-xL-Sml" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1135" y="1497"/>
+        </scene>
+        <!--Split View Controller-->
+        <scene sceneID="CzV-az-pDs">
+            <objects>
+                <splitViewController id="FA6-rb-JLu" sceneMemberID="viewController">
+                    <connections>
+                        <segue destination="b1U-65-eBR" kind="relationship" relationship="masterViewController" id="I5f-ZO-oyR"/>
+                        <segue destination="ktU-Ws-qAf" kind="relationship" relationship="detailViewController" id="UKn-R4-k5M"/>
+                    </connections>
+                </splitViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NNh-VO-nds" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-346" y="1851"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Z6X-IU-Iab"/>
-        <segue reference="elX-bx-MbU"/>
+        <segue reference="gPS-K7-ckQ"/>
+        <segue reference="qta-yE-T30"/>
+        <segue reference="x9o-K0-tAV"/>
         <segue reference="seW-P6-fEX"/>
     </inferredMetricsTieBreakers>
 </document>
