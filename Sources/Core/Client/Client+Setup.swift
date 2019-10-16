@@ -62,6 +62,15 @@ extension Client {
     @discardableResult
     func touchTokenProvider() -> Bool {
         if let tokenProvider = tokenProvider {
+            expiredTokenDisposeBag = DisposeBag()
+            token = nil
+            isExpiredTokenInProgress = true
+            
+            if webSocket.isConnected {
+                webSocket.disconnect()
+            }
+            
+            logger?.log("🀄️", "Request for a new token from a token provider.")
             tokenProvider { [weak self] in self?.setup(token: $0) }
             return true
         }
@@ -171,14 +180,14 @@ extension Client {
             .distinctUntilChanged()
             .map { $0?.isValid ?? false }
             .observeOn(MainScheduler.instance)
-            .flatMapLatest { [unowned self] isTokenValid -> Observable<WebSocketEvent> in
+            .flatMapLatest({ [unowned self] isTokenValid -> Observable<WebSocketEvent> in
                 if isTokenValid {
                     self.webSocket.connect()
                     return self.webSocket.webSocket.rx.response
                 }
                 
                 return .just(.disconnected(nil))
-            }
+            })
             .do(onDispose: { [unowned self] in self.webSocket.disconnect() })
         
         return Observable.combineLatest(appState, internetIsAvailable, webSocketResponse)
@@ -188,6 +197,7 @@ extension Client {
             .do(onNext: { [unowned self] in
                 if case .connected(_, let user) = $0 {
                     self.user = user
+                    self.isExpiredTokenInProgress = false
                 }
             })
             .share(replay: 1)

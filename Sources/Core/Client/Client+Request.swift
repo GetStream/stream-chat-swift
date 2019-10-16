@@ -38,9 +38,22 @@ extension Client {
     /// - Returns: an URLSessionDataTask that can be canncelled.
     @discardableResult
     public func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
+        logger?.timing("Prepare for request \(endpoint)", reset: true)
+        logger?.log(urlSession.configuration)
+        
+        func retryRequestForExpiredToken() {
+            connection.connected()
+                .take(1)
+                .subscribe(onNext: { [unowned self] in self.request(endpoint: endpoint, completion) })
+                .disposed(by: expiredTokenDisposeBag)
+        }
+        
+        if isExpiredTokenInProgress {
+            retryRequestForExpiredToken()
+            return URLSessionDataTask()
+        }
+        
         do {
-            logger?.timing("Prepare for request", reset: true)
-            logger?.log(urlSession.configuration)
             let task: URLSessionDataTask
             let queryItems = try self.queryItems(for: endpoint).get()
             let url = try requestURL(for: endpoint, queryItems: queryItems).get()
@@ -56,6 +69,10 @@ extension Client {
             
             task = urlSession.dataTask(with: urlRequest) { [unowned self] in
                 self.parse(data: $0, response: $1, error: $2, completion: completion)
+                
+                if self.isExpiredTokenInProgress {
+                    retryRequestForExpiredToken()
+                }
             }
             
             logger?.log(task.currentRequest ?? urlRequest)
@@ -196,9 +213,16 @@ extension Client {
 extension Client {
     
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
-        let httpResponse = response as? HTTPURLResponse
         logger?.timing("Response received")
-        logger?.log(response, data: data, forceToShowData: (httpResponse?.statusCode ?? 400) >= 400)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            logger?.log(response, data: data, forceToShowData: true)
+            let errorDescription = "Expecting HTTPURLResponse, but got \(response?.description ?? "nil")"
+            performInCallbackQueue { completion(.failure(.unexpectedError(description: errorDescription))) }
+            return
+        }
+
+        logger?.log(response, data: data, forceToShowData: httpResponse.statusCode >= 400)
         
         if let error = error {
             if (error as NSError).code == NSURLErrorCancelled {
@@ -215,7 +239,25 @@ extension Client {
             performInCallbackQueue {
                 completion(.failure(.emptyBody(description: "Request to \(response?.url?.absoluteString ?? "<unknown URL>")")))
             }
-            
+            return
+        }
+        
+        guard httpResponse.statusCode < 400 else {
+            if let errorResponse = try? JSONDecoder.stream.decode(ClientErrorResponse.self, from: data) {
+                if errorResponse.message.contains("was deactivated") {
+                    webSocket.disconnect()
+                }
+                
+                if errorResponse.code == ClientErrorResponse.tokenExpiredErrorCode {
+                    logger?.log("🀄️", "The Token is expired")
+                    touchTokenProvider()
+                    return
+                }
+                
+                performInCallbackQueue { completion(.failure(.responseError(errorResponse))) }
+            } else {
+                performInCallbackQueue { completion(.failure(.requestFailed(error))) }
+            }
             return
         }
         
@@ -226,16 +268,7 @@ extension Client {
             performInCallbackQueue { completion(.success(response)) }
         } catch {
             ClientLogger.log("🐴", error)
-            
-            if let errorResponse = try? JSONDecoder.stream.decode(ClientErrorResponse.self, from: data) {
-                if errorResponse.message.contains("was deactivated") {
-                    webSocket.disconnect()
-                }
-                
-                performInCallbackQueue { completion(.failure(.responseError(errorResponse))) }
-            } else {
-                performInCallbackQueue { completion(.failure(.decodingFailure(error))) }
-            }
+            performInCallbackQueue { completion(.failure(.decodingFailure(error))) }
         }
     }
     

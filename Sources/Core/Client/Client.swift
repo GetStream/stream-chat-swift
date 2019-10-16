@@ -32,6 +32,8 @@ public final class Client {
     
     let tokenSubject = BehaviorSubject<Token?>(value: nil)
     var tokenProvider: TokenProvider?
+    var expiredTokenDisposeBag = DisposeBag()
+    var isExpiredTokenInProgress = false
     
     /// A web socket client.
     public internal(set) lazy var webSocket = WebSocket()
