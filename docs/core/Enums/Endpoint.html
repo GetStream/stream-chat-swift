@@ -14,7 +14,7 @@
     <a title="Endpoint Enumeration Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (89% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (90% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -232,7 +232,7 @@
                 <a href="../Structs/BaseURL.html">BaseURL</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/BaseURL/Location.html">– Location</a>
+                <a href="../Structs/BaseURL/ServerLocation.html">– ServerLocation</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelDeletedResponse.html">ChannelDeletedResponse</a>
@@ -266,9 +266,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/DevicesResponse.html">DevicesResponse</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/EventResponse.html">EventResponse</a>
@@ -581,6 +578,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore8EndpointO12stopWatchingyAcA7ChannelCcACmF"></a>
+                    <a name="//apple_ref/swift/Element/stopWatching(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore8EndpointO12stopWatchingyAcA7ChannelCcACmF">stopWatching(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Stop watching a channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">stopWatching</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore8EndpointO13deleteChannelyAcA0F0CcACmF"></a>
                     <a name="//apple_ref/swift/Element/deleteChannel(_:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore8EndpointO13deleteChannelyAcA0F0CcACmF">deleteChannel(_:)</a>
@@ -599,6 +623,60 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">deleteChannel</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore8EndpointO11hideChannelyAcA0F0C_AA4UserVSgtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/hideChannel(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore8EndpointO11hideChannelyAcA0F0C_AA4UserVSgtcACmF">hideChannel(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Hide a channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">hideChannel</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">,</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore8EndpointO11showChannelyAcA0F0C_AA4UserVSgtcACmF"></a>
+                    <a name="//apple_ref/swift/Element/showChannel(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore8EndpointO11showChannelyAcA0F0C_AA4UserVSgtcACmF">showChannel(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Show a channel if it was hidden.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">showChannel</span><span class="p">(</span><span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">,</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -1145,8 +1223,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-01)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-16)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

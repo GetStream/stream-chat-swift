@@ -14,7 +14,7 @@
     <a title="Extensions  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">StreamChat Docs</a> (84% documented)</p>
+        <p><a href="index.html">StreamChat Docs</a> (85% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -69,6 +69,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/MessageTableViewCell.html">MessageTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/RxKeyboard.html">RxKeyboard</a>
@@ -220,7 +223,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">UIDocumentPickerViewController</span> <span class="p">:</span> <span class="kt">UIViewController</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UIDocumentPickerViewController</span><span class="p">:</span> <span class="kt">HasDelegate</span></code></pre>
 
                         </div>
                       </div>
@@ -251,7 +254,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">CGFloat</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@frozen</span>
+<span class="kd">extension</span> <span class="kt">CGFloat</span></code></pre>
 
                         </div>
                       </div>
@@ -282,7 +286,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">IndexPath</span> <span class="p">:</span> <span class="kt">ReferenceConvertible</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Hashable</span><span class="p">,</span> <span class="kt">MutableCollection</span><span class="p">,</span> <span class="kt">RandomAccessCollection</span><span class="p">,</span> <span class="kt">Comparable</span><span class="p">,</span> <span class="kt">ExpressibleByArrayLiteral</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">IndexPath</span></code></pre>
 
                         </div>
                       </div>
@@ -313,7 +317,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">UIColor</span> <span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">NSSecureCoding</span><span class="p">,</span> <span class="kt">NSCopying</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UIColor</span></code></pre>
 
                         </div>
                       </div>
@@ -344,7 +348,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">UIEdgeInsets</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UIEdgeInsets</span></code></pre>
 
                         </div>
                       </div>
@@ -375,7 +379,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">UIFont</span> <span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">NSCopying</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UIFont</span></code></pre>
 
                         </div>
                       </div>
@@ -413,7 +417,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">UIImage</span> <span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">NSSecureCoding</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UIImage</span></code></pre>
 
                         </div>
                       </div>
@@ -444,7 +448,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">UITableView</span> <span class="p">:</span> <span class="kt">UIScrollView</span><span class="p">,</span> <span class="kt">NSCoding</span><span class="p">,</span> <span class="kt">UIDataSourceTranslating</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UITableView</span></code></pre>
 
                         </div>
                       </div>
@@ -475,7 +479,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">UITableViewCell</span> <span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">NSCoding</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UITableViewCell</span></code></pre>
 
                         </div>
                       </div>
@@ -502,7 +506,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">UICollectionViewCell</span> <span class="p">:</span> <span class="kt">UICollectionReusableView</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UICollectionViewCell</span></code></pre>
 
                         </div>
                       </div>
@@ -533,7 +537,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">UIViewController</span> <span class="p">:</span> <span class="kt">UIResponder</span><span class="p">,</span> <span class="kt">NSCoding</span><span class="p">,</span> <span class="kt">UIAppearanceContainer</span><span class="p">,</span> <span class="kt">UITraitEnvironment</span><span class="p">,</span> <span class="kt">UIContentContainer</span><span class="p">,</span> <span class="kt">UIFocusEnvironment</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">UIViewController</span></code></pre>
 
                         </div>
                       </div>
@@ -564,7 +568,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">URL</span> <span class="p">:</span> <span class="kt">ReferenceConvertible</span><span class="p">,</span> <span class="kt">Equatable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">URL</span></code></pre>
 
                         </div>
                       </div>
@@ -576,8 +580,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-01)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-16)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

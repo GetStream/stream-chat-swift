@@ -14,7 +14,7 @@
     <a title="ChannelViewStyle Structure Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (84% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (85% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -69,6 +69,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/MessageTableViewCell.html">MessageTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/RxKeyboard.html">RxKeyboard</a>
@@ -317,6 +320,60 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV14nameUnreadFontSo6UIFontCvp"></a>
+                    <a name="//apple_ref/swift/Property/nameUnreadFont" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV14nameUnreadFontSo6UIFontCvp">nameUnreadFont</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A channel name font.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">nameUnreadFont</span><span class="p">:</span> <span class="kt">UIFont</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV15nameUnreadColorSo7UIColorCvp"></a>
+                    <a name="//apple_ref/swift/Property/nameUnreadColor" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV15nameUnreadColorSo7UIColorCvp">nameUnreadColor</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A channel name color.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">nameUnreadColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10StreamChat16ChannelViewStyleV11messageFontSo6UIFontCvp"></a>
                     <a name="//apple_ref/swift/Property/messageFont" class="dashAnchor"></a>
                     <a class="token" href="#/s:10StreamChat16ChannelViewStyleV11messageFontSo6UIFontCvp">messageFont</a>
@@ -533,9 +590,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorG08nameFont0iG007messageJ00kG00k6UnreadJ00klG00k7DeletedJ00kmG004dateJ00nG0ACSo7UIColorC_AQSo6UIFontCAqsqsqsqsQtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(backgroundColor:separatorColor:nameFont:nameColor:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:dateFont:dateColor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorG08nameFont0iG007messageJ00kG00k6UnreadJ00klG00k7DeletedJ00kmG004dateJ00nG0ACSo7UIColorC_AQSo6UIFontCAqsqsqsqsQtcfc">init(backgroundColor:separatorColor:nameFont:nameColor:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:dateFont:dateColor:)</a>
+                    <a name="/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorG08nameFont0iG00i6UnreadJ00ikG007messageJ00lG00lkJ00lkG00l7DeletedJ00lmG004dateJ00nG0ACSo7UIColorC_ASSo6UIFontCAsususususuStcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(backgroundColor:separatorColor:nameFont:nameColor:nameUnreadFont:nameUnreadColor:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:dateFont:dateColor:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorG08nameFont0iG00i6UnreadJ00ikG007messageJ00lG00lkJ00lkG00l7DeletedJ00lmG004dateJ00nG0ACSo7UIColorC_ASSo6UIFontCAsususususuStcfc">init(backgroundColor:separatorColor:nameFont:nameColor:nameUnreadFont:nameUnreadColor:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:dateFont:dateColor:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -553,7 +610,9 @@
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">backgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">white</span><span class="p">,</span>
             <span class="nv">separatorColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatSeparator</span><span class="p">,</span>
             <span class="nv">nameFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatXRegularMedium</span><span class="p">,</span>
-            <span class="nv">nameColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">black</span><span class="p">,</span>
+            <span class="nv">nameColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span>
+            <span class="nv">nameUnreadFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatXRegularMedium</span><span class="p">,</span>
+            <span class="nv">nameUnreadColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">black</span><span class="p">,</span>
             <span class="nv">messageFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatMedium</span><span class="p">,</span>
             <span class="nv">messageColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span>
             <span class="nv">messageUnreadFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatMediumMedium</span><span class="p">,</span>
@@ -614,6 +673,30 @@
                               <td>
                                 <div>
                                   <p>a channel name color.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>nameUnreadFont</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel unread name font.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>nameUnreadColor</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel unread name color.</p>
                                 </div>
                               </td>
                             </tr>
@@ -780,8 +863,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-01)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-16)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

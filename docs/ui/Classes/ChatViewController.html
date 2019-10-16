@@ -14,7 +14,7 @@
     <a title="ChatViewController Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (84% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (85% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -69,6 +69,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/MediaGalleryViewController.html">MediaGalleryViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/MessageTableViewCell.html">MessageTableViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/RxKeyboard.html">RxKeyboard</a>
@@ -219,14 +222,41 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A chat view style.</p>
+                        <p>A chat style.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Structs/ChatViewStyle.html">ChatViewStyle</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">lazy</span> <span class="k">var</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Structs/ChatViewStyle.html">ChatViewStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat0B14ViewControllerC12defaultStyleAA0bcF0Vvp"></a>
+                    <a name="//apple_ref/swift/Property/defaultStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat0B14ViewControllerC12defaultStyleAA0bcF0Vvp">defaultStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A default chat style. This is useful for subclasses.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">defaultStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/ChatViewStyle.html">ChatViewStyle</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -263,9 +293,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat0B14ViewControllerC5itemsXevp"></a>
+                    <a name="/s:10StreamChat0B14ViewControllerC5itemsSay0aB4Core0B4ItemOGvp"></a>
                     <a name="//apple_ref/swift/Property/items" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat0B14ViewControllerC5itemsXevp">items</a>
+                    <a class="token" href="#/s:10StreamChat0B14ViewControllerC5itemsSay0aB4Core0B4ItemOGvp">items</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -280,9 +310,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">items</span><span class="p">:</span> <span class="o">&lt;&lt;</span><span class="n">error</span> <span class="n">type</span><span class="o">&gt;&gt;</span> <span class="p">{</span>
-  <span class="k">get</span>
-  <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">items</span><span class="p">:</span> <span class="p">[</span><span class="kt">ChatItem</span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
@@ -302,7 +330,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>A composer view.</p>
 
                       </div>
                       <div class="declaration">
@@ -329,14 +357,41 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Attachments file types for thw composer view.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">composerAddFileTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt">ChatViewController</span><span class="o">.</span><span class="kt"><a href="../Classes/ChatViewController/ComposerAddFileType.html">ComposerAddFileType</a></span><span class="p">]</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">lazy</span> <span class="k">var</span> <span class="nv">composerAddFileTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt">ChatViewController</span><span class="o">.</span><span class="kt"><a href="../Classes/ChatViewController/ComposerAddFileType.html">ComposerAddFileType</a></span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat0B14ViewControllerC27defaultComposerAddFileTypesSayAC0fgH4TypeOGvp"></a>
+                    <a name="//apple_ref/swift/Property/defaultComposerAddFileTypes" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat0B14ViewControllerC27defaultComposerAddFileTypesSayAC0fgH4TypeOGvp">defaultComposerAddFileTypes</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Default attachments file types for thw composer view. This is useful for subclasses.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">defaultComposerAddFileTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Classes/ChatViewController/ComposerAddFileType.html">ComposerAddFileType</a></span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -373,9 +428,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat0B14ViewControllerC16channelPresenterXevp"></a>
+                    <a name="/s:10StreamChat0B14ViewControllerC16channelPresenter0aB4Core07ChannelF0CSgvp"></a>
                     <a name="//apple_ref/swift/Property/channelPresenter" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat0B14ViewControllerC16channelPresenterXevp">channelPresenter</a>
+                    <a class="token" href="#/s:10StreamChat0B14ViewControllerC16channelPresenter0aB4Core07ChannelF0CSgvp">channelPresenter</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -427,9 +482,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:@M@StreamChat@objc(cs)ChatViewController(im)viewWillAppear:"></a>
-                    <a name="//apple_ref/swift/Method/viewWillAppear(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@M@StreamChat@objc(cs)ChatViewController(im)viewWillAppear:">viewWillAppear(_:)</a>
+                    <a name="/c:@M@StreamChat@objc(cs)ChatViewController(im)viewDidAppear:"></a>
+                    <a name="//apple_ref/swift/Method/viewDidAppear(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@StreamChat@objc(cs)ChatViewController(im)viewDidAppear:">viewDidAppear(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -444,7 +499,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">viewWillAppear</span><span class="p">(</span><span class="n">_</span> <span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">viewDidAppear</span><span class="p">(</span><span class="n">_</span> <span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -566,9 +621,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat0B14ViewControllerC11messageCellySo07UITablecF0C10Foundation9IndexPathV_XeXetcACF"></a>
+                    <a name="/s:10StreamChat0B14ViewControllerC11messageCell2at0E09readUsersSo07UITablecF0C10Foundation9IndexPathV_0aB4Core7MessageVSayAM4UserVGtF"></a>
                     <a name="//apple_ref/swift/Method/messageCell(at:message:readUsers:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat0B14ViewControllerC11messageCellySo07UITablecF0C10Foundation9IndexPathV_XeXetcACF">messageCell(at:message:readUsers:)</a>
+                    <a class="token" href="#/s:10StreamChat0B14ViewControllerC11messageCell2at0E09readUsersSo07UITablecF0C10Foundation9IndexPathV_0aB4Core7MessageVSayAM4UserVGtF">messageCell(at:message:readUsers:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -846,10 +901,10 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Composer2"></a>
-                <a name="//apple_ref/swift/Section/Composer" class="dashAnchor"></a>
-                <a href="#/Composer2">
-                  <h3 class="section-name">Composer</h3>
+                <a name="/Send%20Message"></a>
+                <a name="//apple_ref/swift/Section/Send Message" class="dashAnchor"></a>
+                <a href="#/Send%20Message">
+                  <h3 class="section-name">Send Message</h3>
                 </a>
               </div>
               <ul>
@@ -1128,8 +1183,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-01)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-16)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

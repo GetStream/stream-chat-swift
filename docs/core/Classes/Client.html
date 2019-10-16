@@ -14,7 +14,7 @@
     <a title="Client Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (89% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (90% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -232,7 +232,7 @@
                 <a href="../Structs/BaseURL.html">BaseURL</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/BaseURL/Location.html">– Location</a>
+                <a href="../Structs/BaseURL/ServerLocation.html">– ServerLocation</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelDeletedResponse.html">ChannelDeletedResponse</a>
@@ -266,9 +266,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/DevicesResponse.html">DevicesResponse</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Structs.html#/s:14StreamChatCore9EmptyDataV">EmptyData</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/EventResponse.html">EventResponse</a>
@@ -470,7 +467,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A databse for an offline mode.</p>
+                        <p>A database for an offline mode.</p>
 
                       </div>
                       <div class="declaration">
@@ -735,6 +732,40 @@ You can do requests directly.</p>
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC10disconnectyyF"></a>
+                    <a name="//apple_ref/swift/Method/disconnect()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC10disconnectyyF">disconnect()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Disconnect from Stream and reset the current user.</p>
+
+<p>Resets and removes the user/token pair as well as relevant network connections.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    To restore the connection, use <code>Client.set(user:, token:)</code> to set a valid user/token pair.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">disconnect</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -966,6 +997,81 @@ You can do requests directly.</p>
                       <div>
                         <h4>Return Value</h4>
                         <p>an observable events.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Unread%20Count"></a>
+                <a name="//apple_ref/swift/Section/Unread Count" class="dashAnchor"></a>
+                <a href="#/Unread%20Count">
+                  <h3 class="section-name">Unread Count</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC11UnreadCounta"></a>
+                    <a name="//apple_ref/swift/Alias/UnreadCount" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC11UnreadCounta">UnreadCount</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">UnreadCount</span> <span class="o">=</span> <span class="p">(</span><span class="nv">channels</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">messages</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC11unreadCount7RxCocoa14SharedSequenceVyAE21DriverSharingStrategyVSi8channels_Si8messagestGvp"></a>
+                    <a name="//apple_ref/swift/Property/unreadCount" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC11unreadCount7RxCocoa14SharedSequenceVyAE21DriverSharingStrategyVSi8channels_Si8messagestGvp">unreadCount</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Observe an unread count of messages in the channel.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Be sure the current user is a member of the channel.
+
+</div>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    100 is the maximum unread count of messages.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">unreadCount</span><span class="p">:</span> <span class="kt">Driver</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/Client.html#/s:14StreamChatCore6ClientC11UnreadCounta">UnreadCount</a></span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -1631,9 +1737,9 @@ You can do requests directly.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC3set4user_yAA4UserV_yySScXEtF"></a>
+                    <a name="/s:14StreamChatCore6ClientC3set4user_yAA4UserV_yySScctF"></a>
                     <a name="//apple_ref/swift/Method/set(user:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC3set4user_yAA4UserV_yySScXEtF">set(user:_:)</a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC3set4user_yAA4UserV_yySScctF">set(user:_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1670,7 +1776,7 @@ Then you send it to the client to complete the setup with a callback function fr
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">tokenProvider</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:14StreamChatCore13TokenProvidera">TokenProvider</a></span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">tokenProvider</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Typealiases.html#/s:14StreamChatCore13TokenProvidera">TokenProvider</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1745,8 +1851,8 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-01)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-16)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>
