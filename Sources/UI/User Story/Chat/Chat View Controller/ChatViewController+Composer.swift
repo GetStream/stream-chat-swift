@@ -121,6 +121,11 @@ extension ChatViewController {
         
         channelPresenter?.send(text: text)
             .subscribe(
+                onNext: { [weak self] messageResponse in
+                    if messageResponse.message.type == .error {
+                        self?.show(error: ClientError.errorMessage(messageResponse.message))
+                    }
+                },
                 onError: { [weak self] in
                     self?.composerView.reset()
                     self?.show(error: $0)

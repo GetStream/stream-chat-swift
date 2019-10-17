@@ -137,8 +137,12 @@ public extension Banners {
             error = anyError
         }
         
-        if let clientError = (error as? ClientError)?.error {
-            error = clientError
+        if let clientError = error as? ClientError {
+            message = clientError.errorDescription ?? message
+            
+            if let internalError = clientError.error {
+                error = internalError
+            }
         }
         
         if let clientErrorResponse = error as? ClientErrorResponse {

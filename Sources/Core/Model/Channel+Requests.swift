@@ -287,9 +287,9 @@ public extension Channel {
 /// A message response.
 public struct MessageResponse: Decodable {
     /// A message.
-    let message: Message
+    public let message: Message
     /// A reaction.
-    let reaction: Reaction?
+    public let reaction: Reaction?
 }
 
 /// An event response.

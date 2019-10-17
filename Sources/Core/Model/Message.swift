@@ -108,6 +108,11 @@ public struct Message: Codable {
             : (text.isEmpty ? (args ?? "") : text).trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
+    /// Returns true if the message is type of error with a text for the banned user.
+    public var isBan: Bool {
+        return id.isEmpty && type == .error && text == "You are not allowed to post messages on this channel"
+    }
+    
     /// Init a message.
     ///
     /// - Parameters:
