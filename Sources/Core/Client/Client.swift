@@ -46,8 +46,15 @@ public final class Client {
     
     /// A log manager.
     public let logger: ClientLogger?
+    
+    /// An observable user.
+    public internal(set) lazy var userDidUpdate: Observable<User?> = userPublishSubject.share(replay: 1)
+    private let userPublishSubject = PublishSubject<User?>()
+    
     /// The current user.
-    public var user: User?
+    public internal(set) var user: User? {
+        didSet { userPublishSubject.onNext(user) }
+    }
     
     var unreadCountAtomic = Atomic<UnreadCount>((0, 0))
     

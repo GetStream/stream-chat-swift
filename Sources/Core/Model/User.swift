@@ -49,7 +49,7 @@ public struct User: Codable {
     /// An indicator if a user is online.
     public let online: Bool
     /// An indicator if a user was banned.
-    public let isBanned: Bool
+    public internal(set) var isBanned: Bool
     /// A user role.
     public let role: Role
     /// A list of devices.

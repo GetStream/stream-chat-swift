@@ -89,7 +89,19 @@ public extension Channel {
         
         request = request
             .do(onNext: { _ in Client.shared.logger?.log("🎫", "Send Message Read. For a new message of the current user.") })
-            .flatMapLatest { response -> Observable<MessageResponse> in self.markRead().map { _ in response } }
+            .flatMapLatest({ response -> Observable<MessageResponse> in
+                if response.message.isBan {
+                    if let currentUser = User.current, !currentUser.isBanned {
+                        var user = currentUser
+                        user.isBanned = true
+                        Client.shared.user = user
+                    }
+                    
+                    return .just(response)
+                }
+                
+                return self.markRead().map { _ in response }
+            })
         
         return Client.shared.connectedRequest(request)
     }
