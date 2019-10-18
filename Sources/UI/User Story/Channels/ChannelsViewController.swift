@@ -58,15 +58,35 @@ open class ChannelsViewController: ViewController {
         return tableView
     }()
     
+    private var needsToReload = false
+    private var needsToReloadIndexRows = Set<IndexPath>()
+    
     open override func viewDidLoad() {
         super.viewDidLoad()
         hideBackButtonTitle()
         view.backgroundColor = style.channel.backgroundColor
+        needsToReload = false
         setupChannelsPresenter()
         
         if title == nil {
             title = channelsPresenter.channelType.title
         }
+    }
+    
+    open override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if needsToReload {
+            tableView.reloadData()
+        } else if !needsToReloadIndexRows.isEmpty {
+            if let indexPathsForVisibleRows = tableView.indexPathsForVisibleRows {
+                let indexPaths = Array(needsToReloadIndexRows.filter({ indexPathsForVisibleRows.contains($0) }))
+                tableView.reloadRows(at: indexPaths, with: .none)
+            }
+        }
+        
+        needsToReload = false
+        needsToReloadIndexRows.removeAll()
     }
     
     private func reset() {
@@ -75,6 +95,8 @@ open class ChannelsViewController: ViewController {
         
         if isVisible {
             tableView.reloadData()
+        } else {
+            needsToReload = true
         }
     }
     
@@ -166,20 +188,6 @@ open class ChannelsViewController: ViewController {
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style
         chatViewController.channelPresenter = channelPresenter
-        
-        if channelPresenter.channel.config.readEventsEnabled {
-            channelPresenter.isReadUpdates.asObservable()
-                .takeUntil(chatViewController.rx.deallocated)
-                .subscribe(onNext: { [weak self] in
-                    if let self = self,
-                        let indexPathsForVisibleRows = self.tableView.indexPathsForVisibleRows,
-                        indexPathsForVisibleRows.contains(indexPath) {
-                        self.tableView.reloadRows(at: [indexPath], with: .none)
-                    }
-                })
-                .disposed(by: disposeBag)
-        }
-        
         return chatViewController
     }
     
@@ -197,45 +205,65 @@ open class ChannelsViewController: ViewController {
 extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     
     private func updateTableView(with changes: ViewChanges) {
+        // Update items.
         switch changes {
-        case let .itemAdded(row, _, _, items):
+        case .itemAdded(_, _, _, let items),
+             .itemMoved(fromRow: _, toRow: _, let items),
+             .itemRemoved(_, let items),
+             .reloaded(_, let items):
             self.items = items
+            
+        case .itemUpdated(let rows, _, let items):
+            self.items = items
+            
+            if !isVisible {
+                rows.forEach { needsToReloadIndexRows.insert(.row($0)) }
+                return
+            }
+            
+        case .disconnected:
+            if User.current == nil {
+                reset()
+                return
+            }
+            
+        case .error:
+            break
+            
+        case .none, .footerUpdated:
+            return
+        }
+        
+        guard isVisible else {
+            needsToReload = true
+            return
+        }
+        
+        // Update tableView.
+        switch changes {
+        case let .itemAdded(row, _, _, _):
             tableView.insertRows(at: [.row(row)], with: .none)
             
-        case let .itemMoved(fromRow: row1, toRow: row2, items):
-            self.items = items
-            
+        case let .itemMoved(fromRow: row1, toRow: row2, _):
             tableView.performBatchUpdates({
                 tableView.deleteRows(at: [.row(row1)], with: .none)
                 tableView.insertRows(at: [.row(row2)], with: .none)
             })
             
-        case let .itemUpdated(rows, _, items):
-            self.items = items
+        case let .itemUpdated(rows, _, _):
             tableView.reloadRows(at: rows.map({ .row($0) }), with: .none)
             
-        case .itemRemoved(let row, let items):
-            self.items = items
+        case .itemRemoved(let row, _):
+            tableView.performBatchUpdates({ tableView.deleteRows(at: [.row(row)], with: .none) })
             
-            tableView.performBatchUpdates({
-                tableView.deleteRows(at: [.row(row)], with: .none)
-            })
-            
-        case .reloaded(_, let items):
-            self.items = items
+        case .reloaded:
             tableView.reloadData()
             
         case .error(let error):
             show(error: error)
             
-        case .disconnected:
-            if User.current == nil {
-                reset()
-            }
-            
-        case .none,
-             .footerUpdated:
-            return
+        default:
+            break
         }
     }
     

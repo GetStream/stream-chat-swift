@@ -54,7 +54,6 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public internal(set) var typingUsers: [TypingUser] = []
     var messageReadsToMessageId: [MessageRead: String] = [:]
     let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
-    private let isReadSubject = PublishSubject<Void>()
     
     /// Check if the channel has unread messages.
     public var isUnread: Bool {
@@ -141,9 +140,6 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     /// Uploader for images and files.
     public private(set) lazy var uploader = Uploader()
-    
-    /// An observable updates for the Read event.
-    public private(set) lazy var isReadUpdates = isReadSubject.asDriver(onErrorJustReturn: ())
     
     /// Init a presenter with a given channel.
     ///
@@ -273,12 +269,10 @@ extension ChannelPresenter {
             .do(
                 onNext: { [weak self] _ in
                     self?.unreadMessageReadAtomic.set(nil)
-                    self?.isReadSubject.onNext(())
                     Client.shared.logger?.log("🎫", "Message Read done.")
                 },
                 onError: { [weak self] error in
                     self?.unreadMessageReadAtomic.set(unreadMessageRead)
-                    self?.isReadSubject.onError(error)
                     ClientLogger.log("🎫", error, message: "Send Message Read error.")
             })
             .map { _ in Void() }

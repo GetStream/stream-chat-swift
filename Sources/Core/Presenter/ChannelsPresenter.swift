@@ -171,14 +171,17 @@ extension ChannelsPresenter {
                 items.remove(at: index)
                 return .itemRemoved(index, items)
             }
+            
         case .messageNew(_, _, _, let channel, _):
             return parseNewMessage(response: response, from: channel)
+            
         case .messageDeleted(let message, _):
             if let index = items.firstIndex(whereChannelId: channelId, channelType: response.channelType),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseEvents(event: response.event)
                 return .itemUpdated([index], [message], items)
             }
+            
         default:
             break
         }
@@ -211,6 +214,10 @@ extension ChannelsPresenter {
             let channelPresenter = items.remove(at: index).channelPresenter {
             channelPresenter.parseEvents(event: response.event)
             items.insert(.channelPresenter(channelPresenter), at: 0)
+            
+            if index == 0 {
+                return .itemUpdated([0], [], items)
+            }
             
             return .itemMoved(fromRow: index, toRow: 0, items)
         }
