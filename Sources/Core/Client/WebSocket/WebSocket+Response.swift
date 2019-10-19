@@ -50,10 +50,8 @@ extension WebSocket {
         
         private static let channelInfoSeparator: Character = ":"
         
-        /// A channel id of the event.
-        public let channelId: String?
-        /// A channel type of the event.
-        public let channelType: ChannelType
+        /// A channel type and id.
+        public let cid: ChannelId?
         /// An web socket event.
         public let event: Event
         /// A created date.
@@ -61,17 +59,7 @@ extension WebSocket {
         
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            let cid = try container.decodeIfPresent(String.self, forKey: .cid)
-            
-            if let cid = cid, cid.contains(Response.channelInfoSeparator) {
-                let channelPair = cid.split(separator: Response.channelInfoSeparator)
-                channelId = String(channelPair[1])
-                channelType = ChannelType(rawValue: String(channelPair[0])) ?? .unknown
-            } else {
-                channelId = nil
-                channelType = .unknown
-            }
-            
+            cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
             event = try Event(from: decoder)
             created = try container.decode(Date.self, forKey: .created)
         }

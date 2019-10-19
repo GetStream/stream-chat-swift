@@ -161,13 +161,13 @@ extension ChannelsPresenter {
 
 extension ChannelsPresenter {
     private func parseEvents(response: WebSocket.Response) -> ViewChanges {
-        guard let channelId = response.channelId else {
+        guard let cid = response.cid else {
             return parseNotifications(response: response)
         }
         
         switch response.event {
         case .channelDeleted:
-            if let index = items.firstIndex(whereChannelId: channelId, channelType: response.channelType) {
+            if let index = items.firstIndex(whereChannelId: cid.id, channelType: cid.type) {
                 items.remove(at: index)
                 return .itemRemoved(index, items)
             }
@@ -176,7 +176,7 @@ extension ChannelsPresenter {
             return parseNewMessage(response: response, from: channel)
             
         case .messageDeleted(let message, _):
-            if let index = items.firstIndex(whereChannelId: channelId, channelType: response.channelType),
+            if let index = items.firstIndex(where: cid),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseEvents(event: response.event)
                 return .itemUpdated([index], [message], items)
@@ -209,8 +209,8 @@ extension ChannelsPresenter {
     }
     
     private func parseNewMessage(response: WebSocket.Response, from channel: Channel?) -> ViewChanges {
-        if let channelId = response.channelId,
-            let index = items.firstIndex(whereChannelId: channelId, channelType: response.channelType),
+        if let cid = response.cid,
+            let index = items.firstIndex(where: cid),
             let channelPresenter = items.remove(at: index).channelPresenter {
             channelPresenter.parseEvents(event: response.event)
             items.insert(.channelPresenter(channelPresenter), at: 0)

@@ -203,6 +203,11 @@ extension Client {
             .share(replay: 1)
     }
     
+    func connectedRequest<T: Decodable>(_ endpoint: Endpoint) -> Observable<T> {
+        let request: Observable<T> = rx.request(endpoint: endpoint)
+        return connectedRequest(request)
+    }
+    
     func connectedRequest<T>(_ request: Observable<T>) -> Observable<T> {
         return webSocket.isConnected ? request : connection.connected().take(1).flatMapLatest { request }
     }

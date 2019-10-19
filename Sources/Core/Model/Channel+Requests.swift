@@ -141,6 +141,23 @@ public extension Channel {
     }
 }
 
+// MARK: - Members
+
+public extension Channel {
+    
+    /// Add members to the channel.
+    /// - Parameter members: members.
+    func add(_ members: [Member]) -> Observable<ChannelResponse> {
+        return members.isEmpty ? .empty() : Client.shared.connectedRequest(.addMembers(members, self))
+    }
+    
+    /// Remove members from the channel.
+    /// - Parameter members: members.
+    func remove(_ members: [Member]) -> Observable<ChannelResponse> {
+        return members.isEmpty ? .empty() : Client.shared.connectedRequest(.removeMembers(members, self))
+    }
+}
+
 // MARK: - Invite Requests
 
 public extension Channel {

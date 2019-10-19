@@ -44,11 +44,11 @@ public enum EventType: String, Codable {
     case messageRead = "message.read"
     /// ⚠️ When a message reaction was added or deleted (when watching the channel 📺).
     case messageReaction = "message.reaction"
-    /// ⚠️ When a member was added to a channel (when watching the channel 📺).
+    /// When a member was added to a channel (when watching the channel 📺).
     case memberAdded = "member.added"
     /// When a member was updated (when watching the channel 📺).
     case memberUpdated = "member.updated"
-    /// ⚠️ When a member was removed from a channel (when watching the channel 📺).
+    /// When a member was removed from a channel (when watching the channel 📺).
     case memberRemoved = "member.removed"
     
     /// When a message was added to a channel (when clients that are not currently watching the channel ⚡️).
@@ -113,7 +113,9 @@ public enum Event: Decodable {
     case userStartWatching(User, _ watcherCount: Int, EventType)
     case userStopWatching(User, _ watcherCount: Int, EventType)
     
+    case memberAdded(Member, EventType)
     case memberUpdated(Member, EventType)
+    case memberRemoved(User, EventType)
     
     case reactionNew(Reaction, Message, User, EventType)
     case reactionDeleted(Reaction, Message, User, EventType)
@@ -147,7 +149,9 @@ public enum Event: Decodable {
              .userStartWatching(_, _, let type),
              .userStopWatching(_, _, let type),
              
+             .memberAdded(_, let type),
              .memberUpdated(_, let type),
+             .memberRemoved(_, let type),
              
              .reactionNew(_, _, _, let type),
              .reactionDeleted(_, _, _, let type),
@@ -183,6 +187,10 @@ public enum Event: Decodable {
         
         func user() throws -> User {
             return try container.decode(User.self, forKey: .user)
+        }
+        
+        func member() throws -> Member {
+            return try container.decode(Member.self, forKey: .member)
         }
         
         func channel() throws -> Channel {
@@ -228,9 +236,12 @@ public enum Event: Decodable {
             self = .userStopWatching(try user(), watcherCount, type)
             
         // Member
+        case .memberAdded:
+            self = .memberUpdated(try member(), type)
         case .memberUpdated:
-            let member = try container.decode(Member.self, forKey: .member)
-            self = .memberUpdated(member, type)
+            self = .memberUpdated(try member(), type)
+        case .memberRemoved:
+            self = .memberRemoved(try user(), type)
             
         // Typing
         case .typingStart:
@@ -301,8 +312,12 @@ extension Event: Equatable {
             return user1 == user2 && watcherCount1 == watcherCount2
         case (.userStopWatching(let user1, let watcherCount1, _), .userStopWatching(let user2, let watcherCount2, _)):
             return user1 == user2 && watcherCount1 == watcherCount2
+        case (.memberAdded(let member1, _), .memberAdded(let member2, _)):
+            return member1 == member2
         case (.memberUpdated(let member1, _), .memberUpdated(let member2, _)):
             return member1 == member2
+        case (.memberRemoved(let user1, _), .memberRemoved(let user2, _)):
+            return user1 == user2
         case (.reactionNew(let reaction1, let message1, let user1, _), .reactionNew(let reaction2, let message2, let user2, _)):
             return reaction1 == reaction2 && message1 == message2 && user1 == user2
         case (.reactionDeleted(let reaction1, let message1, let user1, _),

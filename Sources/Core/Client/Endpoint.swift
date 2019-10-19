@@ -57,9 +57,13 @@ public enum Endpoint {
     case sendEvent(EventType, Channel)
     /// Send a message action.
     case sendMessageAction(MessageAction)
+    /// Add members to the channel
+    case addMembers([Member], Channel)
+    /// Remove members to the channel
+    case removeMembers([Member], Channel)
     /// Send an answer for an invite.
     case inviteAnswer(ChannelInviteAnswer)
-
+    
     // MARK: - Message Endpoints
     
     /// Get a thread data.
@@ -159,6 +163,9 @@ extension Endpoint {
             return "moderation/flag"
         case .unflagMessage:
             return "moderation/unflag"
+        case .addMembers(_, let channel),
+             .removeMembers(_, let channel):
+            return path(to: channel)
         case .inviteAnswer(let answer):
             return path(to: answer.channel)
         }
@@ -260,6 +267,10 @@ extension Endpoint {
             
         case .inviteAnswer(let answer):
             return answer
+        case .addMembers(let members, _):
+            return ["add_members": members]
+        case .removeMembers(let members, _):
+            return ["remove_members": members]
         }
     }
     

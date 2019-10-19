@@ -49,7 +49,7 @@ public final class Channel: Codable {
     /// A channel id.
     public let id: String
     /// A channel type + id.
-    public let cid: String
+    public let cid: ChannelId
     /// A channel type.
     public let type: ChannelType
     /// A channel name.
@@ -79,7 +79,7 @@ public final class Channel: Codable {
         return deleted != nil
     }
     
-    static private var activeChannelIds: [String] = []
+    static private var activeChannelIds: [ChannelId] = []
     
     var isActive: Bool {
         return Channel.activeChannelIds.contains(cid)
@@ -117,7 +117,7 @@ public final class Channel: Codable {
                 members: [Member] = [],
                 extraData: Codable? = nil) {
         self.id = id
-        self.cid = "\(type.rawValue):\(id)"
+        self.cid = ChannelId(type: type, id: id)
         self.type = type
         self.name = name ?? id
         self.imageURL = imageURL
@@ -152,7 +152,7 @@ public final class Channel: Codable {
         let container = try decoder.container(keyedBy: DecodingKeys.self)
         let id = try container.decode(String.self, forKey: .id)
         self.id = id
-        cid = try container.decode(String.self, forKey: .cid)
+        cid = try container.decode(ChannelId.self, forKey: .cid)
         type = try container.decode(ChannelType.self, forKey: .type)
         let config = try container.decode(Config.self, forKey: .config)
         self.config = config
@@ -317,6 +317,58 @@ public enum ChannelType: String, Codable {
     /// A channel type title.
     public var title: String {
         return rawValue.capitalized
+    }
+}
+
+/// A channel type and id.
+public struct ChannelId: Codable, Hashable {
+    private static let any = "*"
+    private static let separator: Character = ":"
+    
+    enum Error: Swift.Error {
+        case decoding(String)
+    }
+    
+    /// A channel type of the event.
+    public let type: ChannelType
+    /// A channel id of the event.
+    public let id: String
+    
+    /// Init a ChannelId.
+    /// - Parameter type: a channel type.
+    /// - Parameter id: a channel id.
+    public init(type: ChannelType, id: String) {
+        self.type = type
+        self.id = id
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let cid = try container.decode(String.self)
+        
+        if cid == ChannelId.any {
+            type = .unknown
+            id = ChannelId.any
+            return
+        }
+        
+        if cid.contains(ChannelId.separator) {
+            let channelPair = cid.split(separator: ChannelId.separator)
+            type = ChannelType(rawValue: String(channelPair[0])) ?? .unknown
+            id = String(channelPair[1])
+        } else {
+            throw ChannelId.Error.decoding(cid)
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        
+        if id == ChannelId.any {
+            try container.encode(ChannelId.any)
+        } else {
+            try container.encode("\(type.rawValue):\(id)")
+        }
     }
 }
 

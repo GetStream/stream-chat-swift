@@ -86,9 +86,39 @@ public extension Array where Element == ChatItem {
     
     /// Find the first index of an `ChatItem` of a channel presenter with a given channel id.
     ///
+    /// - Parameter cid: a ChannelId of a searching `ChatItem` of a channel presenter.
+    /// - Returns: an index of an `ChatItem` with a channel presenter.
+    func firstIndex(where cid: ChannelId) -> Int? {
+        return firstIndex(whereChannelId: cid.id, channelType: cid.type)
+    }
+    
+    /// Find the first index of an `ChatItem` of a channel presenter with a given channel id.
+    ///
     /// - Parameter channelId: a channelId of a searching `ChatItem` of a channel presenter.
     /// - Returns: an index of an `ChatItem` with a channel presenter.
     func firstIndex(whereChannelId channelId: String, channelType: ChannelType) -> Int? {
+        return firstIndex(where: { item -> Bool in
+            if case .channelPresenter(let channelPresenter) = item {
+                return channelPresenter.channel.id == channelId && channelPresenter.channel.type == channelType
+            }
+            
+            return false
+        })
+    }
+    
+    /// Find the last index of an `ChatItem` of a channel presenter with a given channel id.
+    ///
+    /// - Parameter cid: a ChannelId of a searching `ChatItem` of a channel presenter.
+    /// - Returns: an index of an `ChatItem` with a channel presenter.
+    func lastIndex(where cid: ChannelId) -> Int? {
+        return lastIndex(whereChannelId: cid.id, channelType: cid.type)
+    }
+    
+    /// Find the last index of an `ChatItem` of a channel presenter with a given channel id.
+    ///
+    /// - Parameter channelId: a channelId of a searching `ChatItem` of a channel presenter.
+    /// - Returns: an index of an `ChatItem` with a channel presenter.
+    func lastIndex(whereChannelId channelId: String, channelType: ChannelType) -> Int? {
         return lastIndex(where: { item -> Bool in
             if case .channelPresenter(let channelPresenter) = item {
                 return channelPresenter.channel.id == channelId && channelPresenter.channel.type == channelType

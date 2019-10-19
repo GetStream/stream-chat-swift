@@ -37,8 +37,8 @@ public extension Channel {
             }
             .flatMapLatest { _ in Client.shared.webSocket.response }
             .filter { [weak self] in
-                if let self = self, let channelId = $0.channelId {
-                    return self.id == channelId && self.type == $0.channelType
+                if let self = self, let cid = $0.cid {
+                    return self.id == cid.id && self.type == cid.type
                 }
                 
                 return false
@@ -115,7 +115,7 @@ extension Channel {
     /// - Returns: true, if unread count was updated.
     @discardableResult
     func updateUnreadCount(_ response: WebSocket.Response) -> Bool {
-        guard response.channelId == id, response.channelType == type else {
+        guard let cid = response.cid, cid.id == id, cid.type == type else {
             if case .notificationMarkRead(let notificationChannel, let unreadCount, _, _) = response.event,
                 let channel = notificationChannel,
                 channel.id == id {

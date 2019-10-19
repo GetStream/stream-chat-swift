@@ -61,17 +61,15 @@ public extension Client {
         
         return connection.connected()
             .flatMapLatest { events }
-            .filter {
+            .filter({
                 if let channel = channel {
-                    if let eventChannelId = $0.channelId {
-                        return channel.type == $0.channelType && channel.id == eventChannelId
+                    if let cid = $0.cid {
+                        return channel.type == cid.type && channel.id == cid.id
                     }
-                    
                     return false
                 }
-                
                 return true
-            }
+            })
             .map { $0.event }
             .filter { (eventTypes.isEmpty && $0.type != .healthCheck) || eventTypes.contains($0.type) }
             .share()
