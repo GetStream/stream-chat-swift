@@ -8,6 +8,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 /// A network client.
 public final class Client {
@@ -48,7 +49,7 @@ public final class Client {
     public let logger: ClientLogger?
     
     /// An observable user.
-    public internal(set) lazy var userDidUpdate: Observable<User?> = userPublishSubject.share(replay: 1)
+    public internal(set) lazy var userDidUpdate: Driver<User?> = userPublishSubject.asDriver(onErrorJustReturn: nil)
     private let userPublishSubject = PublishSubject<User?>()
     
     /// The current user.

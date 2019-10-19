@@ -58,9 +58,9 @@ public enum Endpoint {
     /// Send a message action.
     case sendMessageAction(MessageAction)
     /// Add members to the channel
-    case addMembers([Member], Channel)
+    case addMembers(Set<Member>, Channel)
     /// Remove members to the channel
-    case removeMembers([Member], Channel)
+    case removeMembers(Set<Member>, Channel)
     /// Send an answer for an invite.
     case inviteAnswer(ChannelInviteAnswer)
     

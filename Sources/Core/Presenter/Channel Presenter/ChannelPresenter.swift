@@ -23,10 +23,21 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     private let channelType: ChannelType
     private let channelId: String
-    let channelAtomic = Atomic<Channel>()
+    private let channelPublishSubject = PublishSubject<Channel>()
+    
+    private(set) lazy var channelAtomic = Atomic<Channel> { [weak self] channel in
+        if let channel = channel {
+            self?.channelPublishSubject.onNext(channel)
+        }
+    }
     
     /// A channel (see `Channel`).
     public var channel: Channel { return channelAtomic.get(defaultValue: .unused) }
+    
+    /// An observable channel (see `Channel`).
+    public internal(set) lazy var channelDidUpdate: Driver<Channel> = channelPublishSubject
+        .asDriver(onErrorJustReturn: Channel(type: channelType, id: channelId))
+    
     /// A parent message for replies.
     public let parentMessage: Message?
     /// Query options.
@@ -150,11 +161,11 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public init(channel: Channel, parentMessage: Message? = nil, queryOptions: QueryOptions = .all, showStatuses: Bool = true) {
         channelType = channel.type
         channelId = channel.id
-        channelAtomic.set(channel)
         self.parentMessage = parentMessage
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
         super.init(pageSize: .messagesPageSize)
+        channelAtomic.set(channel)
     }
     
     /// Init a presenter with a given channel query.
@@ -165,11 +176,11 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public init(response: ChannelResponse, queryOptions: QueryOptions, showStatuses: Bool = true) {
         channelType = response.channel.type
         channelId = response.channel.id
-        channelAtomic.set(response.channel)
         parentMessage = nil
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
         super.init(pageSize: .messagesPageSize)
+        channelAtomic.set(response.channel)
         parseResponse(response)
     }
 }

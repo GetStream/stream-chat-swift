@@ -18,7 +18,38 @@ class CustomChatViewController: ChatViewController {
         channelPresenter = ChannelPresenter(channel: channel)
     }
     
-//    override func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        guard let channelPresenter = channelPresenter else {
+            return
+        }
+        
+        channelPresenter.channelDidUpdate
+            .drive(onNext: { [weak self] channel in
+                self?.title = "\(channel.name) (\(channel.members.count))"
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    @IBAction func addMember(_ sender: Any) {
+        channelPresenter?.channel
+            .add(User.user3.asMember)
+            .subscribe(onNext: { _ in
+                Banners.shared.show("\(User.user3.name) added to the channel")
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    @IBAction func removeMember(_ sender: Any) {
+        channelPresenter?.channel
+            .remove(User.user3.asMember)
+            .subscribe(onNext: { _ in
+                Banners.shared.show("\(User.user3.name) removed from the channel")
+            })
+            .disposed(by: disposeBag)
+    }
+    //    override func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
 //        let cell = tableView.dequeueReusableCell(withIdentifier: "message")
 //            ?? UITableViewCell(style: .value2, reuseIdentifier: "message")
 //

@@ -166,6 +166,13 @@ extension ChannelsPresenter {
         }
         
         switch response.event {
+        case .channelUpdated(let channel, _):
+            if let index = items.firstIndex(where: channel.channel.cid),
+                let channelPresenter = items[index].channelPresenter {
+                channelPresenter.parseEvents(event: response.event)
+                return .itemUpdated([index], [], items)
+            }
+            
         case .channelDeleted:
             if let index = items.firstIndex(whereChannelId: cid.id, channelType: cid.type) {
                 items.remove(at: index)

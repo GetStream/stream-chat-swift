@@ -145,16 +145,44 @@ public extension Channel {
 
 public extension Channel {
     
+    /// Add a member to the channel.
+    /// - Parameter member: a member.
+    func add(_ member: Member) -> Observable<ChannelResponse> {
+        return add(Set([member]))
+    }
+    
     /// Add members to the channel.
     /// - Parameter members: members.
-    func add(_ members: [Member]) -> Observable<ChannelResponse> {
+    func add(_ members: Set<Member>) -> Observable<ChannelResponse> {
+        var members = members
+        
+        self.members.forEach { existsMember in
+            if let index = members.firstIndex(of: existsMember) {
+                members.remove(at: index)
+            }
+        }
+        
         return members.isEmpty ? .empty() : Client.shared.connectedRequest(.addMembers(members, self))
+    }
+    
+    /// Remove a member from the channel.
+    /// - Parameter member: a member.
+    func remove(_ member: Member) -> Observable<ChannelResponse> {
+        return remove(Set([member]))
     }
     
     /// Remove members from the channel.
     /// - Parameter members: members.
-    func remove(_ members: [Member]) -> Observable<ChannelResponse> {
-        return members.isEmpty ? .empty() : Client.shared.connectedRequest(.removeMembers(members, self))
+    func remove(_ members: Set<Member>) -> Observable<ChannelResponse> {
+        var existsMembers = Set<Member>()
+        
+        self.members.forEach { existsMember in
+            if members.firstIndex(of: existsMember) != nil {
+                existsMembers.insert(existsMember)
+            }
+        }
+        
+        return existsMembers.isEmpty ? .empty() : Client.shared.connectedRequest(.removeMembers(members, self))
     }
 }
 

@@ -164,6 +164,9 @@ extension ChannelPresenter {
             
             return .itemUpdated(rows, messages, items)
             
+        case .channelUpdated(let response, _):
+            channelAtomic.set(response.channel)
+            
         default:
             break
         }
