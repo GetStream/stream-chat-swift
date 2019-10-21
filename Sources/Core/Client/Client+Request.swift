@@ -218,6 +218,19 @@ extension Client {
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
         logger?.timing("Response received")
         
+        if let error = error {
+            if (error as NSError).code == NSURLErrorCancelled {
+                logger?.log("🙅‍♂️", "A request was cancelled. NSError \(NSURLErrorCancelled)")
+            } else if (error as NSError).code == NSURLErrorNetworkConnectionLost {
+                logger?.log("🤷‍♂️", "The network connection was lost. NSError \(NSURLErrorNetworkConnectionLost)")
+            } else {
+                ClientLogger.log("🐴", error)
+            }
+            
+            performInCallbackQueue { completion(.failure(.requestFailed(error))) }
+            return
+        }
+        
         guard let httpResponse = response as? HTTPURLResponse else {
             logger?.log(response, data: data, forceToShowData: true)
             let errorDescription = "Expecting HTTPURLResponse, but got \(response?.description ?? "nil")"
@@ -226,17 +239,6 @@ extension Client {
         }
 
         logger?.log(response, data: data, forceToShowData: httpResponse.statusCode >= 400)
-        
-        if let error = error {
-            if (error as NSError).code == NSURLErrorCancelled {
-                logger?.log("A request was cancelled: \(error)")
-            } else {
-                ClientLogger.log("🐴", error)
-            }
-            
-            performInCallbackQueue { completion(.failure(.requestFailed(error))) }
-            return
-        }
         
         guard let data = data, !data.isEmpty else {
             performInCallbackQueue {
