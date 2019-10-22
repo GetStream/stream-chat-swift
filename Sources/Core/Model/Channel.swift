@@ -39,7 +39,7 @@ public final class Channel: Codable {
     }
     
     /// Coding keys for the encoding.
-    private enum EncodingKeys: String, CodingKey {
+    enum EncodingKeys: String, CodingKey {
         case name
         case imageURL = "image"
         case members
@@ -53,9 +53,9 @@ public final class Channel: Codable {
     /// A channel type.
     public let type: ChannelType
     /// A channel name.
-    public let name: String
+    public internal(set) var name: String
     /// An image of the channel.
-    public var imageURL: URL?
+    public internal(set) var imageURL: URL?
     /// The last message date.  
     public let lastMessageDate: Date?
     /// A channel created date.
@@ -72,7 +72,7 @@ public final class Channel: Codable {
     /// A list of users to invite in the channel.
     var invitedUsers = Set<User>([])
     /// An extra data for the channel.
-    public let extraData: ExtraData?
+    public internal(set) var extraData: ExtraData?
     
     /// Check if the channel was deleted.
     public var isDeleted: Bool {

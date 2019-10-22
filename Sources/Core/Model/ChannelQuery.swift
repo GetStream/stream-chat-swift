@@ -73,3 +73,22 @@ public struct ChannelInviteResponse: Decodable {
     /// Accept the invite.
     let message: Message?
 }
+
+public struct ChannelUpdate: Encodable {
+    struct ChannelData: Encodable {
+        let channel: Channel
+        
+        init(_ channel: Channel) {
+            self.channel = channel
+        }
+        
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: Channel.EncodingKeys.self)
+            try container.encode(channel.name, forKey: .name)
+            try container.encodeIfPresent(channel.imageURL, forKey: .imageURL)
+            channel.extraData?.encodeSafely(to: encoder)
+        }
+    }
+    
+    let data: ChannelData
+}

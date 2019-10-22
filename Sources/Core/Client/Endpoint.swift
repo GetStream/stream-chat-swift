@@ -35,6 +35,8 @@ public enum Endpoint {
     case channel(ChannelQuery)
     /// Stop watching a channel.
     case stopWatching(Channel)
+    /// Update a channel.
+    case updateChannel(ChannelUpdate)
     /// Delete a channel.
     case deleteChannel(Channel)
     /// Hide a channel.
@@ -117,7 +119,11 @@ extension Endpoint {
             return path(to: query.channel, "query")
         case .stopWatching(let channel):
             return path(to: channel, "stop-watching")
-        case .deleteChannel(let channel):
+        case .updateChannel(let channelUpdate):
+            return path(to: channelUpdate.data.channel)
+        case .deleteChannel(let channel),
+             .addMembers(_, let channel),
+             .removeMembers(_, let channel):
             return path(to: channel)
         case .showChannel(let channel, _):
             return path(to: channel, "show")
@@ -163,9 +169,6 @@ extension Endpoint {
             return "moderation/flag"
         case .unflagMessage:
             return "moderation/unflag"
-        case .addMembers(_, let channel),
-             .removeMembers(_, let channel):
-            return path(to: channel)
         case .inviteAnswer(let answer):
             return path(to: answer.channel)
         }
@@ -213,6 +216,9 @@ extension Endpoint {
              .deleteFile,
              .users:
             return nil
+            
+        case .updateChannel(let channelUpdate):
+            return channelUpdate
             
         case .stopWatching,
              .markRead:

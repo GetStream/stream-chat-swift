@@ -9,7 +9,7 @@
 import Foundation
 import RxSwift
 
-// MARK: - Requests
+// MARK: Channel Requests
 
 public extension Channel {
     
@@ -55,15 +55,7 @@ public extension Channel {
             .map { (_: EmptyData) in Void() }
     }
     
-    /// Delete the channel.
-    ///
-    /// - Returns: an observable completion.
-    func delete() -> Observable<ChannelDeletedResponse> {
-        return Client.shared.rx.connectedRequest(endpoint: .deleteChannel(self))
-    }
-    
     /// Hide the channel from queryChannels for the user until a message is added.
-    ///
     /// - Parameter user: the current user.
     func hide(for user: User? = User.current) -> Observable<Void> {
         return Client.shared.rx.connectedRequest(endpoint: .hideChannel(self, user))
@@ -71,7 +63,6 @@ public extension Channel {
     }
     
     /// Removes the hidden status for a channel.
-    ///
     /// - Parameter user: the current user.
     func show(for user: User? = User.current) -> Observable<Void> {
         guard let user = user else {
@@ -82,8 +73,48 @@ public extension Channel {
             .map { (_: EmptyData) in Void() }
     }
     
-    /// Send a new message or update with a given `message.id`.
+    /// Update channel data.
+    /// - Parameter name: a channel name.
+    /// - Parameter imageURL: an image URL.
+    /// - Parameter extraData: a custom extra data.
+    func update(name: String? = nil, imageURL: URL? = nil, extraData: Codable? = nil) -> Observable<ChannelResponse> {
+        var changed = false
+        
+        if let name = name, !name.isEmpty {
+            changed = true
+            self.name = name
+        }
+        
+        if let imageURL = imageURL {
+            changed = true
+            self.imageURL = imageURL
+        }
+        
+        if let extraData = extraData {
+            changed = true
+            self.extraData = ExtraData(extraData)
+        }
+        
+        guard changed else {
+            return .empty()
+        }
+        
+        return Client.shared.rx.connectedRequest(endpoint: .updateChannel(.init(data: .init(self))))
+    }
+    
+    /// Delete the channel.
     ///
+    /// - Returns: an observable completion.
+    func delete() -> Observable<ChannelDeletedResponse> {
+        return Client.shared.rx.connectedRequest(endpoint: .deleteChannel(self))
+    }
+}
+    
+// MARK: - Message
+
+public extension Channel {
+    
+    /// Send a new message or update with a given `message.id`.
     /// - Parameter message: a message.
     /// - Returns: a created/updated message response.
     func send(message: Message) -> Observable<MessageResponse> {
@@ -113,7 +144,6 @@ public extension Channel {
     }
     
     /// Send a message action for a given ephemeral message.
-    ///
     /// - Parameters:
     ///   - action: an action, e.g. send, shuffle.
     ///   - ephemeralMessage: an ephemeral message.
