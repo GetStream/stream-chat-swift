@@ -16,7 +16,7 @@ public extension Channel {
     /// Create a channel.
     /// - Returns: an observable channel response.
     func create() -> Observable<ChannelResponse> {
-        return query(options: .watch)
+        return query()
     }
     
     /// Request for a channel data, e.g. messages, members, read states, etc
@@ -43,7 +43,13 @@ public extension Channel {
             })
     }
     
-    /// Stop watching the channel for events.
+    /// Loads the initial channel state and watches for changes.
+    /// - Returns: an observable channel response.
+    func watch() -> Observable<ChannelResponse> {
+        return query(options: .watch)
+    }
+    
+    /// Stop watching the channel for a state changes.
     func stopWatching() -> Observable<Void> {
         return Client.shared.rx.request(endpoint: .stopWatching(self))
             .map { (_: EmptyData) in Void() }
