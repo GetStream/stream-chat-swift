@@ -103,6 +103,17 @@ final class DarkChannelsViewController: ChannelsViewController {
             }
         }))
         
+        if (channelPresenter.channel.createdBy?.isCurrent ?? false) {
+            alertController.addAction(.init(title: "Rename", style: .default, handler: { [weak self] _ in
+                if let self = self {
+                    channelPresenter.channel
+                        .update(name: "Updated \(Int.random(in: 100...999))", imageURL: URL(string: "https://bit.ly/321RmWb")!)
+                        .subscribe()
+                        .disposed(by: self.disposeBag)
+                }
+            }))
+        }
+        
         present(alertController, animated: true)
     }
     
