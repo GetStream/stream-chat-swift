@@ -41,6 +41,14 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     /// A callback to provide an extra data for a channel.
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
+    /// A filter for channels events.
+    public var eventsFilter: Event.Filter?
+    
+    /// A filter for a selected channel events.
+    /// When a user select a channel, then `ChannelsViewController` create a `ChatViewController`
+    /// with a selected channel presenter and this channel events filter.
+    public var channelEventsFilter: Event.Filter?
+    
     /// An observable view changes (see `ViewChanges`).
     public private(set) lazy var changes = Driver.merge(requestChannels,
                                                         webSocketEvents,
@@ -57,6 +65,13 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     
     private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.webSocket.response
+        .filter({ [weak self] response in
+            if let eventsFilter = self?.eventsFilter {
+                return eventsFilter(response.event, nil)
+            }
+            
+            return true
+        })
         .map { [weak self] in self?.parseEvents(response: $0) ?? .none }
         .filter { $0 != .none }
         .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }

@@ -187,6 +187,7 @@ open class ChannelsViewController: ViewController {
     open func createChatViewController(with channelPresenter: ChannelPresenter, indexPath: IndexPath) -> ChatViewController {
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style
+        channelPresenter.eventsFilter = channelsPresenter.channelEventsFilter
         chatViewController.channelPresenter = channelPresenter
         return chatViewController
     }

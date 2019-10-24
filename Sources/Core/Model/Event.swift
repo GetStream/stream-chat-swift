@@ -98,6 +98,9 @@ public enum Event: Decodable {
         let type: EventType
     }
     
+    /// A filter type for events.
+    public typealias Filter = (Event, Channel?) -> Bool
+    
     case healthCheck(_ connectionId: String, User?)
     
     case channelUpdated(ChannelUpdatedResponse, EventType)

@@ -81,6 +81,9 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         return parentMessage == nil && channel.config.repliesEnabled
     }
     
+    /// A filter to discard channel events.
+    public var eventsFilter: Event.Filter?
+    
     /// An observable view changes (see `ViewChanges`).
     public private(set) lazy var changes =
         (channel.id.isEmpty
@@ -137,6 +140,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .flatMapLatest { [weak self] in self?.parentMessage?.fetchReplies(pagination: $0) ?? .empty() }
     
     private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.onEvent(channel: channel)
+        .filter({ [weak self] event in
+            if let eventsFilter = self?.eventsFilter {
+                return eventsFilter(event, self?.channel)
+            }
+            
+            return true
+        })
         .map { [weak self] in self?.parseEvents(event: $0) ?? .none }
         .filter { $0 != .none }
         .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
