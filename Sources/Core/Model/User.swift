@@ -15,11 +15,12 @@ public struct User: Codable {
         case name
         case avatarURL = "image"
         case role
-        case online
+        case isOnline = "online"
         case isBanned = "banned"
         case created = "created_at"
         case updated = "updated_at"
         case lastActiveDate = "last_active"
+        case isInvisible = "invisible"
         case devices
         case mutedUsers = "mutes"
         case messagesUnreadCount = "unread_count"
@@ -47,7 +48,9 @@ public struct User: Codable {
     /// A last active date.
     public let lastActiveDate: Date?
     /// An indicator if a user is online.
-    public let online: Bool
+    public let isOnline: Bool
+    /// An indicator if a user is invisible.
+    public let isInvisible: Bool
     /// An indicator if a user was banned.
     public internal(set) var isBanned: Bool
     /// A user role.
@@ -100,7 +103,7 @@ public struct User: Codable {
     ///     - id: a user id.
     ///     - name: a user name.
     ///     - an avatar URL.
-    public init(id: String, name: String, avatarURL: URL? = nil) {
+    public init(id: String, name: String, avatarURL: URL? = nil, isInvisible: Bool = false) {
         self.id = id
         self.name = name
         self.avatarURL = avatarURL
@@ -108,23 +111,25 @@ public struct User: Codable {
         created = .default
         updated = .default
         lastActiveDate = .default
-        online = false
+        isOnline = false
         devices = []
         mutedUsers = []
         messagesUnreadCount = 0
         channelsUnreadCount = 0
+        self.isInvisible = isInvisible
         isBanned = false
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
+        role = try container.decode(Role.self, forKey: .role)
         created = try container.decode(Date.self, forKey: .created)
         updated = try container.decode(Date.self, forKey: .updated)
         lastActiveDate = try container.decodeIfPresent(Date.self, forKey: .lastActiveDate)
-        online = try container.decode(Bool.self, forKey: .online)
+        isOnline = try container.decode(Bool.self, forKey: .isOnline)
+        isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
-        role = try container.decode(Role.self, forKey: .role)
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
         messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
@@ -149,6 +154,10 @@ public struct User: Codable {
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(avatarURL, forKey: .avatarURL)
+        
+        if isInvisible {
+            try container.encode(isInvisible, forKey: .isInvisible)
+        }
     }
 }
 
