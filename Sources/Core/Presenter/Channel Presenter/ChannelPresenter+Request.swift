@@ -24,8 +24,8 @@ extension ChannelPresenter {
     }
     
     @discardableResult
-    func parseResponse(_ query: ChannelResponse) -> ViewChanges {
-        channelAtomic.set(query.channel)
+    func parseResponse(_ response: ChannelResponse) -> ViewChanges {
+        channelAtomic.set(response.channel)
         let isNextPage = next != pageSize
         var items = isNextPage ? self.items : []
         var isLoadingIndex = -1
@@ -36,7 +36,7 @@ extension ChannelPresenter {
         }
         
         if InternetConnection.shared.isAvailable && channel.config.readEventsEnabled {
-            unreadMessageReadAtomic.set(query.unreadMessageRead)
+            unreadMessageReadAtomic.set(response.unreadMessageRead)
             
             if !isNextPage {
                 messageReadsToMessageId = [:]
@@ -44,11 +44,12 @@ extension ChannelPresenter {
         }
         
         let currentCount = items.count
-        let messageReads = InternetConnection.shared.isAvailable && channel.config.readEventsEnabled ? query.messageReads : []
-        parse(query.messages, messageReads: messageReads, to: &items, isNextPage: isNextPage)
+        let messageReads = InternetConnection.shared.isAvailable && channel.config.readEventsEnabled ? response.messageReads : []
+        parse(response.messages, messageReads: messageReads, to: &items, isNextPage: isNextPage)
         self.items = items
+        response.channel.setupUnreadCount(response)
         
-        if query.messages.isEmpty {
+        if response.messages.isEmpty {
             return isLoadingIndex == -1 ? .none : .itemRemoved(isLoadingIndex, items)
         }
         

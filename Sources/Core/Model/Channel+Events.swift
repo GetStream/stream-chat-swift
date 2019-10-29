@@ -91,8 +91,9 @@ extension Channel {
     }
     
     func setupUnreadCount(_ channelResponse: ChannelResponse) {
+        unreadCountAtomic.set(0)
+        
         guard let unreadMessageRead = channelResponse.unreadMessageRead else {
-            unreadCountAtomic.set(0)
             return
         }
         

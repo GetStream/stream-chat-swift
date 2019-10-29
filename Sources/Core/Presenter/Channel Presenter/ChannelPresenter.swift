@@ -190,7 +190,6 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
         super.init(pageSize: .messagesPageSize)
-        channelAtomic.set(response.channel)
         parseResponse(response)
     }
 }
@@ -290,6 +289,7 @@ extension ChannelPresenter {
             .do(
                 onNext: { [weak self] _ in
                     self?.unreadMessageReadAtomic.set(nil)
+                    self?.channel.unreadCountAtomic.set(0)
                     Client.shared.logger?.log("🎫", "Message Read done.")
                 },
                 onError: { [weak self] error in

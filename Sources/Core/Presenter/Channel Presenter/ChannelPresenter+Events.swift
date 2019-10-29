@@ -125,10 +125,13 @@ extension ChannelPresenter {
             }
             
         case .messageRead(let messageRead, _):
-            guard channel.config.readEventsEnabled,
-                let currentUser = User.current,
-                messageRead.user != currentUser,
-                let lastAddedOwnMessage = lastAddedOwnMessage,
+            guard channel.config.readEventsEnabled, let currentUser = User.current, messageRead.user != currentUser else {
+                return .none
+            }
+            
+            channel.unreadCountAtomic.set(0)
+            
+            guard  let lastAddedOwnMessage = lastAddedOwnMessage,
                 lastAddedOwnMessage.created <= messageRead.lastReadDate,
                 let lastOwnMessageIndex = items.lastIndex(whereMessageId: lastAddedOwnMessage.id) else {
                     return .none

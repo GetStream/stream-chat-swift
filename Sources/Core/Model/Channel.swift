@@ -88,6 +88,11 @@ public final class Channel: Codable {
     var unreadCountAtomic = Atomic(0)
     var onlineUsersAtomic = Atomic<[User]>([])
     
+    /// Returns the current unread count.
+    public var currentUnreadCount: Int {
+        return unreadCountAtomic.get(defaultValue: 0)
+    }
+    
     /// Init a channel 1-by-1 with another member.
     /// - Parameter type: a channel type.
     /// - Parameter member: an another member.

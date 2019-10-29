@@ -204,6 +204,11 @@ extension ChannelsPresenter {
                 return .itemUpdated([index], [message], items)
             }
             
+        case .messageRead:
+            if let index = items.firstIndex(where: cid) {
+                return .itemUpdated([index], [], items)
+            }
+            
         default:
             break
         }

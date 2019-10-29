@@ -66,7 +66,13 @@ final class DarkChannelsViewController: ChannelsViewController {
         let cell = super.channelCell(at: indexPath, channelPresenter: channelPresenter)
         
         if let cell = cell as? ChannelTableViewCell {
-            cell.nameLabel.text = "\(cell.nameLabel.text ?? "") (\(channelPresenter.channel.members.count))"
+            // Add a number of members.
+            cell.nameLabel.text = "\(cell.nameLabel.text ?? "") (\(channelPresenter.channel.members.count) members)"
+            
+            // Add an unread count.
+            if channelPresenter.channel.currentUnreadCount > 0 {
+                cell.messageLabel.text = "\(cell.messageLabel.text ?? "") (\(channelPresenter.channel.currentUnreadCount) unread)"
+            }
             
             cell.rx.longPressGesture().when(.began)
                 .subscribe(onNext: { [weak self, weak channelPresenter] _ in
