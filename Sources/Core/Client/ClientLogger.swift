@@ -84,6 +84,13 @@ public final class ClientLogger {
             log(message)
         }
         
+        if let url = request.url,
+            url.query != nil,
+            let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            let queryItems = urlComponents.queryItems {
+            log(queryItems)
+        }
+        
         if let bodyStream = request.httpBodyStream {
             log("Request Body Stream", bodyStream.description)
         }
@@ -108,7 +115,7 @@ public final class ClientLogger {
                 value.hasPrefix("{"),
                 let data = value.data(using: .utf8),
                 let json = try? data.prettyPrintedJSONString() {
-                message += "▫️ \(item.name)=\(json)"
+                message += "▫️ \(item.name)=\(json)\n"
             } else {
                 message += "▫️ \(item.description)\n"
             }

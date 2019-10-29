@@ -157,8 +157,6 @@ extension Client {
             }
         }
         
-        logger?.log(queryItems)
-        
         return .success(queryItems)
     }
     
