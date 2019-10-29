@@ -33,8 +33,22 @@ class CustomChatViewController: ChatViewController {
     }
     
     @IBAction func addMember(_ sender: Any) {
-        channelPresenter?.channel
-            .add(User.user3.asMember)
+        guard let channelPresenter = channelPresenter else {
+            return
+        }
+        
+        let member: Member
+        
+        if !channelPresenter.channel.members.contains(User.current!.asMember) {
+            member = User.current!.asMember
+        } else if let user: User = [.user1, .user2, .user3].randomElement() {
+            member = user.asMember
+        } else {
+            return
+        }
+        
+        channelPresenter.channel
+            .add(member)
             .subscribe(onNext: { _ in
                 Banners.shared.show("\(User.user3.name) added to the channel")
             })
@@ -42,8 +56,12 @@ class CustomChatViewController: ChatViewController {
     }
     
     @IBAction func removeMember(_ sender: Any) {
+        guard let member = channelPresenter?.channel.members.first else {
+            return
+        }
+        
         channelPresenter?.channel
-            .remove(User.user3.asMember)
+            .remove(member)
             .subscribe(onNext: { _ in
                 Banners.shared.show("\(User.user3.name) removed from the channel")
             })
