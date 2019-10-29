@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension Client {
     /// A Stream Chat version.
@@ -16,7 +17,10 @@ extension Client {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
         
-        var headers = ["X-Stream-Client": "stream-chat-swift-client-\(Client.version)"]
+        var headers = [
+            "X-Stream-Client": "stream-chat-swift-client-\(Client.version)",
+            "X-Stream-Device": UIDevice.current.name,
+            "X-Stream-OS": "\(UIDevice.current.systemName)\(UIDevice.current.systemVersion)"]
         
         if token.isBlank {
             headers["Stream-Auth-Type"] = "anonymous"
