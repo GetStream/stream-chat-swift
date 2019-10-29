@@ -13,7 +13,7 @@ import RxSwift
 
 public extension Message {
     
-    private static var flaggedIds = [String]()
+    static var flaggedIds = [String]()
     
     /// Delete the message.
     ///
@@ -56,8 +56,14 @@ public extension Message {
         return Client.shared.database?.replies(for: self, pagination: pagination) ?? .empty()
     }
     
+    // MARK: Flag Message
+    
+    /// Checks if the message is flagged (locally).
+    var isFlagged: Bool {
+        return Message.flaggedIds.contains(id)
+    }
+    
     /// Flag a message.
-    ///
     /// - Returns: an observable flag message response.
     func flag() -> Observable<FlagMessageResponse> {
         guard !user.isCurrent else {
@@ -70,7 +76,6 @@ public extension Message {
     }
     
     /// Unflag a message.
-    ///
     /// - Returns: an observable flag message response.
     func unflag() -> Observable<FlagMessageResponse> {
         guard !user.isCurrent else {
@@ -87,23 +92,9 @@ public extension Message {
             }))
     }
     
-    /// Checks if the message is flagged (locally).
-    var isFlagged: Bool {
-        return Message.flaggedIds.contains(id)
-    }
-    
     private func flagUnflagMessage(endpoint: Endpoint) -> Observable<FlagMessageResponse> {
-        let request: Observable<FlagResponse> = Client.shared.rx.request(endpoint: endpoint)
-        return request.map { $0.flag }
-            .catchError { error -> Observable<FlagMessageResponse> in
-                if let clientError = error as? ClientError,
-                    case .responseError(let clientResponseError) = clientError,
-                    clientResponseError.message.contains("flag already exists") {
-                    return .just(FlagMessageResponse(messageId: self.id, created: Date(), updated: Date()))
-                }
-                
-                return .error(error)
-        }
+        return Client.shared.flagUnflag(endpoint: endpoint,
+                                        aleradyFlagged: FlagMessageResponse(messageId: id, created: Date(), updated: Date()))
     }
 }
 
@@ -115,8 +106,8 @@ public struct MessagesResponse: Decodable {
     let messages: [Message]
 }
 
-struct FlagResponse: Decodable {
-    let flag: FlagMessageResponse
+struct FlagResponse<T: Decodable>: Decodable {
+    let flag: T
 }
 
 /// A flag message response.
@@ -129,6 +120,22 @@ public struct FlagMessageResponse: Decodable {
     
     /// A flagged message id.
     public let messageId: String
+    /// A created date.
+    public let created: Date
+    /// A updated date.
+    public let updated: Date
+}
+
+/// A flag message response.
+public struct FlagUserResponse: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case user = "target_user"
+        case created = "created_at"
+        case updated = "updated_at"
+    }
+    
+    /// A flagged user.
+    public let user: User
     /// A created date.
     public let created: Date
     /// A updated date.

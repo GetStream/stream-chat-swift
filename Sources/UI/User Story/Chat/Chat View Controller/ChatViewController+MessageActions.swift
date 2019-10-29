@@ -53,14 +53,23 @@ extension ChatViewController {
                 }
             }
             
-            // Flag.
             if presenter.channel.config.flagsEnabled {
+                // Flag a message.
                 if message.isFlagged {
-                    alert.addAction(.init(title: "Unflag", style: .default, handler: { [weak self] _ in
+                    alert.addAction(.init(title: "Unflag the message", style: .default, handler: { [weak self] _ in
                         self?.unflag(message: message) }))
                 } else {
-                    alert.addAction(.init(title: "Flag", style: .default, handler: { [weak self] _ in
+                    alert.addAction(.init(title: "Flag the message", style: .default, handler: { [weak self] _ in
                         self?.flag(message: message) }))
+                }
+            
+                // Flag a user.
+                if message.user.isFlagged {
+                    alert.addAction(.init(title: "Unflag the user", style: .default, handler: { [weak self] _ in
+                        self?.unflag(user: message.user) }))
+                } else {
+                    alert.addAction(.init(title: "Flag the user", style: .default, handler: { [weak self] _ in
+                        self?.flag(user: message.user) }))
                 }
             }
         }
@@ -175,6 +184,28 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
                     self?.showBanner("🚩 Unflagged: \(message.textOrArgs)", backgroundColor: backgroundColor)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func flag(user: User) {
+        user.flag()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                if let backgroundColor = self?.view.backgroundColor {
+                    self?.showBanner("🚩 Flagged: \(user.name)", backgroundColor: backgroundColor)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func unflag(user: User) {
+        user.unflag()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                if let backgroundColor = self?.view.backgroundColor {
+                    self?.showBanner("🚩 Unflagged: \(user.name)", backgroundColor: backgroundColor)
                 }
             })
             .disposed(by: disposeBag)

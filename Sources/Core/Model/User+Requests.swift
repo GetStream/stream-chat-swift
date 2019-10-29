@@ -13,6 +13,8 @@ import RxSwift
 
 public extension User {
     
+    static var flaggedUsers = [User]()
+    
     /// Update or create a user.
     ///
     /// - Returns: an observable updated user.
@@ -55,6 +57,42 @@ public extension User {
                     }
                 }
             }))
+    }
+    
+    // MARK: Flag User
+    
+    /// Checks if the user is flagged (locally).
+    var isFlagged: Bool {
+        return User.flaggedUsers.contains(self)
+    }
+    
+    /// Flag a user.
+    func flag() -> Observable<FlagUserResponse> {
+        guard !isCurrent else {
+            return .empty()
+        }
+        
+        return Client.shared.connectedRequest(flagUnflagUser(endpoint: .flagUser(self))
+            .do(onNext: { _ in User.flaggedUsers.append(self) }))
+    }
+     
+    /// Unflag a user.
+    func unflag() -> Observable<FlagUserResponse> {
+        guard !isCurrent else {
+            return .empty()
+        }
+        
+        return Client.shared.connectedRequest(flagUnflagUser(endpoint: .unflagUser(self))
+            .do(onNext: { _ in
+                if let index = User.flaggedUsers.firstIndex(where: { $0 == self }) {
+                    User.flaggedUsers.remove(at: index)
+                }
+            }))
+    }
+    
+    private func flagUnflagUser(endpoint: Endpoint) -> Observable<FlagUserResponse> {
+        return Client.shared.flagUnflag(endpoint: endpoint,
+                                        aleradyFlagged: FlagUserResponse(user: self, created: Date(), updated: Date()))
     }
 }
 

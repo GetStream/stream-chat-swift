@@ -79,6 +79,32 @@ public extension Client {
     func unmute(user: User) -> Observable<Void> {
         return user.unmute()
     }
+    
+    /// Flag a user.
+    /// - Parameter user: a user.
+    func flag(user: User) -> Observable<FlagUserResponse> {
+        return user.flag()
+    }
+    
+    /// Unflag a user.
+    /// - Parameter user: a user.
+    func unflag(user: User) -> Observable<FlagUserResponse> {
+        return user.unflag()
+    }
+    
+    func flagUnflag<T: Decodable>(endpoint: Endpoint, aleradyFlagged value: T) -> Observable<T> {
+        let request: Observable<FlagResponse<T>> = Client.shared.rx.request(endpoint: endpoint)
+        return request.map { $0.flag }
+            .catchError { error -> Observable<T> in
+                if let clientError = error as? ClientError,
+                    case .responseError(let clientResponseError) = clientError,
+                    clientResponseError.message.contains("flag already exists") {
+                    return .just(value)
+                }
+                
+                return .error(error)
+        }
+    }
 }
 
 // MARK: - Devices

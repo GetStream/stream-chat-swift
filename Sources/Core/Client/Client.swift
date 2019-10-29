@@ -150,6 +150,8 @@ public final class Client {
         urlSession = setupURLSession(token: "")
         webSocket = WebSocket()
         token = nil
+        Message.flaggedIds = []
+        User.flaggedUsers = []
     }
 }
 

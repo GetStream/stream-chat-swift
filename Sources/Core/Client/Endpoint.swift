@@ -95,6 +95,10 @@ public enum Endpoint {
     case muteUser(User)
     /// Unmute a user.
     case unmuteUser(User)
+    /// Flag a user.
+    case flagUser(User)
+    /// Unflag a user.
+    case unflagUser(User)
 }
 
 extension Endpoint {
@@ -173,9 +177,11 @@ extension Endpoint {
             return "moderation/mute"
         case .unmuteUser:
             return "moderation/unmute"
-        case .flagMessage:
+        case .flagUser,
+             .flagMessage:
             return "moderation/flag"
-        case .unflagMessage:
+        case .unflagUser,
+             .unflagMessage:
             return "moderation/unflag"
         case .inviteAnswer(let answer):
             return path(to: answer.channel)
@@ -280,6 +286,9 @@ extension Endpoint {
             
         case .flagMessage(let message), .unflagMessage(let message):
             return ["target_message_id": message.id]
+            
+        case .flagUser(let user), .unflagUser(let user):
+            return ["target_user_id": user.id]
             
         case .inviteAnswer(let answer):
             return answer
