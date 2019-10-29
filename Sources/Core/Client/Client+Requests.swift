@@ -27,6 +27,12 @@ public extension Client {
     func message(with messageId: String) -> Observable<MessageResponse> {
         return connectedRequest(.message(messageId))
     }
+    
+    /// Mark all messages as readed.
+    func markAllRead() -> Observable<Void> {
+        let request: Observable<EmptyData> = rx.request(endpoint: .markAllRead)
+        return connectedRequest(request.map({ _ in Void() }))
+    }
 }
 
 // MARK: - Users Requests
@@ -39,7 +45,7 @@ public extension Client {
     /// - Returns: an observable list of users.
     func users(query: UsersQuery) -> Observable<[User]> {
         let request: Observable<UsersResponse> = rx.request(endpoint: .users(query))
-        return connectedRequest(request.map { $0.users })
+        return connectedRequest(request.map({ $0.users }))
     }
     
     /// Update or create a user.
@@ -47,7 +53,7 @@ public extension Client {
     /// - Returns: an observable updated user.
     func update(users: [User]) -> Observable<[User]> {
         let request: Observable<UpdatedUsersResponse> = rx.request(endpoint: .updateUsers(users))
-        return connectedRequest(request.map { $0.users.values.map { $0 } })
+        return connectedRequest(request.map({ $0.users.values.map { $0 } }))
     }
     
     /// Update or create a user.

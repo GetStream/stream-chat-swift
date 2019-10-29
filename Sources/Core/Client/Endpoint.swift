@@ -31,6 +31,7 @@ public enum Endpoint {
     case channels(ChannelsQuery)
     /// Get a message by id.
     case message(String)
+    case markAllRead
     
     // MARK: - Channel Endpoints
     
@@ -120,6 +121,8 @@ extension Endpoint {
             return "channels"
         case .message(let messageId):
             return "messages/\(messageId)"
+        case .markAllRead:
+            return "channels/read"
         case .channel(let query):
             return path(to: query.channel, "query")
         case .stopWatching(let channel):
@@ -223,12 +226,13 @@ extension Endpoint {
              .users:
             return nil
             
+        case .markAllRead,
+             .markRead,
+             .stopWatching:
+            return EmptyData()
+            
         case .updateChannel(let channelUpdate):
             return channelUpdate
-            
-        case .stopWatching,
-             .markRead:
-            return EmptyData()
             
         case .guestToken(let user):
             return ["user": user]
