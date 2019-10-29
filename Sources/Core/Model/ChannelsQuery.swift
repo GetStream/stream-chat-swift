@@ -18,7 +18,7 @@ public struct ChannelsQuery: Encodable {
         case watch
         case presence
         case pagination
-        case messageLimit = "message_limit"
+        case messagesLimit = "message_limit"
     }
     
     /// A filter for the query (see `Filter`).
@@ -61,7 +61,7 @@ public struct ChannelsQuery: Encodable {
             try container.encode(sort, forKey: .sort)
         }
         
-        try container.encode(messagesLimit.limit, forKey: .messageLimit)
+        try container.encode(messagesLimit.limit, forKey: .messagesLimit)
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
         
