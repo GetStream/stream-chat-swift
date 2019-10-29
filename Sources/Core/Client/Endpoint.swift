@@ -10,12 +10,13 @@ import Foundation
 
 /// Chat endpoints.
 public enum Endpoint {
-    // MARK: - Client Endpoints
+    
+    // MARK: Auth Endpoints
     
     /// Get a guest token.
     case guestToken(User)
     
-    // MARK: - Device Endpoints
+    // MARK: Device Endpoints
     
     /// Add a device with a given identifier for Push Notifications.
     case addDevice(deviceId: String, User)
@@ -24,10 +25,12 @@ public enum Endpoint {
     /// Remove a device with a given identifier.
     case removeDevice(deviceId: String, User)
     
-    // MARK: - Channels Endpoints
+    // MARK: Client Endpoints
     
     /// Get a list of channels.
     case channels(ChannelsQuery)
+    /// Get a message by id.
+    case message(String)
     
     // MARK: - Channel Endpoints
     
@@ -96,7 +99,7 @@ public enum Endpoint {
 extension Endpoint {
     var method: Client.Method {
         switch self {
-        case .channels, .replies, .users, .devices:
+        case .channels, .message, .replies, .users, .devices:
             return .get
         case .removeDevice, .deleteChannel, .deleteMessage, .deleteReaction, .deleteImage, .deleteFile:
             return .delete
@@ -115,6 +118,8 @@ extension Endpoint {
             return "devices"
         case .channels:
             return "channels"
+        case .message(let messageId):
+            return "messages/\(messageId)"
         case .channel(let query):
             return path(to: query.channel, "query")
         case .stopWatching(let channel):
@@ -206,6 +211,7 @@ extension Endpoint {
         switch self {
         case .removeDevice,
              .channels,
+             .message,
              .deleteChannel,
              .replies,
              .deleteMessage,

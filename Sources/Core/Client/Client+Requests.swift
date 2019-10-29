@@ -21,6 +21,12 @@ public extension Client {
         let request: Observable<ChannelsResponse> = rx.request(endpoint: .channels(query))
         return connectedRequest(request.map { $0.channels })
     }
+    
+    /// Get a message by id.
+    /// - Parameter messageId: a message id.
+    func message(with messageId: String) -> Observable<MessageResponse> {
+        return connectedRequest(.message(messageId))
+    }
 }
 
 // MARK: - Users Requests
