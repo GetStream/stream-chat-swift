@@ -221,6 +221,8 @@ public extension Channel {
         return existsMembers.isEmpty ? .empty() : Client.shared.connectedRequest(.removeMembers(members, self))
     }
     
+    // MARK: User Ban
+    
     /// Check is the user is banned for the channel.
     /// - Parameter user: a user.
     func isBanned(_ user: User) -> Bool {
@@ -229,13 +231,22 @@ public extension Channel {
     
     /// Ban a user.
     /// - Parameter user: a user.
-    func ban(user: User) -> Observable<Void> {
-        if isBanned(user) {
+    func ban(user: User, timeoutInMinutes: Int? = nil, reason: String? = nil) -> Observable<Void> {
+        if isBanned(user) || !banEnabling.isEnabled(for: self) {
             return .empty()
         }
         
-        let request: Observable<EmptyData> = Client.shared.connectedRequest(.ban(.init(user: user, channel: self)))
-        return request.map({ _ in Void() }).do(onNext: { [weak self] in self?.bannedUsers.append(user) })
+        let timeoutInMinutes = timeoutInMinutes ?? banEnabling.timeoutInMinutes
+        let reason = reason ?? banEnabling.reason
+        let userBan = UserBan(user: user, channel: self, timeoutInMinutes: timeoutInMinutes, reason: reason)
+        let request: Observable<EmptyData> = Client.shared.connectedRequest(.ban(userBan))
+        
+        return request.map({ _ in Void() })
+            .do(onNext: { [weak self] in
+                if timeoutInMinutes == nil {
+                    self?.bannedUsers.append(user)
+                }
+            })
     }
 }
 

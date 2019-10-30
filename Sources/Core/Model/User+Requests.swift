@@ -149,15 +149,21 @@ public struct UserBan: Encodable {
         case userId = "target_user_id"
         case channelType = "type"
         case channelId = "id"
+        case timeoutInMinutes = "timeout"
+        case reason
     }
     
     let userId: String
     let channelType: ChannelType
     let channelId: String
+    let timeoutInMinutes: Int?
+    let reason: String?
     
-    init(user: User, channel: Channel) {
+    init(user: User, channel: Channel, timeoutInMinutes: Int?, reason: String?) {
         userId = user.id
         channelType = channel.type
         channelId = channel.id
+        self.timeoutInMinutes = timeoutInMinutes
+        self.reason = reason
     }
 }

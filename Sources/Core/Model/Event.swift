@@ -30,6 +30,8 @@ public enum EventType: String, Codable {
     case userStopWatching = "user.watching.stop"
     /// When a user was updated (when subscribed to the user status 🙋‍♀️).
     case userUpdated = "user.updated"
+    /// When a user was banned (when subscribed to the user status 🙋‍♀️).
+    case userBanned = "user.banned"
     /// Sent when a user starts typing (when watching the channel 📺).
     case typingStart = "typing.start"
     /// Sent when a user stops typing (when watching the channel 📺).
@@ -87,11 +89,15 @@ public enum Event: Decodable {
         case member
         case watcherCount = "watcher_count"
         case channel
+        case channelType = "channel_type"
+        case channelId = "channel_id"
         case message
         case reaction
         case unreadCount = "unread_count"
         case unreadChannels = "unread_channels"
         case created = "created_at"
+        case reason
+        case expiration
     }
     
     struct ResponseTypeError: Swift.Error {
@@ -115,6 +121,7 @@ public enum Event: Decodable {
     case userPresenceChanged(User, EventType)
     case userStartWatching(User, _ watcherCount: Int, EventType)
     case userStopWatching(User, _ watcherCount: Int, EventType)
+    case userBanned(ChannelId?, reason: String?, expiration: Date?, created: Date, EventType)
     
     case memberAdded(Member, EventType)
     case memberUpdated(Member, EventType)
@@ -151,6 +158,7 @@ public enum Event: Decodable {
              .userPresenceChanged(_, let type),
              .userStartWatching(_, _, let type),
              .userStopWatching(_, _, let type),
+             .userBanned(_, _, _, _, let type),
              
              .memberAdded(_, let type),
              .memberUpdated(_, let type),
@@ -172,6 +180,7 @@ public enum Event: Decodable {
              .notificationInviteAccepted(_, let type),
              .notificationInviteRejected(_, let type):
             return type
+            
         case .healthCheck:
             return .healthCheck
         }
@@ -237,6 +246,18 @@ public enum Event: Decodable {
         case .userStopWatching:
             let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
             self = .userStopWatching(try user(), watcherCount, type)
+        case .userBanned:
+            var channelId: ChannelId? = nil
+            
+            if let channelType = try container.decodeIfPresent(ChannelType.self, forKey: .channelType),
+                let id = try container.decodeIfPresent(String.self, forKey: .channelId) {
+                channelId = ChannelId(type: channelType, id: id)
+            }
+            
+            let reason = try container.decodeIfPresent(String.self, forKey: .reason)
+            let expiration = try container.decodeIfPresent(Date.self, forKey: .expiration)
+            let created = try container.decode(Date.self, forKey: .created)
+            self = .userBanned(channelId, reason: reason, expiration: expiration, created: created, type)
             
         // Member
         case .memberAdded:

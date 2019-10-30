@@ -37,8 +37,14 @@ public extension Channel {
             }
             .flatMapLatest { _ in Client.shared.webSocket.response }
             .filter { [weak self] in
-                if let self = self, let cid = $0.cid {
-                    return self.id == cid.id && self.type == cid.type
+                if let self = self {
+                    if let cid = $0.cid {
+                        return self.id == cid.id && self.type == cid.type
+                    }
+                    
+                    if case .userBanned(let cid, _, _, _, _) = $0.event {
+                        return cid == self.cid
+                    }
                 }
                 
                 return false
