@@ -84,13 +84,21 @@ final class RootViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    @IBAction func checkForBan(_ sender: Any) {
+        Client.shared.connection.connected()
+        .take(1)
+        .subscribe(onNext: { _ in
+            if let currentUser = User.current, currentUser.isBanned {
+                Banners.shared.show("🙅‍♂️ You are banned")
+            } else {
+                Banners.shared.show("👍 You are not banned")
+            }
+        })
+        .disposed(by: disposeBag)
+    }
+    
     func subscribeForTotalUnreadCount() {
         Client.shared.unreadCount
-            .do(onNext: { _ in
-                if let currentUser = User.current, currentUser.isBanned {
-                    Banners.shared.show("You are banned")
-                }
-            })
             .drive(onNext: { [weak self] unreadCount in
                 self?.totalUnreadCountLabel.text = "Unread channels \(unreadCount.0), messages: \(unreadCount.1)"
                 UIApplication.shared.applicationIconBadgeNumber = unreadCount.messages
