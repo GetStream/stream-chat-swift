@@ -106,6 +106,7 @@ public final class Banners {
                                        animations: { self.window.transform = Banners.hiddenTransform },
                                        completion: { finished in
                                         self.window.isHidden = true
+                                        bannerView.removeFromSuperview()
                                         self.showNext()
                         })
         })
