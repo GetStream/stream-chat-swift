@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RxSwift
 import StreamChatCore
 
 final class LoginViewController: UIViewController {
@@ -14,6 +15,7 @@ final class LoginViewController: UIViewController {
     @IBOutlet weak var versionLabel: UILabel!
     var loggedInUser: User?
     var loggenInToken: Token?
+    let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
