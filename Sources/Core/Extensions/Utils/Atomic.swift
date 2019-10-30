@@ -11,9 +11,9 @@ import Foundation
 /// A mutable thread safe variable.
 public final class Atomic<T> {
     /// A didSet callback type.
-    public typealias DidSetCallback = (T?) -> Void
+    public typealias DidSetCallback = (_ value: T?, _ oldValue: T?) -> Void
     
-    private let queue = DispatchQueue(label: "io.getstream.Chat.Atomic", qos: .utility, attributes: .concurrent)
+    private let queue = DispatchQueue(label: "io.getstream.Chat.Atomic", qos: .userInitiated, attributes: .concurrent)
     private var value: T?
     private var didSet: DidSetCallback?
     
@@ -30,8 +30,9 @@ public final class Atomic<T> {
     /// Set a value.
     public func set(_ newValue: T?) {
         queue.async(flags: .barrier) {
+            let oldValue = self.value
             self.value = newValue
-            self.didSet?(newValue)
+            self.didSet?(newValue, oldValue)
         }
     }
     

@@ -88,17 +88,17 @@ extension Client {
     public var unreadCount: Driver<UnreadCount> {
         return Client.shared.connection.connected()
             // Subscribe for new messages and read events.
-            .flatMapLatest({ [weak self] _ in
+            .flatMapLatest({ [unowned self] _ in
                 Client.shared.webSocket.response
-                    .filter { self?.updateUnreadCount($0) ?? false }
-                    .map { _ in self?.unreadCountAtomic.get() }
-                    .startWith(self?.unreadCountAtomic.get())
+                    .filter { self.updateUnreadCount($0) }
+                    .map { _ in self.unreadCountAtomic.get() }
+                    .startWith(self.unreadCountAtomic.get())
                     .unwrap()
             })
             .startWith((0, 0))
             .map { "\($0.0), \($0.1)" }
             .distinctUntilChanged()
-            .map { [weak self] _ in self?.unreadCountAtomic.get() ?? (0, 0) }
+            .map { [unowned self] _ in self.unreadCountAtomic.get() ?? (0, 0) }
             .asDriver(onErrorJustReturn: (0, 0))
     }
     

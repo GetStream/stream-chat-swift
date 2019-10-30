@@ -31,6 +31,7 @@ public enum Endpoint {
     case channels(ChannelsQuery)
     /// Get a message by id.
     case message(String)
+    /// Mark all messages as readed.
     case markAllRead
     
     // MARK: - Channel Endpoints
@@ -99,6 +100,8 @@ public enum Endpoint {
     case flagUser(User)
     /// Unflag a user.
     case unflagUser(User)
+    /// Ban a user.
+    case ban(UserBan)
 }
 
 extension Endpoint {
@@ -183,6 +186,8 @@ extension Endpoint {
         case .unflagUser,
              .unflagMessage:
             return "moderation/unflag"
+        case .ban:
+            return "moderation/ban"
         case .inviteAnswer(let answer):
             return path(to: answer.channel)
         }
@@ -290,10 +295,15 @@ extension Endpoint {
         case .flagUser(let user), .unflagUser(let user):
             return ["target_user_id": user.id]
             
+        case .ban(let userBan):
+            return userBan
+            
         case .inviteAnswer(let answer):
             return answer
+            
         case .addMembers(let members, _):
             return ["add_members": members]
+            
         case .removeMembers(let members, _):
             return ["remove_members": members]
         }

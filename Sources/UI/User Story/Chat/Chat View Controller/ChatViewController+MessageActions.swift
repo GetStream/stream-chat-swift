@@ -57,20 +57,34 @@ extension ChatViewController {
                 // Flag a message.
                 if message.isFlagged {
                     alert.addAction(.init(title: "Unflag the message", style: .default, handler: { [weak self] _ in
-                        self?.unflag(message: message) }))
+                        self?.unflag(message: message)
+                    }))
                 } else {
                     alert.addAction(.init(title: "Flag the message", style: .default, handler: { [weak self] _ in
-                        self?.flag(message: message) }))
+                        self?.flag(message: message)
+                    }))
                 }
             
                 // Flag a user.
                 if message.user.isFlagged {
                     alert.addAction(.init(title: "Unflag the user", style: .default, handler: { [weak self] _ in
-                        self?.unflag(user: message.user) }))
+                        self?.unflag(user: message.user)
+                    }))
                 } else {
                     alert.addAction(.init(title: "Flag the user", style: .default, handler: { [weak self] _ in
-                        self?.flag(user: message.user) }))
+                        self?.flag(user: message.user)
+                    }))
                 }
+            }
+            
+            if let channelPresenter = channelPresenter,
+                channelPresenter.channel.banEnabling.isEnabled(for: channelPresenter.channel),
+                !channelPresenter.channel.isBanned(message.user) {
+                alert.addAction(.init(title: "Ban", style: .default, handler: { [weak self] _ in
+                    if let channelPresenter = self?.channelPresenter {
+                        self?.ban(user: message.user, channel: channelPresenter.channel)
+                    }
+                }))
             }
         }
         
@@ -206,6 +220,17 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
                     self?.showBanner("🚩 Unflagged: \(user.name)", backgroundColor: backgroundColor)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func ban(user: User, channel: Channel) {
+        channel.ban(user: user)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                if let backgroundColor = self?.view.backgroundColor {
+                    self?.showBanner("🙅‍♀️ Ban: \(user.name)", backgroundColor: backgroundColor)
                 }
             })
             .disposed(by: disposeBag)

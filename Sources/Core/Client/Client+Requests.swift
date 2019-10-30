@@ -48,6 +48,8 @@ public extension Client {
         return connectedRequest(request.map({ $0.users }))
     }
     
+    // MARK: Update User
+    
     /// Update or create a user.
     ///
     /// - Returns: an observable updated user.
@@ -63,6 +65,8 @@ public extension Client {
     func update(user: User) -> Observable<User> {
         return update(users: [user]).map({ $0.first }).unwrap()
     }
+    
+    // MARK: Mute User
     
     /// Mute a user.
     ///
@@ -80,6 +84,8 @@ public extension Client {
         return user.unmute()
     }
     
+    // MARK: Flag User
+    
     /// Flag a user.
     /// - Parameter user: a user.
     func flag(user: User) -> Observable<FlagUserResponse> {
@@ -93,7 +99,8 @@ public extension Client {
     }
     
     func flagUnflag<T: Decodable>(endpoint: Endpoint, aleradyFlagged value: T) -> Observable<T> {
-        let request: Observable<FlagResponse<T>> = Client.shared.rx.request(endpoint: endpoint)
+        let request: Observable<FlagResponse<T>> = rx.request(endpoint: endpoint)
+        
         return request.map { $0.flag }
             .catchError { error -> Observable<T> in
                 if let clientError = error as? ClientError,

@@ -71,7 +71,7 @@ extension Client {
             }
             
             logger?.log("🀄️", "Request for a new token from a token provider.")
-            tokenProvider { [weak self] in self?.setup(token: $0) }
+            tokenProvider { [unowned self] in self.setup(token: $0) }
             return true
         }
         

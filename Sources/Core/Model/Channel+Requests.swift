@@ -220,6 +220,23 @@ public extension Channel {
         
         return existsMembers.isEmpty ? .empty() : Client.shared.connectedRequest(.removeMembers(members, self))
     }
+    
+    /// Check is the user is banned for the channel.
+    /// - Parameter user: a user.
+    func isBanned(_ user: User) -> Bool {
+        return bannedUsers.contains(user)
+    }
+    
+    /// Ban a user.
+    /// - Parameter user: a user.
+    func ban(user: User) -> Observable<Void> {
+        if isBanned(user) {
+            return .empty()
+        }
+        
+        let request: Observable<EmptyData> = Client.shared.connectedRequest(.ban(.init(user: user, channel: self)))
+        return request.map({ _ in Void() }).do(onNext: { [weak self] in self?.bannedUsers.append(user) })
+    }
 }
 
 // MARK: - Invite Requests

@@ -25,8 +25,12 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     private let channelId: String
     private let channelPublishSubject = PublishSubject<Channel>()
     
-    private(set) lazy var channelAtomic = Atomic<Channel> { [weak self] channel in
+    private(set) lazy var channelAtomic = Atomic<Channel> { [weak self] channel, oldChannel in
         if let channel = channel {
+            if let oldChannel = oldChannel {
+                channel.banEnabling = oldChannel.banEnabling
+            }
+            
             self?.channelPublishSubject.onNext(channel)
         }
     }

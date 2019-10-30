@@ -93,6 +93,10 @@ public final class Channel: Codable {
         return unreadCountAtomic.get(defaultValue: 0)
     }
     
+    /// An option to enable ban users.
+    public var banEnabling = BanEnabling.disabled
+    var bannedUsers = [User]()
+    
     /// Init a channel 1-by-1 with another member.
     /// - Parameter type: a channel type.
     /// - Parameter member: an another member.
@@ -373,6 +377,30 @@ public struct ChannelId: Codable, Hashable {
             try container.encode(ChannelId.any)
         } else {
             try container.encode("\(type.rawValue):\(id)")
+        }
+    }
+}
+
+/// An option to enable ban users.
+public enum BanEnabling {
+    /// Disabled for everyone.
+    case disabled
+    /// Enabled for everyone.
+    case enabled
+    /// Enabled for channel members with a role of moderator or admin.
+    case enabledForModerators
+    
+    public func isEnabled(for channel: Channel) -> Bool {
+        switch self {
+        case .disabled:
+            return false
+            
+        case .enabled:
+            return true
+            
+        case .enabledForModerators:
+            let members = Array(channel.members)
+            return members.first(where: { $0.user.isCurrent && ($0.role == .moderator || $0.role == .admin) }) != nil
         }
     }
 }

@@ -142,3 +142,22 @@ public struct DevicesResponse: Decodable {
     /// A list of devices.
     public let devices: [Device]
 }
+
+/// A request object to ban a user.
+public struct UserBan: Encodable {
+    private enum CodingKeys: String, CodingKey {
+        case userId = "target_user_id"
+        case channelType = "type"
+        case channelId = "id"
+    }
+    
+    let userId: String
+    let channelType: ChannelType
+    let channelId: String
+    
+    init(user: User, channel: Channel) {
+        userId = user.id
+        channelType = channel.type
+        channelId = channel.id
+    }
+}
