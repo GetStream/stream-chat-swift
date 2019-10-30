@@ -86,6 +86,23 @@ final class DarkChannelsViewController: ChannelsViewController {
         return cell
     }
     
+    override func show(chatViewController: ChatViewController) {
+        if let channel = chatViewController.channelPresenter?.channel {
+            channel.banEnabling = .enabled(timeoutInMinutes: 1, reason: "I don't like you 🤮")
+            
+            channel.onEvent(.userBanned)
+                .observeOn(MainScheduler.instance)
+                .subscribe(onNext: { event in
+                    if case .userBanned(_, let reason, _, _, _) = event {
+                        Banners.shared.show("🙅‍♂️ You are banned: \(reason ?? "No reason")")
+                    }
+                })
+                .disposed(by: chatViewController.disposeBag)
+        }
+        
+        super.show(chatViewController: chatViewController)
+    }
+    
     @IBAction func logout(_ sender: Any) {
         if logoutButton.title == "Logout" {
             Client.shared.disconnect()
@@ -102,12 +119,6 @@ final class DarkChannelsViewController: ChannelsViewController {
     func showMenu(for channelPresenter: ChannelPresenter) {
         let alertController = UIAlertController(title: channelPresenter.channel.name, message: nil, preferredStyle: .actionSheet)
         alertController.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
-        
-        alertController.addAction(.init(title: "Hide", style: .default, handler: { [weak self] _ in
-            if let self = self {
-                self.channelsPresenter.hide(channelPresenter).drive().disposed(by: self.disposeBag)
-            }
-        }))
         
         if (channelPresenter.channel.createdBy?.isCurrent ?? false) {
             alertController.addAction(.init(title: "Rename", style: .default, handler: { [weak self] _ in
