@@ -84,11 +84,20 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     open override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = style.incomingMessage.chatBackgroundColor
-        setupComposerView()
+        
         updateTitle()
         
         guard let presenter = channelPresenter else {
             return
+        }
+        
+        if presenter.channel.config.isEmpty {
+            presenter.channelDidUpdate.asObservable()
+                .takeWhile { $0.config.isEmpty }
+                .subscribe(onCompleted: { [weak self] in self?.setupComposerView() })
+                .disposed(by: disposeBag)
+        } else {
+            setupComposerView()
         }
         
         composerView.uploader = presenter.uploader

@@ -259,6 +259,8 @@ public extension Channel {
         public let created: Date
         /// A channel updated date.
         public let updated: Date
+        /// Indicates if the config was created with an empty channel data.
+        public let isEmpty: Bool
         
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -276,6 +278,7 @@ public extension Channel {
             flagsEnabled = commands.first(where: { $0.name.contains("flag") }) != nil
             created = try container.decode(Date.self, forKey: .created)
             updated = try container.decode(Date.self, forKey: .updated)
+            isEmpty = false
         }
         
         init() {
@@ -293,6 +296,7 @@ public extension Channel {
             commands = []
             created = Date()
             updated = Date()
+            isEmpty = true
         }
     }
     
