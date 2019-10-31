@@ -31,6 +31,11 @@ extension ChatViewController {
     func createComposerView() -> ComposerView {
         let composerView = ComposerView(frame: .zero)
         composerView.style = style.composer
+        
+        if let tabBarController = tabBarController, !tabBarController.tabBar.isTranslucent {
+            composerView.tabbarHeight = tabBarController.tabBar.frame.height
+        }
+        
         return composerView
     }
     
@@ -96,13 +101,20 @@ extension ChatViewController {
     
     private func updateTableViewContentInsetForKeyboardHeight(_ height: CGFloat) {
         height > 0 ? tableView.saveContentInsetState() : tableView.resetContentInsetState()
-        let bottom = .messagesToComposerPadding + max(0, height - (height > 0 ? tableView.oldAdjustedContentInset.bottom : 0))
+        
+        let bottom = .messagesToComposerPadding
+            + max(0, height - (height > 0 ? tableView.oldAdjustedContentInset.bottom + composerView.tabbarHeight : 0))
+        
         tableView.contentInset.bottom = bottom
     }
     
     private func updateTableViewContentOffsetForKeyboardHeight(_ height: CGFloat) {
         var contentOffset = tableView.contentOffset
-        contentOffset.y += height - view.safeAreaBottomOffset - (height > 0 ? .messagesToComposerPadding : 0)
+        
+        contentOffset.y += height
+            - view.safeAreaBottomOffset
+            - (height > 0 ? .messagesToComposerPadding : 0)
+        
         tableView.contentOffset = contentOffset
     }
     

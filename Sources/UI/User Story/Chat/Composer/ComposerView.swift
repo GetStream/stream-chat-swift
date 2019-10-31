@@ -59,6 +59,7 @@ public final class ComposerView: UIView {
     private let disposeBag = DisposeBag()
     private(set) weak var heightConstraint: Constraint?
     private weak var bottomConstraint: Constraint?
+    var tabbarHeight: CGFloat = 0
     var baseTextHeight = CGFloat.greatestFiniteMagnitude
     
     /// An images collection view.
@@ -336,7 +337,7 @@ public extension ComposerView {
 private extension ComposerView {
     func updateBottomConstraint(with keyboardHeight: CGFloat) {
         let bottom: CGFloat = (style?.edgeInsets.bottom ?? 0)
-            + max(0, keyboardHeight - (keyboardHeight > 0 ? toolBar.frame.height : 0))
+            + max(0, keyboardHeight - (keyboardHeight > 0 ? toolBar.frame.height + tabbarHeight : 0))
         
         bottomConstraint?.update(offset: -bottom)
         
