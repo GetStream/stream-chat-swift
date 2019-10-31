@@ -112,8 +112,8 @@ extension Client {
             }
         }
         
-        logger?.log("👤 \(user.name): \(user.id)")
-        logger?.log("🀄️ Token: \(token)")
+        ClientLogger.logger("👤", "", "\(user.name): \(user.id)")
+        ClientLogger.logger("🀄️", "", "Token: \(token)")
         
         if let error = checkUserAndToken(token) {
             ClientLogger.log("🐴", error)
