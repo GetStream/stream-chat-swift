@@ -111,6 +111,10 @@ extension Client {
     }
     
     private func queryItems(for endpoint: Endpoint) -> Result<[URLQueryItem], ClientError> {
+        if apiKey.isEmpty {
+            return .failure(.emptyAPIKey)
+        }
+        
         guard let user = user else {
             return .failure(.emptyUser)
         }

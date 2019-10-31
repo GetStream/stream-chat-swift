@@ -114,12 +114,22 @@ public final class Client {
     ///     - stayConnectedInBackground: when the app will go to the background,
     ///                                  start a background task to stay connected for 5 min
     ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
-    public init(apiKey: String = Client.config.apiKey,
+    init(apiKey: String = Client.config.apiKey,
                 baseURL: BaseURL = Client.config.baseURL,
                 callbackQueue: DispatchQueue? = Client.config.callbackQueue,
                 stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
                 database: Database? = Client.config.database,
                 logOptions: ClientLogger.Options = Client.config.logOptions) {
+        if apiKey.isEmpty {
+            ClientLogger.logger("❌❌❌", "", "The Stream Chat Client didn't setup properly. "
+                + "You are trying to use it before setup the API Key.")
+            Thread.callStackSymbols.forEach { ClientLogger.logger("", "", $0) }
+        } else {
+            ClientLogger.logger("💬", "", "Stream Chat v.\(Client.version)")
+            ClientLogger.logger("🔑", "", apiKey)
+            ClientLogger.logger("🔗", "", baseURL.description)
+        }
+        
         self.apiKey = apiKey
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue
@@ -129,7 +139,6 @@ public final class Client {
         
         if logOptions == .all || logOptions == .requests || logOptions == .requestsHeaders {
             logger = ClientLogger(icon: "🐴", options: logOptions)
-            DispatchQueue.main.async { self.logger?.log("🕸", "Base URL: \(baseURL)") }
         } else {
             logger = nil
         }

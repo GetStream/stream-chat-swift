@@ -19,6 +19,10 @@ extension Client {
     ///     - user: the current user (see `User`).
     ///     - token: a Stream Chat API token.
     public func set(user: User, token: Token) {
+        if apiKey.isEmpty || token.isEmpty {
+            return
+        }
+        
         disconnect()
         self.user = user
         setup(token: token)
@@ -53,6 +57,10 @@ extension Client {
     ///   - user: the current user (see `User`).
     ///   - tokenProvider: a token provider.
     public func set(user: User, _ tokenProvider: @escaping TokenProvider) {
+        if apiKey.isEmpty {
+            return
+        }
+        
         disconnect()
         self.user = user
         self.tokenProvider = tokenProvider
@@ -79,6 +87,11 @@ extension Client {
     }
     
     private func setup(token: Token) {
+        if token.isEmpty {
+            logger?.log("❌ The Token is empty.")
+            return
+        }
+        
         guard let user = user else {
             logger?.log("❌ User is empty. Skip Token setup.")
             return

@@ -12,6 +12,8 @@ import Foundation
 public enum ClientError: LocalizedError {
     /// An unexpected error.
     case unexpectedError(description: String)
+    /// The API Key is empty.
+    case emptyAPIKey
     /// A token is empty.
     case emptyToken
     /// A token is invalid.
@@ -55,6 +57,8 @@ public enum ClientError: LocalizedError {
         switch self {
         case .unexpectedError(let description):
             return "Unexpected error: \(description)"
+        case .emptyAPIKey:
+            return "The Client API Key is empty"
         case .emptyToken:
             return "A Client Token is empty"
         case .tokenInvalid(let description):

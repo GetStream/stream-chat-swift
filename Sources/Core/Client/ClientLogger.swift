@@ -41,9 +41,7 @@ public final class ClientLogger {
     ///     - dateAndTime: a formatted string of date and time, could be empty.
     ///     - message: a message.
     public static var logger: (_ icon: String, _ dateTime: String, _ message: String) -> Void = {
-        if Client.shared.logOptions.isEnabled {
-            print($0, $1.isEmpty ? "" : "[\($1)]", $2)
-        }
+        print($0, $1.isEmpty ? "" : "[\($1)]", $2)
     }
     
     private let icon: String

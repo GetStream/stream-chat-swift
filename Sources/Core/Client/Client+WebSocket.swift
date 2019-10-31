@@ -10,6 +10,10 @@ import Foundation
 
 extension Client {
     func setupWebSocket(user: User, token: Token) -> WebSocket {
+        if apiKey.isEmpty {
+            return WebSocket()
+        }
+        
         let logger: ClientLogger? = (logOptions == .all || logOptions == .webSocket ? ClientLogger(icon: "🦄") : nil)
         let jsonParameter = WebSocketPayload(user: user, token: token)
         var jsonString = ""
