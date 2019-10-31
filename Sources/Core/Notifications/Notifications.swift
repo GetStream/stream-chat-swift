@@ -135,7 +135,12 @@ extension Notifications {
         
         let content = createLocalNotificationContent(newMessage: message, in: channel)
         let request = UNNotificationRequest(identifier: message.id, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                ClientLogger.log("🗞", error, message: "When adding a local notification")
+            }
+        }
     }
     
     private func createLocalNotificationContent(newMessage message: Message, in channel: Channel) -> UNNotificationContent {
