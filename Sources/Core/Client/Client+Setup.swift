@@ -19,11 +19,13 @@ extension Client {
     ///     - user: the current user (see `User`).
     ///     - token: a Stream Chat API token.
     public func set(user: User, token: Token) {
+        disconnect()
+        
         if apiKey.isEmpty || token.isEmpty {
+            logger?.log("❌ API key or token is empty: \(apiKey), \(token)")
             return
         }
         
-        disconnect()
         self.user = user
         setup(token: token)
     }
@@ -57,11 +59,13 @@ extension Client {
     ///   - user: the current user (see `User`).
     ///   - tokenProvider: a token provider.
     public func set(user: User, _ tokenProvider: @escaping TokenProvider) {
+        disconnect()
+        
         if apiKey.isEmpty {
+            logger?.log("❌ API key is empty.")
             return
         }
         
-        disconnect()
         self.user = user
         self.tokenProvider = tokenProvider
         touchTokenProvider()
@@ -120,8 +124,12 @@ extension Client {
             return
         }
         
+        guard let webSocket = setupWebSocket(user: user, token: token) else {
+            return
+        }
+        
+        self.webSocket = webSocket
         urlSession = setupURLSession(token: token)
-        webSocket = setupWebSocket(user: user, token: token)
         self.token = token
     }
     

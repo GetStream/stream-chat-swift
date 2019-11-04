@@ -16,7 +16,11 @@ extension Client {
     func setupURLSession(token: Token) -> URLSession {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
-        
+        config.httpAdditionalHeaders = authHeaders(token: token)
+        return URLSession(configuration: config, delegate: urlSessionTaskDelegate, delegateQueue: nil)
+    }
+    
+    func authHeaders(token: Token) -> [String: String] {
         var headers = [
             "X-Stream-Client": "stream-chat-swift-client-\(Client.version)",
             "X-Stream-Device": UIDevice.current.name,
@@ -29,9 +33,7 @@ extension Client {
             headers["Authorization"] = token
         }
         
-        config.httpAdditionalHeaders = headers
-        
-        return URLSession(configuration: config, delegate: urlSessionTaskDelegate, delegateQueue: nil)
+        return headers
     }
     
     /// Send a request.

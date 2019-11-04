@@ -66,7 +66,7 @@ public final class ClientLogger {
     /// - Parameter sessionConfiguration: an URL session configuration.
     public func log(_ sessionConfiguration: URLSessionConfiguration) {
         if let httpAdditionalHeaders = sessionConfiguration.httpAdditionalHeaders as? [String: String] {
-            log("URL Session Headers", httpAdditionalHeaders.description)
+            log(headers: httpAdditionalHeaders)
         }
     }
     
@@ -75,12 +75,7 @@ public final class ClientLogger {
     /// - Parameter request: an URL request.
     public func log(_ request: URLRequest) {
         log("➡️ \(request.httpMethod ?? "Request")", request.description)
-        
-        if let headers = request.allHTTPHeaderFields, !headers.isEmpty {
-            var message = "Request headers:\n"
-            headers.forEach { message += "◾️ \($0) = \($1)\n" }
-            log(message)
-        }
+        log(headers: request.allHTTPHeaderFields)
         
         if let url = request.url,
             url.query != nil,
@@ -95,6 +90,16 @@ public final class ClientLogger {
         
         if let body = request.httpBody {
             log("Request Body", body)
+        }
+    }
+    
+    /// Log request headers.
+    /// - Parameter headers: headers.
+    public func log(headers: [String: String]?) {
+        if let headers = headers, !headers.isEmpty {
+            var message = "Request headers:\n"
+            headers.forEach { message += "◾️ \($0) = \($1)\n" }
+            log(message)
         }
     }
     
@@ -129,8 +134,8 @@ public final class ClientLogger {
     ///   - data: a response data.
     ///   - forceToShowData: force to always log a data.
     public func log(_ response: URLResponse?, data: Data?, forceToShowData: Bool = false) {
-        if let response = response {
-            log("Response", response.description)
+        if let response = response as? HTTPURLResponse, let url = response.url {
+            log("⬅️", "Response \(response.statusCode): \(url)")
         }
         
         guard let data = data else {
