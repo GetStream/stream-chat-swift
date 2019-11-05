@@ -75,6 +75,11 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         return channel.config.readEventsEnabled && unreadMessageReadAtomic.get() != nil
     }
     
+    /// The current user message read state.
+    public var messageRead: MessageRead? {
+        return unreadMessageReadAtomic.get()
+    }
+    
     /// Check if the channel has ephemeral message, e.g. Giphy preview.
     public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
     /// An ephemeral message, e.g. Giphy preview.
