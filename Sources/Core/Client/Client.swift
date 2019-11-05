@@ -20,7 +20,16 @@ public final class Client {
     /// A shared client.
     public static let shared = Client()
     
-    let apiKey: String
+    /// Stream API key.
+    /// - Note: If you will change API key the Client will be disconnected and the current user will be logged out.
+    ///         You have to setup another user after that.
+    public var apiKey: String {
+        didSet {
+            checkAPIKey()
+            disconnect()
+        }
+    }
+    
     let baseURL: BaseURL
     let stayConnectedInBackground: Bool
     
@@ -120,11 +129,7 @@ public final class Client {
                 stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
                 database: Database? = Client.config.database,
                 logOptions: ClientLogger.Options = Client.config.logOptions) {
-        if apiKey.isEmpty {
-            ClientLogger.logger("❌❌❌", "", "The Stream Chat Client didn't setup properly. "
-                + "You are trying to use it before setup the API Key.")
-            Thread.callStackSymbols.forEach { ClientLogger.logger("", "", $0) }
-        } else {
+        if !apiKey.isEmpty {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Client.version)")
             ClientLogger.logger("🔑", "", apiKey)
             ClientLogger.logger("🔗", "", baseURL.description)
@@ -141,6 +146,16 @@ public final class Client {
             logger = ClientLogger(icon: "🐴", options: logOptions)
         } else {
             logger = nil
+        }
+        
+        checkAPIKey()
+    }
+    
+    private func checkAPIKey() {
+        if apiKey.isEmpty {
+            ClientLogger.logger("❌❌❌", "", "The Stream Chat Client didn't setup properly. "
+                + "You are trying to use it before setup the API Key.")
+            Thread.callStackSymbols.forEach { ClientLogger.logger("", "", $0) }
         }
     }
 
