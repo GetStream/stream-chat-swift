@@ -44,8 +44,15 @@ public extension Channel {
     }
     
     /// Loads the initial channel state and watches for changes.
+    /// - Parameter options: an additional channel options, e.g. `.presence`
     /// - Returns: an observable channel response.
-    func watch() -> Observable<ChannelResponse> {
+    func watch(options: QueryOptions = []) -> Observable<ChannelResponse> {
+        var options = options
+        
+        if !options.contains(.watch) {
+            options = options.union(.watch)
+        }
+        
         return query(options: .watch)
     }
     
