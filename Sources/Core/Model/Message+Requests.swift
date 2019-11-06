@@ -13,7 +13,7 @@ import RxSwift
 
 public extension Message {
     
-    static var flaggedIds = [String]()
+    internal static var flaggedIds = [String]()
     
     /// Delete the message.
     ///

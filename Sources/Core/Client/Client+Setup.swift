@@ -73,24 +73,25 @@ extension Client {
     
     @discardableResult
     func touchTokenProvider() -> Bool {
-        if let tokenProvider = tokenProvider {
-            expiredTokenDisposeBag = DisposeBag()
-            token = nil
-            isExpiredTokenInProgress = true
-            
-            if webSocket.isConnected {
-                webSocket.disconnect()
-            }
-            
-            logger?.log("🀄️", "Request for a new token from a token provider.")
-            tokenProvider { [unowned self] in self.setup(token: $0) }
-            return true
+        guard let tokenProvider = tokenProvider else {
+            return false
         }
         
-        return false
+        expiredTokenDisposeBag = DisposeBag()
+        isExpiredTokenInProgress = true
+        logger?.log("🀄️", "Request for a new token from a token provider.")
+        tokenProvider { [unowned self] in self.setup(token: $0) }
+        
+        return true
     }
     
     private func setup(token: Token) {
+        if webSocket.isConnected {
+            webSocket.disconnect()
+        }
+        
+        self.token = nil
+        
         if token.isEmpty {
             logger?.log("❌ The Token is empty.")
             return

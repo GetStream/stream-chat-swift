@@ -13,7 +13,7 @@ import RxSwift
 
 public extension User {
     
-    static var flaggedUsers = [User]()
+    internal static var flaggedUsers = [User]()
     
     /// Update or create a user.
     ///

@@ -23,7 +23,7 @@ extension Client {
     func authHeaders(token: Token) -> [String: String] {
         var headers = [
             "X-Stream-Client": "stream-chat-swift-client-\(Client.version)",
-            "X-Stream-Device": UIDevice.current.name,
+            "X-Stream-Device": deviceModelName,
             "X-Stream-OS": "\(UIDevice.current.systemName)\(UIDevice.current.systemVersion)"]
         
         if token.isBlank {
@@ -33,7 +33,25 @@ extension Client {
             headers["Authorization"] = token
         }
         
+        if let bundleId = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String {
+            headers["X-Stream-BundleId"] = bundleId
+        }
+        
         return headers
+    }
+    
+    private var deviceModelName: String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        
+        return machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else {
+                return identifier
+            }
+            
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
     }
     
     /// Send a request.
