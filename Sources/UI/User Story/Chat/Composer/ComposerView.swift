@@ -185,7 +185,6 @@ public extension ComposerView {
             make.right.equalToSuperview().offset(-style.edgeInsets.right)
             heightConstraint = make.height.equalTo(style.height).constraint
             make.bottom.lessThanOrEqualTo(view.safeAreaLayoutGuide.snp.bottomMargin).offset(-style.edgeInsets.bottom)
-            bottomConstraint = make.bottom.equalToSuperview().priority(999).constraint
         }
         
         // Apply style.
@@ -339,7 +338,16 @@ private extension ComposerView {
         let bottom: CGFloat = (style?.edgeInsets.bottom ?? 0)
             + max(0, keyboardHeight - (keyboardHeight > 0 ? toolBar.frame.height + tabbarHeight : 0))
         
-        bottomConstraint?.update(offset: -bottom)
+        if bottom > 0 {
+            if bottomConstraint == nil {
+                snp.makeConstraints { bottomConstraint = $0.bottom.equalToSuperview().offset(-bottom).constraint }
+            } else {
+                bottomConstraint?.update(offset: -bottom)
+                bottomConstraint?.isActive = true
+            }
+        } else {
+            bottomConstraint?.isActive = false
+        }
         
         if keyboardHeight == 0 {
             textView.resignFirstResponder()
