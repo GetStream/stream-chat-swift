@@ -387,7 +387,8 @@ extension ChatViewController {
         if subviews.count == 1, let first = subviews.first as? ComposerAddFileView {
             first.tap()
         } else {
-            if composerView.textView.frame.height > (.composerMaxHeight / 2) {
+            if composerView.textView.frame.height > (.composerMaxHeight / 2)
+                || (UIDevice.isPhone && UIDevice.current.orientation.isLandscape) {
                 composerView.textView.resignFirstResponder()
             }
             
