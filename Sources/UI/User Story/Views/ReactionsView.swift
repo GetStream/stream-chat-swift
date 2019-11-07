@@ -36,7 +36,7 @@ final class ReactionsView: UIView {
     func show(at point: CGPoint, for message: Message, completion: @escaping Completion) {
         addSubview(reactionsView)
         
-        var x: CGFloat = (.screenWidth - .attachmentPreviewMaxWidth) / 2
+        var x: CGFloat = (.minScreenWidth - .attachmentPreviewMaxWidth) / 2
         
         if UIDevice.isPad {
             x = max(min(point.x, .screenWidth - .messageTextPaddingWithAvatar - .attachmentPreviewMaxWidth),

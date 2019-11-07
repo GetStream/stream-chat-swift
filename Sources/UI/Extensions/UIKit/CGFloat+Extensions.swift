@@ -11,6 +11,8 @@ import UIKit
 extension CGFloat {
     /// The screen width (alias to `UIScreen.main.bounds.width`).
     public static let screenWidth: CGFloat = UIScreen.main.bounds.width
+    /// The min screen width.
+    public static let minScreenWidth: CGFloat = Swift.min(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
     /// The screen height (alias to `UIScreen.main.bounds.height`).
     public static let screenHeight: CGFloat = UIScreen.main.bounds.height
     /// A top safe area value.
@@ -113,7 +115,7 @@ extension CGFloat {
     /// An attachment preview max width.
     public static let attachmentPreviewMaxWidth: CGFloat = UIDevice.isPad
         ? (4 * .attachmentPreviewMaxHeight / 3).rounded()
-        : UIScreen.main.bounds.width - 2 * .messageTextPaddingWithAvatar
+        : .minScreenWidth - 2 * .messageTextPaddingWithAvatar
     
     /// A message attachment preview action button height.
     public static let attachmentPreviewActionButtonHeight: CGFloat = 2 * .messageCornerRadius
