@@ -98,6 +98,16 @@ extension ChatViewController {
         
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
         
+        if UIDevice.isPad, let popoverPresentationController = alert.popoverPresentationController {
+            let cellPositionY = tableView.convert(cell.frame, to: UIScreen.main.coordinateSpace).minY + locationInView.y
+            let isAtBottom = cellPositionY > CGFloat.screenHeight * 0.6
+            popoverPresentationController.permittedArrowDirections = isAtBottom ? .down : .up
+            popoverPresentationController.sourceView = cell
+            popoverPresentationController.sourceRect = CGRect(x: locationInView.x,
+                                                              y: locationInView.y + (isAtBottom ? -15 : 15),
+                                                              width: 0, height: 0)
+        }
+        
         present(alert, animated: true)
     }
     
