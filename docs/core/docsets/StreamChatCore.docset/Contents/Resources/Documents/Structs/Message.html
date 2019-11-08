@@ -106,6 +106,9 @@
                 <a href="../Enums/AttachmentType.html">AttachmentType</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/BanEnabling.html">BanEnabling</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/ChannelType.html">ChannelType</a>
               </li>
               <li class="nav-group-task">
@@ -143,6 +146,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ReactionType.html">ReactionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SearchQueryError.html">SearchQueryError</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Enums/ViewChanges.html">ViewChanges</a>
@@ -238,6 +244,9 @@
                 <a href="../Structs/ChannelDeletedResponse.html">ChannelDeletedResponse</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/ChannelId.html">ChannelId</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs.html#/s:14StreamChatCore19ChannelInviteAnswerV">ChannelInviteAnswer</a>
               </li>
               <li class="nav-group-task">
@@ -248,6 +257,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelResponse.html">ChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore13ChannelUpdateV">ChannelUpdate</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChannelUpdatedResponse.html">ChannelUpdatedResponse</a>
@@ -283,6 +295,9 @@
                 <a href="../Structs/FlagMessageResponse.html">FlagMessageResponse</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/FlagUserResponse.html">FlagUserResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Member.html">Member</a>
               </li>
               <li class="nav-group-task">
@@ -298,7 +313,7 @@
                 <a href="../Structs/MessageRead.html">MessageRead</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs.html#/s:14StreamChatCore15MessageResponseV">MessageResponse</a>
+                <a href="../Structs/MessageResponse.html">MessageResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs.html#/s:14StreamChatCore16MessagesResponseV">MessagesResponse</a>
@@ -319,6 +334,9 @@
                 <a href="../Structs/ReactionCounts.html">ReactionCounts</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/SearchQuery.html">SearchQuery</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/Sorting.html">Sorting</a>
               </li>
               <li class="nav-group-task">
@@ -332,6 +350,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/User/Role.html">– Role</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore7UserBanV">UserBan</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/UsersQuery.html">UsersQuery</a>
@@ -1056,6 +1077,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore7MessageV5isBanSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isBan" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV5isBanSbvp">isBan</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns true if the message is type of error with a text for the banned user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isBan</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore7MessageV2id4text11attachments9extraData8parentId14mentionedUsers18showReplyInChannelACSS_SSSayAA10AttachmentVGSe_SEpSgSSSgSayAA4UserVGSbtcfc"></a>
                     <a name="//apple_ref/swift/Method/init(id:text:attachments:extraData:parentId:mentionedUsers:showReplyInChannel:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore7MessageV2id4text11attachments9extraData8parentId14mentionedUsers18showReplyInChannelACSS_SSSayAA10AttachmentVGSe_SEpSgSSSgSayAA4UserVGSbtcfc">init(id:text:attachments:extraData:parentId:mentionedUsers:showReplyInChannel:)</a>
@@ -1260,7 +1308,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">delete</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore15MessageResponseV">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">delete</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1291,7 +1339,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addReaction</span><span class="p">(</span><span class="n">_</span> <span class="nv">reactionType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore15MessageResponseV">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addReaction</span><span class="p">(</span><span class="n">_</span> <span class="nv">reactionType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1341,7 +1389,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">deleteReaction</span><span class="p">(</span><span class="n">_</span> <span class="nv">reactionType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:14StreamChatCore15MessageResponseV">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">deleteReaction</span><span class="p">(</span><span class="n">_</span> <span class="nv">reactionType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1471,6 +1519,44 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Flag%20Message"></a>
+                <a name="//apple_ref/swift/Section/Flag Message" class="dashAnchor"></a>
+                <a href="#/Flag%20Message">
+                  <h3 class="section-name">Flag Message</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV9isFlaggedSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isFlagged" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV9isFlaggedSbvp">isFlagged</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if the message is flagged (locally).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isFlagged</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -1529,33 +1615,6 @@
                       <div>
                         <h4>Return Value</h4>
                         <p>an observable flag message response.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore7MessageV9isFlaggedSbvp"></a>
-                    <a name="//apple_ref/swift/Property/isFlagged" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore7MessageV9isFlaggedSbvp">isFlagged</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Checks if the message is flagged (locally).</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isFlagged</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
-
-                        </div>
                       </div>
                     </section>
                   </div>
@@ -1772,7 +1831,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-10-16)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-11-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
