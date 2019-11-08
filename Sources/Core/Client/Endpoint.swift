@@ -71,6 +71,8 @@ public enum Endpoint {
     case addMembers(Set<Member>, Channel)
     /// Remove members to the channel
     case removeMembers(Set<Member>, Channel)
+    /// Invite members.
+    case invite(Set<Member>, Channel)
     /// Send an answer for an invite.
     case inviteAnswer(ChannelInviteAnswer)
     
@@ -135,16 +137,17 @@ extension Endpoint {
             return "messages/\(messageId)"
         case .markAllRead:
             return "channels/read"
+        case .deleteChannel(let channel),
+             .invite(_, let channel),
+             .addMembers(_, let channel),
+             .removeMembers(_, let channel):
+            return path(to: channel)
         case .channel(let query):
             return path(to: query.channel, "query")
         case .stopWatching(let channel):
             return path(to: channel, "stop-watching")
         case .updateChannel(let channelUpdate):
             return path(to: channelUpdate.data.channel)
-        case .deleteChannel(let channel),
-             .addMembers(_, let channel),
-             .removeMembers(_, let channel):
-            return path(to: channel)
         case .showChannel(let channel, _):
             return path(to: channel, "show")
         case .hideChannel(let channel, _):
@@ -305,6 +308,9 @@ extension Endpoint {
             
         case .ban(let userBan):
             return userBan
+            
+        case .invite(let members, _):
+            return ["invites": members]
             
         case .inviteAnswer(let answer):
             return answer

@@ -261,13 +261,28 @@ public extension Channel {
 
 public extension Channel {
     
-    /// Send invites to users.
-    ///
-    /// - Parameter userIds: a list of user Ids.
+    /// Invite a member to the channel.
+    /// - Parameter member: a member.
     /// - Returns: an observable channel response.
-    func sendInvites(to users: [User]) -> Observable<ChannelResponse> {
-        users.forEach { addInvitedUser($0) }    
-        return query()
+    func invite(_ member: Member) -> Observable<ChannelResponse> {
+        return invite([member])
+    }
+    
+    /// Invite members to the channel.
+    /// - Parameter members: a list of members.
+    /// - Returns: an observable channel response.
+    func invite(_ members: [Member]) -> Observable<ChannelResponse> {
+        var membersSet = Set<Member>()
+        
+        for member in members where !self.members.contains(member) {
+            membersSet.insert(member)
+        }
+        
+        guard !membersSet.isEmpty else {
+            return .empty()
+        }
+        
+        return Client.shared.rx.connectedRequest(endpoint: .invite(membersSet, self))
     }
     
     /// Accept an invite to the channel.

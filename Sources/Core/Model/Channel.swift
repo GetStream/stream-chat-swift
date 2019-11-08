@@ -68,9 +68,9 @@ public final class Channel: Codable {
     public let config: Config
     let frozen: Bool
     /// A list of user ids of the channel members.
-    public internal(set) var members = Set<Member>([])
+    public internal(set) var members = Set<Member>()
     /// A list of users to invite in the channel.
-    var invitedUsers = Set<User>([])
+    let invitedMembers: Set<Member>
     /// An extra data for the channel.
     public internal(set) var extraData: ExtraData?
     
@@ -124,6 +124,7 @@ public final class Channel: Codable {
                 name: String? = nil,
                 imageURL: URL? = nil,
                 members: [Member] = [],
+                inviteUsers: Set<User> = Set<User>(),
                 extraData: Codable? = nil) {
         self.id = id
         self.cid = ChannelId(type: type, id: id)
@@ -138,6 +139,12 @@ public final class Channel: Codable {
         frozen = false
         config = Config()
         
+        if !inviteUsers.isEmpty {
+            invitedMembers = Set<Member>(inviteUsers.map({ $0.asMember }))
+        } else {
+            invitedMembers = Set<Member>()
+        }
+        
         if let extraData = extraData {
             self.extraData = ExtraData(extraData)
         } else {
@@ -147,7 +154,7 @@ public final class Channel: Codable {
         if type == .unknown {
             ClientLogger.log("❌", "Created a bad channel unknown type")
         }
-
+        
         if id.isEmpty, members.count < 2, let currentUser = User.current {
             if let anotherMember = members.first, anotherMember.user != currentUser {
                 return
@@ -174,6 +181,7 @@ public final class Channel: Codable {
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
         extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isChannel }))
         members = Set<Member>((try? container.decodeIfPresent([Member].self, forKey: .members)) ?? [])
+        invitedMembers = Set<Member>()
         
         if !isActive {
             Channel.activeChannelIds.append(cid)
@@ -187,14 +195,9 @@ public final class Channel: Codable {
         try container.encode(members, forKey: .members)
         extraData?.encodeSafely(to: encoder)
         
-        if !invitedUsers.isEmpty {
-            try container.encode(invitedUsers.map({ $0.id }), forKey: .invites)
+        if !invitedMembers.isEmpty {
+            try container.encode(invitedMembers, forKey: .invites)
         }
-    }
-    
-    func addInvitedUser(_ user: User) {
-        members.insert(user.asMember)
-        invitedUsers.insert(user)
     }
 }
 
