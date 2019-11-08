@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wm7-Ii-BZP">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wm7-Ii-BZP">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -341,7 +341,7 @@ Stream Swift SDK v.1.0.0</string>
         <!--Custom Chat View Controller-->
         <scene sceneID="K8d-gL-AUv">
             <objects>
-                <viewController id="e0G-IG-Gxn" customClass="CustomChatViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CustomChatViewController" id="e0G-IG-Gxn" customClass="CustomChatViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" layoutMarginsFollowReadableWidth="YES" id="p7A-Vg-wGQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -349,24 +349,22 @@ Stream Swift SDK v.1.0.0</string>
                         <viewLayoutGuide key="safeArea" id="AC2-xq-vHg"/>
                     </view>
                     <navigationItem key="navigationItem" id="M29-wa-tVT">
-                        <leftBarButtonItems>
-                            <barButtonItem systemItem="add" id="knN-36-SFa">
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="stop" id="2ar-d7-vJl">
                                 <connections>
-                                    <action selector="addMember:" destination="e0G-IG-Gxn" id="LvH-IX-9YS"/>
+                                    <segue destination="Z71-Wp-boH" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="Ko2-1P-TID"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem systemItem="trash" id="tUs-Kv-xLY">
+                            <barButtonItem systemItem="action" id="KuC-ND-gaD">
                                 <connections>
-                                    <action selector="removeMember:" destination="e0G-IG-Gxn" id="5ZT-wh-egN"/>
+                                    <action selector="showMenu:" destination="e0G-IG-Gxn" id="HgS-7X-Xmp"/>
                                 </connections>
                             </barButtonItem>
-                        </leftBarButtonItems>
-                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="2ar-d7-vJl">
-                            <connections>
-                                <segue destination="Z71-Wp-boH" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="Ko2-1P-TID"/>
-                            </connections>
-                        </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
+                    <connections>
+                        <outlet property="closeBarButton" destination="2ar-d7-vJl" id="c8U-Av-2uH"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oEb-lB-XXV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -594,7 +592,7 @@ Stream Swift SDK v.1.0.0</string>
     <inferredMetricsTieBreakers>
         <segue reference="gPS-K7-ckQ"/>
         <segue reference="a5b-Jp-cN7"/>
-        <segue reference="x9o-K0-tAV"/>
+        <segue reference="Ko2-1P-TID"/>
         <segue reference="seW-P6-fEX"/>
     </inferredMetricsTieBreakers>
 </document>

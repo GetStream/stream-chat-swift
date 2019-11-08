@@ -34,6 +34,7 @@ final class DarkChannelsViewController: ChannelsViewController {
         deleteChannelBySwipe = true
         title = "My channels"
         setupPresenter()
+        observeInvites()
     }
     
     func setupPresenter() {
@@ -42,15 +43,55 @@ final class DarkChannelsViewController: ChannelsViewController {
         }
     }
     
+    func observeInvites() {
+        Client.shared.onEvent([.notificationInvited,
+                               .notificationInviteAccepted,
+                               .notificationInviteRejected,
+                               .memberUpdated])
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] event in self?.handleInviteEvent(event) })
+            .disposed(by: disposeBag)
+    }
+    
+    func handleInviteEvent(_ event: StreamChatCore.Event) {
+        if case .notificationInvited(let channel, _) = event {
+            let alert = UIAlertController(title: "Invite",
+                                          message: "You are invited to the \(channel.name) channel",
+                preferredStyle: .alert)
+            
+            alert.addAction(.init(title: "Accept", style: .default, handler: { [unowned self] _ in
+                channel.acceptInvite().subscribe().disposed(by: self.disposeBag)
+            }))
+            
+            alert.addAction(.init(title: "Reject", style: .destructive, handler: { [unowned self] _ in
+                channel.rejectInvite().subscribe().disposed(by: self.disposeBag)
+            }))
+            
+            present(alert, animated: true)
+            return
+        }
+        
+        if case .notificationInviteAccepted = event {
+            Banners.shared.show("🙋🏻‍♀️ Invite accepted")
+            channelsPresenter.reload()
+        }
+        
+        if case .notificationInviteRejected = event {
+            Banners.shared.show("🙅🏻‍♀️ Invite rejected")
+        }
+        
+        if case .memberUpdated(let member, _) = event {
+            if member.inviteAccepted != nil {
+                Banners.shared.show("🙋🏻‍♀️ \(member.user.name) accepted invite")
+            } else if member.inviteRejected != nil {
+                Banners.shared.show("🙅🏻‍♀️ \(member.user.name) rejected invite")
+            }
+        }
+    }
+    
     @IBAction func addChannel(_ sender: Any) {
         let number = Int.random(in: 100...999)
-        
-        let channel = Channel(type: .messaging,
-                              id: "new_channel_\(number)",
-                              name: "Channel \(number)",
-                              members: [User.user1.asMember,
-                                        User.user2.asMember,
-                                        User.user3.asMember])
+        let channel = Channel(type: .messaging, id: "new_channel_\(number)", name: "Channel \(number)")
         
         channel.create()
             .flatMapLatest({ channelResponse in
@@ -84,6 +125,20 @@ final class DarkChannelsViewController: ChannelsViewController {
         }
         
         return cell
+    }
+    
+    override func createChatViewController(with channelPresenter: ChannelPresenter, indexPath: IndexPath) -> ChatViewController {
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        
+        guard let chatViewController = storyboard.instantiateViewController(withIdentifier: "CustomChatViewController") as? CustomChatViewController else {
+            print("❌ Can't find CustomChatViewController in Main.storyboard")
+            return super.createChatViewController(with: channelPresenter, indexPath: indexPath)
+        }
+        
+        chatViewController.style = style
+        channelPresenter.eventsFilter = channelsPresenter.channelEventsFilter
+        chatViewController.channelPresenter = channelPresenter
+        return chatViewController
     }
     
     override func show(chatViewController: ChatViewController) {

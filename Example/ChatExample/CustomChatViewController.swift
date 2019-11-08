@@ -7,10 +7,13 @@
 //
 
 import UIKit
+import RxSwift
 import StreamChatCore
 import StreamChat
 
 class CustomChatViewController: ChatViewController {
+    
+    @IBOutlet weak var closeBarButton: UIBarButtonItem!
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -21,9 +24,15 @@ class CustomChatViewController: ChatViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if navigationController?.viewControllers.count ?? 1 > 1, let button = navigationItem.rightBarButtonItems?.last {
+            navigationItem.rightBarButtonItems = [button]
+        }
+        
         guard let channelPresenter = channelPresenter else {
             return
         }
+        
+        title = "\(channelPresenter.channel.name) (\(channelPresenter.channel.members.count))"
         
         channelPresenter.channelDidUpdate
             .drive(onNext: { [weak self] channel in
@@ -32,41 +41,90 @@ class CustomChatViewController: ChatViewController {
             .disposed(by: disposeBag)
     }
     
-    @IBAction func addMember(_ sender: Any) {
-        guard let channelPresenter = channelPresenter else {
-            return
+    @IBAction func showMenu(_ sender: Any) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        alert.addAction(.init(title: "Add a member", style: .default, handler: { [unowned self] _ in
+            self.addMember()
+        }))
+        
+        if (channelPresenter?.channel.members.count ?? 0) > 1 {
+            alert.addAction(.init(title: "Remove a member", style: .default, handler: { [unowned self] _ in
+                self.removeMember()
+            }))
         }
+
+        alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
         
-        let member: Member
-        
-        if !channelPresenter.channel.members.contains(User.current!.asMember) {
-            member = User.current!.asMember
-        } else if let user: User = [.user1, .user2, .user3].randomElement() {
-            member = user.asMember
-        } else {
-            return
-        }
-        
-        channelPresenter.channel
-            .add(member)
-            .subscribe(onNext: { _ in
-                Banners.shared.show("\(User.user3.name) added to the channel")
-            })
-            .disposed(by: disposeBag)
+        present(alert, animated: true)
     }
     
-    @IBAction func removeMember(_ sender: Any) {
-        guard let member = channelPresenter?.channel.members.first else {
+    func addMember() {
+        guard let channelPresenter = channelPresenter,
+            let member = memberNotInList() else {
             return
         }
         
-        channelPresenter?.channel
-            .remove(member)
-            .subscribe(onNext: { _ in
-                Banners.shared.show("\(User.user3.name) removed from the channel")
-            })
-            .disposed(by: disposeBag)
+        let alert = UIAlertController(title: "Members", message: nil, preferredStyle: .actionSheet)
+        
+        alert.addAction(.init(title: "Add a member: \(member.user.name)", style: .default, handler: { [unowned self] _ in
+            channelPresenter.channel
+                .add(member)
+                .subscribe(onNext: { _ in
+                    Banners.shared.show("\(User.user3.name) added to the channel")
+                })
+                .disposed(by: self.disposeBag)
+        }))
+        
+        alert.addAction(.init(title: "Invite a member: \(member.user.name)", style: .default, handler: { [unowned self] _ in
+            channelPresenter.channel
+                .invite(member)
+                .subscribe(onNext: { _ in
+                    Banners.shared.show("Invite for \(member.user.name) was send")
+                })
+                .disposed(by: self.disposeBag)
+        }))
+
+        alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
+        
+        present(alert, animated: true)
     }
+    
+    func removeMember() {
+        if let member = notCurrentMemberInChannelMembers() {
+            channelPresenter?.channel
+                .remove(member)
+                .subscribe(onNext: { _ in
+                    Banners.shared.show("\(User.user3.name) removed from the channel")
+                })
+                .disposed(by: disposeBag)
+        }
+    }
+    
+    func memberNotInList() -> Member? {
+        guard let membersSet = channelPresenter?.channel.members else {
+            return nil
+        }
+        
+        for user in [User.user1, .user2, .user3] where !user.isCurrent && !membersSet.contains(where: { $0.user == user }) {
+            return user.asMember
+        }
+        
+        return nil
+    }
+    
+    func notCurrentMemberInChannelMembers() -> Member? {
+        guard let membersSet = channelPresenter?.channel.members else {
+            return nil
+        }
+        
+        for member in membersSet where !member.user.isCurrent {
+            return member
+        }
+        
+        return nil
+    }
+
     //    override func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
 //        let cell = tableView.dequeueReusableCell(withIdentifier: "message")
 //            ?? UITableViewCell(style: .value2, reuseIdentifier: "message")
