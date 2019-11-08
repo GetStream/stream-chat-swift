@@ -192,12 +192,16 @@ public final class Channel: Codable {
         var container = encoder.container(keyedBy: EncodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
-        try container.encode(members, forKey: .members)
         extraData?.encodeSafely(to: encoder)
         
+        var allMembers = members
+        
         if !invitedMembers.isEmpty {
+            allMembers = allMembers.union(invitedMembers)
             try container.encode(invitedMembers, forKey: .invites)
         }
+        
+        try container.encode(allMembers, forKey: .members)
     }
 }
 
