@@ -13,6 +13,27 @@ import RxSwift
 
 public extension Client {
     
+    /// A message search.
+    /// - Parameters:
+    ///   - filter: a filter for channels, e.g. .key("members", .in(["john"]))
+    ///   - query: a search query.
+    ///   - pagination: a pagination. It works via the standard limit and offset parameters.
+    func search(filter: Filter = .none, query: String, pagination: Pagination = .channelsPageSize) -> Observable<[Message]> {
+        guard !query.isBlank else {
+            return .empty()
+        }
+        
+        let query = SearchQuery(filter: filter, query: query, pagination: pagination)
+        
+        if case .none = query.filter {
+            return .error(SearchQueryError.emptyFilter)
+        }
+        
+        let request: Observable<SearchResponse> = rx.request(endpoint: .search(query))
+        
+        return connectedRequest(request.map { $0.messages.compactMap({ $0["message"] }) })
+    }
+    
     /// Requests channels with a given query.
     ///
     /// - Parameter query: a channels query (see `ChannelsQuery`).

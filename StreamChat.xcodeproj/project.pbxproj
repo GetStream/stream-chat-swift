@@ -175,6 +175,7 @@
 		8AD5EDD422E9BB0C005CFAC9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD022E9BB0C005CFAC9 /* RxGesture.framework */; };
 		8AD5EDD522E9BB0C005CFAC9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */; };
 		8AD5EDD622E9BB0C005CFAC9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD222E9BB0C005CFAC9 /* SwiftyGif.framework */; };
+		8AF4DCBA23757AF300F534F5 /* SearchQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4DCB923757AF300F534F5 /* SearchQuery.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -365,6 +366,7 @@
 		8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatCore.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = "<group>"; };
+		8AF4DCB923757AF300F534F5 /* SearchQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchQuery.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -861,6 +863,7 @@
 				8AD5ED2522E9BA39005CFAC9 /* Sorting.swift */,
 				8A04964E22EF1A8900E94795 /* QueryOptions.swift */,
 				8A34DED32322A92C00271BBF /* Device.swift */,
+				8AF4DCB923757AF300F534F5 /* SearchQuery.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1189,6 +1192,7 @@
 				8AD0A99223141D2400B8EB97 /* Tests.swift in Sources */,
 				8AD5ED6922E9BA5A005CFAC9 /* Client+RxRequest.swift in Sources */,
 				8AD5ED5422E9BA5A005CFAC9 /* ChannelsQuery.swift in Sources */,
+				8AF4DCBA23757AF300F534F5 /* SearchQuery.swift in Sources */,
 				8A04964422E9F52D00E94795 /* Presenter.swift in Sources */,
 				8AD5ED5522E9BA5A005CFAC9 /* Message.swift in Sources */,
 				8AD5ED6422E9BA5A005CFAC9 /* BaseURL.swift in Sources */,

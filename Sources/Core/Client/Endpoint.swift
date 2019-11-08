@@ -34,6 +34,9 @@ public enum Endpoint {
     /// Mark all messages as readed.
     case markAllRead
     
+    /// Message search.
+    case search(SearchQuery)
+    
     // MARK: - Channel Endpoints
     
     /// Get a channel data.
@@ -107,7 +110,7 @@ public enum Endpoint {
 extension Endpoint {
     var method: Client.Method {
         switch self {
-        case .channels, .message, .replies, .users, .devices:
+        case .search, .channels, .message, .replies, .users, .devices:
             return .get
         case .removeDevice, .deleteChannel, .deleteMessage, .deleteReaction, .deleteImage, .deleteFile:
             return .delete
@@ -124,6 +127,8 @@ extension Endpoint {
              .devices,
              .removeDevice:
             return "devices"
+        case .search:
+            return "search"
         case .channels:
             return "channels"
         case .message(let messageId):
@@ -210,6 +215,8 @@ extension Endpoint {
         let payload: Encodable
         
         switch self {
+        case .search(let query):
+            payload = query
         case .channels(let query):
             payload = query
         case .users(let query):
@@ -224,6 +231,7 @@ extension Endpoint {
     var body: Encodable? {
         switch self {
         case .removeDevice,
+             .search,
              .channels,
              .message,
              .deleteChannel,
