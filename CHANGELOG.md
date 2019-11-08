@@ -11,7 +11,7 @@ November 8th, 2019
 - Flag/unflag users: `Client.flag(user: User)` or `user.flag()`.
 - Ban user: `Chanel.ban(user: User, timeoutInMinutes: Int? = nil, reason: String? = nil) `.
 - Channel ban options: `Channel. banEnabling`:
-```
+```swift
 /// Disabled for everyone.
 case disabled
 
@@ -33,7 +33,7 @@ case enabledForModerators(timeoutInMinutes: Int?, reason: String?)
 - Hiding the keyboard on landscape mode to add attachments.
 - Message search.
 - New flow to invite members to a channel:
-```
+```swift
 // 1. Invite members with a creating a new channel
 let channel = Channel(type: .messaging,
                       id: "awesome-chat", 
@@ -54,11 +54,11 @@ channel.invite(nick).subscribe().disposed(by: disposeBag)
 - `ClientLogger` updated
 - `Atomic`
 from:
-```
+```swift
 typealias DidSetCallback = (T?) -> Void
 ```
 to:
-```
+```swift
 typealias DidSetCallback = (_ value: T?, _ oldValue: T?) -> Void
 ```
 - `Channel.watch(options: QueryOptions = [])` with query options.
