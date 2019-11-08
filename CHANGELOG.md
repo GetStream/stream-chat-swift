@@ -34,7 +34,7 @@ case enabledForModerators(timeoutInMinutes: Int?, reason: String?)
 - Message search.
 - New flow to invite members to a channel:
 ```swift
-// 1. Invite members with a creating a new channel
+// 1. Invite members with a creating of a new channel
 let channel = Channel(type: .messaging,
                       id: "awesome-chat", 
                       members: [tomasso, thierry]
@@ -42,7 +42,7 @@ let channel = Channel(type: .messaging,
 
 channel.create().subscribe().disposed(by: disposeBag)
 
-// 2. Invite user(s) to an exists channel.
+// 2. Invite user(s) to an existing channel.
 channel.invite(nick).subscribe().disposed(by: disposeBag)
 ```
 
