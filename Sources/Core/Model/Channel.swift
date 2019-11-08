@@ -118,13 +118,14 @@ public final class Channel: Codable {
     ///     - name: a channel name.
     ///     - imageURL: an image url of the channel.
     ///     - members: a list of members.
+    ///     - invitedMembers: invitation list of members.
     ///     - extraData: an `Codable` object with extra data of the channel.
     public init(type: ChannelType,
                 id: String,
                 name: String? = nil,
                 imageURL: URL? = nil,
                 members: [Member] = [],
-                inviteUsers: Set<User> = Set<User>(),
+                invitedMembers: [Member] = [],
                 extraData: Codable? = nil) {
         self.id = id
         self.cid = ChannelId(type: type, id: id)
@@ -138,12 +139,7 @@ public final class Channel: Codable {
         self.members = Set(members)
         frozen = false
         config = Config()
-        
-        if !inviteUsers.isEmpty {
-            invitedMembers = Set<Member>(inviteUsers.map({ $0.asMember }))
-        } else {
-            invitedMembers = Set<Member>()
-        }
+        self.invitedMembers = Set(invitedMembers)
         
         if let extraData = extraData {
             self.extraData = ExtraData(extraData)
