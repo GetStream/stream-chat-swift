@@ -145,6 +145,20 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         return style.incomingMessage.textColor.isDark ? .default : .lightContent
     }
     
+    open override func willTransition(to newCollection: UITraitCollection,
+                                      with coordinator: UIViewControllerTransitionCoordinator) {
+        super.willTransition(to: newCollection, with: coordinator)
+        
+        if composerView.textView.isFirstResponder {
+            composerView.textView.resignFirstResponder()
+        }
+        
+        DispatchQueue.main.async {
+            self.updateComposerViewOpaqueTabbarHeight()
+            self.composerView.updateBottomConstraint()
+        }
+    }
+    
     /// Refresh table view cells with presenter items.
     ///
     /// - Parameters:

@@ -59,7 +59,13 @@ public final class ComposerView: UIView {
     private let disposeBag = DisposeBag()
     private(set) weak var heightConstraint: Constraint?
     private weak var bottomConstraint: Constraint?
-    var tabbarHeight: CGFloat = 0
+    
+    var opaqueTabbarHeight: CGFloat = 0 {
+        didSet {
+            updateBottomConstraint()
+        }
+    }
+    
     var baseTextHeight = CGFloat.greatestFiniteMagnitude
     
     /// An images collection view.
@@ -181,10 +187,10 @@ public extension ComposerView {
         view.addSubview(self)
         
         snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(style.edgeInsets.left)
-            make.right.equalToSuperview().offset(-style.edgeInsets.right)
+            make.left.equalTo(view.safeAreaLayoutGuide.snp.leftMargin).offset(style.edgeInsets.left)
+            make.right.equalTo(view.safeAreaLayoutGuide.snp.rightMargin).offset(-style.edgeInsets.right)
             heightConstraint = make.height.equalTo(style.height).constraint
-            make.bottom.lessThanOrEqualTo(view.safeAreaLayoutGuide.snp.bottomMargin).offset(-style.edgeInsets.bottom)
+            bottomConstraint = make.bottom.equalToSuperview().offset(-bottomSafeAreaLayoutGuide()).constraint
         }
         
         // Apply style.
@@ -333,21 +339,20 @@ public extension ComposerView {
 
 // MARK: - Keyboard Events
 
-private extension ComposerView {
-    func updateBottomConstraint(with keyboardHeight: CGFloat) {
-        let bottom: CGFloat = (style?.edgeInsets.bottom ?? 0)
-            + max(0, keyboardHeight - (keyboardHeight > 0 ? toolBar.frame.height + tabbarHeight : 0))
-        
-        if bottom > 0 {
-            if bottomConstraint == nil {
-                snp.makeConstraints { bottomConstraint = $0.bottom.equalToSuperview().offset(-bottom).constraint }
-            } else {
-                bottomConstraint?.update(offset: -bottom)
-                bottomConstraint?.isActive = true
-            }
-        } else {
-            bottomConstraint?.isActive = false
+extension ComposerView {
+    /// Update the bottom constraint when the device was rotated or then the tabbar is opaque.
+    func updateBottomConstraint() {
+        updateBottomConstraint(with: 0)
+    }
+    
+    private func updateBottomConstraint(with keyboardHeight: CGFloat) {
+        guard let style = style, superview != nil else {
+            return
         }
+        
+        let keyboardOffset = keyboardHeight - (keyboardHeight > 0 ? toolBar.frame.height + opaqueTabbarHeight : 0)
+        let bottom = max(bottomSafeAreaLayoutGuide(), style.edgeInsets.bottom + max(0, keyboardOffset))
+        bottomConstraint?.update(offset: -bottom)
         
         if keyboardHeight == 0 {
             textView.resignFirstResponder()
@@ -358,6 +363,14 @@ private extension ComposerView {
                 self.updateStyleState()
             }
         }
+    }
+    
+    private func bottomSafeAreaLayoutGuide() -> CGFloat {
+        guard let layoutFrame = superview?.safeAreaLayoutGuide.layoutFrame, let style = style else {
+            return 0
+        }
+        
+        return UIScreen.main.bounds.height - layoutFrame.maxY + style.edgeInsets.bottom - opaqueTabbarHeight
     }
 }
 
