@@ -55,6 +55,8 @@ public struct User: Codable {
     public internal(set) var isBanned: Bool
     /// A user role.
     public let role: Role
+    /// An extra data for the user.
+    public let extraData: ExtraData?
     /// A list of devices.
     public internal(set) var devices: [Device]
     /// A list of devices.
@@ -103,7 +105,7 @@ public struct User: Codable {
     ///     - id: a user id.
     ///     - name: a user name.
     ///     - an avatar URL.
-    public init(id: String, name: String, avatarURL: URL? = nil, isInvisible: Bool = false) {
+    public init(id: String, name: String, avatarURL: URL? = nil, extraData: Codable? = nil, isInvisible: Bool = false) {
         self.id = id
         self.name = name
         self.avatarURL = avatarURL
@@ -118,6 +120,12 @@ public struct User: Codable {
         channelsUnreadCount = 0
         self.isInvisible = isInvisible
         isBanned = false
+        
+        if let extraData = extraData {
+            self.extraData = ExtraData(extraData)
+        } else {
+            self.extraData = nil
+        }
     }
     
     public init(from decoder: Decoder) throws {
@@ -134,6 +142,7 @@ public struct User: Codable {
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
         messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
         channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
+        extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isUser }))
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
             self.name = name
@@ -154,6 +163,7 @@ public struct User: Codable {
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(avatarURL, forKey: .avatarURL)
+        extraData?.encodeSafely(to: encoder)
         
         if isInvisible {
             try container.encode(isInvisible, forKey: .isInvisible)

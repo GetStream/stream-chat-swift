@@ -12,13 +12,23 @@ import Foundation
 public struct ExtraData: Codable {
     /// A custom extra data type.
     public enum DecodableType {
+        /// A user.
+        case user(Codable.Type)
         /// A channel.
         case channel(Codable.Type)
         /// A message.
         case message(Codable.Type)
         /// An attachment.
         case attachment(Codable.Type)
-
+        
+        var isUser: Bool {
+            if case .user = self {
+                return true
+            }
+            
+            return false
+        }
+        
         var isChannel: Bool {
             if case .channel = self {
                 return true
@@ -86,16 +96,13 @@ extension ExtraData {
         let extraDataType: Codable.Type
         
         switch decodableType {
-        case .channel(let codableType), .message(let codableType), .attachment(let codableType):
+        case .user(let codableType),
+             .channel(let codableType),
+             .message(let codableType),
+             .attachment(let codableType):
             extraDataType = codableType
         }
         
-        do {
-            return try ExtraData(extraDataType.init(from: decoder))
-        } catch {
-            ClientLogger.log("🧳", error, message: "⚠️🎩 failed decoding extra data: \(extraDataType)")
-        }
-        
-        return nil
+        return try? ExtraData(extraDataType.init(from: decoder))
     }
 }
