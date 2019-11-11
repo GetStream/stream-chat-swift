@@ -1,5 +1,10 @@
+# 1.4.1-ui
+_November 11th, 2019_
+
+Fixed ComposerView for a keyboard position with different orientations and opaque Tabbar.
+
 # 1.4.0
-November 8th, 2019
+_November 8th, 2019_
 
 ⚠️ The update contains breaking changes.
 
@@ -74,26 +79,26 @@ typealias DidSetCallback = (_ value: T?, _ oldValue: T?) -> Void
 
 
 # 1.3.21
-October 24th, 2019
+_October 24th, 2019_
 - Added events filter in presenters.
 
 
 # 1.3.20
-October 22th, 2019
+_October 22th, 2019_
 ## Added
 - Update a channel data: `update(name: String? = nil, imageURL: URL? = nil, extraData: Codable? = nil)`
 - `Channel.watch()`
 
 
 # 1.3.19
-October 21th, 2019
+_October 21th, 2019_
 ## Fixed
 - Response errors
 - A crash of a date formatter for iOS 11.1 and below.
 
 
 # 1.3.18
-October 21th, 2019
+_October 21th, 2019_
 - `ChannelId` type (`id: String` + `type: ChannelType`).
 - Added `Channel.add(members:)`, `Channel.remove(members:)`.
 - `ChannelsViewController` will update the table view with only invalidated rows or reload completely.
