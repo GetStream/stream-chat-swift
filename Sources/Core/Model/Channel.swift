@@ -226,6 +226,7 @@ public extension Channel {
             case repliesEnabled = "replies"
             case searchEnabled = "search"
             case mutesEnabled = "mutes"
+            case urlEnrichmentEnabled = "url_enrichment"
             case messageRetention = "message_retention"
             case maxMessageLength = "max_message_length"
             case commands
@@ -250,6 +251,8 @@ public extension Channel {
         public let searchEnabled: Bool
         /// Determines if users are able to mute other users. Enabled by default.
         public let mutesEnabled: Bool
+        /// Determines if URL enrichment enabled to show they as attachments. Enabled by default.
+        public let urlEnrichmentEnabled: Bool
         /// Determines if users are able to flag messages. Enabled by default.
         public let flagsEnabled: Bool
         /// A number of days or infinite. Infinite by default.
@@ -275,6 +278,7 @@ public extension Channel {
             repliesEnabled = try container.decode(Bool.self, forKey: .repliesEnabled)
             searchEnabled = try container.decode(Bool.self, forKey: .searchEnabled)
             mutesEnabled = try container.decode(Bool.self, forKey: .mutesEnabled)
+            urlEnrichmentEnabled = try container.decode(Bool.self, forKey: .urlEnrichmentEnabled)
             messageRetention = try container.decode(String.self, forKey: .messageRetention)
             maxMessageLength = try container.decode(Int.self, forKey: .maxMessageLength)
             commands = try container.decodeIfPresent([Command].self, forKey: .commands) ?? []
@@ -293,6 +297,7 @@ public extension Channel {
             repliesEnabled = false
             searchEnabled = false
             mutesEnabled = false
+            urlEnrichmentEnabled = false
             flagsEnabled = false
             messageRetention = ""
             maxMessageLength = 0

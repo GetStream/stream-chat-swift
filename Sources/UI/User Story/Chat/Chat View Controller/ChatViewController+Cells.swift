@@ -27,13 +27,10 @@ extension ChatViewController {
         if message.isDeleted {
             cell.update(info: "This message was deleted.", date: message.deleted)
         } else if message.isEphemeral {
-            cell.update(message: message.args ?? "")
+            cell.update(text: message.args ?? "")
         } else {
-            if !message.mentionedUsers.isEmpty {
-                cell.update(message: message.textOrArgs, mentionedUsersNames: message.mentionedUsers.map({ $0.name }))
-            } else {
-                cell.update(message: message.textOrArgs)
-            }
+            cell.update(text: message.textOrArgs)
+            cell.enrichText(with: message, enrichURLs: true)
             
             if message.isOwn {
                 cell.readUsersView.update(readUsers: readUsers)

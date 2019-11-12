@@ -75,24 +75,22 @@ extension MessageTableViewCell {
         infoLabel.isHidden = false
     }
     
-    func update(message: String, mentionedUsersNames: [String] = []) {
-        let text = message.trimmingCharacters(in: .whitespacesAndNewlines)
+    func update(text: String) {
+        let text = text.trimmingCharacters(in: .whitespacesAndNewlines)
         messageContainerView.isHidden = text.isEmpty
         messageLabel.text = text
+    }
+    
+    func enrichText(with message: Message, enrichURLs: Bool) {
+        messageTextEnrichment = MessageTextEnrichment(message, style: style, enrichURLs: enrichURLs)
         
-        if text.isEmpty || text.messageContainsOnlyEmoji {
-            return
-        }
-        
-        if let style = style,
-            (!mentionedUsersNames.isEmpty || (style.markdownEnabled && text.rangeOfCharacter(from: .markdown) != nil)) {
-            enrichMessage(with: text, mentionedUsersNames: mentionedUsersNames, style: style)
-                .take(1)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .utility))
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [weak self] in self?.messageLabel.attributedText = $0 })
-                .disposed(by: disposeBag)
-        }
+        messageTextEnrichment?.enrich()
+            .take(1)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .utility))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in self?.messageLabel.attributedText = $0 },
+                       onCompleted: { [weak self] in self?.messageTextEnrichment = nil })
+            .disposed(by: disposeBag)
     }
     
     func update(reactionCounts: ReactionCounts?, action: @escaping ReactionAction) {

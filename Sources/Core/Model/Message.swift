@@ -182,7 +182,7 @@ public struct Message: Codable {
         created = try container.decode(Date.self, forKey: .created)
         updated = try container.decode(Date.self, forKey: .updated)
         deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
-        text = try container.decode(String.self, forKey: .text)
+        text = try container.decode(String.self, forKey: .text).trimmingCharacters(in: .whitespacesAndNewlines)
         command = try container.decodeIfPresent(String.self, forKey: .command)
         args = try container.decodeIfPresent(String.self, forKey: .args)
         attachments = try container.decode([Attachment].self, forKey: .attachments)

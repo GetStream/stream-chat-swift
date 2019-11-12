@@ -94,7 +94,7 @@
 		8AD5ED7022E9BA5A005CFAC9 /* ClientURLSessionTaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED4022E9BA39005CFAC9 /* ClientURLSessionTaskDelegate.swift */; };
 		8AD5ED7122E9BA5A005CFAC9 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED4222E9BA39005CFAC9 /* Notifications.swift */; };
 		8AD5ED7422E9BA98005CFAC9 /* StatusTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECDA22E9BA39005CFAC9 /* StatusTableViewCell.swift */; };
-		8AD5ED7522E9BA98005CFAC9 /* MessageTableViewCell+EnrichMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECDB22E9BA39005CFAC9 /* MessageTableViewCell+EnrichMessage.swift */; };
+		8AD5ED7522E9BA98005CFAC9 /* MessageTextEnrichment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECDB22E9BA39005CFAC9 /* MessageTextEnrichment.swift */; };
 		8AD5ED7622E9BA98005CFAC9 /* MessageTableViewCell+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECDC22E9BA39005CFAC9 /* MessageTableViewCell+Attachments.swift */; };
 		8AD5ED7722E9BA98005CFAC9 /* ReadUsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECDD22E9BA39005CFAC9 /* ReadUsersView.swift */; };
 		8AD5ED7822E9BA98005CFAC9 /* MessageTableViewCell+Updates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECDE22E9BA39005CFAC9 /* MessageTableViewCell+Updates.swift */; };
@@ -175,6 +175,7 @@
 		8AD5EDD422E9BB0C005CFAC9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD022E9BB0C005CFAC9 /* RxGesture.framework */; };
 		8AD5EDD522E9BB0C005CFAC9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */; };
 		8AD5EDD622E9BB0C005CFAC9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD222E9BB0C005CFAC9 /* SwiftyGif.framework */; };
+		8AE61E6D237AE25600A585BA /* DataDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE61E692379D3AE00A585BA /* DataDetector.swift */; };
 		8AF4DCBA23757AF300F534F5 /* SearchQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4DCB923757AF300F534F5 /* SearchQuery.swift */; };
 /* End PBXBuildFile section */
 
@@ -261,7 +262,7 @@
 		8AD5ECD522E9BA39005CFAC9 /* ChatItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatItem.swift; sourceTree = "<group>"; };
 		8AD5ECD622E9BA39005CFAC9 /* ViewChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewChanges.swift; sourceTree = "<group>"; };
 		8AD5ECDA22E9BA39005CFAC9 /* StatusTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusTableViewCell.swift; sourceTree = "<group>"; };
-		8AD5ECDB22E9BA39005CFAC9 /* MessageTableViewCell+EnrichMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+EnrichMessage.swift"; sourceTree = "<group>"; };
+		8AD5ECDB22E9BA39005CFAC9 /* MessageTextEnrichment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextEnrichment.swift; sourceTree = "<group>"; };
 		8AD5ECDC22E9BA39005CFAC9 /* MessageTableViewCell+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Attachments.swift"; sourceTree = "<group>"; };
 		8AD5ECDD22E9BA39005CFAC9 /* ReadUsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadUsersView.swift; sourceTree = "<group>"; };
 		8AD5ECDE22E9BA39005CFAC9 /* MessageTableViewCell+Updates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageTableViewCell+Updates.swift"; sourceTree = "<group>"; };
@@ -366,6 +367,7 @@
 		8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatCore.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = "<group>"; };
+		8AE61E692379D3AE00A585BA /* DataDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDetector.swift; sourceTree = "<group>"; };
 		8AF4DCB923757AF300F534F5 /* SearchQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchQuery.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -582,6 +584,7 @@
 				8AD5ECC822E9BA39005CFAC9 /* URL+Media.swift */,
 				8AD5ECC922E9BA39005CFAC9 /* CharacterSet+Extensions.swift */,
 				8AD5ECCA22E9BA39005CFAC9 /* Bundle+Extensions.swift */,
+				8AE61E692379D3AE00A585BA /* DataDetector.swift */,
 				8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */,
 			);
 			path = Extensions;
@@ -700,7 +703,7 @@
 				8AD5ECDF22E9BA39005CFAC9 /* MessageTableViewCell.swift */,
 				8AD5ECDE22E9BA39005CFAC9 /* MessageTableViewCell+Updates.swift */,
 				8AD5ECDC22E9BA39005CFAC9 /* MessageTableViewCell+Attachments.swift */,
-				8AD5ECDB22E9BA39005CFAC9 /* MessageTableViewCell+EnrichMessage.swift */,
+				8AD5ECDB22E9BA39005CFAC9 /* MessageTextEnrichment.swift */,
 				8AD5ECDA22E9BA39005CFAC9 /* StatusTableViewCell.swift */,
 			);
 			path = Cells;
@@ -1098,6 +1101,7 @@
 				8AD5EDBD22E9BA98005CFAC9 /* RxKeyboard.swift in Sources */,
 				8AD5ED8222E9BA98005CFAC9 /* ComposerFileView.swift in Sources */,
 				8AD54F1C231E91E500364657 /* ViewController.swift in Sources */,
+				8AE61E6D237AE25600A585BA /* DataDetector.swift in Sources */,
 				8AD5ED8F22E9BA98005CFAC9 /* AttachmentFileType+Extensions.swift in Sources */,
 				8AD5ED8A22E9BA98005CFAC9 /* ChatViewController+MessageActions.swift in Sources */,
 				8AD5ED7622E9BA98005CFAC9 /* MessageTableViewCell+Attachments.swift in Sources */,
@@ -1106,7 +1110,7 @@
 				8AD5ED7B22E9BA98005CFAC9 /* ComposerCommandView.swift in Sources */,
 				8AD5EDBC22E9BA98005CFAC9 /* RxGesture+Extensions.swift in Sources */,
 				8AD5ED8C22E9BA98005CFAC9 /* AvatarView.swift in Sources */,
-				8AD5ED7522E9BA98005CFAC9 /* MessageTableViewCell+EnrichMessage.swift in Sources */,
+				8AD5ED7522E9BA98005CFAC9 /* MessageTextEnrichment.swift in Sources */,
 				8AD5ED9422E9BA98005CFAC9 /* MediaGalleryViewController.swift in Sources */,
 				8AD5EDA322E9BA98005CFAC9 /* UIEdgeInsets+Extensions.swift in Sources */,
 				8A2BE6092334E0ED00D6E684 /* EscapeBridgingUI.swift in Sources */,

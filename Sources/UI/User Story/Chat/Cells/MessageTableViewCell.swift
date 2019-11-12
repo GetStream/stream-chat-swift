@@ -100,6 +100,8 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
+    var messageTextEnrichment: MessageTextEnrichment?
+    
     lazy var attachmentPreviews: [AttachmentPreviewProtocol] = []
     
     let bottomPaddingView: UIView = {
@@ -304,6 +306,7 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         messageLabel.font = style?.font
         messageLabel.textColor = style?.textColor
         messageLabel.backgroundColor = style?.backgroundColor
+        messageTextEnrichment = nil
         
         readUsersView.reset()
         readUsersRightConstraint?.deactivate()

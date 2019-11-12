@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - Check the string is blank
+// MARK: Check the string is blank
 
 extension String {
     /// Check if the string is empty and does not have whitespaces or newlines.
@@ -16,6 +16,8 @@ extension String {
         return isEmpty || allSatisfy({ $0.isWhitespace })
     }
 }
+
+// MARK: - Optional String
 
 extension Optional where Wrapped == String {
     var isBlank: Bool {
