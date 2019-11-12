@@ -1,3 +1,10 @@
+# 1.4.2
+_November 12th, 2019_
+
+## Added
+- A custom data for `User`.
+- Detect links in messages and open them in WebView.
+
 # 1.4.1-ui
 _November 11th, 2019_
 
