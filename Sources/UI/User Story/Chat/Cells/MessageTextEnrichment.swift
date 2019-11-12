@@ -18,8 +18,8 @@ final class MessageTextEnrichment {
     let addMarkdown: Bool
     let enrichURLs: Bool
     let mentionedUserNames: [String]
+    private(set) var detectedURLs = [DataDetectorURLItem]()
     private(set) var attributedString: NSMutableAttributedString?
-    private(set) var stop = false
     
     private lazy var quoteAttributesForMarkers: [Int: [NSAttributedString.Key: Any]] =
         [2: [.font: style.font.withTraits(.traitBold), .foregroundColor: style.replyColor],
@@ -204,7 +204,7 @@ private extension MessageTextEnrichment {
             return
         }
         
-        let detectedURLs = DataDetector.shared.matchURLs(text)
+        detectedURLs = DataDetector.shared.matchURLs(text)
         
         if detectedURLs.isEmpty {
             return

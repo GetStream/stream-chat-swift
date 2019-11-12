@@ -88,8 +88,7 @@ extension MessageTableViewCell {
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .utility))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] in self?.messageLabel.attributedText = $0 },
-                       onCompleted: { [weak self] in self?.messageTextEnrichment = nil })
+            .subscribe(onNext: { [weak self] in self?.messageLabel.attributedText = $0 })
             .disposed(by: disposeBag)
     }
     

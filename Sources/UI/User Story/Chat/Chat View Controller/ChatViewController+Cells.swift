@@ -129,16 +129,29 @@ extension ChatViewController {
             : [LongPressControlEvent.default])
             .subscribe(onNext: { [weak self, weak cell] gesture in
                 if let self = self, let cell = cell {
-                    let location = gesture.location(in: cell)
-                    
-                    if gesture is UITapGestureRecognizer {
-                        self.showReactions(from: cell, in: message, locationInView: location)
+                    if let tapGesture = gesture as? UITapGestureRecognizer {
+                        self.handelMessageCellTap(from: cell, in: message, tapGesture: tapGesture)
                     } else {
-                        self.showMenu(from: cell, for: message, locationInView: location)
+                        self.showMenu(from: cell, for: message, locationInView: gesture.location(in: cell))
                     }
                 }
             })
             .disposed(by: cell.disposeBag)
+    }
+    
+    func handelMessageCellTap(from cell: MessageTableViewCell,
+                              in message: Message,
+                              tapGesture: UITapGestureRecognizer) {
+        if let messageTextEnrichment = cell.messageTextEnrichment, !messageTextEnrichment.detectedURLs.isEmpty {
+            for detectedURL in messageTextEnrichment.detectedURLs {
+                if tapGesture.didTapAttributedTextInLabel(label: cell.messageLabel, inRange: detectedURL.range) {
+                    showWebView(url: detectedURL.url, title: nil)
+                    return
+                }
+            }
+        }
+        
+        showReactions(from: cell, in: message, locationInView: tapGesture.location(in: cell))
     }
     
     private func show(attachment: Attachment, at index: Int, from attachments: [Attachment]) {

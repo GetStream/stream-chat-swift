@@ -176,6 +176,7 @@
 		8AD5EDD522E9BB0C005CFAC9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */; };
 		8AD5EDD622E9BB0C005CFAC9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD222E9BB0C005CFAC9 /* SwiftyGif.framework */; };
 		8AE61E6D237AE25600A585BA /* DataDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE61E692379D3AE00A585BA /* DataDetector.swift */; };
+		8AE61E70237B1D3400A585BA /* UITapGestureRecognizer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE61E6E237B1AA900A585BA /* UITapGestureRecognizer+Extensions.swift */; };
 		8AF4DCBA23757AF300F534F5 /* SearchQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4DCB923757AF300F534F5 /* SearchQuery.swift */; };
 /* End PBXBuildFile section */
 
@@ -368,6 +369,7 @@
 		8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatCore.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = "<group>"; };
 		8AE61E692379D3AE00A585BA /* DataDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDetector.swift; sourceTree = "<group>"; };
+		8AE61E6E237B1AA900A585BA /* UITapGestureRecognizer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITapGestureRecognizer+Extensions.swift"; sourceTree = "<group>"; };
 		8AF4DCB923757AF300F534F5 /* SearchQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchQuery.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -611,6 +613,7 @@
 				8AD5ECC222E9BA39005CFAC9 /* CGRect+Extensions.swift */,
 				8AD5ECC322E9BA39005CFAC9 /* CGFloat+Extensions.swift */,
 				8AD5ECC422E9BA39005CFAC9 /* Reusable */,
+				8AE61E6E237B1AA900A585BA /* UITapGestureRecognizer+Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -1163,6 +1166,7 @@
 				8AD5ED8522E9BA98005CFAC9 /* ChatViewController.swift in Sources */,
 				8AD5ED8822E9BA98005CFAC9 /* ChatViewController+TableFooterView.swift in Sources */,
 				8AD5EDAD22E9BA98005CFAC9 /* UIStackView+Extensions.swift in Sources */,
+				8AE61E70237B1D3400A585BA /* UITapGestureRecognizer+Extensions.swift in Sources */,
 				8AD5EDA522E9BA98005CFAC9 /* DismissSegue.swift in Sources */,
 				8AD5EDAE22E9BA98005CFAC9 /* UITableView+Extensions.swift in Sources */,
 				8AD5EDB822E9BA98005CFAC9 /* Bundle+Extensions.swift in Sources */,
