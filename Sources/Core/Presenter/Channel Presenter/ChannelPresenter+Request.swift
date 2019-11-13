@@ -47,7 +47,7 @@ extension ChannelPresenter {
         let messageReads = InternetConnection.shared.isAvailable && channel.config.readEventsEnabled ? response.messageReads : []
         parse(response.messages, messageReads: messageReads, to: &items, isNextPage: isNextPage)
         self.items = items
-        response.channel.setupUnreadCount(response)
+        response.channel.calculateUnreadCount(response)
         
         if response.messages.isEmpty {
             return isLoadingIndex == -1 ? .none : .itemRemoved(isLoadingIndex, items)

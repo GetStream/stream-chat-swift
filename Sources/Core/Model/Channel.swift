@@ -86,11 +86,17 @@ public final class Channel: Codable {
     }
     
     var unreadCountAtomic = Atomic(0)
+    var mentionedUnreadCountAtomic = Atomic(0)
     var onlineUsersAtomic = Atomic<[User]>([])
     
     /// Returns the current unread count.
     public var currentUnreadCount: Int {
         return unreadCountAtomic.get(defaultValue: 0)
+    }
+    
+    /// Returns the current user mentioned unread count.
+    public var currentMentionedUnreadCount: Int {
+        return mentionedUnreadCountAtomic.get(defaultValue: 0)
     }
     
     /// An option to enable ban users.
