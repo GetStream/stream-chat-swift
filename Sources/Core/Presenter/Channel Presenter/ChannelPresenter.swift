@@ -305,6 +305,6 @@ extension ChannelPresenter {
                     self?.unreadMessageReadAtomic.set(unreadMessageRead)
                     ClientLogger.log("🎫", error, message: "Send Message Read error.")
             })
-            .map { _ in Void() }
+            .void()
     }
 }

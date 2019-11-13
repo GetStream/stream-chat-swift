@@ -43,7 +43,7 @@ public extension User {
         }
         
         let request: Observable<EmptyData> = Client.shared.rx.request(endpoint: .unmuteUser(self))
-        return Client.shared.connectedRequest(request.map { _ in Void() }
+        return Client.shared.connectedRequest(request.void()
             // Remove unmuted user from the current user.
             .do(onNext: {
                 if let currentUser = User.current {

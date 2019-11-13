@@ -213,8 +213,7 @@ extension Client {
             .do(onDispose: { [unowned self] in self.webSocket.disconnect() })
         
         return Observable.combineLatest(appState, internetIsAvailable, webSocketResponse)
-            .map { [unowned self] in self.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
-            .unwrap()
+            .compactMap { [unowned self] in self.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
             .distinctUntilChanged()
             .do(onNext: { [unowned self] in
                 if case .connected(_, let user) = $0 {

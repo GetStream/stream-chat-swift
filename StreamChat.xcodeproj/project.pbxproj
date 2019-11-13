@@ -57,7 +57,7 @@
 		8AD5ED4B22E9BA5A005CFAC9 /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1622E9BA39005CFAC9 /* Dictionary+Extensions.swift */; };
 		8AD5ED4C22E9BA5A005CFAC9 /* RxStarscream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1822E9BA39005CFAC9 /* RxStarscream.swift */; };
 		8AD5ED4D22E9BA5A005CFAC9 /* Reachability+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1922E9BA39005CFAC9 /* Reachability+Rx.swift */; };
-		8AD5ED4E22E9BA5A005CFAC9 /* unwrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1A22E9BA39005CFAC9 /* unwrap.swift */; };
+		8AD5ED4E22E9BA5A005CFAC9 /* RxFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1A22E9BA39005CFAC9 /* RxFunctions.swift */; };
 		8AD5ED4F22E9BA5A005CFAC9 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1B22E9BA39005CFAC9 /* Data+Extensions.swift */; };
 		8AD5ED5022E9BA5A005CFAC9 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1D22E9BA39005CFAC9 /* Attachment.swift */; };
 		8AD5ED5122E9BA5A005CFAC9 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1E22E9BA39005CFAC9 /* Event.swift */; };
@@ -315,7 +315,7 @@
 		8AD5ED1622E9BA39005CFAC9 /* Dictionary+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ED1822E9BA39005CFAC9 /* RxStarscream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxStarscream.swift; sourceTree = "<group>"; };
 		8AD5ED1922E9BA39005CFAC9 /* Reachability+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Reachability+Rx.swift"; sourceTree = "<group>"; };
-		8AD5ED1A22E9BA39005CFAC9 /* unwrap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = unwrap.swift; sourceTree = "<group>"; };
+		8AD5ED1A22E9BA39005CFAC9 /* RxFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxFunctions.swift; sourceTree = "<group>"; };
 		8AD5ED1B22E9BA39005CFAC9 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ED1D22E9BA39005CFAC9 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		8AD5ED1E22E9BA39005CFAC9 /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
@@ -837,7 +837,7 @@
 			children = (
 				8AD5ED1822E9BA39005CFAC9 /* RxStarscream.swift */,
 				8AD5ED1922E9BA39005CFAC9 /* Reachability+Rx.swift */,
-				8AD5ED1A22E9BA39005CFAC9 /* unwrap.swift */,
+				8AD5ED1A22E9BA39005CFAC9 /* RxFunctions.swift */,
 			);
 			path = Rx;
 			sourceTree = "<group>";
@@ -1178,7 +1178,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AD5ED4E22E9BA5A005CFAC9 /* unwrap.swift in Sources */,
+				8AD5ED4E22E9BA5A005CFAC9 /* RxFunctions.swift in Sources */,
 				8AD5ED7122E9BA5A005CFAC9 /* Notifications.swift in Sources */,
 				8AD5ED5622E9BA5A005CFAC9 /* Channel.swift in Sources */,
 				8AD5ED6722E9BA5A005CFAC9 /* Client.swift in Sources */,

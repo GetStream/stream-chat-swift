@@ -84,7 +84,7 @@ public extension Client {
     /// - Parameter user: a user.
     /// - Returns: an observable updated user.
     func update(user: User) -> Observable<User> {
-        return update(users: [user]).map({ $0.first }).unwrap()
+        return update(users: [user]).compactMap({ $0.first })
     }
     
     // MARK: Mute User
@@ -218,7 +218,7 @@ public extension Client {
                 
                 return .empty()
             }
-            .map { _ in Void() }
+            .void()
             .do(onNext: { [unowned self] in
                 if let currentUser = User.current, let index = currentUser.devices.firstIndex(where: { $0.id == deviceId }) {
                     var user = currentUser

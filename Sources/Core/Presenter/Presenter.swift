@@ -84,7 +84,7 @@ extension Presenter {
                 }
             })
             .filter { $0.isConnected } // Client.shared.database != nil ||
-            .map { _ in Void() }
+            .void()
         
         return Observable.combineLatest(loadPagination.asObserver().startWith(pagination), connectionObservable)
             .map { pagination, _ in pagination }

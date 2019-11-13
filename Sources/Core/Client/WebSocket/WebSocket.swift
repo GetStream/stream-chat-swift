@@ -44,8 +44,7 @@ public final class WebSocket {
     public private(set) lazy var response: Observable<WebSocket.Response> = Observable.just(())
         .observeOn(MainScheduler.instance)
         .flatMapLatest { Client.shared.webSocket.webSocket.rx.response }
-        .map { [weak self] in self?.parseMessage($0) }
-        .unwrap()
+        .compactMap { [weak self] in self?.parseMessage($0) }
         .do(onNext: {
             if case .notificationMutesUpdated(let user, _) = $0.event {
                 Client.shared.user = user
@@ -317,6 +316,6 @@ extension ObservableType where Element == WebSocket.Connection {
     public func connected(_ connectionStatusHandler: ConnectionStatusHandler? = nil) -> Observable<Void> {
         return self.do(onNext: { connectionStatusHandler?($0.isConnected) })
             .filter { $0.isConnected }
-            .map { _ in Void() }
+            .void()
     }
 }

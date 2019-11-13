@@ -57,8 +57,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         .do(onDispose: { [weak self] in self?.disposeBagForInternalRequests = DisposeBag() })
     
     private lazy var requestChannels: Driver<ViewChanges> = prepareRequest(startPaginationWith: pageSize)
-        .map { [weak self] in self?.channelsQuery(pagination: $0) }
-        .unwrap()
+        .compactMap { [weak self] in self?.channelsQuery(pagination: $0) }
         .flatMapLatest { Client.shared.channels(query: $0).retry(3) }
         .map { [weak self] in self?.parseChannels($0) ?? .none }
         .filter { $0 != .none }
@@ -115,8 +114,8 @@ public extension ChannelsPresenter {
     func hide(_ channelPresenter: ChannelPresenter) -> Driver<Void> {
         return channelPresenter.channel
             .hide(for: User.current)
-            .map { _ in Void() }
-            .do(onNext: { [weak self] _ in self?.removeFromItems(channelPresenter) })
+            .void()
+            .do(onNext: { [weak self] in self?.removeFromItems(channelPresenter) })
             .asDriver(onErrorJustReturn: ())
     }
     
