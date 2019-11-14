@@ -15,7 +15,6 @@ final class DataDetector {
     static let shared = DataDetector(types: .link)
     
     private let detector: NSDataDetector?
-    private var cache = [String: [DataDetectorURLItem]]()
     
     public init(types: NSTextCheckingResult.CheckingType) {
         detector = try? NSDataDetector(types: types.rawValue)
@@ -23,12 +22,8 @@ final class DataDetector {
     
     /// Starts the matching in a given text.
     func matchURLs(_ text: String) -> [DataDetectorURLItem] {
-        guard text.count > 4, let detector = detector else {
+        guard text.probablyHasURL, let detector = detector else {
             return []
-        }
-        
-        if let items = cache[text] {
-            return items
         }
         
         var items: [DataDetectorURLItem] = []
@@ -41,8 +36,6 @@ final class DataDetector {
             
             items.append(DataDetectorURLItem(url: url, range: match.range))
         }
-        
-        cache[text] = items
         
         return items
     }
