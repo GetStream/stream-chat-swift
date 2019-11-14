@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import StreamChatCore
 
 /// A data detector worker.
 /// It works in a background thread and returns the result in the completion block.
