@@ -1,3 +1,21 @@
+# 1.4.3
+_November 14th, 2019_
+
+## Added
+- The current user mentioned unread count
+```swift
+// The current unread count.
+let count: Int = channel.currentMentionedUnreadCount
+
+// An observable unread count.
+channel.mentionedUnreadCount
+    .drive(onNext: { count in
+        print(count)
+    })
+    .disposed(by: disposeBag)
+```
+- Map an observable value to void. `.void()`
+
 # 1.4.2
 _November 12th, 2019_
 
