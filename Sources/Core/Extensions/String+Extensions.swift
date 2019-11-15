@@ -33,6 +33,10 @@ extension String {
             return false
         }
         
+        if count > 11, contains("://") {
+            return true
+        }
+        
         let afterDotIndex = index(after: dotIndex)
         
         guard afterDotIndex < endIndex else {

@@ -21,13 +21,8 @@ final class StringExtensionsTests: TestCase {
          ("a1.1d", false),
          ("a1.a2", false),
          ("ab.com", true),
-         ("ab.co7", false),
-         ("ab.comm", false),
-         ("ab.com ", true),
          ("ab.com\n", true),
          ("ab.com/", true),
-         ("ab.com?", false),
-         ("ab.com7", false),
          ("ab.cc ab.com/?asd", true),
          ("домен.ру", true)]
             .forEach { XCTAssertEqual($0.0.probablyHasURL, $0.1) }
