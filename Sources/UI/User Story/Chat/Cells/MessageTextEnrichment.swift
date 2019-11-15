@@ -40,7 +40,9 @@ final class MessageTextEnrichment {
         let addMarkdown = style.markdownEnabled && message.text.rangeOfCharacter(from: .markdown) != nil
         let mentionedUserNames = message.mentionedUsers.map({ $0.name })
         
-        if !addMarkdown, mentionedUserNames.isEmpty {
+        let enrichURLs = enrichURLs && message.text.probablyHasURL
+        
+        if !addMarkdown, !enrichURLs, mentionedUserNames.isEmpty {
             return nil
         }
         

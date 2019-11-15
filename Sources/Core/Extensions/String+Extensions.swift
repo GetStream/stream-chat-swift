@@ -60,41 +60,10 @@ extension String {
         }
         
         // Checks "a7.io"
-        let firstCheck = self[beforeBeforeDotIndex].isLetter
+        return self[beforeBeforeDotIndex].isLetter
             && (self[beforeDotIndex].isLetter || self[beforeDotIndex].isNumber)
             && self[afterDotIndex].isLetter
             && self[afterAfterDotIndex].isLetter
-        
-        guard firstCheck else {
-            return false
-        }
-        
-        let threeAfterDotIndex = index(after: afterAfterDotIndex)
-        
-        // Has 3 chars after dot? "a7.co(m?)"
-        guard threeAfterDotIndex < endIndex else {
-            return true
-        }
-        
-        // Checks "a7.io\n", "a7.io/"
-        if isSpaceOrNewLine(at: threeAfterDotIndex) || isSlash(at: threeAfterDotIndex) {
-            return true
-        }
-        
-        // Check "a7.co❌"
-        guard self[threeAfterDotIndex].isLetter else {
-            return false
-        }
-        
-        let fourAfterDotIndex = index(after: threeAfterDotIndex)
-        
-        // Has 4 chars after dot? "a7.co(m?)"
-        guard fourAfterDotIndex < endIndex else {
-            return true
-        }
-        
-        // Check "a7.com❌"
-        return isSpaceOrNewLine(at: fourAfterDotIndex) || isSlash(at: fourAfterDotIndex)
     }
     
     private func isSpaceOrNewLine(at index: Index) -> Bool {
