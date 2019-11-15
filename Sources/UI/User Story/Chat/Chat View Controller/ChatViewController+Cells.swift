@@ -30,7 +30,6 @@ extension ChatViewController {
             cell.update(text: message.args ?? "")
         } else {
             cell.update(text: message.textOrArgs)
-            cell.enrichText(with: message, enrichURLs: true)
             
             if message.isOwn {
                 cell.readUsersView.update(readUsers: readUsers)
@@ -47,9 +46,11 @@ extension ChatViewController {
         
         var showAvatar = true
         let nextRow = indexPath.row + 1
+        var nextMessage: Message? = nil
         
-        if nextRow < items.count, case .message(let nextMessage, _) = items[nextRow] {
-            showAvatar = nextMessage.user != message.user
+        if nextRow < items.count, case .message(let itemNextMessage, _) = items[nextRow] {
+            nextMessage = itemNextMessage
+            showAvatar = itemNextMessage.user != message.user
             
             if !showAvatar {
                 cell.paddingType = .small
@@ -84,6 +85,7 @@ extension ChatViewController {
             return cell
         }
         
+        // Show attachments.
         if !message.attachments.isEmpty {
             message.attachments.enumerated().forEach { index, attachment in
                 cell.addAttachment(attachment,
@@ -105,12 +107,19 @@ extension ChatViewController {
             return cell
         }
         
-        if presenter.channel.config.reactionsEnabled {
-            update(cell: cell, forReactionsIn: message)
+        // Show additional date, if needed.
+        if !showAvatar,
+            cell.readUsersView.isHidden,
+            messageStyle.showTimeThreshold > 60,
+            let nextMessage = nextMessage,
+            (nextMessage.created.timeIntervalSince1970 - message.created.timeIntervalSince1970) > messageStyle.showTimeThreshold {
+            cell.additionalDateLabel.isHidden = false
+            cell.additionalDateLabel.text = DateFormatter.time.string(from: message.created)
         }
         
-        if !cell.readUsersView.isHidden {
-            cell.updateReadUsersViewConstraints()
+        // Show reactions.
+        if presenter.channel.config.reactionsEnabled {
+            update(cell: cell, forReactionsIn: message)
         }
         
         return cell
@@ -118,10 +127,18 @@ extension ChatViewController {
     
     func willDisplay(cell: UITableViewCell, at indexPath: IndexPath, message: Message) {
         guard let cell = cell as? MessageTableViewCell,
+            let presenter = channelPresenter,
             !message.isEphemeral,
-            !message.isDeleted,
-            let presenter = channelPresenter else {
-            return
+            !message.isDeleted else {
+                return
+        }
+        
+        cell.enrichText(with: message, enrichURLs: true)
+        
+        if (!cell.readUsersView.isHidden || !cell.additionalDateLabel.isHidden),
+            let lastVisibleView = cell.lastVisibleViewFromMessageStackView() {
+            cell.updateReadUsersViewConstraints(relatedTo: lastVisibleView)
+            cell.updateAdditionalLabelViewConstraints(relatedTo: lastVisibleView)
         }
         
         cell.messageStackView.rx.anyGesture(presenter.channel.config.reactionsEnabled
@@ -159,7 +176,7 @@ extension ChatViewController {
             showMediaGallery(with: attachments.compactMap {
                 let logoImage = $0.type == .giphy ? UIImage.Logo.giphy : nil
                 return MediaGalleryItem(title: $0.title, url: $0.imageURL, logoImage: logoImage)
-                }, selectedIndex: index)
+            }, selectedIndex: index)
             
             return
         }

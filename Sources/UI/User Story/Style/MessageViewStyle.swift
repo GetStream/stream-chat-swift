@@ -33,6 +33,9 @@ public struct MessageViewStyle {
     public var infoColor: UIColor
     /// A border color.
     public var borderColor: UIColor
+    /// Show a time for each message with a threshold. Disabled by default.
+    /// It should be more then 60 seconds between messages to make it works.
+    public var showTimeThreshold: TimeInterval
     
     /// A background color of the chat screen.
     public var chatBackgroundColor: UIColor {
@@ -71,7 +74,6 @@ public struct MessageViewStyle {
     }
     
     /// Init a message view style.
-    ///
     /// - Parameters:
     ///   - alignment: an alignment of a message for incoming or outgoing messages.
     ///   - showCurrentUserAvatar: shows the current user avatar for outgoing messages.
@@ -79,7 +81,7 @@ public struct MessageViewStyle {
     ///   - font: a message font.
     ///   - replyFont: a reply info font.
     ///   - nameFont: a user name font.
-    ///   - infoFont: an info font, e.g. date.
+    ///   - infoFont: an info font, e.g. date and time.
     ///   - emojiFont: an emoji font of messages.
     ///   - textColor: a message text color.
     ///   - replyColor: a reply info text color.
@@ -89,6 +91,7 @@ public struct MessageViewStyle {
     ///   - borderWidth: a border width.
     ///   - cornerRadius: a corner radius.
     ///   - reactionViewStyle: a reaction style.
+    ///   - showTimeThreshold: a time threshold between messages to show additional time. To enable it should be more than 60 sec.
     ///   - markdownEnabled: shows markdown text with text attributes, e.g. *italic*, **bold**.
     public init(alignment: Alignment = .left,
                 showCurrentUserAvatar: Bool = true,
@@ -106,6 +109,7 @@ public struct MessageViewStyle {
                 borderWidth: CGFloat = 1,
                 cornerRadius: CGFloat = .messageCornerRadius,
                 reactionViewStyle: ReactionViewStyle = ReactionViewStyle(),
+                showTimeThreshold: TimeInterval = 0,
                 markdownEnabled: Bool = true) {
         self.alignment = alignment
         self.showCurrentUserAvatar = showCurrentUserAvatar
@@ -123,6 +127,7 @@ public struct MessageViewStyle {
         self.borderWidth = borderWidth
         self.cornerRadius = cornerRadius
         self.reactionViewStyle = reactionViewStyle
+        self.showTimeThreshold = showTimeThreshold
         self.markdownEnabled = markdownEnabled
         backgroundImages = [:]
         transparentBackgroundImages = [:]

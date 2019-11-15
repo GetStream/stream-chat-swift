@@ -94,6 +94,8 @@ extension CGFloat {
     public static let messageVerticalInset: CGFloat = 5
     /// A message text padding with avatar,
     public static let messageTextPaddingWithAvatar: CGFloat = .messageEdgePadding + .messageAvatarSize + .messageInnerPadding
+    /// A name and date height for a message.
+    public static let messageNameAndDateHeight: CGFloat = .messageAvatarRadius - .messageSpacing
     
     /// A message read users avatar border width.
     public static let messageReadUsersAvatarBorderWidth: CGFloat = 1

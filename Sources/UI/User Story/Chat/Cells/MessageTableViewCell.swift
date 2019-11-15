@@ -13,6 +13,7 @@ import Nuke
 import RxSwift
 
 public final class MessageTableViewCell: UITableViewCell, Reusable {
+    
     typealias ReactionAction = (_ cell: UITableViewCell, _ locationInView: CGPoint) -> Void
     typealias TapAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
     typealias AttachmentTapAction = (_ attachment: Attachment, _ at: Int, _ attachments: [Attachment]) -> Void
@@ -42,7 +43,7 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, dateLabel])
         stackView.axis = .horizontal
         stackView.spacing = .messageSpacing
-        stackView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageAvatarRadius - .messageSpacing).priority(999) }
+        stackView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageNameAndDateHeight).priority(999) }
         stackView.isHidden = true
         return stackView
     }()
@@ -60,6 +61,16 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         label.textColor = .chatGray
         return label
     }()
+    
+    let additionalDateLabel: UILabel = {
+        let label = UILabel(frame: .zero)
+        label.font = .chatSmall
+        label.textColor = .chatGray
+        return label
+    }()
+    
+    var additionalDateLabelSideConstraint: Constraint?
+    var additionalDateLabelBottomConstraint: Constraint?
     
     let infoLabel: UILabel = {
         let label = UILabel(frame: .zero)
@@ -139,6 +150,12 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         dateLabel.textColor = style.infoColor
         dateLabel.backgroundColor = backgroundColor
         bottomPaddingView.backgroundColor = backgroundColor
+        
+        additionalDateLabel.isHidden = true
+        additionalDateLabel.font = style.infoFont
+        additionalDateLabel.textColor = style.infoColor
+        additionalDateLabel.backgroundColor = backgroundColor
+        contentView.addSubview(additionalDateLabel)
         
         replyCountButton.isHidden = true
         replyCountButton.titleLabel?.font = style.replyFont
@@ -294,6 +311,13 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         infoLabel.isHidden = true
         infoLabel.text = nil
         
+        additionalDateLabel.text = nil
+        additionalDateLabel.isHidden = true
+        additionalDateLabelSideConstraint?.deactivate()
+        additionalDateLabelSideConstraint = nil
+        additionalDateLabelBottomConstraint?.deactivate()
+        additionalDateLabelBottomConstraint = nil
+        
         messageStackViewTopConstraint?.update(offset: CGFloat.messageSpacing)
         
         messageContainerView.isHidden = true
@@ -333,11 +357,11 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         attachmentPreviews = []
     }
     
-    func updateReadUsersViewConstraints() {
+    func lastVisibleViewFromMessageStackView() -> UIView? {
         var visibleViews = messageStackView.arrangedSubviews.filter { $0.isHidden == false }
         
         guard visibleViews.count > 0 else {
-            return
+            return nil
         }
         
         if visibleViews.last == bottomPaddingView {
@@ -352,11 +376,39 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
             visibleViews.removeLast()
         }
         
-        if let view = visibleViews.last {
-            readUsersView.snp.makeConstraints { make in
-                self.readUsersRightConstraint = make.right.equalTo(view.snp.left).offset(-CGFloat.messageSpacing).constraint
-                self.readUsersBottomConstraint = make.bottom.equalTo(view).constraint
+        return visibleViews.last
+    }
+    
+    func updateReadUsersViewConstraints(relatedTo view: UIView) {
+        guard !readUsersView.isHidden else {
+            return
+        }
+        
+        readUsersView.snp.makeConstraints { make in
+            self.readUsersRightConstraint = make.right.equalTo(view.snp.left).offset(-CGFloat.messageSpacing).constraint
+            self.readUsersBottomConstraint = make.bottom.equalTo(view).constraint
+        }
+    }
+    
+    func updateAdditionalLabelViewConstraints(relatedTo view: UIView) {
+        guard !additionalDateLabel.isHidden, let style = style else {
+            return
+        }
+        
+        additionalDateLabel.snp.makeConstraints { make in
+            if style.alignment == .right {
+                self.additionalDateLabelSideConstraint = make.right
+                    .equalTo(view.snp.left)
+                    .offset(-CGFloat.messageSpacing)
+                    .constraint
+            } else {
+                self.additionalDateLabelSideConstraint = make.left
+                    .equalTo(view.snp.right)
+                    .offset(CGFloat.messageSpacing)
+                    .constraint
             }
+            
+            self.additionalDateLabelBottomConstraint = make.bottom.equalTo(view).offset(-CGFloat.messageVerticalInset).constraint
         }
     }
 }

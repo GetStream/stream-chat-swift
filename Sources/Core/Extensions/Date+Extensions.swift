@@ -44,7 +44,7 @@ extension Date {
             return DateFormatter.weekDay.string(from: self).appending(Date.wordsSeparator).appending(timeString)
         }
         
-        return DateFormatter.shortDate.string(from: self)
+        return DateFormatter.shortDate.string(from: self).appending(Date.wordsSeparator).appending(timeString)
     }
     
     /// Generates a filename from the date.
