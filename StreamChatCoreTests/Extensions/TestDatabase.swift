@@ -12,21 +12,23 @@ import RxSwift
 
 public final class TestDatabase {
     public var user: User?
+    public let logger: ClientLogger?
     var messages: [Channel: [Message]] = [:]
     var replies: [String: [Message]] = [:]
+    var members = Set<Member>()
     
-    public init() {}
+    public init(logOptions: ClientLogger.Options = []) {
+        logger = logOptions.logger(icon: "🗄", for: [.databaseError, .database, .databaseInfo])
+    }
 }
 
 extension TestDatabase: Database {
+    
     public func channels(_ query: ChannelsQuery) -> Observable<[ChannelResponse]> {
-        print("🗄🗄🗄 fetch channels", query)
         return .empty()
     }
     
     public func channel(channelType: ChannelType, channelId: String, pagination: Pagination) -> Observable<ChannelResponse> {
-        print("🗄 fetch channel:", channelType, channelId, pagination)
-        
         guard let channel = messages.keys.first(where: { $0.id == channelId }) else {
             return .empty()
         }
@@ -35,29 +37,32 @@ extension TestDatabase: Database {
     }
     
     public func add(messages: [Message], for channel: Channel) {
-        if messages.isEmpty {
-            return
-        }
-        
-        print("🗄 added messages:", messages.count, "for channel:", channel.cid)
         self.messages[channel, default: []].append(contentsOf: messages)
     }
     
     public func replies(for message: Message, pagination: Pagination) -> Observable<[Message]> {
-        print("🗄 fetch replies for message:", message.textOrArgs, pagination)
         return .just(replies[message.id, default: []])
     }
     
     public func add(replies: [Message], for message: Message) {
-        print("🗄 added replies:", replies.count, "for message:", message.textOrArgs)
         self.replies[message.id] = replies
     }
     
-    public func set(members: [Member], for channel: Channel) {}
+    public func set(members: Set<Member>, for channel: Channel) {
+        self.members = members
+    }
     
-    public func add(member: Member, for channel: Channel) {}
+    public func add(members: Set<Member>, for channel: Channel) {
+        self.members = self.members.union(members)
+    }
     
-    public func remove(member: Member, from channel: Channel) {}
+    public func remove(members: Set<Member>, from channel: Channel) {
+        members.forEach { member in
+            self.members.remove(member)
+        }
+    }
     
-    public func update(member: Member, from channel: Channel) {}
+    public func update(members: Set<Member>, from channel: Channel) {
+        self.members = self.members.union(members)
+    }
 }

@@ -112,10 +112,13 @@ public final class ChannelPresenter: Presenter<ChatItem> {
                 }
                 
                 return Driver.merge(
+                    // Messages from requests.
                     self.parentMessage == nil ? self.parsedMessagesRequest : self.parsedRepliesResponse(self.repliesRequest),
+                    // Messages from database.
                     self.parentMessage == nil
                         ? self.parsedChannelResponse(self.messagesDatabaseFetch)
                         : self.parsedRepliesResponse(self.repliesDatabaseFetch),
+                    // Events from a websocket.
                     self.webSocketEvents,
                     self.ephemeralMessageEvents,
                     self.connectionErrors

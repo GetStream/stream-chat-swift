@@ -9,7 +9,7 @@
 import Foundation
 import RxSwift
 
-// MARK: - Requests
+// MARK: Requests
 
 public extension Message {
     
@@ -44,16 +44,8 @@ public extension Message {
     /// - Returns: an observable message response.
     func replies(pagination: Pagination) -> Observable<[Message]> {
         return Client.shared.rx.connectedRequest(endpoint: .replies(self, pagination))
-            .map { (response: MessagesResponse) -> [Message] in response.messages }
-            .do(onNext: { Client.shared.database?.add(replies: $0, for: self) })
-    }
-    
-    /// Fetch a reply messages from a database.
-    ///
-    /// - Parameter pagination: a pagination (see `Pagination`).
-    /// - Returns: an observable message response.
-    func fetchReplies(pagination: Pagination) -> Observable<[Message]> {
-        return Client.shared.database?.replies(for: self, pagination: pagination) ?? .empty()
+            .map { (response: MessagesResponse) in response.messages }
+            .do(onNext: { self.add(repliesToDatabase: $0) })
     }
     
     // MARK: Flag Message

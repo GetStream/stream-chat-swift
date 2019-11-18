@@ -124,7 +124,11 @@ public final class ClientLogger {
     ///     - dateAndTime: a formatted string of date and time, could be empty.
     ///     - message: a message.
     public static var logger: (_ icon: String, _ dateTime: String, _ message: String) -> Void = {
-        print($0, $1.isEmpty ? "" : "[\($1)]", $2)
+        if $1.isEmpty || DateFormatter.log == nil {
+            print($0, $2)
+        } else {
+            print($0, "[\($1)]", $2)
+        }
     }
     
     private let icon: String
@@ -329,16 +333,18 @@ public final class ClientLogger {
 }
 
 extension Date {
-    
-    private static let logDateFormatter: DateFormatter = {
+    /// A string of the date for the `ClientLogger`.
+    public var log: String {
+        return DateFormatter.log?.string(from: self) ?? ""
+    }
+}
+
+extension DateFormatter {
+    /// A date formatter for `ClientLogger`.
+    public static var log: DateFormatter? = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM HH:mm:ss.SSS"
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         return dateFormatter
     }()
-    
-    /// A string of the date for the `ClientLogger`.
-    public var log: String {
-        return Date.logDateFormatter.string(from: self)
-    }
 }

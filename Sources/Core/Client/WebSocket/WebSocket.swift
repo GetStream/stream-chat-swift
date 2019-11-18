@@ -301,7 +301,11 @@ extension WebSocket {
             consecutiveFailures = 0
             
             if case .healthCheck = lastMessageResponse.event.type {} else {
-                logger?.log("\(lastMessageResponse.event.type) in cid: \(lastMessageResponse.cid?.description ?? "-")")
+                if let cid = lastMessageResponse.cid {
+                    logger?.log("\(lastMessageResponse.event.type) 🆔 \(cid)")
+                } else {
+                    logger?.log("\(lastMessageResponse.event.type)")
+                }
             }
             
             logger?.log(data)

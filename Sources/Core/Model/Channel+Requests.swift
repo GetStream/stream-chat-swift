@@ -35,10 +35,8 @@ public extension Channel {
         return Client.shared.rx.connectedRequest(endpoint: .channel(channelQuery))
             .do(onNext: { channelResponse in
                 if options.contains(.state) {
-                    if let database = Client.shared.database {
-                        database.add(messages: channelResponse.messages, for: channelResponse.channel)
-                        database.set(members: channelResponse.members, for: channelResponse.channel)
-                    }
+                    channelResponse.channel.add(messagesToDatabase: channelResponse.messages)
+                    channelResponse.channel.set(membersToDatabase: channelResponse.channel.members)
                 }
             })
     }

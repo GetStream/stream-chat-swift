@@ -176,6 +176,8 @@
 		8AD5EDD422E9BB0C005CFAC9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD022E9BB0C005CFAC9 /* RxGesture.framework */; };
 		8AD5EDD522E9BB0C005CFAC9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */; };
 		8AD5EDD622E9BB0C005CFAC9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD222E9BB0C005CFAC9 /* SwiftyGif.framework */; };
+		8AD82E4B2382E25A0037D47D /* Message+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD82E4A2382E25A0037D47D /* Message+Database.swift */; };
+		8AD82E4D2382F24E0037D47D /* Client+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD82E4C2382F24E0037D47D /* Client+Database.swift */; };
 		8AE61E6D237AE25600A585BA /* DataDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE61E692379D3AE00A585BA /* DataDetector.swift */; };
 		8AE61E70237B1D3400A585BA /* UITapGestureRecognizer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE61E6E237B1AA900A585BA /* UITapGestureRecognizer+Extensions.swift */; };
 		8AF4DCBA23757AF300F534F5 /* SearchQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4DCB923757AF300F534F5 /* SearchQuery.swift */; };
@@ -370,6 +372,8 @@
 		8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatCore.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = "<group>"; };
+		8AD82E4A2382E25A0037D47D /* Message+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Database.swift"; sourceTree = "<group>"; };
+		8AD82E4C2382F24E0037D47D /* Client+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Database.swift"; sourceTree = "<group>"; };
 		8AE61E692379D3AE00A585BA /* DataDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDetector.swift; sourceTree = "<group>"; };
 		8AE61E6E237B1AA900A585BA /* UITapGestureRecognizer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITapGestureRecognizer+Extensions.swift"; sourceTree = "<group>"; };
 		8AF4DCB923757AF300F534F5 /* SearchQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchQuery.swift; sourceTree = "<group>"; };
@@ -860,6 +864,7 @@
 				8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */,
 				8AD5ED2222E9BA39005CFAC9 /* Message.swift */,
 				8A04965222F0910200E94795 /* Message+Requests.swift */,
+				8AD82E4A2382E25A0037D47D /* Message+Database.swift */,
 				8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */,
 				8AD5ED2422E9BA39005CFAC9 /* MessageRead.swift */,
 				8AD5ED2722E9BA39005CFAC9 /* Member.swift */,
@@ -887,6 +892,7 @@
 				8AD5ED3822E9BA39005CFAC9 /* Client+RxRequest.swift */,
 				8AD5ED3B22E9BA39005CFAC9 /* Client+WebSocket.swift */,
 				8A0EB78B22FC608A009481E4 /* Client+Events.swift */,
+				8AD82E4C2382F24E0037D47D /* Client+Database.swift */,
 				8AD5ED3A22E9BA39005CFAC9 /* ClientError.swift */,
 				8AD5ED3D22E9BA39005CFAC9 /* ClientLogger.swift */,
 				8AD5ED2E22E9BA39005CFAC9 /* WebSocket */,
@@ -1228,6 +1234,7 @@
 				8AD5ED4F22E9BA5A005CFAC9 /* Data+Extensions.swift in Sources */,
 				8AD5ED6A22E9BA5A005CFAC9 /* Client+Request.swift in Sources */,
 				8AD5ED5022E9BA5A005CFAC9 /* Attachment.swift in Sources */,
+				8AD82E4B2382E25A0037D47D /* Message+Database.swift in Sources */,
 				8AD5ED6522E9BA5A005CFAC9 /* Client+Setup.swift in Sources */,
 				8A0EB78C22FC608A009481E4 /* Client+Events.swift in Sources */,
 				8AD5ED4622E9BA5A005CFAC9 /* URL+Media.swift in Sources */,
@@ -1239,6 +1246,7 @@
 				8AD5ED4C22E9BA5A005CFAC9 /* RxStarscream.swift in Sources */,
 				8A048E4A2331252400FDB3C0 /* Channel+Database.swift in Sources */,
 				8AD5ED6B22E9BA5A005CFAC9 /* ClientError.swift in Sources */,
+				8AD82E4D2382F24E0037D47D /* Client+Database.swift in Sources */,
 				8AD5ED5722E9BA5A005CFAC9 /* MessageRead.swift in Sources */,
 				8A04964722E9F57000E94795 /* ViewChanges.swift in Sources */,
 				8AD5ED4522E9BA5A005CFAC9 /* Result+Extensions.swift in Sources */,
