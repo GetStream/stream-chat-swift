@@ -51,26 +51,12 @@ public final class Notifications: NSObject {
     
     var logger: ClientLogger?
     
-    /// Enable debug logs.
-    public var logsEnabled: Bool = false {
-        didSet {
-            logsLevel = logsEnabled ? .debug : nil
-        }
-    }
-    
-    /// Enable logs with a given log level, e.g `.error`, `.debug`.
-    public var logsLevel: ClientLogger.Level? {
-        didSet {
-            if let logsLevel = logsLevel {
-                logger = ClientLogger(icon: "🗞", level: logsLevel)
-            } else {
-                logger = nil
-            }
-        }
-    }
-    
     override init() {
         super.init()
+        
+        if let logLevel = Client.shared.logOptions.level(for: [.notificationsError, .notifications]) {
+            logger = ClientLogger(icon: "🗞", level: logLevel)
+        }
         
         if UNUserNotificationCenter.current().delegate == nil {
             UNUserNotificationCenter.current().delegate = self
@@ -129,6 +115,7 @@ extension Notifications {
     public func showIfNeeded(newMessage message: Message, in channel: Channel) {
         DispatchQueue.main.async {
             if UIApplication.shared.appState == .background {
+                self.logger?.log("Show channel: \(channel.cid) message id: \(message.id) text: \(message.textOrArgs)")
                 self.show(newMessage: message, in: channel)
             }
         }
@@ -146,8 +133,9 @@ extension Notifications {
         
         let content = createLocalNotificationContent(newMessage: message, in: channel)
         let request = UNNotificationRequest(identifier: message.id, content: content, trigger: nil)
+        logger?.log("Added a local notification for channel: \(channel.cid) message id: \(message.id) text: \(message.textOrArgs)")
         
-        UNUserNotificationCenter.current().add(request) { error in
+        UNUserNotificationCenter.current().add(request) { [unowned self] error in
             if let error = error {
                 self.logger?.log(error, message: "When adding a local notification")
             }
@@ -241,7 +229,8 @@ extension Notifications {
             
             UIApplication.shared.rx.appState
                 .filter { $0 == .active }
-                .subscribe(onNext: { [weak self] _ in self?.clear() })
+                .skip(1)
+                .subscribe(onNext: { [unowned self] _ in self.clear() })
                 .disposed(by: self.disposeBag)
         }
     }
@@ -250,5 +239,6 @@ extension Notifications {
         UIApplication.shared.applicationIconBadgeNumber = 0
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        logger?.log("🧹 Notifications and the badge cleared")
     }
 }

@@ -48,11 +48,15 @@ public final class ClientLogger {
         public static let requestsError = Options(rawValue: 1 << 0)
         /// Logs for a web socket. [Error]
         public static let webSocketError = Options(rawValue: 1 << 1)
+        /// Logs for a notifications. [Error]
+        public static let notificationsError = Options(rawValue: 1 << 2)
         
         /// Logs for requests. [Debug]
         public static let requests = Options(rawValue: 1 << 10)
         /// Logs for a web socket. [Debug]
         public static let webSocket = Options(rawValue: 1 << 11)
+        /// Logs for a notifications. [Debug]
+        public static let notifications = Options(rawValue: 1 << 12)
         
         /// Logs for requests. [Info]
         public static let requestsInfo = Options(rawValue: 1 << 20)
@@ -60,13 +64,13 @@ public final class ClientLogger {
         public static let webSocketInfo = Options(rawValue: 1 << 21)
         
         /// All errors.
-        public static let error: Options = [.requestsError, .webSocketError]
+        public static let error: Options = [.requestsError, .webSocketError, .notificationsError]
         
         /// All debug logs.
-        public static let debug: Options = [.requests, .webSocket]
+        public static let debug: Options = [.requests, .webSocket, .notifications]
         
         /// Full logs.
-        public static let info: Options = [.requestsInfo, .webSocketInfo]
+        public static let info: Options = [.requestsInfo, .webSocketInfo, .notifications]
         
         // FIXME: Shouldn't be like that.
         var isEnabled: Bool {
