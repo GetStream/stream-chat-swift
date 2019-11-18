@@ -141,13 +141,7 @@ public final class Client {
         self.stayConnectedInBackground = stayConnectedInBackground
         self.database = database
         self.logOptions = logOptions
-        
-        if let logLevel = logOptions.level(for: [.requestsError, .requests, .requestsInfo]) {
-            logger = ClientLogger(icon: "🐴", level: logLevel)
-        } else {
-            logger = nil
-        }
-        
+        logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
         checkAPIKey()
     }
     

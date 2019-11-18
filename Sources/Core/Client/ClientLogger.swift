@@ -50,6 +50,8 @@ public final class ClientLogger {
         public static let webSocketError = Options(rawValue: 1 << 1)
         /// Logs for a notifications. [Error]
         public static let notificationsError = Options(rawValue: 1 << 2)
+        /// Logs for a database. [Error]
+        public static let databaseError = Options(rawValue: 1 << 3)
         
         /// Logs for requests. [Debug]
         public static let requests = Options(rawValue: 1 << 10)
@@ -57,12 +59,16 @@ public final class ClientLogger {
         public static let webSocket = Options(rawValue: 1 << 11)
         /// Logs for a notifications. [Debug]
         public static let notifications = Options(rawValue: 1 << 12)
+        /// Logs for a database. [Debug]
+        public static let database = Options(rawValue: 1 << 13)
         
         /// Logs for requests. [Info]
         public static let requestsInfo = Options(rawValue: 1 << 20)
         /// Logs for a web socket. [Info]
         public static let webSocketInfo = Options(rawValue: 1 << 21)
-        
+        /// Logs for a database. [Info]
+        public static let databaseInfo = Options(rawValue: 1 << 23)
+
         /// All errors.
         public static let error: Options = [.requestsError, .webSocketError, .notificationsError]
         
@@ -96,9 +102,17 @@ public final class ClientLogger {
             self.rawValue = rawValue
         }
         
-        public func level(for options: Options) -> Level? {
-            let result = intersection(options)
-            return result.isEnabled ? .level(result) : nil
+        /// Create a logger with intersected log options.
+        /// - Parameters:
+        ///   - icon: a logger icon.
+        ///   - subOptions: a subset of options.
+        public func logger(icon: String, for subOptions: Options) -> ClientLogger? {
+            guard subOptions.isEnabled else {
+                return nil
+            }
+            
+            let intersectedOptions = intersection(subOptions)
+            return intersectedOptions.isEnabled ? ClientLogger(icon: icon, level: .level(intersectedOptions)) : nil
         }
     }
     

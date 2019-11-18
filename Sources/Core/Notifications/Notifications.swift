@@ -53,10 +53,7 @@ public final class Notifications: NSObject {
     
     override init() {
         super.init()
-        
-        if let logLevel = Client.shared.logOptions.level(for: [.notificationsError, .notifications]) {
-            logger = ClientLogger(icon: "🗞", level: logLevel)
-        }
+        logger = Client.shared.logOptions.logger(icon: "🗞", for: [.notificationsError, .notifications])
         
         if UNUserNotificationCenter.current().delegate == nil {
             UNUserNotificationCenter.current().delegate = self

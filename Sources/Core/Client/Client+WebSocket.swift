@@ -14,12 +14,7 @@ extension Client {
             return nil
         }
         
-        var logger: ClientLogger? = nil
-        
-        if let logLevel = logOptions.level(for: [.webSocketError, .webSocket, .webSocketInfo]) {
-            logger = ClientLogger(icon: "🦄", level: logLevel)
-        }
-        
+        let logger = logOptions.logger(icon: "🦄", for: [.webSocketError, .webSocket, .webSocketInfo])
         let jsonParameter = WebSocketPayload(user: user, token: token)
         
         var urlComponents = URLComponents()
