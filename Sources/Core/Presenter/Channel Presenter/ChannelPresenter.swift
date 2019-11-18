@@ -284,7 +284,7 @@ extension ChannelPresenter {
         }
         
         guard let unreadMessageRead = unreadMessageReadAtomic.get() else {
-            Client.shared.logger?.log("🎫", "Skip read. No unreadMessageRead.")
+            Client.shared.logger?.log("🎫 Skip read. No unreadMessageRead.")
             return .empty()
         }
         
@@ -293,17 +293,19 @@ extension ChannelPresenter {
         return Observable.just(())
             .subscribeOn(MainScheduler.instance)
             .filter { UIApplication.shared.appState == .active }
-            .do(onNext: { Client.shared.logger?.log("🎫", "Send Message Read. Unread from \(unreadMessageRead.lastReadDate)") })
+            .do(onNext: {
+                Client.shared.logger?.log("🎫 Send Message Read. Unread from \(unreadMessageRead.lastReadDate)")
+            })
             .flatMapLatest { [weak self] in self?.channel.markRead() ?? .empty() }
             .do(
                 onNext: { [weak self] _ in
                     self?.unreadMessageReadAtomic.set(nil)
                     self?.channel.unreadCountAtomic.set(0)
-                    Client.shared.logger?.log("🎫", "Message Read done.")
+                    Client.shared.logger?.log("🎫 Message Read done.")
                 },
                 onError: { [weak self] error in
                     self?.unreadMessageReadAtomic.set(unreadMessageRead)
-                    ClientLogger.log("🎫", error, message: "Send Message Read error.")
+                    Client.shared.logger?.log(error, message: "🎫 Send Message Read error.")
             })
             .void()
     }

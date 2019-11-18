@@ -14,7 +14,12 @@ extension Client {
             return nil
         }
         
-        let logger: ClientLogger? = (logOptions == .all || logOptions == .webSocket ? ClientLogger(icon: "🦄") : nil)
+        var logger: ClientLogger? = nil
+        
+        if let logLevel = logOptions.level(for: [.webSocketError, .webSocket, .webSocketInfo]) {
+            logger = ClientLogger(icon: "🦄", level: logLevel)
+        }
+        
         let jsonParameter = WebSocketPayload(user: user, token: token)
         
         var urlComponents = URLComponents()
@@ -32,16 +37,16 @@ extension Client {
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 urlComponents.queryItems?.append(URLQueryItem(name: "json", value: jsonString))
             } else {
-                logger?.log("❌", "Can't create a JSON parameter string from the json: \(jsonParameter)")
+                logger?.log("❌ Can't create a JSON parameter string from the json: \(jsonParameter)", level: .error)
                 return nil
             }
         } catch {
-            ClientLogger.log("🦄", error)
+            logger?.log(error)
             return nil
         }
         
         guard let url = urlComponents.url else {
-            logger?.log("❌", "Bad URL: \(urlComponents)")
+            logger?.log("❌ Bad URL: \(urlComponents)", level: .error)
             return nil
         }
         

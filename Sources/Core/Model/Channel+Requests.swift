@@ -132,7 +132,9 @@ public extension Channel {
         }
         
         request = request
-            .do(onNext: { _ in Client.shared.logger?.log("🎫", "Send Message Read. For a new message of the current user.") })
+            .do(onNext: { _ in
+                Client.shared.logger?.log("🎫 Send Message Read. For a new message of the current user.")
+            })
             .flatMapLatest({ response -> Observable<MessageResponse> in
                 if response.message.isBan {
                     if let currentUser = User.current, !currentUser.isBanned {
@@ -180,7 +182,7 @@ public extension Channel {
         let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .sendEvent(eventType, self))
         
         return Client.shared.connectedRequest(request.map({ $0.event })
-            .do(onNext: { _ in Client.shared.logger?.log("🎫", eventType.rawValue) }))
+            .do(onNext: { _ in Client.shared.logger?.log("🎫 \(eventType.rawValue)") }))
     }
 }
 

@@ -52,11 +52,11 @@ public final class Client {
     private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
-    let logOptions: ClientLogger.Options
     
     /// A log manager.
     public let logger: ClientLogger?
-    
+    let logOptions: ClientLogger.Options
+
     /// An observable user.
     public internal(set) lazy var userDidUpdate: Driver<User?> = userPublishSubject.asDriver(onErrorJustReturn: nil)
     private let userPublishSubject = PublishSubject<User?>()
@@ -129,7 +129,7 @@ public final class Client {
                 stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
                 database: Database? = Client.config.database,
                 logOptions: ClientLogger.Options = Client.config.logOptions) {
-        if !apiKey.isEmpty {
+        if !apiKey.isEmpty, logOptions.isEnabled {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Client.version)")
             ClientLogger.logger("🔑", "", apiKey)
             ClientLogger.logger("🔗", "", baseURL.description)
@@ -142,8 +142,8 @@ public final class Client {
         self.database = database
         self.logOptions = logOptions
         
-        if logOptions == .all || logOptions == .requests || logOptions == .requestsHeaders {
-            logger = ClientLogger(icon: "🐴", options: logOptions)
+        if let logLevel = logOptions.level(for: [.requestsError, .requests, .requestsInfo]) {
+            logger = ClientLogger(icon: "🐴", level: logLevel)
         } else {
             logger = nil
         }
@@ -169,7 +169,7 @@ public final class Client {
             return
         }
         
-        logger?.log("🧹", "Reset Client User, Token, URLSession and WebSocket.")
+        logger?.log("🧹 Reset Client User, Token, URLSession and WebSocket.")
         user = nil
         urlSession = setupURLSession(token: "")
         webSocket = WebSocket()
@@ -209,7 +209,7 @@ extension Client {
                     callbackQueue: DispatchQueue? = nil,
                     stayConnectedInBackground: Bool = true,
                     database: Database? = nil,
-                    logOptions: ClientLogger.Options = .none) {
+                    logOptions: ClientLogger.Options = []) {
             self.apiKey = apiKey
             self.baseURL = baseURL
             self.callbackQueue = callbackQueue

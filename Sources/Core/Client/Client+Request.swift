@@ -161,7 +161,7 @@ extension Client {
                         queryItems.append(URLQueryItem(name: key, value: json))
                     }
                 } catch {
-                    ClientLogger.log("🐴", error, message: "Encode jsonQueryItems")
+                    logger?.log(error, message: "Encode jsonQueryItems")
                 }
             }
         }
@@ -246,11 +246,11 @@ extension Client {
         
         if let error = error {
             if (error as NSError).code == NSURLErrorCancelled {
-                logger?.log("🙅‍♂️", "A request was cancelled. NSError \(NSURLErrorCancelled)")
+                logger?.log("🙅‍♂️ A request was cancelled. NSError \(NSURLErrorCancelled)")
             } else if (error as NSError).code == NSURLErrorNetworkConnectionLost {
-                logger?.log("🤷‍♂️", "The network connection was lost. NSError \(NSURLErrorNetworkConnectionLost)")
+                logger?.log("🤷‍♂️ The network connection was lost. NSError \(NSURLErrorNetworkConnectionLost)")
             } else {
-                ClientLogger.log("🐴", error)
+                logger?.log(error)
             }
             
             performInCallbackQueue { completion(.failure(.requestFailed(error))) }
@@ -280,7 +280,7 @@ extension Client {
                 }
                 
                 if errorResponse.code == ClientErrorResponse.tokenExpiredErrorCode {
-                    logger?.log("🀄️", "The Token is expired")
+                    logger?.log("🀄️ The Token is expired")
                     touchTokenProvider()
                     return
                 }
@@ -298,7 +298,7 @@ extension Client {
             logger?.timing("Response decoded")
             performInCallbackQueue { completion(.success(response)) }
         } catch {
-            ClientLogger.log("🐴", error)
+            logger?.log(error)
             performInCallbackQueue { completion(.failure(.decodingFailure(error))) }
         }
     }

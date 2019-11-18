@@ -51,7 +51,7 @@ extension WebSocket {
         }
         
         let delay = delayForReconnect
-        logger?.log("⏳", "Reconnect in \(delay) sec")
+        logger?.log("⏳ Reconnect in \(delay) sec")
         isReconnecting = true
         
         webSocket.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in

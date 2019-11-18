@@ -153,7 +153,7 @@ public final class Channel: Codable {
             self.extraData = nil
         }
         
-        if type == .unknown {
+        if type == .unknown, Client.shared.logOptions.isEnabled {
             ClientLogger.log("❌", "Created a bad channel unknown type")
         }
         
@@ -162,7 +162,9 @@ public final class Channel: Codable {
                 return
             }
             
-            ClientLogger.log("❌", "Created a bad channel without id and without members")
+            if Client.shared.logOptions.isEnabled {
+                ClientLogger.log("❌", "Created a bad channel without id and without members")
+            }
         }
     }
     
@@ -348,7 +350,7 @@ public enum ChannelType: String, Codable {
 }
 
 /// A channel type and id.
-public struct ChannelId: Codable, Hashable {
+public struct ChannelId: Codable, Hashable, CustomStringConvertible {
     private static let any = "*"
     private static let separator: Character = ":"
     
@@ -396,6 +398,10 @@ public struct ChannelId: Codable, Hashable {
         } else {
             try container.encode("\(type.rawValue):\(id)")
         }
+    }
+    
+    public var description: String {
+        return "\(type)\(ChannelId.separator)\(id)"
     }
 }
 

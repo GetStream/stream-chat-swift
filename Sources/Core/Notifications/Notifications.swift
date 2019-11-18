@@ -51,10 +51,21 @@ public final class Notifications: NSObject {
     
     var logger: ClientLogger?
     
-    /// Enable logs for Notifications.
+    /// Enable debug logs.
     public var logsEnabled: Bool = false {
         didSet {
-            logger = logsEnabled ? ClientLogger(icon: "🗞") : nil
+            logsLevel = logsEnabled ? .debug : nil
+        }
+    }
+    
+    /// Enable logs with a given log level, e.g `.error`, `.debug`.
+    public var logsLevel: ClientLogger.Level? {
+        didSet {
+            if let logsLevel = logsLevel {
+                logger = ClientLogger(icon: "🗞", level: logsLevel)
+            } else {
+                logger = nil
+            }
         }
     }
     
@@ -74,7 +85,7 @@ public final class Notifications: NSObject {
             if settings.authorizationStatus == .notDetermined {
                 self.askForPermissions()
             } else if settings.authorizationStatus == .denied {
-                self.logger?.log("❌ Notifications denied")
+                self.logger?.log("❌ Notifications denied", level: .error)
             } else {
                 self.registerForPushNotifications()
                 self.logger?.log("👍 Notifications authorized (\(settings.authorizationStatus.rawValue))")
@@ -90,9 +101,9 @@ public final class Notifications: NSObject {
                 self.registerForPushNotifications()
                 self.logger?.log("👍 User has accepted notifications")
             } else if let error = error {
-                self.logger?.log("❌ User has declined notifications \(error)")
+                self.logger?.log(error, message: "User has declined notifications")
             } else {
-                self.logger?.log("❌ User has declined notifications: unknown reason")
+                self.logger?.log("❌ User has declined notifications: unknown reason", level: .error)
             }
         }
     }
@@ -138,7 +149,7 @@ extension Notifications {
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                ClientLogger.log("🗞", error, message: "When adding a local notification")
+                self.logger?.log(error, message: "When adding a local notification")
             }
         }
     }

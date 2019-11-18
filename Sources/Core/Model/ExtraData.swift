@@ -84,7 +84,7 @@ extension ExtraData {
         do {
             try encode(to: encoder)
         } catch {
-            ClientLogger.log("🧳", error, message: "⚠️🎩 when encoding an extra data: \(encoder)")
+            Client.shared.logger?.log(error, message: "⚠️📦 when encoding an extra data: \(encoder)")
         }
     }
     

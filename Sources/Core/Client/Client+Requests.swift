@@ -179,7 +179,7 @@ public extension Client {
                 user.devices.append(device)
                 user.currentDevice = device
                 self.user = user
-                self.logger?.log("📱", "Device added with id: \(deviceId)")
+                self.logger?.log("📱 Device added with id: \(deviceId)")
             })
             .map { (_: EmptyData) in Void() }
     }
@@ -198,7 +198,7 @@ public extension Client {
                     var user = currentUser
                     user.devices = response.devices
                     self.user = user
-                    self.logger?.log("📱", "Devices updated")
+                    self.logger?.log("📱 Devices updated")
                 }
             })
     }
@@ -214,7 +214,7 @@ public extension Client {
                     return self.rx.connectedRequest(endpoint: .removeDevice(deviceId: deviceId, user))
                 }
                 
-                self.logger?.log("📱", "Device id not found")
+                self.logger?.log("📱 Device id not found")
                 
                 return .empty()
             }
@@ -224,7 +224,7 @@ public extension Client {
                     var user = currentUser
                     user.devices.remove(at: index)
                     self.user = user
-                    self.logger?.log("📱", "Device removed with id: \(deviceId)")
+                    self.logger?.log("📱 Device removed with id: \(deviceId)")
                 }
             })
     }

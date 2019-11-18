@@ -22,7 +22,7 @@ extension Client {
         disconnect()
         
         if apiKey.isEmpty || token.isEmpty {
-            logger?.log("❌ API key or token is empty: \(apiKey), \(token)")
+            logger?.log("❌ API key or token is empty: \(apiKey), \(token)", level: .error)
             return
         }
         
@@ -62,7 +62,7 @@ extension Client {
         disconnect()
         
         if apiKey.isEmpty {
-            logger?.log("❌ API key is empty.")
+            logger?.log("❌ API key is empty.", level: .error)
             return
         }
         
@@ -79,7 +79,7 @@ extension Client {
         
         expiredTokenDisposeBag = DisposeBag()
         isExpiredTokenInProgress = true
-        logger?.log("🀄️", "Request for a new token from a token provider.")
+        logger?.log("🀄️ Request for a new token from a token provider.")
         tokenProvider { [unowned self] in self.setup(token: $0) }
         
         return true
@@ -93,12 +93,12 @@ extension Client {
         self.token = nil
         
         if token.isEmpty {
-            logger?.log("❌ The Token is empty.")
+            logger?.log("❌ The Token is empty.", level: .error)
             return
         }
         
         guard let user = user else {
-            logger?.log("❌ User is empty. Skip Token setup.")
+            logger?.log("❌ User is empty. Skip Token setup.", level: .error)
             return
         }
         
@@ -117,11 +117,13 @@ extension Client {
             }
         }
         
-        ClientLogger.logger("👤", "", "\(user.name): \(user.id)")
-        ClientLogger.logger("🀄️", "", "Token: \(token)")
+        if logOptions.isEnabled {
+            ClientLogger.logger("👤", "", "\(user.name): \(user.id)")
+            ClientLogger.logger("🀄️", "", "Token: \(token)")
+        }
         
         if let error = checkUserAndToken(token) {
-            ClientLogger.log("🐴", error)
+            logger?.log(error)
             return
         }
         
@@ -145,7 +147,7 @@ extension Client {
             if let response = try? result.get() {
                 self.set(user: response.user, token: response.token)
             } else {
-                ClientLogger.log("🐴", result.error, message: "Guest Token")
+                self.logger?.log(result.error, message: "Guest Token")
             }
         }
     }
@@ -192,7 +194,11 @@ extension Client {
                 .filter { $0 != .inactive }
                 .distinctUntilChanged()
                 .startWith(app.appState)
-                .do(onNext: { state in ClientLogger.log("📱", "App state \(state)") })
+                .do(onNext: { state in
+                    if Client.shared.logOptions.isEnabled {
+                        ClientLogger.log("📱", "App state \(state)")
+                    }
+                })
         
         let internetIsAvailable: Observable<Bool> = isTests()
             ? .just(true)
