@@ -113,6 +113,11 @@ public struct Message: Codable {
         return id.isEmpty && type == .error && text == "You are not allowed to post messages on this channel"
     }
     
+    /// Checks if the message is empty.
+    public var isEmpty: Bool {
+        return text.isBlank && attachments.isEmpty && command.isBlank && extraData == nil
+    }
+    
     /// Init a message.
     ///
     /// - Parameters:

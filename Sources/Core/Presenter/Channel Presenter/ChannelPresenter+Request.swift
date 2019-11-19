@@ -111,6 +111,10 @@ extension ChannelPresenter {
         
         // Add chat items for messages.
         messages.enumerated().forEach { messageIndex, message in
+            if message.isEmpty {
+                return
+            }
+            
             if parentMessage == nil, message.parentId != nil {
                 return
             }
