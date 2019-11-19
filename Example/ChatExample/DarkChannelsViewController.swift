@@ -39,7 +39,7 @@ final class DarkChannelsViewController: ChannelsViewController {
     
     func setupPresenter() {
         if let currentUser = User.current {
-            channelsPresenter = ChannelsPresenter(channelType: .messaging, filter: .key("members", .in([currentUser.id])))
+            channelsPresenter = ChannelsPresenter(filter: .key("members", .in([currentUser.id])))
         }
     }
     
@@ -92,15 +92,7 @@ final class DarkChannelsViewController: ChannelsViewController {
     @IBAction func addChannel(_ sender: Any) {
         let number = Int.random(in: 100...999)
         let channel = Channel(type: .messaging, id: "new_channel_\(number)", name: "Channel \(number)")
-        
-        channel.create()
-            .flatMapLatest({ channelResponse in
-                channelResponse.channel.send(message: Message(text: "A new channel #\(number) created"))
-            })
-            .subscribe(onNext: {
-                print($0)
-            })
-            .disposed(by: disposeBag)
+        channel.create().subscribe().disposed(by: disposeBag)
     }
     
     override func channelCell(at indexPath: IndexPath, channelPresenter: ChannelPresenter) -> UITableViewCell {

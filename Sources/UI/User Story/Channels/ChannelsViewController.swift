@@ -29,7 +29,7 @@ open class ChannelsViewController: ViewController {
     public private(set) var items = [ChatItem]()
     
     /// A channels presenter.
-    open var channelsPresenter = ChannelsPresenter(channelType: .messaging) {
+    open var channelsPresenter = ChannelsPresenter() {
         didSet {
             reset()
             
@@ -69,7 +69,7 @@ open class ChannelsViewController: ViewController {
         setupChannelsPresenter()
         
         if title == nil {
-            title = channelsPresenter.channelType.title
+            title = Bundle.main.object(forInfoDictionaryKey: kCFBundleNameKey as String) as? String
         }
     }
     

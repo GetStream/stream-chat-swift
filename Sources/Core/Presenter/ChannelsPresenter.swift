@@ -15,8 +15,6 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     /// A callback type to provide an extra data for a channel.
     public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
     
-    /// A channel type.
-    public let channelType: ChannelType
     /// Query options.
     public let queryOptions: QueryOptions
     /// Show channel statuses in a selected chat view controller.
@@ -81,17 +79,14 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     /// Init a channels presenter.
     ///
     /// - Parameters:
-    ///   - channelType: a channel type.
     ///   - filter: a channel filter.
     ///   - sorting: a channel sorting. By default channels will be sorted by the last message date.
     ///   - queryOptions: query options (see `QueryOptions`).
     ///   - showChannelStatuses: show channel statuses on a chat view controller of a selected channel.
-    public init(channelType: ChannelType,
-                filter: Filter = .none,
+    public init(filter: Filter = .none,
                 sorting: [Sorting] = [],
                 queryOptions: QueryOptions = .all,
                 showChannelStatuses: Bool = true) {
-        self.channelType = channelType
         self.queryOptions = queryOptions
         self.showChannelStatuses = showChannelStatuses
         self.filter = filter
