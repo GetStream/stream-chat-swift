@@ -45,12 +45,20 @@ extension ChatViewController {
         }
         
         var showAvatar = true
+        var needsToShowAdditionalDate = false
         let nextRow = indexPath.row + 1
-        var nextMessage: Message? = nil
-        
-        if nextRow < items.count, case .message(let itemNextMessage, _) = items[nextRow] {
-            nextMessage = itemNextMessage
-            showAvatar = itemNextMessage.user != message.user
+
+        if nextRow < items.count, case .message(let nextMessage, _) = items[nextRow] {
+            if messageStyle.showTimeThreshold > 59 {
+                let timeLeft = nextMessage.created.timeIntervalSince1970 - message.created.timeIntervalSince1970
+                needsToShowAdditionalDate = timeLeft > messageStyle.showTimeThreshold
+            }
+            
+            if needsToShowAdditionalDate, case .userNameAndDate = messageStyle.additionalDateStyle {
+                showAvatar = true
+            } else {
+                showAvatar = nextMessage.user != message.user
+            }
             
             if !showAvatar {
                 cell.paddingType = .small
@@ -110,9 +118,8 @@ extension ChatViewController {
         // Show additional date, if needed.
         if !showAvatar,
             cell.readUsersView.isHidden,
-            messageStyle.showTimeThreshold > 60,
-            let nextMessage = nextMessage,
-            (nextMessage.created.timeIntervalSince1970 - message.created.timeIntervalSince1970) > messageStyle.showTimeThreshold {
+            needsToShowAdditionalDate,
+            case .messageAndDate = messageStyle.additionalDateStyle {
             cell.additionalDateLabel.isHidden = false
             cell.additionalDateLabel.text = DateFormatter.time.string(from: message.created)
         }

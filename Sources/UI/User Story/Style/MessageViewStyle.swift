@@ -36,7 +36,9 @@ public struct MessageViewStyle {
     /// Show a time for each message with a threshold. Disabled by default.
     /// It should be more then 60 seconds between messages to make it works.
     public var showTimeThreshold: TimeInterval
-    
+    /// An additional date style (see `AdditionalDateStyle`).
+    public var additionalDateStyle: AdditionalDateStyle
+
     /// A background color of the chat screen.
     public var chatBackgroundColor: UIColor {
         didSet { updateBackgroundImages() }
@@ -110,6 +112,7 @@ public struct MessageViewStyle {
                 cornerRadius: CGFloat = .messageCornerRadius,
                 reactionViewStyle: ReactionViewStyle = ReactionViewStyle(),
                 showTimeThreshold: TimeInterval = 0,
+                additionalDateStyle: AdditionalDateStyle = .userNameAndDate,
                 markdownEnabled: Bool = true) {
         self.alignment = alignment
         self.showCurrentUserAvatar = showCurrentUserAvatar
@@ -128,6 +131,7 @@ public struct MessageViewStyle {
         self.cornerRadius = cornerRadius
         self.reactionViewStyle = reactionViewStyle
         self.showTimeThreshold = showTimeThreshold
+        self.additionalDateStyle = additionalDateStyle
         self.markdownEnabled = markdownEnabled
         backgroundImages = [:]
         transparentBackgroundImages = [:]
@@ -187,11 +191,19 @@ public struct MessageViewStyle {
     }
 }
 
-extension MessageViewStyle {
+public extension MessageViewStyle {
     /// An alignment of a message for incoming or outgoing messages.
-    public enum Alignment: String {
+    enum Alignment: String {
         /// A message view style alignment.
         case left, right
+    }
+    
+    /// Additiona date style will work with `showTimeThreshold` paramenter.
+    enum AdditionalDateStyle {
+        /// Show additional date as a default style for the last message.
+        case userNameAndDate
+        /// Show additional date near a message without user name.
+        case messageAndDate
     }
 }
 
@@ -213,6 +225,8 @@ extension MessageViewStyle: Hashable {
             && lhs.borderWidth == rhs.borderWidth
             && lhs.cornerRadius == rhs.cornerRadius
             && lhs.reactionViewStyle == rhs.reactionViewStyle
+            && lhs.showTimeThreshold == rhs.showTimeThreshold
+            && lhs.additionalDateStyle == rhs.additionalDateStyle
             && lhs.markdownEnabled == rhs.markdownEnabled
     }
     
@@ -232,6 +246,8 @@ extension MessageViewStyle: Hashable {
         hasher.combine(borderWidth)
         hasher.combine(cornerRadius)
         hasher.combine(reactionViewStyle)
+        hasher.combine(showTimeThreshold)
+        hasher.combine(additionalDateStyle)
         hasher.combine(markdownEnabled)
     }
 }
