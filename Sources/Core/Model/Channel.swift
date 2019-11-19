@@ -136,7 +136,7 @@ public final class Channel: Codable {
         self.id = id
         self.cid = ChannelId(type: type, id: id)
         self.type = type
-        self.name = name ?? id
+        self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         self.imageURL = imageURL
         lastMessageDate = nil
         created = Date()
@@ -181,10 +181,12 @@ public final class Channel: Codable {
         deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
         createdBy = try container.decodeIfPresent(User.self, forKey: .createdBy)
         frozen = try container.decode(Bool.self, forKey: .frozen)
-        name = try container.decodeIfPresent(String.self, forKey: .name) ?? id
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
         extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isChannel }))
-        members = Set<Member>((try? container.decodeIfPresent([Member].self, forKey: .members)) ?? [])
+        let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
+        self.members = Set<Member>(members)
+        let name = try container.decodeIfPresent(String.self, forKey: .name)
+        self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         invitedMembers = Set<Member>()
         
         if !isActive {
@@ -458,6 +460,25 @@ public enum BanEnabling {
             let members = Array(channel.members)
             return members.first(where: { $0.user.isCurrent && ($0.role == .moderator || $0.role == .admin) }) != nil
         }
+    }
+}
+
+private extension Array where Element == Member {
+    func channelName(default: String) -> String {
+        guard count > 0 else {
+            return `default`
+        }
+        
+        guard count > 1 else {
+            return self[0].user.isCurrent ? `default` : self[0].user.name
+        }
+        
+        if count == 2 {
+            return (self[0].user.isCurrent ? self[1] : self[0]).user.name
+        }
+        
+        let notCurrentMembers = filter({ !$0.user.isCurrent })
+        return "\(notCurrentMembers[0].user.name) and \(notCurrentMembers.count - 1) others"
     }
 }
 
