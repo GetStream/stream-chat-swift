@@ -50,6 +50,8 @@ final class ChatFooterView: UIView {
             make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding).priority(999)
         }
         
+        avatarView.backgroundColor = backgroundColor
+        
         return label
     }()
     
@@ -60,6 +62,7 @@ final class ChatFooterView: UIView {
     func hide() {
         isHidden = true
         avatarView.reset()
+        avatarView.backgroundColor = backgroundColor
         activityIndicatorView.stopAnimating()
         timerWorker?.cancel()
         timerWorker = nil
