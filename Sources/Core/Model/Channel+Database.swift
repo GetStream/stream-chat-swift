@@ -25,6 +25,15 @@ public extension Channel {
         return database.channel(channelType: type, channelId: id, pagination: pagination)
     }
     
+    func addOrUpdateInDatabase() {
+        guard let database = Client.shared.database else {
+            return
+        }
+        
+        database.logger?.log("➡️ Add or update a channel 🆔 \(cid)")
+        database.addOrUpdate(channel: self)
+    }
+    
     /// Add messages to a database.
     /// - Parameter messages: messages
     func add(messagesToDatabase messages: [Message]) {
@@ -33,7 +42,7 @@ public extension Channel {
         }
         
         database.logger?.log("🆔 \(cid) ➡️ Added messages: \(messages.count)")
-        database.add(messages: messages, for: self)
+        database.add(messages: messages, to: self)
     }
 }
 

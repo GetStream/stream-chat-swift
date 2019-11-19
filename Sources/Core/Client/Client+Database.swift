@@ -22,4 +22,18 @@ extension Client {
         database.logger?.log("⬅️ Fetch channels with: \(query)")
         return database.channels(query)
     }
+    
+    /// Add channel responses to a database.
+    /// - Parameter channels: channel responses.
+    public func add(channelsToDatabase channels: [ChannelResponse]) {
+        guard let database = database, !channels.isEmpty else {
+            return
+        }
+        
+        if let logger = database.logger {
+            logger.log("➡️ Added channels: \(channels.map({ $0.channel.id }))")
+        }
+        
+        database.add(channels: channels)
+    }
 }

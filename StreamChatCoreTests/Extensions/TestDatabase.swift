@@ -13,6 +13,7 @@ import RxSwift
 public final class TestDatabase {
     public var user: User?
     public let logger: ClientLogger?
+    var channels = [ChannelResponse]()
     var messages: [Channel: [Message]] = [:]
     var replies: [String: [Message]] = [:]
     var members = Set<Member>()
@@ -25,7 +26,7 @@ public final class TestDatabase {
 extension TestDatabase: Database {
     
     public func channels(_ query: ChannelsQuery) -> Observable<[ChannelResponse]> {
-        return .empty()
+        return .just(channels)
     }
     
     public func channel(channelType: ChannelType, channelId: String, pagination: Pagination) -> Observable<ChannelResponse> {
@@ -36,7 +37,15 @@ extension TestDatabase: Database {
         return .just(ChannelResponse(channel: channel, messages: messages[channel, default: []]))
     }
     
-    public func add(messages: [Message], for channel: Channel) {
+    public func add(channels: [ChannelResponse]) {
+        self.channels = channels
+    }
+    
+    public func addOrUpdate(channel: Channel) {
+        print("⚠️", #function)
+    }
+    
+    public func add(messages: [Message], to channel: Channel) {
         self.messages[channel, default: []].append(contentsOf: messages)
     }
     

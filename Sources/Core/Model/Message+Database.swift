@@ -22,7 +22,7 @@ public extension Message {
             return .empty()
         }
         
-        database.logger?.log("🆔 \(id) \(textOrArgs.prefix(10))... ⬅️ Fetch replies with: \(pagination)")
+        database.logger?.log("♏️ \(id) \(textOrArgs.prefix(10))... ⬅️ Fetch replies with: \(pagination)")
         return database.replies(for: self, pagination: pagination)
     }
     
@@ -33,7 +33,7 @@ public extension Message {
             return
         }
         
-        database.logger?.log("🆔 \(id) \(textOrArgs.prefix(10))... ➡️ Added replies: \(replies.count)")
+        database.logger?.log("♏️ \(id) \(textOrArgs.prefix(10))... ➡️ Added replies: \(replies.count)")
         database.add(replies: replies, for: self)
     }
 }

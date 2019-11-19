@@ -107,12 +107,12 @@ extension Presenter {
     /// Prepare a fetch request from a local database with pagination.
     ///
     /// - Returns: an observable pagination for a fetching data from a local database.
-    public func prepareDatabaseFetch() -> Observable<Pagination> {
+    public func prepareDatabaseFetch(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
         guard Client.shared.database != nil else {
             return .empty()
         }
         
-        return Observable.combineLatest(loadPagination.asObserver(),
+        return Observable.combineLatest(loadPagination.asObserver().startWith(pagination),
                                         InternetConnection.shared.isAvailableObservable.filter({ !$0 }))
             .map { pagination, _ in pagination }
             .filter { [weak self] in $0 != .none && (self?.shouldMakeDatabaseFetch(with: $0) ?? false) }

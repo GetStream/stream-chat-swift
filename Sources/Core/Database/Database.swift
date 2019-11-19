@@ -41,11 +41,19 @@ public protocol Database {
     /// - Returns: an observable messages.
     func replies(for message: Message, pagination: Pagination) -> Observable<[Message]>
     
-    /// Add messages for a channel.
+    /// Add channels with messages and members.
+    /// - Parameter channels: channel responses.
+    func add(channels: [ChannelResponse])
+    
+    /// Add or update a channel.
+    /// - Parameter channel: a channel.
+    func addOrUpdate(channel: Channel)
+    
+    /// Add messages to a channel. The channel and members should be added/updated too.
     /// - Parameters:
     ///   - messages: messages of a channel
     ///   - channel: a channel
-    func add(messages: [Message], for channel: Channel)
+    func add(messages: [Message], to channel: Channel)
     
     // MARK: - Message
     

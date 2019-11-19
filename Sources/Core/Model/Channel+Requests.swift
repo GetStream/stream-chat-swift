@@ -36,7 +36,6 @@ public extension Channel {
             .do(onNext: { channelResponse in
                 if options.contains(.state) {
                     channelResponse.channel.add(messagesToDatabase: channelResponse.messages)
-                    channelResponse.channel.set(membersToDatabase: channelResponse.channel.members)
                 }
             })
     }

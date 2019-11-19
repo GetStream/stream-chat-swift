@@ -48,18 +48,20 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     public var channelEventsFilter: Event.Filter?
     
     /// An observable view changes (see `ViewChanges`).
-    public private(set) lazy var changes = Driver.merge(requestChannels,
+    public private(set) lazy var changes = Driver.merge(parsedChannelResponses(channelsRequest),
+                                                        parsedChannelResponses(channelsDatabaseFetch),
                                                         webSocketEvents,
                                                         actions.asDriver(onErrorJustReturn: .none),
                                                         connectionErrors)
         .do(onDispose: { [weak self] in self?.disposeBagForInternalRequests = DisposeBag() })
     
-    private lazy var requestChannels: Driver<ViewChanges> = prepareRequest(startPaginationWith: pageSize)
+    private lazy var channelsRequest: Observable<[ChannelResponse]> = prepareRequest(startPaginationWith: pageSize)
         .compactMap { [weak self] in self?.channelsQuery(pagination: $0) }
         .flatMapLatest { Client.shared.channels(query: $0).retry(3) }
-        .map { [weak self] in self?.parseChannels($0) ?? .none }
-        .filter { $0 != .none }
-        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+    
+    private lazy var channelsDatabaseFetch: Observable<[ChannelResponse]> = prepareDatabaseFetch(startPaginationWith: pageSize)
+        .compactMap { [weak self] in self?.channelsQuery(pagination: $0) }
+        .flatMapLatest { Client.shared.fetchChannels($0) }
     
     private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.webSocket.response
         .filter({ [weak self] response in
@@ -133,6 +135,14 @@ public extension ChannelsPresenter {
 // MARK: - Response Parsing
 
 extension ChannelsPresenter {
+    
+    private func parsedChannelResponses(_ channelResponses: Observable<[ChannelResponse]>) -> Driver<ViewChanges> {
+        return channelResponses
+            .map { [weak self] in self?.parseChannels($0) ?? .none }
+            .filter { $0 != .none }
+            .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+    }
+    
     private func parseChannels(_ channels: [ChannelResponse]) -> ViewChanges {
         let isNextPage = next != pageSize
         var items = isNextPage ? self.items : [ChatItem]()
