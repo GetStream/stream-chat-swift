@@ -103,7 +103,12 @@ public final class Channel: Codable {
     public var banEnabling = BanEnabling.disabled
     var bannedUsers = [User]()
     
-    /// Init a channel 1-by-1 with another member.
+    /// Checks if the channel is direct message type between 2 users.
+    public var isDirectMessage: Bool {
+        return id.hasPrefix("!members") && members.count == 2
+    }
+    
+    /// Init a channel 1-by-1 (direct message) with another member.
     /// - Parameter type: a channel type.
     /// - Parameter member: an another member.
     /// - Parameter extraData: an `Codable` object with extra data of the channel.
