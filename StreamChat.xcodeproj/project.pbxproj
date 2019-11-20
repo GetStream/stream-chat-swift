@@ -29,13 +29,26 @@
 		8A149202233A64F0007B2DB8 /* TestDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACB784B2333F1FB00C640FA /* TestDatabase.swift */; };
 		8A150E9F232A8D8400330562 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A150E9E232A8D8400330562 /* Database.swift */; };
 		8A2BE6092334E0ED00D6E684 /* EscapeBridgingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */; };
+		8A2DD95123849108007775E9 /* UserRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD95023849108007775E9 /* UserRealmObject.swift */; };
+		8A2DD9532385565B007775E9 /* MutedUserRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD9522385565B007775E9 /* MutedUserRealmObject.swift */; };
+		8A2DD95423855690007775E9 /* ChannelRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2B02384580700C2F9DE /* ChannelRealmObject.swift */; };
+		8A2DD956238556A7007775E9 /* MemberRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD955238556A7007775E9 /* MemberRealmObject.swift */; };
 		8A30D07B237D81C20082B951 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */; };
 		8A34DED42322A92C00271BBF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A34DED32322A92C00271BBF /* Device.swift */; };
 		8A559D24230D937C00E66096 /* ClientRequestsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A559D23230D937C00E66096 /* ClientRequestsTests.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		8A6F69D4230ECD7300B8CC1F /* TestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D3230ECD7300B8CC1F /* TestCase.swift */; };
+		8A7EE00A23857FEC00BDB18D /* MutedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7EE00923857FEC00BDB18D /* MutedUser.swift */; };
+		8A7EE0162385B2F300BDB18D /* ChannelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7EE0152385B2F300BDB18D /* ChannelType.swift */; };
+		8A7EE0182385B31B00BDB18D /* ChannelId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7EE0172385B31B00BDB18D /* ChannelId.swift */; };
+		8A7EE01A2385B33900BDB18D /* BanEnabling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7EE0192385B33900BDB18D /* BanEnabling.swift */; };
 		8A83394A2317D6FD001CBD9A /* ExtraDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8339492317D6FD001CBD9A /* ExtraDataTests.swift */; };
+		8A8BB299238452B600C2F9DE /* StreamChatRealm.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A8BB297238452B600C2F9DE /* StreamChatRealm.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8A8BB29D2384542000C2F9DE /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
+		8A8BB2A52384573400C2F9DE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A32384573400C2F9DE /* Realm.framework */; };
+		8A8BB2A72384573400C2F9DE /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A42384573400C2F9DE /* RealmSwift.framework */; };
+		8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */; };
 		8AC643C422F9AC8A007373FF /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC643C122F9AAD7007373FF /* BannerView.swift */; };
 		8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */; };
 		8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B522F30001003BD1D5 /* User+Requests.swift */; };
@@ -191,6 +204,13 @@
 			remoteGlobalIDString = 8AD5EC9E22E9B355005CFAC9;
 			remoteInfo = StreamChatCore;
 		};
+		8A8BB29F2384542000C2F9DE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8AD5EC9E22E9B355005CFAC9;
+			remoteInfo = StreamChatCore;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -208,6 +228,9 @@
 		8A104FC322F49233002B2DC1 /* Banners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banners.swift; sourceTree = "<group>"; };
 		8A150E9E232A8D8400330562 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscapeBridgingUI.swift; sourceTree = "<group>"; };
+		8A2DD95023849108007775E9 /* UserRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRealmObject.swift; sourceTree = "<group>"; };
+		8A2DD9522385565B007775E9 /* MutedUserRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUserRealmObject.swift; sourceTree = "<group>"; };
+		8A2DD955238556A7007775E9 /* MemberRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberRealmObject.swift; sourceTree = "<group>"; };
 		8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
 		8A34DED32322A92C00271BBF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -215,7 +238,19 @@
 		8A559D25230D937C00E66096 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Tests.swift"; sourceTree = "<group>"; };
 		8A6F69D3230ECD7300B8CC1F /* TestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCase.swift; sourceTree = "<group>"; };
+		8A7EE00923857FEC00BDB18D /* MutedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUser.swift; sourceTree = "<group>"; };
+		8A7EE0152385B2F300BDB18D /* ChannelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelType.swift; sourceTree = "<group>"; };
+		8A7EE0172385B31B00BDB18D /* ChannelId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelId.swift; sourceTree = "<group>"; };
+		8A7EE0192385B33900BDB18D /* BanEnabling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BanEnabling.swift; sourceTree = "<group>"; };
 		8A8339492317D6FD001CBD9A /* ExtraDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraDataTests.swift; sourceTree = "<group>"; };
+		8A8BB295238452B600C2F9DE /* StreamChatRealm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatRealm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A8BB297238452B600C2F9DE /* StreamChatRealm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChatRealm.h; sourceTree = "<group>"; };
+		8A8BB298238452B600C2F9DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8A8BB2A2238456A200C2F9DE /* StreamChatRealm.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatRealm.podspec; sourceTree = "<group>"; };
+		8A8BB2A32384573400C2F9DE /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
+		8A8BB2A42384573400C2F9DE /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
+		8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDatabase.swift; sourceTree = "<group>"; };
+		8A8BB2B02384580700C2F9DE /* ChannelRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelRealmObject.swift; sourceTree = "<group>"; };
 		8AC643C122F9AAD7007373FF /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8AC8C8B522F30001003BD1D5 /* User+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Requests.swift"; sourceTree = "<group>"; };
@@ -388,6 +423,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8A8BB292238452B600C2F9DE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A8BB2A52384573400C2F9DE /* Realm.framework in Frameworks */,
+				8A8BB29D2384542000C2F9DE /* StreamChatCore.framework in Frameworks */,
+				8A8BB2A72384573400C2F9DE /* RealmSwift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8AD5EC8C22E9A3E8005CFAC9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -500,6 +545,43 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		8A8BB296238452B600C2F9DE /* StreamChatRealm */ = {
+			isa = PBXGroup;
+			children = (
+				8A8BB297238452B600C2F9DE /* StreamChatRealm.h */,
+				8A8BB298238452B600C2F9DE /* Info.plist */,
+			);
+			path = StreamChatRealm;
+			sourceTree = "<group>";
+		};
+		8A8BB2AA2384575D00C2F9DE /* Database */ = {
+			isa = PBXGroup;
+			children = (
+				8A8BB2AB2384576700C2F9DE /* Realm */,
+			);
+			path = Database;
+			sourceTree = "<group>";
+		};
+		8A8BB2AB2384576700C2F9DE /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */,
+				8A8BB2B2238459E800C2F9DE /* Model */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
+		8A8BB2B2238459E800C2F9DE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				8A8BB2B02384580700C2F9DE /* ChannelRealmObject.swift */,
+				8A2DD955238556A7007775E9 /* MemberRealmObject.swift */,
+				8A2DD95023849108007775E9 /* UserRealmObject.swift */,
+				8A2DD9522385565B007775E9 /* MutedUserRealmObject.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		8AD5EC8522E9A3E8005CFAC9 = {
 			isa = PBXGroup;
 			children = (
@@ -507,12 +589,14 @@
 				8AD5EC9122E9A3E8005CFAC9 /* StreamChat */,
 				8AD5ECA022E9B355005CFAC9 /* StreamChatCore */,
 				8A559D22230D937C00E66096 /* StreamChatCoreTests */,
+				8A8BB296238452B600C2F9DE /* StreamChatRealm */,
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
 				8AD5EDD822E9C7BC005CFAC9 /* README.md */,
 				8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */,
 				8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */,
 				8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */,
+				8A8BB2A2238456A200C2F9DE /* StreamChatRealm.podspec */,
 				8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */,
 			);
 			sourceTree = "<group>";
@@ -523,6 +607,7 @@
 				8AD5EC8F22E9A3E8005CFAC9 /* StreamChat.framework */,
 				8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */,
 				8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */,
+				8A8BB295238452B600C2F9DE /* StreamChatRealm.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -548,6 +633,8 @@
 		8AD5ECA722E9B3C4005CFAC9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8A8BB2A32384573400C2F9DE /* Realm.framework */,
+				8A8BB2A42384573400C2F9DE /* RealmSwift.framework */,
 				8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */,
 				8AD5EDD022E9BB0C005CFAC9 /* RxGesture.framework */,
 				8AD5EDCF22E9BB0C005CFAC9 /* SnapKit.framework */,
@@ -569,6 +656,7 @@
 			children = (
 				8AD5ED0B22E9BA39005CFAC9 /* Core */,
 				8AD5ECAA22E9BA39005CFAC9 /* UI */,
+				8A8BB2AA2384575D00C2F9DE /* Database */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -870,6 +958,7 @@
 				8AD5ED2722E9BA39005CFAC9 /* Member.swift */,
 				8AD5ED2622E9BA39005CFAC9 /* User.swift */,
 				8AC8C8B522F30001003BD1D5 /* User+Requests.swift */,
+				8A7EE00923857FEC00BDB18D /* MutedUser.swift */,
 				8A04965022EF4B2400E94795 /* UsersQuery.swift */,
 				8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */,
 				8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */,
@@ -878,6 +967,9 @@
 				8A04964E22EF1A8900E94795 /* QueryOptions.swift */,
 				8A34DED32322A92C00271BBF /* Device.swift */,
 				8AF4DCB923757AF300F534F5 /* SearchQuery.swift */,
+				8A7EE0152385B2F300BDB18D /* ChannelType.swift */,
+				8A7EE0172385B31B00BDB18D /* ChannelId.swift */,
+				8A7EE0192385B33900BDB18D /* BanEnabling.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -946,6 +1038,14 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		8A8BB290238452B600C2F9DE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A8BB299238452B600C2F9DE /* StreamChatRealm.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8AD5EC8A22E9A3E8005CFAC9 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -982,6 +1082,25 @@
 			productName = StreamChatCoreTests;
 			productReference = 8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8A8BB294238452B600C2F9DE /* StreamChatRealm */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A8BB29C238452B600C2F9DE /* Build configuration list for PBXNativeTarget "StreamChatRealm" */;
+			buildPhases = (
+				8A8BB290238452B600C2F9DE /* Headers */,
+				8A8BB291238452B600C2F9DE /* Sources */,
+				8A8BB292238452B600C2F9DE /* Frameworks */,
+				8A8BB293238452B600C2F9DE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8A8BB2A02384542000C2F9DE /* PBXTargetDependency */,
+			);
+			name = StreamChatRealm;
+			productName = StreamChatRealm;
+			productReference = 8A8BB295238452B600C2F9DE /* StreamChatRealm.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		8AD5EC8E22E9A3E8005CFAC9 /* StreamChat */ = {
 			isa = PBXNativeTarget;
@@ -1032,6 +1151,9 @@
 					8A559D20230D937B00E66096 = {
 						CreatedOnToolsVersion = 10.2;
 					};
+					8A8BB294238452B600C2F9DE = {
+						CreatedOnToolsVersion = 11.2;
+					};
 					8AD5EC8E22E9A3E8005CFAC9 = {
 						CreatedOnToolsVersion = 10.2;
 					};
@@ -1054,14 +1176,22 @@
 			projectRoot = "";
 			targets = (
 				8AD5EC9E22E9B355005CFAC9 /* StreamChatCore */,
-				8AD5EC8E22E9A3E8005CFAC9 /* StreamChat */,
 				8A559D20230D937B00E66096 /* StreamChatCoreTests */,
+				8AD5EC8E22E9A3E8005CFAC9 /* StreamChat */,
+				8A8BB294238452B600C2F9DE /* StreamChatRealm */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8A559D1F230D937B00E66096 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A8BB293238452B600C2F9DE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1098,6 +1228,18 @@
 				465D64C2231808A2006BAE42 /* AttachmentTypeTests.swift in Sources */,
 				8A559D24230D937C00E66096 /* ClientRequestsTests.swift in Sources */,
 				8A6F69D4230ECD7300B8CC1F /* TestCase.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A8BB291238452B600C2F9DE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8A2DD956238556A7007775E9 /* MemberRealmObject.swift in Sources */,
+				8A2DD95423855690007775E9 /* ChannelRealmObject.swift in Sources */,
+				8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */,
+				8A2DD95123849108007775E9 /* UserRealmObject.swift in Sources */,
+				8A2DD9532385565B007775E9 /* MutedUserRealmObject.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1200,6 +1342,7 @@
 				8AD5ED5322E9BA5A005CFAC9 /* ChannelQuery.swift in Sources */,
 				8AD5ED4D22E9BA5A005CFAC9 /* Reachability+Rx.swift in Sources */,
 				8AD5ED6E22E9BA5A005CFAC9 /* ClientLogger.swift in Sources */,
+				8A7EE0162385B2F300BDB18D /* ChannelType.swift in Sources */,
 				8AD5ED6222E9BA5A005CFAC9 /* WebSocket+Reconnect.swift in Sources */,
 				8A34DED42322A92C00271BBF /* Device.swift in Sources */,
 				8AD5ED5122E9BA5A005CFAC9 /* Event.swift in Sources */,
@@ -1239,6 +1382,7 @@
 				8A0EB78C22FC608A009481E4 /* Client+Events.swift in Sources */,
 				8AD5ED4622E9BA5A005CFAC9 /* URL+Media.swift in Sources */,
 				8AD5ED6122E9BA5A005CFAC9 /* WebSocket.swift in Sources */,
+				8A7EE0182385B31B00BDB18D /* ChannelId.swift in Sources */,
 				8A0EB78E22FC6974009481E4 /* Channel+Events.swift in Sources */,
 				8AD5ED5822E9BA5A005CFAC9 /* Sorting.swift in Sources */,
 				8AD5ED6C22E9BA5A005CFAC9 /* Client+WebSocket.swift in Sources */,
@@ -1250,6 +1394,7 @@
 				8AD5ED5722E9BA5A005CFAC9 /* MessageRead.swift in Sources */,
 				8A04964722E9F57000E94795 /* ViewChanges.swift in Sources */,
 				8AD5ED4522E9BA5A005CFAC9 /* Result+Extensions.swift in Sources */,
+				8A7EE00A23857FEC00BDB18D /* MutedUser.swift in Sources */,
 				8AC8C8B822F43D16003BD1D5 /* Client+Requests.swift in Sources */,
 				8AD5ED5B22E9BA5A005CFAC9 /* MessageAction.swift in Sources */,
 				8AD5ED4422E9BA5A005CFAC9 /* String+Extensions.swift in Sources */,
@@ -1259,6 +1404,7 @@
 				8A048E4E2332259400FDB3C0 /* ChannelPresenter+Events.swift in Sources */,
 				8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */,
 				8A150E9F232A8D8400330562 /* Database.swift in Sources */,
+				8A7EE01A2385B33900BDB18D /* BanEnabling.swift in Sources */,
 				8A048E5323326E1E00FDB3C0 /* ChannelPresenter+TypingUsers.swift in Sources */,
 				8AD5ED5922E9BA5A005CFAC9 /* User.swift in Sources */,
 			);
@@ -1272,12 +1418,18 @@
 			target = 8AD5EC9E22E9B355005CFAC9 /* StreamChatCore */;
 			targetProxy = 8A559D27230D937C00E66096 /* PBXContainerItemProxy */;
 		};
+		8A8BB2A02384542000C2F9DE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8AD5EC9E22E9B355005CFAC9 /* StreamChatCore */;
+			targetProxy = 8A8BB29F2384542000C2F9DE /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		8A559D29230D937C00E66096 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
@@ -1298,6 +1450,7 @@
 		8A559D2A230D937C00E66096 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
@@ -1311,6 +1464,68 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatCoreTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8A8BB29A238452B600C2F9DE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = StreamChatRealm/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatRealm;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8A8BB29B238452B600C2F9DE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = StreamChatRealm/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 0.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatRealm;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1443,6 +1658,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1473,6 +1689,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -1503,9 +1720,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1525,6 +1744,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1533,9 +1753,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = NO;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1555,6 +1777,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1567,6 +1790,15 @@
 			buildConfigurations = (
 				8A559D29230D937C00E66096 /* Debug */,
 				8A559D2A230D937C00E66096 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8A8BB29C238452B600C2F9DE /* Build configuration list for PBXNativeTarget "StreamChatRealm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8A8BB29A238452B600C2F9DE /* Debug */,
+				8A8BB29B238452B600C2F9DE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

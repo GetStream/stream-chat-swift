@@ -20,13 +20,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .info)
+        DateFormatter.log = nil
+        Client.config = .init(apiKey: "qk4nn7rpcn75",
+                              database: TestDatabase(logOptions: .databaseInfo),
+                              logOptions: .debug)
+        
         setupNotifications()
         return true
     }
     
     private func setupNotifications() {
-        Notifications.shared.logsEnabled = true
         Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
         
         Notifications.shared.showNewMessage = { [weak self] messageReference in
