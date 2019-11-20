@@ -66,7 +66,8 @@ public final class Channel: Codable {
     public let createdBy: User?
     /// A config.
     public let config: Config
-    let frozen: Bool
+    /// Checks if the channel is frozen.
+    public let frozen: Bool
     /// A list of user ids of the channel members.
     public internal(set) var members = Set<Member>()
     /// A list of users to invite in the channel.
@@ -136,7 +137,12 @@ public final class Channel: Codable {
                 name: String? = nil,
                 imageURL: URL? = nil,
                 lastMessageDate: Date? = nil,
+                created: Date = Date(),
+                deleted: Date? = nil,
+                createdBy: User? = nil,
+                frozen: Bool = false,
                 members: [Member] = [],
+                config: Config = Config(isEmpty: true),
                 invitedMembers: [Member] = [],
                 extraData: Codable? = nil) {
         self.id = id
@@ -145,12 +151,12 @@ public final class Channel: Codable {
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         self.imageURL = imageURL
         self.lastMessageDate = lastMessageDate
-        created = Date()
-        deleted = nil
-        createdBy = nil
+        self.created = created
+        self.deleted = deleted
+        self.createdBy = createdBy
+        self.frozen = frozen
         self.members = Set(members)
-        frozen = false
-        config = Config()
+        self.config = config
         self.invitedMembers = Set(invitedMembers)
         self.extraData = ExtraData(extraData)
         
@@ -245,7 +251,6 @@ public extension Channel {
             case updated = "updated_at"
         }
         
-        
         /// If users are allowed to add reactions to messages. Enabled by default.
         public let reactionsEnabled: Bool
         /// Controls if typing indicators are shown. Enabled by default.
@@ -253,7 +258,7 @@ public extension Channel {
         /// Controls whether the chat shows how far you’ve read. Enabled by default.
         public let readEventsEnabled: Bool
         /// Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
-        let connectEventsEnabled: Bool
+        public let connectEventsEnabled: Bool
         /// Enables uploads.
         public let uploadsEnabled: Bool
         /// Enables message threads and replies. Enabled by default.
@@ -299,23 +304,38 @@ public extension Channel {
             isEmpty = false
         }
         
-        init() {
-            reactionsEnabled = false
-            typingEventsEnabled = false
-            readEventsEnabled = false
-            connectEventsEnabled = false
-            uploadsEnabled = false
-            repliesEnabled = false
-            searchEnabled = false
-            mutesEnabled = false
-            urlEnrichmentEnabled = false
-            flagsEnabled = false
-            messageRetention = ""
-            maxMessageLength = 0
-            commands = []
-            created = Date()
-            updated = Date()
-            isEmpty = true
+        public init(reactionsEnabled: Bool = false,
+                    typingEventsEnabled: Bool = false,
+                    readEventsEnabled: Bool = false,
+                    connectEventsEnabled: Bool = false,
+                    uploadsEnabled: Bool = false,
+                    repliesEnabled: Bool = false,
+                    searchEnabled: Bool = false,
+                    mutesEnabled: Bool = false,
+                    urlEnrichmentEnabled: Bool = false,
+                    flagsEnabled: Bool = false,
+                    messageRetention: String = "",
+                    maxMessageLength: Int = 0,
+                    commands: [Command] = [],
+                    created: Date = .default,
+                    updated: Date = .default,
+                    isEmpty: Bool = false) {
+            self.reactionsEnabled = reactionsEnabled
+            self.typingEventsEnabled = typingEventsEnabled
+            self.readEventsEnabled = readEventsEnabled
+            self.connectEventsEnabled = connectEventsEnabled
+            self.uploadsEnabled = uploadsEnabled
+            self.repliesEnabled = repliesEnabled
+            self.searchEnabled = searchEnabled
+            self.mutesEnabled = mutesEnabled
+            self.urlEnrichmentEnabled = urlEnrichmentEnabled
+            self.flagsEnabled = flagsEnabled
+            self.messageRetention = messageRetention
+            self.maxMessageLength = maxMessageLength
+            self.commands = commands
+            self.created = created
+            self.updated = updated
+            self.isEmpty = isEmpty
         }
     }
     
@@ -325,9 +345,19 @@ public extension Channel {
         public let name: String
         /// A description.
         public let description: String
-        let set: String
+        public let set: String
         /// Args for the command.
         public let args: String
+        
+        public init(name: String = "",
+                    description: String = "",
+                    set: String = "",
+                    args: String = "") {
+            self.name = name
+            self.description = description
+            self.set = set
+            self.args = args
+        }
         
         public static func == (lhs: Command, rhs: Command) -> Bool {
             return lhs.name == rhs.name
