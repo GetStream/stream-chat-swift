@@ -135,6 +135,7 @@ public final class Channel: Codable {
                 id: String,
                 name: String? = nil,
                 imageURL: URL? = nil,
+                lastMessageDate: Date? = nil,
                 members: [Member] = [],
                 invitedMembers: [Member] = [],
                 extraData: Codable? = nil) {
@@ -143,7 +144,7 @@ public final class Channel: Codable {
         self.type = type
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         self.imageURL = imageURL
-        lastMessageDate = nil
+        self.lastMessageDate = lastMessageDate
         created = Date()
         deleted = nil
         createdBy = nil
@@ -338,130 +339,7 @@ public extension Channel {
     }
 }
 
-// MARK: - Channel Type
-
-/// A channel type.
-public enum ChannelType: String, Codable {
-    /// A channel type.
-    case unknown, livestream, messaging, team, gaming, commerce
-    
-    /// A channel type title.
-    public var title: String {
-        return rawValue.capitalized
-    }
-}
-
-/// A channel type and id.
-public struct ChannelId: Codable, Hashable, CustomStringConvertible {
-    private static let any = "*"
-    private static let separator: Character = ":"
-    
-    enum Error: Swift.Error {
-        case decoding(String)
-    }
-    
-    /// A channel type of the event.
-    public let type: ChannelType
-    /// A channel id of the event.
-    public let id: String
-    
-    /// Init a ChannelId.
-    /// - Parameter type: a channel type.
-    /// - Parameter id: a channel id.
-    public init(type: ChannelType, id: String) {
-        self.type = type
-        self.id = id
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let cid = try container.decode(String.self)
-        
-        if cid == ChannelId.any {
-            type = .unknown
-            id = ChannelId.any
-            return
-        }
-        
-        if cid.contains(ChannelId.separator) {
-            let channelPair = cid.split(separator: ChannelId.separator)
-            type = ChannelType(rawValue: String(channelPair[0])) ?? .unknown
-            id = String(channelPair[1])
-        } else {
-            throw ChannelId.Error.decoding(cid)
-        }
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        
-        if id == ChannelId.any {
-            try container.encode(ChannelId.any)
-        } else {
-            try container.encode("\(type.rawValue):\(id)")
-        }
-    }
-    
-    public var description: String {
-        return "\(type)\(ChannelId.separator)\(id)"
-    }
-}
-
-/// An option to enable ban users.
-public enum BanEnabling {
-    /// Disabled for everyone.
-    case disabled
-    
-    /// Enabled for everyone.
-    /// The default timeout in minutes until the ban is automatically expired.
-    /// The default reason the ban was created.
-    case enabled(timeoutInMinutes: Int?, reason: String?)
-    
-    /// Enabled for channel members with a role of moderator or admin.
-    /// The default timeout in minutes until the ban is automatically expired.
-    /// The default reason the ban was created.
-    case enabledForModerators(timeoutInMinutes: Int?, reason: String?)
-    
-    /// The default timeout in minutes until the ban is automatically expired.
-    public var timeoutInMinutes: Int? {
-        switch self {
-        case .disabled:
-            return nil
-            
-        case .enabled(let timeout, _),
-             .enabledForModerators(let timeout, _):
-            return timeout
-        }
-    }
-    
-    /// The default reason the ban was created.
-    public var reason: String? {
-        switch self {
-        case .disabled:
-            return nil
-            
-        case .enabled(_, let reason),
-             .enabledForModerators(_, let reason):
-            return reason
-        }
-    }
-    
-    /// Returns true is the ban is enabled for the channel.
-    /// - Parameter channel: a channel.
-    public func isEnabled(for channel: Channel) -> Bool {
-        switch self {
-        case .disabled:
-            return false
-            
-        case .enabled:
-            return true
-            
-        case .enabledForModerators:
-            let members = Array(channel.members)
-            return members.first(where: { $0.user.isCurrent && ($0.role == .moderator || $0.role == .admin) }) != nil
-        }
-    }
-}
+// MARK: - Helpers
 
 private extension Array where Element == Member {
     func channelName(default: String) -> String {

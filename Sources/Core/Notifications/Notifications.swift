@@ -204,12 +204,17 @@ extension Notifications: UNUserNotificationCenterDelegate {
     /// - Parameter response: a message reference (see `MessageReference`).
     public static func parseMessageReference(notificationResponse response: UNNotificationResponse) -> MessageReference? {
         let userInfo = response.notification.request.content.userInfo
-        
+
         guard let channelId = userInfo[NotificationUserInfoKeys.channelId.rawValue] as? String,
             let channelTypeString = userInfo[NotificationUserInfoKeys.channelType.rawValue] as? String,
-            let messageId = userInfo[NotificationUserInfoKeys.messageId.rawValue] as? String,
-            let channelType = ChannelType(rawValue: channelTypeString) else {
+            let messageId = userInfo[NotificationUserInfoKeys.messageId.rawValue] as? String else {
                 return nil
+        }
+        
+        let channelType = ChannelType(rawValue: channelTypeString)
+        
+        if case .unknown = channelType {
+            return nil
         }
         
         return (channelId, channelType, messageId)
