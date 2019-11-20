@@ -40,14 +40,20 @@ public struct Member: Codable {
     /// - Parameters:
     ///   - user: a user.
     ///   - role: a role.
-    public init(_ user: User, role: Role = .member) {
+    public init(_ user: User,
+                role: Role = .member,
+                created: Date = .default,
+                updated: Date = .default,
+                isInvited: Bool = false,
+                inviteAccepted: Date? = nil,
+                inviteRejected: Date? = nil) {
         self.user = user
         self.role = role
-        created = .default
-        updated = .default
-        isInvited = false
-        inviteAccepted = nil
-        inviteRejected = nil
+        self.created = created
+        self.updated = updated
+        self.isInvited = isInvited
+        self.inviteAccepted = inviteAccepted
+        self.inviteRejected = inviteRejected
     }
     
     public func encode(to encoder: Encoder) throws {

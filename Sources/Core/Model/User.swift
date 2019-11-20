@@ -105,27 +105,32 @@ public struct User: Codable {
     ///     - id: a user id.
     ///     - name: a user name.
     ///     - an avatar URL.
-    public init(id: String, name: String, avatarURL: URL? = nil, extraData: Codable? = nil, isInvisible: Bool = false) {
+    public init(id: String,
+                name: String,
+                role: Role = .user,
+                avatarURL: URL? = nil,
+                created: Date = .default,
+                updated: Date = .default,
+                lastActiveDate: Date? = nil,
+                isInvisible: Bool = false,
+                isBanned: Bool = false,
+                mutedUsers: [MutedUser] = [],
+                extraData: Codable? = nil) {
         self.id = id
         self.name = name
         self.avatarURL = avatarURL
-        role = .user
-        created = .default
-        updated = .default
-        lastActiveDate = .default
+        self.role = role
+        self.created = created
+        self.updated = updated
+        self.lastActiveDate = lastActiveDate
         isOnline = false
-        devices = []
-        mutedUsers = []
+        self.isInvisible = isInvisible
+        self.isBanned = isBanned
+        self.mutedUsers = mutedUsers
         messagesUnreadCount = 0
         channelsUnreadCount = 0
-        self.isInvisible = isInvisible
-        isBanned = false
-        
-        if let extraData = extraData {
-            self.extraData = ExtraData(extraData)
-        } else {
-            self.extraData = nil
-        }
+        devices = []
+        self.extraData = ExtraData(extraData)
     }
     
     public init(from decoder: Decoder) throws {
@@ -142,7 +147,7 @@ public struct User: Codable {
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
         messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
         channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
-        extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isUser }))
+        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isUser })?.decode(from: decoder))
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
             self.name = name
@@ -163,7 +168,7 @@ public struct User: Codable {
         try container.encode(id, forKey: .id)
         try container.encode(name, forKey: .name)
         try container.encode(avatarURL, forKey: .avatarURL)
-        extraData?.encodeSafely(to: encoder)
+        extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a user extra data")
         
         if isInvisible {
             try container.encode(isInvisible, forKey: .isInvisible)

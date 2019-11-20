@@ -9,7 +9,7 @@
 import Foundation
 
 extension Date {
-    static let `default` = Date()
+    public static let `default` = Date()
 }
 
 extension Date {

@@ -152,18 +152,13 @@ public struct Message: Codable {
         latestReactions = []
         ownReactions = []
         reactionCounts = nil
-        
-        if let extraData = extraData {
-            self.extraData = ExtraData(extraData)
-        } else {
-            self.extraData = nil
-        }
+        self.extraData = ExtraData(extraData)
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(text, forKey: .text)
-        extraData?.encodeSafely(to: encoder)
+        extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a message extra data")
         
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)
@@ -197,7 +192,7 @@ public struct Message: Codable {
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         latestReactions = try container.decode([Reaction].self, forKey: .latestReactions)
         ownReactions = try container.decode([Reaction].self, forKey: .ownReactions)
-        extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isMessage }))
+        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isMessage })?.decode(from: decoder))
         
         if let reactionCounts = try container.decodeIfPresent(ReactionCounts.self, forKey: .reactionCounts),
             !reactionCounts.counts.isEmpty {

@@ -151,12 +151,7 @@ public final class Channel: Codable {
         frozen = false
         config = Config()
         self.invitedMembers = Set(invitedMembers)
-        
-        if let extraData = extraData {
-            self.extraData = ExtraData(extraData)
-        } else {
-            self.extraData = nil
-        }
+        self.extraData = ExtraData(extraData)
         
         if type == .unknown, Client.shared.logOptions.isEnabled {
             ClientLogger.log("❌", "Created a bad channel unknown type")
@@ -187,7 +182,7 @@ public final class Channel: Codable {
         createdBy = try container.decodeIfPresent(User.self, forKey: .createdBy)
         frozen = try container.decode(Bool.self, forKey: .frozen)
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
-        extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isChannel }))
+        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isChannel })?.decode(from: decoder))
         let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         self.members = Set<Member>(members)
         let name = try container.decodeIfPresent(String.self, forKey: .name)
@@ -203,7 +198,7 @@ public final class Channel: Codable {
         var container = encoder.container(keyedBy: EncodingKeys.self)
         try container.encode(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
-        extraData?.encodeSafely(to: encoder)
+        extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a channel extra data")
         
         var allMembers = members
         

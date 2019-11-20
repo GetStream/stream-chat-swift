@@ -108,35 +108,6 @@ public struct UpdatedUsersResponse: Decodable {
     public let users: [String: User]
 }
 
-/// A muted users response.
-public struct MutedUsersResponse: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case mutedUser = "mute"
-        case currentUser = "own_user"
-    }
-    
-    /// A muted user.
-    public let mutedUser: MutedUser
-    /// The current user.
-    public let currentUser: User
-}
-
-/// A muted user.
-public struct MutedUser: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case user = "target"
-        case created = "created_at"
-        case updated = "updated_at"
-    }
-    
-    /// A muted user.
-    public let user: User
-    /// A created date.
-    public let created: Date
-    /// A updated date.
-    public let updated: Date
-}
-
 /// A response with a list of devices.
 public struct DevicesResponse: Decodable {
     /// A list of devices.

@@ -74,12 +74,7 @@ public struct Attachment: Codable {
         text = nil
         author = nil
         actions = []
-        
-        if let extraData = extraData {
-            self.extraData = ExtraData(extraData)
-        } else {
-            self.extraData = nil
-        }
+        self.extraData = ExtraData(extraData)
     }
     
     public init(from decoder: Decoder) throws {
@@ -131,7 +126,7 @@ public struct Attachment: Codable {
         self.text = text
         file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
         actions = try container.decodeIfPresent([Action].self, forKey: .actions) ?? []
-        extraData = .decode(from: decoder, ExtraData.decodableTypes.first(where: { $0.isAttachment }))
+        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isAttachment })?.decode(from: decoder))
     }
     
     /// Image upload:
@@ -156,7 +151,7 @@ public struct Attachment: Codable {
         try container.encodeIfPresent(url, forKey: .assetURL)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try file?.encode(to: encoder)
-        extraData?.encodeSafely(to: encoder)
+        extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding an extra data for attachment")
     }
     
     private static func fixedURL(_ urlString: String?) -> URL? {

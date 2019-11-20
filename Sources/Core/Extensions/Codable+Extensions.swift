@@ -143,5 +143,19 @@ struct AnyEncodable: Encodable {
     }
 }
 
+// MARK: - Safe Helpers
+
+extension Encodable {
+    func encodeSafely(to encoder: Encoder, logMessage: String? = nil) {
+        do {
+            try encode(to: encoder)
+        } catch {
+            if let logMessage = logMessage {
+                Client.shared.logger?.log(error, message: "⚠️ \(logMessage): \(encoder)")
+            }
+        }
+    }
+}
+
 /// ⚠️ Should be internal. Map this value to Void().
 struct EmptyData: Codable {}

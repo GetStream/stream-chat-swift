@@ -86,7 +86,7 @@ public struct ChannelUpdate: Encodable {
             var container = encoder.container(keyedBy: Channel.EncodingKeys.self)
             try container.encode(channel.name, forKey: .name)
             try container.encodeIfPresent(channel.imageURL, forKey: .imageURL)
-            channel.extraData?.encodeSafely(to: encoder)
+            channel.extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a channel extra data")
         }
     }
     
