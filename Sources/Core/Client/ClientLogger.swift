@@ -178,7 +178,7 @@ public final class ClientLogger {
         }
         
         if level.isEnabled(with: .info), let body = request.httpBody {
-            log("Request Body \(body)", level: .info)
+            log(body, message: "Request Body")
         }
     }
     
@@ -281,20 +281,20 @@ public final class ClientLogger {
     
     /// Log a data as a pretty printed JSON string.
     /// - Parameter data: a data.
-    public func log(_ data: Data?, forceToShowData: Bool = false) {
+    public func log(_ data: Data?, message: String = "", forceToShowData: Bool = false) {
         guard forceToShowData || level.isEnabled(with: .info) else {
             return
         }
         
         guard let data = data, !data.isEmpty else {
-            log("📦 Data is empty", level: (forceToShowData ? .error : .info))
+            log("📦 \(message) Data is empty", level: (forceToShowData ? .error : .info))
             return
         }
         
         do {
-            log("📦 " + (try data.prettyPrintedJSONString()), level: (forceToShowData ? .error : .info))
+            log("📦 \(message) " + (try data.prettyPrintedJSONString()), level: (forceToShowData ? .error : .info))
         } catch {
-            log("📦 \(error)", level: (forceToShowData ? .error : .info))
+            log("📦 \(message) \(error)", level: (forceToShowData ? .error : .info))
         }
     }
     
