@@ -55,19 +55,23 @@ extension Client {
 fileprivate struct WebSocketPayload: Encodable {
     private enum CodingKeys: String, CodingKey {
         case userId = "user_id"
-        case user = "user_details"
+        case userDetails = "user_details"
         case token = "user_token"
         case serverDeterminesConnectionId = "server_determines_connection_id"
     }
     
-    let user: User
+    let userDetails: UserDetails
     let userId: String
     let token: Token
     let serverDeterminesConnectionId = true
     
     init(user: User, token: Token) {
-        self.user = user
+        userDetails = UserDetails(id: user.id)
         userId = user.id
         self.token = token
     }
+}
+
+fileprivate struct UserDetails: Encodable {
+    let id: String
 }
