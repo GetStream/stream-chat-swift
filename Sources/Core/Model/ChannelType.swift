@@ -24,7 +24,7 @@ public enum ChannelType: Codable, Hashable {
         switch self {
         case .unknown: return "unknown"
         case .livestream: return "livestream"
-        case .messaging: return "livestream"
+        case .messaging: return "messaging"
         case .team: return "team"
         case .gaming: return "gaming"
         case .commerce: return "commerce"
