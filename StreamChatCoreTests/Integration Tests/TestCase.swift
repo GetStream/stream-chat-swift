@@ -24,7 +24,7 @@ class TestCase: XCTestCase {
         
         isClientReady = true
         ClientLogger.logger = { print($0, $1.isEmpty ? "" : "[\($1)]", $2) }
-        Client.config = .init(apiKey: TestCase.apiKey, logOptions: .all)
+        Client.config = .init(apiKey: TestCase.apiKey, logOptions: .info)
         Client.shared.set(user: .user1, token: .token1)
     }
     

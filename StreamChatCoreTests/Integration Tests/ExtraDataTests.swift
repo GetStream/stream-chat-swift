@@ -40,7 +40,7 @@ final class ExtraDataTests: TestCase {
                 .toArray()
             
             if let response = result.first, let responseExtraData = response.channel.extraData {
-                XCTAssertEqual(meta, responseExtraData.data as? Meta)
+                XCTAssertEqual(meta, responseExtraData.object as? Meta)
             } else {
                 XCTFail("No extra data from channel response \(result)")
             }
@@ -56,8 +56,8 @@ final class ExtraDataTests: TestCase {
                 .toArray()
             
             if let response: MessageResponse = result.first {
-                XCTAssertEqual(meta, response.message.extraData?.data as? Meta)
-                XCTAssertEqual(meta, response.message.attachments.first?.extraData?.data as? Meta)
+                XCTAssertEqual(meta, response.message.extraData?.object as? Meta)
+                XCTAssertEqual(meta, response.message.attachments.first?.extraData?.object as? Meta)
             } else {
                 XCTFail("No extra data from message response \(result)")
             }

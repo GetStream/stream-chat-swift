@@ -12,7 +12,7 @@ import RxSwift
 
 final class ClientSetupTests: TestCase {
     
-    private var setupClient = Client(apiKey: TestCase.apiKey, logOptions: .all)
+    private var setupClient = Client(apiKey: TestCase.apiKey, logOptions: .info)
     
     func testUserSetup() {
         // Test regular user.
