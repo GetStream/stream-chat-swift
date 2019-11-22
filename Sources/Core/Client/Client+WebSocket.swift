@@ -60,18 +60,14 @@ fileprivate struct WebSocketPayload: Encodable {
         case serverDeterminesConnectionId = "server_determines_connection_id"
     }
     
-    let userDetails: UserDetails
+    let userDetails: User
     let userId: String
     let token: Token
     let serverDeterminesConnectionId = true
     
     init(user: User, token: Token) {
-        userDetails = UserDetails(id: user.id)
+        userDetails = user
         userId = user.id
         self.token = token
     }
-}
-
-fileprivate struct UserDetails: Encodable {
-    let id: String
 }

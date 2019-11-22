@@ -166,9 +166,12 @@ public struct User: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        try container.encode(name, forKey: .name)
-        try container.encode(avatarURL, forKey: .avatarURL)
+        try container.encodeIfPresent(avatarURL, forKey: .avatarURL)
         extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a user extra data")
+        
+        if !name.isBlank {
+            try container.encode(name, forKey: .name)
+        }
         
         if isInvisible {
             try container.encode(isInvisible, forKey: .isInvisible)
