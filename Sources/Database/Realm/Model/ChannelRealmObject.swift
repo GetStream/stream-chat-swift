@@ -52,7 +52,7 @@ public final class ChannelRealmObject: Object {
         deleted = channel.deleted
         frozen = channel.frozen
         members.append(objectsIn: channel.members.map({ MemberRealmObject(member: $0) }))
-        config = ConfigRealmObject(config: channel.config)
+        config = channel.config.isEmpty ? ConfigRealmObject() : ConfigRealmObject(config: channel.config)
         extraData = channel.extraData?.encode()
         
         if let createdBy = channel.createdBy {
