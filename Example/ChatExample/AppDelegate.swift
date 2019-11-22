@@ -21,9 +21,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         DateFormatter.log = nil
-        Client.config = .init(apiKey: "qk4nn7rpcn75",
-                              database: TestDatabase(logOptions: .databaseInfo),
-                              logOptions: .debug)
+        Client.config = .init(apiKey: "qk4nn7rpcn75", logOptions: .debug)
         
         setupNotifications()
         return true
