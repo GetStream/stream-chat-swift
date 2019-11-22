@@ -61,7 +61,7 @@ extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
         updateTextHeightIfNeeded()
         updateSendButton()
         updateStyleState()
-        updateToolBarHeight()
+        updateToolbarIfNeeded()
     }
     
     private func uploaderItem(at indexPath: IndexPath) -> UploaderItem? {

@@ -88,6 +88,6 @@ extension ComposerView {
         updateTextHeightIfNeeded()
         updateSendButton()
         updateStyleState()
-        updateToolBarHeight()
+        updateToolbarIfNeeded()
     }
 }

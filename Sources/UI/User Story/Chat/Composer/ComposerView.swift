@@ -46,10 +46,7 @@ public final class ComposerView: UIView {
     public private(set) lazy var textView = setupTextView()
     var textViewTopConstraint: Constraint?
     
-    lazy var toolBar = UIToolbar(frame: CGRect(width: UIScreen.main.bounds.width,
-                                               height: (style?.height ?? .composerHeight)
-                                                + (style?.edgeInsets.bottom ?? .messageEdgePadding)
-                                                + .messageEdgePadding))
+    lazy var toolBar = UIToolbar(frame: .zero)
     
     /// An action for a plus button in the images attachments collection view.
     /// If it's nil, it will not be shown in the images collection view.
@@ -281,8 +278,7 @@ public extension ComposerView {
         // Add placeholder.
         self.placeholderText = placeholderText
         
-        toolBar.isHidden = true
-        textView.inputAccessoryView = toolBar
+        updateToolbarIfNeeded()
         updateStyleState()
         
         // Observe the keyboard moving.

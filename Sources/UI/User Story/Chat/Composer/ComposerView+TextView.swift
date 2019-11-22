@@ -88,13 +88,15 @@ extension ComposerView {
             layoutIfNeeded()
         }
         
-        updateToolBarHeight()
+        updateToolbarIfNeeded()
     }
     
-    func updateToolBarHeight() {
-        let height = (heightConstraint?.layoutConstraints.first?.constant ?? 0)
-            + (style?.edgeInsets.top ?? 0)
-            + (style?.edgeInsets.bottom ?? 0)
+    func updateToolbarIfNeeded() {
+        guard let style = style, let composerViewHeight = heightConstraint?.layoutConstraints.first?.constant else {
+            return
+        }
+        
+        let height = composerViewHeight + style.edgeInsets.top + style.edgeInsets.bottom
         
         guard toolBar.frame.height != height else {
             return
