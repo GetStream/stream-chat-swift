@@ -90,7 +90,7 @@ final class DarkChannelsViewController: ChannelsViewController {
     }
     
     @IBAction func addChannel(_ sender: Any) {
-        let number = Int.random(in: 100...999)
+        let number = Int.random(in: 1000...9999)
         let channel = Channel(type: .messaging, id: "new_channel_\(number)", name: "Channel \(number)")
         channel.create().subscribe().disposed(by: disposeBag)
     }
@@ -99,13 +99,15 @@ final class DarkChannelsViewController: ChannelsViewController {
         let cell = super.channelCell(at: indexPath, channelPresenter: channelPresenter)
         
         if let cell = cell as? ChannelTableViewCell {
-            // Add a number of members.
-            cell.nameLabel.text = "\(cell.nameLabel.text ?? "") (\(channelPresenter.channel.members.count) members)"
+            var extraChannelName = "🙋🏻‍♀️\(channelPresenter.channel.members.count)"
             
             // Add an unread count.
             if channelPresenter.channel.currentUnreadCount > 0 {
-                cell.messageLabel.text = "\(cell.messageLabel.text ?? "") (\(channelPresenter.channel.currentUnreadCount) unread)"
+                extraChannelName += " 📬\(channelPresenter.channel.currentUnreadCount)"
             }
+            
+            // Add a number of members.
+            cell.nameLabel.text = "\(cell.nameLabel.text ?? "") \(extraChannelName)"
             
             cell.rx.longPressGesture().when(.began)
                 .subscribe(onNext: { [weak self, weak channelPresenter] _ in

@@ -14,6 +14,7 @@ import StreamChat
 class CustomChatViewController: ChatViewController {
     
     @IBOutlet weak var closeBarButton: UIBarButtonItem!
+    let membersCountButton = UIBarButtonItem(title: "🤷🏻‍♀️0", style: .plain, target: nil, action: nil)
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -28,17 +29,36 @@ class CustomChatViewController: ChatViewController {
             navigationItem.rightBarButtonItems = [button]
         }
         
+        touchMembersCount()
+        
+        if (navigationItem.rightBarButtonItems?.count ?? 0) == 1 {
+            navigationItem.rightBarButtonItems?.append(membersCountButton)
+        } else {
+            navigationItem.leftBarButtonItem = membersCountButton
+        }
+        
         guard let channelPresenter = channelPresenter else {
             return
         }
         
-        title = "\(channelPresenter.channel.name) (\(channelPresenter.channel.members.count))"
+        title = channelPresenter.channel.name
         
         channelPresenter.channelDidUpdate
             .drive(onNext: { [weak self] channel in
-                self?.title = "\(channel.name) (\(channel.members.count))"
+                self?.title = channelPresenter.channel.name
+                self?.touchMembersCount()
             })
             .disposed(by: disposeBag)
+    }
+    
+    func touchMembersCount() {
+        guard let channelPresenter = channelPresenter else {
+            return
+        }
+        
+        membersCountButton.title = channelPresenter.channel.members.count > 0
+            ? "🙋🏻‍♀️\(channelPresenter.channel.members.count)"
+            : "🤷🏻‍♀️0"
     }
     
     @IBAction func showMenu(_ sender: Any) {
@@ -124,42 +144,4 @@ class CustomChatViewController: ChatViewController {
         
         return nil
     }
-
-    //    override func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "message")
-//            ?? UITableViewCell(style: .value2, reuseIdentifier: "message")
-//
-//        cell.textLabel?.text = message.user.name
-//        cell.textLabel?.numberOfLines = 2
-//        cell.textLabel?.font = .systemFont(ofSize: 12, weight: .bold)
-//        cell.detailTextLabel?.text = message.text
-//        cell.detailTextLabel?.numberOfLines = 0
-//
-//        return cell
-//    }
-//
-//    override func loadingCell(at indexPath: IndexPath) -> UITableViewCell? {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "loading")
-//            ?? UITableViewCell(style: .default, reuseIdentifier: "loading")
-//
-//        cell.textLabel?.textColor = .red
-//        cell.textLabel?.text = "LOADING..."
-//        cell.textLabel?.textAlignment = .center
-//
-//        return cell
-//    }
-//
-//    override func statusCell(at indexPath: IndexPath,
-//                             title: String,
-//                             subtitle: String? = nil,
-//                             highlighted: Bool) -> UITableViewCell? {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "status")
-//            ?? UITableViewCell(style: .default, reuseIdentifier: "status")
-//
-//        cell.textLabel?.textColor = .gray
-//        cell.textLabel?.text = title
-//        cell.textLabel?.textAlignment = .center
-//
-//        return cell
-//    }
 }
