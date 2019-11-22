@@ -60,23 +60,35 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, _, _, let messageNewChannel, _):
+        case .messageNew(let message, let unreadCount, _, let messageNewChannel, let type):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
             
-            if let messageNewChannel = messageNewChannel {
-                channelAtomic.set(messageNewChannel)
-            }
-            
-            if channel.config.readEventsEnabled, !message.user.isCurrent {
-                if let lastMessage = lastMessageAtomic.get() {
-                    unreadMessageReadAtomic.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
+            // A new message event.
+            if case .messageNew = type {
+                if channel.config.readEventsEnabled, !message.user.isCurrent {
+                    channel.unreadCountAtomic += 1
+                    
+                    if let lastMessage = lastMessageAtomic.get() {
+                        unreadMessageReadAtomic.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
+                    } else {
+                        unreadMessageReadAtomic.set(MessageRead(user: message.user, lastReadDate: message.updated))
+                    }
                 } else {
-                    unreadMessageReadAtomic.set(MessageRead(user: message.user, lastReadDate: message.updated))
+                    unreadMessageReadAtomic.set(nil)
                 }
             } else {
-                unreadMessageReadAtomic.set(nil)
+                // A notification new message event.
+                if let messageNewChannel = messageNewChannel {
+                    channelAtomic.set(messageNewChannel)
+                }
+                
+                channel.unreadCountAtomic.set(unreadCount)
+                
+                if unreadCount > 0, unreadMessageReadAtomic.get() == nil {
+                    unreadMessageReadAtomic.set(MessageRead(user: message.user, lastReadDate: message.updated))
+                }
             }
             
             let nextRow = items.count
