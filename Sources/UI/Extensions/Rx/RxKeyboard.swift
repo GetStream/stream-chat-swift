@@ -1,175 +1,127 @@
 //
 //  RxKeyboard.swift
-//  RxKeyboard
+//  StreamChat
 //
-//  Created by Suyeol Jeon on 09/10/2016.
-//  Copyright © 2016 Suyeol Jeon. All rights reserved.
+//  Created by Alexey Bukhtin on 04/06/2019.
+//  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-#if os(iOS)
 import UIKit
-
 import RxCocoa
 import RxSwift
+import RxGesture
 
-public protocol RxKeyboardType {
-  var frame: Driver<CGRect> { get }
-  var visibleHeight: Driver<CGFloat> { get }
-  var willShowVisibleHeight: Driver<CGFloat> { get }
-  var isHidden: Driver<Bool> { get }
+extension Reactive where Base: NotificationCenter {
+    
+    var keyboard: Driver<KeyboardNotification> {
+        return Observable.merge(windowPan, keyboardNotifications)
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: KeyboardNotification(.init(name: UIResponder.keyboardWillChangeFrameNotification)))
+    }
+    
+    private var keyboardNotifications: Observable<KeyboardNotification> {
+        return Observable.merge(notification(UIResponder.keyboardWillChangeFrameNotification),
+                                notification(UIResponder.keyboardWillHideNotification),
+                                notification(UIResponder.keyboardWillShowNotification))
+            .map { KeyboardNotification($0) }
+    }
+    
+    private var windowPan: Observable<KeyboardNotification> {
+        return notification(UIApplication.didFinishLaunchingNotification)
+            .void()
+            .startWith(Void())
+            .flatMapLatest({ _ -> Observable<UIPanGestureRecognizer> in
+                guard let window = UIApplication.shared.windows.first else {
+                    return .empty()
+                }
+                
+                return window.rx.panGesture().when(.began, .changed, .ended)
+            })
+            .withLatestFrom(keyboardNotifications) { ($0, $1) }
+            .filter { $1.height > 0 }
+            .compactMap { KeyboardNotification(panGesture: $0, with: $1) }
+    }
 }
 
-/// RxKeyboard provides a reactive way of observing keyboard frame changes.
-public class RxKeyboard: NSObject, RxKeyboardType {
-
-  // MARK: Public
-
-  /// Get a singleton instance.
-  public static let instance = RxKeyboard()
-
-  /// An observable keyboard frame.
-  public let frame: Driver<CGRect>
-
-  /// An observable visible height of keyboard. Emits keyboard height if the keyboard is visible
-  /// or `0` if the keyboard is not visible.
-  public let visibleHeight: Driver<CGFloat>
-
-  /// Same with `visibleHeight` but only emits values when keyboard is about to show. This is
-  /// useful when adjusting scroll view content offset.
-  public let willShowVisibleHeight: Driver<CGFloat>
-  
-  /// An observable visibility of keyboard. Emits keyboard visibility
-  /// when changed keyboard show and hide.
-  public let isHidden: Driver<Bool>
-
-  // MARK: Private
-
-  private let disposeBag = DisposeBag()
-  private let panRecognizer = UIPanGestureRecognizer()
-
-  // MARK: Initializing
-
-  override init() {
-    #if swift(>=4.2)
-      let keyboardWillChangeFrame = UIResponder.keyboardWillChangeFrameNotification
-      let keyboardWillHide = UIResponder.keyboardWillHideNotification
-      let keyboardFrameEndKey = UIResponder.keyboardFrameEndUserInfoKey
-      let applicationDidFinishLaunching = UIApplication.didFinishLaunchingNotification
-    #else
-      let keyboardWillChangeFrame = NSNotification.Name.UIKeyboardWillChangeFrame
-      let keyboardWillHide = NSNotification.Name.UIKeyboardWillHide
-      let keyboardFrameEndKey = UIKeyboardFrameEndUserInfoKey
-      let applicationDidFinishLaunching = NSNotification.Name.UIApplicationDidFinishLaunching
-    #endif
-
-    let defaultFrame = CGRect(
-      x: 0,
-      y: UIScreen.main.bounds.height,
-      width: UIScreen.main.bounds.width,
-      height: 0
-    )
-    let frameVariable = BehaviorRelay<CGRect>(value: defaultFrame)
-    self.frame = frameVariable.asDriver().distinctUntilChanged()
-    self.visibleHeight = self.frame.map { UIScreen.main.bounds.height - $0.origin.y }
-    self.willShowVisibleHeight = self.visibleHeight
-      .scan((visibleHeight: 0, isShowing: false)) { lastState, newVisibleHeight in
-        return (visibleHeight: newVisibleHeight, isShowing: lastState.visibleHeight == 0 && newVisibleHeight > 0)
-      }
-      .filter { state in state.isShowing }
-      .map { state in state.visibleHeight }
-    self.isHidden = self.visibleHeight.map({ $0 == 0.0 }).distinctUntilChanged()
-    super.init()
-
-    // keyboard will change frame
-    let willChangeFrame = NotificationCenter.default.rx.notification(keyboardWillChangeFrame)
-      .map { notification -> CGRect in
-        let rectValue = notification.userInfo?[keyboardFrameEndKey] as? NSValue
-        return rectValue?.cgRectValue ?? defaultFrame
-      }
-      .map { frame -> CGRect in
-        if frame.origin.y < 0 { // if went to wrong frame
-          var newFrame = frame
-          newFrame.origin.y = UIScreen.main.bounds.height - newFrame.height
-          return newFrame
+struct KeyboardNotification: Equatable {
+    struct Animation: Equatable {
+        let curve: UIView.AnimationOptions
+        let duration: TimeInterval
+        
+        init?(_ notification: Notification) {
+            guard let userInfo = notification.userInfo,
+                let curve = (userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? NSNumber)?.uintValue,
+                let duration = (userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? NSNumber)?.doubleValue,
+                curve > 0,
+                duration > 0 else {
+                    return nil
+            }
+            
+            self.curve = UIView.AnimationOptions(rawValue: curve)
+            self.duration = duration
         }
-        return frame
-      }
-
-    // keyboard will hide
-    let willHide = NotificationCenter.default.rx.notification(keyboardWillHide)
-      .map { notification -> CGRect in
-        let rectValue = notification.userInfo?[keyboardFrameEndKey] as? NSValue
-        return rectValue?.cgRectValue ?? defaultFrame
-      }
-      .map { frame -> CGRect in
-        if frame.origin.y < 0 { // if went to wrong frame
-          var newFrame = frame
-          newFrame.origin.y = UIScreen.main.bounds.height
-          return newFrame
+        
+        static func == (lhs: Animation, rhs: Animation) -> Bool {
+            return lhs.curve == rhs.curve && lhs.duration == rhs.duration
         }
-        return frame
-      }
-
-    // pan gesture
-    let didPan = self.panRecognizer.rx.event
-      .withLatestFrom(frameVariable.asObservable()) { ($0, $1) }
-      .flatMap { (gestureRecognizer, frame) -> Observable<CGRect> in
-        guard case .changed = gestureRecognizer.state,
-          let window = UIApplication.shared.windows.first,
-          frame.origin.y < UIScreen.main.bounds.height
-        else { return .empty() }
-        let origin = gestureRecognizer.location(in: window)
+    }
+    
+    let frame: CGRect?
+    let animation: Animation?
+    
+    var height: CGFloat {
+        if let frame = frame {
+            return UIScreen.main.bounds.height - frame.origin.y
+        }
+        
+        return 0
+    }
+    
+    var isVisible: Bool {
+        return height > 0
+    }
+    
+    var isHidden: Bool {
+        return !isVisible
+    }
+    
+    init(_ notification: Notification) {
+        if let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            if frame.origin.y < 0 {
+                var newFrame = frame
+                newFrame.origin.y = UIScreen.main.bounds.height - newFrame.height
+                self.frame = newFrame
+            } else {
+                self.frame = frame
+            }
+        } else {
+            frame = nil
+        }
+        
+        animation = Animation(notification)
+    }
+    
+    init?(panGesture: UIPanGestureRecognizer, with keyboardNotification: KeyboardNotification) {
+        guard let frame = keyboardNotification.frame else {
+            return nil
+        }
+        
+        guard case .changed = panGesture.state,
+            let window = UIApplication.shared.windows.first,
+            frame.origin.y < UIScreen.main.bounds.height else {
+                return nil
+                
+        }
+        
+        let origin = panGesture.location(in: window)
         var newFrame = frame
         newFrame.origin.y = max(origin.y, UIScreen.main.bounds.height - frame.height)
-        return .just(newFrame)
-      }
-
-    // merge into single sequence
-    Observable.of(didPan, willChangeFrame, willHide).merge()
-      .bind(to: frameVariable)
-      .disposed(by: self.disposeBag)
-
-    // gesture recognizer
-    self.panRecognizer.delegate = self
-    NotificationCenter.default.rx.notification(applicationDidFinishLaunching)
-      .map { _ in Void() }
-      .startWith(Void()) // when RxKeyboard is initialized before UIApplication.window is created
-      .subscribe(onNext: { _ in
-        UIApplication.shared.windows.first?.addGestureRecognizer(self.panRecognizer)
-      })
-      .disposed(by: self.disposeBag)
-  }
-
-}
-
-
-// MARK: - UIGestureRecognizerDelegate
-
-extension RxKeyboard: UIGestureRecognizerDelegate {
-
-  public func gestureRecognizer(
-    _ gestureRecognizer: UIGestureRecognizer,
-    shouldReceive touch: UITouch
-  ) -> Bool {
-    let point = touch.location(in: gestureRecognizer.view)
-    var view = gestureRecognizer.view?.hitTest(point, with: nil)
-    while let candidate = view {
-      if let scrollView = candidate as? UIScrollView,
-        case .interactive = scrollView.keyboardDismissMode {
-        return true
-      }
-      view = candidate.superview
+        
+        self.frame = newFrame
+        animation = nil
     }
-    return false
-  }
-
-  public func gestureRecognizer(
-    _ gestureRecognizer: UIGestureRecognizer,
-    shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
-  ) -> Bool {
-    return gestureRecognizer === self.panRecognizer
-  }
-
+    
+    static func == (lhs: KeyboardNotification, rhs: KeyboardNotification) -> Bool {
+        return lhs.frame == rhs.frame && lhs.animation == rhs.animation
+    }
 }
-#endif
-

@@ -13,6 +13,69 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
+// MARK: Setup Keyboard Events
+
+extension ChatViewController {
+    func setupKeyboard() -> Binder<KeyboardNotification> {
+        return Binder<KeyboardNotification>(self) { chatViewController, keyboardNotification in
+            var bottom: CGFloat = 0
+            
+            if keyboardNotification.isVisible {
+                bottom = keyboardNotification.height
+                    - chatViewController.composerView.toolBar.frame.height
+                    - chatViewController.initialSafeAreaBottom
+            } else {
+                chatViewController.composerView.textView.resignFirstResponder()
+            }
+            
+            var contentOffset = CGPoint.zero
+            
+            let contentHeight = chatViewController.tableView.contentSize.height
+                + chatViewController.tableView.contentInset.top
+                + chatViewController.tableView.contentInset.bottom
+            
+            let tableHeight = chatViewController.tableView.bounds.height - keyboardNotification.height
+            
+            if keyboardNotification.animation != nil,
+                keyboardNotification.isVisible,
+                !chatViewController.keyboardIsVisible,
+                tableHeight < contentHeight {
+                contentOffset = chatViewController.tableView.contentOffset
+                contentOffset.y += min(bottom, contentHeight - tableHeight)
+            }
+            
+            func animations() {
+                chatViewController.view.removeAllAnimations()
+                chatViewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: bottom, right: 0)
+                
+                if keyboardNotification.animation != nil {
+                    if keyboardNotification.isVisible {
+                        if contentOffset != .zero {
+                            chatViewController.tableView.setContentOffset(contentOffset, animated: false)
+                            chatViewController.keyboardIsVisible = true
+                        }
+                    } else {
+                        chatViewController.keyboardIsVisible = false
+                    }
+                    
+                    chatViewController.view.layoutIfNeeded()
+                }
+            }
+            
+            if let animation = keyboardNotification.animation {
+                UIView.animate(withDuration: animation.duration,
+                               delay: 0,
+                               options: [animation.curve, .beginFromCurrentState],
+                               animations: animations)
+            } else {
+                animations()
+            }
+            
+            DispatchQueue.main.async { chatViewController.composerView.updateStyleState() }
+        }
+    }
+}
+
 // MARK: - Composer
 
 public extension ChatViewController {
@@ -31,14 +94,7 @@ extension ChatViewController {
     func createComposerView() -> ComposerView {
         let composerView = ComposerView(frame: .zero)
         composerView.style = style.composer
-        DispatchQueue.main.async { self.updateComposerViewOpaqueTabbarHeight() }
         return composerView
-    }
-    
-    func updateComposerViewOpaqueTabbarHeight() {
-        if let tabBarController = tabBarController, !tabBarController.tabBar.isTranslucent {
-            composerView.opaqueTabbarHeight = tabBarController.tabBar.frame.height
-        }
     }
     
     func setupComposerView() {
@@ -72,18 +128,8 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self] in self?.send() })
             .disposed(by: disposeBag)
         
-        RxKeyboard.instance.visibleHeight
-            .skip(1)
-            .drive(onNext: { [weak self] in self?.updateTableViewContentInsetForKeyboardHeight($0) })
-            .disposed(by: disposeBag)
-        
-        RxKeyboard.instance.willShowVisibleHeight
-            .drive(onNext: { [weak self] in self?.updateTableViewContentOffsetForKeyboardHeight($0) })
-            .disposed(by: disposeBag)
-        
-        RxKeyboard.instance.isHidden
-            .skip(1)
-            .filter { $0 }
+        NotificationCenter.default.rx.keyboard
+            .filter { $0.isHidden }
             .drive(onNext: { [weak self] _ in self?.showCommands(show: false) })
             .disposed(by: disposeBag)
     }
@@ -97,27 +143,6 @@ extension ChatViewController {
             composerView.textView.text = trimmedText
             send()
         }
-    }
-    
-    // MARK: Keyboard Events
-    
-    private func updateTableViewContentInsetForKeyboardHeight(_ height: CGFloat) {
-        height > 0 ? tableView.saveContentInsetState() : tableView.resetContentInsetState()
-        
-        let bottom = .messagesToComposerPadding
-            + max(0, height - (height > 0 ? tableView.oldAdjustedContentInset.bottom + composerView.opaqueTabbarHeight : 0))
-        
-        tableView.contentInset.bottom = bottom
-    }
-    
-    private func updateTableViewContentOffsetForKeyboardHeight(_ height: CGFloat) {
-        var contentOffset = tableView.contentOffset
-        
-        contentOffset.y += height
-            - view.safeAreaBottomOffset
-            - (height > 0 ? .messagesToComposerPadding : 0)
-        
-        tableView.contentOffset = contentOffset
     }
     
     // MARK: Send Message

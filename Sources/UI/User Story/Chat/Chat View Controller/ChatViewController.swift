@@ -37,6 +37,9 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     
     /// A composer view.
     public private(set) lazy var composerView = createComposerView()
+    private(set) lazy var initialSafeAreaBottom: CGFloat = view.safeAreaInsets.bottom
+    var keyboardIsVisible = false
+    lazy var keyboardHandler = setupKeyboard()
     
     /// Attachments file types for thw composer view.
     public lazy var composerAddFileTypes = defaultComposerAddFileTypes
@@ -81,6 +84,8 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     public var channelPresenter: ChannelPresenter?
     private var changesEnabled: Bool = false
     
+    // MARK: - View Life Cycle
+    
     open override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = style.incomingMessage.chatBackgroundColor
@@ -123,6 +128,8 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         needsToReload = false
         changesEnabled = true
         setupFooterUpdates()
+        
+        NotificationCenter.default.rx.keyboard.drive(keyboardHandler).disposed(by: disposeBag)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
@@ -153,10 +160,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             composerView.textView.resignFirstResponder()
         }
         
-        DispatchQueue.main.async {
-            self.updateComposerViewOpaqueTabbarHeight()
-            self.composerView.updateBottomConstraint()
-        }
+        DispatchQueue.main.async { self.initialSafeAreaBottom = self.view.safeAreaInsets.bottom }
     }
     
     /// Refresh table view cells with presenter items.
