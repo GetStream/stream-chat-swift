@@ -1,3 +1,11 @@
+# 1.5.1
+_November 26th, 2019_
+
+## Changed
+- Layout `ComposerView` depends on keyboard events.
+
+## Fixed
+- Token update.
 
 # 1.5.0
 _November 23th, 2019_
