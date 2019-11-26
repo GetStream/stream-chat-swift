@@ -253,16 +253,16 @@ public final class ClientLogger {
     ///   - tag: a tag.
     ///   - reset: reset the last timing.
     public func timing(_ tag: String = "", reset: Bool = false) {
-        guard level.isEnabled(with: .info) else {
+        guard level.isEnabled(with: .debug) else {
             return
         }
         
         if reset {
-            log("⏱ \(tag)", level: .info)
+            log("⏱ \(tag)", level: .debug)
         } else {
             let overall: CFTimeInterval = round((CACurrentMediaTime() - startTime) * 1000) / 1000
             let time: CFTimeInterval = round((CACurrentMediaTime() - lastTime) * 1000) / 1000
-            log("⏱ \(tag) \(overall) +\(time < 0.001 ? 0 : time)", level: .info)
+            log("⏱ \(tag): \(overall) +\(time < 0.001 ? 0 : time)", level: .debug)
         }
         
         lastTime = CACurrentMediaTime()

@@ -93,7 +93,7 @@ extension Client {
         self.token = nil
         
         if token.isEmpty {
-            logger?.log("❌ The Token is empty.", level: .error)
+            logger?.log("❌ Token is empty.", level: .error)
             return
         }
         

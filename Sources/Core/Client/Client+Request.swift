@@ -65,17 +65,21 @@ extension Client {
     @discardableResult
     public func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
         logger?.log("Endpoint: \(String(describing: endpoint))", level: .debug)
-        logger?.timing("Prepare for request", reset: true)
-
-        func retryRequestForExpiredToken() {
+        
+        func retryRequestForExpiredToken(_ endpoint: Endpoint) {
+            logger?.log("🀄️ Token expired. The request added to the waiting list", level: .debug)
+            
             connection.connected()
                 .take(1)
-                .subscribe(onNext: { [unowned self] in self.request(endpoint: endpoint, completion) })
+                .subscribe(onNext: { [unowned self] in
+                    self.logger?.log("Retring the request when token was expired...", level: .debug)
+                    self.request(endpoint: endpoint, completion)
+                })
                 .disposed(by: expiredTokenDisposeBag)
         }
         
         if isExpiredTokenInProgress {
-            retryRequestForExpiredToken()
+            retryRequestForExpiredToken(endpoint)
             return URLSessionDataTask()
         }
         
@@ -87,17 +91,17 @@ extension Client {
             
             if endpoint.isUploading {
                 urlRequest = try encodeRequestForUpload(for: endpoint, url: url).get()
-                logger?.timing("Uploading...")
+                logger?.timing("Uploading...", reset: true)
             } else {
                 urlRequest = try encodeRequest(for: endpoint, url: url).get()
-                logger?.timing("Sending request...")
+                logger?.timing("Sending request...", reset: true)
             }
             
             task = urlSession.dataTask(with: urlRequest) { [unowned self] in
                 self.parse(data: $0, response: $1, error: $2, completion: completion)
                 
                 if self.isExpiredTokenInProgress {
-                    retryRequestForExpiredToken()
+                    retryRequestForExpiredToken(endpoint)
                 }
             }
             
@@ -279,7 +283,7 @@ extension Client {
                 }
                 
                 if errorResponse.code == ClientErrorResponse.tokenExpiredErrorCode {
-                    logger?.log("🀄️ The Token is expired")
+                    logger?.log("🀄️ Token is expired")
                     touchTokenProvider()
                     return
                 }
@@ -292,7 +296,6 @@ extension Client {
         }
         
         do {
-            logger?.timing("Prepare for decoding")
             let response = try JSONDecoder.stream.decode(T.self, from: data)
             logger?.timing("Response decoded")
             performInCallbackQueue { completion(.success(response)) }
