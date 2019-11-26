@@ -1,3 +1,57 @@
+
+# 1.5.0
+_November 23th, 2019_
+
+## Added
+- Added levels for `ClientLogger`.
+  - Error Level:
+    - `ClientLogger.Options.requestsError`
+    - `ClientLogger.Options.webSocketError`
+    - `ClientLogger.Options.notificationsError`
+    - `ClientLogger.Options.error` — all errors
+  - Debug Level:
+    - `ClientLogger.Options.requests`
+    - `ClientLogger.Options.webSocket`
+    - `ClientLogger.Options.notifications`
+    - `ClientLogger.Options.debug` — all debug
+  - Info Level:
+    - `ClientLogger.Options.requestsInfo`
+    - `ClientLogger.Options.webSocketInfo`
+    - `ClientLogger.Options.notificationsInfo`
+    - `ClientLogger.Options.info` — all info
+
+- `MessageViewStyle.showTimeThreshold` to show additional time for messages from the same user at different times.
+
+`AdditionalDateStyle.messageAndDate` . . . `AdditionalDateStyle.userNameAndDate`
+
+<img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/additionalDate1.jpg" width="300"> <img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/additionalDate2.jpg" width="300">
+
+- Optimized MessageTableViewCell rendering.
+- Channel name. If it's empty:
+  - for 2 members: the 2nd member name
+  - for more than 2 members: member name + N others.
+  - channel `id`.
+
+- `Channel.isDirectMessage` — checks if only 2 members in the channel and the channel name was generated.
+- Improved work with `ExtraData`.
+- A custom `ChannelType.custom(String)`
+
+## Changed
+- Removed a `channelType` parameter in `ChannelsPresenter.init`.
+- Renamed `ExtraData.data` -> `ExtraData.object`
+- `Channel.currentUnreadCount` update.
+
+## Fixed
+- Detecting and highlighting URL's in messages.
+- Skip empty messages.
+- `ChatFooterView` with a white circle.
+- A user avatar missing.
+
+# 1.4.4
+_November 14th, 2019_
+
+Fixed DataDetector.
+
 # 1.4.3
 _November 14th, 2019_
 
