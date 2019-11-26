@@ -31,13 +31,7 @@ public extension Channel {
         }
         
         let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: options)
-        
-        return Client.shared.rx.connectedRequest(endpoint: .channel(channelQuery))
-            .do(onNext: { channelResponse in
-                if options.contains(.state) {
-                    channelResponse.channel.add(messagesToDatabase: channelResponse.messages)
-                }
-            })
+        return Client.shared.channel(query: channelQuery)
     }
     
     /// Loads the initial channel state and watches for changes.

@@ -44,6 +44,19 @@ public extension Client {
             .do(onNext: { [unowned self] in self.add(channelsToDatabase: $0) })
     }
     
+    /// Requests channel with a given query.
+    ///
+    /// - Parameter query: a channels query (see `ChannelsQuery`).
+    /// - Returns: a list of a channel response (see `ChannelResponse`).
+    func channel(query: ChannelQuery) -> Observable<ChannelResponse> {
+        return connectedRequest(.channel(query))
+            .do(onNext: { channelResponse in
+                if query.options.contains(.state) {
+                    channelResponse.channel.add(messagesToDatabase: channelResponse.messages)
+                }
+            })
+    }
+    
     /// Get a message by id.
     /// - Parameter messageId: a message id.
     func message(with messageId: String) -> Observable<MessageResponse> {
