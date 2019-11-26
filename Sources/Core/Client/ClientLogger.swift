@@ -147,23 +147,11 @@ public final class ClientLogger {
         lastTime = startTime
     }
     
-    /// Log URLSessionConfiguration.
-    ///
-    /// - Parameter sessionConfiguration: an URL session configuration.
-    public func log(_ sessionConfiguration: URLSessionConfiguration) {
-        if level.isEnabled(with: .debug),
-            let httpAdditionalHeaders = sessionConfiguration.httpAdditionalHeaders as? [String: String] {
-            log(headers: httpAdditionalHeaders)
-        }
-    }
-    
     /// Log a request.
     ///
     /// - Parameter request: an URL request.
     public func log(_ request: URLRequest) {
         log("➡️ \(request.httpMethod ?? "Request") \(request.description)")
-        
-        log(headers: request.allHTTPHeaderFields)
         
         if level.isEnabled(with: .debug),
             let url = request.url,

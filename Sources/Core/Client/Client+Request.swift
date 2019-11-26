@@ -14,9 +14,11 @@ extension Client {
     public static let version: String = Bundle(for: Client.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
     
     func setupURLSession(token: Token) -> URLSession {
+        let headers = authHeaders(token: token)
+        logger?.log(headers: headers)
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
-        config.httpAdditionalHeaders = authHeaders(token: token)
+        config.httpAdditionalHeaders = headers
         return URLSession(configuration: config, delegate: urlSessionTaskDelegate, delegateQueue: nil)
     }
     
@@ -65,7 +67,6 @@ extension Client {
         if let logger = logger {
             let endpointDescription = String(describing: endpoint).prefix(while: { $0 != "(" }).uppercased()
             logger.timing("Prepare for request: \(endpointDescription)", reset: true)
-            logger.log(urlSession.configuration)
         }
         
         func retryRequestForExpiredToken() {
