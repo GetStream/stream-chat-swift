@@ -64,11 +64,9 @@ extension Client {
     /// - Returns: an URLSessionDataTask that can be canncelled.
     @discardableResult
     public func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
-        if let logger = logger {
-            let endpointDescription = String(describing: endpoint).prefix(while: { $0 != "(" }).uppercased()
-            logger.timing("Prepare for request: \(endpointDescription)", reset: true)
-        }
-        
+        logger?.log("Endpoint: \(String(describing: endpoint))", level: .debug)
+        logger?.timing("Prepare for request", reset: true)
+
         func retryRequestForExpiredToken() {
             connection.connected()
                 .take(1)

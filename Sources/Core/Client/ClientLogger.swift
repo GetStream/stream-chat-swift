@@ -257,9 +257,14 @@ public final class ClientLogger {
             return
         }
         
-        let overall: CFTimeInterval = round((CACurrentMediaTime() - startTime) * 1000) / 1000
-        let time: CFTimeInterval = round((CACurrentMediaTime() - lastTime) * 1000) / 1000
-        log("⏱ \(tag) \(overall) +\(time < 0.001 ? 0 : time)", level: .info)
+        if reset {
+            log("⏱ \(tag)", level: .info)
+        } else {
+            let overall: CFTimeInterval = round((CACurrentMediaTime() - startTime) * 1000) / 1000
+            let time: CFTimeInterval = round((CACurrentMediaTime() - lastTime) * 1000) / 1000
+            log("⏱ \(tag) \(overall) +\(time < 0.001 ? 0 : time)", level: .info)
+        }
+        
         lastTime = CACurrentMediaTime()
         
         if reset {
