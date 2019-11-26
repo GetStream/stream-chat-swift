@@ -24,7 +24,7 @@ _November 23th, 2019_
 
 `AdditionalDateStyle.messageAndDate` . . . `AdditionalDateStyle.userNameAndDate`
 
-<img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/additionalDate1.jpg" width="300"> <img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/additionalDate2.jpg" width="300">
+<img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/additionalDate1.jpg" width="300">    . . . <img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/additionalDate2.jpg" width="300">
 
 - Optimized MessageTableViewCell rendering.
 - Channel name. If it's empty:
