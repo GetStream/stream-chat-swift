@@ -31,6 +31,11 @@ This repo includes a fully functional example app. You can run the example app b
 
 ```
 git clone git@github.com:GetStream/stream-chat-swift.git
+cd stream-chat-swift
+brew install carthage
+carthage update --platform iOS --new-resolver
+open Example/ChatExample.xcodeproj
+click play/run in xcode
 ```
 
 ## Docs
