@@ -13,9 +13,34 @@
 
 [stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat applications.
 
-You can sign up for a Stream account at [https://getstream.io/chat/get_started/](https://getstream.io/chat/get_started/).
+**Quick Links**
+
+* [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat
+* [Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/)
+* [Chat UI Kit](https://getstream.io/chat/ui-kit/)
 
 ![Stream Chat](https://getstream.imgix.net/images/ios-chat-tutorial/iphone_chat_art@2x.png?auto=format,enhance)
+
+## Swift/iOS Chat Tutorial
+
+The best place to start is the [iOS Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/). It teaches you how to use this SDK and also shows how to make common changes. 
+
+## Example App
+
+This repo includes a fully functional example app. You can run the example app by following these steps:
+
+```
+git clone git@github.com:GetStream/stream-chat-swift.git
+```
+
+## Docs
+
+You'll typically want to start out using the UI components, and implement your own components using the Swift Chat API as needed.
+
+* [SDK UI Components](https://getstream.github.io/stream-chat-swift/ui/)
+* [Swift Chat API Docs](https://getstream.io/chat/docs/swift/)
+* [Low level core API Reference](https://getstream.github.io/stream-chat-swift/core/)
+
 
 ## Requirements
 
@@ -87,16 +112,6 @@ Then run: `carthage update --platform iOS --new-resolver`. This will build frame
   - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChat.framework`
   
 Now build your app.
-
-## Documentation
-
-[Official API Docs](https://getstream.io/chat/docs/)
-
-[SDK Reference](https://getstream.github.io/stream-chat-swift/ui/)
-
-[Low level core API Reference](https://getstream.github.io/stream-chat-swift/core/)
-
-[Getting started with the iOS Swift Chat tutorial](https://getstream.io/chat/ios-chat/tutorial/)
 
 ## Supported features
 
