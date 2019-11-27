@@ -128,7 +128,7 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self] in self?.send() })
             .disposed(by: disposeBag)
         
-        NotificationCenter.default.rx.keyboard
+        Keyboard.shared.notification
             .filter { $0.isHidden }
             .drive(onNext: { [weak self] _ in self?.showCommands(show: false) })
             .disposed(by: disposeBag)

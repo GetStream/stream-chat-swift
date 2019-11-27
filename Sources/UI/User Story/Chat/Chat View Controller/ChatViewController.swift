@@ -37,9 +37,13 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     
     /// A composer view.
     public private(set) lazy var composerView = createComposerView()
-    private(set) lazy var initialSafeAreaBottom: CGFloat = view.safeAreaInsets.bottom
     var keyboardIsVisible = false
     lazy var keyboardHandler = setupKeyboard()
+    
+    private(set) lazy var initialSafeAreaBottom: CGFloat = {
+        let bottom = view.safeAreaInsets.bottom
+        return bottom > 0 ? bottom : (parent?.view.safeAreaInsets.bottom ?? 0)
+    }()
     
     /// Attachments file types for thw composer view.
     public lazy var composerAddFileTypes = defaultComposerAddFileTypes
@@ -129,7 +133,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         changesEnabled = true
         setupFooterUpdates()
         
-        NotificationCenter.default.rx.keyboard.drive(keyboardHandler).disposed(by: disposeBag)
+        Keyboard.shared.notification.drive(keyboardHandler).disposed(by: disposeBag)
     }
     
     open override func viewDidAppear(_ animated: Bool) {

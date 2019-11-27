@@ -1,5 +1,5 @@
 //
-//  RxKeyboard.swift
+//  Keyboard.swift
 //  StreamChat
 //
 //  Created by Alexey Bukhtin on 04/06/2019.
@@ -11,23 +11,20 @@ import RxCocoa
 import RxSwift
 import RxGesture
 
-extension Reactive where Base: NotificationCenter {
+struct Keyboard {
     
-    var keyboard: Driver<KeyboardNotification> {
-        return Observable.merge(windowPan, keyboardNotifications)
-            .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: KeyboardNotification(.init(name: UIResponder.keyboardWillChangeFrameNotification)))
-    }
+    static let shared = Self()
+    let notification: Driver<KeyboardNotification>
     
-    private var keyboardNotifications: Observable<KeyboardNotification> {
-        return Observable.merge(notification(UIResponder.keyboardWillChangeFrameNotification),
-                                notification(UIResponder.keyboardWillHideNotification),
-                                notification(UIResponder.keyboardWillShowNotification))
-            .map { KeyboardNotification($0) }
-    }
-    
-    private var windowPan: Observable<KeyboardNotification> {
-        return notification(UIApplication.didFinishLaunchingNotification)
+    init() {
+        let keyboardNotifications: Observable<KeyboardNotification> =
+            Observable.merge(NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification),
+                             NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification),
+                             NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification))
+                .map { KeyboardNotification($0) }
+        
+        let windowPan: Observable<KeyboardNotification> =
+            NotificationCenter.default.rx.notification(UIApplication.didFinishLaunchingNotification)
             .void()
             .startWith(Void())
             .flatMapLatest({ _ -> Observable<UIPanGestureRecognizer> in
@@ -40,6 +37,10 @@ extension Reactive where Base: NotificationCenter {
             .withLatestFrom(keyboardNotifications) { ($0, $1) }
             .filter { $1.height > 0 }
             .compactMap { KeyboardNotification(panGesture: $0, with: $1) }
+        
+        notification = Observable.merge(windowPan, keyboardNotifications)
+            .distinctUntilChanged()
+            .asDriver(onErrorJustReturn: KeyboardNotification(.init(name: UIResponder.keyboardWillChangeFrameNotification)))
     }
 }
 

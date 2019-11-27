@@ -175,7 +175,7 @@
 		8AD5EDB922E9BA98005CFAC9 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECCC22E9BA39005CFAC9 /* String+Extensions.swift */; };
 		8AD5EDBA22E9BA98005CFAC9 /* String+FileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECCD22E9BA39005CFAC9 /* String+FileType.swift */; };
 		8AD5EDBC22E9BA98005CFAC9 /* RxGesture+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD022E9BA39005CFAC9 /* RxGesture+Extensions.swift */; };
-		8AD5EDBD22E9BA98005CFAC9 /* RxKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD122E9BA39005CFAC9 /* RxKeyboard.swift */; };
+		8AD5EDBD22E9BA98005CFAC9 /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD122E9BA39005CFAC9 /* Keyboard.swift */; };
 		8AD5EDBE22E9BA98005CFAC9 /* RxDocumentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD222E9BA39005CFAC9 /* RxDocumentPickerViewController.swift */; };
 		8AD5EDC722E9BAC5005CFAC9 /* RxAppState.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDBF22E9BAC5005CFAC9 /* RxAppState.framework */; };
 		8AD5EDC822E9BAC5005CFAC9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC022E9BAC5005CFAC9 /* RxRelay.framework */; };
@@ -296,7 +296,7 @@
 		8AD5ECCD22E9BA39005CFAC9 /* String+FileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FileType.swift"; sourceTree = "<group>"; };
 		8AD5ECCE22E9BA39005CFAC9 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ECD022E9BA39005CFAC9 /* RxGesture+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RxGesture+Extensions.swift"; sourceTree = "<group>"; };
-		8AD5ECD122E9BA39005CFAC9 /* RxKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxKeyboard.swift; sourceTree = "<group>"; };
+		8AD5ECD122E9BA39005CFAC9 /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
 		8AD5ECD222E9BA39005CFAC9 /* RxDocumentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxDocumentPickerViewController.swift; sourceTree = "<group>"; };
 		8AD5ECD322E9BA39005CFAC9 /* Chat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Chat.xcassets; sourceTree = "<group>"; };
 		8AD5ECD522E9BA39005CFAC9 /* ChatItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatItem.swift; sourceTree = "<group>"; };
@@ -682,6 +682,7 @@
 				8AD5ECC922E9BA39005CFAC9 /* CharacterSet+Extensions.swift */,
 				8AD5ECCA22E9BA39005CFAC9 /* Bundle+Extensions.swift */,
 				8AE61E692379D3AE00A585BA /* DataDetector.swift */,
+				8AD5ECD122E9BA39005CFAC9 /* Keyboard.swift */,
 				8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */,
 			);
 			path = Extensions;
@@ -755,7 +756,6 @@
 			isa = PBXGroup;
 			children = (
 				8AD5ECD022E9BA39005CFAC9 /* RxGesture+Extensions.swift */,
-				8AD5ECD122E9BA39005CFAC9 /* RxKeyboard.swift */,
 				8AD5ECD222E9BA39005CFAC9 /* RxDocumentPickerViewController.swift */,
 			);
 			path = Rx;
@@ -1253,7 +1253,7 @@
 				8AD5ED8D22E9BA98005CFAC9 /* ReactionsView.swift in Sources */,
 				8AD5EDB922E9BA98005CFAC9 /* String+Extensions.swift in Sources */,
 				8AD5ED7C22E9BA98005CFAC9 /* ComposerView+Images.swift in Sources */,
-				8AD5EDBD22E9BA98005CFAC9 /* RxKeyboard.swift in Sources */,
+				8AD5EDBD22E9BA98005CFAC9 /* Keyboard.swift in Sources */,
 				8AD5ED8222E9BA98005CFAC9 /* ComposerFileView.swift in Sources */,
 				8AD54F1C231E91E500364657 /* ViewController.swift in Sources */,
 				8AE61E6D237AE25600A585BA /* DataDetector.swift in Sources */,
