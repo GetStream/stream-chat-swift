@@ -192,7 +192,7 @@ public final class Channel: Codable {
         extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isChannel })?.decode(from: decoder))
         let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         self.members = Set<Member>(members)
-        let name = try container.decodeIfPresent(String.self, forKey: .name)
+        let name = try? container.decodeIfPresent(String.self, forKey: .name)
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         invitedMembers = Set<Member>()
         
