@@ -133,11 +133,8 @@ extension ChatViewController {
     }
     
     func willDisplay(cell: UITableViewCell, at indexPath: IndexPath, message: Message) {
-        guard let cell = cell as? MessageTableViewCell,
-            let presenter = channelPresenter,
-            !message.isEphemeral,
-            !message.isDeleted else {
-                return
+        guard let cell = cell as? MessageTableViewCell, !message.isEphemeral, !message.isDeleted else {
+            return
         }
         
         cell.enrichText(with: message, enrichURLs: true)
@@ -148,9 +145,7 @@ extension ChatViewController {
             cell.updateAdditionalLabelViewConstraints(relatedTo: lastVisibleView)
         }
         
-        cell.messageStackView.rx.anyGesture(presenter.channel.config.reactionsEnabled
-            ? [TapControlEvent.default, LongPressControlEvent.default]
-            : [LongPressControlEvent.default])
+        cell.messageStackView.rx.anyGesture([TapControlEvent.default, LongPressControlEvent.default])
             .subscribe(onNext: { [weak self, weak cell] gesture in
                 if let self = self, let cell = cell {
                     if let tapGesture = gesture as? UITapGestureRecognizer {
@@ -175,7 +170,9 @@ extension ChatViewController {
             }
         }
         
-        showReactions(from: cell, in: message, locationInView: tapGesture.location(in: cell))
+        if let presenter = channelPresenter, presenter.channel.config.reactionsEnabled {
+            showReactions(from: cell, in: message, locationInView: tapGesture.location(in: cell))
+        }
     }
     
     private func show(attachment: Attachment, at index: Int, from attachments: [Attachment]) {
