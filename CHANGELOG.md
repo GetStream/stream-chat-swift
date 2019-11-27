@@ -1,3 +1,19 @@
+# 1.5.3-ui
+_November 27th, 2019_
+
+Fix tap on a link with disabled reactions.
+
+# 1.5.2
+_November 27th, 2019_
+
+## Added
+- `Client.channel(query: ChannelQuery)`
+
+## Fixed
+- `ComposerView` and keyboard events crashes.
+- `ComposerView` position for embedded `ChatViewController`.
+- Parse now can properly ignore bad channel name.
+
 # 1.5.1
 _November 26th, 2019_
 
