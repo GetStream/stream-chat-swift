@@ -16,7 +16,7 @@
 **Quick Links**
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat
-* [Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/)
+* [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/)
 * [Chat UI Kit](https://getstream.io/chat/ui-kit/)
 
 ![Stream Chat](https://getstream.imgix.net/images/ios-chat-tutorial/iphone_chat_art@2x.png?auto=format,enhance)
