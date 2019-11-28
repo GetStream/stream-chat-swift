@@ -40,10 +40,19 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     var keyboardIsVisible = false
     lazy var keyboardHandler = setupKeyboard()
     
-    private(set) lazy var initialSafeAreaBottom: CGFloat = {
-        let bottom = view.safeAreaInsets.bottom
-        return bottom > 0 ? bottom : (parent?.view.safeAreaInsets.bottom ?? 0)
-    }()
+    private(set) lazy var initialSafeAreaBottom: CGFloat = calculatedSafeAreaBottom
+    
+    /// Calculates the bottom inset for the `ComposerView` when the keyboard will appear.
+    open var calculatedSafeAreaBottom: CGFloat {
+        var bottom = view.safeAreaInsets.bottom
+        bottom = bottom > 0 ? bottom : (parent?.view.safeAreaInsets.bottom ?? 0)
+        
+        if let tabBar = tabBarController?.tabBar, !tabBar.isTranslucent {
+            bottom += tabBar.frame.height
+        }
+        
+        return bottom
+    }
     
     /// Attachments file types for thw composer view.
     public lazy var composerAddFileTypes = defaultComposerAddFileTypes
@@ -164,8 +173,10 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             composerView.textView.resignFirstResponder()
         }
         
-        DispatchQueue.main.async { self.initialSafeAreaBottom = self.view.safeAreaInsets.bottom }
+        DispatchQueue.main.async { self.initialSafeAreaBottom = self.calculatedSafeAreaBottom }
     }
+    
+    // MARK: Table View Customization
     
     /// Refresh table view cells with presenter items.
     ///
