@@ -9,4 +9,4 @@ github "SnapKit/SnapKit" ~> 5.0.0
 github "kirualex/SwiftyGif" ~> 5.1.0
 github "RxSwiftCommunity/RxGesture" ~> 3.0.0
 
-github "realm/realm-cocoa"
+#github "realm/realm-cocoa"
