@@ -7,22 +7,26 @@
 //
 
 import Foundation
-import StreamChatCore
 import RealmSwift
+import StreamChatCore
 
 public final class UserRealmObject: Object {
     
     @objc dynamic var id: String = ""
     @objc dynamic var name: String = ""
     @objc dynamic var avatarURL: URL?
-    @objc dynamic var created: Date = Date()
-    @objc dynamic var updated: Date = Date()
+    @objc dynamic var created = Date.default
+    @objc dynamic var updated = Date.default
     @objc dynamic var lastActiveDate: Date?
     @objc dynamic var isInvisible: Bool = false
     @objc dynamic var isBanned: Bool = false
     @objc dynamic var role: String = "user"
     @objc dynamic var extraData: Data?
     let mutedUsers = List<MutedUserRealmObject>()
+    
+    override public static func primaryKey() -> String? {
+        return "id"
+    }
     
     public var asUser: User? {
         guard let role = User.Role(rawValue: role) else {
@@ -44,7 +48,7 @@ public final class UserRealmObject: Object {
     
     required init() {}
     
-    public init(user: User) {
+    public init(_ user: User) {
         id = user.id
         name = user.name
         avatarURL = user.avatarURL

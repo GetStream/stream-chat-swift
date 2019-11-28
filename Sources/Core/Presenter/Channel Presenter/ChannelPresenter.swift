@@ -243,11 +243,11 @@ extension ChannelPresenter {
         }
         
         let message = Message(id: messageId,
+                              parentId: parentId,
                               text: text,
                               attachments: attachments,
-                              extraData: extraData,
-                              parentId: parentId,
                               mentionedUsers: mentionedUsers,
+                              extraData: extraData,
                               showReplyInChannel: false)
         
         return channel.send(message: message)

@@ -26,8 +26,11 @@
 		8A0EB78C22FC608A009481E4 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78B22FC608A009481E4 /* Client+Events.swift */; };
 		8A0EB78E22FC6974009481E4 /* Channel+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78D22FC6974009481E4 /* Channel+Events.swift */; };
 		8A104FC522F4B95B002B2DC1 /* Banners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A104FC322F49233002B2DC1 /* Banners.swift */; };
+		8A1207CB238ED68000E41790 /* MessageRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207C9238ED66500E41790 /* MessageRealmObject.swift */; };
+		8A1207CD238EE3C700E41790 /* ReactionRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207CC238EE3C700E41790 /* ReactionRealmObject.swift */; };
 		8A149202233A64F0007B2DB8 /* TestDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACB784B2333F1FB00C640FA /* TestDatabase.swift */; };
 		8A150E9F232A8D8400330562 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A150E9E232A8D8400330562 /* Database.swift */; };
+		8A2A5110238FE10F00B230E9 /* RealmObjectIndexable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2A510F238FE10F00B230E9 /* RealmObjectIndexable.swift */; };
 		8A2BE6092334E0ED00D6E684 /* EscapeBridgingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */; };
 		8A2DD95123849108007775E9 /* UserRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD95023849108007775E9 /* UserRealmObject.swift */; };
 		8A2DD9532385565B007775E9 /* MutedUserRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD9522385565B007775E9 /* MutedUserRealmObject.swift */; };
@@ -35,6 +38,7 @@
 		8A2DD956238556A7007775E9 /* MemberRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD955238556A7007775E9 /* MemberRealmObject.swift */; };
 		8A30D07B237D81C20082B951 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */; };
 		8A34DED42322A92C00271BBF /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A34DED32322A92C00271BBF /* Device.swift */; };
+		8A5211D5238EE7DC004BED65 /* AttachmentRealmObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5211D4238EE7DC004BED65 /* AttachmentRealmObject.swift */; };
 		8A559D24230D937C00E66096 /* ClientRequestsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A559D23230D937C00E66096 /* ClientRequestsTests.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
@@ -226,13 +230,17 @@
 		8A0EB78B22FC608A009481E4 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		8A0EB78D22FC6974009481E4 /* Channel+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Events.swift"; sourceTree = "<group>"; };
 		8A104FC322F49233002B2DC1 /* Banners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banners.swift; sourceTree = "<group>"; };
+		8A1207C9238ED66500E41790 /* MessageRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRealmObject.swift; sourceTree = "<group>"; };
+		8A1207CC238EE3C700E41790 /* ReactionRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionRealmObject.swift; sourceTree = "<group>"; };
 		8A150E9E232A8D8400330562 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		8A2A510F238FE10F00B230E9 /* RealmObjectIndexable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObjectIndexable.swift; sourceTree = "<group>"; };
 		8A2BE6082334E0ED00D6E684 /* EscapeBridgingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EscapeBridgingUI.swift; sourceTree = "<group>"; };
 		8A2DD95023849108007775E9 /* UserRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRealmObject.swift; sourceTree = "<group>"; };
 		8A2DD9522385565B007775E9 /* MutedUserRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUserRealmObject.swift; sourceTree = "<group>"; };
 		8A2DD955238556A7007775E9 /* MemberRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberRealmObject.swift; sourceTree = "<group>"; };
 		8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
 		8A34DED32322A92C00271BBF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		8A5211D4238EE7DC004BED65 /* AttachmentRealmObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentRealmObject.swift; sourceTree = "<group>"; };
 		8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A559D23230D937C00E66096 /* ClientRequestsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRequestsTests.swift; sourceTree = "<group>"; };
 		8A559D25230D937C00E66096 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -574,10 +582,14 @@
 		8A8BB2B2238459E800C2F9DE /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				8A2DD95023849108007775E9 /* UserRealmObject.swift */,
 				8A8BB2B02384580700C2F9DE /* ChannelRealmObject.swift */,
 				8A2DD955238556A7007775E9 /* MemberRealmObject.swift */,
-				8A2DD95023849108007775E9 /* UserRealmObject.swift */,
 				8A2DD9522385565B007775E9 /* MutedUserRealmObject.swift */,
+				8A1207C9238ED66500E41790 /* MessageRealmObject.swift */,
+				8A1207CC238EE3C700E41790 /* ReactionRealmObject.swift */,
+				8A5211D4238EE7DC004BED65 /* AttachmentRealmObject.swift */,
+				8A2A510F238FE10F00B230E9 /* RealmObjectIndexable.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -664,7 +676,6 @@
 		8AD5ECAA22E9BA39005CFAC9 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				8AD5ECD422E9BA39005CFAC9 /* Model */,
 				8AD5ECD722E9BA39005CFAC9 /* User Story */,
 				8AD5ECAB22E9BA39005CFAC9 /* Extensions */,
 				8AD5ECD322E9BA39005CFAC9 /* Chat.xcassets */,
@@ -759,13 +770,6 @@
 				8AD5ECD222E9BA39005CFAC9 /* RxDocumentPickerViewController.swift */,
 			);
 			path = Rx;
-			sourceTree = "<group>";
-		};
-		8AD5ECD422E9BA39005CFAC9 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
 			sourceTree = "<group>";
 		};
 		8AD5ECD722E9BA39005CFAC9 /* User Story */ = {
@@ -1235,11 +1239,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A1207CD238EE3C700E41790 /* ReactionRealmObject.swift in Sources */,
 				8A2DD956238556A7007775E9 /* MemberRealmObject.swift in Sources */,
 				8A2DD95423855690007775E9 /* ChannelRealmObject.swift in Sources */,
 				8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */,
+				8A2A5110238FE10F00B230E9 /* RealmObjectIndexable.swift in Sources */,
 				8A2DD95123849108007775E9 /* UserRealmObject.swift in Sources */,
+				8A1207CB238ED68000E41790 /* MessageRealmObject.swift in Sources */,
 				8A2DD9532385565B007775E9 /* MutedUserRealmObject.swift in Sources */,
+				8A5211D5238EE7DC004BED65 /* AttachmentRealmObject.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

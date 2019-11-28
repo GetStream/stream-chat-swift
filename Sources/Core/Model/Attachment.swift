@@ -198,15 +198,30 @@ public extension Attachment {
         public var isSend: Bool {
             return value == "send"
         }
+        
+        /// Init an attachment action.
+        /// - Parameters:
+        ///   - name: a name.
+        ///   - value: a value.
+        ///   - style: a style.
+        ///   - type: a type.
+        ///   - text: a text.
+        public init(name: String, value: String, style: ActionStyle, type: ActionType, text: String) {
+            self.name = name
+            self.value = value
+            self.style = style
+            self.type = type
+            self.text = text
+        }
     }
     
     /// An attachment action type, e.g. button.
-    enum ActionType: String, Decodable {
+    public enum ActionType: String, Decodable {
         case button
     }
     
     /// An attachment action style, e.g. primary button.
-    enum ActionStyle: String, Decodable {
+    public enum ActionStyle: String, Decodable {
         case `default`
         case primary
     }
@@ -319,7 +334,12 @@ public struct AttachmentFile: Codable {
         return AttachmentFile.sizeFormatter.string(fromByteCount: size)
     }
     
-    init(type: AttachmentFileType, size: Int64, mimeType: String?) {
+    /// Init an attachment file.
+    /// - Parameters:
+    ///   - type: a file type.
+    ///   - size: a file size.
+    ///   - mimeType: a mime type.
+    public init(type: AttachmentFileType, size: Int64, mimeType: String?) {
         self.type = type
         self.size = size
         self.mimeType = mimeType

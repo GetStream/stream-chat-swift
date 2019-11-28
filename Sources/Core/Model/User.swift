@@ -27,7 +27,8 @@ public struct User: Codable {
         case channelsUnreadCount = "unread_channels"
     }
     
-    static let unknown = User(id: "", name: "")
+    /// An unkown user.
+    public static let unknown = User(id: "", name: "")
     
     public enum Role: String, Codable {
         case user

@@ -7,14 +7,14 @@
 //
 
 import Foundation
-import StreamChatCore
 import RealmSwift
+import StreamChatCore
 
 public final class MutedUserRealmObject: Object {
     
-    @objc dynamic var user: UserRealmObject = UserRealmObject()
-    @objc dynamic var created: Date = Date()
-    @objc dynamic var updated: Date = Date()
+    @objc dynamic var user = UserRealmObject()
+    @objc dynamic var created = Date.default
+    @objc dynamic var updated = Date.default
     
     public var asMutedUser: MutedUser? {
         guard let user = user.asUser else {
@@ -27,7 +27,7 @@ public final class MutedUserRealmObject: Object {
     required init() {}
     
     public init(mutedUser: MutedUser) {
-        user = UserRealmObject(user: mutedUser.user)
+        user = UserRealmObject(mutedUser.user)
         created = mutedUser.created
         updated = mutedUser.updated
     }

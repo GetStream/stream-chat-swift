@@ -7,16 +7,16 @@
 //
 
 import Foundation
-import StreamChatCore
 import RealmSwift
+import StreamChatCore
 
 public final class MemberRealmObject: Object {
     
-    @objc dynamic var user: UserRealmObject = UserRealmObject()
-    @objc dynamic var role: String = ""
-    @objc dynamic var created: Date = Date()
-    @objc dynamic var updated: Date = Date()
-    @objc dynamic var isInvited: Bool = false
+    @objc dynamic var user = UserRealmObject()
+    @objc dynamic var role = ""
+    @objc dynamic var created = Date.default
+    @objc dynamic var updated = Date.default
+    @objc dynamic var isInvited = false
     @objc dynamic var inviteAccepted: Date?
     @objc dynamic var inviteRejected: Date?
     
@@ -37,7 +37,7 @@ public final class MemberRealmObject: Object {
     required init() {}
     
     public init(member: Member) {
-        user = UserRealmObject(user: member.user)
+        user = UserRealmObject(member.user)
         role = member.role.rawValue
         created = member.created
         updated = member.updated

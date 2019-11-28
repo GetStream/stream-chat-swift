@@ -66,16 +66,29 @@ public struct Reaction: Codable, Equatable {
     
     /// A reaction type.
     public let type: ReactionType
+    /// A message id.
+    public let messageId: String
     /// A user of the reaction.
     public let user: User?
     /// A created date.
     public let created: Date
-    /// A message id.
-    public let messageId: String
     
     /// Check if the reaction if by the current user.
     public var isOwn: Bool {
         return user?.isCurrent ?? false
+    }
+    
+    /// Init a reaction.
+    /// - Parameters:
+    ///   - type: a reaction type.
+    ///   - messageId: a message id.
+    ///   - user: a user owner of the reaction.
+    ///   - created: a created date.
+    public init(type: ReactionType, messageId: String, user: User? = nil, created: Date = Date()) {
+        self.type = type
+        self.messageId = messageId
+        self.user = user
+        self.created = created
     }
 }
 
@@ -108,6 +121,14 @@ public struct ReactionCounts: Decodable {
     /// Init a reaction counts with 1 for a given reaction type.
     init(reactionType: ReactionType) {
         counts = [reactionType: 1]
+        string = ""
+        string = joinToString()
+    }
+    
+    /// Init a reaction counts with dictionary counts.
+    /// - Parameter counts: a rection counts by reaction types.
+    public init(counts: [ReactionType: Int]) {
+        self.counts = counts
         string = ""
         string = joinToString()
     }

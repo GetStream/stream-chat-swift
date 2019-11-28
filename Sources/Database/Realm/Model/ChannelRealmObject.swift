@@ -7,23 +7,29 @@
 //
 
 import Foundation
-import StreamChatCore
 import RealmSwift
+import StreamChatCore
 
-public final class ChannelRealmObject: Object {
+public final class ChannelRealmObject: Object, RealmObjectIndexable {
     
     @objc dynamic var id = ""
     @objc dynamic var type = ""
     @objc dynamic var name = ""
     @objc dynamic var imageURL: URL?
     @objc dynamic var lastMessageDate: Date?
-    @objc dynamic var created = Date()
+    @objc dynamic var created = Date.default
     @objc dynamic var deleted: Date?
     @objc dynamic var createdBy = UserRealmObject()
     @objc dynamic var frozen = false
     @objc dynamic var config = ConfigRealmObject()
     @objc dynamic var extraData: Data?
     let members = List<MemberRealmObject>()
+    
+    public static var indexedPropertiesKeyPaths: [AnyKeyPath] = [\ChannelRealmObject.created]
+    
+    override public static func primaryKey() -> String? {
+        return "id"
+    }
     
     public var asChannel: Channel? {
         return Channel(type: ChannelType(rawValue: type),
@@ -51,12 +57,12 @@ public final class ChannelRealmObject: Object {
         created = channel.created
         deleted = channel.deleted
         frozen = channel.frozen
-        members.append(objectsIn: channel.members.map({ MemberRealmObject(member: $0) }))
         config = channel.config.isEmpty ? ConfigRealmObject() : ConfigRealmObject(config: channel.config)
         extraData = channel.extraData?.encode()
+        members.append(objectsIn: channel.members.map({ MemberRealmObject(member: $0) }))
         
         if let createdBy = channel.createdBy {
-            self.createdBy = UserRealmObject(user: createdBy)
+            self.createdBy = UserRealmObject(createdBy)
         }
     }
 }

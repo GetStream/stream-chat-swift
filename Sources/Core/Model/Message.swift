@@ -53,7 +53,7 @@ public struct Message: Codable {
     /// A parent message id.
     public let parentId: String?
     /// Check if this reply message needs to show in the channel.
-    public let showReplyInChannel: Bool?
+    public let showReplyInChannel: Bool
     /// Mentioned users (see `User`).
     public let mentionedUsers: [User]
     /// Reply count.
@@ -129,30 +129,41 @@ public struct Message: Codable {
     ///   - mentionedUsers: a list of mentioned users.
     ///   - showReplyInChannel: a flag to show reply messages in a channel, not in a separate thread.
     public init(id: String = "",
-                text: String,
-                attachments: [Attachment] = [],
-                extraData: Codable? = nil,
+                type: MessageType = .regular,
                 parentId: String? = nil,
+                created: Date = .default,
+                updated: Date = .default,
+                deleted: Date? = nil,
+                text: String,
+                command: String? = nil,
+                args: String? = nil,
+                user: User = .unknown,
+                attachments: [Attachment] = [],
                 mentionedUsers: [User] = [],
+                extraData: Codable? = nil,
+                latestReactions: [Reaction] = [],
+                ownReactions: [Reaction] = [],
+                reactionCounts: ReactionCounts? = nil,
+                replyCount: Int = 0,
                 showReplyInChannel: Bool = false) {
         self.id = id
+        self.type = type
         self.parentId = parentId
-        self.showReplyInChannel = showReplyInChannel
-        type = .regular
-        user = .unknown
-        created = .default
-        updated = .default
-        deleted = nil
+        self.created = created
+        self.updated = updated
+        self.deleted = deleted
         self.text = text
-        command = nil
-        args = nil
+        self.command = command
+        self.args = args
+        self.user = user
         self.attachments = attachments
         self.mentionedUsers = mentionedUsers
-        replyCount = 0
-        latestReactions = []
-        ownReactions = []
-        reactionCounts = nil
         self.extraData = ExtraData(extraData)
+        self.latestReactions = latestReactions
+        self.ownReactions = ownReactions
+        self.reactionCounts = reactionCounts
+        self.replyCount = replyCount
+        self.showReplyInChannel = showReplyInChannel
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -187,7 +198,7 @@ public struct Message: Codable {
         args = try container.decodeIfPresent(String.self, forKey: .args)
         attachments = try container.decode([Attachment].self, forKey: .attachments)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
-        showReplyInChannel = false
+        showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
         mentionedUsers = try container.decode([User].self, forKey: .mentionedUsers)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         latestReactions = try container.decode([Reaction].self, forKey: .latestReactions)
