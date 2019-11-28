@@ -31,11 +31,8 @@ This repo includes a fully functional example app. You can run the example app b
 
 1. Download the StreamChat repo: `git clone git@github.com:GetStream/stream-chat-swift.git`
 2. Change the directory: `cd stream-chat-swift`
-3. Install Carthage with [brew](https://brew.sh): `brew install carthage`
-4. Install dependencies with Carthage: 
-```sh
-$ carthage update --platform iOS --new-resolver --no-use-binaries
-```
+3. Install the [Carthage](https://github.com/Carthage/Carthage) with the [brew package manager](https://brew.sh): `brew install carthage`
+4. Install dependencies with the Carthage: `carthage update --platform iOS --new-resolver --no-use-binaries`
 
 <details>
 <p>
