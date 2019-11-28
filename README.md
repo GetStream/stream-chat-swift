@@ -29,14 +29,60 @@ The best place to start is the [iOS Swift Chat Tutorial](https://getstream.io/tu
 
 This repo includes a fully functional example app. You can run the example app by following these steps:
 
+1. Download the StreamChat repo: `git clone git@github.com:GetStream/stream-chat-swift.git`
+2. Change the directory: `cd stream-chat-swift`
+3. Install Carthage with [brew](https://brew.sh): `brew install carthage`
+4. Install dependencies with Carthage: 
+```sh
+$ carthage update --platform iOS --new-resolver --no-use-binaries
 ```
-git clone git@github.com:GetStream/stream-chat-swift.git
-cd stream-chat-swift
-brew install carthage
-carthage update --platform iOS --new-resolver
-open Example/ChatExample.xcodeproj
-click play/run in xcode
+
+<details>
+<p>
+  
+```sh
+*** Fetching Starscream
+*** Fetching Nuke
+*** Fetching SnapKit
+*** Fetching RxGesture
+*** Fetching RxSwift
+*** Fetching GzipSwift
+*** Fetching SwiftyGif
+*** Fetching Reachability.swift
+*** Fetching RxAppState
+*** Checking out RxGesture at "3.0.1"
+*** Checking out Reachability.swift at "v4.3.1"
+*** Checking out SwiftyGif at "5.2.0"
+*** Checking out GzipSwift at "5.1.1"
+*** Checking out Starscream at "3.1.1"
+*** Checking out SnapKit at "5.0.1"
+*** Checking out RxAppState at "1.6.0"
+*** Checking out RxSwift at "5.0.1"
+*** Checking out Nuke at "8.4.0"
+*** xcodebuild output can be found in /var/folders/jc/ghydzbx93055d3l7_25_178r0000gn/T/carthage-xcodebuild.0njXFg.log
+*** Building scheme "Gzip iOS" in Gzip.xcodeproj
+*** Building scheme "Nuke" in Nuke.xcodeproj
+*** Building scheme "Reachability" in Reachability.xcodeproj
+*** Building scheme "RxBlocking" in Rx.xcworkspace
+*** Building scheme "RxRelay" in Rx.xcworkspace
+*** Building scheme "RxSwift" in Rx.xcworkspace
+*** Building scheme "RxCocoa" in Rx.xcworkspace
+*** Building scheme "RxTest" in Rx.xcworkspace
+*** Building scheme "RxAppState" in RxAppState.xcworkspace
+*** Building scheme "RxAppState" in RxAppState.xcworkspace
+*** Building scheme "RxGesture-iOS" in RxGesture.xcodeproj
+*** Building scheme "SnapKit" in SnapKit.xcworkspace
+*** Building scheme "Starscream" in Starscream.xcodeproj
+*** Building scheme "SwiftyGif" in SwiftyGif.xcodeproj
 ```
+  
+</p>
+</details>
+
+5. Open the project: `open Example/ChatExample.xcodeproj`
+6. Select `ChatExample` as an active scheme:
+![Xcode Example app active scheme](https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/example_app_active_scheme.jpg)
+7. Click build and run.
 
 ## Docs
 
@@ -50,9 +96,10 @@ You'll typically want to start out using the UI components, and implement your o
 ## Requirements
 
 - iOS 11+
-- Xcode 10.2+
-- Swift 5
+- Xcode 11.2+
+- Swift 5.1
 - CocoaPods 1.7+
+- Carthage 0.33.0+
 
 ## Installation
 
