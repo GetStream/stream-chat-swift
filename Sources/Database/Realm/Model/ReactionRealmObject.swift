@@ -25,7 +25,9 @@ public final class ReactionRealmObject: Object {
         return Reaction(type: type, messageId: messageId, user: user?.asUser, created: created)
     }
     
-    required init() {}
+    required init() {
+        super.init()
+    }
     
     init(_ reaction: Reaction) {
         type = reaction.type.rawValue
@@ -42,7 +44,9 @@ public final class ReactionCountsRealmObject: Object {
     @objc dynamic var type = ""
     @objc dynamic var count = 0
     
-    required init() {}
+    required init() {
+        super.init()
+    }
     
     init(type: String, count: Int) {
         self.type = type

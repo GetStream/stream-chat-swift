@@ -34,7 +34,7 @@ public final class Client {
     let stayConnectedInBackground: Bool
     
     /// A database for an offline mode.
-    public let database: Database?
+    public internal(set) var database: Database?
     
     var token: Token? {
         didSet { tokenSubject.onNext(token) }

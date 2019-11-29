@@ -14,7 +14,7 @@ public final class UserRealmObject: Object {
     
     @objc dynamic var id: String = ""
     @objc dynamic var name: String = ""
-    @objc dynamic var avatarURL: URL?
+    @objc dynamic var avatarURL: String?
     @objc dynamic var created = Date.default
     @objc dynamic var updated = Date.default
     @objc dynamic var lastActiveDate: Date?
@@ -36,7 +36,7 @@ public final class UserRealmObject: Object {
         return User(id: id,
                     name: name,
                     role: role,
-                    avatarURL: avatarURL,
+                    avatarURL: avatarURL?.url,
                     created: created,
                     updated: updated,
                     lastActiveDate: lastActiveDate,
@@ -51,7 +51,7 @@ public final class UserRealmObject: Object {
     public init(_ user: User) {
         id = user.id
         name = user.name
-        avatarURL = user.avatarURL
+        avatarURL = user.avatarURL?.absoluteString
         created = user.created
         updated = user.updated
         lastActiveDate = user.lastActiveDate

@@ -12,19 +12,21 @@ import StreamChatCore
 
 public final class MutedUserRealmObject: Object {
     
-    @objc dynamic var user = UserRealmObject()
+    @objc dynamic var user: UserRealmObject?
     @objc dynamic var created = Date.default
     @objc dynamic var updated = Date.default
     
     public var asMutedUser: MutedUser? {
-        guard let user = user.asUser else {
+        guard let user = user?.asUser else {
             return nil
         }
         
         return MutedUser(user: user, created: created, updated: updated)
     }
     
-    required init() {}
+    required init() {
+        super.init()
+    }
     
     public init(mutedUser: MutedUser) {
         user = UserRealmObject(mutedUser.user)

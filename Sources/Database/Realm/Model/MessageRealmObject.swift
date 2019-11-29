@@ -14,7 +14,7 @@ public final class MessageRealmObject: Object, RealmObjectIndexable {
     
     @objc dynamic var id = ""
     @objc dynamic var type = ""
-    @objc dynamic var user = UserRealmObject()
+    @objc dynamic var user: UserRealmObject?
     @objc dynamic var created = Date.default
     @objc dynamic var updated = Date.default
     @objc dynamic var deleted: Date?
@@ -38,7 +38,7 @@ public final class MessageRealmObject: Object, RealmObjectIndexable {
     }
     
     var asMessage: Message? {
-        guard let type = MessageType(rawValue: type), let user = user.asUser else {
+        guard let type = MessageType(rawValue: type), let user = user?.asUser else {
             return nil
         }
         
@@ -70,7 +70,9 @@ public final class MessageRealmObject: Object, RealmObjectIndexable {
                        showReplyInChannel: showReplyInChannel)
     }
     
-    required init() {}
+    required init() {
+        super.init()
+    }
     
     init(_ message: Message) {
         id = message.id

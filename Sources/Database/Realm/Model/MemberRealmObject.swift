@@ -12,7 +12,7 @@ import StreamChatCore
 
 public final class MemberRealmObject: Object {
     
-    @objc dynamic var user = UserRealmObject()
+    @objc dynamic var user: UserRealmObject?
     @objc dynamic var role = ""
     @objc dynamic var created = Date.default
     @objc dynamic var updated = Date.default
@@ -21,7 +21,7 @@ public final class MemberRealmObject: Object {
     @objc dynamic var inviteRejected: Date?
     
     public var asMember: Member? {
-        guard let user = user.asUser, let role = Member.Role(rawValue: role) else {
+        guard let user = user?.asUser, let role = Member.Role(rawValue: role) else {
             return nil
         }
         
@@ -34,7 +34,9 @@ public final class MemberRealmObject: Object {
                       inviteRejected: inviteRejected)
     }
     
-    required init() {}
+    required init() {
+        super.init()
+    }
     
     public init(member: Member) {
         user = UserRealmObject(member.user)

@@ -16,32 +16,34 @@ public final class AttachmentRealmObject: Object {
     @objc dynamic var author: String?
     @objc dynamic var text: String?
     @objc dynamic var type: String?
-    @objc dynamic var url: URL?
-    @objc dynamic var imageURL: URL?
+    @objc dynamic var url: String?
+    @objc dynamic var imageURL: String?
     @objc dynamic var file: AttachmentFileRealmObject?
     @objc dynamic var extraData: Data?
-    let actions = List<ActionRealmObject>()
+    let actions = List<AttachmentActionRealmObject>()
     
     var asAttachment: Attachment {
         return Attachment(type: AttachmentType(rawValue: type),
                           title: title,
-                          url: url,
-                          imageURL: imageURL,
+                          url: url?.url,
+                          imageURL: imageURL?.url,
                           file: file?.asAttachmentFile,
                           extraData: ExtraData.AttachmentWrapper.decode(extraData))
     }
     
-    required init() {}
+    required init() {
+        super.init()
+    }
     
     init(_ attachment: Attachment) {
         title = attachment.title
         author = attachment.author
         text = attachment.text
         type = attachment.type.rawValue
-        url = attachment.url
-        imageURL = attachment.imageURL
+        url = attachment.url?.absoluteString
+        imageURL = attachment.imageURL?.absoluteString
         extraData = attachment.extraData?.encode()
-        actions.append(objectsIn: attachment.actions.map({ ActionRealmObject($0) }))
+        actions.append(objectsIn: attachment.actions.map({ AttachmentActionRealmObject($0) }))
         
         if let attachmentFile = attachment.file {
             file = AttachmentFileRealmObject(attachmentFile)
@@ -49,32 +51,34 @@ public final class AttachmentRealmObject: Object {
     }
 }
 
-extension AttachmentRealmObject {
-    final class ActionRealmObject: Object {
-        @objc dynamic var name = ""
-        @objc dynamic var value = ""
-        @objc dynamic var style = ""
-        @objc dynamic var type = ""
-        @objc dynamic var text = ""
-        
-        var asAction: Attachment.Action? {
-            guard let style = Attachment.ActionStyle(rawValue: style),
-                let type = Attachment.ActionType(rawValue: type) else {
+// MARK: - Attachment Action
+
+final class AttachmentActionRealmObject: Object {
+    @objc dynamic var name = ""
+    @objc dynamic var value = ""
+    @objc dynamic var style = ""
+    @objc dynamic var type = ""
+    @objc dynamic var text = ""
+    
+    var asAction: Attachment.Action? {
+        guard let style = Attachment.ActionStyle(rawValue: style),
+            let type = Attachment.ActionType(rawValue: type) else {
                 return nil
-            }
-            
-            return Attachment.Action(name: name, value: value, style: style, type: type, text: text)
         }
         
-        required init() {}
-        
-        init(_ action: Attachment.Action) {
-            name = action.name
-            value = action.value
-            style = action.style.rawValue
-            type = action.type.rawValue
-            text = action.text
-        }
+        return Attachment.Action(name: name, value: value, style: style, type: type, text: text)
+    }
+    
+    required init() {
+        super.init()
+    }
+    
+    init(_ action: Attachment.Action) {
+        name = action.name
+        value = action.value
+        style = action.style.rawValue
+        type = action.type.rawValue
+        text = action.text
     }
 }
 
@@ -91,7 +95,9 @@ final class AttachmentFileRealmObject: Object {
         return AttachmentFile(type: type, size: size, mimeType: mimeType)
     }
     
-    required init() {}
+    required init() {
+        super.init()
+    }
     
     init(_ attachmentFile: AttachmentFile) {
         type = attachmentFile.type.rawValue

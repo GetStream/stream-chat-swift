@@ -20,19 +20,27 @@ public final class RealmDatabase {
     /// A shared instance.
     public static let shared = RealmDatabase()
     
+    /// Create a RealmDatabase with a given config.
+    /// - Parameter config: a RealmDatabase config.
+    @discardableResult
+    public static func setup(_ config: Config = Config()) -> RealmDatabase {
+        self.config = config
+        return .shared
+    }
+    
     private static let schemaVersion: UInt64 = 0
     
     private static let objectTypes: [Object.Type] = [UserRealmObject.self,
                                                      ChannelRealmObject.self,
-                                                     ChannelRealmObject.ConfigRealmObject.self,
-                                                     ChannelRealmObject.CommandRealmObject.self,
+                                                     ChannelConfigRealmObject.self,
+                                                     ChannelCommandRealmObject.self,
                                                      MemberRealmObject.self,
                                                      MutedUserRealmObject.self,
                                                      MessageRealmObject.self,
                                                      ReactionRealmObject.self,
                                                      ReactionCountsRealmObject.self,
                                                      AttachmentRealmObject.self,
-                                                     AttachmentRealmObject.ActionRealmObject.self,
+                                                     AttachmentActionRealmObject.self,
                                                      AttachmentFileRealmObject.self]
     
     /// Setup an optimization for Realm database size (totalBytes > 50Mb, usedBytes < 50%).
@@ -72,7 +80,6 @@ public final class RealmDatabase {
         self.keychainServiceId = keychainServiceId
         self.inMemoryId = inMemoryId
         logger = logOptions.logger(icon: "🔮", for: [.databaseError, .database, .databaseInfo])
-        logger?.log("Schema version: \(RealmDatabase.schemaVersion)")
     }
     
     static func setupKeychain() -> Keychain {
@@ -100,11 +107,13 @@ extension RealmDatabase {
             return
         }
         
+        logger?.log("Schema version: \(RealmDatabase.schemaVersion)")
+        
         let userKey = user.id.appending("57r34mch47").md5
         
         // Setup Realm URL.
         var realmURL = try URL.baseRealmURL(basePath, subPath: userKey)
-        realmURL = realmURL.appendingPathComponent("chat").appendingPathExtension("realm")
+        realmURL = realmURL.appendingPathComponent("chat_\(user.id.fileName)").appendingPathExtension("realm")
         logger?.log(realmURL.absoluteString)
         
         // Setup encryption key.
@@ -129,7 +138,7 @@ public extension RealmDatabase {
         public let inMemoryId: String?
         public let logOptions: ClientLogger.Options
         
-        public init(basePath: BasePath,
+        public init(basePath: BasePath = .caches,
                     keychainServiceId: String? = nil,
                     inMemoryId: String? = nil,
                     logOptions: ClientLogger.Options = []) {

@@ -70,13 +70,13 @@ public final class ClientLogger {
         public static let databaseInfo = Options(rawValue: 1 << 23)
 
         /// All errors.
-        public static let error: Options = [.requestsError, .webSocketError, .notificationsError]
+        public static let error: Options = [.requestsError, .webSocketError, .notificationsError, databaseError]
         
         /// All debug logs.
-        public static let debug: Options = [.requests, .webSocket, .notifications]
+        public static let debug: Options = [.requests, .webSocket, .notifications, .database]
         
         /// Full logs.
-        public static let info: Options = [.requestsInfo, .webSocketInfo, .notifications]
+        public static let info: Options = [.requestsInfo, .webSocketInfo, .notifications, .databaseInfo]
         
         // FIXME: Shouldn't be like that.
         var isEnabled: Bool {
