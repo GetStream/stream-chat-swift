@@ -29,10 +29,11 @@ The best place to start is the [iOS Swift Chat Tutorial](https://getstream.io/tu
 
 This repo includes a fully functional example app. You can run the example app by following these steps:
 
-1. Download the StreamChat repo: `git clone git@github.com:GetStream/stream-chat-swift.git`
-2. Change the directory: `cd stream-chat-swift`
-3. Install the [Carthage](https://github.com/Carthage/Carthage) with the [brew package manager](https://brew.sh): `brew install carthage`
-4. Install dependencies with the Carthage: 
+1. Make sure you have XCode installed and that it has latest components installed (open XCode and install any pending update)
+2. Download the StreamChat repo: `git clone git@github.com:GetStream/stream-chat-swift.git`
+3. Change the directory: `cd stream-chat-swift`
+4. Install the [Carthage](https://github.com/Carthage/Carthage) with the [brew package manager](https://brew.sh): `brew install carthage`
+5. Install dependencies with the Carthage: 
 `carthage update --platform iOS --new-resolver --no-use-binaries --cache-builds`
 
 <details>
@@ -77,10 +78,10 @@ This repo includes a fully functional example app. You can run the example app b
 </p>
 </details>
 
-5. Open the project: `open Example/ChatExample.xcodeproj`
-6. Select `ChatExample` as an active scheme:
+6. Open the project: `open Example/ChatExample.xcodeproj`
+67. Select `ChatExample` as an active scheme:
 ![Xcode Example app active scheme](https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/example_app_active_scheme.jpg)
-7. Click build and run.
+8. Click build and run.
 
 ## Docs
 
