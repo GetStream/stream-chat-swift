@@ -216,12 +216,12 @@ public extension Attachment {
     }
     
     /// An attachment action type, e.g. button.
-    public enum ActionType: String, Decodable {
+    enum ActionType: String, Decodable {
         case button
     }
     
     /// An attachment action style, e.g. primary button.
-    public enum ActionStyle: String, Decodable {
+    enum ActionStyle: String, Decodable {
         case `default`
         case primary
     }
