@@ -50,6 +50,7 @@ public final class RealmDatabase {
     
     let basePath: BasePath?
     let keychainServiceId: String?
+    let encrypted: Bool
     let inMemoryId: String?
     public let logger: ClientLogger?
     
@@ -74,10 +75,12 @@ public final class RealmDatabase {
     
     private init(basePath: BasePath = RealmDatabase.config.basePath,
                  keychainServiceId: String? = RealmDatabase.config.keychainServiceId,
+                 encrypted: Bool = RealmDatabase.config.encrypted,
                  inMemoryId: String? = RealmDatabase.config.inMemoryId,
                  logOptions: ClientLogger.Options = RealmDatabase.config.logOptions) {
         self.basePath = basePath
         self.keychainServiceId = keychainServiceId
+        self.encrypted = encrypted
         self.inMemoryId = inMemoryId
         logger = logOptions.logger(icon: "🔮", for: [.databaseError, .database, .databaseInfo])
     }
@@ -117,8 +120,14 @@ extension RealmDatabase {
         logger?.log(realmURL.absoluteString)
         
         // Setup encryption key.
-        let encryptionKey: Data = try Data.encryptionKey(userKey: userKey)
-        logger?.log("🔑 Encryption key: \(encryptionKey.hex)")
+        var encryptionKey: Data? = nil
+        
+        if encrypted {
+            encryptionKey = try Data.encryptionKey(userKey: userKey)
+            logger?.log("🔑 Encryption key: \(encryptionKey?.hex ?? "⚠️")")
+        } else {
+            logger?.log("🔑 Encryption disabled")
+        }
         
         realmConfiguration = Realm.Configuration(fileURL: realmURL,
                                                  inMemoryIdentifier: inMemoryId,
@@ -135,15 +144,18 @@ public extension RealmDatabase {
     struct Config {
         public let basePath: BasePath
         public let keychainServiceId: String?
+        public let encrypted: Bool
         public let inMemoryId: String?
         public let logOptions: ClientLogger.Options
         
         public init(basePath: BasePath = .caches,
                     keychainServiceId: String? = nil,
+                    encrypted: Bool = true,
                     inMemoryId: String? = nil,
                     logOptions: ClientLogger.Options = []) {
             self.basePath = basePath
             self.keychainServiceId = keychainServiceId
+            self.encrypted = encrypted
             self.inMemoryId = inMemoryId
             self.logOptions = logOptions
         }

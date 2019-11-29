@@ -12,6 +12,7 @@ import StreamChatCore
 
 public final class MessageRealmObject: Object, RealmObjectIndexable {
     
+    @objc dynamic var channel: ChannelRealmObject?
     @objc dynamic var id = ""
     @objc dynamic var type = ""
     @objc dynamic var user: UserRealmObject?
@@ -74,7 +75,8 @@ public final class MessageRealmObject: Object, RealmObjectIndexable {
         super.init()
     }
     
-    init(_ message: Message) {
+    init(_ message: Message, channelRealmObject: ChannelRealmObject) {
+        channel = channelRealmObject
         id = message.id
         type = message.type.rawValue
         parentId = message.parentId

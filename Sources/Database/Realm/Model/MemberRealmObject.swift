@@ -12,6 +12,7 @@ import StreamChatCore
 
 public final class MemberRealmObject: Object {
     
+    @objc dynamic var id = ""
     @objc dynamic var user: UserRealmObject?
     @objc dynamic var role = ""
     @objc dynamic var created = Date.default
@@ -38,7 +39,8 @@ public final class MemberRealmObject: Object {
         super.init()
     }
     
-    public init(member: Member) {
+    public init(member: Member, channel: Channel) {
+        id = "\(channel.cid)_\(member.user.id)"
         user = UserRealmObject(member.user)
         role = member.role.rawValue
         created = member.created

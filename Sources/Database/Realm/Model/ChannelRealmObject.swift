@@ -25,7 +25,8 @@ public final class ChannelRealmObject: Object, RealmObjectIndexable {
     @objc dynamic var extraData: Data?
     let members = List<MemberRealmObject>()
     
-    public static var indexedPropertiesKeyPaths: [AnyKeyPath] = [\ChannelRealmObject.created]
+    public static var indexedPropertiesKeyPaths: [AnyKeyPath] = [\ChannelRealmObject.type,
+                                                                 \ChannelRealmObject.created]
     
     override public static func primaryKey() -> String? {
         return "id"
@@ -61,7 +62,7 @@ public final class ChannelRealmObject: Object, RealmObjectIndexable {
         frozen = channel.frozen
         config = channel.config.isEmpty ? nil : ChannelConfigRealmObject(config: channel.config)
         extraData = channel.extraData?.encode()
-        members.append(objectsIn: channel.members.map({ MemberRealmObject(member: $0) }))
+        members.append(objectsIn: channel.members.map({ MemberRealmObject(member: $0, channel: channel) }))
         
         if let createdBy = channel.createdBy {
             self.createdBy = UserRealmObject(createdBy)
@@ -136,6 +137,10 @@ public final class ChannelCommandRealmObject: Object {
     @objc dynamic var desc = ""
     @objc dynamic var set = ""
     @objc dynamic var args = ""
+    
+    override public static func primaryKey() -> String? {
+        return "name"
+    }
     
     public var asCommand: Channel.Command {
         return Channel.Command(name: name,
