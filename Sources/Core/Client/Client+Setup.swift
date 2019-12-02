@@ -167,7 +167,7 @@ extension Client {
             return ClientError.emptyUser
         }
         
-        guard token.isValid, let payload = token.payload else {
+        guard token.isValidToken(userId: user.id), let payload = token.payload else {
             return ClientError.tokenInvalid(description: "Token is invalid or Token payload is invalid")
         }
         
@@ -207,7 +207,7 @@ extension Client {
         
         let webSocketResponse = tokenSubject.asObserver()
             .distinctUntilChanged()
-            .map { $0?.isValid ?? false }
+            .map { $0?.isValidToken() ?? false }
             .observeOn(MainScheduler.instance)
             .flatMapLatest({ [unowned self] isTokenValid -> Observable<WebSocketEvent> in
                 if isTokenValid {
