@@ -79,7 +79,6 @@ final class LoginViewController: UIViewController {
             return
         }
         
-        store(key: .apiKey, value: apiKey)
         store(key: .userId, value: userId)
         store(key: .userName, value: userName)
         store(key: .token, value: token)
@@ -97,6 +96,7 @@ final class LoginViewController: UIViewController {
                                   logOptions: .debug)
             
             Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
+            store(key: .apiKey, value: apiKey)
             clientSetupped = true
         }
         
