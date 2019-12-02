@@ -20,8 +20,6 @@
 * [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/)
 * [Chat UI Kit](https://getstream.io/chat/ui-kit/)
 
-![Stream Chat](https://getstream.imgix.net/images/ios-chat-tutorial/iphone_chat_art@2x.png?auto=format,enhance)
-
 ## Swift/iOS Chat Tutorial
 
 The best place to start is the [iOS Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/). It teaches you how to use this SDK and also shows how to make common changes. 
