@@ -8,8 +8,8 @@
 
 import UIKit
 import RxSwift
-import StreamChatCore
 import StreamChat
+import StreamChatCore
 
 final class LoginViewController: UIViewController {
     
@@ -21,8 +21,8 @@ final class LoginViewController: UIViewController {
     @IBOutlet weak var versionLabel: UILabel!
     let userDefaults = UserDefaults()
     var loggedInToken: Token?
-    var loggedInUser: User?
-    var secondUser: User?
+    var loggedInUser: StreamChatCore.User?
+    var secondUser: StreamChatCore.User?
     let disposeBag = DisposeBag()
     var clientSetupped = false
     
@@ -30,10 +30,10 @@ final class LoginViewController: UIViewController {
         super.viewDidLoad()
         versionLabel.text = "Demo Project\nStream Swift SDK v.\(Client.version)"
         
-        apiKeyLabel.text = storedValue(key: .apiKey)
-        userIdLabel.text = storedValue(key: .userId)
-        userNameLabel.text = storedValue(key: .userName)
-        tokenLabel.text = storedValue(key: .token)
+        apiKeyLabel.text = storedValue(key: .apiKey, default: "qk4nn7rpcn75")
+        userIdLabel.text = storedValue(key: .userId, default: "broken-waterfall-5")
+        userNameLabel.text = storedValue(key: .userName, default: "Broken waterfall")
+        tokenLabel.text = storedValue(key: .token, default:  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg")
         secondUserIdLabel.text = storedValue(key: .secondUserId)
     }
     
@@ -45,6 +45,7 @@ final class LoginViewController: UIViewController {
         if clientSetupped {
             apiKeyLabel.isEnabled = false
             apiKeyLabel.textColor = .systemGray
+            apiKeyLabel.text = "\(apiKeyLabel.text ?? "") (restart the app to change it)"
             Client.shared.disconnect()
         } else if (apiKeyLabel.text ?? "").isEmpty {
             apiKeyLabel.becomeFirstResponder()
@@ -92,7 +93,9 @@ final class LoginViewController: UIViewController {
         loggedInToken = token
         
         if !clientSetupped {
-            Client.config = .init(apiKey: apiKey, logOptions: .debug)
+            Client.config = .init(apiKey: apiKey,
+                                  logOptions: .debug)
+            
             Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
             clientSetupped = true
         }
@@ -140,7 +143,7 @@ extension LoginViewController {
         userDefaults.set(value, forKey: key.rawValue)
     }
     
-    func storedValue(key: StoreKey) -> String? {
-        return userDefaults.value(forKey: key.rawValue) as? String
+    func storedValue(key: StoreKey, default: String? = nil) -> String? {
+        return (userDefaults.value(forKey: key.rawValue) as? String) ?? `default`
     }
 }
