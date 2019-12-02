@@ -30,18 +30,18 @@ public final class RealmDatabase {
     
     private static let schemaVersion: UInt64 = 0
     
-    private static let objectTypes: [Object.Type] = [UserRealmObject.self,
-                                                     ChannelRealmObject.self,
-                                                     ChannelConfigRealmObject.self,
-                                                     ChannelCommandRealmObject.self,
-                                                     MemberRealmObject.self,
-                                                     MutedUserRealmObject.self,
-                                                     MessageRealmObject.self,
-                                                     ReactionRealmObject.self,
-                                                     ReactionCountsRealmObject.self,
-                                                     AttachmentRealmObject.self,
-                                                     AttachmentActionRealmObject.self,
-                                                     AttachmentFileRealmObject.self]
+    private static let objectTypes: [Object.Type] = [User.self,
+                                                     Channel.self,
+                                                     ChannelConfig.self,
+                                                     ChannelCommand.self,
+                                                     Member.self,
+                                                     MutedUser.self,
+                                                     Message.self,
+                                                     Reaction.self,
+                                                     ReactionCounts.self,
+                                                     Attachment.self,
+                                                     AttachmentAction.self,
+                                                     AttachmentFile.self]
     
     /// Setup an optimization for Realm database size (totalBytes > 50Mb, usedBytes < 50%).
     private static let compactOnLaunch = { (totalBytes: Int, usedBytes: Int) -> Bool in
@@ -63,7 +63,7 @@ public final class RealmDatabase {
         return realmConfiguration?.fileURL
     }
     
-    public var user: User? {
+    public var user: StreamChatCore.User? {
         didSet {
             do {
                 try setup()

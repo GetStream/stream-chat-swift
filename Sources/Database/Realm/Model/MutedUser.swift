@@ -1,5 +1,5 @@
 //
-//  MutedUserRealmObject.swift
+//  MutedUser.swift
 //  StreamChatRealm
 //
 //  Created by Alexey Bukhtin on 20/11/2019.
@@ -10,10 +10,10 @@ import Foundation
 import RealmSwift
 import StreamChatCore
 
-public final class MutedUserRealmObject: Object {
+public final class MutedUser: Object {
     
     @objc dynamic var id = ""
-    @objc dynamic var user: UserRealmObject?
+    @objc dynamic var user: User?
     @objc dynamic var created = Date.default
     @objc dynamic var updated = Date.default
     
@@ -21,21 +21,21 @@ public final class MutedUserRealmObject: Object {
         return "id"
     }
     
-    public var asMutedUser: MutedUser? {
+    public var asMutedUser: StreamChatCore.MutedUser? {
         guard let user = user?.asUser else {
             return nil
         }
         
-        return MutedUser(user: user, created: created, updated: updated)
+        return StreamChatCore.MutedUser(user: user, created: created, updated: updated)
     }
     
     required init() {
         super.init()
     }
     
-    public init(mutedUser: MutedUser, channel: Channel) {
+    public init(mutedUser: StreamChatCore.MutedUser, channel: StreamChatCore.Channel) {
         id = "\(channel.cid)_\(mutedUser.user.id)"
-        user = UserRealmObject(mutedUser.user)
+        user = User(mutedUser.user)
         created = mutedUser.created
         updated = mutedUser.updated
     }

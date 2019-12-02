@@ -6,14 +6,10 @@
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
+import RealmSwift
 
-public protocol RealmObjectIndexable: class {
-    static var indexedPropertiesKeyPaths: [AnyKeyPath] { get }
-}
-
-extension RealmObjectIndexable {
-    public static func indexedProperties() -> [String] {
-        return indexedPropertiesKeyPaths.compactMap({ $0._kvcKeyPathString })
+extension Object {
+    static func indexedPropertiesKeyPaths(_ keyPaths: [AnyKeyPath]) -> [String] {
+        return keyPaths.compactMap({ $0._kvcKeyPathString })
     }
 }

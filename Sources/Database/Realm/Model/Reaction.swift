@@ -1,5 +1,5 @@
 //
-//  ReactionRealmObject.swift
+//  Reaction.swift
 //  StreamChatRealm
 //
 //  Created by Alexey Bukhtin on 27/11/2019.
@@ -10,37 +10,37 @@ import Foundation
 import RealmSwift
 import StreamChatCore
 
-public final class ReactionRealmObject: Object {
+public final class Reaction: Object {
     
     @objc dynamic var type = ""
-    @objc dynamic var user: UserRealmObject?
+    @objc dynamic var user: User?
     @objc dynamic var created = Date.default
     @objc dynamic var messageId = ""
     
-    var asReaction: Reaction? {
+    var asReaction: StreamChatCore.Reaction? {
         guard let type = ReactionType(rawValue: type) else {
             return nil
         }
         
-        return Reaction(type: type, messageId: messageId, user: user?.asUser, created: created)
+        return StreamChatCore.Reaction(type: type, messageId: messageId, user: user?.asUser, created: created)
     }
     
     required init() {
         super.init()
     }
     
-    init(_ reaction: Reaction) {
+    init(_ reaction: StreamChatCore.Reaction) {
         type = reaction.type.rawValue
         created = reaction.created
         messageId = reaction.messageId
         
         if let user = reaction.user {
-            self.user = UserRealmObject(user)
+            self.user = User(user)
         }
     }
 }
 
-public final class ReactionCountsRealmObject: Object {
+public final class ReactionCounts: Object {
     @objc dynamic var type = ""
     @objc dynamic var count = 0
     

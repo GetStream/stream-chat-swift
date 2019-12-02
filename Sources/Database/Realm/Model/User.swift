@@ -1,5 +1,5 @@
 //
-//  UserRealmObject.swift
+//  User.swift
 //  StreamChatRealm
 //
 //  Created by Alexey Bukhtin on 19/11/2019.
@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 import StreamChatCore
 
-public final class UserRealmObject: Object {
+public final class User: Object {
     
     @objc dynamic var id: String = ""
     @objc dynamic var name: String = ""
@@ -22,33 +22,33 @@ public final class UserRealmObject: Object {
     @objc dynamic var isBanned: Bool = false
     @objc dynamic var role: String = "user"
     @objc dynamic var extraData: Data?
-    let mutedUsers = List<MutedUserRealmObject>()
+    let mutedUsers = List<MutedUser>()
     
     override public static func primaryKey() -> String? {
         return "id"
     }
     
-    public var asUser: User? {
-        guard let role = User.Role(rawValue: role) else {
+    public var asUser: StreamChatCore.User? {
+        guard let role = StreamChatCore.User.Role(rawValue: role) else {
             return nil
         }
         
-        return User(id: id,
-                    name: name,
-                    role: role,
-                    avatarURL: avatarURL?.url,
-                    created: created,
-                    updated: updated,
-                    lastActiveDate: lastActiveDate,
-                    isInvisible: isInvisible,
-                    isBanned: isBanned,
-                    mutedUsers: mutedUsers.compactMap({ $0.asMutedUser }),
-                    extraData: ExtraData.UserWrapper.decode(extraData))
+        return StreamChatCore.User(id: id,
+                                   name: name,
+                                   role: role,
+                                   avatarURL: avatarURL?.url,
+                                   created: created,
+                                   updated: updated,
+                                   lastActiveDate: lastActiveDate,
+                                   isInvisible: isInvisible,
+                                   isBanned: isBanned,
+                                   mutedUsers: mutedUsers.compactMap({ $0.asMutedUser }),
+                                   extraData: ExtraData.UserWrapper.decode(extraData))
     }
     
     required init() {}
     
-    public init(_ user: User) {
+    public init(_ user: StreamChatCore.User) {
         id = user.id
         name = user.name
         avatarURL = user.avatarURL?.absoluteString
