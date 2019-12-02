@@ -426,7 +426,7 @@ Stream Swift SDK v.1.0.0</string>
             </objects>
             <point key="canvasLocation" x="-2020" y="-63"/>
         </scene>
-        <!--Login-->
+        <!--Authorization-->
         <scene sceneID="FcB-TZ-bNa">
             <objects>
                 <viewController id="ILk-9W-cdO" customClass="LoginViewController" customModule="ChatExample" customModuleProvider="target" sceneMemberID="viewController">
@@ -434,60 +434,88 @@ Stream Swift SDK v.1.0.0</string>
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="efb-oB-Elc">
-                                <rect key="frame" x="16" y="64" width="343" height="152"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="efb-oB-Elc">
+                                <rect key="frame" x="16" y="54" width="343" height="303"/>
                                 <subviews>
-                                    <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vdR-lO-ZcN">
-                                        <rect key="frame" x="0.0" y="0.0" width="246" height="30"/>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                        <state key="normal" title="⚔️ Jon Snow (broken-waterfall-5)"/>
-                                        <connections>
-                                            <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="NCF-EU-18h"/>
-                                        </connections>
-                                    </button>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1sr-Xf-5Ga">
-                                        <rect key="frame" x="0.0" y="45" width="343" height="1"/>
-                                        <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Client API key:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cwF-PR-bJn">
+                                        <rect key="frame" x="0.0" y="0.0" width="343" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Stream Chat API key" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="b0t-D9-sKI">
+                                        <rect key="frame" x="0.0" y="22" width="343" height="25"/>
+                                        <color key="backgroundColor" systemColor="quaternarySystemFillColor" red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="dV5-HI-qCc"/>
+                                            <constraint firstAttribute="height" constant="25" id="XIf-4p-ctT"/>
                                         </constraints>
-                                    </view>
-                                    <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ajg-K2-RrU">
-                                        <rect key="frame" x="0.0" y="61" width="230" height="30"/>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                        <state key="normal" title="🌙 Steep Moon (steep-moon-9)"/>
-                                        <connections>
-                                            <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="FCd-Vp-jlt"/>
-                                        </connections>
-                                    </button>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="upo-Ap-0Rf">
-                                        <rect key="frame" x="0.0" y="106" width="343" height="1"/>
-                                        <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no"/>
+                                    </textField>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The current user:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Na5-V9-XpN">
+                                        <rect key="frame" x="0.0" y="52" width="343" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="User id" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sRM-UZ-Fap">
+                                        <rect key="frame" x="0.0" y="74" width="343" height="25"/>
+                                        <color key="backgroundColor" systemColor="quaternarySystemFillColor" red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="rBK-Mb-tmS"/>
+                                            <constraint firstAttribute="height" constant="25" id="HCA-x1-cHa"/>
                                         </constraints>
-                                    </view>
-                                    <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SCf-XQ-rtk">
-                                        <rect key="frame" x="0.0" y="122" width="217" height="30"/>
-                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                        <state key="normal" title="🍁 Spring Unit (spring-unit-2)"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no"/>
+                                    </textField>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="User name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="tm9-EU-QhU">
+                                        <rect key="frame" x="0.0" y="104" width="343" height="25"/>
+                                        <color key="backgroundColor" systemColor="quaternarySystemFillColor" red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="tcC-Mt-Pnd"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no"/>
+                                    </textField>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Token:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4vw-If-lcR">
+                                        <rect key="frame" x="0.0" y="134" width="343" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="No1-11-4jC">
+                                        <rect key="frame" x="0.0" y="156" width="343" height="60"/>
+                                        <color key="backgroundColor" systemColor="quaternarySystemFillColor" red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="60" id="DpA-2I-uKa"/>
+                                        </constraints>
+                                        <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
+                                    </textView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The second user for invites (optional):" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZHg-Vu-qVC">
+                                        <rect key="frame" x="0.0" y="221" width="343" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="User id" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vlr-5g-a7q">
+                                        <rect key="frame" x="0.0" y="243" width="343" height="25"/>
+                                        <color key="backgroundColor" systemColor="quaternarySystemFillColor" red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="25" id="R2g-x0-sae"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lj1-9I-86W">
+                                        <rect key="frame" x="0.0" y="273" width="343" height="30"/>
+                                        <state key="normal" title="Login"/>
                                         <connections>
-                                            <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="gDX-da-TCu"/>
+                                            <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="qMX-U4-fUK"/>
                                         </connections>
                                     </button>
                                 </subviews>
-                                <constraints>
-                                    <constraint firstItem="upo-Ap-0Rf" firstAttribute="width" secondItem="efb-oB-Elc" secondAttribute="width" id="oEN-mi-5Au"/>
-                                    <constraint firstItem="1sr-Xf-5Ga" firstAttribute="width" secondItem="efb-oB-Elc" secondAttribute="width" id="oeI-pg-JH6"/>
-                                </constraints>
                             </stackView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="R2e-bX-RrE">
-                                <rect key="frame" x="0.0" y="231" width="375" height="1"/>
-                                <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="1" id="jV7-Av-0Eh"/>
-                                </constraints>
-                            </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qkx-nf-WiO">
                                 <rect key="frame" x="118.5" y="618" width="138.5" height="29"/>
                                 <string key="text">Demo Project
@@ -499,21 +527,33 @@ Stream Swift SDK v.1.0.0</string>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="R2e-bX-RrE" firstAttribute="top" secondItem="efb-oB-Elc" secondAttribute="bottom" constant="15" id="76d-H9-bu9"/>
-                            <constraint firstItem="R2e-bX-RrE" firstAttribute="leading" secondItem="mWs-yd-frq" secondAttribute="leading" id="7hh-SD-zIL"/>
                             <constraint firstItem="efb-oB-Elc" firstAttribute="leading" secondItem="gGL-YF-wXz" secondAttribute="leading" constant="16" id="9cD-l8-fdy"/>
                             <constraint firstItem="qkx-nf-WiO" firstAttribute="centerX" secondItem="gGL-YF-wXz" secondAttribute="centerX" id="Ahj-nO-yCX"/>
-                            <constraint firstItem="efb-oB-Elc" firstAttribute="top" secondItem="gGL-YF-wXz" secondAttribute="top" constant="20" id="EK4-eb-883"/>
+                            <constraint firstItem="efb-oB-Elc" firstAttribute="top" secondItem="gGL-YF-wXz" secondAttribute="top" constant="10" id="EK4-eb-883"/>
                             <constraint firstItem="gGL-YF-wXz" firstAttribute="trailing" secondItem="efb-oB-Elc" secondAttribute="trailing" constant="16" id="o0m-gG-MBq"/>
                             <constraint firstItem="gGL-YF-wXz" firstAttribute="bottom" secondItem="qkx-nf-WiO" secondAttribute="bottom" constant="20" id="veE-mH-nNt"/>
-                            <constraint firstAttribute="trailing" secondItem="R2e-bX-RrE" secondAttribute="trailing" id="vxo-3H-n0Q"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="gGL-YF-wXz"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Login" largeTitleDisplayMode="always" id="n63-Bd-bXJ">
+                    <navigationItem key="navigationItem" title="Authorization" largeTitleDisplayMode="never" id="n63-Bd-bXJ">
                         <barButtonItem key="backBarButtonItem" title="Logout" id="a3A-MZ-TuC"/>
+                        <barButtonItem key="leftBarButtonItem" title="Clear" id="nPe-Sh-e4b">
+                            <connections>
+                                <action selector="clear:" destination="ILk-9W-cdO" id="DlM-Oz-uhD"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Login" id="XdY-po-FTF">
+                            <connections>
+                                <action selector="login:" destination="ILk-9W-cdO" id="uWQ-hB-vcc"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="apiKeyLabel" destination="b0t-D9-sKI" id="6Jy-9g-fjj"/>
+                        <outlet property="secondUserIdLabel" destination="vlr-5g-a7q" id="Vmg-Ny-GCu"/>
+                        <outlet property="tokenLabel" destination="No1-11-4jC" id="Eru-Zw-dCK"/>
+                        <outlet property="userIdLabel" destination="sRM-UZ-Fap" id="RQb-kk-Z3E"/>
+                        <outlet property="userNameLabel" destination="tm9-EU-QhU" id="6VT-Cf-2ts"/>
                         <outlet property="versionLabel" destination="qkx-nf-WiO" id="0Dx-7r-bP1"/>
                         <segue destination="0IT-ko-SLg" kind="show" identifier="RootViewController" id="KhR-fH-fGN"/>
                     </connections>
@@ -591,8 +631,8 @@ Stream Swift SDK v.1.0.0</string>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="gPS-K7-ckQ"/>
-        <segue reference="a5b-Jp-cN7"/>
-        <segue reference="Ko2-1P-TID"/>
+        <segue reference="qta-yE-T30"/>
+        <segue reference="x9o-K0-tAV"/>
         <segue reference="seW-P6-fEX"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -91,7 +91,7 @@ class CustomChatViewController: ChatViewController {
             channelPresenter.channel
                 .add(member)
                 .subscribe(onNext: { _ in
-                    Banners.shared.show("\(User.user3.name) added to the channel")
+                    Banners.shared.show("\(member.user.name) added to the channel")
                 })
                 .disposed(by: self.disposeBag)
         }))
@@ -115,7 +115,7 @@ class CustomChatViewController: ChatViewController {
             channelPresenter?.channel
                 .remove(member)
                 .subscribe(onNext: { _ in
-                    Banners.shared.show("\(User.user3.name) removed from the channel")
+                    Banners.shared.show("\(member.user.name) removed from the channel")
                 })
                 .disposed(by: disposeBag)
         }
@@ -126,11 +126,14 @@ class CustomChatViewController: ChatViewController {
             return nil
         }
         
-        for user in [User.user1, .user2, .user3] where !user.isCurrent && !membersSet.contains(where: { $0.user == user }) {
-            return user.asMember
+        guard let window = UIApplication.shared.delegate?.window,
+            let navigationController = window?.rootViewController as? UINavigationController,
+            let loginViewController = navigationController.viewControllers.first as? LoginViewController,
+            let secondUser = loginViewController.secondUser else {
+            return nil
         }
         
-        return nil
+        return membersSet.contains(where: { $0.user == secondUser }) ? nil : secondUser.asMember
     }
     
     func notCurrentMemberInChannelMembers() -> Member? {
