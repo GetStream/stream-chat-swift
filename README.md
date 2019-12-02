@@ -33,7 +33,7 @@ This repo includes a fully functional example app. You can run the example app b
 2. Download the StreamChat repo: `git clone git@github.com:GetStream/stream-chat-swift.git`
 3. Change the directory: `cd stream-chat-swift/Example/Cocoapods`
 4. Install the [Cocoapods](https://guides.cocoapods.org/using/getting-started.html): `sudo gem install cocoapods`
-5. Install dependencies: `pod install`
+5. Install dependencies: `pod install --repo-update`
 
 <details>
 <p>
