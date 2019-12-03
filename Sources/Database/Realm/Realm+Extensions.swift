@@ -20,14 +20,20 @@ extension Realm {
         } catch let error as Realm.Error {
             RealmDatabase.shared.logger?.log(error, message: "Getting the default Realm")
             
-            if error.code == .fileAccess {
-                RealmDatabase.shared.logger?.log(error, message: "Unable to open a Realm file (probably decryption failed).")
+            if error.code == .fileAccess || error.code == .schemaMismatch {
+                RealmDatabase.shared.logger?.log("Trying to clean up the Realm database...")
                 
                 if let realmURL = RealmDatabase.shared.realmURL {
                     do {
                         var realmURL = realmURL
                         realmURL.deleteLastPathComponent()
-                        try FileManager.default.removeItem(at: realmURL)
+                        
+                        if FileManager.default.fileExists(atPath: realmURL.path) {
+                            try FileManager.default.removeItem(at: realmURL)
+                            try RealmDatabase.shared.setup()
+                        } else {
+                            return nil
+                        }
                     } catch let error {
                         RealmDatabase.shared.logger?.log(error, message: "Cleaning up Realm directory")
                         return nil
@@ -35,6 +41,7 @@ extension Realm {
                 }
                 
                 return Realm.default
+                
             } else {
                 RealmDatabase.shared.logger?.log(error)
                 return nil

@@ -12,6 +12,7 @@ import StreamChatCore
 
 public final class Channel: Object {
     
+    @objc dynamic var cid = ""
     @objc dynamic var id = ""
     @objc dynamic var type = ""
     @objc dynamic var name = ""
@@ -26,11 +27,11 @@ public final class Channel: Object {
     let members = List<Member>()
     
     override public static func primaryKey() -> String? {
-        return "id"
+        return "cid"
     }
     
     public override class func indexedProperties() -> [String] {
-        return indexedPropertiesKeyPaths([\Channel.type, \Channel.created])
+        return indexedPropertiesKeyPaths([\Channel.id, \Channel.type, \Channel.created])
     }
     
     public var asChannel: StreamChatCore.Channel? {
@@ -53,6 +54,7 @@ public final class Channel: Object {
     }
     
     public init(_ channel: StreamChatCore.Channel) {
+        cid = channel.cid.description
         id = channel.id
         type = channel.type.rawValue
         name = channel.name

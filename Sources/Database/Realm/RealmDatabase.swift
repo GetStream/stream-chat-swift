@@ -14,7 +14,9 @@ import KeychainAccess
 
 /// A Realm datase for Stream Chat.
 public final class RealmDatabase {
-    
+    public typealias FilterKeyMapping = (_ key: String) -> String
+    public typealias FilterValueMapping = (_ key: String, _ value: Encodable) -> CVarArg?
+
     /// A config for Realm database.
     public static var config = Config(basePath: .caches)
     /// A shared instance.
@@ -28,6 +30,9 @@ public final class RealmDatabase {
         return .shared
     }
     
+    public static var filterKeyMapping: FilterKeyMapping?
+    public static var filterValueMapping: FilterValueMapping?
+
     private static let schemaVersion: UInt64 = 0
     
     private static let objectTypes: [Object.Type] = [User.self,
@@ -103,7 +108,7 @@ public final class RealmDatabase {
 // MARK: - Setup
 
 extension RealmDatabase {
-    private func setup() throws {
+    func setup() throws {
         realmConfiguration = nil
         
         guard let user = user, let basePath = basePath else {
@@ -112,7 +117,8 @@ extension RealmDatabase {
         
         logger?.log("Schema version: \(RealmDatabase.schemaVersion)")
         
-        let userKey = user.id.appending("57r34mch47").md5
+        // User key: MD5(API key + user id + salt).
+        let userKey = Client.shared.apiKey.appending(user.id).appending("57r34mch47").md5
         
         // Setup Realm URL.
         var realmURL = try URL.baseRealmURL(basePath, subPath: userKey)

@@ -17,6 +17,9 @@ public protocol Database {
     /// A logger.
     var logger: ClientLogger? { get }
     
+    /// Delete all objects.
+    func deleteAll()
+    
     // MARK: Channels
     
     /// Fetch channels and messages from a database.
