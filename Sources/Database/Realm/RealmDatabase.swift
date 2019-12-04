@@ -39,9 +39,12 @@ public final class RealmDatabase {
                                                      Channel.self,
                                                      ChannelConfig.self,
                                                      ChannelCommand.self,
+                                                     ChannelsResponse.self,
+                                                     ChannelResponse.self,
                                                      Member.self,
                                                      MutedUser.self,
                                                      Message.self,
+                                                     MessageRead.self,
                                                      Reaction.self,
                                                      ReactionCounts.self,
                                                      Attachment.self,
@@ -122,7 +125,7 @@ extension RealmDatabase {
         
         // Setup Realm URL.
         var realmURL = try URL.baseRealmURL(basePath, subPath: userKey)
-        realmURL = realmURL.appendingPathComponent("chat_\(user.id.fileName)").appendingPathExtension("realm")
+        realmURL = realmURL.appendingPathComponent("chat_\(user.id.fileName())").appendingPathExtension("realm")
         logger?.log(realmURL.absoluteString)
         
         // Setup encryption key.

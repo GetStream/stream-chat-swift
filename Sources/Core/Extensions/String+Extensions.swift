@@ -7,13 +7,54 @@
 //
 
 import Foundation
+import CommonCrypto
 
-// MARK: Check the string is blank
+// MARK: Hashing
 
 extension String {
+    /// A string format to conver bytes to string.
+    public static let dataToHEXFormat = "%02hhx"
+    
+    /// Returns a MD5 hash for the string.
+    public var md5: String {
+        let context = UnsafeMutablePointer<CC_MD5_CTX>.allocate(capacity: 1)
+        var digest = Array<UInt8>(repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
+        CC_MD5_Init(context)
+        CC_MD5_Update(context, self, CC_LONG(lengthOfBytes(using: .utf8)))
+        CC_MD5_Final(&digest, context)
+        context.deallocate()
+        return digest.map({ String(format: String.dataToHEXFormat, $0) }).joined()
+    }
+}
+
+// MARK: Helpers
+
+extension String {
+    private static let fileNameCharacterSet = CharacterSet.lowercaseLetters.union(.decimalDigits).union(.init(charactersIn: "_"))
+    
+    /// Get an URL from the string.
+    public var url: URL? {
+        return URL(string: self)
+    }
+    
     /// Check if the string is empty and does not have whitespaces or newlines.
     public var isBlank: Bool {
         return isEmpty || allSatisfy({ $0.isWhitespace })
+    }
+    
+    /// Get a safe filnename from the string.
+    public func fileName(limit: Int = 20) -> String {
+        var fileName = String(UnicodeScalarView(lowercased()
+            .replacingOccurrences(of: "-", with: "_")
+            .unicodeScalars
+            .lazy
+            .filter({ String.fileNameCharacterSet.contains($0) })))
+        
+        if fileName.count > limit {
+            fileName = String(fileName.prefix(limit))
+        }
+        
+        return fileName
     }
 }
 

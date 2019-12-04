@@ -41,7 +41,7 @@ public extension Client {
     func channels(query: ChannelsQuery) -> Observable<[ChannelResponse]> {
         let request: Observable<ChannelsResponse> = rx.request(endpoint: .channels(query))
         return connectedRequest(request.map { $0.channels })
-            .do(onNext: { [unowned self] in self.add(channelsToDatabase: $0) })
+            .do(onNext: { [unowned self] in self.add(channelsToDatabase: $0, query: query) })
     }
     
     /// Requests channel with a given query.

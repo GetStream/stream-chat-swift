@@ -21,7 +21,7 @@ import Foundation
 /// // Filter channels by type or members:
 /// filter = .key("type", .equal(to: "messaging")) | .key("members", .in(["jon"]))
 /// ```
-public enum Filter: Encodable {
+public enum Filter: Encodable, CustomStringConvertible {
     /// No filter.
     case none
     /// Filter by a given key with a given operator (see Operator).
@@ -32,6 +32,21 @@ public enum Filter: Encodable {
     indirect case or([Filter])
     /// Filter without any of filters (like `not or`).
     indirect case nor([Filter])
+    
+    public var description: String {
+        switch self {
+        case .none:
+            return ""
+        case .key(let key, let op):
+            return "\(key) \(op)"
+        case .and(let filters):
+            return "(" + filters.map({ $0.description }).joined(separator: ") AND (") + ")"
+        case .or(let filters):
+            return "(" + filters.map({ $0.description }).joined(separator: ") OR (") + ")"
+        case .nor(let filters):
+            return "(" + filters.map({ $0.description }).joined(separator: ") NOR (") + ")"
+        }
+    }
     
     public func encode(to encoder: Encoder) throws {
         switch self {
@@ -51,7 +66,7 @@ public enum Filter: Encodable {
 
 public extension Filter {
     /// An operator for the filter.
-    enum Operator: Encodable {
+    enum Operator: Encodable, CustomStringConvertible {
         /// An equal operator.
         case equal(to: Encodable)
         /// A not equal operator.
@@ -72,6 +87,31 @@ public extension Filter {
         case query(String)
         /// An autocomplete operator.
         case autocomplete(String)
+        
+        public var description: String {
+            switch self {
+            case .equal(let object):
+                return "= \(object)"
+            case .notEqual(let object):
+                return "!= \(object)"
+            case .greater(let object):
+                return "> \(object)"
+            case .greaterOrEqual(let object):
+                return ">= \(object)"
+            case .less(let object):
+                return "< \(object)"
+            case .lessOrEqual(let object):
+                return ">= \(object)"
+            case .in(let objects):
+                return "IN (\(objects))"
+            case .notIn(let objects):
+                return "NOT IN (\(objects))"
+            case .query(let object):
+                return "QUERY \(object)"
+            case .autocomplete(let object):
+                return "CONTAINS \(object)"
+            }
+        }
         
         public func encode(to encoder: Encoder) throws {
             var operatorName = ""

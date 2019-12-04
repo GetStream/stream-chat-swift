@@ -29,10 +29,12 @@
 		8A1207CB238ED68000E41790 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207C9238ED66500E41790 /* Message.swift */; };
 		8A1207CD238EE3C700E41790 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207CC238EE3C700E41790 /* Reaction.swift */; };
 		8A150E9F232A8D8400330562 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A150E9E232A8D8400330562 /* Database.swift */; };
+		8A1BC0FE23969079006694A1 /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */; };
+		8A1BC1002396A2C1006694A1 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FF2396A2C1006694A1 /* ChannelResponse.swift */; };
+		8A1BC1022396A459006694A1 /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC1012396A459006694A1 /* MessageRead.swift */; };
 		8A2A5110238FE10F00B230E9 /* RealmObjectIndexable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2A510F238FE10F00B230E9 /* RealmObjectIndexable.swift */; };
 		8A2A511623901CC200B230E9 /* Realm+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2A511423901C6500B230E9 /* Realm+Extensions.swift */; };
 		8A2A511823901EAC00B230E9 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2A511723901EAC00B230E9 /* URL+Extensions.swift */; };
-		8A2A511A239022E000B230E9 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2A5119239022E000B230E9 /* String+Extensions.swift */; };
 		8A2A511C2390266A00B230E9 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2A511B2390266A00B230E9 /* Data+Extensions.swift */; };
 		8A2A511E2390273E00B230E9 /* KeychainAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A2A511D2390273E00B230E9 /* KeychainAccess.framework */; };
 		8A2A51212390274800B230E9 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
@@ -266,10 +268,12 @@
 		8A1207C9238ED66500E41790 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		8A1207CC238EE3C700E41790 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8A150E9E232A8D8400330562 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsResponse.swift; sourceTree = "<group>"; };
+		8A1BC0FF2396A2C1006694A1 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
+		8A1BC1012396A459006694A1 /* MessageRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRead.swift; sourceTree = "<group>"; };
 		8A2A510F238FE10F00B230E9 /* RealmObjectIndexable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObjectIndexable.swift; sourceTree = "<group>"; };
 		8A2A511423901C6500B230E9 /* Realm+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Extensions.swift"; sourceTree = "<group>"; };
 		8A2A511723901EAC00B230E9 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
-		8A2A5119239022E000B230E9 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		8A2A511B2390266A00B230E9 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		8A2A511D2390273E00B230E9 /* KeychainAccess.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KeychainAccess.framework; path = Carthage/Build/iOS/KeychainAccess.framework; sourceTree = "<group>"; };
 		8A2A51272391218E00B230E9 /* RealmDatabase+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RealmDatabase+Database.swift"; sourceTree = "<group>"; };
@@ -616,7 +620,6 @@
 				8A2A51272391218E00B230E9 /* RealmDatabase+Database.swift */,
 				8A2A511423901C6500B230E9 /* Realm+Extensions.swift */,
 				8A2A511723901EAC00B230E9 /* URL+Extensions.swift */,
-				8A2A5119239022E000B230E9 /* String+Extensions.swift */,
 				8A2A511B2390266A00B230E9 /* Data+Extensions.swift */,
 				8A8BB2B2238459E800C2F9DE /* Model */,
 			);
@@ -627,10 +630,13 @@
 			isa = PBXGroup;
 			children = (
 				8A2DD95023849108007775E9 /* User.swift */,
-				8A8BB2B02384580700C2F9DE /* Channel.swift */,
 				8A2DD955238556A7007775E9 /* Member.swift */,
 				8A2DD9522385565B007775E9 /* MutedUser.swift */,
+				8A8BB2B02384580700C2F9DE /* Channel.swift */,
+				8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */,
+				8A1BC0FF2396A2C1006694A1 /* ChannelResponse.swift */,
 				8A1207C9238ED66500E41790 /* Message.swift */,
+				8A1BC1012396A459006694A1 /* MessageRead.swift */,
 				8A1207CC238EE3C700E41790 /* Reaction.swift */,
 				8A5211D4238EE7DC004BED65 /* Attachment.swift */,
 				8A2A510F238FE10F00B230E9 /* RealmObjectIndexable.swift */,
@@ -1287,10 +1293,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A1BC0FE23969079006694A1 /* ChannelsResponse.swift in Sources */,
 				8A2A511823901EAC00B230E9 /* URL+Extensions.swift in Sources */,
 				8AD5907F23957102005903AC /* Filter.swift in Sources */,
 				8A1207CD238EE3C700E41790 /* Reaction.swift in Sources */,
 				8A2DD956238556A7007775E9 /* Member.swift in Sources */,
+				8A1BC1022396A459006694A1 /* MessageRead.swift in Sources */,
 				8A2DD95423855690007775E9 /* Channel.swift in Sources */,
 				8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */,
 				8A2A5110238FE10F00B230E9 /* RealmObjectIndexable.swift in Sources */,
@@ -1298,8 +1306,8 @@
 				8A2A51282391218E00B230E9 /* RealmDatabase+Database.swift in Sources */,
 				8A2A511C2390266A00B230E9 /* Data+Extensions.swift in Sources */,
 				8A1207CB238ED68000E41790 /* Message.swift in Sources */,
+				8A1BC1002396A2C1006694A1 /* ChannelResponse.swift in Sources */,
 				8A2DD9532385565B007775E9 /* MutedUser.swift in Sources */,
-				8A2A511A239022E000B230E9 /* String+Extensions.swift in Sources */,
 				8A5211D5238EE7DC004BED65 /* Attachment.swift in Sources */,
 				8A2A511623901CC200B230E9 /* Realm+Extensions.swift in Sources */,
 			);

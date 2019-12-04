@@ -15,11 +15,15 @@ import Foundation
 /// // Sort channels by the last message date:
 /// let sorting = Sorting("lastMessageDate")
 /// ```
-public struct Sorting: Encodable {
+public struct Sorting: Encodable, CustomStringConvertible {
     /// A sorting field name.
     public let field: String
     /// A sorting direction.
     public let direction: Int
+    
+    public var description: String {
+        return "\(field):\(direction)"
+    }
     
     /// Init sorting options.
     ///

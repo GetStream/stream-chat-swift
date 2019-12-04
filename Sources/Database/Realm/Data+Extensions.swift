@@ -27,8 +27,4 @@ extension Data {
         
         throw RealmDatabase.Error.generatingKeyDataFailed
     }
-    
-    var hex: String {
-        return map({ String(format: String.dataToHEXFormat, $0) }).joined()
-    }
 }

@@ -19,37 +19,38 @@ extension RealmDatabase: Database {
         Realm.default?.deleteAll()
     }
     
-    public func channels(_ query: ChannelsQuery) -> Observable<[ChannelResponse]> {
-        guard let realm = Realm.default else {
+    public func channels(_ query: StreamChatCore.ChannelsQuery) -> Observable<[StreamChatCore.ChannelResponse]> {
+        guard let realm = Realm.default,
+            let channelResponsesRealmObject = realm.object(ofType: ChannelsResponse.self, forPrimaryKey: query.id) else {
             return .empty()
         }
-
-        var channelResponses = [ChannelResponse]()
-        var channelRealmObjects = realm.objects(Channel.self)
         
-        if case .none = query.filter {} else if let predicate = query.filter.predicate {
-            channelRealmObjects = channelRealmObjects.filter(predicate)
-        }
-        
-        for channelRealmObject in channelRealmObjects {
-            if let channelResponse = channelResponse(with: channelRealmObject, realm: realm) {
-                channelResponses.append(channelResponse)
-            }
-        }
+        let channelResponses: [StreamChatCore.ChannelResponse] = channelResponsesRealmObject.channelResponses
+            .compactMap({ channelResponse in
+                guard let channel = channelResponse.channel?.asChannel else {
+                    return nil
+                }
+                
+                return StreamChatCore.ChannelResponse(channel: channel,
+                                                      messages: channelResponse.messages.compactMap({ $0.asMessage }),
+                                                      messageReads: channelResponse.messageReads.compactMap({ $0.asMessageRead }))
+            })
         
         return .just(channelResponses)
     }
     
-    private func channelResponse(with channelRealmObject: Channel, realm: Realm) -> ChannelResponse? {
+    private func channelResponse(with channelRealmObject: Channel, realm: Realm) -> StreamChatCore.ChannelResponse? {
         if let channel = channelRealmObject.asChannel {
             let messages = realm.objects(Message.self).filter("channel == %@", channelRealmObject)
-            return ChannelResponse(channel: channel, messages: messages.compactMap({ $0.asMessage }))
+            return StreamChatCore.ChannelResponse(channel: channel, messages: messages.compactMap({ $0.asMessage }))
         }
         
         return nil
     }
     
-    public func channel(channelType: ChannelType, channelId: String, pagination: Pagination) -> Observable<ChannelResponse> {
+    public func channel(channelType: ChannelType,
+                        channelId: String,
+                        pagination: Pagination) -> Observable<StreamChatCore.ChannelResponse> {
         guard let realm = Realm.default else {
             return .empty()
         }
@@ -71,20 +72,14 @@ extension RealmDatabase: Database {
         return .empty()
     }
     
-    public func add(channels: [ChannelResponse]) {
+    public func add(channels: [StreamChatCore.ChannelResponse], query: ChannelsQuery) {
         guard let realm = Realm.default else {
             return
         }
         
         realm.write(orCatchError: "Add channels \(channels.count)") { realm in
-            channels.forEach { channelResponse in
-                let channelRealmObject = Channel(channelResponse.channel)
-                realm.add(channelRealmObject, update: .modified)
-                
-                channelResponse.messages.forEach { message in
-                    realm.add(Message(message, channelRealmObject: channelRealmObject), update: .modified)
-                }
-            }
+            let channelsResponse = ChannelsResponse(channelsQueryId: query.id, channels: channels)
+            realm.add(channelsResponse, update: .modified)
         }
     }
     

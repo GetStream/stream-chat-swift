@@ -19,4 +19,9 @@ extension Data {
     mutating func append(_ string: String, encoding: String.Encoding = .utf8) {
         append(string.data(using: encoding, allowLossyConversion: false)!)
     }
+    
+    /// Conver a data to the HEX string.
+    public var hex: String {
+        return map({ String(format: String.dataToHEXFormat, $0) }).joined()
+    }
 }

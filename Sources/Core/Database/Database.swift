@@ -46,7 +46,7 @@ public protocol Database {
     
     /// Add channels with messages and members.
     /// - Parameter channels: channel responses.
-    func add(channels: [ChannelResponse])
+    func add(channels: [ChannelResponse], query: ChannelsQuery)
     
     /// Add or update a channel.
     /// - Parameter channel: a channel.

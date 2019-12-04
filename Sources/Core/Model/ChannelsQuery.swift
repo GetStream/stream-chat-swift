@@ -32,6 +32,11 @@ public struct ChannelsQuery: Encodable {
     /// Query options.
     public let options: QueryOptions
     
+    /// An hash id for filter and sorting properties.
+    public var id: String {
+        return "F:\(filter)S:\(sort)".md5
+    }
+    
     /// Init a channels query.
     /// - Parameter filter: a channels filter.
     /// - Parameter sort: a sorting list for channels.

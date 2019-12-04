@@ -26,7 +26,7 @@ public struct ChannelResponse: Decodable {
     /// Message read states (see `MessageRead`)
     public let messageReads: [MessageRead]
     /// Unread message state by the current user.
-    public let unreadMessageRead: MessageRead?
+    public private(set) var unreadMessageRead: MessageRead?
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -35,14 +35,7 @@ public struct ChannelResponse: Decodable {
         channel.members = Set(members)
         messages = try container.decodeIfPresent([Message].self, forKey: .messages) ?? []
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
-        
-        if let lastMessage = messages.last,
-            let messageRead = messageReads.first(where: { $0.user.isCurrent }),
-            lastMessage.updated > messageRead.lastReadDate {
-            unreadMessageRead = messageRead
-        } else  {
-            unreadMessageRead = nil
-        }
+        updateUnreadMessageRead()
     }
     
     /// Init a channel response.
@@ -52,12 +45,20 @@ public struct ChannelResponse: Decodable {
     ///   - channel: a channel.
     ///   - members: members of the channel.
     ///   - messages: messages in the channel.
-    public init(channel: Channel, messages: [Message] = []) {
+    public init(channel: Channel, messages: [Message] = [], messageReads: [MessageRead] = []) {
         self.channel = channel
         self.members = Array(channel.members)
         self.messages = messages
-        messageReads = []
-        unreadMessageRead = nil
+        self.messageReads = messageReads
+        updateUnreadMessageRead()
+    }
+    
+    private mutating func updateUnreadMessageRead() {
+        if let lastMessage = messages.last,
+            let messageRead = messageReads.first(where: { $0.user.isCurrent }),
+            lastMessage.updated > messageRead.lastReadDate {
+            unreadMessageRead = messageRead
+        }
     }
 }
 
