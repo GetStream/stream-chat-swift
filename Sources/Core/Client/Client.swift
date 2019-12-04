@@ -133,6 +133,10 @@ public final class Client {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Client.version)")
             ClientLogger.logger("🔑", "", apiKey)
             ClientLogger.logger("🔗", "", baseURL.description)
+            
+            if let database = database {
+                ClientLogger.logger("🗄", "", "\(database.self)")
+            }
         }
         
         self.apiKey = apiKey

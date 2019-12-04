@@ -30,11 +30,16 @@ final class LoginViewController: UIViewController {
         super.viewDidLoad()
         versionLabel.text = "Demo Project\nStream Swift SDK v.\(Client.version)"
         
+        let autoLogin = storedValue(key: .apiKey) != nil
         apiKeyLabel.text = storedValue(key: .apiKey, default: "qk4nn7rpcn75")
         userIdLabel.text = storedValue(key: .userId, default: "broken-waterfall-5")
         userNameLabel.text = storedValue(key: .userName, default: "Broken waterfall")
         tokenLabel.text = storedValue(key: .token, default:  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg")
         secondUserIdLabel.text = storedValue(key: .secondUserId)
+        
+        if autoLogin {
+            DispatchQueue.main.async { self.login(animated: false) }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,6 +51,11 @@ final class LoginViewController: UIViewController {
             apiKeyLabel.isEnabled = false
             apiKeyLabel.textColor = .systemGray
             apiKeyLabel.text = "\(apiKeyLabel.text ?? "") (restart the app to change it)"
+            remove(key: .apiKey)
+            remove(key: .userId)
+            remove(key: .userName)
+            remove(key: .token)
+            remove(key: .secondUserId)
             Client.shared.disconnect()
         } else if (apiKeyLabel.text ?? "").isEmpty {
             apiKeyLabel.becomeFirstResponder()
@@ -53,6 +63,10 @@ final class LoginViewController: UIViewController {
     }
     
     @IBAction func login(_ sender: Any) {
+        login(animated: true)
+    }
+    
+    func login(animated: Bool) {
         if #available(iOS 13.0, *) {
             tokenLabel.textColor = .label
         } else {
@@ -86,13 +100,24 @@ final class LoginViewController: UIViewController {
         if let secondUserId = secondUserIdLabel.text {
             secondUser = User(id: secondUserId, name: secondUserId)
             store(key: .secondUserId, value: secondUserId)
+        } else {
+            remove(key: .secondUserId)
         }
         
         loggedInUser = User(id: userId, name: userName)
         loggedInToken = token
         
         if !clientSetupped {
+            var database: Database? = nil
+            
+            // Database setup, if possible.
+            if NSClassFromString("RealmDatabase") != nil {
+                database = RealmDatabase.setup(.init(encrypted: false, logOptions: .info))
+            }
+            
             Client.config = .init(apiKey: apiKey,
+                                  baseURL: .init(customURL: URL(string: "https://chat-proxy-us-east.stream-io-api.com/")!),
+                                  database: database,
                                   logOptions: .debug)
             
             Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
@@ -100,19 +125,19 @@ final class LoginViewController: UIViewController {
             clientSetupped = true
         }
         
-        login(showNextViewController: true)
+        login(showNextViewController: true, animated: animated)
     }
     
-    func showRootViewController() {
-        performSegue(withIdentifier: "RootViewController", sender: self)
+    func showRootViewController(animated: Bool) {
+        performSegue(withIdentifier: animated ? "RootAnimated" : "Root", sender: self)
     }
     
-    func login(showNextViewController: Bool = false) {
+    func login(showNextViewController: Bool = false, animated: Bool) {
         if let user = loggedInUser, let token = loggedInToken {
             Client.shared.set(user: user, token: token)
             
             if showNextViewController {
-                showRootViewController()
+                showRootViewController(animated: animated)
             }
         }
     }
@@ -141,9 +166,26 @@ extension LoginViewController {
     
     func store(key: StoreKey, value: String) {
         userDefaults.set(value, forKey: key.rawValue)
+        userDefaults.synchronize()
     }
     
     func storedValue(key: StoreKey, default: String? = nil) -> String? {
         return (userDefaults.value(forKey: key.rawValue) as? String) ?? `default`
     }
+    
+    func remove(key: StoreKey) {
+        userDefaults.removeObject(forKey: key.rawValue)
+        userDefaults.synchronize()
+    }
 }
+
+// MARK: - Database Import (if possible)
+
+#if canImport(StreamChatRealm)
+import StreamChatRealm
+#else
+struct RealmDatabaseConfig { let encrypted: Bool; let logOptions: ClientLogger.Options }
+final class RealmDatabase {
+    static func setup(_ c: RealmDatabaseConfig? = nil) -> Database { return RealmDatabase() as! Database }
+}
+#endif

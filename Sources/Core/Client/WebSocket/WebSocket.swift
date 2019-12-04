@@ -141,7 +141,10 @@ public final class WebSocket {
     }
     
     func disconnect() {
+        logger?.log("Disconnecting...")
+        
         guard webSocketInitiated else {
+            logger?.log("Skip disconnecting: WebSocket was not initiated")
             return
         }
         
@@ -151,6 +154,8 @@ public final class WebSocket {
             handshakeTimer.suspend()
             webSocket.disconnect()
             logger?.log("💔 Disconnected deliberately")
+        } else {
+            logger?.log("Skip disconnecting: WebSocket was not connected")
         }
         
         DispatchQueue.main.async {
@@ -234,7 +239,7 @@ extension WebSocket {
     }
     
     private func disconnectedNoInternet() {
-        logger?.log("💔🕸 Skip connecting")
+        logger?.log("💔🕸 Disconnected: No Internet")
         cancelBackgroundWork()
         handshakeTimer.suspend()
         lastConnectionId = nil

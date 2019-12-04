@@ -3,7 +3,7 @@
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -76,7 +76,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="fQM-5J-VyU">
-                                <rect key="frame" x="16" y="64" width="343" height="421"/>
+                                <rect key="frame" x="16" y="64" width="343" height="470"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lMz-sX-zDG">
                                         <rect key="frame" x="0.0" y="0.0" width="128" height="30"/>
@@ -179,8 +179,21 @@
                                             <constraint firstAttribute="height" constant="1" id="vnA-K0-oI2"/>
                                         </constraints>
                                     </view>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Offline mode:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bRL-1s-rt3" userLabel="Offline:">
+                                        <rect key="frame" x="0.0" y="403" width="93" height="18"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="88s-xm-EP6">
+                                        <rect key="frame" x="0.0" y="436" width="343" height="1"/>
+                                        <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="1" id="ZYx-GI-2Xg"/>
+                                        </constraints>
+                                    </view>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push  notifications:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MVq-bk-kzB">
-                                        <rect key="frame" x="0.0" y="403" width="130.5" height="18"/>
+                                        <rect key="frame" x="0.0" y="452" width="130.5" height="18"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -189,6 +202,7 @@
                                 <constraints>
                                     <constraint firstItem="qr4-mI-Aca" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="63B-qm-Ywr"/>
                                     <constraint firstItem="gbU-nu-nAs" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="FUK-FQ-UjH"/>
+                                    <constraint firstItem="88s-xm-EP6" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="JAj-7u-7So"/>
                                     <constraint firstItem="NfR-jx-apB" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="W57-dd-fAC"/>
                                     <constraint firstItem="Is3-cY-vA9" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="XmS-Ge-9cD"/>
                                     <constraint firstItem="Mr8-ak-oSo" firstAttribute="width" secondItem="fQM-5J-VyU" secondAttribute="width" id="Z3W-3U-xbk"/>
@@ -243,19 +257,22 @@ badge</string>
                                 <rect key="frame" x="310" y="350.5" width="51" height="31"/>
                             </switch>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="H0k-lx-tmL">
-                                <rect key="frame" x="310" y="460.5" width="51" height="31"/>
+                                <rect key="frame" x="310" y="509.5" width="51" height="31"/>
                             </switch>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="1lG-cg-5R8">
                                 <rect key="frame" x="310" y="301.5" width="51" height="31"/>
                             </switch>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="dR6-bE-we3">
+                                <rect key="frame" x="310" y="460.5" width="51" height="31"/>
+                            </switch>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="It doesn't hold the state and to disable Push notifications you need to toggle it twice." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B0u-JV-sSq">
-                                <rect key="frame" x="16" y="490" width="283" height="29"/>
+                                <rect key="frame" x="16" y="539" width="283" height="29"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7rg-Xd-yMa">
-                                <rect key="frame" x="0.0" y="534" width="375" height="1"/>
+                                <rect key="frame" x="0.0" y="583" width="375" height="1"/>
                                 <color key="backgroundColor" red="0.83741801979999997" green="0.83743780850000005" blue="0.83742713930000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="1" id="b5l-qn-iGf"/>
@@ -275,6 +292,7 @@ Stream Swift SDK v.1.0.0</string>
                             <constraint firstItem="jrn-MT-IQv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="LML-Ms-XJg" secondAttribute="trailing" constant="10" id="21z-y7-4iv"/>
                             <constraint firstItem="11f-PJ-qcd" firstAttribute="leading" secondItem="Try-iz-4dr" secondAttribute="trailing" constant="10" id="4ic-pP-d1B"/>
                             <constraint firstItem="eTn-JY-iPB" firstAttribute="leading" secondItem="5Of-ZP-Ztv" secondAttribute="trailing" id="7eh-gI-RGo"/>
+                            <constraint firstItem="dR6-bE-we3" firstAttribute="centerY" secondItem="bRL-1s-rt3" secondAttribute="centerY" id="BdG-it-ipQ"/>
                             <constraint firstItem="7rg-Xd-yMa" firstAttribute="leading" secondItem="5vB-qP-Wuo" secondAttribute="leading" id="BrI-Wb-SCz"/>
                             <constraint firstItem="OkG-5O-emD" firstAttribute="centerY" secondItem="jQp-EN-Voh" secondAttribute="centerY" id="EtX-0u-umn"/>
                             <constraint firstItem="B0u-JV-sSq" firstAttribute="leading" secondItem="MVq-bk-kzB" secondAttribute="leading" id="G4B-f4-p79"/>
@@ -294,6 +312,7 @@ Stream Swift SDK v.1.0.0</string>
                             <constraint firstItem="jQp-EN-Voh" firstAttribute="centerY" secondItem="5Of-ZP-Ztv" secondAttribute="centerY" id="bEW-cC-JuG"/>
                             <constraint firstItem="fQM-5J-VyU" firstAttribute="top" secondItem="pUb-7p-fIc" secondAttribute="top" constant="20" id="bmR-kQ-ZPs"/>
                             <constraint firstItem="jrn-MT-IQv" firstAttribute="centerY" secondItem="LML-Ms-XJg" secondAttribute="centerY" id="hcw-6a-JAC"/>
+                            <constraint firstItem="dR6-bE-we3" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" id="lgw-dm-e2K"/>
                             <constraint firstItem="B0u-JV-sSq" firstAttribute="top" secondItem="MVq-bk-kzB" secondAttribute="bottom" constant="5" id="qS7-8L-5W1"/>
                             <constraint firstItem="1lG-cg-5R8" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" id="qTd-Gz-MV4"/>
                             <constraint firstItem="pUb-7p-fIc" firstAttribute="bottom" secondItem="Fyw-02-BDi" secondAttribute="bottom" constant="20" id="vik-Ho-cFz"/>
@@ -306,6 +325,7 @@ Stream Swift SDK v.1.0.0</string>
                         <outlet property="badgeLabel" destination="eTn-JY-iPB" id="e9E-76-dq3"/>
                         <outlet property="badgeSwitch" destination="jQp-EN-Voh" id="ICQ-KT-RZ0"/>
                         <outlet property="notificationsSwitch" destination="H0k-lx-tmL" id="MCi-8p-JQM"/>
+                        <outlet property="offlineMode" destination="dR6-bE-we3" id="6B5-gs-PVO"/>
                         <outlet property="onlineSwitch" destination="jrn-MT-IQv" id="cmf-96-hY1"/>
                         <outlet property="onlinelabel" destination="LML-Ms-XJg" id="Lgb-US-mZB"/>
                         <outlet property="splitViewButton" destination="uBn-vP-Vku" id="gHC-eV-Gpl"/>
@@ -555,7 +575,8 @@ Stream Swift SDK v.1.0.0</string>
                         <outlet property="userIdLabel" destination="sRM-UZ-Fap" id="RQb-kk-Z3E"/>
                         <outlet property="userNameLabel" destination="tm9-EU-QhU" id="6VT-Cf-2ts"/>
                         <outlet property="versionLabel" destination="qkx-nf-WiO" id="0Dx-7r-bP1"/>
-                        <segue destination="0IT-ko-SLg" kind="show" identifier="RootViewController" id="KhR-fH-fGN"/>
+                        <segue destination="0IT-ko-SLg" kind="show" identifier="Root" animates="NO" id="KhR-fH-fGN"/>
+                        <segue destination="0IT-ko-SLg" kind="show" identifier="RootAnimated" id="NE9-Td-MIk"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Uee-d6-hqm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -634,5 +655,6 @@ Stream Swift SDK v.1.0.0</string>
         <segue reference="qta-yE-T30"/>
         <segue reference="x9o-K0-tAV"/>
         <segue reference="seW-P6-fEX"/>
+        <segue reference="NE9-Td-MIk"/>
     </inferredMetricsTieBreakers>
 </document>

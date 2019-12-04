@@ -17,10 +17,22 @@ public final class InternetConnection {
     public static let shared = InternetConnection()
     
     private let disposeBag = DisposeBag()
+    private let restartSubject = PublishSubject<Void>()
     private lazy var reachability = Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
+    
+    public var offlineMode = false {
+        didSet {
+            ClientLogger.log("🕸✈️", "Offline mode is \(offlineMode ? "On" : "Off").")
+            restartSubject.onNext(())
+        }
+    }
     
     /// Check if the Internet is available.
     public var isAvailable: Bool {
+        if offlineMode {
+            return false
+        }
+        
         let connection = reachability?.connection ?? .none
         
         if case .none  = connection {
@@ -31,10 +43,15 @@ public final class InternetConnection {
     }
     
     /// An observable Internet connection status.
-    public private(set) lazy var isAvailableObservable: Observable<Bool> = Observable.just(Void())
+    public private(set) lazy var isAvailableObservable: Observable<Bool> = restartSubject.asObserver()
+        .startWith(())
         .observeOn(MainScheduler.instance)
-        .flatMapLatest({ [weak self] _ -> Observable<Reachability.Connection> in
-            if let reachability = self?.reachability {
+        .flatMapLatest({ [unowned self] _ -> Observable<Reachability.Connection> in
+            if self.offlineMode {
+                return .just(.none)
+            }
+            
+            if let reachability = self.reachability {
                 return reachability.rx.reachabilityChanged
                     .map({ $0.connection })
                     .startWith(reachability.connection)

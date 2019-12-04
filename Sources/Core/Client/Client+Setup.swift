@@ -205,13 +205,15 @@ extension Client {
             ? .just(true)
             : InternetConnection.shared.isAvailableObservable
         
-        let webSocketResponse = tokenSubject.asObserver()
+        let webSocketResponse = internetIsAvailable
+            .filter({ $0 })
+            .flatMapLatest { [unowned self]  _ in self.tokenSubject.asObserver() }
             .distinctUntilChanged()
             .map { $0?.isValidToken() ?? false }
             .observeOn(MainScheduler.instance)
             .flatMapLatest({ [unowned self] isTokenValid -> Observable<WebSocketEvent> in
                 if isTokenValid {
-                    self.webSocket.connect()
+                    self.webSocket.connectIfPossible()
                     return self.webSocket.webSocket.rx.response
                 }
                 

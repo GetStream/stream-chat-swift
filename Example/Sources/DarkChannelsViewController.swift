@@ -159,7 +159,7 @@ final class DarkChannelsViewController: ChannelsViewController {
         } else if let delegate = UIApplication.shared.delegate as? AppDelegate,
             let navigationController = delegate.window?.rootViewController as? UINavigationController,
             let loginViewController = navigationController.viewControllers.first as? LoginViewController {
-            loginViewController.login()
+            loginViewController.login(animated: true)
             setupPresenter()
             logoutButton.title = "Logout"
         }

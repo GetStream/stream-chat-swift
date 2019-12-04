@@ -24,6 +24,7 @@ final class RootViewController: UIViewController {
     @IBOutlet weak var onlineSwitch: UISwitch!
     @IBOutlet weak var notificationsSwitch: UISwitch!
     @IBOutlet weak var versionLabel: UILabel!
+    @IBOutlet weak var offlineMode: UISwitch!
     
     let disposeBag = DisposeBag()
     var totalUnreadCountDisposeBag = DisposeBag()
@@ -81,6 +82,10 @@ final class RootViewController: UIViewController {
                     self?.onlinelabel.text = "Online members: <Disabled>"
                 }
             })
+            .disposed(by: disposeBag)
+        
+        offlineMode.rx.isOn.changed
+            .subscribe(onNext: { InternetConnection.shared.offlineMode = $0 })
             .disposed(by: disposeBag)
     }
     
