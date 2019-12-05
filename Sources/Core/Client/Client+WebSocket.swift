@@ -27,7 +27,7 @@ extension Client {
                                     URLQueryItem(name: "stream-auth-type", value: "jwt")]
         
         do {
-            let jsonData = try JSONEncoder.stream.encode(jsonParameter)
+            let jsonData = try JSONEncoder.default.encode(jsonParameter)
             
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 urlComponents.queryItems?.append(URLQueryItem(name: "json", value: jsonString))

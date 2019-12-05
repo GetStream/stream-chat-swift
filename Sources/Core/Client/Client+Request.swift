@@ -158,7 +158,7 @@ extension Client {
         if let endpointQueryItems = endpoint.jsonQueryItems {
             endpointQueryItems.forEach { (key: String, value: Encodable) in
                 do {
-                    let data = try JSONEncoder.stream.encode(AnyEncodable(value))
+                    let data = try JSONEncoder.default.encode(AnyEncodable(value))
                     
                     if let json = String(data: data, encoding: .utf8) {
                         queryItems.append(URLQueryItem(name: key, value: json))
@@ -170,7 +170,7 @@ extension Client {
         }
         
         if let endpointQueryItem = endpoint.queryItem {
-            if let data = try? JSONEncoder.stream.encode(AnyEncodable(endpointQueryItem)),
+            if let data = try? JSONEncoder.default.encode(AnyEncodable(endpointQueryItem)),
                 let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                 json.forEach { key, value in
                     if let stringValue = value as? String {
@@ -200,11 +200,11 @@ extension Client {
             let encodable = AnyEncodable(body)
             
             do {
-                if let httpBody = try? JSONEncoder.streamGzip.encode(encodable) {
+                if let httpBody = try? JSONEncoder.defaultGzip.encode(encodable) {
                     urlRequest.httpBody = httpBody
                     urlRequest.addValue("gzip", forHTTPHeaderField: "Content-Encoding")
                 } else {
-                    urlRequest.httpBody = try JSONEncoder.stream.encode(encodable)
+                    urlRequest.httpBody = try JSONEncoder.default.encode(encodable)
                 }
             } catch {
                 return .failure(.encodingFailure(error, object: body))
@@ -277,7 +277,7 @@ extension Client {
         }
         
         guard httpResponse.statusCode < 400 else {
-            if let errorResponse = try? JSONDecoder.stream.decode(ClientErrorResponse.self, from: data) {
+            if let errorResponse = try? JSONDecoder.default.decode(ClientErrorResponse.self, from: data) {
                 if errorResponse.message.contains("was deactivated") {
                     webSocket.disconnect()
                 }
@@ -296,7 +296,7 @@ extension Client {
         }
         
         do {
-            let response = try JSONDecoder.stream.decode(T.self, from: data)
+            let response = try JSONDecoder.default.decode(T.self, from: data)
             logger?.timing("Response decoded")
             performInCallbackQueue { completion(.success(response)) }
         } catch {

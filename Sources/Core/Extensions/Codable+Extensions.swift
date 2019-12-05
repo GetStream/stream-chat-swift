@@ -12,6 +12,10 @@ import Gzip
 // MARK: - JSONDecoder Stream
 
 extension JSONDecoder {
+    
+    /// A default `JSONDecoder`.
+    public static var `default`: JSONDecoder = stream
+    
     /// A Stream Chat JSON decoder.
     public static let stream: JSONDecoder = {
         let decoder = JSONDecoder()
@@ -45,6 +49,12 @@ extension JSONDecoder {
 // MARK: - JSONEncoder Stream
 
 extension JSONEncoder {
+    
+    /// A default `JSONEncoder`.
+    public static var `default`: JSONEncoder = stream
+    /// A default gzip `JSONEncoder`.
+    public static var defaultGzip: JSONEncoder = streamGzip
+    
     /// A Stream Chat JSON encoder.
     public static let stream: JSONEncoder = {
         let encoder = JSONEncoder()
