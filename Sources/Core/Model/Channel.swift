@@ -120,7 +120,12 @@ public final class Channel: Codable {
             members.append(currentUser.asMember)
         }
         
-        self.init(type: type, id: "", name: member.user.name, members: members, extraData: extraData)
+        self.init(type: type,
+                  id: "",
+                  name: member.user.name,
+                  imageURL: member.user.avatarURL,
+                  members: members,
+                  extraData: extraData)
     }
     
     /// Init a channel.
