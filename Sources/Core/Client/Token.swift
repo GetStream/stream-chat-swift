@@ -23,6 +23,10 @@ extension Token {
     
     /// Checks if the token is valid.
     public func isValidToken(userId: String? = User.current?.id) -> Bool {
+        if self == .guest || self == .development {
+            return true
+        }
+        
         return userId != nil && (payload?["user_id"] as? String) == userId
     }
     

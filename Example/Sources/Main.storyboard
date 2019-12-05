@@ -536,6 +536,22 @@ Stream Swift SDK v.1.0.0</string>
                                     </button>
                                 </subviews>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Wf-hg-MXM">
+                                <rect key="frame" x="280" y="182.5" width="79" height="28"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <state key="normal" title="development"/>
+                                <connections>
+                                    <action selector="developmentToken:" destination="ILk-9W-cdO" eventType="touchUpInside" id="mrW-1Z-gEt"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OUJ-of-Bfu">
+                                <rect key="frame" x="229" y="182.5" width="35" height="28"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <state key="normal" title="guest"/>
+                                <connections>
+                                    <action selector="guestToken:" destination="ILk-9W-cdO" eventType="touchUpInside" id="yhw-rS-WfT"/>
+                                </connections>
+                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qkx-nf-WiO">
                                 <rect key="frame" x="118.5" y="618" width="138.5" height="29"/>
                                 <string key="text">Demo Project
@@ -549,8 +565,12 @@ Stream Swift SDK v.1.0.0</string>
                         <constraints>
                             <constraint firstItem="efb-oB-Elc" firstAttribute="leading" secondItem="gGL-YF-wXz" secondAttribute="leading" constant="16" id="9cD-l8-fdy"/>
                             <constraint firstItem="qkx-nf-WiO" firstAttribute="centerX" secondItem="gGL-YF-wXz" secondAttribute="centerX" id="Ahj-nO-yCX"/>
+                            <constraint firstItem="8Wf-hg-MXM" firstAttribute="centerY" secondItem="4vw-If-lcR" secondAttribute="centerY" id="Bk1-mq-7Ds"/>
                             <constraint firstItem="efb-oB-Elc" firstAttribute="top" secondItem="gGL-YF-wXz" secondAttribute="top" constant="10" id="EK4-eb-883"/>
+                            <constraint firstItem="OUJ-of-Bfu" firstAttribute="trailing" secondItem="8Wf-hg-MXM" secondAttribute="leading" constant="-16" id="dcK-N0-cdG"/>
+                            <constraint firstItem="8Wf-hg-MXM" firstAttribute="trailing" secondItem="efb-oB-Elc" secondAttribute="trailing" id="lpI-gp-PQG"/>
                             <constraint firstItem="gGL-YF-wXz" firstAttribute="trailing" secondItem="efb-oB-Elc" secondAttribute="trailing" constant="16" id="o0m-gG-MBq"/>
+                            <constraint firstItem="OUJ-of-Bfu" firstAttribute="centerY" secondItem="4vw-If-lcR" secondAttribute="centerY" id="ub7-cZ-Hmf"/>
                             <constraint firstItem="gGL-YF-wXz" firstAttribute="bottom" secondItem="qkx-nf-WiO" secondAttribute="bottom" constant="20" id="veE-mH-nNt"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="gGL-YF-wXz"/>

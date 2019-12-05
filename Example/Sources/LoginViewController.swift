@@ -50,16 +50,28 @@ final class LoginViewController: UIViewController {
         if clientSetupped {
             apiKeyLabel.isEnabled = false
             apiKeyLabel.textColor = .systemGray
-            apiKeyLabel.text = "\(apiKeyLabel.text ?? "") (restart the app to change it)"
             remove(key: .apiKey)
             remove(key: .userId)
             remove(key: .userName)
             remove(key: .token)
             remove(key: .secondUserId)
             Client.shared.disconnect()
+            let info = "(restart the app to change it)"
+            
+            if !(apiKeyLabel.text ?? "").contains(info) {
+                apiKeyLabel.text = "\(apiKeyLabel.text ?? "") \(info)"
+            }
         } else if (apiKeyLabel.text ?? "").isEmpty {
             apiKeyLabel.becomeFirstResponder()
         }
+    }
+    
+    @IBAction func guestToken(_ sender: Any) {
+        tokenLabel.text = Token.guest
+    }
+    
+    @IBAction func developmentToken(_ sender: Any) {
+        tokenLabel.text = Token.development
     }
     
     @IBAction func login(_ sender: Any) {
