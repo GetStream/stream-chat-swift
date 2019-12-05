@@ -73,21 +73,18 @@ public final class WebSocket {
         disconnect()
     }
     
-    func connectIfPossible() {
+    func connect() {
         guard InternetConnection.shared.isAvailable else {
             disconnectedNoInternet()
             return
         }
         
-        connect()
-    }
-    
-    func connect() {
         guard webSocketInitiated else {
             return
         }
         
         if webSocket.isConnected || isReconnecting {
+            logger?.log("Skip connecting: isConnected = \(webSocket.isConnected), isReconnecting = \(isReconnecting)")
            return
         }
         
@@ -148,22 +145,25 @@ public final class WebSocket {
             return
         }
         
-        lastConnectionId = nil
-        
         if webSocket.isConnected {
-            handshakeTimer.suspend()
             webSocket.disconnect()
             logger?.log("💔 Disconnected deliberately")
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
         }
         
+        clearStateAfterDisconnect()
+        
         DispatchQueue.main.async {
             if UIApplication.shared.appState == .background {
                 InternetConnection.shared.stopObserving()
             }
         }
-        
+    }
+    
+    func clearStateAfterDisconnect() {
+        handshakeTimer.suspend()
+        lastConnectionId = nil
         cancelBackgroundWork()
     }
 }
@@ -240,15 +240,13 @@ extension WebSocket {
     
     private func disconnectedNoInternet() {
         logger?.log("💔🕸 Disconnected: No Internet")
-        cancelBackgroundWork()
-        handshakeTimer.suspend()
-        lastConnectionId = nil
+        clearStateAfterDisconnect()
         consecutiveFailures = 0
     }
     
     private func disconnected(_ error: Error? = nil) -> Connection {
         logger?.log("💔🤔 Disconnected")
-        handshakeTimer.suspend()
+        clearStateAfterDisconnect()
         
         if let error = error {
             var errorMessage = "🦄💔😡 Disconnected by error"
@@ -292,7 +290,7 @@ extension WebSocket {
         
         lastJSONError = nil
         
-        if let errorContainer = try? JSONDecoder.stream.decode(ErrorContainer.self, from: data) {
+        if let errorContainer = try? JSONDecoder.default.decode(ErrorContainer.self, from: data) {
             lastJSONError = errorContainer.error
             lastMessageResponse = nil
             logger?.log(data, forceToShowData: true)
@@ -300,7 +298,7 @@ extension WebSocket {
         }
         
         do {
-            let lastMessageResponse = try JSONDecoder.stream.decode(Response.self, from: data)
+            let lastMessageResponse = try JSONDecoder.default.decode(Response.self, from: data)
             self.lastMessageResponse = lastMessageResponse
             lastMessageHashValue = message.hashValue
             consecutiveFailures = 0

@@ -213,7 +213,7 @@ extension Client {
             .observeOn(MainScheduler.instance)
             .flatMapLatest({ [unowned self] isTokenValid -> Observable<WebSocketEvent> in
                 if isTokenValid {
-                    self.webSocket.connectIfPossible()
+                    self.webSocket.connect()
                     return self.webSocket.webSocket.rx.response
                 }
                 

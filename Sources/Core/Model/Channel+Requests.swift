@@ -123,10 +123,7 @@ public extension Channel {
         }
         
         request = request
-            .do(onNext: { _ in
-                Client.shared.logger?.log("🎫 Send Message Read. For a new message of the current user.")
-            })
-            .flatMapLatest({ response -> Observable<MessageResponse> in
+            .flatMapLatest({ [weak self] response -> Observable<MessageResponse> in
                 if response.message.isBan {
                     if let currentUser = User.current, !currentUser.isBanned {
                         var user = currentUser
@@ -137,7 +134,15 @@ public extension Channel {
                     return .just(response)
                 }
                 
-                return self.markRead().map { _ in response }
+                guard let self = self else {
+                    return .empty()
+                }
+                
+                if self.config.readEventsEnabled {
+                    return self.markRead().map({ _ in response })
+                }
+                
+                return .just(response)
             })
         
         return Client.shared.connectedRequest(request)
@@ -161,6 +166,7 @@ public extension Channel {
             return .empty()
         }
         
+        Client.shared.logger?.log("🎫 Send Message Read. For a new message of the current user.")
         let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .markRead(self))
         return Client.shared.connectedRequest(request.map({ $0.event }))
     }

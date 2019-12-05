@@ -33,6 +33,9 @@ class TestCase: XCTestCase {
             Client.shared.connection.connected().subscribe().disposed(by: disposeBag)
         }
     }
+}
+
+extension XCTestCase {
     
     func expectRequest(_ description: String, callback: (_ test: XCTestExpectation) -> Void) {
         expect(description, timeout: 5, callback: callback)

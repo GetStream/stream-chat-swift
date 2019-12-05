@@ -10,37 +10,43 @@ import XCTest
 import RxSwift
 @testable import StreamChatCore
 
-final class ClientSetupTests: TestCase {
+final class ClientSetupTests: XCTestCase {
     
-    private var setupClient = Client(apiKey: TestCase.apiKey, logOptions: .info)
+    var disposeBag = DisposeBag()
     
-    func testUserSetup() {
-        // Test regular user.
-        setupUser(token: .token2) { [unowned self] in
-            XCTAssertEqual(self.setupClient.user, User.user2)
-            XCTAssertEqual(self.setupClient.token, .token2)
-        }
-        
-        // Test guest.
-        setupUser(token: .guest) { [unowned self] in
-            XCTAssertEqual(self.setupClient.user?.role, .guest)
-            XCTAssertNotNil(self.setupClient.token)
-        }
-        
-        // Test development user.
-        /// Disconnected by error:
-        /// Error(code: 5, message: "development tokens are not allowed for this application", statusCode: 401)
-//        setupUser(token: .development) { [unowned self] in
-//            XCTAssertEqual(self.setupClient.user, .user2)
-//            XCTAssertNotNil(self.setupClient.token)
-//        }
+    override static func setUp() {
+        DateFormatter.log = nil
+        Client.config = .init(apiKey: TestCase.apiKey, logOptions: [.webSocketInfo, .requests])
     }
     
-    func setupUser(token: Token, asserts: @escaping () -> Void) {
-        setupClient.set(user: User.user2, token: token)
+    func testUserSetup() {
+        setupUser(user: User.user1, token: .token1) {
+            XCTAssertEqual(Client.shared.user, User.user1)
+            XCTAssertEqual(Client.shared.token, .token1)
+        }
+    }
+    
+    func testGuestSetup() {
+        setupUser(user: User.user1, token: .guest) {
+            XCTAssertEqual(Client.shared.user?.role, .guest)
+            XCTAssertNotNil(Client.shared.token)
+        }
+    }
+    
+    func testDevelopmentSetup() {
+        /// Disconnected by error:
+        /// Error(code: 5, message: "development tokens are not allowed for this application", statusCode: 401)
+        //        setupUser(token: .development) { [unowned self] in
+        //            XCTAssertEqual(self.setupClient.user, .user2)
+        //            XCTAssertNotNil(self.setupClient.token)
+        //        }
+    }
+
+    func setupUser(user: User, token: Token, asserts: @escaping () -> Void) {
+        Client.shared.set(user: user, token: token)
         
         expectRequest("Connected with guest token") { test in
-            setupClient.connection.connected()
+            Client.shared.connection.connected()
                 .take(1)
                 .subscribe(onNext: { [unowned self] in
                     test.fulfill()
