@@ -17,7 +17,6 @@ final class LoginViewController: UIViewController {
     @IBOutlet weak var userIdLabel: UITextField!
     @IBOutlet weak var userNameLabel: UITextField!
     @IBOutlet weak var tokenLabel: UITextView!  
-    @IBOutlet weak var secondUserIdLabel: UITextField!
     @IBOutlet weak var versionLabel: UILabel!
     let userDefaults = UserDefaults()
     var loggedInToken: Token?
@@ -35,7 +34,6 @@ final class LoginViewController: UIViewController {
         userIdLabel.text = storedValue(key: .userId, default: "broken-waterfall-5")
         userNameLabel.text = storedValue(key: .userName, default: "Broken waterfall")
         tokenLabel.text = storedValue(key: .token, default:  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg")
-        secondUserIdLabel.text = storedValue(key: .secondUserId)
         
         if autoLogin {
             DispatchQueue.main.async { self.login(animated: false) }
@@ -54,7 +52,6 @@ final class LoginViewController: UIViewController {
             remove(key: .userId)
             remove(key: .userName)
             remove(key: .token)
-            remove(key: .secondUserId)
             Client.shared.disconnect()
             let info = "(restart the app to change it)"
             
@@ -109,13 +106,6 @@ final class LoginViewController: UIViewController {
         store(key: .userName, value: userName)
         store(key: .token, value: token)
         
-        if let secondUserId = secondUserIdLabel.text {
-            secondUser = User(id: secondUserId, name: secondUserId)
-            store(key: .secondUserId, value: secondUserId)
-        } else {
-            remove(key: .secondUserId)
-        }
-        
         loggedInUser = User(id: userId, name: userName)
         loggedInToken = token
         
@@ -151,7 +141,6 @@ final class LoginViewController: UIViewController {
         userIdLabel.text = nil
         userNameLabel.text = nil
         tokenLabel.text = nil
-        secondUserIdLabel.text = nil
         
         if clientSetupped {
             userIdLabel.becomeFirstResponder()
@@ -166,7 +155,7 @@ final class LoginViewController: UIViewController {
 
 extension LoginViewController {
     enum StoreKey: String {
-        case apiKey, userId, userName, token, secondUserId
+        case apiKey, userId, userName, token
     }
     
     func store(key: StoreKey, value: String) {

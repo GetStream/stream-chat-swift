@@ -455,7 +455,7 @@ Stream Swift SDK v.1.0.0</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="efb-oB-Elc">
-                                <rect key="frame" x="16" y="54" width="343" height="303"/>
+                                <rect key="frame" x="16" y="54" width="343" height="280"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Client API key:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cwF-PR-bJn">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="17"/>
@@ -512,24 +512,25 @@ Stream Swift SDK v.1.0.0</string>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                                     </textView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The second user for invites (optional):" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZHg-Vu-qVC">
-                                        <rect key="frame" x="0.0" y="221" width="343" height="17"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="User id" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vlr-5g-a7q">
-                                        <rect key="frame" x="0.0" y="243" width="343" height="25"/>
-                                        <color key="backgroundColor" systemColor="quaternarySystemFillColor" red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C9w-aB-O6T">
+                                        <rect key="frame" x="0.0" y="221" width="343" height="10"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="25" id="R2g-x0-sae"/>
+                                            <constraint firstAttribute="height" constant="10" id="mkK-dl-rld"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no"/>
-                                    </textField>
+                                    </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lj1-9I-86W">
-                                        <rect key="frame" x="0.0" y="273" width="343" height="30"/>
+                                        <rect key="frame" x="0.0" y="236" width="343" height="44"/>
+                                        <color key="backgroundColor" systemColor="systemFillColor" red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="ewp-N9-BMF"/>
+                                        </constraints>
                                         <state key="normal" title="Login"/>
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                <integer key="value" value="8"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
                                         <connections>
                                             <action selector="login:" destination="ILk-9W-cdO" eventType="touchUpInside" id="qMX-U4-fUK"/>
                                         </connections>
@@ -590,7 +591,6 @@ Stream Swift SDK v.1.0.0</string>
                     </navigationItem>
                     <connections>
                         <outlet property="apiKeyLabel" destination="b0t-D9-sKI" id="6Jy-9g-fjj"/>
-                        <outlet property="secondUserIdLabel" destination="vlr-5g-a7q" id="Vmg-Ny-GCu"/>
                         <outlet property="tokenLabel" destination="No1-11-4jC" id="Eru-Zw-dCK"/>
                         <outlet property="userIdLabel" destination="sRM-UZ-Fap" id="RQb-kk-Z3E"/>
                         <outlet property="userNameLabel" destination="tm9-EU-QhU" id="6VT-Cf-2ts"/>
@@ -673,7 +673,7 @@ Stream Swift SDK v.1.0.0</string>
     <inferredMetricsTieBreakers>
         <segue reference="gPS-K7-ckQ"/>
         <segue reference="qta-yE-T30"/>
-        <segue reference="x9o-K0-tAV"/>
+        <segue reference="Ko2-1P-TID"/>
         <segue reference="seW-P6-fEX"/>
         <segue reference="NE9-Td-MIk"/>
     </inferredMetricsTieBreakers>

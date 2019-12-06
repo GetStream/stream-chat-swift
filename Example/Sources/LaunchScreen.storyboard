@@ -3,7 +3,7 @@
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -25,7 +25,7 @@ Stream Swift SDK v.1.0.0</string>
                                 <nil key="highlightedColor"/>
                             </label>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="IHM-K4-Qx5">
-                                <rect key="frame" x="16" y="54" width="343" height="303"/>
+                                <rect key="frame" x="16" y="54" width="343" height="280"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Client API key:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G8M-pt-bJ0">
                                         <rect key="frame" x="0.0" y="0.0" width="343" height="17"/>
@@ -82,33 +82,43 @@ Stream Swift SDK v.1.0.0</string>
                                         <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                         <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
                                     </textView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="The second user for invites (optional):" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="96Y-Hz-0ej">
-                                        <rect key="frame" x="0.0" y="221" width="343" height="17"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <color key="textColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="User id" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="zsu-2y-7Jk">
-                                        <rect key="frame" x="0.0" y="243" width="343" height="25"/>
-                                        <color key="backgroundColor" systemColor="quaternarySystemFillColor" red="0.4549019608" green="0.4549019608" blue="0.50196078430000002" alpha="0.080000000000000002" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="BCT-nl-WIZ">
+                                        <rect key="frame" x="0.0" y="221" width="343" height="10"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="25" id="hH8-Qb-w87"/>
+                                            <constraint firstAttribute="height" constant="10" id="ctp-ab-C8C"/>
                                         </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no"/>
-                                    </textField>
-                                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MZ5-88-ob5">
-                                        <rect key="frame" x="0.0" y="273" width="343" height="30"/>
+                                    </view>
+                                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dYC-9X-Dki">
+                                        <rect key="frame" x="0.0" y="236" width="343" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="M2a-UI-LKD"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Login"/>
                                     </button>
                                 </subviews>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e2C-FI-h2A">
+                                <rect key="frame" x="280" y="182.5" width="79" height="28"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <state key="normal" title="development"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xob-W2-pqI">
+                                <rect key="frame" x="229" y="182.5" width="35" height="28"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <state key="normal" title="guest"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="e2C-FI-h2A" firstAttribute="trailing" secondItem="IHM-K4-Qx5" secondAttribute="trailing" id="QbX-dY-iT6"/>
+                            <constraint firstItem="e2C-FI-h2A" firstAttribute="centerY" secondItem="H6T-I7-C3I" secondAttribute="centerY" id="QnO-4P-AxH"/>
+                            <constraint firstItem="Xob-W2-pqI" firstAttribute="centerY" secondItem="H6T-I7-C3I" secondAttribute="centerY" id="SqM-ZR-D5Y"/>
                             <constraint firstItem="IHM-K4-Qx5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="ZJl-IL-emn"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="IHM-K4-Qx5" secondAttribute="trailing" constant="16" id="gX3-1d-H8Z"/>
                             <constraint firstItem="IHM-K4-Qx5" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="ilp-ln-XrE"/>
+                            <constraint firstItem="Xob-W2-pqI" firstAttribute="trailing" secondItem="e2C-FI-h2A" secondAttribute="leading" constant="-16" id="kXI-wC-iKj"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="fkx-Wi-Cv1" secondAttribute="bottom" constant="20" id="qmq-Ux-6yR"/>
                             <constraint firstItem="fkx-Wi-Cv1" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="rRt-0A-gaL"/>
                         </constraints>
