@@ -16,7 +16,7 @@ final class LoginViewController: UIViewController {
     @IBOutlet weak var apiKeyLabel: UITextField!
     @IBOutlet weak var userIdLabel: UITextField!
     @IBOutlet weak var userNameLabel: UITextField!
-    @IBOutlet weak var tokenLabel: UITextView!
+    @IBOutlet weak var tokenLabel: UITextView!  
     @IBOutlet weak var secondUserIdLabel: UITextField!
     @IBOutlet weak var versionLabel: UILabel!
     let userDefaults = UserDefaults()
@@ -120,16 +120,9 @@ final class LoginViewController: UIViewController {
         loggedInToken = token
         
         if !clientSetupped {
-            var database: Database? = nil
-            
-            // Database setup, if possible.
-            if NSClassFromString("RealmDatabase") != nil {
-                database = RealmDatabase.setup(.init(encrypted: false, logOptions: .info))
-            }
-            
             Client.config = .init(apiKey: apiKey,
                                   baseURL: .init(customURL: URL(string: "https://chat-proxy-us-east.stream-io-api.com/")!),
-                                  database: database,
+                                  database: Database.instance,
                                   logOptions: .debug)
             
             Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
@@ -190,14 +183,3 @@ extension LoginViewController {
         userDefaults.synchronize()
     }
 }
-
-// MARK: - Database Import (if possible)
-
-#if canImport(StreamChatRealm)
-import StreamChatRealm
-#else
-struct RealmDatabaseConfig { let encrypted: Bool; let logOptions: ClientLogger.Options }
-final class RealmDatabase {
-    static func setup(_ c: RealmDatabaseConfig? = nil) -> Database { return RealmDatabase() as! Database }
-}
-#endif

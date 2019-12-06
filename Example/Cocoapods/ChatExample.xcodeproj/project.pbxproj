@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5634CCF2C0591699CF465315 /* Pods_ChatExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1F0D0B522281DFB2191825C5 /* Pods_ChatExample.framework */; };
+		8A02F139239A6E36003FBF34 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A02F138239A6E36003FBF34 /* Database.swift */; };
 		8A08B1572395246500C900EB /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A08B1532395246500C900EB /* LoginViewController.swift */; };
 		8A08B1582395246500C900EB /* DarkChannelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A08B1542395246500C900EB /* DarkChannelsViewController.swift */; };
 		8A08B1592395246500C900EB /* CustomChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A08B1552395246500C900EB /* CustomChatViewController.swift */; };
@@ -34,6 +35,7 @@
 /* Begin PBXFileReference section */
 		15AC17A354B2358EEAA8FB56 /* Pods-ChatExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatExample.release.xcconfig"; path = "Target Support Files/Pods-ChatExample/Pods-ChatExample.release.xcconfig"; sourceTree = "<group>"; };
 		1F0D0B522281DFB2191825C5 /* Pods_ChatExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ChatExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A02F138239A6E36003FBF34 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Database.swift; path = ../../Sources/Database.swift; sourceTree = "<group>"; };
 		8A08B1532395246500C900EB /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LoginViewController.swift; path = ../../Sources/LoginViewController.swift; sourceTree = "<group>"; };
 		8A08B1542395246500C900EB /* DarkChannelsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DarkChannelsViewController.swift; path = ../../Sources/DarkChannelsViewController.swift; sourceTree = "<group>"; };
 		8A08B1552395246500C900EB /* CustomChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CustomChatViewController.swift; path = ../../Sources/CustomChatViewController.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 				8A08B1562395246500C900EB /* RootViewController.swift */,
 				8A08B1542395246500C900EB /* DarkChannelsViewController.swift */,
 				8A08B1552395246500C900EB /* CustomChatViewController.swift */,
+				8A02F138239A6E36003FBF34 /* Database.swift */,
 				8A08B15F239524D200C900EB /* Main.storyboard */,
 				8A08B15D2395249C00C900EB /* Assets.xcassets */,
 				8A08B160239524D200C900EB /* LaunchScreen.storyboard */,
@@ -236,6 +239,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A02F139239A6E36003FBF34 /* Database.swift in Sources */,
 				8A08B15A2395246500C900EB /* RootViewController.swift in Sources */,
 				8A08B1572395246500C900EB /* LoginViewController.swift in Sources */,
 				8A08B1582395246500C900EB /* DarkChannelsViewController.swift in Sources */,
