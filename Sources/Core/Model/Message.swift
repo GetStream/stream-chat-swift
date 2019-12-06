@@ -219,15 +219,27 @@ public struct Message: Codable {
     }
 }
 
-extension Message: Equatable {
+extension Message: Hashable {
     public static func == (lhs: Message, rhs: Message) -> Bool {
         return lhs.id == rhs.id
             && lhs.type == rhs.type
             && lhs.user == rhs.user
             && lhs.text == rhs.text
+            && lhs.command == rhs.command
             && lhs.created == rhs.created
             && lhs.updated == rhs.updated
             && lhs.deleted == rhs.deleted
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(type)
+        hasher.combine(user)
+        hasher.combine(text)
+        hasher.combine(command)
+        hasher.combine(created)
+        hasher.combine(updated)
+        hasher.combine(deleted)
     }
 }
 
