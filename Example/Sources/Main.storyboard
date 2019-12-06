@@ -525,6 +525,7 @@ Stream Swift SDK v.1.0.0</string>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="44" id="ewp-N9-BMF"/>
                                         </constraints>
+                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="Login"/>
                                         <userDefinedRuntimeAttributes>
                                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
