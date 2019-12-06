@@ -83,7 +83,7 @@ extension RealmDatabase: Database {
             
             if let existsChannelsResponse = realm.object(ofType: ChannelsResponse.self, forPrimaryKey: queryId) {
                 channelsResponse = existsChannelsResponse
-                channelsResponse.add(channels: channels)
+                channelsResponse.add(channels: channels, offset: query.pagination.offset, realm: realm)
             } else {
                 channelsResponse = ChannelsResponse(channelsQueryId: queryId, channels: channels)
             }

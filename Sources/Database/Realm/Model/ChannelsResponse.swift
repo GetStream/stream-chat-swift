@@ -27,14 +27,15 @@ public final class ChannelsResponse: Object {
         channelResponses.append(objectsIn: channels.map({ ChannelResponse($0) }))
     }
     
-    func add(channels: [StreamChatCore.ChannelResponse]) {
+    func add(channels: [StreamChatCore.ChannelResponse], offset: Int, realm: Realm) {
         channels.enumerated().forEach { index, coreChannelResponse in
-            let channelResponse = ChannelResponse(coreChannelResponse)
+            let channelResponse = realm.create(ChannelResponse.self, value: ChannelResponse(coreChannelResponse), update: .modified)
             
-            if let existIndex = channelResponses.index(of: channelResponse) {
+            if let existIndex = channelResponses.index(matching: "id == %@", coreChannelResponse.channel.cid.description) {
                 channelResponses.remove(at: existIndex)
             }
             
+            let index = min(index + offset, channelResponses.count)
             channelResponses.insert(channelResponse, at: index)
         }
     }
