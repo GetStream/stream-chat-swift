@@ -78,7 +78,16 @@ extension RealmDatabase: Database {
         }
         
         realm.write(orCatchError: "Add channels \(channels.count)") { realm in
-            let channelsResponse = ChannelsResponse(channelsQueryId: query.id, channels: channels)
+            let queryId = query.id
+            let channelsResponse: ChannelsResponse
+            
+            if let existsChannelsResponse = realm.object(ofType: ChannelsResponse.self, forPrimaryKey: queryId) {
+                channelsResponse = existsChannelsResponse
+                channelsResponse.add(channels: channels)
+            } else {
+                channelsResponse = ChannelsResponse(channelsQueryId: queryId, channels: channels)
+            }
+            
             realm.add(channelsResponse, update: .modified)
         }
     }

@@ -26,4 +26,16 @@ public final class ChannelsResponse: Object {
         id = channelsQueryId
         channelResponses.append(objectsIn: channels.map({ ChannelResponse($0) }))
     }
+    
+    func add(channels: [StreamChatCore.ChannelResponse]) {
+        channels.enumerated().forEach { index, coreChannelResponse in
+            let channelResponse = ChannelResponse(coreChannelResponse)
+            
+            if let existIndex = channelResponses.index(of: channelResponse) {
+                channelResponses.remove(at: existIndex)
+            }
+            
+            channelResponses.insert(channelResponse, at: index)
+        }
+    }
 }

@@ -11,9 +11,24 @@ import RealmSwift
 import StreamChatCore
 
 public final class ChannelResponse: Object {
+    @objc dynamic var id: String = ""
     @objc dynamic var channel: Channel?
     let messages = List<Message>()
     let messageReads = List<MessageRead>()
+    
+    public override class func primaryKey() -> String? {
+        return "id"
+    }
+    
+    var asChannelResponse: StreamChatCore.ChannelResponse? {
+        guard let channel = channel?.asChannel else {
+            return nil
+        }
+        
+        return StreamChatCore.ChannelResponse(channel: channel,
+                                              messages: messages.compactMap({ $0.asMessage }),
+                                              messageReads: messageReads.compactMap({ $0.asMessageRead }))
+    }
     
     required init() {
         super.init()
@@ -21,6 +36,7 @@ public final class ChannelResponse: Object {
     
     init(_ channelResponse: StreamChatCore.ChannelResponse) {
         let channel = Channel(channelResponse.channel)
+        id = channelResponse.channel.cid.description
         self.channel = channel
         messages.append(objectsIn: channelResponse.messages.map({ Message($0, channelRealmObject: channel) }))
         messageReads.append(objectsIn: channelResponse.messageReads.map({ MessageRead($0) }))
