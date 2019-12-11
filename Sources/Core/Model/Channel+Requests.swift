@@ -54,9 +54,11 @@ public extension Channel {
     }
     
     /// Hide the channel from queryChannels for the user until a message is added.
-    /// - Parameter user: the current user.
-    func hide(for user: User? = User.current) -> Observable<Void> {
-        return Client.shared.rx.connectedRequest(endpoint: .hideChannel(self, user))
+    /// - Parameters:
+    ///   - user: the current user.
+    ///   - clearHistory: checks if needs to remove a message history of the channel.
+    func hide(for user: User? = User.current, clearHistory: Bool = false) -> Observable<Void> {
+        return Client.shared.rx.connectedRequest(endpoint: .hideChannel(self, user, clearHistory))
             .flatMapLatest { (_: EmptyData) in self.stopWatching() }
     }
     
@@ -444,4 +446,38 @@ public struct EventResponse: Decodable {
 public struct FileUploadResponse: Decodable {
     /// An uploaded file URL.
     public let file: URL
+}
+
+struct HiddenChannelRequest: Encodable {
+    private enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case clearHistory = "clear_history"
+    }
+    
+    let userId: String
+    let clearHistory: Bool
+}
+
+/// A hidden channel event response.
+public struct HiddenChannelResponse: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case cid
+        case user
+        case clearHistory = "clear_history"
+        /// A created date.
+        case created = "created_at"
+        /// A received date.
+        case received = "received_at"
+    }
+    
+    /// A channel type + id.
+    public let cid: ChannelId
+    /// A user who hided the channel.
+    public let user: User
+    /// The message history was cleared.
+    public let clearHistory: Bool
+    /// An event created date.
+    public let created: Date
+    /// An event received date.
+    public let received: Date?
 }

@@ -49,6 +49,10 @@ class CustomChatViewController: ChatViewController {
                 self?.touchMembersCount()
             })
             .disposed(by: disposeBag)
+        
+        membersCountButton.rx.tap
+            .subscribe(onNext: showMembers)
+            .disposed(by: disposeBag)
     }
     
     func touchMembersCount() {
@@ -152,5 +156,15 @@ class CustomChatViewController: ChatViewController {
                 })
                 .disposed(by: self.disposeBag)
         }
+    }
+    
+    func showMembers() {
+        let members = channelPresenter?.channel.members
+            .map({ "\($0.user.name) (\($0.user.id))" })
+            .joined(separator: "\n")
+        
+        let alert = UIAlertController(title: "Members", message: members, preferredStyle: .actionSheet)
+        alert.addAction(.init(title: "Ok", style: .cancel, handler: nil))
+        present(alert, animated: true)
     }
 }

@@ -48,7 +48,7 @@ public enum Endpoint {
     /// Delete a channel.
     case deleteChannel(Channel)
     /// Hide a channel.
-    case hideChannel(Channel, User?)
+    case hideChannel(Channel, User?, _ clearHistory: Bool)
     /// Show a channel if it was hidden.
     case showChannel(Channel, User?)
     /// Send a message to a channel.
@@ -150,7 +150,7 @@ extension Endpoint {
             return path(to: channelUpdate.data.channel)
         case .showChannel(let channel, _):
             return path(to: channel, "show")
-        case .hideChannel(let channel, _):
+        case .hideChannel(let channel, _, _):
             return path(to: channel, "hide")
         case .replies(let message, _):
             return path(to: message, "replies")
@@ -268,10 +268,16 @@ extension Endpoint {
         case .channel(let query):
             return query
             
-        case .showChannel(_, let user),
-             .hideChannel(_, let user):
+        case .showChannel(_, let user):
             if let user = user {
                 return ["user_id": user.id]
+            }
+            
+            return nil
+            
+        case .hideChannel(_, let user, let clearHistory):
+            if let user = user {
+                return HiddenChannelRequest(userId: user.id, clearHistory: clearHistory)
             }
             
             return nil

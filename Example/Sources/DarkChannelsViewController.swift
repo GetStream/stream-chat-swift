@@ -169,6 +169,18 @@ final class DarkChannelsViewController: ChannelsViewController {
         let alertController = UIAlertController(title: channelPresenter.channel.name, message: nil, preferredStyle: .actionSheet)
         alertController.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
         
+        alertController.addAction(.init(title: "Hide", style: .default, handler: { [weak self] _ in
+            if let self = self {
+                self.channelsPresenter.hide(channelPresenter).drive().disposed(by: self.disposeBag)
+            }
+        }))
+        
+        alertController.addAction(.init(title: "Hide and Clear History", style: .default, handler: { [weak self] _ in
+            if let self = self {
+                self.channelsPresenter.hide(channelPresenter, clearHistory: true).drive().disposed(by: self.disposeBag)
+            }
+        }))
+        
         if (channelPresenter.channel.createdBy?.isCurrent ?? false) {
             alertController.addAction(.init(title: "Rename", style: .default, handler: { [weak self] _ in
                 if let self = self {
