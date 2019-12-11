@@ -61,6 +61,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     
     private lazy var channelsDatabaseFetch: Observable<[ChannelResponse]> = prepareDatabaseFetch(startPaginationWith: pageSize)
         .compactMap { [weak self] in self?.channelsQuery(pagination: $0) }
+        .observeOn(SerialDispatchQueueScheduler.init(qos: .userInitiated))
         .flatMapLatest { Client.shared.fetchChannels($0) }
     
     private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.webSocket.response

@@ -22,19 +22,17 @@ extension RealmDatabase: Database {
     public func channels(_ query: StreamChatCore.ChannelsQuery) -> Observable<[StreamChatCore.ChannelResponse]> {
         guard let realm = Realm.default,
             let channelResponsesRealmObject = realm.object(ofType: ChannelsResponse.self, forPrimaryKey: query.id) else {
-            return .empty()
+                return .empty()
         }
         
-        let channelResponses: [StreamChatCore.ChannelResponse] = channelResponsesRealmObject.channelResponses
-            .compactMap({ channelResponse in
-                guard let channel = channelResponse.channel?.asChannel else {
-                    return nil
-                }
-                
-                return StreamChatCore.ChannelResponse(channel: channel,
-                                                      messages: channelResponse.messages.compactMap({ $0.asMessage }),
-                                                      messageReads: channelResponse.messageReads.compactMap({ $0.asMessageRead }))
-            })
+        var channelResponses = [StreamChatCore.ChannelResponse]()
+        let count = channelResponsesRealmObject.channelResponses.count
+        
+        for index in query.pagination.offset..<(query.pagination.offset + query.pagination.limit) where index < count {
+            if let channelResponse = channelResponsesRealmObject.channelResponses[index].asChannelResponse {
+                channelResponses.append(channelResponse)
+            }
+        }
         
         return .just(channelResponses)
     }
@@ -65,10 +63,6 @@ extension RealmDatabase: Database {
     }
     
     public func replies(for message: StreamChatCore.Message, pagination: Pagination) -> Observable<[StreamChatCore.Message]> {
-//        guard let realm = Realm.default else {
-//            return .empty()
-//        }
-        
         return .empty()
     }
     
@@ -103,44 +97,20 @@ extension RealmDatabase: Database {
     }
     
     public func add(messages: [StreamChatCore.Message], to channel: StreamChatCore.Channel) {
-//        guard let realm = Realm.default else {
-//            return
-//        }
-        
     }
     
     public func add(replies: [StreamChatCore.Message], for message: StreamChatCore.Message) {
-//        guard let realm = Realm.default else {
-//            return
-//        }
-        
     }
     
     public func set(members: Set<StreamChatCore.Member>, for channel: StreamChatCore.Channel) {
-//        guard let realm = Realm.default else {
-//            return
-//        }
-        
     }
     
     public func add(members: Set<StreamChatCore.Member>, for channel: StreamChatCore.Channel) {
-//        guard let realm = Realm.default else {
-//            return
-//        }
-        
     }
     
     public func remove(members: Set<StreamChatCore.Member>, from channel: StreamChatCore.Channel) {
-//        guard let realm = Realm.default else {
-//            return
-//        }
-        
     }
     
     public func update(members: Set<StreamChatCore.Member>, from channel: StreamChatCore.Channel) {
-//        guard let realm = Realm.default else {
-//            return
-//        }
-        
     }
 }
