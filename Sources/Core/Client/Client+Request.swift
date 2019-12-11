@@ -252,6 +252,7 @@ extension Client {
                 logger?.log("🙅‍♂️ A request was cancelled. NSError \(NSURLErrorCancelled)")
             } else if (error as NSError).code == NSURLErrorNetworkConnectionLost {
                 logger?.log("🤷‍♂️ The network connection was lost. NSError \(NSURLErrorNetworkConnectionLost)")
+                logger?.log(error)
             } else {
                 logger?.log(error)
             }

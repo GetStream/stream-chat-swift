@@ -21,6 +21,8 @@ public enum EventType: String, Codable {
     case channelUpdated = "channel.updated"
     /// When a channel was deleted (when watching the channel 📺).
     case channelDeleted = "channel.deleted"
+    /// When a channel was hidden (when watching the channel 📺).
+    case channelHidden = "channel.hidden"
     
     /// When a user status changes, e.g. online, offline, away (when subscribed to the user status 🙋‍♀️).
     case userPresenceChanged = "user.presence.changed"
@@ -111,6 +113,7 @@ public enum Event: Decodable {
     
     case channelUpdated(ChannelUpdatedResponse, EventType)
     case channelDeleted(Channel, EventType)
+    case channelHidden(HiddenChannelResponse, EventType)
     
     case messageRead(MessageRead, EventType)
     case messageNew(Message, _ unreadCount: Int, _ unreadChannels: Int, Channel?, EventType)
@@ -148,6 +151,7 @@ public enum Event: Decodable {
         switch self {
         case .channelUpdated(_, let type),
              .channelDeleted(_, let type),
+             .channelHidden(_, let type),
              
              .messageRead(_, let type),
              .messageNew(_, _, _, _, let type),
@@ -219,6 +223,9 @@ public enum Event: Decodable {
             self = .channelUpdated(try ChannelUpdatedResponse(from: decoder), type)
         case .channelDeleted:
             self = .channelDeleted(try channel(), type)
+        case .channelHidden:
+            let hiddenChannelResponse = try HiddenChannelResponse(from: decoder)
+            self = .channelHidden(hiddenChannelResponse, type)
             
         // Message
         case .messageNew, .notificationMessageNew:
@@ -316,6 +323,10 @@ extension Event: Equatable {
             return true
         case (.channelUpdated(let response1, _), .channelUpdated(let response2, _)):
             return response1 == response2
+        case (.channelDeleted(let channel1, _), .channelDeleted(let channel2, _)):
+            return channel1 == channel2
+        case (.channelHidden(let channel1, let clearHistory1, _), .channelHidden(let channel2, let clearHistory2, _)):
+            return channel1 == channel2 && clearHistory1 == clearHistory2
         case (.messageRead(let messageRead1, _), .messageRead(let messageRead2, _)):
             return messageRead1 == messageRead2
         case (.messageNew(let message1, let unreadCount1, let unreadChannels1, let channel1, _),

@@ -111,9 +111,9 @@ final class LoginViewController: UIViewController {
         
         if !clientSetupped {
             Client.config = .init(apiKey: apiKey,
-                                  baseURL: .init(customURL: URL(string: "https://chat-proxy-us-east.stream-io-api.com/")!),
+//                                  baseURL: .init(customURL: URL(string: "https://chat-proxy-us-east.stream-io-api.com/")!),
                                   database: Database.instance,
-                                  logOptions: .debug)
+                                  logOptions: .info)
             
             Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
             store(key: .apiKey, value: apiKey)
