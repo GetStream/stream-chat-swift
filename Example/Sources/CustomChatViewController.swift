@@ -31,8 +31,8 @@ class CustomChatViewController: ChatViewController {
         
         touchMembersCount()
         
-        if (navigationItem.rightBarButtonItems?.count ?? 0) == 1 {
-            navigationItem.rightBarButtonItems?.append(membersCountButton)
+        if (navigationController?.viewControllers.count ?? 1) > 1 {
+            navigationItem.rightBarButtonItem = membersCountButton
         } else {
             navigationItem.leftBarButtonItem = membersCountButton
         }
@@ -63,46 +63,6 @@ class CustomChatViewController: ChatViewController {
         membersCountButton.title = channelPresenter.channel.members.count > 0
             ? "🙋🏻‍♀️\(channelPresenter.channel.members.count)"
             : "🤷🏻‍♀️0"
-    }
-    
-    @IBAction func showMenu(_ sender: Any) {
-        guard let channelPresenter = channelPresenter else {
-            return
-        }
-        
-        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        alert.addAction(.init(title: "Add a member", style: .default, handler: { [unowned self] _ in
-            self.createMember("Add a member") { member in
-                channelPresenter.channel
-                    .add(member)
-                    .subscribe(onNext: { _ in
-                        Banners.shared.show("\(member.user.name) added to the channel")
-                    })
-                    .disposed(by: self.disposeBag)
-            }
-        }))
-        
-        alert.addAction(.init(title: "Invite a member", style: .default, handler: { [unowned self] _ in
-            self.createMember("Invite a member") { member in
-                channelPresenter.channel
-                    .invite(member)
-                    .subscribe(onNext: { _ in
-                        Banners.shared.show("Invite for \(member.user.name) was send")
-                    })
-                    .disposed(by: self.disposeBag)
-            }
-        }))
-        
-        if channelPresenter.channel.members.count > 1 {
-            alert.addAction(.init(title: "Remove a member", style: .default, handler: { [unowned self] _ in
-                self.removeMember()
-            }))
-        }
-        
-        alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
-        
-        present(alert, animated: true)
     }
     
     func createMember(_ title: String, _ add: @escaping (Member) -> Void) {
@@ -159,12 +119,53 @@ class CustomChatViewController: ChatViewController {
     }
     
     func showMembers() {
-        let members = channelPresenter?.channel.members
-            .map({ "\($0.user.name) (\($0.user.id))" })
-            .joined(separator: "\n")
+        guard let channelPresenter = channelPresenter else {
+            return
+        }
+        
+        let onlyYou = channelPresenter.channel.members.count == 1
+            && channelPresenter.channel.members.first!.user.id == User.current!.id
+        
+        let members = channelPresenter.channel.members.count > 0
+            ? (onlyYou
+                ? "Only you"
+                : channelPresenter.channel.members
+                    .map({ "\($0.user.name) (\($0.user.id))" })
+                    .joined(separator: "\n"))
+            : "No members"
         
         let alert = UIAlertController(title: "Members", message: members, preferredStyle: .actionSheet)
-        alert.addAction(.init(title: "Ok", style: .cancel, handler: nil))
+        
+        alert.addAction(.init(title: "Add a member", style: .default, handler: { [unowned self] _ in
+            self.createMember("Add a member") { member in
+                channelPresenter.channel
+                    .add(member)
+                    .subscribe(onNext: { _ in
+                        Banners.shared.show("\(member.user.name) added to the channel")
+                    })
+                    .disposed(by: self.disposeBag)
+            }
+        }))
+        
+        alert.addAction(.init(title: "Invite a member", style: .default, handler: { [unowned self] _ in
+            self.createMember("Invite a member") { member in
+                channelPresenter.channel
+                    .invite(member)
+                    .subscribe(onNext: { _ in
+                        Banners.shared.show("Invite for \(member.user.name) was send")
+                    })
+                    .disposed(by: self.disposeBag)
+            }
+        }))
+        
+        if channelPresenter.channel.members.count > 0 && !onlyYou {
+            alert.addAction(.init(title: "Remove a member", style: .default, handler: { [unowned self] _ in
+                self.removeMember()
+            }))
+        }
+        
+        alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
+        
         present(alert, animated: true)
     }
 }
