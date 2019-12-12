@@ -68,11 +68,11 @@ class CustomChatViewController: ChatViewController {
     func createMember(_ title: String, _ add: @escaping (Member) -> Void) {
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
         alert.addTextField { textField in textField.placeholder = "user id" }
-        alert.addTextField { textField in textField.placeholder = "user name" }
+        alert.addTextField { textField in textField.placeholder = "user name (optional)" }
         
         alert.addAction(.init(title: "Add", style: .default, handler: { [unowned alert] _ in
-            if let id = alert.textFields?[0].text, !id.isBlank, let name = alert.textFields?[1].text, !name.isBlank {
-                add(User(id: id, name: name).asMember)
+            if let id = alert.textFields?[0].text, !id.isBlank, let name = alert.textFields?[1].text {
+                add(User(id: id, name: name.isBlank ? id : name).asMember)
             }
         }))
         
