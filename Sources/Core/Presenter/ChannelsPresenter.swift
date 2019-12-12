@@ -188,15 +188,21 @@ extension ChannelsPresenter {
         }
         
         switch response.event {
-        case .channelUpdated(let channel, _):
-            if let index = items.firstIndex(where: channel.channel.cid),
+        case .channelUpdated(let channelResponse, _):
+            if let index = items.firstIndex(where: channelResponse.channel.cid),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseEvents(event: response.event)
                 return .itemUpdated([index], [], items)
             }
             
         case .channelDeleted:
-            if let index = items.firstIndex(whereChannelId: cid.id, channelType: cid.type) {
+            if let index = items.firstIndex(where: cid) {
+                items.remove(at: index)
+                return .itemRemoved(index, items)
+            }
+            
+        case .channelHidden:
+            if let index = items.firstIndex(where: cid) {
                 items.remove(at: index)
                 return .itemRemoved(index, items)
             }

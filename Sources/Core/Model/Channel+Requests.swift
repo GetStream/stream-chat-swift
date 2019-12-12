@@ -459,7 +459,7 @@ struct HiddenChannelRequest: Encodable {
 }
 
 /// A hidden channel event response.
-public struct HiddenChannelResponse: Decodable {
+public struct HiddenChannelResponse: Decodable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case cid
         case user

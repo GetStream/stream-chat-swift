@@ -325,8 +325,8 @@ extension Event: Equatable {
             return response1 == response2
         case (.channelDeleted(let channel1, _), .channelDeleted(let channel2, _)):
             return channel1 == channel2
-        case (.channelHidden(let channel1, let clearHistory1, _), .channelHidden(let channel2, let clearHistory2, _)):
-            return channel1 == channel2 && clearHistory1 == clearHistory2
+        case (.channelHidden(let hiddenChannelResponse1, _), .channelHidden(let hiddenChannelResponse2, _)):
+            return hiddenChannelResponse1 == hiddenChannelResponse2
         case (.messageRead(let messageRead1, _), .messageRead(let messageRead2, _)):
             return messageRead1 == messageRead2
         case (.messageNew(let message1, let unreadCount1, let unreadChannels1, let channel1, _),
