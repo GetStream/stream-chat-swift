@@ -369,18 +369,11 @@ Stream Swift SDK v.1.0.0</string>
                         <viewLayoutGuide key="safeArea" id="AC2-xq-vHg"/>
                     </view>
                     <navigationItem key="navigationItem" id="M29-wa-tVT">
-                        <rightBarButtonItems>
-                            <barButtonItem systemItem="stop" id="2ar-d7-vJl">
-                                <connections>
-                                    <segue destination="Z71-Wp-boH" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="Ko2-1P-TID"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem systemItem="action" id="KuC-ND-gaD">
-                                <connections>
-                                    <action selector="showMenu:" destination="e0G-IG-Gxn" id="HgS-7X-Xmp"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" systemItem="stop" id="2ar-d7-vJl">
+                            <connections>
+                                <segue destination="Z71-Wp-boH" kind="custom" customClass="DismissSegue" customModule="StreamChat" id="Ko2-1P-TID"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="closeBarButton" destination="2ar-d7-vJl" id="c8U-Av-2uH"/>
@@ -673,7 +666,7 @@ Stream Swift SDK v.1.0.0</string>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="gPS-K7-ckQ"/>
-        <segue reference="qta-yE-T30"/>
+        <segue reference="a5b-Jp-cN7"/>
         <segue reference="Ko2-1P-TID"/>
         <segue reference="seW-P6-fEX"/>
         <segue reference="NE9-Td-MIk"/>
