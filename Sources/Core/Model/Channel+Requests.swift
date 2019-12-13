@@ -462,22 +462,15 @@ struct HiddenChannelRequest: Encodable {
 public struct HiddenChannelResponse: Decodable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case cid
-        case user
         case clearHistory = "clear_history"
         /// A created date.
         case created = "created_at"
-        /// A received date.
-        case received = "received_at"
     }
     
     /// A channel type + id.
     public let cid: ChannelId
-    /// A user who hided the channel.
-    public let user: User
     /// The message history was cleared.
     public let clearHistory: Bool
     /// An event created date.
     public let created: Date
-    /// An event received date.
-    public let received: Date?
 }
