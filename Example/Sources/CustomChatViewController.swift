@@ -159,7 +159,7 @@ class CustomChatViewController: ChatViewController {
         }))
         
         if !channelPresenter.channel.members.isEmpty && !onlyYou {
-            alert.addAction(.init(title: "Remove a member", style: .default, handler: { [unowned self] _ in
+            alert.addAction(.init(title: "Remove a member", style: .destructive, handler: { [unowned self] _ in
                 self.removeMember()
             }))
         }
