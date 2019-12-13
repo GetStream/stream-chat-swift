@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import StreamChat
 import StreamChatCore
+import RxGesture
 
 final class LoginViewController: UIViewController {
     
@@ -31,13 +32,15 @@ final class LoginViewController: UIViewController {
         
         let autoLogin = storedValue(key: .apiKey) != nil
         apiKeyLabel.text = storedValue(key: .apiKey, default: "qk4nn7rpcn75")
-        userIdLabel.text = storedValue(key: .userId, default: "broken-waterfall-5")
-        userNameLabel.text = storedValue(key: .userName, default: "Broken waterfall")
-        tokenLabel.text = storedValue(key: .token, default:  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg")
+        userIdLabel.text = storedValue(key: .userId, default: User.user1.id)
+        userNameLabel.text = storedValue(key: .userName, default: User.user1.name)
+        tokenLabel.text = storedValue(key: .token, default: Token.token1)
         
         if autoLogin {
             DispatchQueue.main.async { self.login(animated: false) }
         }
+        
+        setupUsers()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -83,17 +86,17 @@ final class LoginViewController: UIViewController {
         }
         
         guard let apiKey = apiKeyLabel.text, !apiKey.isBlank else {
-            apiKeyLabel.placeholder = "⚠️ Stream Chat API key"
+            apiKeyLabel.placeholder = " ⚠️ Stream Chat API key"
             return
         }
         
         guard let userId = userIdLabel.text, !userId.isBlank else {
-            userIdLabel.placeholder = "⚠️ User id"
+            userIdLabel.placeholder = " ⚠️ User id"
             return
         }
         
         guard let userName = userNameLabel.text, !userName.isBlank else {
-            userNameLabel.placeholder = "⚠️ User name"
+            userNameLabel.placeholder = " ⚠️ User name"
             return
         }
         
@@ -149,9 +152,52 @@ final class LoginViewController: UIViewController {
             apiKeyLabel.becomeFirstResponder()
         }
     }
+    
+    private func setupUsers() {
+        versionLabel.isUserInteractionEnabled = true
+        
+        versionLabel.rx.longPressGesture()
+            .when(.began)
+            .subscribe(onNext: { [unowned self] _ in self.showUsers() })
+            .disposed(by: disposeBag)
+    }
+    
+    private func showUsers() {
+        let alert = UIAlertController(title: "Select a user", message: nil, preferredStyle: .actionSheet)
+        
+        alert.addAction(.init(title: User.user1.name, style: .default, handler: { [unowned self] _ in
+            self.login(with: User.user1, token: .token1)
+        }))
+        
+        alert.addAction(.init(title: User.user2.name, style: .default, handler: { [unowned self] _ in
+            self.login(with: User.user2, token: .token2)
+        }))
+        
+        alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
+        present(alert, animated: true)
+    }
+    
+    private func login(with user: User, token: Token) {
+        userIdLabel.text = user.id
+        userNameLabel.text = user.name
+        tokenLabel.text = token
+        login(animated: true)
+    }
 }
 
-// MARk: UserDefaults
+// MARK: Test Users
+
+extension User {
+    static let user1 = User(id: "broken-waterfall-5", name: "Jon Snow", avatarURL: URL(string: "https://bit.ly/2u9Vc0r"))
+    static let user2 = User(id: "steep-moon-9", name: "Steep moon")
+}
+
+extension Token {
+    static let token1 = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
+    static let token2 = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoic3RlZXAtbW9vbi05In0.K7uZEqKmiVb5_Y7XFCmlz64SzOV34hoMpeqRSz7g4YI"
+}
+
+// MARK: UserDefaults
 
 extension LoginViewController {
     enum StoreKey: String {
