@@ -53,15 +53,15 @@ extension ChannelPresenter {
             return isLoadingIndex == -1 ? .none : .itemRemoved(isLoadingIndex, items)
         }
         
-        if items.count > 0 {
-            if isNextPage {
-                return .reloaded(max(items.count - currentCount - 1, 0), items)
-            }
-            
-            return .reloaded((items.count - 1), items)
+        if items.isEmpty {
+            return .none
         }
         
-        return .none
+        if isNextPage {
+            return .reloaded(max(items.count - currentCount - 1, 0), items)
+        }
+        
+        return .reloaded((items.count - 1), items)
     }
     
     func parsedRepliesResponse(_ repliesResponse: Observable<[Message]>) -> Driver<ViewChanges> {

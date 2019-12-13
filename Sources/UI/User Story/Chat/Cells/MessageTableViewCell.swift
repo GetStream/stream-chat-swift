@@ -360,7 +360,7 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
     func lastVisibleViewFromMessageStackView() -> UIView? {
         var visibleViews = messageStackView.arrangedSubviews.filter { $0.isHidden == false }
         
-        guard visibleViews.count > 0 else {
+        if visibleViews.isEmpty {
             return nil
         }
         
