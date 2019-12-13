@@ -378,7 +378,7 @@ public extension Channel {
 
 private extension Array where Element == Member {
     func channelName(default: String) -> String {
-        guard count > 0 else {
+        if isEmpty {
             return `default`
         }
         

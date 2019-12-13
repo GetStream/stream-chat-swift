@@ -60,9 +60,9 @@ class CustomChatViewController: ChatViewController {
             return
         }
         
-        membersCountButton.title = channelPresenter.channel.members.count > 0
-            ? "🙋🏻‍♀️\(channelPresenter.channel.members.count)"
-            : "🤷🏻‍♀️0"
+        membersCountButton.title = channelPresenter.channel.members.isEmpty
+            ? "🤷🏻‍♀️0"
+            : "🙋🏻‍♀️\(channelPresenter.channel.members.count)"
     }
     
     func createMember(_ title: String, _ add: @escaping (Member) -> Void) {
@@ -126,13 +126,13 @@ class CustomChatViewController: ChatViewController {
         let onlyYou = channelPresenter.channel.members.count == 1
             && channelPresenter.channel.members.first!.user.id == User.current!.id
         
-        let members = channelPresenter.channel.members.count > 0
-            ? (onlyYou
+        let members = channelPresenter.channel.members.isEmpty
+            ? "No members"
+            : (onlyYou
                 ? "Only you"
                 : channelPresenter.channel.members
                     .map({ "\($0.user.name) (\($0.user.id))" })
                     .joined(separator: "\n"))
-            : "No members"
         
         let alert = UIAlertController(title: "Members", message: members, preferredStyle: .actionSheet)
         
@@ -158,7 +158,7 @@ class CustomChatViewController: ChatViewController {
             }
         }))
         
-        if channelPresenter.channel.members.count > 0 && !onlyYou {
+        if !channelPresenter.channel.members.isEmpty && !onlyYou {
             alert.addAction(.init(title: "Remove a member", style: .default, handler: { [unowned self] _ in
                 self.removeMember()
             }))
