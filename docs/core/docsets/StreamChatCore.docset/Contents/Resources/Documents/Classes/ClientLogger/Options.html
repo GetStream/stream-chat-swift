@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Options Enumeration Reference</title>
+    <title>Options Structure Reference</title>
     <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
     <meta charset='utf-8'>
@@ -10,8 +10,8 @@
     
   </head>
   <body>
-    <a name="//apple_ref/swift/Enum/Options" class="dashAnchor"></a>
-    <a title="Options Enumeration Reference"></a>
+    <a name="//apple_ref/swift/Struct/Options" class="dashAnchor"></a>
+    <a title="Options Structure Reference"></a>
     <header>
       <div class="content-wrapper">
         <p><a href="../../index.html">StreamChatCore Docs</a> (90% documented)</p>
@@ -22,7 +22,7 @@
       <p id="breadcrumbs">
         <a href="../../index.html">StreamChatCore Reference</a>
         <img id="carat" src="../../img/carat.png" />
-        Options Enumeration Reference
+        Options Structure Reference
       </p>
     </div>
     <div class="content-wrapper">
@@ -60,6 +60,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../../Classes/ClientLogger.html">ClientLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Classes/ClientLogger/Level.html">– Level</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../Classes/ClientLogger/Options.html">– Options</a>
@@ -163,6 +166,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="../../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../Extensions/Date.html">Date</a>
@@ -289,6 +295,21 @@
                 <a href="../../Structs/ExtraData/DecodableType.html">– DecodableType</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../Structs/ExtraData/Wrapper.html">– Wrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV11UserWrapperC">– UserWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV14ChannelWrapperC">– ChannelWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV14MessageWrapperC">– MessageWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV17AttachmentWrapperC">– AttachmentWrapper</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../Structs/FileUploadResponse.html">FileUploadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -296,6 +317,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../../Structs/FlagUserResponse.html">FlagUserResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Structs/HiddenChannelResponse.html">HiddenChannelResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../Structs/Member.html">Member</a>
@@ -384,11 +408,23 @@
             <h1>Options</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Options</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Options</span> <span class="p">:</span> <span class="kt">OptionSet</span></code></pre>
 
                 </div>
               </div>
             <p>A client logger options.</p>
+
+<p>It has several levels: Error, Debug and Info.</p>
+
+<ul>
+<li>🐴 for REST requests: <code>.requestsError</code>, <code>.requests</code>, <code>.requestsInfo</code></li>
+<li>🦄 for web socket events: <code>.webSocketError</code>, <code>.webSocket</code>, <code>.webSocketInfo</code></li>
+<li>🗞 for notifications: <code>.notificationsError</code>, <code>.notifications</code></li>
+<li>🗄 for a database: <code>.databaseError</code>, <code>.database</code>, <code>.databaseInfo</code></li>
+<li>for all error logs: <code>.error</code></li>
+<li>for all debug logs: <code>.debug</code></li>
+<li>full logs: <code>.info</code></li>
+</ul>
 
           </section>
           <section class="section task-group-section">
@@ -397,9 +433,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsO4noneyA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/none" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsO4noneyA2EmF">none</a>
+                    <a name="/s:SY8rawValue03RawB0Qzvp"></a>
+                    <a name="//apple_ref/swift/Property/rawValue" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SY8rawValue03RawB0Qzvp">rawValue</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -407,14 +443,13 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>No logs.</p>
-
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="k">none</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">rawValue</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
@@ -424,9 +459,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsO8requestsyA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/requests" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsO8requestsyA2EmF">requests</a>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV13requestsErrorAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/requestsError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV13requestsErrorAEvpZ">requestsError</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -434,14 +469,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Logs for requests.</p>
+                        <p>Logs for requests 🐴. [Error]</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">requests</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">requestsError</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
 
                         </div>
                       </div>
@@ -451,9 +486,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsO15requestsHeadersyA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/requestsHeaders" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsO15requestsHeadersyA2EmF">requestsHeaders</a>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV14webSocketErrorAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/webSocketError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV14webSocketErrorAEvpZ">webSocketError</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -461,14 +496,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Logs only requests headers.</p>
+                        <p>Logs for a web socket 🦄. [Error]</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">requestsHeaders</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">webSocketError</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
 
                         </div>
                       </div>
@@ -478,9 +513,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsO9webSocketyA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/webSocket" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsO9webSocketyA2EmF">webSocket</a>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV18notificationsErrorAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/notificationsError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV18notificationsErrorAEvpZ">notificationsError</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -488,14 +523,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Logs for a web socket.</p>
+                        <p>Logs for notifications 🗞. [Error]</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">webSocket</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">notificationsError</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
 
                         </div>
                       </div>
@@ -505,9 +540,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsO3allyA2EmF"></a>
-                    <a name="//apple_ref/swift/Element/all" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsO3allyA2EmF">all</a>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV13databaseErrorAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/databaseError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV13databaseErrorAEvpZ">databaseError</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -515,16 +550,451 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>All logs.</p>
+                        <p>Logs for a database 🗄. [Error]</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">all</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">databaseError</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
 
                         </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV8requestsAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/requests" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV8requestsAEvpZ">requests</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Logs for requests 🐴. [Debug]</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">requests</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV9webSocketAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/webSocket" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV9webSocketAEvpZ">webSocket</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Logs for a web socket 🦄. [Debug]</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">webSocket</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV13notificationsAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/notifications" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV13notificationsAEvpZ">notifications</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Logs for notifications 🗞. [Debug]</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">notifications</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV8databaseAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/database" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV8databaseAEvpZ">database</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Logs for a database 🗄. [Debug]</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">database</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV12requestsInfoAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/requestsInfo" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV12requestsInfoAEvpZ">requestsInfo</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Logs for requests 🐴. [Info]</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">requestsInfo</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV13webSocketInfoAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/webSocketInfo" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV13webSocketInfoAEvpZ">webSocketInfo</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Logs for a web socket 🦄. [Info]</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">webSocketInfo</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV12databaseInfoAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/databaseInfo" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV12databaseInfoAEvpZ">databaseInfo</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Logs for a database 🗄. [Info]</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">databaseInfo</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV5errorAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/error" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV5errorAEvpZ">error</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>All errors.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">error</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV5debugAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/debug" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV5debugAEvpZ">debug</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>All debug logs.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">debug</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV4infoAEvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/info" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV4infoAEvpZ">info</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Full logs.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">info</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV7isErrorSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV7isErrorSbvp">isError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if the level is error.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isError</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV7isDebugSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isDebug" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV7isDebugSbvp">isDebug</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if the level is debug.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isDebug</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV6isInfoSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isInfo" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV6isInfoSbvp">isInfo</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if the level is info.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isInfo</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:s9OptionSetP8rawValuex03RawD0Qz_tcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(rawValue:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:s9OptionSetP8rawValuex03RawD0Qz_tcfc">init(rawValue:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">rawValue</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV6logger4icon3forACSgSS_AEtF"></a>
+                    <a name="//apple_ref/swift/Method/logger(icon:for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV6logger4icon3forACSgSS_AEtF">logger(icon:for:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Create a logger with intersected log options.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">logger</span><span class="p">(</span><span class="nv">icon</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="k">for</span> <span class="nv">subOptions</span><span class="p">:</span> <span class="kt">Options</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>icon</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a logger icon.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>subOptions</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a subset of options.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -534,7 +1004,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

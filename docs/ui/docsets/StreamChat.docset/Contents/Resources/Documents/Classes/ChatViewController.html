@@ -14,7 +14,7 @@
     <a title="ChatViewController Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (84% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (86% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -72,9 +72,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/MessageTableViewCell.html">MessageTableViewCell</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/RxKeyboard.html">RxKeyboard</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/TableView.html">TableView</a>
@@ -154,9 +151,6 @@
               <li class="nav-group-task">
                 <a href="../Protocols.html#/s:10StreamChat33ComposerAddFileCustomSourceIdTypeP">ComposerAddFileCustomSourceIdType</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/RxKeyboardType.html">RxKeyboardType</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -178,6 +172,9 @@
                 <a href="../Structs/ComposerViewStyle/Style.html">– Style</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/DataDetectorURLItem.html">DataDetectorURLItem</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/MediaGalleryItem.html">MediaGalleryItem</a>
               </li>
               <li class="nav-group-task">
@@ -185,6 +182,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/MessageViewStyle/Alignment.html">– Alignment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageViewStyle/AdditionalDateStyle.html">– AdditionalDateStyle</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a>
@@ -347,6 +347,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10StreamChat0B14ViewControllerC24calculatedSafeAreaBottom12CoreGraphics7CGFloatVvp"></a>
+                    <a name="//apple_ref/swift/Property/calculatedSafeAreaBottom" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat0B14ViewControllerC24calculatedSafeAreaBottom12CoreGraphics7CGFloatVvp">calculatedSafeAreaBottom</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Calculates the bottom inset for the <code><a href="../Classes/ComposerView.html">ComposerView</a></code> when the keyboard will appear.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">var</span> <span class="nv">calculatedSafeAreaBottom</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10StreamChat0B14ViewControllerC20composerAddFileTypesSayAC08ComposerfG4TypeOGvp"></a>
                     <a name="//apple_ref/swift/Property/composerAddFileTypes" class="dashAnchor"></a>
                     <a class="token" href="#/s:10StreamChat0B14ViewControllerC20composerAddFileTypesSayAC08ComposerfG4TypeOGvp">composerAddFileTypes</a>
@@ -452,6 +479,17 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/View%20Life%20Cycle"></a>
+                <a name="//apple_ref/swift/Section/View Life Cycle" class="dashAnchor"></a>
+                <a href="#/View%20Life%20Cycle">
+                  <h3 class="section-name">View Life Cycle</h3>
+                </a>
+              </div>
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -560,6 +598,45 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@StreamChat@objc(cs)ChatViewController(im)willTransitionToTraitCollection:withTransitionCoordinator:"></a>
+                    <a name="//apple_ref/swift/Method/willTransition(to:with:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@StreamChat@objc(cs)ChatViewController(im)willTransitionToTraitCollection:withTransitionCoordinator:">willTransition(to:with:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">willTransition</span><span class="p">(</span><span class="n">to</span> <span class="nv">newCollection</span><span class="p">:</span> <span class="kt">UITraitCollection</span><span class="p">,</span>
+                                  <span class="n">with</span> <span class="nv">coordinator</span><span class="p">:</span> <span class="kt">UIViewControllerTransitionCoordinator</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Table%20View%20Customization"></a>
+                <a name="//apple_ref/swift/Section/Table View Customization" class="dashAnchor"></a>
+                <a href="#/Table%20View%20Customization">
+                  <h3 class="section-name">Table View Customization</h3>
+                </a>
+              </div>
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -1183,7 +1260,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

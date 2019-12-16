@@ -62,6 +62,9 @@
                 <a href="../Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/ClientLogger/Level.html">– Level</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/ClientLogger/Options.html">– Options</a>
               </li>
               <li class="nav-group-task">
@@ -163,6 +166,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Date.html">Date</a>
@@ -289,6 +295,21 @@
                 <a href="../Structs/ExtraData/DecodableType.html">– DecodableType</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/ExtraData/Wrapper.html">– Wrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV11UserWrapperC">– UserWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV14ChannelWrapperC">– ChannelWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV14MessageWrapperC">– MessageWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV17AttachmentWrapperC">– AttachmentWrapper</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/FileUploadResponse.html">FileUploadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -296,6 +317,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/FlagUserResponse.html">FlagUserResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/HiddenChannelResponse.html">HiddenChannelResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/Member.html">Member</a>
@@ -397,9 +421,37 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsO"></a>
-                    <a name="//apple_ref/swift/Enum/Options" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsO">Options</a>
+                    <a name="/s:14StreamChatCore12ClientLoggerC5LevelO"></a>
+                    <a name="//apple_ref/swift/Enum/Level" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC5LevelO">Level</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A logger level.</p>
+
+                        <a href="../Classes/ClientLogger/Level.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Level</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ClientLoggerC7OptionsV"></a>
+                    <a name="//apple_ref/swift/Struct/Options" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC7OptionsV">Options</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -409,13 +461,25 @@
                       <div class="abstract">
                         <p>A client logger options.</p>
 
+<p>It has several levels: Error, Debug and Info.</p>
+
+<ul>
+<li>🐴 for REST requests: <code>.requestsError</code>, <code>.requests</code>, <code>.requestsInfo</code></li>
+<li>🦄 for web socket events: <code>.webSocketError</code>, <code>.webSocket</code>, <code>.webSocketInfo</code></li>
+<li>🗞 for notifications: <code>.notificationsError</code>, <code>.notifications</code></li>
+<li>🗄 for a database: <code>.databaseError</code>, <code>.database</code>, <code>.databaseInfo</code></li>
+<li>for all error logs: <code>.error</code></li>
+<li>for all debug logs: <code>.debug</code></li>
+<li>full logs: <code>.info</code></li>
+</ul>
+
                         <a href="../Classes/ClientLogger/Options.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Options</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Options</span> <span class="p">:</span> <span class="kt">OptionSet</span></code></pre>
 
                         </div>
                       </div>
@@ -496,9 +560,9 @@ By default error messages will print to the console, but you can customize it to
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC4icon7optionsACSS_AC7OptionsOtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(icon:options:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC4icon7optionsACSS_AC7OptionsOtcfc">init(icon:options:)</a>
+                    <a name="/s:14StreamChatCore12ClientLoggerC4icon5levelACSS_AC5LevelOtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(icon:level:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC4icon5levelACSS_AC5LevelOtcfc">init(icon:level:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -513,7 +577,7 @@ By default error messages will print to the console, but you can customize it to
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">icon</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Classes/ClientLogger/Options.html">Options</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">none</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">icon</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">level</span><span class="p">:</span> <span class="kt"><a href="../Classes/ClientLogger/Level.html">Level</a></span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -536,58 +600,12 @@ By default error messages will print to the console, but you can customize it to
                             <tr>
                               <td>
                                 <code>
-                                <em>options</em>
+                                <em>level</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>options (see <code><a href="../Classes/ClientLogger/Options.html">ClientLogger.Options</a></code>).</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC3logyySo25NSURLSessionConfigurationCF"></a>
-                    <a name="//apple_ref/swift/Method/log(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC3logyySo25NSURLSessionConfigurationCF">log(_:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Log URLSessionConfiguration.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">sessionConfiguration</span><span class="p">:</span> <span class="kt">URLSessionConfiguration</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>sessionConfiguration</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>an URL session configuration.</p>
+                                  <p>level (see <code><a href="../Classes/ClientLogger/Level.html">ClientLogger.Level</a></code>).</p>
                                 </div>
                               </td>
                             </tr>
@@ -808,9 +826,9 @@ By default error messages will print to the console, but you can customize it to
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC3log__7message8function4lineySS_s5Error_pSgSSSgSSSitFZ"></a>
-                    <a name="//apple_ref/swift/Method/log(_:_:message:function:line:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC3log__7message8function4lineySS_s5Error_pSgSSSgSSSitFZ">log(_:_:message:function:line:)</a>
+                    <a name="/s:14StreamChatCore12ClientLoggerC3log_7message8function4lineys5Error_pSg_SSSgSSSitF"></a>
+                    <a name="//apple_ref/swift/Method/log(_:message:function:line:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC3log_7message8function4lineys5Error_pSg_SSSgSSSitF">log(_:message:function:line:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -825,11 +843,10 @@ By default error messages will print to the console, but you can customize it to
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">icon</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
-                       <span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?,</span>
-                       <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                       <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span>
-                       <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?,</span>
+                <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="kd">#function</span><span class="p">,</span>
+                <span class="nv">line</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="kd">#line</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -837,18 +854,6 @@ By default error messages will print to the console, but you can customize it to
                         <h4>Parameters</h4>
                         <table class="graybox">
                           <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>icon</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a string icon, e.g. emoji.</p>
-                                </div>
-                              </td>
-                            </tr>
                             <tr>
                               <td>
                                 <code>
@@ -964,9 +969,9 @@ By default error messages will print to the console, but you can customize it to
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC3logyySS_10Foundation4DataVSgtF"></a>
-                    <a name="//apple_ref/swift/Method/log(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC3logyySS_10Foundation4DataVSgtF">log(_:_:)</a>
+                    <a name="/s:14StreamChatCore12ClientLoggerC3log_7message15forceToShowDatay10Foundation0K0VSg_SSSbtF"></a>
+                    <a name="//apple_ref/swift/Method/log(_:message:forceToShowData:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC3log_7message15forceToShowDatay10Foundation0K0VSg_SSSbtF">log(_:message:forceToShowData:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -981,7 +986,7 @@ By default error messages will print to the console, but you can customize it to
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">_</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">data</span><span class="p">:</span> <span class="kt">Data</span><span class="p">?,</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span> <span class="nv">forceToShowData</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -989,18 +994,6 @@ By default error messages will print to the console, but you can customize it to
                         <h4>Parameters</h4>
                         <table class="graybox">
                           <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>identifier</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>an identifier.</p>
-                                </div>
-                              </td>
-                            </tr>
                             <tr>
                               <td>
                                 <code>
@@ -1022,9 +1015,9 @@ By default error messages will print to the console, but you can customize it to
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC3logyySS_SStF"></a>
-                    <a name="//apple_ref/swift/Method/log(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC3logyySS_SStF">log(_:_:)</a>
+                    <a name="/s:14StreamChatCore12ClientLoggerC3log_5levelySS_AC5LevelOtF"></a>
+                    <a name="//apple_ref/swift/Method/log(_:level:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC3log_5levelySS_AC5LevelOtF">log(_:level:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1039,7 +1032,7 @@ By default error messages will print to the console, but you can customize it to
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">level</span><span class="p">:</span> <span class="kt"><a href="../Classes/ClientLogger/Level.html">Level</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">debug</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1059,52 +1052,6 @@ By default error messages will print to the console, but you can customize it to
                                 </div>
                               </td>
                             </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>message</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a message.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore12ClientLoggerC3logyySSF"></a>
-                    <a name="//apple_ref/swift/Method/log(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ClientLoggerC3logyySSF">log(_:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Log a message.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
                             <tr>
                               <td>
                                 <code>
@@ -1198,7 +1145,7 @@ By default error messages will print to the console, but you can customize it to
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

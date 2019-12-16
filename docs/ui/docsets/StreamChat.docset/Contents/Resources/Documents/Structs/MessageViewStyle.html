@@ -14,7 +14,7 @@
     <a title="MessageViewStyle Structure Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (84% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (86% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -72,9 +72,6 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/MessageTableViewCell.html">MessageTableViewCell</a>
-              </li>
-              <li class="nav-group-task">
-                <a href="../Classes/RxKeyboard.html">RxKeyboard</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/TableView.html">TableView</a>
@@ -154,9 +151,6 @@
               <li class="nav-group-task">
                 <a href="../Protocols.html#/s:10StreamChat33ComposerAddFileCustomSourceIdTypeP">ComposerAddFileCustomSourceIdType</a>
               </li>
-              <li class="nav-group-task">
-                <a href="../Protocols/RxKeyboardType.html">RxKeyboardType</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -178,6 +172,9 @@
                 <a href="../Structs/ComposerViewStyle/Style.html">– Style</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/DataDetectorURLItem.html">DataDetectorURLItem</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/MediaGalleryItem.html">MediaGalleryItem</a>
               </li>
               <li class="nav-group-task">
@@ -185,6 +182,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/MessageViewStyle/Alignment.html">– Alignment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageViewStyle/AdditionalDateStyle.html">– AdditionalDateStyle</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a>
@@ -509,6 +509,61 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10StreamChat16MessageViewStyleV17showTimeThresholdSdvp"></a>
+                    <a name="//apple_ref/swift/Property/showTimeThreshold" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV17showTimeThresholdSdvp">showTimeThreshold</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Show a time for each message with a threshold. Disabled by default.
+It should be more then 60 seconds between messages to make it works.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">showTimeThreshold</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16MessageViewStyleV014additionalDateE0AC010AdditionalgE0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/additionalDateStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV014additionalDateE0AC010AdditionalgE0Ovp">additionalDateStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An additional date style (see <code><a href="../Structs/MessageViewStyle/AdditionalDateStyle.html">AdditionalDateStyle</a></code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">additionalDateStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/MessageViewStyle/AdditionalDateStyle.html">AdditionalDateStyle</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10StreamChat16MessageViewStyleV19chatBackgroundColorSo7UIColorCvp"></a>
                     <a name="//apple_ref/swift/Property/chatBackgroundColor" class="dashAnchor"></a>
                     <a class="token" href="#/s:10StreamChat16MessageViewStyleV19chatBackgroundColorSo7UIColorCvp">chatBackgroundColor</a>
@@ -700,9 +755,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16MessageViewStyleV9alignment21showCurrentUserAvatar19chatBackgroundColor4font9replyFont04nameP004infoP005emojiP004textM00oM00rM0010backgroundM006borderM00V5Width12cornerRadius08reactiondE015markdownEnabledA2C9AlignmentO_SbSo7UIColorCSo6UIFontCA4z5X12CoreGraphics7CGFloatVA1_AA08ReactiondE0VSbtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(alignment:showCurrentUserAvatar:chatBackgroundColor:font:replyFont:nameFont:infoFont:emojiFont:textColor:replyColor:infoColor:backgroundColor:borderColor:borderWidth:cornerRadius:reactionViewStyle:markdownEnabled:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV9alignment21showCurrentUserAvatar19chatBackgroundColor4font9replyFont04nameP004infoP005emojiP004textM00oM00rM0010backgroundM006borderM00V5Width12cornerRadius08reactiondE015markdownEnabledA2C9AlignmentO_SbSo7UIColorCSo6UIFontCA4z5X12CoreGraphics7CGFloatVA1_AA08ReactiondE0VSbtcfc">init(alignment:showCurrentUserAvatar:chatBackgroundColor:font:replyFont:nameFont:infoFont:emojiFont:textColor:replyColor:infoColor:backgroundColor:borderColor:borderWidth:cornerRadius:reactionViewStyle:markdownEnabled:)</a>
+                    <a name="/s:10StreamChat16MessageViewStyleV9alignment21showCurrentUserAvatar19chatBackgroundColor4font9replyFont04nameP004infoP005emojiP004textM00oM00rM0010backgroundM006borderM00V5Width12cornerRadius08reactiondE00G13TimeThreshold014additionalDateE015markdownEnabledA2C9AlignmentO_SbSo7UIColorCSo6UIFontCA0_A0_A0_A0_A5Z12CoreGraphics7CGFloatVA3_AA08ReactiondE0VSdAC014AdditionalDateE0OSbtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(alignment:showCurrentUserAvatar:chatBackgroundColor:font:replyFont:nameFont:infoFont:emojiFont:textColor:replyColor:infoColor:backgroundColor:borderColor:borderWidth:cornerRadius:reactionViewStyle:showTimeThreshold:additionalDateStyle:markdownEnabled:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV9alignment21showCurrentUserAvatar19chatBackgroundColor4font9replyFont04nameP004infoP005emojiP004textM00oM00rM0010backgroundM006borderM00V5Width12cornerRadius08reactiondE00G13TimeThreshold014additionalDateE015markdownEnabledA2C9AlignmentO_SbSo7UIColorCSo6UIFontCA0_A0_A0_A0_A5Z12CoreGraphics7CGFloatVA3_AA08ReactiondE0VSdAC014AdditionalDateE0OSbtcfc">init(alignment:showCurrentUserAvatar:chatBackgroundColor:font:replyFont:nameFont:infoFont:emojiFont:textColor:replyColor:infoColor:backgroundColor:borderColor:borderWidth:cornerRadius:reactionViewStyle:showTimeThreshold:additionalDateStyle:markdownEnabled:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -733,6 +788,8 @@
             <span class="nv">borderWidth</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nv">cornerRadius</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="o">.</span><span class="n">messageCornerRadius</span><span class="p">,</span>
             <span class="nv">reactionViewStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a></span><span class="p">(),</span>
+            <span class="nv">showTimeThreshold</span><span class="p">:</span> <span class="kt">TimeInterval</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nv">additionalDateStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/MessageViewStyle/AdditionalDateStyle.html">AdditionalDateStyle</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">userNameAndDate</span><span class="p">,</span>
             <span class="nv">markdownEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span></code></pre>
 
                         </div>
@@ -821,7 +878,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>an info font, e.g. date.</p>
+                                  <p>an info font, e.g. date and time.</p>
                                 </div>
                               </td>
                             </tr>
@@ -936,6 +993,18 @@
                             <tr>
                               <td>
                                 <code>
+                                <em>showTimeThreshold</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a time threshold between messages to show additional time. To enable it should be more than 60 sec.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>markdownEnabled</em>
                                 </code>
                               </td>
@@ -976,7 +1045,35 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Alignment</span> <span class="p">:</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">enum</span> <span class="kt">Alignment</span> <span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16MessageViewStyleV014AdditionalDateE0O"></a>
+                    <a name="//apple_ref/swift/Enum/AdditionalDateStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV014AdditionalDateE0O">AdditionalDateStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Additiona date style will work with <code><a href="../Structs/MessageViewStyle.html#/s:10StreamChat16MessageViewStyleV17showTimeThresholdSdvp">showTimeThreshold</a></code> paramenter.</p>
+
+                        <a href="../Structs/MessageViewStyle/AdditionalDateStyle.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">enum</span> <span class="kt">AdditionalDateStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -1044,7 +1141,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

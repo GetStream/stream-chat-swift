@@ -61,6 +61,9 @@
                 <a href="Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/ClientLogger/Level.html">– Level</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/ClientLogger/Options.html">– Options</a>
               </li>
               <li class="nav-group-task">
@@ -162,6 +165,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/Data.html">Data</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/Date.html">Date</a>
@@ -288,6 +294,21 @@
                 <a href="Structs/ExtraData/DecodableType.html">– DecodableType</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/ExtraData/Wrapper.html">– Wrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV11UserWrapperC">– UserWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV14ChannelWrapperC">– ChannelWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV14MessageWrapperC">– MessageWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV17AttachmentWrapperC">– AttachmentWrapper</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/FileUploadResponse.html">FileUploadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -295,6 +316,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Structs/FlagUserResponse.html">FlagUserResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Structs/HiddenChannelResponse.html">HiddenChannelResponse</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/Member.html">Member</a>
@@ -383,6 +407,8 @@
             
             <h1 id='official-ios-sdk-for-a-href-https-getstream-io-chat-stream-chat-a' class='heading'>Official iOS SDK for <a href="https://getstream.io/chat/">Stream Chat</a></h1>
 
+<p><a href="https://getstream.io/tutorials/ios-chat/"><img src="https://i.imgur.com/B7przBT.png" alt="Stream Chat"></a></p>
+
 <p><a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.0-orange.svg" alt="Language: Swift 5.0"></a>
 <a href="https://github.com/Carthage/Carthage"><img src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" alt="Carthage compatible"></a></p>
 
@@ -394,18 +420,86 @@
 <img src="https://img.shields.io/cocoapods/v/StreamChat.svg" alt="Cocoapods">
 <a href="https://getstream.github.io/stream-chat-swift/ui"><img src="https://github.com/GetStream/stream-chat-swift/blob/master/docs/ui/badge.svg" alt="UI Documentation"></a></p>
 
-<p><a href="https://github.com/GetStream/stream-chat-swift">stream-chat-swift</a> is the official iOS SDK for <a href="https://getstream.io/chat">Stream Chat</a>, a service for building chat applications.</p>
+<p><a href="https://github.com/GetStream/stream-chat-swift">stream-chat-swift</a> is the official iOS SDK for <a href="https://getstream.io/chat">Stream Chat</a>, a service for building chat and messaging applications.</p>
 
-<p>You can sign up for a Stream account at <a href="https://getstream.io/chat/get_started/">https://getstream.io/chat/get_started/</a>.</p>
+<p><strong>Quick Links</strong></p>
 
-<p><img src="https://getstream.imgix.net/images/ios-chat-tutorial/iphone_chat_art@2x.png?auto=format,enhance" alt="Stream Chat"></p>
+<ul>
+<li><a href="https://getstream.io/chat/trial/">Register</a> to get an API key for Stream Chat</li>
+<li><a href="https://getstream.io/tutorials/ios-chat/">iOS/Swift Chat Tutorial</a></li>
+<li><a href="https://getstream.io/chat/ui-kit/">Chat UI Kit</a></li>
+</ul>
+<h2 id='swift-ios-chat-tutorial' class='heading'>Swift/iOS Chat Tutorial</h2>
+
+<p>The best place to start is the <a href="https://getstream.io/tutorials/ios-chat/">iOS Swift Chat Tutorial</a>. It teaches you how to use this SDK and also shows how to make common changes. </p>
+<h2 id='example-app' class='heading'>Example App</h2>
+
+<p>This repo includes a fully functional example app. You can run the example app by following these steps:</p>
+
+<ol>
+<li>Make sure you have Xcode 11 installed and that it has latest components installed (open Xcode and install any pending update)</li>
+<li>Download the StreamChat repo: <code>git clone git@github.com:GetStream/stream-chat-swift.git</code></li>
+<li>Change the directory: <code>cd stream-chat-swift/Example/Cocoapods</code></li>
+<li>Install the <a href="https://guides.cocoapods.org/using/getting-started.html">Cocoapods</a>: <code>sudo gem install cocoapods</code></li>
+<li>Install dependencies: <code>pod install --repo-update</code></li>
+</ol>
+
+<details>
+<p>
+  
+&ldquo;`sh
+Analyzing dependencies
+Downloading dependencies
+Installing GzipSwift (5.0.0)
+Installing Nuke (8.2.0)
+Installing ReachabilitySwift (4.3.1)
+Installing RxAppState (1.6.0)
+Installing RxCocoa (5.0.1)
+Installing RxGesture (3.0.1)
+Installing RxRelay (5.0.1)
+Installing RxSwift (5.0.1)
+Installing SnapKit (5.0.1)
+Installing Starscream (3.1.1)
+Installing StreamChat (1.5.4)
+Installing StreamChatCore (1.5.4)
+Installing SwiftyGif (5.1.1)
+Generating Pods project
+Integrating client project
+Pod installation complete! There are 2 dependencies from the Podfile and 13 total pods installed.
+&rdquo;`
+  
+</p>
+</details>
+
+<ol>
+<li>Open the project: <code>open ChatExample.xcworkspace</code></li>
+<li>Select <code>ChatExample</code> as an active scheme (if needed):</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/example_app_active_scheme.jpg" width="690"></p>
+
+<ol>
+<li>Click build and run.</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/example_app.png" width="375"></p>
+<h2 id='docs' class='heading'>Docs</h2>
+
+<p>You&rsquo;ll typically want to start out using the UI components, and implement your own components using the Swift Chat API as needed.</p>
+
+<ul>
+<li><a href="https://getstream.github.io/stream-chat-swift/ui/">SDK UI Components</a></li>
+<li><a href="https://getstream.io/chat/docs/swift/">Swift Chat API Docs</a></li>
+<li><a href="https://getstream.github.io/stream-chat-swift/core/">Low level core API Reference</a></li>
+</ul>
 <h2 id='requirements' class='heading'>Requirements</h2>
 
 <ul>
 <li>iOS 11+</li>
-<li>Xcode 10.2+</li>
-<li>Swift 5</li>
+<li>Xcode 11.2+</li>
+<li>Swift 5.1</li>
 <li>CocoaPods 1.7+</li>
+<li>Carthage 0.33.0+</li>
 </ul>
 <h2 id='installation' class='heading'>Installation</h2>
 
@@ -468,15 +562,6 @@
 </ul>
 
 <p>Now build your app.</p>
-<h2 id='documentation' class='heading'>Documentation</h2>
-
-<p><a href="https://getstream.io/chat/docs/">Official API Docs</a></p>
-
-<p><a href="https://getstream.github.io/stream-chat-swift/ui/">SDK Reference</a></p>
-
-<p><a href="https://getstream.github.io/stream-chat-swift/core/">Low level core API Reference</a></p>
-
-<p><a href="https://getstream.io/chat/ios-chat/tutorial/">Getting started with the iOS Swift Chat tutorial</a></p>
 <h2 id='supported-features' class='heading'>Supported features</h2>
 
 <ul>
@@ -502,7 +587,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-11-08)</p>
+          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
