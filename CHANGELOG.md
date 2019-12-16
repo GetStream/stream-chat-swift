@@ -1,3 +1,38 @@
+# 1.5.4
+_December 16th, 2019_
+
+## 💥 Breaking Changes
+- The order of parameters in `Message.init`
+- Removed members from `ChannelResponse`. Now it's only inside the channel of the response.
+
+## 🔄 Changed
+- Improved Token validation.
+
+## ✅ Added
+- Public `Attachment.init(...)`.
+- Public `Reaction.init(...)`.
+- Public `Reaction(counts: [ReactionType: Int])`.
+- Public `User.unknown`.
+- Example app with Cocoapods.
+- Example app with Carthage.
+- A new authorization in the Example app.
+- ✈️ Offline mode inside `InternetConnection`.
+- Improved connection flow.
+- Extension `Data.hex`.
+- Extension `String.md5`, `String.url?`.
+- `Filter.description`.
+- `Sorting.description`.
+- A variable `JSONDecoder.default`. Now you can change the default JSON decoder.
+- Variables `JSONEncoder.default` and `JSONEncoder.defaultGzip`. Now you can change default JSON encoders.
+- A channel for a direct messages will use a member avatar as default channel image by default.
+- [Docs](https://getstream.github.io/stream-chat-swift/core/Classes/ClientLogger.html#/s:14StreamChatCore12ClientLoggerC7OptionsV) for the `ClientLogger`.
+- [Hide a channel](https://getstream.github.io/stream-chat-swift/core/Classes/Channel.html#/s:14StreamChatCore7ChannelC4hide3for12clearHistory7RxSwift10ObservableCyytGAA4UserVSg_SbtF) with clearing messages history.
+- Added a new event `Event.channelHidden(HiddenChannelResponse, EventType)`.
+
+## 🐞 Fixed
+- ComposerView position related to the keyboard with an opaque `UITabBar`.
+- A proper way to check if members are empty.
+
 # 1.5.3-ui
 _November 27th, 2019_
 
