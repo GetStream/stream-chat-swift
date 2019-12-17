@@ -317,7 +317,7 @@ extension ChatViewController {
             tableView.reloadData()
             
             if row >= 0 && (isLoading || (scrollEnabled && needsToScroll)) {
-                tableView.scrollToRow(at: .row(row), at: .top, animated: false)
+                tableView.scrollToRowIfPossible(at: row, animated: false)
             }
             
             if !items.isEmpty, case .loading = items[0] {
@@ -344,7 +344,7 @@ extension ChatViewController {
                 })
                 
                 if (scrollEnabled && needsToScroll) || forceToScroll {
-                    tableView.scrollToRow(at: .row(row), at: .top, animated: false)
+                    tableView.scrollToRowIfPossible(at: row, animated: false)
                 }
             }
         case let .itemUpdated(rows, messages, items):

@@ -18,6 +18,10 @@ extension UITableView {
     ///
     /// - Parameter animated: true if you want to animate the change in position; false if it should be immediate.
     public func scrollToBottom(animated: Bool = true) {
+        scrollToRowIfPossible(at: Int.max, animated: animated)
+    }
+    
+    public func scrollToRowIfPossible(at row: Int, animated: Bool = true) {
         let sectionsCount = numberOfSections
         
         guard sectionsCount > 0 else {
@@ -30,8 +34,9 @@ extension UITableView {
             return
         }
         
+        let row: Int = min(row, rowsCount - 1)
         setContentOffset(contentOffset, animated: false)
-        scrollToRow(at: IndexPath(row: rowsCount - 1, section: sectionsCount - 1), at: .top, animated: animated)
+        scrollToRow(at: IndexPath(row: row, section: sectionsCount - 1), at: .top, animated: animated)
     }
     
     func layoutFooterView() {
