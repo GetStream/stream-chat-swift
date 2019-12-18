@@ -1,7 +1,7 @@
 # 1.5.4
 _December 16th, 2019_
 
-## 💥 Breaking Changes
+### 💥 Breaking Changes
 - The order of parameters in `Message.init`
 - Removed members from `ChannelResponse`. Now it's only inside the channel of the response.
 
@@ -243,6 +243,6 @@ _October 21th, 2019_
 - `ChannelPresenter.channelDidUpdate` observable (for example to get updated members).
 - `ChannelsViewController` UI warnings. It tries to update itself when it's not in the hierarchy view.
 
-## Breaking changes
+### Breaking changes
 
 - Changed `Client.userDidUpdate` as `Driver`.
