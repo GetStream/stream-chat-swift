@@ -5,10 +5,10 @@ _December 16th, 2019_
 - The order of parameters in `Message.init`
 - Removed members from `ChannelResponse`. Now it's only inside the channel of the response.
 
-## 🔄 Changed
+### 🔄 Changed
 - Improved Token validation.
 
-## ✅ Added
+### ✅ Added
 - Public `Attachment.init(...)`.
 - Public `Reaction.init(...)`.
 - Public `Reaction(counts: [ReactionType: Int])`.
@@ -29,7 +29,7 @@ _December 16th, 2019_
 - [Hide a channel](https://getstream.github.io/stream-chat-swift/core/Classes/Channel.html#/s:14StreamChatCore7ChannelC4hide3for12clearHistory7RxSwift10ObservableCyytGAA4UserVSg_SbtF) with clearing messages history.
 - Added a new event `Event.channelHidden(HiddenChannelResponse, EventType)`.
 
-## 🐞 Fixed
+### 🐞 Fixed
 - ComposerView position related to the keyboard with an opaque `UITabBar`.
 - A proper way to check if members are empty.
 
@@ -41,10 +41,10 @@ Fix tap on a link with disabled reactions.
 # 1.5.2
 _November 27th, 2019_
 
-## Added
+### Added
 - `Client.channel(query: ChannelQuery)`
 
-## Fixed
+### Fixed
 - `ComposerView` and keyboard events crashes.
 - `ComposerView` position for embedded `ChatViewController`.
 - Parse now can properly ignore bad channel name.
@@ -52,16 +52,16 @@ _November 27th, 2019_
 # 1.5.1
 _November 26th, 2019_
 
-## Changed
+### Changed
 - Layout `ComposerView` depends on keyboard events.
 
-## Fixed
+### Fixed
 - Token update.
 
 # 1.5.0
 _November 23th, 2019_
 
-## Added
+### Added
 - Added levels for `ClientLogger`.
   - Error Level:
     - `ClientLogger.Options.requestsError`
@@ -95,12 +95,12 @@ _November 23th, 2019_
 - Improved work with `ExtraData`.
 - A custom `ChannelType.custom(String)`
 
-## Changed
+### Changed
 - Removed a `channelType` parameter in `ChannelsPresenter.init`.
 - Renamed `ExtraData.data` -> `ExtraData.object`
 - `Channel.currentUnreadCount` update.
 
-## Fixed
+### Fixed
 - Detecting and highlighting URL's in messages.
 - Skip empty messages.
 - `ChatFooterView` with a white circle.
@@ -114,7 +114,7 @@ Fixed DataDetector.
 # 1.4.3
 _November 14th, 2019_
 
-## Added
+### Added
 - The current user mentioned unread count
 ```swift
 // The current unread count.
@@ -132,7 +132,7 @@ channel.mentionedUnreadCount
 # 1.4.2
 _November 12th, 2019_
 
-## Added
+### Added
 - A custom data for `User`.
 - Detect links in messages and open them in WebView.
 
@@ -146,7 +146,7 @@ _November 8th, 2019_
 
 ⚠️ The update contains breaking changes.
 
-## Added
+### Added
 - `Channel.currentUnreadCount` value to show the number in table view.
 - Get a message by id: `Client.message(with messageId: String)`
 - Mark all messages as reader: `Client.markAllRead()`
@@ -189,11 +189,11 @@ channel.create().subscribe().disposed(by: disposeBag)
 channel.invite(nick).subscribe().disposed(by: disposeBag)
 ```
 
-## Renamed
+### Renamed
 - `ChannelsQuery`: `.messageLimit` → `.messagesLimit`.
 - `User`: `.online` → `.isOnline`.
 
-## Changed
+### Changed
 - `ClientLogger` updated
 - `Atomic`
 from:
@@ -206,7 +206,7 @@ typealias DidSetCallback = (_ value: T?, _ oldValue: T?) -> Void
 ```
 - `Channel.watch(options: QueryOptions = [])` with query options.
 
-## Fixed
+### Fixed
 - `BannerView` memory leak.
 - A bug with the composer attachment button, when a channel config wasn't loaded.
 - ComposerView position with opaque Tabbar.
@@ -223,14 +223,14 @@ _October 24th, 2019_
 
 # 1.3.20
 _October 22th, 2019_
-## Added
+### Added
 - Update a channel data: `update(name: String? = nil, imageURL: URL? = nil, extraData: Codable? = nil)`
 - `Channel.watch()`
 
 
 # 1.3.19
 _October 21th, 2019_
-## Fixed
+### Fixed
 - Response errors
 - A crash of a date formatter for iOS 11.1 and below.
 
@@ -243,6 +243,6 @@ _October 21th, 2019_
 - `ChannelPresenter.channelDidUpdate` observable (for example to get updated members).
 - `ChannelsViewController` UI warnings. It tries to update itself when it's not in the hierarchy view.
 
-##### Breaking changes
+## Breaking changes
 
 - Changed `Client.userDidUpdate` as `Driver`.
