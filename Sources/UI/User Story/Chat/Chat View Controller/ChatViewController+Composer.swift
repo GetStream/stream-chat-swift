@@ -15,9 +15,9 @@ import RxCocoa
 
 // MARK: Setup Keyboard Events
 
-extension ChatViewController {
-    func setupKeyboard() -> Binder<KeyboardNotification> {
-        return Binder<KeyboardNotification>(self) { chatViewController, keyboardNotification in
+extension Reactive where Base: ChatViewController {
+    var keyboard: Binder<KeyboardNotification> {
+        return Binder<KeyboardNotification>(base) { chatViewController, keyboardNotification in
             var bottom: CGFloat = 0
             
             if keyboardNotification.isVisible {

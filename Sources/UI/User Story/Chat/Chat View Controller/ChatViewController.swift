@@ -38,7 +38,6 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     /// A composer view.
     public private(set) lazy var composerView = createComposerView()
     var keyboardIsVisible = false
-    lazy var keyboardHandler = setupKeyboard()
     
     private(set) lazy var initialSafeAreaBottom: CGFloat = calculatedSafeAreaBottom
     
@@ -142,7 +141,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         changesEnabled = true
         setupFooterUpdates()
         
-        Keyboard.shared.notification.drive(keyboardHandler).disposed(by: disposeBag)
+        Keyboard.shared.notification.drive(rx.keyboard).disposed(by: disposeBag)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
