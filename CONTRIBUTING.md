@@ -32,7 +32,7 @@ Before submitting, please make sure you're finished with the PR (and all tests p
 
 Guidelines on "Fixed a bug" part is applicable.
 
-# Our Release flow 🚀
+## Our Release flow 🚀
 
 We make sure to follow all QA test procedure for minor and major releases. 
 
