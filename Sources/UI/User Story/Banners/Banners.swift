@@ -15,6 +15,7 @@ import RxAppState
 public final class Banners {
     struct BannerItem: Equatable {
         let delay: TimeInterval
+        let bouncing: CGFloat
         let title: String
         let backgroundColor: UIColor
         let borderColor: UIColor?
@@ -55,6 +56,7 @@ public final class Banners {
     ///   - borderColor: a border color.
     public func show(_ title: String,
                      delay: TimeInterval = 3,
+                     bouncing: CGFloat = 1,
                      backgroundColor: UIColor = .white,
                      borderColor: UIColor? = nil) {
         DispatchQueue.main.async {
@@ -63,6 +65,7 @@ public final class Banners {
             }
             
             self.items.append(.init(delay: max(1, min(5, delay)),
+                                    bouncing: bouncing,
                                     title: title,
                                     backgroundColor: backgroundColor,
                                     borderColor: borderColor))
@@ -93,9 +96,9 @@ public final class Banners {
         
         UIView.animate(withDuration: 0.3,
                        delay: 0,
-                       usingSpringWithDamping: 0.6,
+                       usingSpringWithDamping: bannerItem.bouncing,
                        initialSpringVelocity: 0,
-                       options: .curveLinear,
+                       options: (bannerItem.bouncing < 1 ? .curveLinear : .curveEaseOut),
                        animations: { self.window.transform = .identity },
                        completion: { finished in
                         UIView.animate(withDuration: 0.3,
@@ -123,6 +126,7 @@ public extension Banners {
     func show(errorMessage: String) {
         show(errorMessage,
              delay: errorMessage.count > 100 ? 7 : 5,
+             bouncing: 0.6,
              backgroundColor: .messageErrorBackground,
              borderColor: .messageErrorBorder)
     }

@@ -159,6 +159,6 @@ extension CGFloat {
     public static let bannerHeight: CGFloat = 60
     public static let bannerWidth: CGFloat = .screenWidth - 2 * .messageEdgePadding
     public static let bannerCornerRadius: CGFloat = 10
-    public static let bannerTopOffset: CGFloat = .safeAreaTop + .messageEdgePadding
+    public static let bannerTopOffset: CGFloat = .safeAreaTop
     public static let bannerMaxY: CGFloat = .bannerHeight + .bannerTopOffset + .composerHelperShadowRadius
 }
