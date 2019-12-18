@@ -4,7 +4,7 @@ We're glad you want to contribute to the Stream team 🎉
 
 ---
 
-_So you.._
+_So you..._
 
 ### Got stuck on something 💭
 
