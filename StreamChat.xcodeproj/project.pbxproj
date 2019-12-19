@@ -730,7 +730,14 @@
 		8AD5ECAA22E9BA39005CFAC9 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				8AD5ECD722E9BA39005CFAC9 /* User Story */,
+				8AD54F1B231E91E500364657 /* ViewController.swift */,
+				8AD5ED0022E9BA39005CFAC9 /* Style */,
+				8AD5ED0722E9BA39005CFAC9 /* Channels */,
+				8AD5ECD822E9BA39005CFAC9 /* Chat */,
+				8AD5EDD722E9C6CA005CFAC9 /* Views */,
+				8A104FC222F4921F002B2DC1 /* Banners */,
+				8AD5ECFC22E9BA39005CFAC9 /* Web View */,
+				8AD5ECFE22E9BA39005CFAC9 /* Image Gallery */,
 				8AD5ECAB22E9BA39005CFAC9 /* Extensions */,
 				8AD5ECD322E9BA39005CFAC9 /* Chat.xcassets */,
 			);
@@ -824,21 +831,6 @@
 				8AD5ECD222E9BA39005CFAC9 /* RxDocumentPickerViewController.swift */,
 			);
 			path = Rx;
-			sourceTree = "<group>";
-		};
-		8AD5ECD722E9BA39005CFAC9 /* User Story */ = {
-			isa = PBXGroup;
-			children = (
-				8AD5ED0022E9BA39005CFAC9 /* Style */,
-				8AD5ED0722E9BA39005CFAC9 /* Channels */,
-				8AD5ECD822E9BA39005CFAC9 /* Chat */,
-				8AD5EDD722E9C6CA005CFAC9 /* Views */,
-				8A104FC222F4921F002B2DC1 /* Banners */,
-				8AD5ECFC22E9BA39005CFAC9 /* Web View */,
-				8AD5ECFE22E9BA39005CFAC9 /* Image Gallery */,
-				8AD54F1B231E91E500364657 /* ViewController.swift */,
-			);
-			path = "User Story";
 			sourceTree = "<group>";
 		};
 		8AD5ECD822E9BA39005CFAC9 /* Chat */ = {
