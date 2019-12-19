@@ -130,7 +130,7 @@ extension ChatViewController {
         
         Keyboard.shared.notification
             .filter { $0.isHidden }
-            .drive(onNext: { [weak self] _ in self?.showCommands(show: false) })
+            .subscribe(onNext: { [weak self] _ in self?.showCommands(show: false) })
             .disposed(by: disposeBag)
     }
     
