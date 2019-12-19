@@ -149,7 +149,7 @@ extension ChatViewController {
             .subscribe(onNext: { [weak self, weak cell] gesture in
                 if let self = self, let cell = cell {
                     if let tapGesture = gesture as? UITapGestureRecognizer {
-                        self.handelMessageCellTap(from: cell, in: message, tapGesture: tapGesture)
+                        self.handleMessageCellTap(from: cell, in: message, tapGesture: tapGesture)
                     } else {
                         self.showMenu(from: cell, for: message, locationInView: gesture.location(in: cell))
                     }
@@ -158,7 +158,7 @@ extension ChatViewController {
             .disposed(by: cell.disposeBag)
     }
     
-    func handelMessageCellTap(from cell: MessageTableViewCell,
+    func handleMessageCellTap(from cell: MessageTableViewCell,
                               in message: Message,
                               tapGesture: UITapGestureRecognizer) {
         if let messageTextEnrichment = cell.messageTextEnrichment, !messageTextEnrichment.detectedURLs.isEmpty {
