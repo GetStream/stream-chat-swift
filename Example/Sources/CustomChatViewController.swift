@@ -51,7 +51,7 @@ class CustomChatViewController: ChatViewController {
             .disposed(by: disposeBag)
         
         membersCountButton.rx.tap
-            .subscribe(onNext: showMembers)
+            .subscribe(onNext: { [weak self] in self?.showMembers() })
             .disposed(by: disposeBag)
     }
     
