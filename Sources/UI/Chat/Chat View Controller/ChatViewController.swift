@@ -141,7 +141,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         changesEnabled = true
         setupFooterUpdates()
         
-        Keyboard.shared.notification.bind(to: self.rx.keyboard).disposed(by: self.disposeBag)
+        Keyboard.shared.notification.bind(to: rx.keyboard).disposed(by: self.disposeBag)
     }
     
     open override func viewDidAppear(_ animated: Bool) {
