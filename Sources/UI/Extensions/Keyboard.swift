@@ -14,7 +14,7 @@ import RxGesture
 struct Keyboard {
     
     static let shared = Self()
-    let notification: Driver<KeyboardNotification>
+    let notification: Observable<KeyboardNotification>
     
     init() {
         let keyboardNotifications: Observable<KeyboardNotification> =
@@ -40,7 +40,9 @@ struct Keyboard {
         
         notification = Observable.merge(windowPan, keyboardNotifications)
             .distinctUntilChanged()
-            .asDriver(onErrorJustReturn: KeyboardNotification(.init(name: UIResponder.keyboardWillChangeFrameNotification)))
+            .observeOn(MainScheduler.instance)
+            .share()
+            .catchErrorJustReturn(KeyboardNotification(.init(name: UIResponder.keyboardWillChangeFrameNotification)))
     }
 }
 
