@@ -1,3 +1,14 @@
+# Upcoming
+
+## ✅ Added
+- Banner animation without bouncing.
+
+## 🐞 Fixed
+- Example app for a memory leak.
+- Keyboard events replays.
+- Handling keyboard notifications for ChatViewController in rx way.
+- Scroll the table view to the bottom safely.
+
 # 1.5.4
 _December 16th, 2019_
 

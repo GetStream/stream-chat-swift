@@ -267,6 +267,7 @@
 		8A104FC322F49233002B2DC1 /* Banners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banners.swift; sourceTree = "<group>"; };
 		8A1207C9238ED66500E41790 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		8A1207CC238EE3C700E41790 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
+		8A14347823ABBF30002A45BC /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		8A150E9E232A8D8400330562 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsResponse.swift; sourceTree = "<group>"; };
 		8A1BC0FF2396A2C1006694A1 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
@@ -656,6 +657,7 @@
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
 				8AD5EDD822E9C7BC005CFAC9 /* README.md */,
+				8A14347823ABBF30002A45BC /* CHANGELOG.md */,
 				8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */,
 				8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */,
 				8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */,
