@@ -1,9 +1,9 @@
 # Upcoming
 
-## ✅ Added
+### ✅ Added
 - Banner animation without bouncing.
 
-## 🐞 Fixed
+### 🐞 Fixed
 - Example app for a memory leak.
 - Keyboard events replays.
 - Handling keyboard notifications for ChatViewController in rx way.
