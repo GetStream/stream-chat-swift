@@ -5,4 +5,5 @@ target 'ChatExample' do
   use_frameworks!
   pod 'StreamChatCore', :path => "../.."
   pod 'StreamChat', :path => "../.."
+  pod 'StreamChatRealm', :path => "../.."
 end

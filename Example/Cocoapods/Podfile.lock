@@ -2,6 +2,11 @@ PODS:
   - GzipSwift (5.0.0)
   - Nuke (8.2.0)
   - ReachabilitySwift (4.3.1)
+  - Realm (4.3.0):
+    - Realm/Headers (= 4.3.0)
+  - Realm/Headers (4.3.0)
+  - RealmSwift (4.3.0):
+    - Realm (= 4.3.0)
   - RxAppState (1.6.0):
     - RxCocoa (~> 5.0)
     - RxSwift (~> 5.0)
@@ -28,17 +33,23 @@ PODS:
     - RxAppState (~> 1.6.0)
     - RxSwift (~> 5.0.0)
     - Starscream (~> 3.1.0)
+  - StreamChatRealm (0.0.1):
+    - RealmSwift
+    - StreamChatCore
   - SwiftyGif (5.1.1)
 
 DEPENDENCIES:
   - StreamChat (from `../..`)
   - StreamChatCore (from `../..`)
+  - StreamChatRealm (from `../..`)
 
 SPEC REPOS:
   trunk:
     - GzipSwift
     - Nuke
     - ReachabilitySwift
+    - Realm
+    - RealmSwift
     - RxAppState
     - RxCocoa
     - RxGesture
@@ -53,11 +64,15 @@ EXTERNAL SOURCES:
     :path: "../.."
   StreamChatCore:
     :path: "../.."
+  StreamChatRealm:
+    :path: "../.."
 
 SPEC CHECKSUMS:
   GzipSwift: 5592f4d62b641e04d06443ba471f8ed76b1363e4
   Nuke: 0134d56b7c9dd3e69e9bce8bdcb37c2e0d55469f
   ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
+  Realm: 9357c3589555793e1860a7104a7412bca4a48d99
+  RealmSwift: 402f1e379a8ef82c635313037b043f0f06de880c
   RxAppState: b633d7370970ecb80081912ea08a7bf3eb644b4e
   RxCocoa: e741b9749968e8a143e2b787f1dfbff2b63d0a5c
   RxGesture: a3f8dd6adf078110ed5e1c9c30d09d705a09852e
@@ -67,8 +82,9 @@ SPEC CHECKSUMS:
   Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
   StreamChat: 949fae87a75fd8093330051fb87610193bab0fa8
   StreamChatCore: 6b994cce5ceedcdbba4b55383099816927977568
+  StreamChatRealm: 706b89f6a21c6ef3e744bd3173a11d9b65328be5
   SwiftyGif: f7702483db93586a41f04f4927cd682852a2fa10
 
-PODFILE CHECKSUM: 0914703eb06e6a7db082448d2137e0c979bb6ca0
+PODFILE CHECKSUM: 881c2dfbd865416a424f50f1849bdcfead0191c5
 
 COCOAPODS: 1.8.4
