@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		465D64C2231808A2006BAE42 /* AttachmentTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */; };
+		798D413C23ACC89500F39EF8 /* ClientLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D413B23ACC89400F39EF8 /* ClientLoggerTests.swift */; };
 		8A048E4A2331252400FDB3C0 /* Channel+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E492331252400FDB3C0 /* Channel+Database.swift */; };
 		8A048E4C2332247900FDB3C0 /* ChannelPresenter+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E4B2332247900FDB3C0 /* ChannelPresenter+Request.swift */; };
 		8A048E4E2332259400FDB3C0 /* ChannelPresenter+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E4D2332259400FDB3C0 /* ChannelPresenter+Events.swift */; };
@@ -257,6 +258,7 @@
 
 /* Begin PBXFileReference section */
 		465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentTypeTests.swift; sourceTree = "<group>"; };
+		798D413B23ACC89400F39EF8 /* ClientLoggerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientLoggerTests.swift; sourceTree = "<group>"; };
 		8A048E492331252400FDB3C0 /* Channel+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Database.swift"; sourceTree = "<group>"; };
 		8A048E4B2332247900FDB3C0 /* ChannelPresenter+Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelPresenter+Request.swift"; sourceTree = "<group>"; };
 		8A048E4D2332259400FDB3C0 /* ChannelPresenter+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelPresenter+Events.swift"; sourceTree = "<group>"; };
@@ -527,6 +529,7 @@
 			children = (
 				465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */,
 				8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */,
+				798D413B23ACC89400F39EF8 /* ClientLoggerTests.swift */,
 			);
 			path = "Unit Tests";
 			sourceTree = "<group>";
@@ -1282,6 +1285,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A30D07B237D81C20082B951 /* StringExtensionsTests.swift in Sources */,
+				798D413C23ACC89500F39EF8 /* ClientLoggerTests.swift in Sources */,
 				8A83394A2317D6FD001CBD9A /* ExtraDataTests.swift in Sources */,
 				8AD0A9942314252700B8EB97 /* ClientSetupTests.swift in Sources */,
 				8AD0A9962314394200B8EB97 /* ChannelTests.swift in Sources */,
