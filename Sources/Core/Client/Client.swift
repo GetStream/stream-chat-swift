@@ -135,7 +135,7 @@ public final class Client {
             ClientLogger.logger("🔗", "", baseURL.description)
             
             if let database = database {
-                ClientLogger.logger("🗄", "", "\(database.self)")
+                ClientLogger.logger("💽", "", "\(database.self)")
             }
         }
         

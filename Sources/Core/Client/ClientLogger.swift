@@ -46,7 +46,7 @@ public final class ClientLogger {
     ///  - 🐴 for REST requests: `.requestsError`, `.requests`, `.requestsInfo`
     ///  - 🦄 for web socket events: `.webSocketError`, `.webSocket`, `.webSocketInfo`
     ///  - 🗞 for notifications: `.notificationsError`, `.notifications`
-    ///  - 🗄 for a database: `.databaseError`, `.database`, `.databaseInfo`
+    ///  - 💽 for a database: `.databaseError`, `.database`, `.databaseInfo`
     ///  - for all error logs: `.error`
     ///  - for all debug logs: `.debug`
     ///  - full logs: `.info`
@@ -59,7 +59,7 @@ public final class ClientLogger {
         public static let webSocketError = Options(rawValue: 1 << 1)
         /// Logs for notifications 🗞. [Error]
         public static let notificationsError = Options(rawValue: 1 << 2)
-        /// Logs for a database 🗄. [Error]
+        /// Logs for a database 💽. [Error]
         public static let databaseError = Options(rawValue: 1 << 3)
         
         /// Logs for requests 🐴. [Debug]
@@ -68,14 +68,14 @@ public final class ClientLogger {
         public static let webSocket = Options(rawValue: 1 << 11)
         /// Logs for notifications 🗞. [Debug]
         public static let notifications = Options(rawValue: 1 << 12)
-        /// Logs for a database 🗄. [Debug]
+        /// Logs for a database 💽. [Debug]
         public static let database = Options(rawValue: 1 << 13)
         
         /// Logs for requests 🐴. [Info]
         public static let requestsInfo = Options(rawValue: 1 << 20)
         /// Logs for a web socket 🦄. [Info]
         public static let webSocketInfo = Options(rawValue: 1 << 21)
-        /// Logs for a database 🗄. [Info]
+        /// Logs for a database 💽. [Info]
         public static let databaseInfo = Options(rawValue: 1 << 23)
 
         /// All errors.
