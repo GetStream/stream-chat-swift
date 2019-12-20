@@ -120,6 +120,9 @@ class ClientLoggerTests: XCTestCase {
         logger.log(headers: headers)
         
         XCTAssertFalse(logged.isEmpty)
+        for (key, value) in headers {
+            XCTAssert(logged[0].contains("\(key) = \(value)"))
+        }
     }
     
     func testLogQueryItems() {
@@ -129,6 +132,7 @@ class ClientLoggerTests: XCTestCase {
         logger.log(queryItems)
         
         XCTAssertFalse(logged.isEmpty)
+        XCTAssertEqual(logged[0], "URL query items:\n▫️ test1=test1\n▫️ test2=test2\n")
     }
     
     func testLogURLResponse() {
@@ -137,6 +141,7 @@ class ClientLoggerTests: XCTestCase {
         logger.log(urlResponse, data: testData)
         
         XCTAssertFalse(logged.isEmpty)
+        XCTAssert(logged[0].starts(with: "⬅️❔ Unknown response (6 bytes): "))
     }
     
     func testLogError() {
@@ -144,17 +149,20 @@ class ClientLoggerTests: XCTestCase {
         logger.log(testError as Error, message: "test error message")
         
         XCTAssertFalse(logged.isEmpty)
+        XCTAssertEqual(logged[0], "❌ test error message Error Domain=test Code=1 \"(null)\" in testLogError()[144]")
     }
     
     func testLogData() {
         logger.log(testData)
         
         XCTAssertFalse(logged.isEmpty)
+        XCTAssertEqual(logged[0], "📦  Error Domain=NSCocoaErrorDomain Code=3840 \"JSON text did not start with array or object and option to allow fragments not set.\" UserInfo={NSDebugDescription=JSON text did not start with array or object and option to allow fragments not set.}")
     }
     
     func testLogMessage() {
         logger.log("Some message")
         
         XCTAssertFalse(logged.isEmpty)
+        XCTAssertEqual(logged[0], "Some message")
     }
 }
