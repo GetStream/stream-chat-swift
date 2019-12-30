@@ -24,7 +24,7 @@
 
 The best place to start is the [iOS Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/). It teaches you how to use this SDK and also shows how to make common changes. 
 
-## Example App
+## Clone the Github Example App
 
 This repo includes a fully functional example app. You can run the example app by following these steps:
 
