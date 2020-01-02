@@ -22,10 +22,6 @@ extension MessageTableViewCell {
                        tap: @escaping AttachmentTapAction,
                        actionTap: @escaping AttachmentActionTapAction,
                        reload: @escaping () -> Void) {
-        guard let style = style else {
-            return
-        }
-        
         let imageBackgroundColor = UIColor.color(by: message.user.name, isDark: !(messageLabel.textColor?.isDark ?? true))
         
         func addGetures(_ preview: AttachmentPreviewProtocol, _ error: Error?) {
@@ -121,7 +117,7 @@ extension MessageTableViewCell {
     }
     
     private func backgroundImageForAttachment(at offset: Int) -> UIImage? {
-        guard let style = style, style.hasBackgroundImage else {
+        guard style.hasBackgroundImage else {
             return nil
         }
         
@@ -133,7 +129,7 @@ extension MessageTableViewCell {
     }
     
     private func maskImageForAttachment(at offset: Int) -> UIImage? {
-        guard let style = style, style.hasBackgroundImage, let messageContainerViewImage = messageContainerView.image else {
+        guard style.hasBackgroundImage, let messageContainerViewImage = messageContainerView.image else {
             return nil
         }
         

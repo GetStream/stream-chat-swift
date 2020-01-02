@@ -24,9 +24,9 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
     }()
     
     /// Create a AvatarView with a given corner radius.
-    public init(cornerRadius: CGFloat = .messageAvatarRadius) {
+    public init(cornerRadius: CGFloat = .messageAvatarRadius, font: UIFont? = nil) {
         super.init(frame: .zero)
-        setup(cornerRadius: cornerRadius)
+        setup(cornerRadius: cornerRadius, font: font)
     }
     
     /// A decoder.
@@ -35,12 +35,12 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
         setup(cornerRadius: frame.width / 2)
     }
     
-    private func setup(cornerRadius: CGFloat) {
+    private func setup(cornerRadius: CGFloat, font: UIFont? = nil) {
         layer.cornerRadius = cornerRadius
         clipsToBounds = true
         contentMode = .scaleAspectFill
         snp.makeConstraints { $0.width.height.equalTo(2 * cornerRadius).priority(999) }
-        avatarLabel.font = .avatarFont(size: cornerRadius * 0.7)
+        avatarLabel.font = font ?? .avatarFont(size: cornerRadius * 0.7)
         avatarLabel.makeEdgesEqualToSuperview(superview: self)
     }
     
@@ -48,9 +48,9 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
     public func reset() {
         image = nil
         backgroundColor = .white
+        imageTask?.cancel()
         avatarLabel.text = nil
         avatarLabel.isHidden = true
-        imageTask?.cancel()
     }
     
     /// Update the view with a given image url with user name.

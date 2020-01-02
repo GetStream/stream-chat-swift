@@ -12,7 +12,8 @@ import SnapKit
 import Nuke
 import RxSwift
 
-public final class MessageTableViewCell: UITableViewCell, Reusable {
+/// A message table view cell.
+open class MessageTableViewCell: UITableViewCell, Reusable {
     
     typealias ReactionAction = (_ cell: UITableViewCell, _ locationInView: CGPoint) -> Void
     typealias TapAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
@@ -24,8 +25,16 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
     
     /// A dispose bag for the cell.
     public private(set) var disposeBag = DisposeBag()
+    /// A message view style.
+    public private(set) var style: MessageViewStyle = MessageViewStyle()
+    /// Checks if needds setup layout.
+    public private(set) var needsToSetup = true
     
-    let avatarView = AvatarView(cornerRadius: .messageAvatarRadius)
+    /// An avatar.
+    public private(set) lazy var avatarView: AvatarView = {
+        return AvatarView(cornerRadius: style.avatarViewStyle?.radius ?? 0,
+                          font: style.avatarViewStyle?.placeholderFont)
+    }()
     
     let reactionsContainer: UIImageView = UIImageView(frame: .zero)
     let reactionsOverlayView = UIView(frame: .zero)
@@ -42,27 +51,41 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
     private(set) lazy var nameAndDateStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [nameLabel, dateLabel])
         stackView.axis = .horizontal
-        stackView.spacing = .messageSpacing
-        stackView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageNameAndDateHeight).priority(999) }
+        stackView.spacing = style.spacing.vertical
+        let messageNameAndDateHeight: CGFloat
+        
+        stackView.snp.makeConstraints {
+            var height: CGFloat = 13
+            
+            if let avatarViewStyle = self.style.avatarViewStyle {
+                height = max(height, avatarViewStyle.radius - self.style.spacing.vertical)
+            }
+            
+            $0.height.equalTo(height).priority(999)
+        }
+        
         stackView.isHidden = true
         return stackView
     }()
     
-    let nameLabel: UILabel = {
+    /// A name label.
+    public let nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatSmallBold
         label.textColor = .chatGray
         return label
     }()
     
-    let dateLabel: UILabel = {
+    /// A date label.
+    public let dateLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatSmall
         label.textColor = .chatGray
         return label
     }()
     
-    let additionalDateLabel: UILabel = {
+    /// An additional date label.
+    public let additionalDateLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = .chatSmall
         label.textColor = .chatGray
@@ -72,7 +95,8 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
     var additionalDateLabelSideConstraint: Constraint?
     var additionalDateLabelBottomConstraint: Constraint?
     
-    let infoLabel: UILabel = {
+    /// An info label.
+    public let infoLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = UIFont.chatMedium.withTraits([.traitItalic])
         label.textColor = .chatGray
@@ -80,7 +104,8 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    let replyCountButton = UIButton(type: .custom)
+    /// A reply button.
+    public let replyCountButton = UIButton(type: .custom)
     
     let readUsersView = ReadUsersView()
     var readUsersRightConstraint: Constraint?
@@ -93,7 +118,7 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
                                                        nameAndDateStackView,
                                                        bottomPaddingView])
         stackView.axis = .vertical
-        stackView.spacing = .messageSpacing
+        stackView.spacing = style.spacing.vertical
         return stackView
     }()
     
@@ -105,20 +130,25 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         return imageView
     }()
     
-    private(set) lazy var messageLabel: UILabel = {
+    /// A message label.
+    public private(set) lazy var messageLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.numberOfLines = 0
         return label
     }()
     
     var messageTextEnrichment: MessageTextEnrichment?
+    var attachmentPreviews: [AttachmentPreviewProtocol] = []
     
-    lazy var attachmentPreviews: [AttachmentPreviewProtocol] = []
-    
-    let bottomPaddingView: UIView = {
+    private(set) lazy var bottomPaddingView: UIView = {
         let view = UIView(frame: .zero)
         view.isUserInteractionEnabled = false
-        view.snp.makeConstraints { $0.height.equalTo(CGFloat.messageBottomPadding - .messageSpacing).priority(999) }
+        
+        view.snp.makeConstraints {
+            let height: CGFloat = self.style.edgeInsets.bottom - self.style.spacing.vertical
+            $0.height.equalTo(height).priority(999)
+        }
+        
         return view
     }()
     
@@ -126,36 +156,37 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         didSet { bottomPaddingView.isHidden = paddingType == .small }
     }
     
-    var style: MessageViewStyle? {
-        didSet {
-            if oldValue == nil, style != nil {
-                setup()
-            }
-        }
-    }
-    
     public override func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }
     
-    private func setup() {
-        guard let style = style else {
+    /// Setup style and layouts.
+    /// - Parameter style: a message view style.
+    public func setupIfNeeded(style: MessageViewStyle) {
+        guard needsToSetup else {
             return
         }
         
+        needsToSetup = false
+        self.style = style
         selectionStyle = .none
         backgroundColor = style.chatBackgroundColor
+        bottomPaddingView.backgroundColor = backgroundColor
+        
+        // MARK: Date
+
         dateLabel.font = style.infoFont
         dateLabel.textColor = style.infoColor
         dateLabel.backgroundColor = backgroundColor
-        bottomPaddingView.backgroundColor = backgroundColor
         
         additionalDateLabel.isHidden = true
         additionalDateLabel.font = style.infoFont
         additionalDateLabel.textColor = style.infoColor
         additionalDateLabel.backgroundColor = backgroundColor
         contentView.addSubview(additionalDateLabel)
+        
+        // MARK: Reply Count
         
         replyCountButton.isHidden = true
         replyCountButton.titleLabel?.font = style.replyFont
@@ -174,6 +205,8 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
             ? style.borderColor
             : (style.backgroundColor == style.chatBackgroundColor ? .chatGray : style.backgroundColor)
         
+        // MARK: Name
+        
         if style.alignment == .left {
             nameLabel.font = style.nameFont
             nameLabel.textColor = style.infoColor
@@ -182,22 +215,24 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
             nameLabel.isHidden = true
         }
         
-        // Avatar
-        if style.showCurrentUserAvatar {
+        // MARK: Avatar
+        
+        if style.avatarViewStyle != nil {
             contentView.addSubview(avatarView)
             
             avatarView.snp.makeConstraints { make in
-                make.bottom.equalToSuperview().offset(-CGFloat.messageBottomPadding)
+                make.top.greaterThanOrEqualToSuperview().offset(style.edgeInsets.top)
+                make.bottom.equalToSuperview().offset(-style.edgeInsets.bottom)
                 
                 if style.alignment == .left {
-                    make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
+                    make.left.equalToSuperview().offset(style.edgeInsets.left)
                 } else {
-                    make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+                    make.right.equalToSuperview().offset(-style.edgeInsets.right)
                 }
             }
         }
         
-        // Message Stack View
+        // MARK: Message Stack View
         
         messageLabel.attributedText = nil
         messageLabel.numberOfLines = 0
@@ -217,24 +252,22 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         messageStackView.alignment = style.alignment == .left ? .leading : .trailing
         
         messageStackView.snp.makeConstraints { make in
-            messageStackViewTopConstraint = make.top.equalToSuperview().offset(CGFloat.messageSpacing).priority(999).constraint
+            messageStackViewTopConstraint = make.top.equalToSuperview().offset(style.spacing.vertical).priority(999).constraint
             make.bottom.equalToSuperview().priority(999)
             
-            if style.showCurrentUserAvatar {
-                make.left.equalToSuperview().offset(CGFloat.messageTextPaddingWithAvatar).priority(999)
-                make.right.equalToSuperview().offset(-CGFloat.messageTextPaddingWithAvatar).priority(999)
-            } else if style.reactionViewStyle.alignment == .left {
-                make.left.equalToSuperview().offset(CGFloat.messageEdgePadding).priority(999)
+            if style.reactionViewStyle.alignment == .left {
+                make.left.equalToSuperview().offset(style.marginWithAvatarOffset).priority(999)
                 make.right.equalToSuperview().offset(-CGFloat.messageTextPaddingWithAvatar).priority(999)
             } else {
                 make.left.equalToSuperview().offset(CGFloat.messageTextPaddingWithAvatar).priority(999)
-                make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding).priority(999)
+                make.right.equalToSuperview().offset(-style.marginWithAvatarOffset).priority(999)
             }
         }
         
         infoLabel.backgroundColor = backgroundColor
         
-        // Read Users.
+        // MARK: Read Users
+        
         readUsersView.isHidden = true
         
         if style.alignment == .right {
@@ -245,7 +278,8 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
             readUsersView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageReadUsersSize) }
         }
         
-        // Reactions.
+        // MARK: Reactions
+        
         contentView.addSubview(reactionsContainer)
         contentView.addSubview(reactionsOverlayView)
         reactionsOverlayView.isHidden = true
@@ -259,19 +293,17 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         let tailAdditionalOffset: CGFloat = 2
         
         reactionsContainer.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(CGFloat.messageSpacing)
+            make.top.equalToSuperview().offset(self.style.spacing.vertical)
             make.height.equalTo(CGFloat.reactionsHeight).priority(999)
             let minWidth = style.reactionViewStyle.tailImage.size.width + .reactionsHeight - 2 * tailAdditionalOffset
             make.width.greaterThanOrEqualTo(minWidth)
             
-            let messagePadding: CGFloat = style.showCurrentUserAvatar ? .messageTextPaddingWithAvatar : .messageEdgePadding
-            
             if style.reactionViewStyle.alignment == .left {
-                make.left.greaterThanOrEqualToSuperview().offset(messagePadding).priority(999)
+                make.left.greaterThanOrEqualToSuperview().offset(style.marginWithAvatarOffset).priority(999)
                 make.right.greaterThanOrEqualTo(reactionsTailImage.snp.right)
                     .offset(CGFloat.reactionsCornerRadius - tailAdditionalOffset).priority(998)
             } else {
-                make.right.lessThanOrEqualToSuperview().offset(-messagePadding).priority(999)
+                make.right.lessThanOrEqualToSuperview().offset(-style.marginWithAvatarOffset).priority(999)
                 make.left.lessThanOrEqualTo(reactionsTailImage.snp.left)
                     .offset(tailAdditionalOffset - .reactionsCornerRadius).priority(998)
             }
@@ -293,16 +325,21 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         
         reactionsOverlayView.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.left.equalTo(reactionsContainer).offset(-CGFloat.messageSpacing)
-            make.right.equalTo(reactionsContainer).offset(CGFloat.messageSpacing)
+            make.left.equalTo(reactionsContainer).offset(-self.style.spacing.vertical)
+            make.right.equalTo(reactionsContainer).offset(self.style.spacing.vertical)
             make.bottom.equalTo(reactionsTailImage)
         }
     }
     
-    func reset() {
-        avatarView.reset()
-        avatarView.isHidden = true
-        avatarView.backgroundColor = backgroundColor
+    // MARK: Reset
+    
+    /// Reset views.
+    open func reset() {
+        if style.avatarViewStyle != nil {
+            avatarView.reset()
+            avatarView.isHidden = true
+            avatarView.backgroundColor = backgroundColor
+        }
         
         replyCountButton.isHidden = true
         nameAndDateStackView.isHidden = true
@@ -318,18 +355,18 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         additionalDateLabelBottomConstraint?.deactivate()
         additionalDateLabelBottomConstraint = nil
         
-        messageStackViewTopConstraint?.update(offset: CGFloat.messageSpacing)
+        messageStackViewTopConstraint?.update(offset: style.spacing.vertical)
         
         messageContainerView.isHidden = true
         messageContainerView.image = nil
         messageContainerView.layer.borderWidth = 0
-        messageContainerView.backgroundColor = style?.chatBackgroundColor
+        messageContainerView.backgroundColor = style.chatBackgroundColor
         messageContainerView.mask = nil
         
         messageLabel.attributedText = nil
-        messageLabel.font = style?.font
-        messageLabel.textColor = style?.textColor
-        messageLabel.backgroundColor = style?.backgroundColor
+        messageLabel.font = style.font
+        messageLabel.textColor = style.textColor
+        messageLabel.backgroundColor = style.backgroundColor
         messageTextEnrichment = nil
         
         readUsersView.reset()
@@ -351,7 +388,8 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         free()
     }
     
-    func free() {
+    /// Free resources (attachments, rx.subscriptions).
+    open func free() {
         disposeBag = DisposeBag()
         attachmentPreviews.forEach { $0.removeFromSuperview() }
         attachmentPreviews = []
@@ -385,13 +423,13 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
         }
         
         readUsersView.snp.makeConstraints { make in
-            self.readUsersRightConstraint = make.right.equalTo(view.snp.left).offset(-CGFloat.messageSpacing).constraint
+            self.readUsersRightConstraint = make.right.equalTo(view.snp.left).offset(-self.style.spacing.vertical).constraint
             self.readUsersBottomConstraint = make.bottom.equalTo(view).constraint
         }
     }
     
     func updateAdditionalLabelViewConstraints(relatedTo view: UIView) {
-        guard !additionalDateLabel.isHidden, let style = style else {
+        guard !additionalDateLabel.isHidden else {
             return
         }
         
@@ -399,19 +437,23 @@ public final class MessageTableViewCell: UITableViewCell, Reusable {
             if style.alignment == .right {
                 self.additionalDateLabelSideConstraint = make.right
                     .equalTo(view.snp.left)
-                    .offset(-CGFloat.messageSpacing)
+                    .offset(-self.style.spacing.vertical)
                     .constraint
             } else {
                 self.additionalDateLabelSideConstraint = make.left
                     .equalTo(view.snp.right)
-                    .offset(CGFloat.messageSpacing)
+                    .offset(self.style.spacing.vertical)
                     .constraint
             }
             
-            self.additionalDateLabelBottomConstraint = make.bottom.equalTo(view).offset(-CGFloat.messageVerticalInset).constraint
+            self.additionalDateLabelBottomConstraint = make.bottom.equalTo(view)
+                .offset(-(self.style.spacing.vertical + 2))
+                .constraint
         }
     }
 }
+
+// MARK: - Padding Type
 
 enum MessageTableViewCellPaddingType: String {
     case regular

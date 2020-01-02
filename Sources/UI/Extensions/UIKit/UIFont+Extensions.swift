@@ -45,6 +45,7 @@ extension UIFont {
     /// - Parameter size: a font size.
     /// - Returns: a font.
     public static func avatarFont(size: CGFloat) -> UIFont? {
+        guard size > 5 else { return nil }
         return UIFont(name: "GillSans-UltraBold", size: size)
     }
     

@@ -33,8 +33,7 @@ extension UITableView {
             fatalError("Failed to dequeue a cell with identifier \(identifier) matching type MessageTableViewCell.")
         }
         
-        cell.style = style
-        
+        cell.setupIfNeeded(style: style)
         return cell
     }
     

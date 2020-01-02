@@ -82,7 +82,7 @@ extension ChatViewController {
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
             
-            if messageStyle.showCurrentUserAvatar {
+            if messageStyle.avatarViewStyle != nil {
                 cell.avatarView.update(with: message.user.avatarURL,
                                        name: message.user.name,
                                        baseColor: messageStyle.chatBackgroundColor)

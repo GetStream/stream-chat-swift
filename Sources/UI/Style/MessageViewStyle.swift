@@ -13,8 +13,8 @@ public struct MessageViewStyle {
     
     /// An alignment of a message for incoming or outgoing messages.
     public var alignment: Alignment
-    /// Shows the current user avatar for outgoing messages.
-    public var showCurrentUserAvatar: Bool
+    /// Avatars style.
+    public var avatarViewStyle: AvatarViewStyle?
     /// A message font.
     public var font: UIFont
     /// A reply info font.
@@ -59,6 +59,11 @@ public struct MessageViewStyle {
         didSet { updateBackgroundImages() }
     }
     
+    // Spacings between elements.
+    public var spacing: Spacing
+    /// A margin.
+    public var edgeInsets: UIEdgeInsets
+
     /// A reaction style.
     public var reactionViewStyle: ReactionViewStyle
     
@@ -75,10 +80,19 @@ public struct MessageViewStyle {
         return cornerRadius > 1 && (chatBackgroundColor != backgroundColor || borderWidth > 0)
     }
     
+    /// A margin left or right offset with avatar size.
+    public var marginWithAvatarOffset: CGFloat {
+        guard let avatarViewStyle = avatarViewStyle else {
+            return alignment == .left ? edgeInsets.left : edgeInsets.right
+        }
+        
+        return (alignment == .left ? edgeInsets.left : edgeInsets.right) + avatarViewStyle.size + spacing.horizontal
+    }
+    
     /// Init a message view style.
     /// - Parameters:
     ///   - alignment: an alignment of a message for incoming or outgoing messages.
-    ///   - showCurrentUserAvatar: shows the current user avatar for outgoing messages.
+    ///   - avatarViewStyle: avatars style.
     ///   - chatBackgroundColor: a background color of the chat screen.
     ///   - font: a message font.
     ///   - replyFont: a reply info font.
@@ -92,11 +106,14 @@ public struct MessageViewStyle {
     ///   - borderColor: a border color.
     ///   - borderWidth: a border width.
     ///   - cornerRadius: a corner radius.
+    ///   - spacing: spacings between elements.
+    ///   - edgeInsets: edge insets.
     ///   - reactionViewStyle: a reaction style.
     ///   - showTimeThreshold: a time threshold between messages to show additional time. To enable it should be more than 60 sec.
+    ///   - additionalDateStyle: additional date style will work with showTimeThreshold paramenter.
     ///   - markdownEnabled: shows markdown text with text attributes, e.g. *italic*, **bold**.
     public init(alignment: Alignment = .left,
-                showCurrentUserAvatar: Bool = true,
+                avatarViewStyle: AvatarViewStyle? = .init(),
                 chatBackgroundColor: UIColor = .white,
                 font: UIFont = .chatRegular,
                 replyFont: UIFont = .chatSmallBold,
@@ -110,12 +127,17 @@ public struct MessageViewStyle {
                 borderColor: UIColor = .chatSuperLightGray,
                 borderWidth: CGFloat = 1,
                 cornerRadius: CGFloat = .messageCornerRadius,
+                spacing: Spacing = .init(horizontal: .messageInnerPadding, vertical: .messageSpacing),
+                edgeInsets: UIEdgeInsets = .init(top: .messageSpacing,
+                                                 left: .messageEdgePadding,
+                                                 bottom: .messageBottomPadding,
+                                                 right: .messageEdgePadding),
                 reactionViewStyle: ReactionViewStyle = ReactionViewStyle(),
                 showTimeThreshold: TimeInterval = 0,
                 additionalDateStyle: AdditionalDateStyle = .userNameAndDate,
                 markdownEnabled: Bool = true) {
         self.alignment = alignment
-        self.showCurrentUserAvatar = showCurrentUserAvatar
+        self.avatarViewStyle = avatarViewStyle
         self.chatBackgroundColor = chatBackgroundColor
         self.font = font
         self.replyFont = replyFont
@@ -129,6 +151,8 @@ public struct MessageViewStyle {
         self.borderColor = borderColor
         self.borderWidth = borderWidth
         self.cornerRadius = cornerRadius
+        self.spacing = spacing
+        self.edgeInsets = edgeInsets
         self.reactionViewStyle = reactionViewStyle
         self.showTimeThreshold = showTimeThreshold
         self.additionalDateStyle = additionalDateStyle
@@ -198,7 +222,24 @@ public extension MessageViewStyle {
         case left, right
     }
     
-    /// Additiona date style will work with `showTimeThreshold` paramenter.
+    /// Spacings between elements.
+    struct Spacing: Hashable {
+        /// A horizontal spacing between elements.
+        public let horizontal: CGFloat
+        /// A vertical spacing between elements.
+        public let vertical: CGFloat
+        
+        /// Init spacings.
+        /// - Parameters:
+        ///   - horizontal: a horizontal spacing between elements.
+        ///   - vertical: a vertical spacing between elements.
+        public init(horizontal: CGFloat, vertical: CGFloat) {
+            self.horizontal = horizontal
+            self.vertical = vertical
+        }
+    }
+    
+    /// Additional date style will work with `showTimeThreshold` paramenter.
     enum AdditionalDateStyle {
         /// Show additional date as a default style for the last message.
         case userNameAndDate
@@ -207,23 +248,48 @@ public extension MessageViewStyle {
     }
 }
 
+/// Avatars style.
+public struct AvatarViewStyle: Hashable {
+    /// An avatar radius.
+    public let radius: CGFloat
+    /// A placeholder font.
+    public let placeholderFont: UIFont?
+    
+    /// A double value of `radius`.
+    public var size: CGFloat {
+        return 2 * radius
+    }
+    
+    /// An avatar style.
+    /// - Parameters:
+    ///   - radius: a radius.
+    ///   - placeholderFont: a placeholder font.
+    public init(radius: CGFloat = .messageAvatarRadius, placeholderFont: UIFont? = nil) {
+        self.radius = radius
+        self.placeholderFont = placeholderFont
+    }
+}
+
 extension MessageViewStyle: Hashable {
     
     public static func == (lhs: MessageViewStyle, rhs: MessageViewStyle) -> Bool {
         return lhs.alignment == rhs.alignment
-            && lhs.showCurrentUserAvatar == rhs.showCurrentUserAvatar
+            && lhs.avatarViewStyle == rhs.avatarViewStyle
+            && lhs.chatBackgroundColor == rhs.chatBackgroundColor
             && lhs.font == rhs.font
             && lhs.replyFont == rhs.replyFont
             && lhs.nameFont == rhs.nameFont
             && lhs.infoFont == rhs.infoFont
+            && lhs.emojiFont == rhs.emojiFont
             && lhs.textColor == rhs.textColor
             && lhs.replyColor == rhs.replyColor
             && lhs.infoColor == rhs.infoColor
-            && lhs.borderColor == rhs.borderColor
-            && lhs.chatBackgroundColor == rhs.chatBackgroundColor
             && lhs.backgroundColor == rhs.backgroundColor
+            && lhs.borderColor == rhs.borderColor
             && lhs.borderWidth == rhs.borderWidth
             && lhs.cornerRadius == rhs.cornerRadius
+            && lhs.spacing == rhs.spacing
+            && lhs.edgeInsets == rhs.edgeInsets
             && lhs.reactionViewStyle == rhs.reactionViewStyle
             && lhs.showTimeThreshold == rhs.showTimeThreshold
             && lhs.additionalDateStyle == rhs.additionalDateStyle
@@ -232,19 +298,25 @@ extension MessageViewStyle: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(alignment)
-        hasher.combine(showCurrentUserAvatar)
+        hasher.combine(avatarViewStyle)
+        hasher.combine(chatBackgroundColor)
         hasher.combine(font)
         hasher.combine(replyFont)
         hasher.combine(nameFont)
         hasher.combine(infoFont)
+        hasher.combine(emojiFont)
         hasher.combine(textColor)
         hasher.combine(replyColor)
         hasher.combine(infoColor)
-        hasher.combine(borderColor)
-        hasher.combine(chatBackgroundColor)
         hasher.combine(backgroundColor)
+        hasher.combine(borderColor)
         hasher.combine(borderWidth)
         hasher.combine(cornerRadius)
+        hasher.combine(spacing)
+        hasher.combine(edgeInsets.top)
+        hasher.combine(edgeInsets.bottom)
+        hasher.combine(edgeInsets.left)
+        hasher.combine(edgeInsets.right)
         hasher.combine(reactionViewStyle)
         hasher.combine(showTimeThreshold)
         hasher.combine(additionalDateStyle)

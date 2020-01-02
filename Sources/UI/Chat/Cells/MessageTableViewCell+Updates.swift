@@ -15,10 +15,6 @@ import RxSwift
 extension MessageTableViewCell {
     
     func updateBackground(isContinueMessage: Bool) {
-        guard let style = style else {
-            return
-        }
-        
         if let text = messageLabel.text, text.messageContainsOnlyEmoji {
             messageLabel.font = style.emojiFont
             messageLabel.backgroundColor = style.chatBackgroundColor
@@ -38,7 +34,7 @@ extension MessageTableViewCell {
     }
     
     private func messageBackgroundImage(isContinueMessage: Bool) -> UIImage? {
-        guard let style = style, style.hasBackgroundImage else {
+        guard style.hasBackgroundImage else {
             return nil
         }
         
@@ -50,7 +46,7 @@ extension MessageTableViewCell {
     func update(name: String? = nil, date: Date) {
         nameAndDateStackView.isHidden = false
         
-        if style?.alignment == .left, let name = name, !name.isEmpty {
+        if style.alignment == .left, let name = name, !name.isEmpty {
             nameLabel.isHidden = false
             nameLabel.text = name
         } else {
@@ -95,11 +91,11 @@ extension MessageTableViewCell {
     func update(reactionCounts: ReactionCounts?, action: @escaping ReactionAction) {
         guard let reactionCounts = reactionCounts,
             !reactionCounts.counts.isEmpty,
-            let anchorView = messageStackView.arrangedSubviews.first(where: { !$0.isHidden }),
-            let style = style?.reactionViewStyle else {
+            let anchorView = messageStackView.arrangedSubviews.first(where: { !$0.isHidden }) else {
             return
         }
         
+        let style = self.style.reactionViewStyle
         reactionsContainer.isHidden = false
         reactionsOverlayView.isHidden = false
         reactionsLabel.text = reactionCounts.string
