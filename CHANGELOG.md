@@ -2,6 +2,10 @@
 
 ### ✅ Added
 - Banner animation without bouncing.
+- Customization for message actions.
+- More customization for a message cell (avatar view style, edge insets, spacing).
+
+![MessageViewStyle](https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/ui_message_view_style.png)
 
 ### 🐞 Fixed
 - Example app for a memory leak.
