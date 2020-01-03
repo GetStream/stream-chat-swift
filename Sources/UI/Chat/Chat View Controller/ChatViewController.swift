@@ -23,6 +23,14 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         return .default
     }
     
+    /// Message actions (see `MessageAction`).
+    public lazy var messageActions = defaultMessageActions
+    
+    /// A default message actions. This is useful for subclasses.
+    open var defaultMessageActions: MessageAction {
+        return .all
+    }
+    
     /// A dispose bag for rx subscriptions.
     public let disposeBag = DisposeBag()
     /// A list of table view items, e.g. messages.
@@ -246,6 +254,15 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             .disposed(by: disposeBag)
         
         updateFooterView()
+    }
+    
+    /// Show message actions when long press on a message cell.
+    /// - Parameters:
+    ///   - cell: a message cell.
+    ///   - message: a message.
+    ///   - locationInView: a tap location in the cell.
+    open func showActions(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) {
+        extensionShowActions(from: cell, for: message, locationInView: locationInView)
     }
     
     private func markReadIfPossible() {

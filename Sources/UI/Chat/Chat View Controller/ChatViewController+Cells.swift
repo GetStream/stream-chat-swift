@@ -151,7 +151,7 @@ extension ChatViewController {
                     if let tapGesture = gesture as? UITapGestureRecognizer {
                         self.handleMessageCellTap(from: cell, in: message, tapGesture: tapGesture)
                     } else {
-                        self.showMenu(from: cell, for: message, locationInView: gesture.location(in: cell))
+                        self.showActions(from: cell, for: message, locationInView: gesture.location(in: cell))
                     }
                 }
             })
