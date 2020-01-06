@@ -222,51 +222,12 @@ public extension MessageViewStyle {
         case left, right
     }
     
-    /// Spacings between elements.
-    struct Spacing: Hashable {
-        /// A horizontal spacing between elements.
-        public let horizontal: CGFloat
-        /// A vertical spacing between elements.
-        public let vertical: CGFloat
-        
-        /// Init spacings.
-        /// - Parameters:
-        ///   - horizontal: a horizontal spacing between elements.
-        ///   - vertical: a vertical spacing between elements.
-        public init(horizontal: CGFloat, vertical: CGFloat) {
-            self.horizontal = horizontal
-            self.vertical = vertical
-        }
-    }
-    
     /// Additional date style will work with `showTimeThreshold` paramenter.
     enum AdditionalDateStyle {
         /// Show additional date as a default style for the last message.
         case userNameAndDate
         /// Show additional date near a message without user name.
         case messageAndDate
-    }
-}
-
-/// Avatars style.
-public struct AvatarViewStyle: Hashable {
-    /// An avatar radius.
-    public let radius: CGFloat
-    /// A placeholder font.
-    public let placeholderFont: UIFont?
-    
-    /// A double value of `radius`.
-    public var size: CGFloat {
-        return 2 * radius
-    }
-    
-    /// An avatar style.
-    /// - Parameters:
-    ///   - radius: a radius.
-    ///   - placeholderFont: a placeholder font.
-    public init(radius: CGFloat = .messageAvatarRadius, placeholderFont: UIFont? = nil) {
-        self.radius = radius
-        self.placeholderFont = placeholderFont
     }
 }
 

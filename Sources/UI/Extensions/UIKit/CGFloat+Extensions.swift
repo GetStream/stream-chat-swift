@@ -20,8 +20,8 @@ extension CGFloat {
     /// A bottom safe area value.
     public static let safeAreaBottom: CGFloat = (UIApplication.shared.delegate?.window as? UIWindow)?.safeAreaInsets.bottom ?? 0
     
-    /// A channel big avatar size.
-    public static let channelBigAvatarSize: CGFloat = 40
+    /// A channel avatar radius.
+    public static let channelAvatarRadius: CGFloat = 20
     
     /// A chat bottom threshold for autoscroll down..
     public static let chatBottomThreshold: CGFloat = .messageAvatarSize + 2 * .messageVerticalInset + .messagesToComposerPadding

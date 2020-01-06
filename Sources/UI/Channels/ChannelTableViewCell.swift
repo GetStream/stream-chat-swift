@@ -10,10 +10,21 @@ import UIKit
 import RxSwift
 
 /// Channel table view cell.
-public final class ChannelTableViewCell: UITableViewCell, Reusable {
+open class ChannelTableViewCell: UITableViewCell, Reusable {
+    
+    /// A channel style.
+    public var style: ChannelViewStyle = ChannelViewStyle()
+    /// Checks if needds setup layout.
+    public private(set) var needsToSetup = true
     
     /// An avatar view.
-    public let avatarView: AvatarView = AvatarView(cornerRadius: 20)
+    public private(set) lazy var avatarView: AvatarView = {
+        if let avatarStyle = style.avatarViewStyle {
+            return AvatarView(cornerRadius: avatarStyle.radius)
+        }
+        
+        return AvatarView(cornerRadius: .channelAvatarRadius)
+    }()
     
     /// A dispose bag for the cell.
     public private(set) var disposeBag = DisposeBag()
@@ -48,35 +59,32 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    /// A channel style.
-    public var style: ChannelViewStyle? {
-        didSet {
-            if oldValue == nil, style != nil {
-                setup()
-            }
-        }
-    }
-    
     public override func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }
     
-    func setup() {
-        guard let style = style else {
+    /// Setup style and layouts.
+    /// - Parameter style: a message view style.
+    public func setupIfNeeded(style: ChannelViewStyle) {
+        guard needsToSetup else {
             return
         }
         
+        needsToSetup = false
+        self.style = style
         selectionStyle = .none
         backgroundColor = style.backgroundColor
         
         nameLabel.font = style.nameFont
         nameLabel.textColor = style.nameColor
         nameLabel.backgroundColor = backgroundColor
-
+        nameLabel.numberOfLines = style.nameNumberOfLines
+        
         messageLabel.font = style.messageFont
         messageLabel.textColor = style.messageColor
         messageLabel.backgroundColor = backgroundColor
+        messageLabel.numberOfLines = style.messageNumberOfLines
         
         dateLabel.font = style.dateFont
         dateLabel.textColor = style.dateColor
@@ -86,48 +94,68 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
         infoLabel.textColor = style.dateColor
         infoLabel.backgroundColor = backgroundColor
         
-        contentView.addSubview(avatarView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(messageLabel)
         contentView.addSubview(dateLabel)
         contentView.addSubview(infoLabel)
-
-        avatarView.backgroundColor = backgroundColor
-        avatarView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(CGFloat.messageInnerPadding).priority(999)
-            make.left.equalToSuperview().offset(CGFloat.messageEdgePadding)
-            make.size.equalTo(CGFloat.channelBigAvatarSize)
+        var hasAvatar = false
+        
+        if let avatarViewStyle = style.avatarViewStyle {
+            hasAvatar = true
+            contentView.addSubview(avatarView)
+            
+            avatarView.backgroundColor = backgroundColor
+            avatarView.snp.makeConstraints { make in
+                make.top.equalToSuperview().offset(style.edgeInsets.top).priority(999)
+                make.left.equalToSuperview().offset(style.edgeInsets.left)
+                make.size.equalTo(avatarViewStyle.size)
+            }
         }
         
         nameLabel.snp.makeConstraints { make in
-            make.left.equalTo(avatarView.snp.right).offset(CGFloat.messageInnerPadding)
-            make.right.lessThanOrEqualTo(dateLabel.snp.left).offset(-CGFloat.messageInnerPadding)
-            make.bottom.equalTo(avatarView.snp.centerY)
+            if hasAvatar {
+                make.bottom.equalTo(avatarView.snp.centerY).offset(style.spacing.vertical / -2).priority(999)
+                make.left.equalTo(avatarView.snp.right).offset(style.spacing.horizontal)
+            } else {
+                make.top.equalToSuperview().offset(style.edgeInsets.top).priority(999)
+                make.left.equalToSuperview().offset(style.edgeInsets.left)
+            }
+            
+            make.right.lessThanOrEqualTo(dateLabel.snp.left).offset(-style.spacing.horizontal)
         }
         
         dateLabel.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            make.right.equalToSuperview().offset(-style.edgeInsets.right)
             make.centerY.equalTo(nameLabel.snp.centerY)
         }
         
         dateLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         infoLabel.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
+            make.right.equalToSuperview().offset(-style.edgeInsets.right)
             make.centerY.equalTo(messageLabel.snp.centerY)
         }
         
         infoLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         messageLabel.snp.makeConstraints { make in
-            make.top.equalTo(avatarView.snp.centerY)
+            if hasAvatar {
+                make.top.equalTo(avatarView.snp.centerY).offset(style.spacing.vertical / 2).priority(999)
+            } else {
+                make.top.equalTo(nameLabel.snp.bottom).offset(style.spacing.vertical).priority(999)
+            }
+            
             make.left.equalTo(nameLabel)
-            make.right.equalTo(infoLabel.snp.left).offset(-CGFloat.messageInnerPadding)
+            make.right.equalTo(infoLabel.snp.left).offset(-style.spacing.horizontal)
+            make.bottom.lessThanOrEqualToSuperview().offset(-style.edgeInsets.bottom).priority(999)
         }
     }
     
     func reset() {
-        avatarView.reset()
+        if style.avatarViewStyle != nil {
+            avatarView.reset()
+        }
+        
         nameLabel.text = nil
         dateLabel.text = nil
         messageLabel.text = nil
@@ -142,10 +170,6 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
     ///   - isMeta: shows the message text as a meta data.
     ///   - isUnread: shows the message as unread.
     public func update(message: String, isMeta: Bool, isUnread: Bool) {
-        guard let style = style else {
-            return
-        }
-        
         if isMeta {
             messageLabel.font = style.messageDeletedFont
             messageLabel.textColor = style.messageDeletedColor
@@ -174,7 +198,7 @@ public final class ChannelTableViewCell: UITableViewCell, Reusable {
     ///   - info: an info text.
     ///   - isUnread: if true apply an unread view style.
     public func update(info: String?, isUnread: Bool = false) {
-        guard let style = style, let info = info else {
+        guard let info = info else {
             return
         }
         
