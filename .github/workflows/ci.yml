@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Clean and build the StreamChat scheme
+      run: xcodebuild -scheme StreamChat clean build
+  
+  test:
+    needs: [build]
+    runs-on: macos-latest
+    steps:
+    - name: Runs StreamChatCore tests on iPhone 11 Pro simulator
+      run: xcodebuild test -project StreamChat.xcodeproj -scheme StreamChatCore -destination "platform=iOS Simulator,name=iPhone 11 Pro"
