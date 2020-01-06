@@ -16,6 +16,8 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Install Carthage dependencies
+      run: carthage update --platform iOS --new-resolver
     - name: Clean and build the StreamChat scheme
       run: xcodebuild -scheme StreamChat clean build
   
