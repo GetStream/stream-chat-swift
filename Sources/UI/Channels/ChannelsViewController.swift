@@ -46,15 +46,22 @@ open class ChannelsViewController: ViewController {
     public private(set) lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.backgroundColor = style.channel.backgroundColor
-        tableView.separatorColor = style.channel.separatorColor
+        tableView.separatorColor = style.channel.separatorStyle.color
+        tableView.separatorStyle = style.channel.separatorStyle.tableStyle
+        
+        if style.channel.separatorStyle.inset != .zero {
+            tableView.separatorInset = style.channel.separatorStyle.inset
+        }
+        
+        tableView.rowHeight = style.channel.height
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 2 * .messageInnerPadding + .channelBigAvatarSize
         tableView.register(cellType: ChannelTableViewCell.self)
         tableView.register(cellType: StatusTableViewCell.self)
         view.insertSubview(tableView, at: 0)
         tableView.makeEdgesEqualToSuperview()
         tableView.tableFooterView = UIView(frame: .zero)
+        
         return tableView
     }()
     
@@ -122,7 +129,7 @@ open class ChannelsViewController: ViewController {
     
     open func channelCell(at indexPath: IndexPath, channelPresenter: ChannelPresenter) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(for: indexPath) as ChannelTableViewCell
-        cell.style = style.channel
+        cell.setupIfNeeded(style: style.channel)
         cell.nameLabel.text = channelPresenter.channel.name
         
         cell.avatarView.update(with: channelPresenter.channel.imageURL,

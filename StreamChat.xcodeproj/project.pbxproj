@@ -52,6 +52,9 @@
 		8A5211D5238EE7DC004BED65 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5211D4238EE7DC004BED65 /* Attachment.swift */; };
 		8A559D24230D937C00E66096 /* ClientRequestsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A559D23230D937C00E66096 /* ClientRequestsTests.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
+		8A669E0C23C36E9500E86BC2 /* AvatarViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A669E0B23C36E9500E86BC2 /* AvatarViewStyle.swift */; };
+		8A669E0E23C37D0200E86BC2 /* Spacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A669E0D23C37D0200E86BC2 /* Spacing.swift */; };
+		8A669E1023C3893F00E86BC2 /* SeparatorStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A669E0F23C3893F00E86BC2 /* SeparatorStyle.swift */; };
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		8A6F69D4230ECD7300B8CC1F /* TestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D3230ECD7300B8CC1F /* TestCase.swift */; };
 		8A7EE00A23857FEC00BDB18D /* MutedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7EE00923857FEC00BDB18D /* MutedUser.swift */; };
@@ -288,6 +291,9 @@
 		8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A559D23230D937C00E66096 /* ClientRequestsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRequestsTests.swift; sourceTree = "<group>"; };
 		8A559D25230D937C00E66096 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8A669E0B23C36E9500E86BC2 /* AvatarViewStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarViewStyle.swift; sourceTree = "<group>"; };
+		8A669E0D23C37D0200E86BC2 /* Spacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spacing.swift; sourceTree = "<group>"; };
+		8A669E0F23C3893F00E86BC2 /* SeparatorStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorStyle.swift; sourceTree = "<group>"; };
 		8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Tests.swift"; sourceTree = "<group>"; };
 		8A6F69D3230ECD7300B8CC1F /* TestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCase.swift; sourceTree = "<group>"; };
 		8A7EE00923857FEC00BDB18D /* MutedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUser.swift; sourceTree = "<group>"; };
@@ -922,7 +928,10 @@
 				8AD5ED0422E9BA39005CFAC9 /* ChannelViewStyle.swift */,
 				8AD5ED0322E9BA39005CFAC9 /* ComposerViewStyle.swift */,
 				8AD5ED0222E9BA39005CFAC9 /* MessageViewStyle.swift */,
+				8A669E0B23C36E9500E86BC2 /* AvatarViewStyle.swift */,
 				8AD5ED0122E9BA39005CFAC9 /* ReactionViewStyle.swift */,
+				8A669E0D23C37D0200E86BC2 /* Spacing.swift */,
+				8A669E0F23C3893F00E86BC2 /* SeparatorStyle.swift */,
 			);
 			path = Style;
 			sourceTree = "<group>";
@@ -1320,8 +1329,10 @@
 				8AD5EDBD22E9BA98005CFAC9 /* Keyboard.swift in Sources */,
 				8AD5ED8222E9BA98005CFAC9 /* ComposerFileView.swift in Sources */,
 				8AD54F1C231E91E500364657 /* ViewController.swift in Sources */,
+				8A669E1023C3893F00E86BC2 /* SeparatorStyle.swift in Sources */,
 				8AE61E6D237AE25600A585BA /* DataDetector.swift in Sources */,
 				8AD5ED8F22E9BA98005CFAC9 /* AttachmentFileType+Extensions.swift in Sources */,
+				8A669E0E23C37D0200E86BC2 /* Spacing.swift in Sources */,
 				8AD5ED8A22E9BA98005CFAC9 /* ChatViewController+MessageActions.swift in Sources */,
 				8AD5ED7622E9BA98005CFAC9 /* MessageTableViewCell+Attachments.swift in Sources */,
 				8AD5ED7722E9BA98005CFAC9 /* ReadUsersView.swift in Sources */,
@@ -1347,6 +1358,7 @@
 				8AD5ED7922E9BA98005CFAC9 /* MessageTableViewCell.swift in Sources */,
 				8AD5ED9722E9BA98005CFAC9 /* ComposerViewStyle.swift in Sources */,
 				8AD5EDAB22E9BA98005CFAC9 /* UIViewController+Extensions.swift in Sources */,
+				8A669E0C23C36E9500E86BC2 /* AvatarViewStyle.swift in Sources */,
 				8AD5EDA822E9BA98005CFAC9 /* UIDevice+Extensions.swift in Sources */,
 				8AD5ED9E22E9BA98005CFAC9 /* UIImage+Icons.swift in Sources */,
 				8AD5ED7E22E9BA98005CFAC9 /* ComposerView+TextView.swift in Sources */,
