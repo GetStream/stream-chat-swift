@@ -12,21 +12,11 @@ on:
       - created
 
 jobs:
-  build:
+  build-and-test:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
     - name: Install Carthage dependencies
       run: carthage update --platform iOS --new-resolver
     - name: Clean and build the StreamChat scheme
-      run: xcodebuild -scheme StreamChat clean build
-  
-  test:
-    needs: [build]
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Install Carthage dependencies
-      run: carthage update --platform iOS --new-resolver
-    - name: Runs StreamChatCore tests on iPhone 11 Pro simulator
-      run: xcodebuild test -project StreamChat.xcodeproj -scheme StreamChatCore -destination "platform=iOS Simulator,name=iPhone 11 Pro"
+      run: xcodebuild clean test -project StreamChat.xcodeproj -scheme StreamChatCore -destination "platform=iOS Simulator,name=iPhone 11 Pro"
