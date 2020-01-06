@@ -18,13 +18,7 @@ open class ChannelTableViewCell: UITableViewCell, Reusable {
     public private(set) var needsToSetup = true
     
     /// An avatar view.
-    public private(set) lazy var avatarView: AvatarView = {
-        if let avatarStyle = style.avatarViewStyle {
-            return AvatarView(cornerRadius: avatarStyle.radius)
-        }
-        
-        return AvatarView(cornerRadius: .channelAvatarRadius)
-    }()
+    public private(set) lazy var avatarView = AvatarView(cornerRadius: style.avatarViewStyle?.radius ?? .channelAvatarRadius)
     
     /// A dispose bag for the cell.
     public private(set) var disposeBag = DisposeBag()
