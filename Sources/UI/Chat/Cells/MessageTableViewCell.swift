@@ -107,7 +107,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     /// A reply button.
     public let replyCountButton = UIButton(type: .custom)
     
-    let readUsersView = ReadUsersView()
+    private(set) var readUsersView: ReadUsersView?
     var readUsersRightConstraint: Constraint?
     var readUsersBottomConstraint: Constraint?
     
@@ -268,14 +268,15 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         
         // MARK: Read Users
         
-        readUsersView.isHidden = true
-        
         if style.alignment == .right {
+            let readUsersView = ReadUsersView()
+            readUsersView.isHidden = true
             readUsersView.backgroundColor = backgroundColor
             readUsersView.countLabel.textColor = style.infoColor
             readUsersView.countLabel.font = style.infoFont
             contentView.addSubview(readUsersView)
             readUsersView.snp.makeConstraints { $0.height.equalTo(CGFloat.messageReadUsersSize) }
+            self.readUsersView = readUsersView
         }
         
         // MARK: Reactions
@@ -370,7 +371,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         messageLabel.backgroundColor = style.backgroundColor
         messageTextEnrichment = nil
         
-        readUsersView.reset()
+        readUsersView?.reset()
         readUsersRightConstraint?.deactivate()
         readUsersRightConstraint = nil
         readUsersBottomConstraint?.deactivate()
@@ -419,7 +420,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     }
     
     func updateReadUsersViewConstraints(relatedTo view: UIView) {
-        guard !readUsersView.isHidden else {
+        guard let readUsersView = readUsersView, !readUsersView.isHidden else {
             return
         }
         
