@@ -40,6 +40,8 @@ public struct ChannelViewStyle {
     public var messageDeletedFont: UIFont
     /// A deleted message text color.
     public var messageDeletedColor: UIColor
+    /// A name and messagin vertical alignment.
+    public var verticalTextAlignment: VerticalTextAlignment
     /// A date font.
     public var dateFont: UIFont
     /// A date text color.
@@ -91,6 +93,7 @@ public struct ChannelViewStyle {
                 messageUnreadColor: UIColor = .black,
                 messageDeletedFont: UIFont = .chatMediumItalic,
                 messageDeletedColor: UIColor = .chatGray,
+                verticalTextAlignment: VerticalTextAlignment = .center,
                 dateFont: UIFont = .chatSmall,
                 dateColor: UIColor = .chatGray,
                 height: CGFloat = UITableView.automaticDimension,
@@ -114,6 +117,7 @@ public struct ChannelViewStyle {
         self.messageUnreadColor = messageUnreadColor
         self.messageDeletedFont = messageDeletedFont
         self.messageDeletedColor = messageDeletedColor
+        self.verticalTextAlignment = avatarViewStyle == nil ? .top : verticalTextAlignment
         self.dateFont = dateFont
         self.dateColor = dateColor
         self.spacing = spacing
@@ -124,6 +128,18 @@ public struct ChannelViewStyle {
                 + edgeInsets.top
                 + edgeInsets.bottom
             : height
+    }
+}
+
+public extension ChannelViewStyle {
+    /// The name and message vertical alignment.
+    enum VerticalTextAlignment {
+        /// The name aligned from the top with `edgeInsets.top` top offset.
+        /// The message aligned after the name with `spacing.vertical` top offset.
+        case top
+        /// The name aligned from the center of the avatar with `spacing.vertical / 2` bottom offset.
+        /// The message aligned from the center of the avatar with `spacing.vertical / 2` top offset.
+        case center
     }
 }
 

@@ -18,7 +18,8 @@ open class ChannelTableViewCell: UITableViewCell, Reusable {
     public private(set) var needsToSetup = true
     
     /// An avatar view.
-    public private(set) lazy var avatarView = AvatarView(cornerRadius: style.avatarViewStyle?.radius ?? .channelAvatarRadius)
+    public private(set) lazy var avatarView = AvatarView(cornerRadius: style.avatarViewStyle?.radius ?? .channelAvatarRadius,
+                                                         font: style.avatarViewStyle?.placeholderFont)
     
     /// A dispose bag for the cell.
     public private(set) var disposeBag = DisposeBag()
@@ -101,18 +102,24 @@ open class ChannelTableViewCell: UITableViewCell, Reusable {
             avatarView.backgroundColor = backgroundColor
             avatarView.snp.makeConstraints { make in
                 make.top.equalToSuperview().offset(style.edgeInsets.top).priority(999)
+                make.bottom.lessThanOrEqualToSuperview().offset(-style.edgeInsets.bottom).priority(999)
                 make.left.equalToSuperview().offset(style.edgeInsets.left)
                 make.size.equalTo(avatarViewStyle.size)
             }
         }
         
         nameLabel.snp.makeConstraints { make in
-            if hasAvatar {
+            if style.verticalTextAlignment == .center {
                 make.bottom.equalTo(avatarView.snp.centerY).offset(style.spacing.vertical / -2).priority(999)
                 make.left.equalTo(avatarView.snp.right).offset(style.spacing.horizontal)
             } else {
                 make.top.equalToSuperview().offset(style.edgeInsets.top).priority(999)
-                make.left.equalToSuperview().offset(style.edgeInsets.left)
+                
+                if hasAvatar {
+                    make.left.equalTo(avatarView.snp.right).offset(style.spacing.horizontal)
+                } else {
+                    make.left.equalToSuperview().offset(style.edgeInsets.left)
+                }
             }
             
             make.right.lessThanOrEqualTo(dateLabel.snp.left).offset(-style.spacing.horizontal)
@@ -133,7 +140,7 @@ open class ChannelTableViewCell: UITableViewCell, Reusable {
         infoLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         messageLabel.snp.makeConstraints { make in
-            if hasAvatar {
+            if style.verticalTextAlignment == .center {
                 make.top.equalTo(avatarView.snp.centerY).offset(style.spacing.vertical / 2).priority(999)
             } else {
                 make.top.equalTo(nameLabel.snp.bottom).offset(style.spacing.vertical).priority(999)
