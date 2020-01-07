@@ -24,6 +24,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-carthage-
     - name: Install Carthage dependencies
-      run: carthage update --platform iOS --new-resolver
+      run: carthage update --platform iOS --new-resolver --no-use-binaries --cache-builds
     - name: Clean and build the StreamChat scheme
       run: xcodebuild clean test -project StreamChat.xcodeproj -scheme StreamChatCore -destination "platform=iOS Simulator,name=iPhone 11 Pro"
