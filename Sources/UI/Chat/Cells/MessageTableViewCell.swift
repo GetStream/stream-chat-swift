@@ -290,12 +290,13 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         reactionsContainer.layer.cornerRadius = style.reactionViewStyle.cornerRadius
         reactionsTailImage.image = style.reactionViewStyle.tailImage
         reactionsTailImage.tintColor = style.reactionViewStyle.backgroundColor
+        let reactionsHeight = style.reactionViewStyle.cornerRadius * 2
         let tailAdditionalOffset: CGFloat = 2
         
         reactionsContainer.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(self.style.spacing.vertical)
-            make.height.equalTo(CGFloat.reactionsHeight).priority(999)
-            let minWidth = style.reactionViewStyle.tailImage.size.width + .reactionsHeight - 2 * tailAdditionalOffset
+            make.height.equalTo(reactionsHeight).priority(999)
+            let minWidth = style.reactionViewStyle.tailImage.size.width + reactionsHeight - 2 * tailAdditionalOffset
             make.width.greaterThanOrEqualTo(minWidth)
             
             if style.reactionViewStyle.alignment == .left {
