@@ -23,9 +23,6 @@ extension CGFloat {
     /// A channel avatar radius.
     public static let channelAvatarRadius: CGFloat = 20
     
-    /// A chat bottom threshold for autoscroll down..
-    public static let chatBottomThreshold: CGFloat = .messageAvatarSize + 2 * .messageVerticalInset + .messagesToComposerPadding
-    
     /// A chat footer hight.
     public static let chatFooterHeight: CGFloat = 30
     /// A chat footer avatar radius.
@@ -72,8 +69,6 @@ extension CGFloat {
     /// A composer file icon width.
     public static let composerFileIconWidth: CGFloat = 25
     
-    /// A message to composer padding.
-    public static let messagesToComposerPadding: CGFloat = .composerHeight + 2 * .messageEdgePadding
     /// A message avatar radius.
     public static let messageAvatarRadius: CGFloat = 16
     /// A message avatar size.
@@ -105,7 +100,7 @@ extension CGFloat {
     public static let messageReadUsersSize: CGFloat = 2 * .messageReadUsersAvatarCornerRadius
     
     /// A message status line width.
-    public static let messageStatusLineWidth: CGFloat = 1
+    public static let messageStatusLineWidth: CGFloat = 0.5
     /// A message status spacing.
     public static let messageStatusSpacing: CGFloat = 26
     

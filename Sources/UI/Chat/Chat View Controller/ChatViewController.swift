@@ -84,12 +84,8 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         tableView.registerMessageCell(style: style.incomingMessage)
         tableView.registerMessageCell(style: style.outgoingMessage)
         tableView.register(cellType: StatusTableViewCell.self)
-        
-        tableView.contentInset = UIEdgeInsets(top: 2 * .messageEdgePadding,
-                                              left: 0,
-                                              bottom: .messagesToComposerPadding,
-                                              right: 0)
-        
+        let bottomInset = style.composer.height + style.composer.edgeInsets.top + style.composer.edgeInsets.bottom
+        tableView.contentInset = UIEdgeInsets(top: style.incomingMessage.edgeInsets.top, left: 0, bottom: bottomInset, right: 0)
         view.insertSubview(tableView, at: 0)
         tableView.makeEdgesEqualToSuperview()
         
@@ -99,6 +95,13 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         
         return tableView
     }()
+    
+    private lazy var bottomThreshold = (style.incomingMessage.avatarViewStyle?.size ?? CGFloat.messageAvatarSize)
+        + style.incomingMessage.edgeInsets.top
+        + style.incomingMessage.edgeInsets.bottom
+        + style.composer.height
+        + style.composer.edgeInsets.top
+        + style.composer.edgeInsets.bottom
     
     /// A channel presenter.
     public var channelPresenter: ChannelPresenter?
@@ -158,7 +161,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         markReadIfPossible()
         
         if let presenter = channelPresenter, (needsToReload || presenter.items != items) {
-            let scrollToBottom = items.isEmpty || (scrollEnabled && tableView.bottomContentOffset < .chatBottomThreshold)
+            let scrollToBottom = items.isEmpty || (scrollEnabled && tableView.bottomContentOffset < bottomThreshold)
             refreshTableView(scrollToBottom: scrollToBottom, animated: false)
         }
     }
@@ -236,7 +239,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     open func statusCell(at indexPath: IndexPath,
                          title: String,
                          subtitle: String? = nil,
-                         highlighted: Bool) -> UITableViewCell? {
+                         textColor: UIColor) -> UITableViewCell? {
         return nil
     }
     
@@ -343,7 +346,7 @@ extension ChatViewController {
         case let .itemAdded(row, reloadRow, forceToScroll, items):
             self.items = items
             let indexPath = IndexPath.row(row)
-            let needsToScroll = tableView.bottomContentOffset < .chatBottomThreshold
+            let needsToScroll = tableView.bottomContentOffset < bottomThreshold
             tableView.stayOnScrollOnce = scrollEnabled && needsToScroll && !forceToScroll
             
             if forceToScroll {
@@ -407,13 +410,18 @@ extension ChatViewController {
         
         switch items[indexPath.row] {
         case .loading:
-            cell = loadingCell(at: indexPath) ?? tableView.loadingCell(at: indexPath)
+            cell = loadingCell(at: indexPath)
+                ?? tableView.loadingCell(at: indexPath, textColor: style.incomingMessage.infoColor)
+            
         case let .status(title, subtitle, highlighted):
+            let textColor = highlighted ? style.incomingMessage.replyColor : style.incomingMessage.infoColor
+            
             cell = statusCell(at: indexPath,
                               title: title,
                               subtitle: subtitle,
-                              highlighted: highlighted)
-                ?? tableView.statusCell(at: indexPath, title: title, subtitle: subtitle, highlighted: highlighted)
+                              textColor: textColor)
+                ?? tableView.statusCell(at: indexPath, title: title, subtitle: subtitle, textColor: textColor)
+            
         case let .message(message, readUsers):
             cell = messageCell(at: indexPath, message: message, readUsers: readUsers)
         default:
