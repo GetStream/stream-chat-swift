@@ -77,7 +77,7 @@ You'll typically want to start out using the UI components, and implement your o
 * [SDK UI Components](https://getstream.github.io/stream-chat-swift/ui/)
 * [Swift Chat API Docs](https://getstream.io/chat/docs/swift/)
 * [Low level core API Reference](https://getstream.github.io/stream-chat-swift/core/)
-* [Github Wiki](https://github.com/GetStream/stream-chat-swift/wiki)
+* [Wiki Pages](https://github.com/GetStream/stream-chat-swift/wiki)
 
 
 ## Requirements
