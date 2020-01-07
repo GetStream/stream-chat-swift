@@ -200,7 +200,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
             replyCountButton.setImage(UIImage.Icons.path.flip(orientation: .upMirrored)?.template, for: .normal)
             replyCountButton.semanticContentAttribute = .forceRightToLeft
         }
-
+        
         replyCountButton.tintColor = style.borderWidth > 0
             ? style.borderColor
             : (style.backgroundColor == style.chatBackgroundColor ? .chatGray : style.backgroundColor)
@@ -255,7 +255,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
             messageStackViewTopConstraint = make.top.equalToSuperview().offset(style.spacing.vertical).priority(999).constraint
             make.bottom.equalToSuperview().priority(999)
             
-            if style.reactionViewStyle.alignment == .left {
+            if style.alignment == .left {
                 make.left.equalToSuperview().offset(style.marginWithAvatarOffset).priority(999)
                 make.right.equalToSuperview().offset(-CGFloat.messageTextPaddingWithAvatar).priority(999)
             } else {
@@ -287,7 +287,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         reactionsContainer.addSubview(reactionsTailImage)
         reactionsContainer.addSubview(reactionsLabel)
         reactionsContainer.backgroundColor = style.reactionViewStyle.backgroundColor
-        reactionsContainer.layer.cornerRadius = .reactionsCornerRadius
+        reactionsContainer.layer.cornerRadius = style.reactionViewStyle.cornerRadius
         reactionsTailImage.image = style.reactionViewStyle.tailImage
         reactionsTailImage.tintColor = style.reactionViewStyle.backgroundColor
         let tailAdditionalOffset: CGFloat = 2
@@ -301,11 +301,11 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
             if style.reactionViewStyle.alignment == .left {
                 make.left.greaterThanOrEqualToSuperview().offset(style.marginWithAvatarOffset).priority(999)
                 make.right.greaterThanOrEqualTo(reactionsTailImage.snp.right)
-                    .offset(CGFloat.reactionsCornerRadius - tailAdditionalOffset).priority(998)
+                    .offset(style.reactionViewStyle.cornerRadius - tailAdditionalOffset).priority(998)
             } else {
                 make.right.lessThanOrEqualToSuperview().offset(-style.marginWithAvatarOffset).priority(999)
                 make.left.lessThanOrEqualTo(reactionsTailImage.snp.left)
-                    .offset(tailAdditionalOffset - .reactionsCornerRadius).priority(998)
+                    .offset(tailAdditionalOffset - style.reactionViewStyle.cornerRadius).priority(998)
             }
         }
         
