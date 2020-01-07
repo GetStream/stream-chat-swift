@@ -32,7 +32,7 @@ extension ChatViewController {
             cell.update(text: message.textOrArgs)
             
             if message.isOwn {
-                cell.readUsersView.update(readUsers: readUsers)
+                cell.readUsersView?.update(readUsers: readUsers)
             }
             
             if presenter.canReply, message.replyCount > 0 {
@@ -117,7 +117,7 @@ extension ChatViewController {
         
         // Show additional date, if needed.
         if !showAvatar,
-            cell.readUsersView.isHidden,
+            (cell.readUsersView?.isHidden ?? true),
             needsToShowAdditionalDate,
             case .messageAndDate = messageStyle.additionalDateStyle {
             cell.additionalDateLabel.isHidden = false
@@ -139,7 +139,7 @@ extension ChatViewController {
         
         cell.enrichText(with: message, enrichURLs: true)
         
-        if (!cell.readUsersView.isHidden || !cell.additionalDateLabel.isHidden),
+        if (!(cell.readUsersView?.isHidden ?? true) || !cell.additionalDateLabel.isHidden),
             let lastVisibleView = cell.lastVisibleViewFromMessageStackView() {
             cell.updateReadUsersViewConstraints(relatedTo: lastVisibleView)
             cell.updateAdditionalLabelViewConstraints(relatedTo: lastVisibleView)
