@@ -16,6 +16,13 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Cache dependencies
+      uses: actions/cache@v1.1.0
+      with:
+        path: Carthage
+        key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+        restore-keys: |
+          ${{ runner.os }}-carthage-
     - name: Install Carthage dependencies
       run: carthage update --platform iOS --new-resolver
     - name: Clean and build the StreamChat scheme
