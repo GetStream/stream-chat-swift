@@ -164,7 +164,7 @@ open class ChannelsViewController: ViewController {
     ///   - chatItem: a loading chat item.
     /// - Returns: a loading table view cell.
     open func loadingCell(at indexPath: IndexPath, chatItem: ChatItem) -> UITableViewCell {
-        return chatItem.isLoading ? tableView.loadingCell(at: indexPath) : .unused
+        return chatItem.isLoading ? tableView.loadingCell(at: indexPath, textColor: style.channel.messageColor) : .unused
     }
     
     // MARK: - Show Chat
@@ -286,7 +286,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         
         guard let channelPresenter = items[indexPath.row].channelPresenter else {
             if items[indexPath.row].isLoading {
-                return tableView.loadingCell(at: indexPath)
+                return tableView.loadingCell(at: indexPath, textColor: style.channel.messageColor)
             }
             
             return .unused

@@ -59,9 +59,8 @@ final class StatusTableViewCell: UITableViewCell, Reusable {
         lineView1.snp.makeConstraints { $0.width.equalTo(lineView2) }
 
         stackView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview()
-            make.left.equalToSuperview().priority(999)
-            make.right.equalToSuperview().priority(999)
+            make.edges.equalToSuperview().priority(999)
+            make.height.equalTo(60).priority(999)
         }
     }
     
@@ -71,21 +70,15 @@ final class StatusTableViewCell: UITableViewCell, Reusable {
         return view
     }
     
-    func update(title: String, subtitle: String? = nil, highlighted: Bool) {
+    func update(title: String, subtitle: String? = nil, textColor: UIColor) {
         if titleLabel.superview == nil {
             setup()
         }
         
         titleLabel.text = title.uppercased()
-        titleLabel.textColor = highlighted ? .chatBlue : .chatGray
-        
-        if highlighted {
-            lineView1.backgroundColor = UIColor.chatBlue.withAlphaComponent(0.5)
-            lineView2.backgroundColor = lineView1.backgroundColor
-        } else {
-            lineView1.backgroundColor = (backgroundColor?.isDark ?? false) ? .chatDarkGray : .chatSuperLightGray
-            lineView2.backgroundColor = lineView1.backgroundColor
-        }
+        titleLabel.textColor = textColor
+        lineView1.backgroundColor = textColor.withAlphaComponent(0.5)
+        lineView2.backgroundColor = lineView1.backgroundColor
         
         if let subtitle = subtitle {
             subtitleLabel.text = subtitle.uppercased()
