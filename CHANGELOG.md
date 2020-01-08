@@ -2,10 +2,11 @@
 
 ### ⚠️ Breaking Changes
 - Default `UITableView.loadingCell` changed:
-  - 1. from `func loadingCell(at indexPath: IndexPath) -> UITableViewCell`
-  - 1. to `func loadingCell(at indexPath: IndexPath, textColor: UIColor) -> UITableViewCell`
-  - 2. from `func statusCell(... subtitle: String? = nil, highlighted: Bool) -> UITableViewCell`
-  - 2. to `func statusCell(... subtitle: String? = nil, textColor: UIColor) -> UITableViewCell`
+  - from `func loadingCell(at indexPath: IndexPath) -> UITableViewCell`
+  - to `func loadingCell(at indexPath: IndexPath, textColor: UIColor) -> UITableViewCell`
+- Default `UITableView.statusCell` changed:
+  - from `func statusCell(... subtitle: String? = nil, highlighted: Bool) -> UITableViewCell`
+  - to `func statusCell(... subtitle: String? = nil, textColor: UIColor) -> UITableViewCell`
 
 ### ✅ Added
 - Banner animation without bouncing.
@@ -14,22 +15,22 @@
 - Opened `MessageTableViewCell`.
 - Opened `ChannelTableViewCell`.
 - More customization for [a message and channel cells](https://github.com/GetStream/stream-chat-swift/wiki/Styles).
-- Added `AvatarViewStyle`
-- Added `SeparatorStyle`
-- Added `Spacing`
-- Added `ChannelTableViewCell.VerticalTextAlignment`
-- `MessageTableViewCell.avatarViewStyle: AvatarViewStyle?`
-- `MessageTableViewCell.spacing: Spacing`
-- `MessageTableViewCell.edgeInsets: UIEdgeInsets`
-- `ChannelTableViewCell.avatarViewStyle: AvatarViewStyle?`
-- `ChannelTableViewCell.separatorStyle: SeparatorStyle`
-- `ChannelTableViewCell.nameNumberOfLines: Int`
-- `ChannelTableViewCell.messageNumberOfLines: Int`
-- `ChannelTableViewCell.height: CGFloat`
-- `ChannelTableViewCell.spacing: Spacing`
-- `ChannelTableViewCell.edgeInsets: UIEdgeInsets`
-- `ChannelTableViewCell.verticalTextAlignment: VerticalTextAlignment`
-- Added a customization for [message actions](https://github.com/GetStream/stream-chat-swift/wiki/Message-Actions)).
+  - Added `AvatarViewStyle`
+  - Added `SeparatorStyle`
+  - Added `Spacing`
+  - Added `ChannelTableViewCell.VerticalTextAlignment`
+  - `MessageTableViewCell.avatarViewStyle: AvatarViewStyle?`
+  - `MessageTableViewCell.spacing: Spacing`
+  - `MessageTableViewCell.edgeInsets: UIEdgeInsets`
+  - `ChannelTableViewCell.avatarViewStyle: AvatarViewStyle?`
+  - `ChannelTableViewCell.separatorStyle: SeparatorStyle`
+  - `ChannelTableViewCell.nameNumberOfLines: Int`
+  - `ChannelTableViewCell.messageNumberOfLines: Int`
+  - `ChannelTableViewCell.height: CGFloat`
+  - `ChannelTableViewCell.spacing: Spacing`
+  - `ChannelTableViewCell.edgeInsets: UIEdgeInsets`
+  - `ChannelTableViewCell.verticalTextAlignment: VerticalTextAlignment`
+- Added a customization for [message actions](https://github.com/GetStream/stream-chat-swift/wiki/Message-Actions).
 
 ### 🐞 Fixed
 - Example app for a memory leak.
