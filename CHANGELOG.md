@@ -1,22 +1,48 @@
 # Upcoming
 
+### ⚠️ Breaking Changes
+- Default `UITableView.loadingCell` changed:
+1.1 from `func loadingCell(at indexPath: IndexPath) -> UITableViewCell`
+1.2 to `func loadingCell(at indexPath: IndexPath, textColor: UIColor) -> UITableViewCell`
+2.1 from `func statusCell(... subtitle: String? = nil, highlighted: Bool) -> UITableViewCell`
+3.1 to `func statusCell(... subtitle: String? = nil, textColor: UIColor) -> UITableViewCell`
+
 ### ✅ Added
 - Banner animation without bouncing.
 - Customization for message actions.
-- More customization for a message cell (avatar view style, edge insets, spacing).
-
-![MessageViewStyle](https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/ui_message_view_style.png)
+- Added `Event.reactionUpdated`.
+- Opened `MessageTableViewCell`.
+- Opened `ChannelTableViewCell`.
+- More customization for [a message and channel cells](https://github.com/GetStream/stream-chat-swift/wiki/Styles).
+- Added `AvatarViewStyle`
+- Added `SeparatorStyle`
+- Added `Spacing`
+- Added `ChannelTableViewCell.VerticalTextAlignment`
+- `MessageTableViewCell.avatarViewStyle: AvatarViewStyle?`
+- `MessageTableViewCell.spacing: Spacing`
+- `MessageTableViewCell.edgeInsets: UIEdgeInsets`
+- `ChannelTableViewCell.avatarViewStyle: AvatarViewStyle?`
+- `ChannelTableViewCell.separatorStyle: SeparatorStyle`
+- `ChannelTableViewCell.nameNumberOfLines: Int`
+- `ChannelTableViewCell.messageNumberOfLines: Int`
+- `ChannelTableViewCell.height: CGFloat`
+- `ChannelTableViewCell.spacing: Spacing`
+- `ChannelTableViewCell.edgeInsets: UIEdgeInsets`
+- `ChannelTableViewCell.verticalTextAlignment: VerticalTextAlignment`
+- Added a customization for [message actions](https://github.com/GetStream/stream-chat-swift/wiki/Message-Actions)).
 
 ### 🐞 Fixed
 - Example app for a memory leak.
 - Keyboard events replays.
 - Handling keyboard notifications for ChatViewController in rx way.
 - Scroll the table view to the bottom safely.
+- Fixed a crash when the token was expired.
+- Fixed `StatusTableViewCell` layout.
 
 # 1.5.4
 _December 16th, 2019_
 
-### 💥 Breaking Changes
+### ⚠️ Breaking Changes
 - The order of parameters in `Message.init`
 - Removed members from `ChannelResponse`. Now it's only inside the channel of the response.
 
@@ -78,21 +104,21 @@ _November 23th, 2019_
 
 ### Added
 - Added levels for `ClientLogger`.
-  - Error Level:
-    - `ClientLogger.Options.requestsError`
-    - `ClientLogger.Options.webSocketError`
-    - `ClientLogger.Options.notificationsError`
-    - `ClientLogger.Options.error` — all errors
-  - Debug Level:
-    - `ClientLogger.Options.requests`
-    - `ClientLogger.Options.webSocket`
-    - `ClientLogger.Options.notifications`
-    - `ClientLogger.Options.debug` — all debug
-  - Info Level:
-    - `ClientLogger.Options.requestsInfo`
-    - `ClientLogger.Options.webSocketInfo`
-    - `ClientLogger.Options.notificationsInfo`
-    - `ClientLogger.Options.info` — all info
+- Error Level:
+- `ClientLogger.Options.requestsError`
+- `ClientLogger.Options.webSocketError`
+- `ClientLogger.Options.notificationsError`
+- `ClientLogger.Options.error` — all errors
+- Debug Level:
+- `ClientLogger.Options.requests`
+- `ClientLogger.Options.webSocket`
+- `ClientLogger.Options.notifications`
+- `ClientLogger.Options.debug` — all debug
+- Info Level:
+- `ClientLogger.Options.requestsInfo`
+- `ClientLogger.Options.webSocketInfo`
+- `ClientLogger.Options.notificationsInfo`
+- `ClientLogger.Options.info` — all info
 
 - `MessageViewStyle.showTimeThreshold` to show additional time for messages from the same user at different times.
 
@@ -102,9 +128,9 @@ _November 23th, 2019_
 
 - Optimized MessageTableViewCell rendering.
 - Channel name. If it's empty:
-  - for 2 members: the 2nd member name
-  - for more than 2 members: member name + N others.
-  - channel `id`.
+- for 2 members: the 2nd member name
+- for more than 2 members: member name + N others.
+- channel `id`.
 
 - `Channel.isDirectMessage` — checks if only 2 members in the channel and the channel name was generated.
 - Improved work with `ExtraData`.
@@ -137,10 +163,10 @@ let count: Int = channel.currentMentionedUnreadCount
 
 // An observable unread count.
 channel.mentionedUnreadCount
-    .drive(onNext: { count in
-        print(count)
-    })
-    .disposed(by: disposeBag)
+.drive(onNext: { count in
+print(count)
+})
+.disposed(by: disposeBag)
 ```
 - Map an observable value to void. `.void()`
 
@@ -194,9 +220,9 @@ case enabledForModerators(timeoutInMinutes: Int?, reason: String?)
 ```swift
 // 1. Invite members with a creating of a new channel
 let channel = Channel(type: .messaging,
-                      id: "awesome-chat", 
-                      members: [tomasso, thierry]
-                      invitedMembers: [nick])
+id: "awesome-chat", 
+members: [tomasso, thierry]
+invitedMembers: [nick])
 
 channel.create().subscribe().disposed(by: disposeBag)
 
