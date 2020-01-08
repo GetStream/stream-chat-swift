@@ -77,6 +77,8 @@ public enum EventType: String, Codable {
     
     /// When a message reaction was added.
     case reactionNew = "reaction.new"
+    /// When a message reaction updated.
+    case reactionUpdated = "reaction.updated"
     /// When a message reaction deleted.
     case reactionDeleted = "reaction.deleted"
 }
@@ -131,6 +133,7 @@ public enum Event: Decodable {
     case memberRemoved(User, EventType)
     
     case reactionNew(Reaction, Message, User, EventType)
+    case reactionUpdated(Reaction, Message, User, EventType)
     case reactionDeleted(Reaction, Message, User, EventType)
     
     case typingStart(User, EventType)
@@ -169,6 +172,7 @@ public enum Event: Decodable {
              .memberRemoved(_, let type),
              
              .reactionNew(_, _, _, let type),
+             .reactionUpdated(_, _, _, let type),
              .reactionDeleted(_, _, _, let type),
              
              .typingStart(_, let type),
@@ -215,6 +219,10 @@ public enum Event: Decodable {
         
         func message() throws -> Message {
             return try container.decode(Message.self, forKey: .message)
+        }
+        
+        func reaction() throws -> Reaction {
+            return try container.decode(Reaction.self, forKey: .reaction)
         }
         
         switch type {
@@ -273,7 +281,7 @@ public enum Event: Decodable {
             self = .memberUpdated(try member(), type)
         case .memberRemoved:
             self = .memberRemoved(try user(), type)
-            
+                
         // Typing
         case .typingStart:
             self = .typingStart(try user(), type)
@@ -282,11 +290,11 @@ public enum Event: Decodable {
             
         // Reaction
         case .reactionNew:
-            let reaction = try container.decode(Reaction.self, forKey: .reaction)
-            self = .reactionNew(reaction, try message(), try user(), type)
+            self = .reactionNew(try reaction(), try message(), try user(), type)
+//        case .reactionUpdated:
+//            self = .reactionUpdated(try reaction(), try message(), try user(), type)
         case .reactionDeleted:
-            let reaction = try container.decode(Reaction.self, forKey: .reaction)
-            self = .reactionDeleted(reaction, try message(), try user(), type)
+            self = .reactionDeleted(try reaction(), try message(), try user(), type)
             
         // Notifications
         case .notificationMutesUpdated:
@@ -354,6 +362,9 @@ extension Event: Equatable {
         case (.memberRemoved(let user1, _), .memberRemoved(let user2, _)):
             return user1 == user2
         case (.reactionNew(let reaction1, let message1, let user1, _), .reactionNew(let reaction2, let message2, let user2, _)):
+            return reaction1 == reaction2 && message1 == message2 && user1 == user2
+        case (.reactionUpdated(let reaction1, let message1, let user1, _),
+              .reactionUpdated(let reaction2, let message2, let user2, _)):
             return reaction1 == reaction2 && message1 == message2 && user1 == user2
         case (.reactionDeleted(let reaction1, let message1, let user1, _),
               .reactionDeleted(let reaction2, let message2, let user2, _)):

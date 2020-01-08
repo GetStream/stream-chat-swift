@@ -77,6 +77,10 @@ extension Client {
             return false
         }
         
+        if webSocket.isConnected {
+            webSocket.disconnect()
+        }
+        
         expiredTokenDisposeBag = DisposeBag()
         isExpiredTokenInProgress = true
         logger?.log("🀄️ Request for a new token from a token provider.")
@@ -227,7 +231,6 @@ extension Client {
             .do(onNext: { [unowned self] in
                 if case .connected(_, let user) = $0 {
                     self.user = user
-                    self.isExpiredTokenInProgress = false
                 }
             })
             .share(replay: 1)
