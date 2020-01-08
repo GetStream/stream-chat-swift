@@ -64,7 +64,9 @@ extension Client {
     /// - Returns: an URLSessionDataTask that can be canncelled.
     @discardableResult
     public func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
-        logger?.log("Endpoint: \(String(describing: endpoint))", level: .debug)
+        if let logger = logger {
+            logger.log("Request: \(String(describing: endpoint).prefix(100))...", level: .debug)
+        }
         
         func retryRequestForExpiredToken(_ endpoint: Endpoint) {
             logger?.log("🀄️ Token expired. The request added to the waiting list", level: .debug)
@@ -73,6 +75,7 @@ extension Client {
                 .take(1)
                 .subscribe(onNext: { [unowned self] in
                     self.logger?.log("Retring the request when token was expired...", level: .debug)
+                    self.isExpiredTokenInProgress = false
                     self.request(endpoint: endpoint, completion)
                 })
                 .disposed(by: expiredTokenDisposeBag)
