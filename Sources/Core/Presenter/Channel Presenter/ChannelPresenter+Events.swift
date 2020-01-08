@@ -114,7 +114,8 @@ extension ChannelPresenter {
                 return viewChanges
             }
             
-        case .reactionNew(let reaction, let message, _, _), .reactionDeleted(let reaction, let message, _, _):
+        case .reactionNew(let reaction, let message, _, _),
+             .reactionDeleted(let reaction, let message, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
