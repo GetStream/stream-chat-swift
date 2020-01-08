@@ -2,10 +2,10 @@
 
 ### ⚠️ Breaking Changes
 - Default `UITableView.loadingCell` changed:
-1.1 from `func loadingCell(at indexPath: IndexPath) -> UITableViewCell`
-1.2 to `func loadingCell(at indexPath: IndexPath, textColor: UIColor) -> UITableViewCell`
-2.1 from `func statusCell(... subtitle: String? = nil, highlighted: Bool) -> UITableViewCell`
-3.1 to `func statusCell(... subtitle: String? = nil, textColor: UIColor) -> UITableViewCell`
+  - 1. from `func loadingCell(at indexPath: IndexPath) -> UITableViewCell`
+  - 1. to `func loadingCell(at indexPath: IndexPath, textColor: UIColor) -> UITableViewCell`
+  - 2. from `func statusCell(... subtitle: String? = nil, highlighted: Bool) -> UITableViewCell`
+  - 2. to `func statusCell(... subtitle: String? = nil, textColor: UIColor) -> UITableViewCell`
 
 ### ✅ Added
 - Banner animation without bouncing.
