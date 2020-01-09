@@ -79,6 +79,7 @@
 		8A92BAE923C789A90085184F /* Client+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAE823C789A90085184F /* Client+Users.swift */; };
 		8A92BAEB23C78CFF0085184F /* Client+RxUnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAEA23C78CFF0085184F /* Client+RxUnreadCount.swift */; };
 		8A92BAED23C78D8E0085184F /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAEC23C78D8D0085184F /* Client+Events.swift */; };
+		8A92BAEF23C793470085184F /* Client+RxConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAEE23C793470085184F /* Client+RxConnection.swift */; };
 		8AC643C422F9AC8A007373FF /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC643C122F9AAD7007373FF /* BannerView.swift */; };
 		8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */; };
 		8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B522F30001003BD1D5 /* User+Requests.swift */; };
@@ -313,6 +314,7 @@
 		8A92BAE823C789A90085184F /* Client+Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Users.swift"; sourceTree = "<group>"; };
 		8A92BAEA23C78CFF0085184F /* Client+RxUnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxUnreadCount.swift"; sourceTree = "<group>"; };
 		8A92BAEC23C78D8D0085184F /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
+		8A92BAEE23C793470085184F /* Client+RxConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxConnection.swift"; sourceTree = "<group>"; };
 		8AC643C122F9AAD7007373FF /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8AC8C8B522F30001003BD1D5 /* User+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Requests.swift"; sourceTree = "<group>"; };
@@ -1065,6 +1067,7 @@
 				8AD5ED3622E9BA39005CFAC9 /* Client.swift */,
 				8A4AB32724110398000A23DD /* Client+Config.swift */,
 				8AD5ED3422E9BA39005CFAC9 /* Client+Setup.swift */,
+				8A92BAEE23C793470085184F /* Client+RxConnection.swift */,
 				8AD5ED3922E9BA39005CFAC9 /* Client+Request.swift */,
 				8AD5ED3822E9BA39005CFAC9 /* Client+RxRequest.swift */,
 				8AD5ED3B22E9BA39005CFAC9 /* Client+WebSocket.swift */,
@@ -1494,6 +1497,7 @@
 				8AD5ED6122E9BA5A005CFAC9 /* WebSocket.swift in Sources */,
 				8A4AB326241021C4000A23DD /* ReactionScores.swift in Sources */,
 				8A7EE0182385B31B00BDB18D /* ChannelId.swift in Sources */,
+				8A92BAEF23C793470085184F /* Client+RxConnection.swift in Sources */,
 				8A0EB78E22FC6974009481E4 /* Channel+Events.swift in Sources */,
 				8AD5ED5822E9BA5A005CFAC9 /* Sorting.swift in Sources */,
 				8AD5ED6C22E9BA5A005CFAC9 /* Client+WebSocket.swift in Sources */,

@@ -167,7 +167,7 @@ extension Client {
         return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.\(json.base64EncodedString()).devtoken" // {"alg": "HS256", "typ": "JWT"}
     }
     
-    private func checkUserAndToken(_ token: Token) -> ClientError? {
+    func checkUserAndToken(_ token: Token) -> ClientError? {
         guard let user = user else {
             return ClientError.emptyUser
         }
@@ -181,68 +181,5 @@ extension Client {
         }
         
         return ClientError.tokenInvalid(description: "Token payload user_id doesn't equal to the client user id")
-    }
-}
-
-// MARK: - Connection
-
-extension Client {
-    func createObservableConnection() -> Observable<WebSocket.Connection> {
-        if let token = token, let error = checkUserAndToken(token) {
-            return .error(error)
-        }
-        
-        let app = UIApplication.shared
-        
-        let appState = isTests()
-            ? .just(.active)
-            : app.rx.appState
-                .filter { $0 != .inactive }
-                .distinctUntilChanged()
-                .startWith(app.appState)
-                .do(onNext: { state in
-                    if Client.shared.logOptions.isEnabled {
-                        ClientLogger.log("📱", "App state \(state)")
-                    }
-                })
-        
-        let internetIsAvailable: Observable<Bool> = isTests()
-            ? .just(true)
-            : InternetConnection.shared.isAvailableObservable
-        
-        let webSocketResponse = internetIsAvailable
-            .filter({ $0 })
-            .flatMapLatest { [unowned self]  _ in self.tokenSubject.asObserver() }
-            .distinctUntilChanged()
-            .map { $0?.isValidToken() ?? false }
-            .observeOn(MainScheduler.instance)
-            .flatMapLatest({ [unowned self] isTokenValid -> Observable<WebSocketEvent> in
-                if isTokenValid {
-                    self.webSocket.connect()
-                    return self.webSocket.webSocket.rx.response
-                }
-                
-                return .just(.disconnected(nil))
-            })
-            .do(onDispose: { [unowned self] in self.webSocket.disconnect() })
-        
-        return Observable.combineLatest(appState, internetIsAvailable, webSocketResponse)
-            .compactMap { [unowned self] in self.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
-            .distinctUntilChanged()
-            .do(onNext: { [unowned self] in
-                if case .connected(_, let user) = $0 {
-                    self.user = user
-                }
-            })
-            .share(replay: 1)
-    }
-    
-    func connectedRequest<T: Decodable>(_ endpoint: Endpoint) -> Observable<T> {
-        let request: Observable<T> = rx.request(endpoint: endpoint)
-        return connectedRequest(request)
-    }
-    
-    func connectedRequest<T>(_ request: Observable<T>) -> Observable<T> {
-        return webSocket.isConnected ? request : connection.connected().take(1).flatMapLatest { request }
     }
 }
