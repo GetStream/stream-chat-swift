@@ -27,7 +27,7 @@ public extension Channel {
     /// - Parameter eventType: an event type.
     /// - Returns: observable events.
     func onEvent(_ eventTypes: [EventType] = []) -> Observable<Event> {
-        return Client.shared.connection.connected()
+        return Client.shared.rx.connection.connected()
             .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
                 if let self = self {
                     return self.query(options: .watch)
@@ -79,7 +79,7 @@ extension Channel {
     }
     
     private func createUnreadCount() -> Observable<(Int?, Int?)> {
-        return Client.shared.connection.connected()
+        return Client.shared.rx.connection.connected()
             // Request channel messages and messageRead's.
             .flatMapLatest({ [weak self] _ -> Observable<ChannelResponse> in
                 if let self = self {
@@ -177,7 +177,7 @@ extension Channel {
     /// Online users in the channel.
     /// - Note: Be sure users are members of the channel.
     public var onlineUsers: Driver<[User]> {
-        return Client.shared.connection.connected()
+        return Client.shared.rx.connection.connected()
             // Request channel for members.
             .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
                 if let self = self {

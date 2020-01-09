@@ -16,6 +16,27 @@ public typealias ClientCompletion<T> = (ClientResult<T>) -> Void
 public typealias EmptyClientCompletion = ClientCompletion<Void>
 
 /// A subscription for an async request.
+/// You have to keep as an instance variable until you need results in a completion block.
+///
+/// For example:
+/// ```
+/// class MyViewController: UIViewController {
+///     var subscription: Subscription?
+///
+///     open override func viewWillAppear() {
+///         super.viewWillAppear(animated)
+///
+///         subscription = Client.shared.onEvent() { event
+///             print(event)
+///         }
+///     }
+///
+///     open override func viewWillDisappear() {
+///         super.viewWillDisappear()
+///         subscription = nil
+///     }
+/// }
+/// ```
 public final class Subscription {
     let disposeBag = DisposeBag()
 }
