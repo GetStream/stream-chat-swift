@@ -31,7 +31,7 @@ public extension Channel {
         }
         
         let channelQuery = ChannelQuery(channel: self, members: members, pagination: pagination, options: options)
-        return Client.shared.channel(query: channelQuery)
+        return Client.shared.rx.channel(query: channelQuery)
     }
     
     /// Loads the initial channel state and watches for changes.
@@ -110,7 +110,7 @@ public extension Channel {
     }
 }
     
-// MARK: - Message
+// MARK: Message
 
 public extension Channel {
     
