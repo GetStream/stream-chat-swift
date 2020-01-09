@@ -103,7 +103,7 @@ final class RootViewController: UIViewController {
     }
     
     func subscribeForTotalUnreadCount() {
-        Client.shared.unreadCount
+        Client.shared.rx.unreadCount
             .drive(onNext: { [weak self] unreadCount in
                 self?.totalUnreadCountLabel.text = "Unread channels \(unreadCount.0), messages: \(unreadCount.1)"
                 UIApplication.shared.applicationIconBadgeNumber = unreadCount.messages
