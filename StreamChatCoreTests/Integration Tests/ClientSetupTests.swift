@@ -46,7 +46,7 @@ final class ClientSetupTests: XCTestCase {
         Client.shared.set(user: user, token: token)
         
         expectRequest("Connected with guest token") { test in
-            Client.shared.connection.connected()
+            Client.shared.rx.connection.connected()
                 .take(1)
                 .subscribe(onNext: { [unowned self] in
                     test.fulfill()

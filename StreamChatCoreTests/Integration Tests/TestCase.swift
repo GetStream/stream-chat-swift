@@ -30,7 +30,7 @@ class TestCase: XCTestCase {
     
     override func setUp() {
         if !Client.shared.webSocket.isConnected {
-            Client.shared.connection.connected().subscribe().disposed(by: disposeBag)
+            Client.shared.rx.connection.connected().subscribe().disposed(by: disposeBag)
         }
     }
 }

@@ -256,7 +256,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     
     /// Setup Footer updates for environement updates.
     open func setupFooterUpdates() {
-        Client.shared.connection
+        Client.shared.rx.connection
             .observeOn(MainScheduler.instance)
             .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] connection in

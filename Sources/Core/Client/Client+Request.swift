@@ -85,7 +85,7 @@ extension Client {
         func retryRequestForExpiredToken(_ endpoint: Endpoint) {
             logger?.log("🀄️ Token expired. The request added to the waiting list", level: .debug)
             
-            connection.connected()
+            rx.connection.connected()
                 .take(1)
                 .subscribe(onNext: { [unowned self] in
                     self.logger?.log("Retring the request when token was expired...", level: .debug)
