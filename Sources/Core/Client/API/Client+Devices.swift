@@ -16,7 +16,7 @@ public extension Client {
     /// - Parameters:
     ///   - deviceToken: a device token.
     ///   - completion: a completion block (see `EmptyClientCompletion`).
-    /// - Returns: an subscription.
+    /// - Returns: a subscription.
     func addDevice(deviceToken: Data, _ completion: @escaping EmptyClientCompletion) -> Subscription {
         return rx.addDevice(deviceToken: deviceToken).bind(to: completion)
     }
@@ -32,7 +32,7 @@ public extension Client {
     
     /// Request az list if devices.
     /// - Parameter completion: a completion block (see `ClientCompletion`).
-    /// - Returns: an subscription.
+    /// - Returns: a subscription.
     func requestDevices(_ completion: @escaping ClientCompletion<DevicesResponse>) -> Subscription {
         return rx.requestDevices().bind(to: completion)
     }
@@ -42,7 +42,7 @@ public extension Client {
     /// - Parameters:
     ///   - deviceId: a Push Notifications device identifier.
     ///   - completion: a completion block (see `EmptyClientCompletion`).
-    /// - Returns: an subscription.
+    /// - Returns: a subscription.
     func removeDevice(deviceId: String, _ completion: @escaping EmptyClientCompletion) -> Subscription {
         return rx.removeDevice(deviceId: deviceId).bind(to: completion)
     }
