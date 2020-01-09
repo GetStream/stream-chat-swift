@@ -31,7 +31,7 @@ public extension Reactive where Base == Client {
         
         let searchRequest: Observable<SearchResponse> = request(endpoint: .search(query))
         
-        return base.connectedRequest(searchRequest.map { $0.messages.compactMap({ $0["message"] }) })
+        return connectedRequest(searchRequest.map { $0.messages.compactMap({ $0["message"] }) })
     }
     
     /// Requests channels with a given query.
@@ -40,7 +40,7 @@ public extension Reactive where Base == Client {
     /// - Returns: a list of a channel response (see `ChannelResponse`).
     func channels(query: ChannelsQuery) -> Observable<[ChannelResponse]> {
         let channelsRequest: Observable<ChannelsResponse> = request(endpoint: .channels(query))
-        return base.connectedRequest(channelsRequest.map { $0.channels })
+        return connectedRequest(channelsRequest.map { $0.channels })
             .do(onNext: { [unowned base] in base.add(channelsToDatabase: $0, query: query) })
     }
     
@@ -49,7 +49,7 @@ public extension Reactive where Base == Client {
     /// - Parameter query: a channels query (see `ChannelsQuery`).
     /// - Returns: a list of a channel response (see `ChannelResponse`).
     func channel(query: ChannelQuery) -> Observable<ChannelResponse> {
-        return base.connectedRequest(.channel(query))
+        return connectedRequest(.channel(query))
             .do(onNext: { channelResponse in
                 if query.options.contains(.state) {
                     channelResponse.channel.add(messagesToDatabase: channelResponse.messages)
@@ -60,12 +60,12 @@ public extension Reactive where Base == Client {
     /// Get a message by id.
     /// - Parameter messageId: a message id.
     func message(with messageId: String) -> Observable<MessageResponse> {
-        return base.connectedRequest(.message(messageId))
+        return connectedRequest(.message(messageId))
     }
     
     /// Mark all messages as readed.
     func markAllRead() -> Observable<Void> {
         let markAllReadRequest: Observable<EmptyData> = request(endpoint: .markAllRead)
-        return base.connectedRequest(markAllReadRequest.map({ _ in Void() }))
+        return connectedRequest(markAllReadRequest.map({ _ in Void() }))
     }
 }
