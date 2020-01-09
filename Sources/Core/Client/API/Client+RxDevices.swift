@@ -83,7 +83,7 @@ public extension Reactive where Base == Client {
             return .error(ClientError.emptyUser)
         }
         
-        return Client.shared.connection.connected()
+        return connection.connected()
             .flatMapLatest({ [unowned base] _ -> Observable<EmptyData> in
                 if currentUser.devices.firstIndex(where: { $0.id == deviceId }) != nil {
                     return self.connectedRequest(endpoint: .removeDevice(deviceId: deviceId, currentUser))

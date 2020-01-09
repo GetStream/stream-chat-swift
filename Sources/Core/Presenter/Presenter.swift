@@ -26,7 +26,7 @@ public class Presenter<T> {
     
     let loadPagination = PublishSubject<Pagination>()
     
-    private(set) lazy var connectionErrors: Driver<ViewChanges> = Client.shared.connection
+    private(set) lazy var connectionErrors: Driver<ViewChanges> = Client.shared.rx.connection
         .map { connection -> ViewChanges? in
             if case .disconnected(let error) = connection, let webSocketError = error as? ClientErrorResponse {
                 return .error(AnyError(error: webSocketError))
@@ -73,7 +73,7 @@ extension Presenter {
     /// - Parameter pagination: an initial page size (see `Pagination`).
     /// - Returns: an observable pagination for a request.
     public func prepareRequest(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
-        let connectionObservable: Observable<Void> = Client.shared.connection
+        let connectionObservable: Observable<Void> = Client.shared.rx.connection
             .do(onNext: { [weak self] connection in
                 if !connection.isConnected,
                     let self = self,

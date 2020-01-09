@@ -21,7 +21,7 @@ public extension Reactive where Base == Client {
     /// - Note: Be sure the current user is a member of the channel.
     /// - Note: 100 is the maximum unread count of messages.
     var unreadCount: Driver<UnreadCount> {
-        return base.connection.connected()
+        return connection.connected()
             // Subscribe for new messages and read events.
             .flatMapLatest({ [unowned base] _ in
                 base.webSocket.response
