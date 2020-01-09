@@ -225,6 +225,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
                 linkStackViewTopConstraint?.update(offset: CGFloat.messageCornerRadius)
             }
             
+            completion(self, nil)
             return
         }
         
