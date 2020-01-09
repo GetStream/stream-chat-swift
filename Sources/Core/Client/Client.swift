@@ -69,53 +69,13 @@ public final class Client {
     var unreadCountAtomic = Atomic<UnreadCount>((0, 0))
     
     /// An observable client web socket connection.
-    /// 
     /// The connection is responsible for:
     /// * Checking the Internet connection.
     /// * Checking the app state, e.g. active, background.
     /// * Connecting and reconnecting to the web sockets.
-    ///
-    /// Example of usage:
-    /// ```
-    /// // Start observing connection statuses.
-    /// Client.shared.connection
-    ///     // Filter connection statuses only for connected.
-    ///     .connected()
-    ///     // Send a message request to a channel.
-    ///     .flatMapLatest {
-    ///         // Make a request here.
-    ///     }
-    ///     // Subscribe for a result.
-    ///     .subscribe(onNext: { response in
-    ///         // Handle the reponse.
-    ///     })
-    ///     .disposed(by: disposeBag)
-    /// ```
-    ///
-    /// All requests from the client or a channel are wrapped with connection events.
-    /// You can do requests directly.
-    ///
-    /// For example:
-    /// ```
-    /// // Find all channels with type `messaging`.
-    /// let channelsQuery = ChannelsQuery(filter: .key("type", .equal(to: "messaging")))
-    /// Client.shared.channels(query: channelsQuery)
-    ///     // Here we will get channels when web socket will be connected.
-    ///     // Select the first channel.
-    ///     .map { $0.first }
-    ///     .unwrap()
-    ///     // Send a message to the first channel.
-    ///     .flatMapLatest { $0.send(message: Message(text: "Hi!")) }
-    ///     .subscribe(onNext: { result in
-    ///         print(result)
-    ///     })
-    ///     .disposed(by: disposeBag)
-    /// ```
-    ///
-    public private(set) lazy var connection = rx.createObservableConnection()
+    private(set) lazy var rxConnection = rx.createConnection()
     
     /// Init a network client.
-    ///
     /// - Parameters:
     ///     - apiKey: a Stream Chat API key.
     ///     - baseURL: a base URL (see `BaseURL`).
@@ -156,7 +116,14 @@ public final class Client {
             Thread.callStackSymbols.forEach { ClientLogger.logger("", "", $0) }
         }
     }
-
+    
+    /// A subscription for websocket connection status.
+    /// - Parameter completion: a completion block (see `ClientCompletion`).
+    /// - Returns: a subscription.
+    public func connection(_ completion: @escaping ClientCompletion<WebSocket.Connection>) -> Subscription {
+        return rxConnection.bind(to: completion)
+    }
+    
     /// Disconnect from Stream and reset the current user.
     ///
     /// Resets and removes the user/token pair as well as relevant network connections.
