@@ -66,7 +66,7 @@ public extension Message {
         }
         
         let messageId = id
-        return Client.shared.connectedRequest(flagUnflagMessage(endpoint: .flagMessage(self))
+        return Client.shared.rx.connectedRequest(flagUnflagMessage(endpoint: .flagMessage(self))
             .do(onNext: { _ in Message.flaggedIds.append(messageId) }))
     }
     
@@ -79,7 +79,7 @@ public extension Message {
         
         let messageId = id
         
-        return Client.shared.connectedRequest(flagUnflagMessage(endpoint: .unflagMessage(self))
+        return Client.shared.rx.connectedRequest(flagUnflagMessage(endpoint: .unflagMessage(self))
             .do(onNext: { _ in
                 if let index = Message.flaggedIds.firstIndex(where: { $0 == messageId }) {
                     Message.flaggedIds.remove(at: index)
