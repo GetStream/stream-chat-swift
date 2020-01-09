@@ -43,7 +43,7 @@ public extension Reactive where Base == Client {
     /// - Parameter endpoint: an endpoint (see `Endpoint`).
     /// - Returns: an observable result `T`.
     func connectedRequest<T: Decodable>(endpoint: Endpoint) -> Observable<T> {
-        return self.base.connectedRequest(request(endpoint: endpoint))
+        return connectedRequest(request(endpoint: endpoint))
     }
     
     /// Make an observable `Client` request with a progress.

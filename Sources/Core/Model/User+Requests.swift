@@ -43,7 +43,7 @@ public extension User {
         }
         
         let request: Observable<EmptyData> = Client.shared.rx.request(endpoint: .unmuteUser(self))
-        return Client.shared.connectedRequest(request.void()
+        return Client.shared.rx.connectedRequest(request.void()
             // Remove unmuted user from the current user.
             .do(onNext: {
                 if let currentUser = User.current {
@@ -72,7 +72,7 @@ public extension User {
             return .empty()
         }
         
-        return Client.shared.connectedRequest(flagUnflagUser(endpoint: .flagUser(self))
+        return Client.shared.rx.connectedRequest(flagUnflagUser(endpoint: .flagUser(self))
             .do(onNext: { _ in User.flaggedUsers.append(self) }))
     }
      
@@ -82,7 +82,7 @@ public extension User {
             return .empty()
         }
         
-        return Client.shared.connectedRequest(flagUnflagUser(endpoint: .unflagUser(self))
+        return Client.shared.rx.connectedRequest(flagUnflagUser(endpoint: .unflagUser(self))
             .do(onNext: { _ in
                 if let index = User.flaggedUsers.firstIndex(where: { $0 == self }) {
                     User.flaggedUsers.remove(at: index)
