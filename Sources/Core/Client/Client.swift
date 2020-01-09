@@ -115,7 +115,7 @@ public final class Client {
     ///     .disposed(by: disposeBag)
     /// ```
     ///
-    public private(set) lazy var connection = createObservableConnection()
+    public private(set) lazy var connection = rx.createObservableConnection()
     
     /// Init a network client.
     ///

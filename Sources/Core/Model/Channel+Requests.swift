@@ -147,7 +147,7 @@ public extension Channel {
                 return .just(response)
             })
         
-        return Client.shared.connectedRequest(request)
+        return Client.shared.rx.connectedRequest(request)
     }
     
     /// Send a message action for a given ephemeral message.
@@ -170,7 +170,7 @@ public extension Channel {
         
         Client.shared.logger?.log("🎫 Send Message Read. For a new message of the current user.")
         let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .markRead(self))
-        return Client.shared.connectedRequest(request.map({ $0.event }))
+        return Client.shared.rx.connectedRequest(request.map({ $0.event }))
     }
     
     /// Send an event.
@@ -180,7 +180,7 @@ public extension Channel {
     func send(eventType: EventType) -> Observable<Event> {
         let request: Observable<EventResponse> = Client.shared.rx.request(endpoint: .sendEvent(eventType, self))
         
-        return Client.shared.connectedRequest(request.map({ $0.event })
+        return Client.shared.rx.connectedRequest(request.map({ $0.event })
             .do(onNext: { _ in Client.shared.logger?.log("🎫 \(eventType.rawValue)") }))
     }
 }
@@ -206,7 +206,7 @@ public extension Channel {
             }
         }
         
-        return members.isEmpty ? .empty() : Client.shared.connectedRequest(.addMembers(members, self))
+        return members.isEmpty ? .empty() : Client.shared.rx.connectedRequest(.addMembers(members, self))
     }
     
     /// Remove a member from the channel.
@@ -226,7 +226,7 @@ public extension Channel {
             }
         }
         
-        return existsMembers.isEmpty ? .empty() : Client.shared.connectedRequest(.removeMembers(members, self))
+        return existsMembers.isEmpty ? .empty() : Client.shared.rx.connectedRequest(.removeMembers(members, self))
     }
     
     // MARK: User Ban
@@ -247,7 +247,7 @@ public extension Channel {
         let timeoutInMinutes = timeoutInMinutes ?? banEnabling.timeoutInMinutes
         let reason = reason ?? banEnabling.reason
         let userBan = UserBan(user: user, channel: self, timeoutInMinutes: timeoutInMinutes, reason: reason)
-        let request: Observable<EmptyData> = Client.shared.connectedRequest(.ban(userBan))
+        let request: Observable<EmptyData> = Client.shared.rx.connectedRequest(.ban(userBan))
         
         return request.map({ _ in Void() })
             .do(onNext: { [weak self] in
@@ -334,7 +334,7 @@ public extension Channel {
     
     private func sendFile(endpoint: Endpoint) -> Observable<ProgressResponse<URL>> {
         let request: Observable<ProgressResponse<FileUploadResponse>> = Client.shared.rx.progressRequest(endpoint: endpoint)
-        return Client.shared.connectedRequest(request.map({ ($0.progress, $0.result?.file) }))
+        return Client.shared.rx.connectedRequest(request.map({ ($0.progress, $0.result?.file) }))
     }
     
     /// Delete an image with a given URL.
@@ -355,7 +355,7 @@ public extension Channel {
     
     private func deleteFile(endpoint: Endpoint) -> Observable<Void> {
         let request: Observable<EmptyData> = Client.shared.rx.request(endpoint: endpoint)
-        return Client.shared.connectedRequest(request.map({ _ in Void() }))
+        return Client.shared.rx.connectedRequest(request.map({ _ in Void() }))
     }
 }
 
