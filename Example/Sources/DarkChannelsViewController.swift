@@ -44,10 +44,10 @@ final class DarkChannelsViewController: ChannelsViewController {
     }
     
     func observeInvites() {
-        Client.shared.onEvent([.notificationInvited,
-                               .notificationInviteAccepted,
-                               .notificationInviteRejected,
-                               .memberUpdated])
+        Client.shared.rx.onEvent([.notificationInvited,
+                                  .notificationInviteAccepted,
+                                  .notificationInviteRejected,
+                                  .memberUpdated])
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] event in self?.handleInviteEvent(event) })
             .disposed(by: disposeBag)
