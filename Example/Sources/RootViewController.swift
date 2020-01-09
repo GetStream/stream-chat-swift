@@ -154,7 +154,7 @@ final class RootViewController: UIViewController {
                 }
                 
                 if let device = User.current?.currentDevice {
-                    return Client.shared.removeDevice(deviceId: device.id)
+                    return Client.shared.rx.removeDevice(deviceId: device.id)
                 }
                 
                 return .empty()

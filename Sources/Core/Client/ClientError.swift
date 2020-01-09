@@ -36,7 +36,9 @@ public enum ClientError: LocalizedError {
     case decodingFailure(_ error: Error)
     /// A message with the error type.
     case errorMessage(Message)
-    
+    /// A device token is empty.
+    case emptyDeviceToken
+
     /// Internal error.
     public var error: Error? {
         switch self {
@@ -87,6 +89,8 @@ public enum ClientError: LocalizedError {
             return "A decoding failed: \(error)"
         case .errorMessage(let message):
             return message.text
+        case .emptyDeviceToken:
+            return "A device token is empty"
         }
     }
 }
