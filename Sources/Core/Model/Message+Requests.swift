@@ -85,8 +85,8 @@ public extension Message {
     }
     
     private func flagUnflagMessage(endpoint: Endpoint) -> Observable<FlagMessageResponse> {
-        return Client.shared.flagUnflag(endpoint: endpoint,
-                                        aleradyFlagged: FlagMessageResponse(messageId: id, created: Date(), updated: Date()))
+        return Client.shared.rx.flagUnflag(endpoint: endpoint,
+                                           aleradyFlagged: FlagMessageResponse(messageId: id, created: Date(), updated: Date()))
     }
 }
 

@@ -18,7 +18,7 @@ public extension Client {
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     ///   - completion: a completion block (see `ClientCompletion`).
-    /// - Returns: an subscription.
+    /// - Returns: a subscription.
     func search(filter: Filter = .none,
                 query: String,
                 pagination: Pagination = .channelsPageSize,
@@ -31,7 +31,7 @@ public extension Client {
     /// - Parameters:
     ///   - query: a channels query (see `ChannelsQuery`).
     ///   - completion: a completion block (see `ClientCompletion`).
-    /// - Returns: an subscription.
+    /// - Returns: a subscription.
     func channels(query: ChannelsQuery, _ completion: @escaping ClientCompletion<[ChannelResponse]>) -> Subscription {
         return rx.channels(query: query).bind(to: completion)
     }
@@ -41,7 +41,7 @@ public extension Client {
     /// - Parameters:
     ///   - query: a channels query (see `ChannelsQuery`).
     ///   - completion: a completion block (see `ClientCompletion`).
-    /// - Returns: an subscription.
+    /// - Returns: a subscription.
     func channel(query: ChannelQuery, _ completion: @escaping ClientCompletion<ChannelResponse>) -> Subscription {
         return rx.channel(query: query).bind(to: completion)
     }
@@ -50,14 +50,14 @@ public extension Client {
     /// - Parameters:
     ///   - messageId: a message id.
     ///   - completion: a completion block (see `ClientCompletion`).
-    /// - Returns: an subscription.
+    /// - Returns: a subscription.
     func message(with messageId: String, _ completion: @escaping ClientCompletion<MessageResponse>) -> Subscription {
         return rx.message(with: messageId).bind(to: completion)
     }
     
     /// Mark all messages as readed.
     /// - Parameter completion: a completion block (see `EmptyClientCompletion`).
-    /// - Returns: an subscription.
+    /// - Returns: a subscription.
     func markAllRead(_ completion: @escaping EmptyClientCompletion) -> Subscription {
         return rx.markAllRead().bind(to: completion)
     }

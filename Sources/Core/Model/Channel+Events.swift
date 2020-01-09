@@ -196,7 +196,7 @@ extension Channel {
                 self.onlineUsersAtomic.set(onlineUsers)
                 
                 // Subscribe for user presence changes.
-                return Client.shared.onEvent(.userPresenceChanged)
+                return Client.shared.rx.onEvent(.userPresenceChanged)
                     .map { [weak self] event -> [User] in
                         guard let self = self, case .userPresenceChanged(let user, _) = event else {
                             return []
