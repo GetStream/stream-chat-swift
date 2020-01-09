@@ -154,7 +154,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
         .flatMapLatest { [weak self] in self?.parentMessage?.fetchReplies(pagination: $0) ?? .empty() }
     
-    private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.onEvent(channel: channel)
+    private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.rx.onEvent(channel: channel)
         .filter({ [weak self] event in
             if let eventsFilter = self?.eventsFilter {
                 return eventsFilter(event, self?.channel)
