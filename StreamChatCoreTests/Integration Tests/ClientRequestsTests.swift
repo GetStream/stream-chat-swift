@@ -17,7 +17,7 @@ final class ClientRequestsTests: TestCase {
         do {
             let query = ChannelsQuery(filter: .key("type", .equal(to: "messaging")))
             
-            let channels = try Client.shared.channels(query: query)
+            let channels = try Client.shared.rx.channels(query: query)
                 .toBlocking()
                 .toArray()
                 .compactMap { $0 }
@@ -32,7 +32,7 @@ final class ClientRequestsTests: TestCase {
         do {
             let query = UsersQuery(filter: .key("id", .equal(to: User.user1.id)))
             
-            let users = try Client.shared.users(query: query)
+            let users = try Client.shared.rx.users(query: query)
                 .toBlocking()
                 .toArray()
                 .compactMap { $0 }
