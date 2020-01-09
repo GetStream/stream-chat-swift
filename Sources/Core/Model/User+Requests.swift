@@ -19,7 +19,7 @@ public extension User {
     ///
     /// - Returns: an observable updated user.
     func update() -> Observable<User> {
-        return Client.shared.update(user: self)
+        return Client.shared.rx.update(user: self)
     }
     
     /// Mute the user.
@@ -91,8 +91,8 @@ public extension User {
     }
     
     private func flagUnflagUser(endpoint: Endpoint) -> Observable<FlagUserResponse> {
-        return Client.shared.flagUnflag(endpoint: endpoint,
-                                        aleradyFlagged: FlagUserResponse(user: self, created: Date(), updated: Date()))
+        return Client.shared.rx.flagUnflag(endpoint: endpoint,
+                                           aleradyFlagged: FlagUserResponse(user: self, created: Date(), updated: Date()))
     }
 }
 
