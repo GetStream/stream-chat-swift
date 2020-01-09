@@ -58,7 +58,7 @@ public extension Reactive where Base == Client {
             events = base.webSocket.response
         }
         
-        return base.connection.connected()
+        return connection.connected()
             .flatMapLatest { events }
             .filter({
                 if let channel = channel {
