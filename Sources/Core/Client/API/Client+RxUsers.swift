@@ -1,5 +1,5 @@
 //
-//  Client+Requests.swift
+//  Client+RxUsers.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 02/08/2019.
@@ -9,17 +9,17 @@
 import Foundation
 import RxSwift
 
-// MARK: - Users Requests
+// MARK: Users Requests
 
-public extension Client {
+public extension Reactive where Base == Client {
     
     /// Requests users with a given query.
     ///
     /// - Parameter query: a users query (see `UsersQuery`).
     /// - Returns: an observable list of users.
     func users(query: UsersQuery) -> Observable<[User]> {
-        let request: Observable<UsersResponse> = rx.request(endpoint: .users(query))
-        return connectedRequest(request.map({ $0.users }))
+        let usersRequest: Observable<UsersResponse> = request(endpoint: .users(query))
+        return base.connectedRequest(usersRequest.map({ $0.users }))
     }
     
     // MARK: Update User
@@ -28,8 +28,8 @@ public extension Client {
     ///
     /// - Returns: an observable updated user.
     func update(users: [User]) -> Observable<[User]> {
-        let request: Observable<UpdatedUsersResponse> = rx.request(endpoint: .updateUsers(users))
-        return connectedRequest(request.map({ $0.users.values.map { $0 } }))
+        let updateRequest: Observable<UpdatedUsersResponse> = request(endpoint: .updateUsers(users))
+        return base.connectedRequest(updateRequest.map({ $0.users.values.map { $0 } }))
     }
     
     /// Update or create a user.
@@ -73,9 +73,9 @@ public extension Client {
     }
     
     func flagUnflag<T: Decodable>(endpoint: Endpoint, aleradyFlagged value: T) -> Observable<T> {
-        let request: Observable<FlagResponse<T>> = rx.request(endpoint: endpoint)
+        let flagUnflagRequest: Observable<FlagResponse<T>> = request(endpoint: endpoint)
         
-        return request.map { $0.flag }
+        return flagUnflagRequest.map { $0.flag }
             .catchError { error -> Observable<T> in
                 if let clientError = error as? ClientError,
                     case .responseError(let clientResponseError) = clientError,
