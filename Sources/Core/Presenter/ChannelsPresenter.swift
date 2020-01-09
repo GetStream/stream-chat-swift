@@ -57,7 +57,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
     
     private lazy var channelsRequest: Observable<[ChannelResponse]> = prepareRequest(startPaginationWith: pageSize)
         .compactMap { [weak self] in self?.channelsQuery(pagination: $0) }
-        .flatMapLatest { Client.shared.channels(query: $0).retry(3) }
+        .flatMapLatest { Client.shared.rx.channels(query: $0).retry(3) }
     
     private lazy var channelsDatabaseFetch: Observable<[ChannelResponse]> = prepareDatabaseFetch(startPaginationWith: pageSize)
         .compactMap { [weak self] in self?.channelsQuery(pagination: $0) }
