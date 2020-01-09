@@ -11,9 +11,13 @@ import RxSwift
 
 // MARK: Connection
 
-public extension Reactive where Base == Client {
+extension Reactive where Base == Client {
     
-    func createObservableConnection() -> Observable<WebSocket.Connection> {
+    public var connection: Observable<WebSocket.Connection> {
+        return base.rxConnection
+    }
+    
+    func createConnection() -> Observable<WebSocket.Connection> {
         if let token = base.token, let error = base.checkUserAndToken(token) {
             return .error(error)
         }
@@ -71,6 +75,6 @@ public extension Reactive where Base == Client {
     func connectedRequest<T>(_ request: Observable<T>) -> Observable<T> {
         return base.webSocket.isConnected
             ? request
-            : base.connection.connected().take(1).flatMapLatest { request }
+            : connection.connected().take(1).flatMapLatest { request }
     }
 }
