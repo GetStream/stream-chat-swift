@@ -19,7 +19,7 @@ public extension Reactive where Base == Client {
     /// - Returns: an observable list of users.
     func users(query: UsersQuery) -> Observable<[User]> {
         let usersRequest: Observable<UsersResponse> = request(endpoint: .users(query))
-        return base.connectedRequest(usersRequest.map({ $0.users }))
+        return connectedRequest(usersRequest.map({ $0.users }))
     }
     
     // MARK: Update User
@@ -29,7 +29,7 @@ public extension Reactive where Base == Client {
     /// - Returns: an observable updated user.
     func update(users: [User]) -> Observable<[User]> {
         let updateRequest: Observable<UpdatedUsersResponse> = request(endpoint: .updateUsers(users))
-        return base.connectedRequest(updateRequest.map({ $0.users.values.map { $0 } }))
+        return connectedRequest(updateRequest.map({ $0.users.values.map { $0 } }))
     }
     
     /// Update or create a user.
