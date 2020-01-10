@@ -9,11 +9,11 @@
 import Foundation
 import RxSwift
 
-// MARK: Requests
-
 extension Message: ReactiveCompatible {}
 
 public extension Reactive where Base == Message {
+    
+    // MARK: Requests
     
     /// Delete the message.
     ///

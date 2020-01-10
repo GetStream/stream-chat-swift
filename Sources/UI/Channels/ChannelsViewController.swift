@@ -26,7 +26,7 @@ open class ChannelsViewController: ViewController {
     }
     
     /// A list of table view items, e.g. channel presenters.
-    public private(set) var items = [ChatItem]()
+    public private(set) var items = [PresenterItem]()
     
     /// A channels presenter.
     open var channelsPresenter = ChannelsPresenter() {
@@ -163,7 +163,7 @@ open class ChannelsViewController: ViewController {
     ///   - indexPath: an index path.
     ///   - chatItem: a loading chat item.
     /// - Returns: a loading table view cell.
-    open func loadingCell(at indexPath: IndexPath, chatItem: ChatItem) -> UITableViewCell {
+    open func loadingCell(at indexPath: IndexPath, chatItem: PresenterItem) -> UITableViewCell {
         return chatItem.isLoading ? tableView.loadingCell(at: indexPath, textColor: style.channel.messageColor) : .unused
     }
     

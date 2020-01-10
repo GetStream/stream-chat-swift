@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 /// A channel presenter.
-public final class ChannelPresenter: Presenter<ChatItem> {
+public final class ChannelPresenter: Presenter {
     typealias EphemeralType = (message: Message?, updated: Bool)
     
     /// A callback type for the adding an extra data for a new message.
@@ -127,7 +127,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     lazy var parsedMessagesRequest = parsedChannelResponse(messagesRequest)
     
-    private lazy var messagesRequest: Observable<ChannelResponse> = prepareRequest()
+    private lazy var messagesRequest: Observable<ChannelResponse> = rx.prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
         .flatMapLatest { [weak self] pagination -> Observable<ChannelResponse> in
             if let self = self {
@@ -137,17 +137,17 @@ public final class ChannelPresenter: Presenter<ChatItem> {
             return .empty()
     }
     
-    private lazy var messagesDatabaseFetch: Observable<ChannelResponse> = prepareDatabaseFetch()
+    private lazy var messagesDatabaseFetch: Observable<ChannelResponse> = rx.prepareDatabaseFetch()
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
         .flatMapLatest({ [weak self] pagination -> Observable<ChannelResponse> in
             self?.channel.fetch(pagination: pagination) ?? .empty()
         })
     
-    private lazy var repliesRequest: Observable<[Message]> = prepareRequest()
+    private lazy var repliesRequest: Observable<[Message]> = rx.prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
         .flatMapLatest { [weak self] in (self?.parentMessage?.rx.replies(pagination: $0) ?? .empty()).retry(3) }
     
-    private lazy var repliesDatabaseFetch: Observable<[Message]> = prepareDatabaseFetch()
+    private lazy var repliesDatabaseFetch: Observable<[Message]> = rx.prepareDatabaseFetch()
         .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
         .flatMapLatest { [weak self] in self?.parentMessage?.fetchReplies(pagination: $0) ?? .empty() }
     
