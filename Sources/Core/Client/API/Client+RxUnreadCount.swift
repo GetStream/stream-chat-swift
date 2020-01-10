@@ -12,10 +12,7 @@ import RxCocoa
 
 // MARK: Unread Count
 
-public typealias UnreadCount = (channels: Int, messages: Int)
-
 public extension Reactive where Base == Client {
-    
     /// Observe an unread count of messages in the channel.
     ///
     /// - Note: Be sure the current user is a member of the channel.
@@ -25,8 +22,8 @@ public extension Reactive where Base == Client {
             // Subscribe for new messages and read events.
             .flatMapLatest({ [unowned base] _ in
                 base.webSocket.rx.response
-                    .filter { self.updateUnreadCount($0) }
-                    .map { [unowned base] _ in base.unreadCountAtomic.get() }
+                    .filter { base.updateUnreadCount($0) }
+                    .map { _ in base.unreadCountAtomic.get() }
                     .startWith(base.unreadCountAtomic.get())
                     .unwrap()
             })
@@ -35,16 +32,5 @@ public extension Reactive where Base == Client {
             .distinctUntilChanged()
             .map { [unowned base] _ in base.unreadCountAtomic.get() ?? (0, 0) }
             .asDriver(onErrorJustReturn: (0, 0))
-    }
-    
-    func updateUnreadCount(_ response: WebSocket.Response) -> Bool {
-        switch response.event {
-        case .notificationMarkRead(_, let messagesUnreadCount, let channelsUnreadCount, _),
-             .messageNew(_, let messagesUnreadCount, let channelsUnreadCount, _, _):
-            base.unreadCountAtomic.set((channelsUnreadCount, messagesUnreadCount))
-            return true
-        default:
-            return false
-        }
     }
 }
