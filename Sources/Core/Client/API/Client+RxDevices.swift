@@ -44,7 +44,7 @@ public extension Reactive where Base == Client {
             return .empty()
         }
         
-        return Client.shared.rx.connectedRequest(endpoint: .addDevice(deviceId: deviceId, user))
+        return connectedRequest(endpoint: .addDevice(deviceId: deviceId, user))
             .do(onNext: { [unowned base] _ in
                 var user = user
                 user.devices.append(device)
@@ -63,7 +63,7 @@ public extension Reactive where Base == Client {
             return .error(ClientError.emptyUser)
         }
         
-        return Client.shared.rx.connectedRequest(endpoint: .devices(user))
+        return connectedRequest(endpoint: .devices(user))
             .do(onNext: { [unowned base] response in
                 if let currentUser = User.current {
                     var user = currentUser

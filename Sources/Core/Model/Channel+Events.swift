@@ -28,15 +28,15 @@ public extension Channel {
     /// - Returns: observable events.
     func onEvent(_ eventTypes: [EventType] = []) -> Observable<Event> {
         return Client.shared.rx.connection.connected()
-            .flatMapLatest { [weak self] _ -> Observable<ChannelResponse> in
+            .flatMapLatest({ [weak self] _ -> Observable<ChannelResponse> in
                 if let self = self {
                     return self.query(options: .watch)
                 }
                 
                 return .empty()
-            }
-            .flatMapLatest { _ in Client.shared.webSocket.response }
-            .filter { [weak self] in
+            })
+            .flatMapLatest { _ in Client.shared.webSocket.rx.response }
+            .filter({ [weak self] in
                 if let self = self {
                     if let cid = $0.cid {
                         return self.id == cid.id && self.type == cid.type
@@ -48,7 +48,7 @@ public extension Channel {
                 }
                 
                 return false
-            }
+            })
             .map { $0.event }
             .filter { eventTypes.isEmpty || eventTypes.contains($0.type) }
             .share()
@@ -95,7 +95,7 @@ extension Channel {
             .do(onNext: { [weak self] in self?.calculateUnreadCount($0) })
             // Subscribe for new messages and read events.
             .flatMapLatest({ [weak self] _ in
-                Client.shared.webSocket.response
+                Client.shared.webSocket.rx.response
                     .filter { self?.updateUnreadCount($0) ?? false }
                     .map { _ in (self?.unreadCountAtomic.get(), self?.mentionedUnreadCountAtomic.get()) }
                     .startWith((self?.unreadCountAtomic.get(), self?.mentionedUnreadCountAtomic.get()))
