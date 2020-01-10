@@ -24,7 +24,7 @@ public extension Reactive where Base == Client {
         return connection.connected()
             // Subscribe for new messages and read events.
             .flatMapLatest({ [unowned base] _ in
-                base.webSocket.response
+                base.webSocket.rx.response
                     .filter { self.updateUnreadCount($0) }
                     .map { [unowned base] _ in base.unreadCountAtomic.get() }
                     .startWith(base.unreadCountAtomic.get())
