@@ -11,7 +11,7 @@ import RxSwift
 import RxCocoa
 
 /// A channels presenter.
-public final class ChannelsPresenter: Presenter<ChatItem> {
+public final class ChannelsPresenter: Presenter {
     /// A callback type to provide an extra data for a channel.
     public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
     
@@ -55,11 +55,12 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
                                                         connectionErrors)
         .do(onDispose: { [weak self] in self?.disposeBagForInternalRequests = DisposeBag() })
     
-    private lazy var channelsRequest: Observable<[ChannelResponse]> = prepareRequest(startPaginationWith: pageSize)
+    private lazy var channelsRequest: Observable<[ChannelResponse]> = rx.prepareRequest(startPaginationWith: pageSize)
         .compactMap { [weak self] in self?.channelsQuery(pagination: $0) }
         .flatMapLatest { Client.shared.rx.channels(query: $0).retry(3) }
     
-    private lazy var channelsDatabaseFetch: Observable<[ChannelResponse]> = prepareDatabaseFetch(startPaginationWith: pageSize)
+    private lazy var channelsDatabaseFetch: Observable<[ChannelResponse]> =
+        rx.prepareDatabaseFetch(startPaginationWith: pageSize)
         .compactMap { [weak self] in self?.channelsQuery(pagination: $0) }
         .observeOn(SerialDispatchQueueScheduler.init(qos: .userInitiated))
         .flatMapLatest { Client.shared.fetchChannels($0) }
@@ -148,7 +149,7 @@ extension ChannelsPresenter {
     
     private func parseChannels(_ channels: [ChannelResponse]) -> ViewChanges {
         let isNextPage = next != pageSize
-        var items = isNextPage ? self.items : [ChatItem]()
+        var items = isNextPage ? self.items : [PresenterItem]()
         
         if let last = items.last, case .loading = last {
             items.removeLast()

@@ -10,9 +10,9 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-// MARK: Events
-
 public extension Reactive where Base == Channel {
+    
+    // MARK: Events
     
     /// Observe channel events.
     ///

@@ -19,7 +19,7 @@
 		8A04964522E9F53200E94795 /* ChannelsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED0922E9BA39005CFAC9 /* ChannelsPresenter.swift */; };
 		8A04964622E9F53900E94795 /* ChannelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECF622E9BA39005CFAC9 /* ChannelPresenter.swift */; };
 		8A04964722E9F57000E94795 /* ViewChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD622E9BA39005CFAC9 /* ViewChanges.swift */; };
-		8A04964822E9F57000E94795 /* ChatItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD522E9BA39005CFAC9 /* ChatItem.swift */; };
+		8A04964822E9F57000E94795 /* PresenterItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD522E9BA39005CFAC9 /* PresenterItem.swift */; };
 		8A04964922E9F59A00E94795 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECCE22E9BA39005CFAC9 /* Date+Extensions.swift */; };
 		8A04964F22EF1A8900E94795 /* QueryOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04964E22EF1A8900E94795 /* QueryOptions.swift */; };
 		8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965022EF4B2400E94795 /* UsersQuery.swift */; };
@@ -81,6 +81,7 @@
 		8A92BAFA23C8C4EC0085184F /* Channel+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAF923C8C4EC0085184F /* Channel+Events.swift */; };
 		8A92BAFC23C8C7570085184F /* Client+UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAFB23C8C7570085184F /* Client+UnreadCount.swift */; };
 		8A92BAFE23C8CB930085184F /* Message+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAFD23C8CB930085184F /* Message+Requests.swift */; };
+		8A92BB0023C8D0C30085184F /* Presenter+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAFF23C8D0C30085184F /* Presenter+Rx.swift */; };
 		8AC643C422F9AC8A007373FF /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC643C122F9AAD7007373FF /* BannerView.swift */; };
 		8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */; };
 		8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B522F30001003BD1D5 /* User+Requests.swift */; };
@@ -338,6 +339,7 @@
 		8A92BAF923C8C4EC0085184F /* Channel+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Events.swift"; sourceTree = "<group>"; };
 		8A92BAFB23C8C7570085184F /* Client+UnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+UnreadCount.swift"; sourceTree = "<group>"; };
 		8A92BAFD23C8CB930085184F /* Message+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Requests.swift"; sourceTree = "<group>"; };
+		8A92BAFF23C8D0C30085184F /* Presenter+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Presenter+Rx.swift"; sourceTree = "<group>"; };
 		8AC643C122F9AAD7007373FF /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8AC8C8B522F30001003BD1D5 /* User+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Requests.swift"; sourceTree = "<group>"; };
@@ -386,7 +388,7 @@
 		8AD5ECD122E9BA39005CFAC9 /* Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
 		8AD5ECD222E9BA39005CFAC9 /* RxDocumentPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxDocumentPickerViewController.swift; sourceTree = "<group>"; };
 		8AD5ECD322E9BA39005CFAC9 /* Chat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Chat.xcassets; sourceTree = "<group>"; };
-		8AD5ECD522E9BA39005CFAC9 /* ChatItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatItem.swift; sourceTree = "<group>"; };
+		8AD5ECD522E9BA39005CFAC9 /* PresenterItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterItem.swift; sourceTree = "<group>"; };
 		8AD5ECD622E9BA39005CFAC9 /* ViewChanges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewChanges.swift; sourceTree = "<group>"; };
 		8AD5ECDA22E9BA39005CFAC9 /* StatusTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusTableViewCell.swift; sourceTree = "<group>"; };
 		8AD5ECDB22E9BA39005CFAC9 /* MessageTextEnrichment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextEnrichment.swift; sourceTree = "<group>"; };
@@ -576,8 +578,9 @@
 			isa = PBXGroup;
 			children = (
 				8AD5ED0622E9BA39005CFAC9 /* Presenter.swift */,
-				8AD5ECD522E9BA39005CFAC9 /* ChatItem.swift */,
+				8A92BAFF23C8D0C30085184F /* Presenter+Rx.swift */,
 				8AD5ECD622E9BA39005CFAC9 /* ViewChanges.swift */,
+				8AD5ECD522E9BA39005CFAC9 /* PresenterItem.swift */,
 				8AD5ED0922E9BA39005CFAC9 /* ChannelsPresenter.swift */,
 				8A048E4F233226D400FDB3C0 /* Channel Presenter */,
 			);
@@ -1020,9 +1023,9 @@
 			children = (
 				8AD5ED2D22E9BA39005CFAC9 /* Client */,
 				8AD5ED1C22E9BA39005CFAC9 /* Model */,
-				8A150E9D232A73B800330562 /* Database */,
 				8A04964322E9F51C00E94795 /* Presenter */,
 				8AD5ED4122E9BA39005CFAC9 /* Notifications */,
+				8A150E9D232A73B800330562 /* Database */,
 				8AD5ED0C22E9BA39005CFAC9 /* Extensions */,
 			);
 			path = Core;
@@ -1489,6 +1492,7 @@
 				8AD5ED4D22E9BA5A005CFAC9 /* Reachability+Rx.swift in Sources */,
 				8AD5ED6E22E9BA5A005CFAC9 /* ClientLogger.swift in Sources */,
 				8A7EE0162385B2F300BDB18D /* ChannelType.swift in Sources */,
+				8A92BB0023C8D0C30085184F /* Presenter+Rx.swift in Sources */,
 				8A92BAEB23C78CFF0085184F /* Client+RxUnreadCount.swift in Sources */,
 				8A34DED42322A92C00271BBF /* Device.swift in Sources */,
 				8AD5ED5122E9BA5A005CFAC9 /* Event.swift in Sources */,
@@ -1514,7 +1518,7 @@
 				8A04965322F0910200E94795 /* Message+RxRequests.swift in Sources */,
 				8AD5ED6822E9BA5A005CFAC9 /* Endpoint.swift in Sources */,
 				8A92BAED23C78D8E0085184F /* Client+Events.swift in Sources */,
-				8A04964822E9F57000E94795 /* ChatItem.swift in Sources */,
+				8A04964822E9F57000E94795 /* PresenterItem.swift in Sources */,
 				8AD5ED6F22E9BA5A005CFAC9 /* MultipartFormData.swift in Sources */,
 				8AD5ED7022E9BA5A005CFAC9 /* ClientURLSessionTaskDelegate.swift in Sources */,
 				8AD5ED5E22E9BA5A005CFAC9 /* Channel+RxRequests.swift in Sources */,

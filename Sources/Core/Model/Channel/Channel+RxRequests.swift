@@ -9,11 +9,11 @@
 import Foundation
 import RxSwift
 
-// MARK: Channel Requests
-
 extension Channel: ReactiveCompatible {}
 
 public extension Reactive where Base == Channel {
+    
+    // MARK: Channel Requests
     
     /// Create a channel.
     /// - Returns: an observable channel response.
