@@ -158,7 +158,7 @@ public final class UploaderItem: Equatable {
         
         if type == .file || type == .video {
             if let url = url, let data = try? Data(contentsOf: url) {
-                request = channel.sendFile(fileName: fileName, mimeType: fileType.mimeType, fileData: data)
+                request = channel.rx.sendFile(fileName: fileName, mimeType: fileType.mimeType, fileData: data)
             } else {
                 return .error(ClientError.emptyBody(description: "For file at URL: \(url?.absoluteString ?? "<unknown>")"))
             }
@@ -182,7 +182,7 @@ public final class UploaderItem: Equatable {
                 return .error(ClientError.emptyBody(description: errorDescription))
             }
             
-            request = channel.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData)
+            request = channel.rx.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData)
         }
         
         return request

@@ -82,7 +82,7 @@ extension ChannelPresenter {
             }
         }
         
-        return channel.send(action: action, for: message)
+        return channel.rx.send(action: action, for: message)
             .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
     }
