@@ -9,9 +9,9 @@
 import Foundation
 import RxSwift
 
-// MARK: Users Requests
-
 public extension Reactive where Base == Client {
+    
+    // MARK: Users Requests
     
     /// Requests users with a given query.
     ///

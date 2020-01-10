@@ -9,9 +9,9 @@
 import Foundation
 import RxSwift
 
-// MARK: - Devices
-
 public extension Reactive where Base == Client {
+    
+    // MARK: - Devices
     
     /// Add a device for Push Notifications.
     ///

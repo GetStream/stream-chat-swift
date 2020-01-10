@@ -97,7 +97,7 @@ extension ChannelPresenter {
     
     private func parse(_ messages: [Message],
                        messageReads: [MessageRead] = [],
-                       to items: inout [ChatItem],
+                       to items: inout [PresenterItem],
                        startIndex: Int = 0,
                        isNextPage: Bool) {
         guard let currentUser = User.current else {
@@ -121,7 +121,7 @@ extension ChannelPresenter {
             
             if showStatuses, !yesterdayStatusAdded, message.created.isYesterday {
                 yesterdayStatusAdded = true
-                items.insert(.status(ChatItem.statusYesterdayTitle,
+                items.insert(.status(PresenterItem.statusYesterdayTitle,
                                      "at \(DateFormatter.time.string(from: message.created))",
                     false), at: index)
                 index += 1
@@ -129,7 +129,7 @@ extension ChannelPresenter {
             
             if showStatuses, !todayStatusAdded, message.created.isToday {
                 todayStatusAdded = true
-                items.insert(.status(ChatItem.statusTodayTitle,
+                items.insert(.status(PresenterItem.statusTodayTitle,
                                      "at \(DateFormatter.time.string(from: message.created))",
                     false), at: index)
                 index += 1
@@ -180,11 +180,11 @@ extension ChannelPresenter {
         
         if isNextPage {
             if yesterdayStatusAdded {
-                removeDuplicatedStatus(statusTitle: ChatItem.statusYesterdayTitle, items: &items)
+                removeDuplicatedStatus(statusTitle: PresenterItem.statusYesterdayTitle, items: &items)
             }
             
             if todayStatusAdded {
-                removeDuplicatedStatus(statusTitle: ChatItem.statusTodayTitle, items: &items)
+                removeDuplicatedStatus(statusTitle: PresenterItem.statusTodayTitle, items: &items)
             }
         }
         
@@ -197,7 +197,7 @@ extension ChannelPresenter {
         }
     }
     
-    private func removeDuplicatedStatus(statusTitle: String, items: inout [ChatItem]) {
+    private func removeDuplicatedStatus(statusTitle: String, items: inout [PresenterItem]) {
         if let firstIndex = items.firstIndex(whereStatusTitle: statusTitle),
             let lastIndex = items.lastIndex(whereStatusTitle: statusTitle),
             firstIndex != lastIndex {

@@ -15,15 +15,15 @@ public enum ViewChanges: Equatable {
     /// No changes.
     case none
     /// Reload all views.
-    case reloaded(_ row: Int, _ items: [ChatItem])
+    case reloaded(_ row: Int, _ items: [PresenterItem])
     /// Add item at row and reload another one.
-    case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool, _ items: [ChatItem])
+    case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool, _ items: [PresenterItem])
     /// Update items with messages.
-    case itemUpdated(_ rows: [Int], [Message], _ items: [ChatItem])
+    case itemUpdated(_ rows: [Int], [Message], _ items: [PresenterItem])
     /// Remove item at row.
-    case itemRemoved(_ row: Int, _ items: [ChatItem])
+    case itemRemoved(_ row: Int, _ items: [PresenterItem])
     /// Move item from row to another.
-    case itemMoved(fromRow: Int, toRow: Int, _ items: [ChatItem])
+    case itemMoved(fromRow: Int, toRow: Int, _ items: [PresenterItem])
     /// Update fiiter.
     case footerUpdated
     /// Disconnected deliberately.
