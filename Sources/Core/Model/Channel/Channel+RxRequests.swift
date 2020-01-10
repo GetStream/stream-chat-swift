@@ -348,7 +348,7 @@ public extension Reactive where Base == Channel {
     /// - Parameter message: a message.
     /// - Returns: an observable message response.
     func delete(message: Message) -> Observable<MessageResponse> {
-        return message.delete()
+        return message.rx.delete()
     }
     
     /// Add a reaction to a message.
@@ -382,7 +382,7 @@ public extension Reactive where Base == Channel {
     ///     - pagination: a pagination (see `Pagination`).
     /// - Returns: an observable message response.
     func replies(for parentMessage: Message, pagination: Pagination) -> Observable<[Message]> {
-        return parentMessage.replies(pagination: pagination)
+        return parentMessage.rx.replies(pagination: pagination)
     }
     
     /// Flag a message.
@@ -394,7 +394,7 @@ public extension Reactive where Base == Channel {
             return .empty()
         }
         
-        return message.flag()
+        return message.rx.flag()
     }
     
     /// Unflag a message.
@@ -406,6 +406,6 @@ public extension Reactive where Base == Channel {
             return .empty()
         }
         
-        return message.unflag()
+        return message.rx.unflag()
     }
 }

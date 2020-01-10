@@ -149,7 +149,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     
     private lazy var repliesRequest: Observable<[Message]> = prepareRequest()
         .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
-        .flatMapLatest { [weak self] in (self?.parentMessage?.replies(pagination: $0) ?? .empty()).retry(3) }
+        .flatMapLatest { [weak self] in (self?.parentMessage?.rx.replies(pagination: $0) ?? .empty()).retry(3) }
     
     private lazy var repliesDatabaseFetch: Observable<[Message]> = prepareDatabaseFetch()
         .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
