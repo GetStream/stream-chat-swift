@@ -64,7 +64,7 @@ public final class ChannelsPresenter: Presenter<ChatItem> {
         .observeOn(SerialDispatchQueueScheduler.init(qos: .userInitiated))
         .flatMapLatest { Client.shared.fetchChannels($0) }
     
-    private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.webSocket.response
+    private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.webSocket.rx.response
         .filter({ [weak self] response in
             if let eventsFilter = self?.eventsFilter {
                 return eventsFilter(response.event, nil)
