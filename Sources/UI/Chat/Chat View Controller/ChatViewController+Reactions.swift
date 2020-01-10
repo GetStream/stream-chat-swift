@@ -43,7 +43,7 @@ extension ChatViewController {
             self.reactionsView = nil
             let reactionExists = message.hasOwnReaction(type: reactionType)
             
-            (reactionExists ? message.deleteReaction(reactionType) : message.addReaction(reactionType))
+            (reactionExists ? message.rx.deleteReaction(reactionType) : message.rx.addReaction(reactionType))
                 .subscribe(onError: { [weak self] in self?.show(error: $0) })
                 .disposed(by: self.disposeBag)
             
