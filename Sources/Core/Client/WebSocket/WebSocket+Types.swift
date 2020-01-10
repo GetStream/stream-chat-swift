@@ -1,5 +1,5 @@
 //
-//  WebSocket+Response.swift
+//  WebSocket+Types.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 23/04/2019.
@@ -9,6 +9,12 @@
 import Foundation
 
 extension WebSocket {
+    
+    /// WebSocket Error
+    struct ErrorContainer: Decodable {
+        let error: ClientErrorResponse
+    }
+    
     /// A web socket connection state.
     public enum Connection: Equatable {
         case notConnected
@@ -38,9 +44,7 @@ extension WebSocket {
             }
         }
     }
-}
-
-extension WebSocket {
+    
     /// A web socket event response.
     public struct Response: Decodable {
         private enum CodingKeys: String, CodingKey {
