@@ -30,6 +30,8 @@ public struct Message: Codable {
         case reactionCounts = "reaction_counts"
     }
     
+    static var flaggedIds = [String]()
+    
     /// A message id.
     public let id: String
     /// A message type (see `MessageType`).
@@ -216,6 +218,13 @@ public struct Message: Codable {
     private func checkIfTextAsAttachmentURL(_ text: String) -> Bool {
         let text = text.lowercased()
         return !text.isEmpty && text.hasPrefix("http") && !text.contains(" ") && attachments.count == 1
+    }
+}
+
+extension Message {
+    /// Checks if the message is flagged (locally).
+    public var isFlagged: Bool {
+        return Message.flaggedIds.contains(id)
     }
 }
 
