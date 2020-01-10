@@ -80,6 +80,7 @@
 		8A92BAEB23C78CFF0085184F /* Client+RxUnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAEA23C78CFF0085184F /* Client+RxUnreadCount.swift */; };
 		8A92BAED23C78D8E0085184F /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAEC23C78D8D0085184F /* Client+Events.swift */; };
 		8A92BAEF23C793470085184F /* Client+RxConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAEE23C793470085184F /* Client+RxConnection.swift */; };
+		8A92BAF123C8941D0085184F /* WebSocket+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAF023C8941D0085184F /* WebSocket+Rx.swift */; };
 		8AC643C422F9AC8A007373FF /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC643C122F9AAD7007373FF /* BannerView.swift */; };
 		8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */; };
 		8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B522F30001003BD1D5 /* User+Requests.swift */; };
@@ -120,9 +121,8 @@
 		8AD5ED5D22E9BA5A005CFAC9 /* Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */; };
 		8AD5ED5E22E9BA5A005CFAC9 /* Channel+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2B22E9BA39005CFAC9 /* Channel+Requests.swift */; };
 		8AD5ED5F22E9BA5A005CFAC9 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */; };
-		8AD5ED6022E9BA5A005CFAC9 /* WebSocket+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Response.swift */; };
+		8AD5ED6022E9BA5A005CFAC9 /* WebSocket+Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Types.swift */; };
 		8AD5ED6122E9BA5A005CFAC9 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */; };
-		8AD5ED6222E9BA5A005CFAC9 /* WebSocket+Reconnect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3122E9BA39005CFAC9 /* WebSocket+Reconnect.swift */; };
 		8AD5ED6322E9BA5A005CFAC9 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */; };
 		8AD5ED6422E9BA5A005CFAC9 /* BaseURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3322E9BA39005CFAC9 /* BaseURL.swift */; };
 		8AD5ED6522E9BA5A005CFAC9 /* Client+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3422E9BA39005CFAC9 /* Client+Setup.swift */; };
@@ -315,6 +315,7 @@
 		8A92BAEA23C78CFF0085184F /* Client+RxUnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxUnreadCount.swift"; sourceTree = "<group>"; };
 		8A92BAEC23C78D8D0085184F /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		8A92BAEE23C793470085184F /* Client+RxConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxConnection.swift"; sourceTree = "<group>"; };
+		8A92BAF023C8941D0085184F /* WebSocket+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Rx.swift"; sourceTree = "<group>"; };
 		8AC643C122F9AAD7007373FF /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8AC8C8B522F30001003BD1D5 /* User+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Requests.swift"; sourceTree = "<group>"; };
@@ -436,9 +437,8 @@
 		8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pagination.swift; sourceTree = "<group>"; };
 		8AD5ED2B22E9BA39005CFAC9 /* Channel+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Requests.swift"; sourceTree = "<group>"; };
 		8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
-		8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Response.swift"; sourceTree = "<group>"; };
+		8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Types.swift"; sourceTree = "<group>"; };
 		8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
-		8AD5ED3122E9BA39005CFAC9 /* WebSocket+Reconnect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Reconnect.swift"; sourceTree = "<group>"; };
 		8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternetConnection.swift; sourceTree = "<group>"; };
 		8AD5ED3322E9BA39005CFAC9 /* BaseURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
 		8AD5ED3422E9BA39005CFAC9 /* Client+Setup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Setup.swift"; sourceTree = "<group>"; };
@@ -1091,8 +1091,8 @@
 			isa = PBXGroup;
 			children = (
 				8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */,
-				8AD5ED3122E9BA39005CFAC9 /* WebSocket+Reconnect.swift */,
-				8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Response.swift */,
+				8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Types.swift */,
+				8A92BAF023C8941D0085184F /* WebSocket+Rx.swift */,
 			);
 			path = WebSocket;
 			sourceTree = "<group>";
@@ -1452,7 +1452,6 @@
 				8AD5ED4D22E9BA5A005CFAC9 /* Reachability+Rx.swift in Sources */,
 				8AD5ED6E22E9BA5A005CFAC9 /* ClientLogger.swift in Sources */,
 				8A7EE0162385B2F300BDB18D /* ChannelType.swift in Sources */,
-				8AD5ED6222E9BA5A005CFAC9 /* WebSocket+Reconnect.swift in Sources */,
 				8A92BAEB23C78CFF0085184F /* Client+RxUnreadCount.swift in Sources */,
 				8A34DED42322A92C00271BBF /* Device.swift in Sources */,
 				8AD5ED5122E9BA5A005CFAC9 /* Event.swift in Sources */,
@@ -1515,9 +1514,10 @@
 				8AD5ED5B22E9BA5A005CFAC9 /* MessageAction.swift in Sources */,
 				8AD5ED4422E9BA5A005CFAC9 /* String+Extensions.swift in Sources */,
 				8A13852E23C781930088DBC7 /* Client+Channels.swift in Sources */,
+				8A92BAF123C8941D0085184F /* WebSocket+Rx.swift in Sources */,
 				8AD5ED4322E9BA5A005CFAC9 /* Int+Extensions.swift in Sources */,
 				8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */,
-				8AD5ED6022E9BA5A005CFAC9 /* WebSocket+Response.swift in Sources */,
+				8AD5ED6022E9BA5A005CFAC9 /* WebSocket+Types.swift in Sources */,
 				8A048E4E2332259400FDB3C0 /* ChannelPresenter+Events.swift in Sources */,
 				8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */,
 				8A150E9F232A8D8400330562 /* Database.swift in Sources */,

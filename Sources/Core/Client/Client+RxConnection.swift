@@ -13,6 +13,7 @@ import RxSwift
 
 extension Reactive where Base == Client {
     
+    /// An observable connection.
     public var connection: Observable<WebSocket.Connection> {
         return base.rxConnection
     }
