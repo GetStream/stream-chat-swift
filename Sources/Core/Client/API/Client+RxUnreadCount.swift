@@ -10,9 +10,10 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-// MARK: Unread Count
-
 public extension Reactive where Base == Client {
+    
+    // MARK: Unread Count
+    
     /// Observe an unread count of messages in the channel.
     ///
     /// - Note: Be sure the current user is a member of the channel.

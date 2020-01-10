@@ -1,5 +1,5 @@
 //
-//  ChatItem.swift
+//  PresenterItem.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 13/04/2019.
@@ -9,7 +9,7 @@
 import Foundation
 
 /// A chat item type for view elements.
-public enum ChatItem: Equatable {
+public enum PresenterItem: Equatable {
     /// A title for the yesterday separator.
     public static var statusYesterdayTitle = "Yesterday"
     /// A title for the today separator.
@@ -62,7 +62,7 @@ public enum ChatItem: Equatable {
         return []
     }
     
-    public static func == (lhs: ChatItem, rhs: ChatItem) -> Bool {
+    public static func == (lhs: PresenterItem, rhs: PresenterItem) -> Bool {
         switch (lhs, rhs) {
         case let (.loading(inProgress1), .loading(inProgress2)):
             return inProgress1 == inProgress2
@@ -80,22 +80,22 @@ public enum ChatItem: Equatable {
     }
 }
 
-// MARK: - Array extension for ChatItem
+// MARK: - Array extension for PresenterItem
 
-public extension Array where Element == ChatItem {
+public extension Array where Element == PresenterItem {
     
-    /// Find the first index of an `ChatItem` of a channel presenter with a given channel id.
+    /// Find the first index of an `PresenterItem` of a channel presenter with a given channel id.
     ///
-    /// - Parameter cid: a ChannelId of a searching `ChatItem` of a channel presenter.
-    /// - Returns: an index of an `ChatItem` with a channel presenter.
+    /// - Parameter cid: a ChannelId of a searching `PresenterItem` of a channel presenter.
+    /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func firstIndex(where cid: ChannelId) -> Int? {
         return firstIndex(whereChannelId: cid.id, channelType: cid.type)
     }
     
-    /// Find the first index of an `ChatItem` of a channel presenter with a given channel id.
+    /// Find the first index of an `PresenterItem` of a channel presenter with a given channel id.
     ///
-    /// - Parameter channelId: a channelId of a searching `ChatItem` of a channel presenter.
-    /// - Returns: an index of an `ChatItem` with a channel presenter.
+    /// - Parameter channelId: a channelId of a searching `PresenterItem` of a channel presenter.
+    /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func firstIndex(whereChannelId channelId: String, channelType: ChannelType) -> Int? {
         return firstIndex(where: { item -> Bool in
             if case .channelPresenter(let channelPresenter) = item {
@@ -106,18 +106,18 @@ public extension Array where Element == ChatItem {
         })
     }
     
-    /// Find the last index of an `ChatItem` of a channel presenter with a given channel id.
+    /// Find the last index of an `PresenterItem` of a channel presenter with a given channel id.
     ///
-    /// - Parameter cid: a ChannelId of a searching `ChatItem` of a channel presenter.
-    /// - Returns: an index of an `ChatItem` with a channel presenter.
+    /// - Parameter cid: a ChannelId of a searching `PresenterItem` of a channel presenter.
+    /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func lastIndex(where cid: ChannelId) -> Int? {
         return lastIndex(whereChannelId: cid.id, channelType: cid.type)
     }
     
-    /// Find the last index of an `ChatItem` of a channel presenter with a given channel id.
+    /// Find the last index of an `PresenterItem` of a channel presenter with a given channel id.
     ///
-    /// - Parameter channelId: a channelId of a searching `ChatItem` of a channel presenter.
-    /// - Returns: an index of an `ChatItem` with a channel presenter.
+    /// - Parameter channelId: a channelId of a searching `PresenterItem` of a channel presenter.
+    /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func lastIndex(whereChannelId channelId: String, channelType: ChannelType) -> Int? {
         return lastIndex(where: { item -> Bool in
             if case .channelPresenter(let channelPresenter) = item {
@@ -128,10 +128,10 @@ public extension Array where Element == ChatItem {
         })
     }
     
-    /// Find the last index of an `ChatItem` of a message with a given message id.
+    /// Find the last index of an `PresenterItem` of a message with a given message id.
     ///
-    /// - Parameter messageId: a messageId of a searching `ChatItem` of a message.
-    /// - Returns: an index of an `ChatItem` with a message.
+    /// - Parameter messageId: a messageId of a searching `PresenterItem` of a message.
+    /// - Returns: an index of an `PresenterItem` with a message.
     func lastIndex(whereMessageId messageId: String) -> Int? {
         return lastIndex(where: { item -> Bool in
             if case .message(let message, _) = item, !message.id.isEmpty {
@@ -142,10 +142,10 @@ public extension Array where Element == ChatItem {
         })
     }
     
-    /// Find the last `ChatItem` of a message before a given index.
+    /// Find the last `PresenterItem` of a message before a given index.
     ///
-    /// - Parameter beforeIndex: an index of `ChatItem` where to start a search of `ChatItem` message.
-    /// - Returns: a tuple of `ChatItem` index and a message.
+    /// - Parameter beforeIndex: an index of `PresenterItem` where to start a search of `PresenterItem` message.
+    /// - Returns: a tuple of `PresenterItem` index and a message.
     func findLastMessage(before beforeIndex: Int = .max) -> (index: Int, message: Message)? {
         guard !isEmpty else {
             return nil
@@ -160,9 +160,9 @@ public extension Array where Element == ChatItem {
         return nil
     }
     
-    /// Find the first index of an `ChatItem` of a status loading.
+    /// Find the first index of an `PresenterItem` of a status loading.
     ///
-    /// - Returns: an index of a `ChatItem` status loading.
+    /// - Returns: an index of a `PresenterItem` status loading.
     func firstIndexWhereStatusLoading() -> Int? {
         return firstIndex(where: { item -> Bool in
             if case .loading = item {
@@ -173,10 +173,10 @@ public extension Array where Element == ChatItem {
         })
     }
     
-    /// Find the first index of an `ChatItem` of a status with a given title.
+    /// Find the first index of an `PresenterItem` of a status with a given title.
     ///
     /// - Parameter title: a searching status title.
-    /// - Returns: an index of a `ChatItem` status.
+    /// - Returns: an index of a `PresenterItem` status.
     func firstIndex(whereStatusTitle title: String) -> Int? {
         return firstIndex(where: { item -> Bool in
             if case .status(let itemTitle, _, _) = item {
@@ -187,10 +187,10 @@ public extension Array where Element == ChatItem {
         })
     }
     
-    /// Find the last index of an `ChatItem` of a status with a given title.
+    /// Find the last index of an `PresenterItem` of a status with a given title.
     ///
     /// - Parameter title: a searching status title.
-    /// - Returns: an index of a `ChatItem` status.
+    /// - Returns: an index of a `PresenterItem` status.
     func lastIndex(whereStatusTitle title: String) -> Int? {
         return lastIndex(where: { item -> Bool in
             if case .status(let itemTitle, _, _) = item {
