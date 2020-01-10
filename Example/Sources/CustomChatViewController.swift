@@ -109,7 +109,7 @@ class CustomChatViewController: ChatViewController {
     
     func removeMember() {
         selectMember { [unowned self] member in
-            self.channelPresenter?.channel
+            self.channelPresenter?.channel.rx
                 .remove(member)
                 .subscribe(onNext: { _ in
                     Banners.shared.show("\(member.user.name) removed from the channel")
@@ -138,7 +138,7 @@ class CustomChatViewController: ChatViewController {
         
         alert.addAction(.init(title: "Add a member", style: .default, handler: { [unowned self] _ in
             self.createMember("Add a member") { member in
-                channelPresenter.channel
+                channelPresenter.channel.rx
                     .add(member)
                     .subscribe(onNext: { _ in
                         Banners.shared.show("\(member.user.name) added to the channel")
@@ -149,7 +149,7 @@ class CustomChatViewController: ChatViewController {
         
         alert.addAction(.init(title: "Invite a member", style: .default, handler: { [unowned self] _ in
             self.createMember("Invite a member") { member in
-                channelPresenter.channel
+                channelPresenter.channel.rx
                     .invite(member)
                     .subscribe(onNext: { _ in
                         Banners.shared.show("Invite for \(member.user.name) was send")

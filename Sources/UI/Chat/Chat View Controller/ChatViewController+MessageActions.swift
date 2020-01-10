@@ -288,7 +288,7 @@ extension ChatViewController {
     }
     
     private func ban(user: User, channel: Channel) {
-        channel.ban(user: user)
+        channel.rx.ban(user: user)
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] in
                 if let backgroundColor = self?.view.backgroundColor {
