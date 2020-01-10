@@ -315,6 +315,6 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             return
         }
         
-        channelPresenter.channel.delete().subscribe().disposed(by: disposeBag)
+        channelPresenter.channel.rx.delete().subscribe().disposed(by: disposeBag)
     }
 }

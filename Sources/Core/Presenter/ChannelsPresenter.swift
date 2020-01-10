@@ -112,7 +112,7 @@ public extension ChannelsPresenter {
     ///   - channelPresenter: a channel presenter.
     ///   - clearHistory: checks if needs to remove a message history of the channel.
     func hide(_ channelPresenter: ChannelPresenter, clearHistory: Bool = false) -> Driver<Void> {
-        return channelPresenter.channel
+        return channelPresenter.channel.rx
             .hide(for: User.current, clearHistory: clearHistory)
             .void()
             .do(onNext: { [weak self] in self?.removeFromItems(channelPresenter) })

@@ -53,7 +53,7 @@ public extension Reactive where Base == Client {
         let events: Observable<WebSocket.Response>
         
         if let channel = channel {
-            events = channel.query(options: .watch).flatMapLatest { [unowned base] _ in base.webSocket.rx.response }
+            events = channel.rx.query(options: .watch).flatMapLatest { [unowned base] _ in base.webSocket.rx.response }
         } else {
             events = base.webSocket.rx.response
         }
