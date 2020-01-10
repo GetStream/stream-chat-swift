@@ -234,6 +234,84 @@ extension Channel: Hashable {
     }
 }
 
+// MARK: - Helpers
+
+extension Channel {
+    
+    /// Check is the user is banned for the channel.
+    /// - Parameter user: a user.
+    public func isBanned(_ user: User) -> Bool {
+        return bannedUsers.contains(user)
+    }
+    
+    /// Update the unread count if needed.
+    ///
+    /// - Parameter response: a web socket event.
+    /// - Returns: true, if unread count was updated.
+    @discardableResult
+    func updateUnreadCount(_ response: WebSocket.Response) -> Bool {
+        guard let currentUser = User.current else {
+            return false
+        }
+        
+        guard let cid = response.cid, cid.id == id, cid.type == type else {
+            if case .notificationMarkRead(let notificationChannel, let unreadCount, _, _) = response.event,
+                let channel = notificationChannel,
+                channel.id == id {
+                unreadCountAtomic.set(unreadCount)
+                return true
+            }
+            
+            return false
+        }
+        
+        if case .messageNew(let message, let unreadCount, _, _, _) = response.event {
+            unreadCountAtomic.set(unreadCount)
+            
+            if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
+                mentionedUnreadCountAtomic += 1
+            }
+            
+            return true
+        }
+        
+        if case .messageRead(let messageRead, _) = response.event, messageRead.user.isCurrent {
+            unreadCountAtomic.set(0)
+            mentionedUnreadCountAtomic.set(0)
+            return true
+        }
+        
+        return false
+    }
+    
+    func calculateUnreadCount(_ channelResponse: ChannelResponse) {
+        unreadCountAtomic.set(0)
+        mentionedUnreadCountAtomic.set(0)
+        
+        guard let currentUser = User.current, let unreadMessageRead = channelResponse.unreadMessageRead else {
+            return
+        }
+        
+        var count = 0
+        var mentionedCount = 0
+        
+        for message in channelResponse.messages.reversed() {
+            if message.created > unreadMessageRead.lastReadDate {
+                count += 1
+                
+                if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
+                    mentionedCount += 1
+                }
+            } else {
+                break
+            }
+        }
+        
+        unreadCountAtomic.set(count)
+        mentionedUnreadCountAtomic.set(mentionedCount)
+    }
+}
+
 // MARK: - Config
 
 public extension Channel {

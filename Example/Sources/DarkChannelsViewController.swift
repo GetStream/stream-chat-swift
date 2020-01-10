@@ -60,11 +60,11 @@ final class DarkChannelsViewController: ChannelsViewController {
                 preferredStyle: .alert)
             
             alert.addAction(.init(title: "Accept", style: .default, handler: { [unowned self] _ in
-                channel.acceptInvite().subscribe().disposed(by: self.disposeBag)
+                channel.rx.acceptInvite().subscribe().disposed(by: self.disposeBag)
             }))
             
             alert.addAction(.init(title: "Reject", style: .destructive, handler: { [unowned self] _ in
-                channel.rejectInvite().subscribe().disposed(by: self.disposeBag)
+                channel.rx.rejectInvite().subscribe().disposed(by: self.disposeBag)
             }))
             
             present(alert, animated: true)
@@ -92,7 +92,7 @@ final class DarkChannelsViewController: ChannelsViewController {
     @IBAction func addChannel(_ sender: Any) {
         let number = Int.random(in: 1000...9999)
         let channel = Channel(type: .messaging, id: "new_channel_\(number)", name: "Channel \(number)")
-        channel.create().subscribe().disposed(by: disposeBag)
+        channel.rx.create().subscribe().disposed(by: disposeBag)
     }
     
     override func channelCell(at indexPath: IndexPath, channelPresenter: ChannelPresenter) -> UITableViewCell {
@@ -139,7 +139,7 @@ final class DarkChannelsViewController: ChannelsViewController {
         if let channel = chatViewController.channelPresenter?.channel {
             channel.banEnabling = .enabled(timeoutInMinutes: 1, reason: "I don't like you 🤮")
             
-            channel.onEvent(.userBanned)
+            channel.rx.onEvent(.userBanned)
                 .observeOn(MainScheduler.instance)
                 .subscribe(onNext: { event in
                     if case .userBanned(_, let reason, _, _, _) = event {
@@ -184,7 +184,7 @@ final class DarkChannelsViewController: ChannelsViewController {
         if (channelPresenter.channel.createdBy?.isCurrent ?? false) {
             alertController.addAction(.init(title: "Rename", style: .default, handler: { [weak self] _ in
                 if let self = self {
-                    channelPresenter.channel
+                    channelPresenter.channel.rx
                         .update(name: "Updated \(Int.random(in: 100...999))", imageURL: URL(string: "https://bit.ly/321RmWb")!)
                         .subscribe()
                         .disposed(by: self.disposeBag)
@@ -199,7 +199,7 @@ final class DarkChannelsViewController: ChannelsViewController {
         let channel = Channel(type: .messaging, id: "general")
         sender.isEnabled = false
         
-        channel.show()
+        channel.rx.show()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] in
                 sender.isEnabled = true

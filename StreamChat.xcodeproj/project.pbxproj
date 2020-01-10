@@ -25,7 +25,7 @@
 		8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965022EF4B2400E94795 /* UsersQuery.swift */; };
 		8A04965322F0910200E94795 /* Message+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965222F0910200E94795 /* Message+Requests.swift */; };
 		8A0EB78C22FC608A009481E4 /* Client+RxEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78B22FC608A009481E4 /* Client+RxEvents.swift */; };
-		8A0EB78E22FC6974009481E4 /* Channel+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78D22FC6974009481E4 /* Channel+Events.swift */; };
+		8A0EB78E22FC6974009481E4 /* Channel+RxEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78D22FC6974009481E4 /* Channel+RxEvents.swift */; };
 		8A104FC522F4B95B002B2DC1 /* Banners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A104FC322F49233002B2DC1 /* Banners.swift */; };
 		8A1207CB238ED68000E41790 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207C9238ED66500E41790 /* Message.swift */; };
 		8A1207CD238EE3C700E41790 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207CC238EE3C700E41790 /* Reaction.swift */; };
@@ -115,7 +115,7 @@
 		8AD5ED5B22E9BA5A005CFAC9 /* MessageAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */; };
 		8AD5ED5C22E9BA5A005CFAC9 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */; };
 		8AD5ED5D22E9BA5A005CFAC9 /* Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */; };
-		8AD5ED5E22E9BA5A005CFAC9 /* Channel+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2B22E9BA39005CFAC9 /* Channel+Requests.swift */; };
+		8AD5ED5E22E9BA5A005CFAC9 /* Channel+RxRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2B22E9BA39005CFAC9 /* Channel+RxRequests.swift */; };
 		8AD5ED5F22E9BA5A005CFAC9 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */; };
 		8AD5ED6022E9BA5A005CFAC9 /* WebSocket+Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Types.swift */; };
 		8AD5ED6122E9BA5A005CFAC9 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */; };
@@ -277,7 +277,7 @@
 		8A04965022EF4B2400E94795 /* UsersQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersQuery.swift; sourceTree = "<group>"; };
 		8A04965222F0910200E94795 /* Message+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Requests.swift"; sourceTree = "<group>"; };
 		8A0EB78B22FC608A009481E4 /* Client+RxEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxEvents.swift"; sourceTree = "<group>"; };
-		8A0EB78D22FC6974009481E4 /* Channel+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Events.swift"; sourceTree = "<group>"; };
+		8A0EB78D22FC6974009481E4 /* Channel+RxEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+RxEvents.swift"; sourceTree = "<group>"; };
 		8A104FC322F49233002B2DC1 /* Banners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banners.swift; sourceTree = "<group>"; };
 		8A1207C9238ED66500E41790 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		8A1207CC238EE3C700E41790 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
@@ -449,7 +449,7 @@
 		8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAction.swift; sourceTree = "<group>"; };
 		8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pagination.swift; sourceTree = "<group>"; };
-		8AD5ED2B22E9BA39005CFAC9 /* Channel+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Requests.swift"; sourceTree = "<group>"; };
+		8AD5ED2B22E9BA39005CFAC9 /* Channel+RxRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+RxRequests.swift"; sourceTree = "<group>"; };
 		8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Types.swift"; sourceTree = "<group>"; };
 		8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
@@ -687,6 +687,27 @@
 				8AD5907E23957102005903AC /* Filter.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		8A92BAF523C8B5370085184F /* Channel */ = {
+			isa = PBXGroup;
+			children = (
+				8AD5ED2322E9BA39005CFAC9 /* Channel.swift */,
+				8AD5ED2B22E9BA39005CFAC9 /* Channel+RxRequests.swift */,
+				8A0EB78D22FC6974009481E4 /* Channel+RxEvents.swift */,
+				8A048E492331252400FDB3C0 /* Channel+Database.swift */,
+			);
+			path = Channel;
+			sourceTree = "<group>";
+		};
+		8A92BAF623C8B5490085184F /* Message */ = {
+			isa = PBXGroup;
+			children = (
+				8AD5ED2222E9BA39005CFAC9 /* Message.swift */,
+				8A04965222F0910200E94795 /* Message+Requests.swift */,
+				8AD82E4A2382E25A0037D47D /* Message+Database.swift */,
+			);
+			path = Message;
 			sourceTree = "<group>";
 		};
 		8AD5EC8522E9A3E8005CFAC9 = {
@@ -1036,36 +1057,31 @@
 		8AD5ED1C22E9BA39005CFAC9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				8AD5ED1D22E9BA39005CFAC9 /* Attachment.swift */,
-				8AD5ED1E22E9BA39005CFAC9 /* Event.swift */,
-				8AD5ED1F22E9BA39005CFAC9 /* ExtraData.swift */,
-				8AD5ED2122E9BA39005CFAC9 /* ChannelsQuery.swift */,
-				8AD5ED2322E9BA39005CFAC9 /* Channel.swift */,
-				8AD5ED2B22E9BA39005CFAC9 /* Channel+Requests.swift */,
-				8A0EB78D22FC6974009481E4 /* Channel+Events.swift */,
-				8A048E492331252400FDB3C0 /* Channel+Database.swift */,
-				8AD5ED2022E9BA39005CFAC9 /* ChannelQuery.swift */,
-				8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */,
-				8AD5ED2222E9BA39005CFAC9 /* Message.swift */,
-				8A04965222F0910200E94795 /* Message+Requests.swift */,
-				8AD82E4A2382E25A0037D47D /* Message+Database.swift */,
-				8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */,
-				8AD5ED2422E9BA39005CFAC9 /* MessageRead.swift */,
-				8AD5ED2722E9BA39005CFAC9 /* Member.swift */,
 				8AD5ED2622E9BA39005CFAC9 /* User.swift */,
 				8AC8C8B522F30001003BD1D5 /* User+Requests.swift */,
-				8A7EE00923857FEC00BDB18D /* MutedUser.swift */,
 				8A04965022EF4B2400E94795 /* UsersQuery.swift */,
-				8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */,
-				8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */,
-				8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */,
-				8AD5ED2522E9BA39005CFAC9 /* Sorting.swift */,
-				8A04964E22EF1A8900E94795 /* QueryOptions.swift */,
-				8A34DED32322A92C00271BBF /* Device.swift */,
-				8AF4DCB923757AF300F534F5 /* SearchQuery.swift */,
+				8A7EE00923857FEC00BDB18D /* MutedUser.swift */,
+				8AD5ED2722E9BA39005CFAC9 /* Member.swift */,
+				8AD5ED1E22E9BA39005CFAC9 /* Event.swift */,
+				8A92BAF523C8B5370085184F /* Channel */,
 				8A7EE0152385B2F300BDB18D /* ChannelType.swift */,
 				8A7EE0172385B31B00BDB18D /* ChannelId.swift */,
+				8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */,
+				8AD5ED2022E9BA39005CFAC9 /* ChannelQuery.swift */,
+				8AD5ED2122E9BA39005CFAC9 /* ChannelsQuery.swift */,
+				8A92BAF623C8B5490085184F /* Message */,
+				8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */,
+				8AD5ED2422E9BA39005CFAC9 /* MessageRead.swift */,
+				8AD5ED1D22E9BA39005CFAC9 /* Attachment.swift */,
+				8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */,
 				8A7EE0192385B33900BDB18D /* BanEnabling.swift */,
+				8AD5ED1F22E9BA39005CFAC9 /* ExtraData.swift */,
+				8AF4DCB923757AF300F534F5 /* SearchQuery.swift */,
+				8A04964E22EF1A8900E94795 /* QueryOptions.swift */,
+				8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */,
+				8AD5ED2522E9BA39005CFAC9 /* Sorting.swift */,
+				8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */,
+				8A34DED32322A92C00271BBF /* Device.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1489,7 +1505,7 @@
 				8A04964822E9F57000E94795 /* ChatItem.swift in Sources */,
 				8AD5ED6F22E9BA5A005CFAC9 /* MultipartFormData.swift in Sources */,
 				8AD5ED7022E9BA5A005CFAC9 /* ClientURLSessionTaskDelegate.swift in Sources */,
-				8AD5ED5E22E9BA5A005CFAC9 /* Channel+Requests.swift in Sources */,
+				8AD5ED5E22E9BA5A005CFAC9 /* Channel+RxRequests.swift in Sources */,
 				8A048E5123326D5F00FDB3C0 /* ChannelPresenter+EphemeralMessages.swift in Sources */,
 				8AD5ED5D22E9BA5A005CFAC9 /* Pagination.swift in Sources */,
 				8AD5ED6622E9BA5A005CFAC9 /* Uploader.swift in Sources */,
@@ -1503,7 +1519,7 @@
 				8AD5ED6122E9BA5A005CFAC9 /* WebSocket.swift in Sources */,
 				8A7EE0182385B31B00BDB18D /* ChannelId.swift in Sources */,
 				8A92BAEF23C793470085184F /* Client+RxConnection.swift in Sources */,
-				8A0EB78E22FC6974009481E4 /* Channel+Events.swift in Sources */,
+				8A0EB78E22FC6974009481E4 /* Channel+RxEvents.swift in Sources */,
 				8AD5ED5822E9BA5A005CFAC9 /* Sorting.swift in Sources */,
 				8AD5ED6C22E9BA5A005CFAC9 /* Client+WebSocket.swift in Sources */,
 				8AC8C8B422F2E14F003BD1D5 /* ChannelResponse.swift in Sources */,

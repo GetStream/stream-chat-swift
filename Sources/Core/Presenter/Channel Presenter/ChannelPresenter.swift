@@ -97,7 +97,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     public private(set) lazy var changes =
         (channel.id.isEmpty
             // Get a channel with a generated channel id.
-            ? channel.query()
+            ? channel.rx.query()
                 .map({ [weak self] channelResponse -> Void in
                     // Update the current channel.
                     self?.channelAtomic.set(channelResponse.channel)
@@ -131,7 +131,7 @@ public final class ChannelPresenter: Presenter<ChatItem> {
         .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
         .flatMapLatest { [weak self] pagination -> Observable<ChannelResponse> in
             if let self = self {
-                return self.channel.query(pagination: pagination, options: self.queryOptions).retry(3)
+                return self.channel.rx.query(pagination: pagination, options: self.queryOptions).retry(3)
             }
             
             return .empty()
@@ -250,7 +250,7 @@ extension ChannelPresenter {
                               extraData: extraData,
                               showReplyInChannel: false)
         
-        return channel.send(message: message)
+        return channel.rx.send(message: message)
             .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
     }
@@ -268,11 +268,11 @@ extension ChannelPresenter {
         if isTyping {
             if !startedTyping {
                 startedTyping = true
-                return channel.send(eventType: .typingStart).observeOn(MainScheduler.instance)
+                return channel.rx.send(eventType: .typingStart).observeOn(MainScheduler.instance)
             }
         } else if startedTyping {
             startedTyping = false
-            return channel.send(eventType: .typingStop).observeOn(MainScheduler.instance)
+            return channel.rx.send(eventType: .typingStop).observeOn(MainScheduler.instance)
         }
         
         return .empty()
@@ -299,7 +299,7 @@ extension ChannelPresenter {
             .do(onNext: {
                 Client.shared.logger?.log("🎫 Send Message Read. Unread from \(unreadMessageRead.lastReadDate)")
             })
-            .flatMapLatest { [weak self] in self?.channel.markRead() ?? .empty() }
+            .flatMapLatest { [weak self] in self?.channel.rx.markRead() ?? .empty() }
             .do(
                 onNext: { [weak self] _ in
                     self?.unreadMessageReadAtomic.set(nil)

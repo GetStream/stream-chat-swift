@@ -112,7 +112,7 @@ final class RootViewController: UIViewController {
     }
     
     func subscribeForUnreadCount() {
-        channel.unreadCount
+        channel.rx.unreadCount
             .drive(onNext: { [weak self] unreadCount in
                 self?.badgeLabel.text = "\(unreadCount == 100 ? "99+" : String(unreadCount))  "
             })
@@ -120,7 +120,7 @@ final class RootViewController: UIViewController {
     }
     
     func subscribeForOnlineUsers() {
-        channel.onlineUsers
+        channel.rx.onlineUsers
             .startWith([User(id: "", name: "")])
             .drive(onNext: { [weak self] users in
                 if users.count == 1, users[0].id.isEmpty {
