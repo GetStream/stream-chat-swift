@@ -9,9 +9,9 @@
 import Foundation
 import RxSwift
 
-// MARK: Channels Requests
-
 public extension Reactive where Base == Client {
+    
+    // MARK: Channels Requests
     
     /// A message search.
     /// - Parameters:

@@ -44,7 +44,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     /// A dispose bag for rx subscriptions.
     public let disposeBag = DisposeBag()
     /// A list of table view items, e.g. messages.
-    public private(set) var items = [ChatItem]()
+    public private(set) var items = [PresenterItem]()
     private var needsToReload = true
     /// A reaction view.
     weak var reactionsView: ReactionsView?
