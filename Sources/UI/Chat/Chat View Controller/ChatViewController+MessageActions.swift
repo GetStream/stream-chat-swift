@@ -212,7 +212,7 @@ extension ChatViewController {
         
         alert.addAction(.init(title: "Delete", style: .destructive, handler: { [weak self] _ in
             if let self = self {
-                message.delete().subscribe().disposed(by: self.disposeBag)
+                message.rx.delete().subscribe().disposed(by: self.disposeBag)
             }
         }))
         
@@ -244,7 +244,7 @@ extension ChatViewController {
     }
     
     private func flag(message: Message) {
-        message.flag()
+        message.rx.flag()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
@@ -255,7 +255,7 @@ extension ChatViewController {
     }
     
     private func unflag(message: Message) {
-        message.unflag()
+        message.rx.unflag()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
