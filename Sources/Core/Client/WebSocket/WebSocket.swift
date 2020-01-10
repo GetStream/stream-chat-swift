@@ -18,18 +18,18 @@ public final class WebSocket {
     
     let webSocket: Starscream.WebSocket
     let stayConnectedInBackground: Bool
+    let logger: ClientLogger?
     
     private(set) var lastJSONError: ClientErrorResponse?
     private(set) var lastConnectionId: String?
-    var consecutiveFailures: TimeInterval = 0
-    let logger: ClientLogger?
-    var isReconnecting = false
+    private var consecutiveFailures: TimeInterval = 0
+    private var isReconnecting = false
     private var goingToDisconnect: DispatchWorkItem?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
-    
     private var lastMessageHashValue: Int = 0
     private var lastMessageResponse: Response?
-    
+    private let webSocketInitiated: Bool
+
     private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(30), queue: webSocket.callbackQueue) { [weak self] in
         self?.logger?.log("🏓", level: .info)
         self?.webSocket.write(ping: Data())
@@ -41,18 +41,7 @@ public final class WebSocket {
     }
     
     /// An observable event response.
-    public private(set) lazy var response: Observable<WebSocket.Response> = Observable.just(())
-        .observeOn(MainScheduler.instance)
-        .flatMapLatest { [weak self] in self?.webSocket.rx.response ?? .empty() }
-        .compactMap { [weak self] in self?.parseMessage($0) }
-        .do(onNext: {
-            if case .notificationMutesUpdated(let user, _) = $0.event {
-                Client.shared.user = user
-            }
-        })
-        .share()
-    
-    private let webSocketInitiated: Bool
+    private(set) lazy var rxResponse = rx.setupResponse()
     
     init(_ urlRequest: URLRequest, stayConnectedInBackground: Bool = true, logger: ClientLogger? = nil) {
         self.stayConnectedInBackground = stayConnectedInBackground
@@ -73,6 +62,18 @@ public final class WebSocket {
         disconnect()
     }
     
+    /// Subscribe for websocket response.
+    /// - Parameter completion: a completion block (see `ClientCompletion`).
+    /// - Returns: a subscription.
+    public func response(_ completion: @escaping ClientCompletion<WebSocket.Response>) -> Subscription {
+        return rxResponse.bind(to: completion)
+    }
+}
+
+// MARK: - Connection
+
+extension WebSocket {
+    
     func connect() {
         guard InternetConnection.shared.isAvailable else {
             disconnectedNoInternet()
@@ -91,6 +92,21 @@ public final class WebSocket {
         logger?.log("❤️ Connecting...")
         logger?.log(webSocket.request)
         DispatchQueue.main.async(execute: webSocket.connect)
+    }
+    
+    func reconnect() {
+        guard !isReconnecting else {
+            return
+        }
+        
+        let delay = delayForReconnect
+        logger?.log("⏳ Reconnect in \(delay) sec")
+        isReconnecting = true
+        
+        webSocket.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
+            self?.isReconnecting = false
+            self?.connect()
+        }
     }
     
     func disconnectInBackground() {
@@ -161,11 +177,87 @@ public final class WebSocket {
         }
     }
     
-    func clearStateAfterDisconnect() {
+    private func isTokenExpired() -> Bool {
+        guard let lastJSONError = lastJSONError else {
+            return false
+        }
+        
+        let isTokenExpired = lastJSONError.code == ClientErrorResponse.tokenExpiredErrorCode
+        return isTokenExpired && Client.shared.touchTokenProvider()
+    }
+    
+    private func disconnectedNoInternet() {
+        logger?.log("💔🕸 Disconnected: No Internet")
+        clearStateAfterDisconnect()
+        consecutiveFailures = 0
+    }
+    
+    private func disconnected(_ error: Error? = nil) -> Connection {
+        logger?.log("💔🤔 Disconnected")
+        clearStateAfterDisconnect()
+        
+        if let error = error {
+            var errorMessage = "🦄💔😡 Disconnected by error"
+            
+            if let lastJSONError = lastJSONError {
+                errorMessage += ": \(lastJSONError)"
+            }
+            
+            logger?.log(error, message: errorMessage)
+            ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
+            
+            if !willReconnectAfterError(error) {
+                consecutiveFailures = 0
+                
+                if let lastJSONError = lastJSONError, isStopError(error) {
+                    return .disconnected(lastJSONError)
+                }
+            }
+        } else {
+            consecutiveFailures = 0
+        }
+        
+        return .notConnected
+    }
+    
+    private func willReconnectAfterError(_ error: Swift.Error) -> Bool {
+        if isStopError(error) {
+            return false
+        }
+        
+        if InternetConnection.shared.isAvailable {
+            reconnect()
+            return true
+        }
+        
+        return false
+    }
+    
+    private func isStopError(_ error: Swift.Error) -> Bool {
+        if let lastJSONError = lastJSONError, lastJSONError.code == 1000 {
+            return true
+        }
+        
+        if let wsError = error as? WSError, wsError.code == 1000 {
+            return true
+        }
+        
+        return false
+    }
+    
+    private func clearStateAfterDisconnect() {
         handshakeTimer.suspend()
         lastConnectionId = nil
         cancelBackgroundWork()
         logger?.log("🔑 connectionId cleaned")
+    }
+    
+    private var delayForReconnect: TimeInterval {
+        let maxDelay: TimeInterval = min(500 + consecutiveFailures * 2000, 25000) / 1000
+        let minDelay: TimeInterval = min(max(250, (consecutiveFailures - 1) * 2000), 25000) / 1000
+        consecutiveFailures += 1
+        
+        return minDelay + TimeInterval.random(in: 0...(maxDelay - minDelay))
     }
 }
 
@@ -230,49 +322,7 @@ extension WebSocket {
         return nil
     }
     
-    private func isTokenExpired() -> Bool {
-        guard let lastJSONError = lastJSONError else {
-            return false
-        }
-        
-        let isTokenExpired = lastJSONError.code == ClientErrorResponse.tokenExpiredErrorCode
-        return isTokenExpired && Client.shared.touchTokenProvider()
-    }
-    
-    private func disconnectedNoInternet() {
-        logger?.log("💔🕸 Disconnected: No Internet")
-        clearStateAfterDisconnect()
-        consecutiveFailures = 0
-    }
-    
-    private func disconnected(_ error: Error? = nil) -> Connection {
-        logger?.log("💔🤔 Disconnected")
-        
-        if let error = error {
-            var errorMessage = "🦄💔😡 Disconnected by error"
-            
-            if let lastJSONError = lastJSONError {
-                errorMessage += ": \(lastJSONError)"
-            }
-            
-            logger?.log(error, message: errorMessage)
-            ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
-            
-            if !willReconnectAfterError(error) {
-                consecutiveFailures = 0
-                
-                if let lastJSONError = lastJSONError, isStopError(error) {
-                    return .disconnected(lastJSONError)
-                }
-            }
-        } else {
-            consecutiveFailures = 0
-        }
-        
-        return .notConnected
-    }
-    
-    private func parseMessage(_ event: WebSocketEvent) -> Response? {
+    func parseMessage(_ event: WebSocketEvent) -> Response? {
         guard case .message(let message) = event else {
             lastMessageResponse = nil
             return nil
@@ -322,22 +372,5 @@ extension WebSocket {
         }
         
         return nil
-    }
-}
-
-// MARK: - Rx
-
-extension ObservableType where Element == WebSocket.Connection {
-    /// A connection status handler block type.
-    public typealias ConnectionStatusHandler = (_ connected: Bool) -> Void
-    
-    /// Observe a web socket connection and filter not connected statuses.
-    ///
-    /// - Parameter connectionStatusHandler: a handler to make a side effect with all web scoket connection statuses.
-    /// - Returns: an empty observable.
-    public func connected(_ connectionStatusHandler: ConnectionStatusHandler? = nil) -> Observable<Void> {
-        return self.do(onNext: { connectionStatusHandler?($0.isConnected) })
-            .filter { $0.isConnected }
-            .void()
     }
 }
