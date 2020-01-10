@@ -9,9 +9,9 @@
 import Foundation
 import RxSwift
 
-// MARK: Events
-
 public extension Reactive where Base == Client {
+    
+    // MARK: Events
     
     /// Observe a list of event types.
     ///
