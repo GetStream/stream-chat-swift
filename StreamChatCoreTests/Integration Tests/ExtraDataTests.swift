@@ -34,35 +34,29 @@ final class ExtraDataTests: TestCase {
     }
     
     func testChannelExtraData() {
-        do {
-            let result = try channel.query(pagination: .limit(1))
-                .toBlocking()
-                .toArray()
-            
-            if let response = result.first, let responseExtraData = response.channel.extraData {
-                XCTAssertEqual(meta, responseExtraData.object as? Meta)
-            } else {
-                XCTFail("No extra data from channel response \(result)")
+        channel.query(pagination: .limit(1)) { result in
+            do {
+                let response = try result.get()
+                if let responseExtraData = response.channel.extraData {
+                    XCTAssertEqual(self.meta, responseExtraData.object as? Meta)
+                } else {
+                    XCTFail("No extra data from channel response \(result)")
+                }
+            } catch {
+                XCTFail("\(error)")
             }
-        } catch {
-            XCTFail("\(error)")
         }
     }
     
     func testMessageAndAttachmentExtraData() {
-        do {
-            let result = try channel.send(message: message)
-                .toBlocking()
-                .toArray()
-            
-            if let response: MessageResponse = result.first {
-                XCTAssertEqual(meta, response.message.extraData?.object as? Meta)
-                XCTAssertEqual(meta, response.message.attachments.first?.extraData?.object as? Meta)
-            } else {
-                XCTFail("No extra data from message response \(result)")
+        channel.send(message: message) { result in
+            do {
+                let response = try result.get()
+                XCTAssertEqual(self.meta, response.message.extraData?.object as? Meta)
+                XCTAssertEqual(self.meta, response.message.attachments.first?.extraData?.object as? Meta)
+            } catch {
+                XCTFail("\(error)")
             }
-        } catch {
-            XCTFail("\(error)")
         }
     }
 }

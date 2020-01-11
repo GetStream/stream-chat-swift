@@ -117,13 +117,9 @@ public extension Reactive where Base == Channel {
     /// - Parameter message: a message.
     /// - Returns: a created/updated message response.
     func send(message: Message) -> Observable<MessageResponse> {
-        var request: Observable<MessageResponse> = Client.shared.rx.request(endpoint: .sendMessage(message, base))
+        let sendMessageRequest: Observable<MessageResponse> = Client.shared.rx.request(endpoint: .sendMessage(message, base))
         
-        if !base.isActive {
-            request = query().flatMapLatest { _ in request }
-        }
-        
-        request = request
+        let request = (base.isActive ? sendMessageRequest : query().flatMapLatest { _ in sendMessageRequest })
             .flatMapLatest({ [weak base] response -> Observable<MessageResponse> in
                 if response.message.isBan {
                     if let currentUser = User.current, !currentUser.isBanned {
