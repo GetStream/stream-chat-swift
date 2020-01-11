@@ -16,9 +16,10 @@ public typealias UnreadCount = (channels: Int, messages: Int)
 extension Client {
     
     /// Observe an unread count of messages in the channel.
-    ///
     /// - Note: Be sure the current user is a member of the channel.
     /// - Note: 100 is the maximum unread count of messages.
+    /// - Parameter completion: a completion block with `UnreadCount`.
+    /// - Returns: a subscription.
     public func unreadCount(_ completion: @escaping ClientCompletion<UnreadCount>) -> Subscription {
         return rx.unreadCount.asObservable().bind(to: completion)
     }

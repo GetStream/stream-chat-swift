@@ -14,7 +14,6 @@ public extension Reactive where Base == Client {
     // MARK: - Devices
     
     /// Add a device for Push Notifications.
-    ///
     /// - Parameter deviceToken: a device token.
     /// - Returns: an observable completion.
     func addDevice(deviceToken: Data) -> Observable<Void> {
@@ -24,7 +23,6 @@ public extension Reactive where Base == Client {
     }
     
     /// Add a device for Push Notifications.
-    ///
     /// - Parameter deviceId: a Push Notifications device identifier.
     /// - Returns: an observable completion.
     func addDevice(deviceId: String) -> Observable<Void> {
@@ -56,18 +54,19 @@ public extension Reactive where Base == Client {
     }
     
     /// Request a list if devices.
-    ///
     /// - Returns: an observable list of devices.
-    func requestDevices() -> Observable<DevicesResponse> {
+    func requestDevices() -> Observable<[Device]> {
         guard let user = User.current else {
             return .error(ClientError.emptyUser)
         }
         
-        return connectedRequest(endpoint: .devices(user))
-            .do(onNext: { [unowned base] response in
+        let request: Observable<DevicesResponse> = connectedRequest(endpoint: .devices(user))
+        
+        return request.map { $0.devices }
+            .do(onNext: { [unowned base] devices in
                 if let currentUser = User.current {
                     var user = currentUser
-                    user.devices = response.devices
+                    user.devices = devices
                     base.user = user
                     base.logger?.log("📱 Devices updated")
                 }
@@ -75,7 +74,6 @@ public extension Reactive where Base == Client {
     }
     
     /// Remove a device.
-    ///
     /// - Parameter deviceId: a Push Notifications device identifier.
     /// - Returns: an observable empty data.
     func removeDevice(deviceId: String) -> Observable<Void> {
