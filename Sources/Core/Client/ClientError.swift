@@ -29,13 +29,13 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     /// An invalid URL.
     case invalidReactionType(String)
     /// A request failed with an error.
-    case requestFailed(_ error: Error?)
+    case requestFailed(Error?)
     /// A response client error.
-    case responseError(_ responseError: ClientErrorResponse)
+    case responseError(ClientErrorResponse)
     /// An encoding failed with an error.
-    case encodingFailure(_ error: Error, object: Encodable)
+    case encodingFailure(Error, object: Encodable)
     /// A decoding failed with an error.
-    case decodingFailure(_ error: Error)
+    case decodingFailure(Error)
     /// A message with the error type.
     case errorMessage(Message)
     /// A device token is empty.
