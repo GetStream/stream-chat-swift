@@ -15,35 +15,30 @@ public extension Client {
     /// Add a device for Push Notifications.
     /// - Parameters:
     ///   - deviceToken: a device token.
-    ///   - completion: a completion block (see `EmptyClientCompletion`).
-    /// - Returns: a subscription.
-    func addDevice(deviceToken: Data, _ completion: @escaping EmptyClientCompletion) -> Subscription {
-        return rx.addDevice(deviceToken: deviceToken).bind(to: completion)
+    ///   - completion: an empty completion block.
+    func addDevice(deviceToken: Data, _ completion: @escaping EmptyClientCompletion) {
+        return rx.addDevice(deviceToken: deviceToken).bindOnce(to: completion)
     }
     
     /// Add a device for Push Notifications.
     /// - Parameters:
     ///   - deviceId: a Push Notifications device identifier.
-    ///   - completion: a completion block (see `EmptyClientCompletion`).
-    /// - Returns: an observable completion.
-    func addDevice(deviceId: String, _ completion: @escaping EmptyClientCompletion) -> Subscription {
-        return rx.addDevice(deviceId: deviceId).bind(to: completion)
+    ///   - completion: an empty completion block.
+    func addDevice(deviceId: String, _ completion: @escaping EmptyClientCompletion) {
+        return rx.addDevice(deviceId: deviceId).bindOnce(to: completion)
     }
     
     /// Request az list if devices.
-    /// - Parameter completion: a completion block (see `ClientCompletion`).
-    /// - Returns: a subscription.
-    func requestDevices(_ completion: @escaping ClientCompletion<DevicesResponse>) -> Subscription {
-        return rx.requestDevices().bind(to: completion)
+    /// - Parameter completion: a completion block wiith `[Device]`.
+    func requestDevices(_ completion: @escaping ClientCompletion<[Device]>) {
+        return rx.requestDevices().bindOnce(to: completion)
     }
     
     /// Remove a device.
-    ///
     /// - Parameters:
     ///   - deviceId: a Push Notifications device identifier.
-    ///   - completion: a completion block (see `EmptyClientCompletion`).
-    /// - Returns: a subscription.
-    func removeDevice(deviceId: String, _ completion: @escaping EmptyClientCompletion) -> Subscription {
-        return rx.removeDevice(deviceId: deviceId).bind(to: completion)
+    ///   - completion: an empty completion block.
+    func removeDevice(deviceId: String, _ completion: @escaping EmptyClientCompletion) {
+        return rx.removeDevice(deviceId: deviceId).bindOnce(to: completion)
     }
 }
