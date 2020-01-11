@@ -11,7 +11,7 @@ import Foundation
 /// A client error.
 public enum ClientError: LocalizedError {
     /// An unexpected error.
-    case unexpectedError(description: String)
+    case unexpectedError(String?, Error?)
     /// The API Key is empty.
     case emptyAPIKey
     /// A token is empty.
@@ -27,13 +27,13 @@ public enum ClientError: LocalizedError {
     /// An invalid URL.
     case invalidURL(_ string: String?)
     /// A request failed with an error.
-    case requestFailed(_ error: Error?)
+    case requestFailed(Error?)
     /// A response client error.
-    case responseError(_ responseError: ClientErrorResponse)
+    case responseError(ClientErrorResponse)
     /// An encoding failed with an error.
-    case encodingFailure(_ error: Error, object: Encodable)
+    case encodingFailure(Error, object: Encodable)
     /// A decoding failed with an error.
-    case decodingFailure(_ error: Error)
+    case decodingFailure(Error)
     /// A message with the error type.
     case errorMessage(Message)
     /// A device token is empty.
@@ -57,8 +57,19 @@ public enum ClientError: LocalizedError {
     
     public var errorDescription: String? {
         switch self {
-        case .unexpectedError(let description):
-            return "Unexpected error: \(description)"
+        case let .unexpectedError(description, error):
+            let errorDescription: String
+            
+            if let description = description {
+                errorDescription = "Unexpected error: \(description)"
+            } else if let error = error {
+                errorDescription = "Unexpected error: \(error)"
+            } else {
+                errorDescription = "Unexpected error"
+            }
+            
+            return errorDescription
+            
         case .emptyAPIKey:
             return "The Client API Key is empty"
         case .emptyToken:
