@@ -8,10 +8,8 @@
 
 import RxSwift
 
-/// A client completion type.
+/// A client completion block type.
 public typealias ClientCompletion<T> = (Result<T, ClientError>) -> Void
-/// An empty client completion type.
-public typealias EmptyClientCompletion = ClientCompletion<Void>
 
 /// A subscription for an async request.
 /// You have to keep as an instance variable until you need results in a completion block.
