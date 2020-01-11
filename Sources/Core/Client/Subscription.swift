@@ -8,10 +8,8 @@
 
 import RxSwift
 
-/// A client result type.
-public typealias ClientResult<T> = Result<T, ClientError>
 /// A client completion type.
-public typealias ClientCompletion<T> = (ClientResult<T>) -> Void
+public typealias ClientCompletion<T> = (Result<T, ClientError>) -> Void
 /// An empty client completion type.
 public typealias EmptyClientCompletion = ClientCompletion<Void>
 
@@ -38,6 +36,7 @@ public typealias EmptyClientCompletion = ClientCompletion<Void>
 /// }
 /// ```
 public final class Subscription {
+    fileprivate static let shared = Subscription()
     let disposeBag = DisposeBag()
 }
 
@@ -50,20 +49,32 @@ extension ObservableType {
     /// - Returns: A subscription.
     func bind<T>(to clientCompletion: @escaping ClientCompletion<T>) -> Subscription where Element == T {
         let subscription = Subscription()
-        
-        subscribe({ event in
+        subscribe(to: clientCompletion).disposed(by: subscription.disposeBag)
+        return subscription
+    }
+    
+    /// Bind observable for the first event only to a completion block.
+    /// - Parameter clientCompletion: a client completion block.
+    func bindOnce<T>(to clientCompletion: @escaping ClientCompletion<T>) where Element == T {
+        take(1).subscribe(to: clientCompletion).disposed(by: Subscription.shared.disposeBag)
+    }
+    
+    private func subscribe<T>(to clientCompletion: @escaping ClientCompletion<T>) -> Disposable where Element == T {
+        return subscribe({ event in
             switch event {
             case let .next(element):
                 clientCompletion(.success(element))
+                
+            case .completed:
+                break
+                
             case let .error(error):
                 if let clientError = error as? ClientError {
                     clientCompletion(.failure(clientError))
+                } else {
+                    clientCompletion(.failure(.unexpectedError(nil, error)))
                 }
-            case .completed:
-                break
             }
-        }).disposed(by: subscription.disposeBag)
-        
-        return subscription
+        })
     }
 }
