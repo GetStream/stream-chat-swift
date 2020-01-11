@@ -106,8 +106,9 @@ public extension Reactive where Base == Channel {
     /// Delete the channel.
     ///
     /// - Returns: an observable completion.
-    func delete() -> Observable<ChannelDeletedResponse> {
-        return Client.shared.rx.connectedRequest(endpoint: .deleteChannel(base))
+    func delete() -> Observable<Channel> {
+        let request: Observable<ChannelDeletedResponse> = Client.shared.rx.connectedRequest(endpoint: .deleteChannel(base))
+        return request.map { $0.channel }
     }
     
     // MARK: - Message

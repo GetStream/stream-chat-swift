@@ -11,9 +11,9 @@ import Foundation
 public extension Message {
     
     /// Delete the message.
-    /// - Returns: an observable message response.
-    func delete(_ completion: @escaping ClientCompletion<MessageResponse>) -> Subscription {
-        return rx.delete().bind(to: completion)
+    /// - Parameter completion: a completion block with `MessageResponse`.
+    func delete(_ completion: @escaping ClientCompletion<MessageResponse>) {
+        return rx.delete().bindOnce(to: completion)
     }
     
     /// Add a reaction to the message.
@@ -50,27 +50,28 @@ public extension Message {
             .map { (response: MessagesResponse) in response.messages }
             .do(onNext: { self.add(repliesToDatabase: $0) })
     func deleteReaction(_ reactionType: ReactionType,
-                        _ completion: @escaping ClientCompletion<MessageResponse>) -> Subscription {
-        return rx.deleteReaction(reactionType).bind(to: completion)
+                        _ completion: @escaping ClientCompletion<MessageResponse>) {
+        return rx.deleteReaction(reactionType).bindOnce(to: completion)
     }
     
     /// Send a request for reply messages.
-    /// - Parameter pagination: a pagination (see `Pagination`).
-    /// - Returns: an observable message response.
-    func replies(pagination: Pagination, _ completion: @escaping ClientCompletion<[Message]>) -> Subscription {
-        return rx.replies(pagination: pagination).bind(to: completion)
+    /// - Parameters:
+    ///   - pagination: a pagination (see `Pagination`).
+    ///   - completion: a completion block with `[Message]`.
+    func replies(pagination: Pagination, _ completion: @escaping ClientCompletion<[Message]>) {
+        return rx.replies(pagination: pagination).bindOnce(to: completion)
     }
     
     /// Flag a message.
-    /// - Returns: an observable flag message response.
-    func flag(_ completion: @escaping ClientCompletion<FlagMessageResponse>) -> Subscription {
-        return rx.flag().bind(to: completion)
+    /// - Parameter completion: a completion block with `FlagMessageResponse`.
+    func flag(_ completion: @escaping ClientCompletion<FlagMessageResponse>) {
+        return rx.flag().bindOnce(to: completion)
     }
     
     /// Unflag a message.
-    /// - Returns: an observable flag message response.
-    func unflag(_ completion: @escaping ClientCompletion<FlagMessageResponse>) -> Subscription {
-        return rx.unflag().bind(to: completion)
+    /// - Parameter completion: a completion block with `FlagMessageResponse`.
+    func unflag(_ completion: @escaping ClientCompletion<FlagMessageResponse>) {
+        return rx.unflag().bindOnce(to: completion)
     }
 }
 
