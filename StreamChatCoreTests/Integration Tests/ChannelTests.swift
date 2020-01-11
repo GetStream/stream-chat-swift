@@ -16,42 +16,40 @@ final class ChannelTests: TestCase {
     let channel = Channel(type: .messaging, id: "integration")
     
     func testCreateDelete() {
-        let randomChannelId = "new_channel_\(Int.random(in: 1000...9999))"
-        
-        do {
-            let channel = Channel(type: .messaging, id: randomChannelId)
-            let channelResponse = try channel.create()
-                .toBlocking()
-                .toArray()
-            
-            XCTAssertEqual(channelResponse.count, 1)
-            XCTAssertEqual(channelResponse[0].channel, channel)
-            
-            let deletedResponse = try channelResponse[0].channel.delete()
-                .toBlocking()
-                .toArray()
-            
-            XCTAssertEqual(deletedResponse.count, 1)
-            XCTAssertTrue(deletedResponse[0].channel.isDeleted)
-        } catch {
-            XCTFail("\(error)")
+        let randomChannelId = "test_channel_\(Int.random(in: 1000...9999))"
+        let channel = Channel(type: .messaging, id: randomChannelId)
+
+        channel.create { result in
+            do {
+                let channelResponse = try result.get()
+                XCTAssertEqual(channelResponse.channel, channel)
+                self.deleteChannel(channelResponse.channel)
+            } catch {
+                XCTFail("\(error)")
+            }
         }
     }
-    
-    func testQuery() {
-        do {
-            let response = try channel.query()
-                .toBlocking()
-                .toArray()
-            
-            if let response = response.first {
-                XCTAssertEqual(response.channel, channel)
-            } else {
-                XCTFail("Empty query channel response")
+
+    func deleteChannel(_ channel: Channel) {
+        channel.delete { result in
+            do {
+                let deletedChannel = try result.get()
+                XCTAssertTrue(deletedChannel.isDeleted)
+            } catch {
+                XCTFail("\(error)")
             }
-        } catch {
-            XCTFail("\(error)")
-        }   
+        }
+    }
+
+    func testQuery() {
+        channel.query { result in
+            do {
+                let response = try result.get()
+                XCTAssertEqual(response.channel, self.channel)
+            } catch {
+                XCTFail("\(error)")
+            }
+        }
     }
     
     func testSendAndDeleteMessage() {
@@ -60,7 +58,7 @@ final class ChannelTests: TestCase {
         let love = ReactionType.regular("love", emoji: "❤️")
 
         expectRequest("Connected with guest token") { [unowned self] test in
-            self.channel.onEvent(.messageNew)
+            self.channel.rx.onEvent(.messageNew)
                 .map({ event -> Message? in
                     if case .messageNew(let message, _, _, _, _) = event {
                         XCTAssertEqual(message.text, messageText)
@@ -82,7 +80,7 @@ final class ChannelTests: TestCase {
                     XCTFail("Failed to add a like reaction")
                     
                     return nil
-                }
+                })
                 .unwrap()
                 .flatMapLatest { $0.addReaction(type: love) }
                 .map { response -> Message? in
@@ -95,7 +93,7 @@ final class ChannelTests: TestCase {
                     XCTFail("Failed to add a love reaction")
                     
                     return nil
-                }
+                })
                 .unwrap()
                 .flatMapLatest { $0.addReaction(type: love) }
                 .map { response -> Message? in
@@ -108,7 +106,7 @@ final class ChannelTests: TestCase {
                     XCTFail("Failed to add a 2nd love reaction")
                     
                     return nil
-                }
+                })
                 .unwrap()
                 .flatMapLatest { $0.deleteReaction(type: like) }
                 .map { response -> Message? in
@@ -121,24 +119,24 @@ final class ChannelTests: TestCase {
                     XCTFail("Failed to delete a reaction")
                     
                     return nil
-                }
+                })
                 .unwrap()
                 .flatMapLatest { $0.deleteReaction(type: love) }
                 .map { response -> Message? in
                     XCTAssertNil(response.message.reactionScores)
                     return response.message
-                }
+                })
                 .unwrap()
-                .flatMapLatest { $0.delete() }
+                .flatMapLatest { $0.rx.delete() }
                 .subscribe(onNext: { response in
                     XCTAssertTrue(response.message.isDeleted)
                     test.fulfill()
                 })
-                .disposed(by: disposeBag)
+                .disposed(by: self.disposeBag)
             
             let message = Message(text: messageText)
             
-            self.channel.send(message: message)
+            self.channel.rx.send(message: message)
                 .subscribe(onNext: { response in
                     XCTAssertFalse(response.message.id.isEmpty)
                     XCTAssertEqual(response.message.text, messageText)
