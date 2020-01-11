@@ -16,7 +16,7 @@ public extension Client {
     /// - Parameters:
     ///   - deviceToken: a device token.
     ///   - completion: an empty completion block.
-    func addDevice(deviceToken: Data, _ completion: @escaping EmptyClientCompletion) {
+    func addDevice(deviceToken: Data, _ completion: @escaping ClientCompletion<Void>) {
         return rx.addDevice(deviceToken: deviceToken).bindOnce(to: completion)
     }
     
@@ -24,7 +24,7 @@ public extension Client {
     /// - Parameters:
     ///   - deviceId: a Push Notifications device identifier.
     ///   - completion: an empty completion block.
-    func addDevice(deviceId: String, _ completion: @escaping EmptyClientCompletion) {
+    func addDevice(deviceId: String, _ completion: @escaping ClientCompletion<Void>) {
         return rx.addDevice(deviceId: deviceId).bindOnce(to: completion)
     }
     
@@ -38,7 +38,7 @@ public extension Client {
     /// - Parameters:
     ///   - deviceId: a Push Notifications device identifier.
     ///   - completion: an empty completion block.
-    func removeDevice(deviceId: String, _ completion: @escaping EmptyClientCompletion) {
+    func removeDevice(deviceId: String, _ completion: @escaping ClientCompletion<Void>) {
         return rx.removeDevice(deviceId: deviceId).bindOnce(to: completion)
     }
 }
