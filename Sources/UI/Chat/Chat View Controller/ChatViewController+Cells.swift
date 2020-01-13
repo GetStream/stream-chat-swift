@@ -100,7 +100,7 @@ extension ChatViewController {
                                    at: index,
                                    from: message,
                                    tap: { [weak self] in self?.show(attachment: $0, at: $1, from: $2) },
-                                   actionTap: { [weak self] in self?.sendActionForEphemeral(message: $0, button: $1) },
+                                   actionTap: { [weak self] in self?.sendActionForEphemeralMessage($0, button: $1) },
                                    reload: { [weak self] in
                                     if let self = self {
                                         self.tableView.reloadRows(at: [indexPath], with: .none)
