@@ -72,19 +72,16 @@ extension ChannelPresenter {
 // MARK: - Ephemeral Message Actions
 
 extension ChannelPresenter {
+    
     /// Dispatch an ephemeral message action, e.g. shuffle, send.
-    public func dispatch(action: Attachment.Action, message: Message) -> Observable<MessageResponse> {
-        if action.isCancelled || action.isSend {
-            ephemeralSubject.onNext((nil, true))
-            
-            if action.isCancelled {
-                return .empty()
-            }
-        }
-        
-        return channel.rx.send(action: action, for: message)
-            .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
-            .observeOn(MainScheduler.instance)
+    /// - Parameters:
+    ///   - action: an attachment action for the ephemeral message.
+    ///   - message: an ephemeral message
+    ///   - completion: a completion block with `MessageResponse`.
+    public func dispatchEphemeralMessageAction(_ action: Attachment.Action,
+                                               message: Message,
+                                               _ completion: @escaping ClientCompletion<MessageResponse>) {
+        rx.dispatchEphemeralMessageAction(action, message: message).bindOnce(to: completion)
     }
     
     func updateEphemeralMessage(_ message: Message) {
