@@ -108,7 +108,7 @@ open class ChannelsViewController: ViewController {
     }
     
     private func setupChannelsPresenter() {
-        channelsPresenter.changes
+        channelsPresenter.rx.changes
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
     }
