@@ -171,13 +171,13 @@ final class DarkChannelsViewController: ChannelsViewController {
         
         alertController.addAction(.init(title: "Hide", style: .default, handler: { [weak self] _ in
             if let self = self {
-                self.channelsPresenter.hide(channelPresenter).drive().disposed(by: self.disposeBag)
+                self.channelsPresenter.hide(channelPresenter)
             }
         }))
         
         alertController.addAction(.init(title: "Hide and Clear History", style: .default, handler: { [weak self] _ in
             if let self = self {
-                self.channelsPresenter.hide(channelPresenter, clearHistory: true).drive().disposed(by: self.disposeBag)
+                self.channelsPresenter.hide(channelPresenter, clearHistory: true)
             }
         }))
         
