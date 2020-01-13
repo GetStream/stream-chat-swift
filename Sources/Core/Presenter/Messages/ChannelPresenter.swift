@@ -21,9 +21,9 @@ public final class ChannelPresenter: Presenter {
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
     
-    private let channelType: ChannelType
-    private let channelId: String
-    private let channelPublishSubject = PublishSubject<Channel>()
+    let channelType: ChannelType
+    let channelId: String
+    let channelPublishSubject = PublishSubject<Channel>()
     
     private(set) lazy var channelAtomic = Atomic<Channel> { [weak self] channel, oldChannel in
         if let channel = channel {
@@ -38,10 +38,6 @@ public final class ChannelPresenter: Presenter {
     /// A channel (see `Channel`).
     public var channel: Channel { return channelAtomic.get(defaultValue: .unused) }
     
-    /// An observable channel (see `Channel`).
-    public internal(set) lazy var channelDidUpdate: Driver<Channel> = channelPublishSubject
-        .asDriver(onErrorJustReturn: Channel(type: channelType, id: channelId))
-    
     /// A parent message for replies.
     public let parentMessage: Message?
     /// Query options.
@@ -51,7 +47,7 @@ public final class ChannelPresenter: Presenter {
     /// Show statuses separators, e.g. Today
     public private(set) var showStatuses = true
     
-    private var startedTyping = false
+    var startedTyping = false
     let lastMessageAtomic = Atomic<Message>()
     
     /// The last parsed message from WebSocket events.
@@ -94,82 +90,8 @@ public final class ChannelPresenter: Presenter {
     public var eventsFilter: Event.Filter?
     
     /// An observable view changes (see `ViewChanges`).
-    public private(set) lazy var changes =
-        (channel.id.isEmpty
-            // Get a channel with a generated channel id.
-            ? channel.rx.query()
-                .map({ [weak self] channelResponse -> Void in
-                    // Update the current channel.
-                    self?.channelAtomic.set(channelResponse.channel)
-                    return Void()
-                })
-                .asDriver(onErrorJustReturn: ())
-            : Driver.just(()))
-            // Merge all view changes from all sources.
-            .flatMapLatest({ [weak self] _ -> Driver<ViewChanges> in
-                guard let self = self else {
-                    return .empty()
-                }
-                
-                return Driver.merge(
-                    // Messages from requests.
-                    self.parentMessage == nil ? self.parsedMessagesRequest : self.parsedRepliesResponse(self.repliesRequest),
-                    // Messages from database.
-                    self.parentMessage == nil
-                        ? self.parsedChannelResponse(self.messagesDatabaseFetch)
-                        : self.parsedRepliesResponse(self.repliesDatabaseFetch),
-                    // Events from a websocket.
-                    self.webSocketEvents,
-                    self.ephemeralMessageEvents,
-                    self.rx.connectionErrors
-                )
-            })
-    
-    lazy var parsedMessagesRequest = parsedChannelResponse(messagesRequest)
-    
-    private lazy var messagesRequest: Observable<ChannelResponse> = rx.prepareRequest()
-        .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
-        .flatMapLatest { [weak self] pagination -> Observable<ChannelResponse> in
-            if let self = self {
-                return self.channel.rx.query(pagination: pagination, options: self.queryOptions).retry(3)
-            }
-            
-            return .empty()
-    }
-    
-    private lazy var messagesDatabaseFetch: Observable<ChannelResponse> = rx.prepareDatabaseFetch()
-        .filter { [weak self] in $0 != .none && self?.parentMessage == nil }
-        .flatMapLatest({ [weak self] pagination -> Observable<ChannelResponse> in
-            self?.channel.fetch(pagination: pagination) ?? .empty()
-        })
-    
-    private lazy var repliesRequest: Observable<[Message]> = rx.prepareRequest()
-        .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
-        .flatMapLatest { [weak self] in (self?.parentMessage?.rx.replies(pagination: $0) ?? .empty()).retry(3) }
-    
-    private lazy var repliesDatabaseFetch: Observable<[Message]> = rx.prepareDatabaseFetch()
-        .filter { [weak self] in $0 != .none && self?.parentMessage != nil }
-        .flatMapLatest { [weak self] in self?.parentMessage?.fetchReplies(pagination: $0) ?? .empty() }
-    
-    private lazy var webSocketEvents: Driver<ViewChanges> = Client.shared.rx.onEvent(channel: channel)
-        .filter({ [weak self] event in
-            if let eventsFilter = self?.eventsFilter {
-                return eventsFilter(event, self?.channel)
-            }
-            
-            return true
-        })
-        .map { [weak self] in self?.parseEvents(event: $0) ?? .none }
-        .filter { $0 != .none }
-        .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
-        .filter { $0 != .none }
-        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
-    
-    private lazy var ephemeralMessageEvents: Driver<ViewChanges> = ephemeralSubject
-        .skip(1)
-        .map { [weak self] in self?.parseEphemeralMessageEvents($0) ?? .none }
-        .filter { $0 != .none }
-        .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+    lazy var rxChanges: Driver<ViewChanges> = rx.setupChanges()
+    lazy var rxParsedMessagesRequest = rx.parsedChannelResponse(rx.messagesRequest)
     
     /// Uploader for images and files.
     public private(set) lazy var uploader = Uploader()
@@ -206,15 +128,36 @@ public final class ChannelPresenter: Presenter {
     }
 }
 
+// MARK: - Changes
+
+public extension ChannelPresenter {
+    
+    /// Subscribes for `ViewChanges`.
+    /// - Parameter completion: a co    mpletion block with `ViewChanges`.
+    /// - Returns: a subscription.
+    func changes(_ completion: @escaping ClientCompletion<ViewChanges>) -> Subscription {
+        return rx.changes.asObservable().bind(to: completion)
+    }
+    
+    /// An observable channel (see `Channel`).
+    func channelDidUpdate(_ completion: @escaping ClientCompletion<Channel>) -> Subscription {
+        return rx.channelDidUpdate.asObservable().bind(to: completion)
+    }
+}
+
 // MARK: - Send Message
 
 extension ChannelPresenter {
+    
     /// Create a message by sending a text.
-    ///
     /// - Parameters:
     ///     - text: a message text
-    ///     - completion: a completion blocks
-    public func send(text: String) -> Observable<MessageResponse> {
+    ///     - completion: a completion block with `MessageResponse`.
+    public func send(text: String, _ completion: @escaping ClientCompletion<MessageResponse>) {
+        return rx.send(text: text).bindOnce(to: completion)
+    }
+    
+    func createMessage(with text: String) -> Message {
         let messageId = editMessage?.id ?? ""
         var attachments = uploader.items.compactMap({ $0.attachment })
         let parentId = parentMessage?.id
@@ -242,74 +185,31 @@ extension ChannelPresenter {
             }
         }
         
-        let message = Message(id: messageId,
-                              parentId: parentId,
-                              text: text,
-                              attachments: attachments,
-                              mentionedUsers: mentionedUsers,
-                              extraData: extraData,
-                              showReplyInChannel: false)
-        
-        return channel.rx.send(message: message)
-            .do(onNext: { [weak self] in self?.updateEphemeralMessage($0.message) })
-            .observeOn(MainScheduler.instance)
+        return Message(id: messageId,
+                       parentId: parentId,
+                       text: text,
+                       attachments: attachments,
+                       mentionedUsers: mentionedUsers,
+                       extraData: extraData,
+                       showReplyInChannel: false)
     }
 }
 
 // MARK: - Send Event
 
 extension ChannelPresenter {
+    
     /// Send a typing event.
-    public func sendEvent(isTyping: Bool) -> Observable<Event> {
-        guard parentMessage == nil else {
-            return .empty()
-        }
-        
-        if isTyping {
-            if !startedTyping {
-                startedTyping = true
-                return channel.rx.send(eventType: .typingStart).observeOn(MainScheduler.instance)
-            }
-        } else if startedTyping {
-            startedTyping = false
-            return channel.rx.send(eventType: .typingStop).observeOn(MainScheduler.instance)
-        }
-        
-        return .empty()
+    /// - Parameters:
+    ///   - isTyping: a user typing action.
+    ///   - completion: a completion block with `Event`.
+    public func sendEvent(isTyping: Bool, _ completion: @escaping ClientCompletion<Event>) {
+        rx.sendEvent(isTyping: isTyping).bindOnce(to: completion)
     }
     
     /// Send Read event if the app is active.
-    ///
     /// - Returns: an observable completion.
-    public func markReadIfPossible() -> Observable<Void> {
-        guard InternetConnection.shared.isAvailable, channel.config.readEventsEnabled else {
-            return .empty()
-        }
-        
-        guard let unreadMessageRead = unreadMessageReadAtomic.get() else {
-            Client.shared.logger?.log("🎫 Skip read. No unreadMessageRead.")
-            return .empty()
-        }
-        
-        unreadMessageReadAtomic.set(nil)
-        
-        return Observable.just(())
-            .subscribeOn(MainScheduler.instance)
-            .filter { UIApplication.shared.appState == .active }
-            .do(onNext: {
-                Client.shared.logger?.log("🎫 Send Message Read. Unread from \(unreadMessageRead.lastReadDate)")
-            })
-            .flatMapLatest { [weak self] in self?.channel.rx.markRead() ?? .empty() }
-            .do(
-                onNext: { [weak self] _ in
-                    self?.unreadMessageReadAtomic.set(nil)
-                    self?.channel.unreadCountAtomic.set(0)
-                    Client.shared.logger?.log("🎫 Message Read done.")
-                },
-                onError: { [weak self] error in
-                    self?.unreadMessageReadAtomic.set(unreadMessageRead)
-                    Client.shared.logger?.log(error, message: "🎫 Send Message Read error.")
-            })
-            .void()
+    public func markReadIfPossible(_ completion: @escaping ClientCompletion<Void> = { _ in }) {
+        return rx.markReadIfPossible().bindOnce(to: completion)
     }
 }

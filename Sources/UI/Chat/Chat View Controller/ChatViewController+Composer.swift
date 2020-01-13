@@ -166,7 +166,7 @@ extension ChatViewController {
         
         composerView.isEnabled = false
         
-        channelPresenter?.send(text: text)
+        channelPresenter?.rx.send(text: text)
             .subscribe(
                 onNext: { [weak self] messageResponse in
                     if messageResponse.message.type == .error {

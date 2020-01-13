@@ -43,7 +43,7 @@ class CustomChatViewController: ChatViewController {
         
         title = channelPresenter.channel.name
         
-        channelPresenter.channelDidUpdate
+        channelPresenter.rx.channelDidUpdate
             .drive(onNext: { [weak self] channel in
                 self?.title = channelPresenter.channel.name
                 self?.touchMembersCount()
