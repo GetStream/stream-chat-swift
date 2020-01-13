@@ -37,7 +37,7 @@ public extension Channel {
     
     /// Stop watching the channel for a state changes.
     /// - Parameter completion: an empty completion block.
-    func stopWatching(_ completion: @escaping ClientCompletion<Void>) {
+    func stopWatching(_ completion: @escaping ClientCompletion<Void> = { _ in }) {
         return rx.stopWatching().bindOnce(to: completion)
     }
     
@@ -48,7 +48,7 @@ public extension Channel {
     ///   - completion: an empty completion block.
     func hide(for user: User? = User.current,
               clearHistory: Bool = false,
-              _ completion: @escaping ClientCompletion<Void>) {
+              _ completion: @escaping ClientCompletion<Void> = { _ in }) {
         return rx.hide(for: user, clearHistory: clearHistory).bindOnce(to: completion)
     }
     
@@ -56,7 +56,7 @@ public extension Channel {
     /// - Parameters:
     ///   - user: the current user.
     ///   - completion: an empty completion block.
-    func show(for user: User? = User.current, _ completion: @escaping ClientCompletion<Void>) {
+    func show(for user: User? = User.current, _ completion: @escaping ClientCompletion<Void> = { _ in }) {
         return rx.show(for: user).bindOnce(to: completion)
     }
     
@@ -152,7 +152,7 @@ public extension Channel {
     func ban(user: User,
              timeoutInMinutes: Int? = nil,
              reason: String? = nil,
-             _ completion: @escaping ClientCompletion<Void>) {
+             _ completion: @escaping ClientCompletion<Void> = { _ in }) {
         return rx.ban(user: user, timeoutInMinutes: timeoutInMinutes, reason: reason).bindOnce(to: completion)
     }
     
@@ -219,7 +219,7 @@ public extension Channel {
     /// - Parameters:
     ///   - url: an image URL.
     ///   - completion: an empty completion block.
-    func deleteImage(url: URL, _ completion: @escaping ClientCompletion<Void>) {
+    func deleteImage(url: URL, _ completion: @escaping ClientCompletion<Void> = { _ in }) {
         return rx.deleteImage(url: url).bindOnce(to: completion)
     }
     
@@ -227,7 +227,7 @@ public extension Channel {
     /// - Parameters:
     ///   - url: a file URL.
     ///   - completion: an empty completion block.
-    func deleteFile(url: URL, _ completion: @escaping ClientCompletion<Void>) {
+    func deleteFile(url: URL, _ completion: @escaping ClientCompletion<Void> = { _ in }) {
         return rx.deleteFile(url: url).bindOnce(to: completion)
     }
     
