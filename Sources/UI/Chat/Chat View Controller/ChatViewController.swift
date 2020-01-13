@@ -131,7 +131,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         }
         
         if presenter.channel.config.isEmpty {
-            presenter.channelDidUpdate.asObservable()
+            presenter.rx.channelDidUpdate.asObservable()
                 .takeWhile { $0.config.isEmpty }
                 .subscribe(onCompleted: { [weak self] in self?.setupComposerView() })
                 .disposed(by: disposeBag)
@@ -141,7 +141,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         
         composerView.uploader = presenter.uploader
         
-        presenter.changes
+        presenter.rx.changes
             .filter { [weak self] _ in
                 if let self = self {
                     self.needsToReload = self.needsToReload || !self.isVisible
@@ -169,7 +169,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         startGifsAnimations()
-        markReadIfPossible()
+        channelPresenter?.markReadIfPossible()
         
         if let presenter = channelPresenter, (needsToReload || presenter.items != items) {
             let scrollToBottom = items.isEmpty || (scrollEnabled && tableView.bottomContentOffset < bottomThreshold)
@@ -294,10 +294,6 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     open func createActionsContextMenu(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) -> UIMenu? {
         defaultActionsContextMenu(from: cell, for: message, locationInView: locationInView)
     }
-    
-    private func markReadIfPossible() {
-        channelPresenter?.markReadIfPossible().subscribe().disposed(by: disposeBag)
-    }
 }
 
 // MARK: - Title
@@ -345,7 +341,7 @@ extension ChatViewController {
 extension ChatViewController {
     
     private func updateTableView(with changes: ViewChanges) {
-        markReadIfPossible()
+        channelPresenter?.markReadIfPossible()
         
         switch changes {
         case .none, .itemMoved:

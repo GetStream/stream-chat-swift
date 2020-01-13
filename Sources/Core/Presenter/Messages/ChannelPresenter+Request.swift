@@ -14,15 +14,6 @@ import RxCocoa
 
 extension ChannelPresenter {
     
-    func parsedChannelResponse(_ channelResponse: Observable<ChannelResponse>) -> Driver<ViewChanges> {
-        return channelResponse
-            .map { [weak self] in self?.parseResponse($0) ?? .none }
-            .filter { $0 != .none }
-            .map { [weak self] in self?.mapWithEphemeralMessage($0) ?? .none }
-            .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
-    }
-    
     @discardableResult
     func parseResponse(_ response: ChannelResponse) -> ViewChanges {
         channelAtomic.set(response.channel)
@@ -62,13 +53,6 @@ extension ChannelPresenter {
         }
         
         return .reloaded((items.count - 1), items)
-    }
-    
-    func parsedRepliesResponse(_ repliesResponse: Observable<[Message]>) -> Driver<ViewChanges> {
-        return repliesResponse
-            .map { [weak self] in self?.parseReplies($0) ?? .none }
-            .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
     }
     
     func parseReplies(_ messages: [Message]) -> ViewChanges {
