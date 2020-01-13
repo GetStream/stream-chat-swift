@@ -77,6 +77,7 @@
 		8A8BB2A52384573400C2F9DE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A32384573400C2F9DE /* Realm.framework */; };
 		8A8BB2A72384573400C2F9DE /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A42384573400C2F9DE /* RealmSwift.framework */; };
 		8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */; };
+		8A8DFF4C23CC850F0031AC79 /* ChannelsPresenter+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8DFF4B23CC850F0031AC79 /* ChannelsPresenter+Rx.swift */; };
 		8A92BAE923C789A90085184F /* Client+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAE823C789A90085184F /* Client+Users.swift */; };
 		8A92BAEB23C78CFF0085184F /* Client+RxUnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAEA23C78CFF0085184F /* Client+RxUnreadCount.swift */; };
 		8A92BAED23C78D8E0085184F /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAEC23C78D8D0085184F /* Client+Events.swift */; };
@@ -318,6 +319,7 @@
 		8A8BB2A42384573400C2F9DE /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDatabase.swift; sourceTree = "<group>"; };
 		8A8BB2B02384580700C2F9DE /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
+		8A8DFF4B23CC850F0031AC79 /* ChannelsPresenter+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelsPresenter+Rx.swift"; sourceTree = "<group>"; };
 		8A92BAE823C789A90085184F /* Client+Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Users.swift"; sourceTree = "<group>"; };
 		8A92BAEA23C78CFF0085184F /* Client+RxUnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxUnreadCount.swift"; sourceTree = "<group>"; };
 		8A92BAEC23C78D8D0085184F /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
@@ -550,7 +552,7 @@
 			path = "Unit Tests";
 			sourceTree = "<group>";
 		};
-		8A048E4F233226D400FDB3C0 /* Channel Presenter */ = {
+		8A048E4F233226D400FDB3C0 /* Messages */ = {
 			isa = PBXGroup;
 			children = (
 				8AD5ECF622E9BA39005CFAC9 /* ChannelPresenter.swift */,
@@ -559,7 +561,7 @@
 				8A048E5023326D5F00FDB3C0 /* ChannelPresenter+EphemeralMessages.swift */,
 				8A048E5223326E1E00FDB3C0 /* ChannelPresenter+TypingUsers.swift */,
 			);
-			path = "Channel Presenter";
+			path = Messages;
 			sourceTree = "<group>";
 		};
 		8A04964322E9F51C00E94795 /* Presenter */ = {
@@ -569,8 +571,8 @@
 				8A92BAFF23C8D0C30085184F /* Presenter+Rx.swift */,
 				8AD5ECD622E9BA39005CFAC9 /* ViewChanges.swift */,
 				8AD5ECD522E9BA39005CFAC9 /* PresenterItem.swift */,
-				8AD5ED0922E9BA39005CFAC9 /* ChannelsPresenter.swift */,
-				8A048E4F233226D400FDB3C0 /* Channel Presenter */,
+				8A8DFF4D23CC85160031AC79 /* Channels */,
+				8A048E4F233226D400FDB3C0 /* Messages */,
 			);
 			path = Presenter;
 			sourceTree = "<group>";
@@ -687,6 +689,15 @@
 				8AD5907E23957102005903AC /* Filter.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		8A8DFF4D23CC85160031AC79 /* Channels */ = {
+			isa = PBXGroup;
+			children = (
+				8AD5ED0922E9BA39005CFAC9 /* ChannelsPresenter.swift */,
+				8A8DFF4B23CC850F0031AC79 /* ChannelsPresenter+Rx.swift */,
+			);
+			path = Channels;
 			sourceTree = "<group>";
 		};
 		8A92BAF523C8B5370085184F /* Channel */ = {
@@ -1564,6 +1575,7 @@
 				8A048E4E2332259400FDB3C0 /* ChannelPresenter+Events.swift in Sources */,
 				8A04965122EF4B2400E94795 /* UsersQuery.swift in Sources */,
 				8A150E9F232A8D8400330562 /* Database.swift in Sources */,
+				8A8DFF4C23CC850F0031AC79 /* ChannelsPresenter+Rx.swift in Sources */,
 				8A0C2938241678C5008BAB60 /* Environment.swift in Sources */,
 				8A7EE01A2385B33900BDB18D /* BanEnabling.swift in Sources */,
 				8A048E5323326E1E00FDB3C0 /* ChannelPresenter+TypingUsers.swift in Sources */,

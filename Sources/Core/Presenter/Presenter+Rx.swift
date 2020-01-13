@@ -8,12 +8,33 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 extension Presenter: ReactiveCompatible {}
 
+extension Reactive  where Base: Presenter {
+    /// Observe connection errors as `ViewChanges`.
+    var connectionErrors: Driver<ViewChanges> {
+        return Client.shared.rx.connection
+            .map({ connection -> ViewChanges? in
+                if case .disconnected(let error) = connection, let webSocketError = error as? ClientErrorResponse {
+                    return .error(AnyError(error: webSocketError))
+                }
+                
+                if case .notConnected = connection {
+                    return .disconnected
+                }
+                
+                return nil
+            })
+            .unwrap()
+            .asDriver(onErrorJustReturn: .none)
+    }
+}
+
 public extension Reactive  where Base: Presenter {
     
-    // MARK: - Requests
+    // MARK: Requests
     
     /// Prepare a request with pagination when the web socket is connected.
     ///
