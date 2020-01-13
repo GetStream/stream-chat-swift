@@ -138,20 +138,19 @@ Then run: `carthage update --platform iOS --new-resolver`. This will build frame
 - Select the project in the Navigator
 - Select your app target
 - Open `General` panel
-- Click the `+` button in the `Linked Franeworks and Libraries` section
-- Click the `Add Other...` and add `StreamChatCore.framework` in `<Path to your Project>/Carthage/Build/iOS/`
-- Add `StreamChat.framework` if you need UI components
-- Open `Build Phases` panel
+- Open `<Path to your Project>/Carthage/Build/iOS/` in Finder and find `StreamChatCore.framework`, drag and drop it into `Frameworks, Libraries and Embedded Content` area in Xcode. Do the same for `StreamChat.framework` if you need UI components.
+- After adding libraries, select "Do Not Embed" option in "Embed" section. (Right next to the library name after adding it)
+- Open `Build Phases` panel in Xcode
 - Click the `+` button and select `New Run Script Phase`
 - Set the content to: `/usr/local/bin/carthage copy-frameworks`  
 - Add to `Input Files`:
   - `$(SRCROOT)/Carthage/Build/iOS/StreamChatCore.framework`
-  - `$(SRCROOT)/Carthage/Build/iOS/StreamChat.framework`
+  - `$(SRCROOT)/Carthage/Build/iOS/StreamChat.framework` (if you need UI components)
 - Add to `Output Files`:
   - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChatCore.framework`
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChat.framework`
+  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChat.framework` (if you need UI components)
   
-Now build your app.
+Now you can build your app and use `StreamChat`.
 
 ## Supported features
 
