@@ -26,21 +26,6 @@ public class Presenter {
     
     let loadPagination = PublishSubject<Pagination>()
     
-    private(set) lazy var connectionErrors: Driver<ViewChanges> = Client.shared.rx.connection
-        .map { connection -> ViewChanges? in
-            if case .disconnected(let error) = connection, let webSocketError = error as? ClientErrorResponse {
-                return .error(AnyError(error: webSocketError))
-            }
-            
-            if case .notConnected = connection {
-                return .disconnected
-            }
-            
-            return nil
-        }
-        .unwrap()
-        .asDriver(onErrorJustReturn: .none)
-    
     init(pageSize: Pagination) {
         self.pageSize = pageSize
         self.next = pageSize
@@ -62,5 +47,12 @@ public class Presenter {
     
     private func load(pagination: Pagination) {
         loadPagination.onNext(pagination)
+    }
+    
+    /// Observe connection errors as `ViewChanges`.
+    /// - Parameter completion: a completion block with `ViewChanges`.
+    /// - Returns: a subscription.
+    public func connectionErrors(_ completion: @escaping ClientCompletion<ViewChanges>) -> Subscription {
+        rx.connectionErrors.asObservable().bind(to: completion)
     }
 }
