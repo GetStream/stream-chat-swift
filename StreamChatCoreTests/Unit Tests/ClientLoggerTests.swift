@@ -91,10 +91,10 @@ class ClientLoggerTests: XCTestCase {
     
     func testLogEndpointStringsWithInfoLevel() {
         for endpoint in allEndpoints {
-            infoLogger.log("Endpoint: \(String(describing: endpoint))", level: .debug)
+            infoLogger.log("Endpoint: \(String(describing: endpoint))", level: .info)
         }
 
-        XCTAssertEqual(logged.count, allEndpoints.count)
+        XCTAssertEqual(logged.count, allEndpoints.count, "Unexpected log found! \(logged)")
     }
 
     func testLogURLRequestWithInfoLevel() {
@@ -138,7 +138,7 @@ class ClientLoggerTests: XCTestCase {
             return
         }
         for (key, value) in headers {
-            XCTAssert(logged[0].contains("\(key) = \(value)"))
+            XCTAssert(logged[0].contains("\(key) = \(value)"), "Unexpected log found! \(logged)")
         }
     }
 
@@ -152,7 +152,7 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "URL query items:\n▫️ test1=test1\n▫️ test2=test2\n")
+        XCTAssertEqual(logged[0], "URL query items:\n▫️ test1=test1\n▫️ test2=test2\n", "Unexpected log found! \(logged)")
     }
 
     func testLogURLResponseWithInfoLevel() {
@@ -164,7 +164,7 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "⬅️ Response 200 (23 bytes): getstream.io")
+        XCTAssertEqual(logged[0], "⬅️ Response 200 (23 bytes): getstream.io", "Unexpected log found! \(logged)")
     }
 
     func testLogErrorWithInfoLevel() {
@@ -175,7 +175,7 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "❌ test error message Error Domain=test Code=1 \"(null)\" in \(#function)[\(line)]")
+        XCTAssertEqual(logged[0], "❌ test error message Error Domain=test Code=1 \"(null)\" in \(#function)[\(line)]", "Unexpected log found! \(logged)")
     }
 
     func testLogDataWithInfoLevel() {
@@ -185,7 +185,7 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "📦  {\n  \"testKey\" : \"testValue\"\n}")
+        XCTAssertEqual(logged[0], "📦  {\n  \"testKey\" : \"testValue\"\n}", "Unexpected log found! \(logged)")
     }
 
     func testLogMessageWithInfoLevel() {
@@ -195,7 +195,7 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "Some message")
+        XCTAssertEqual(logged[0], "Some message", "Unexpected log found! \(logged)")
     }
     
     // MARK: Debug level logging
@@ -205,7 +205,7 @@ class ClientLoggerTests: XCTestCase {
             debugLogger.log("Endpoint: \(String(describing: endpoint))", level: .debug)
         }
         
-        XCTAssertEqual(logged.count, allEndpoints.count)
+        XCTAssertEqual(logged.count, allEndpoints.count, "Unexpected log found! \(logged)")
     }
     
     func testLogURLRequestWithDebugLevel() {
@@ -244,7 +244,7 @@ class ClientLoggerTests: XCTestCase {
         
         debugLogger.log(headers: headers)
         
-        XCTAssert(logged.isEmpty)
+        XCTAssert(logged.isEmpty, "Unexpected log found! \(logged)")
     }
     
     func testLogQueryItemsWithDebugLevel() {
@@ -257,7 +257,7 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "URL query items:\n▫️ test1=test1\n▫️ test2=test2\n")
+        XCTAssertEqual(logged[0], "URL query items:\n▫️ test1=test1\n▫️ test2=test2\n", "Unexpected log found! \(logged)")
     }
     
     func testLogURLResponseWithDebugLevel() {
@@ -269,7 +269,7 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "⬅️ Response 200 (23 bytes): getstream.io")
+        XCTAssertEqual(logged[0], "⬅️ Response 200 (23 bytes): getstream.io", "Unexpected log found! \(logged)")
     }
     
     func testLogErrorWithDebugLevel() {
@@ -280,13 +280,13 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "❌ test error message Error Domain=test Code=1 \"(null)\" in \(#function)[\(line)]")
+        XCTAssertEqual(logged[0], "❌ test error message Error Domain=test Code=1 \"(null)\" in \(#function)[\(line)]", "Unexpected log found! \(logged)")
     }
     
     func testLogDataWithDebugLevel() {
         debugLogger.log(testData)
         
-        XCTAssert(logged.isEmpty)
+        XCTAssert(logged.isEmpty, "Unexpected log found! \(logged)")
     }
     
     func testLogMessageWithDebugLevel() {
@@ -296,17 +296,17 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "Some message")
+        XCTAssertEqual(logged[0], "Some message", "Unexpected log found! \(logged)")
     }
     
     // MARK: Error level logging
     
     func testLogEndpointStringsWithErrorLevel() {
         for endpoint in allEndpoints {
-            errorLogger.log("Endpoint: \(String(describing: endpoint))", level: .debug)
+            errorLogger.log("Endpoint: \(String(describing: endpoint))", level: .error)
         }
         
-        XCTAssert(logged.isEmpty)
+        XCTAssertEqual(logged.count, allEndpoints.count, "Unexpected log found! \(logged)")
     }
     
     func testLogURLRequestWithErrorLevel() {
@@ -333,7 +333,7 @@ class ClientLoggerTests: XCTestCase {
             errorLogger.log(urlRequest)
         }
         
-        XCTAssert(logged.isEmpty)
+        XCTAssert(logged.isEmpty, "Unexpected log found! \(logged)")
     }
     
     func testLogHeadersWithErrorLevel() {
@@ -345,7 +345,7 @@ class ClientLoggerTests: XCTestCase {
         
         errorLogger.log(headers: headers)
         
-        XCTAssert(logged.isEmpty)
+        XCTAssert(logged.isEmpty, "Unexpected log found! \(logged)")
     }
     
     func testLogQueryItemsWithErrorLevel() {
@@ -354,7 +354,7 @@ class ClientLoggerTests: XCTestCase {
         
         errorLogger.log(queryItems)
         
-        XCTAssert(logged.isEmpty)
+        XCTAssert(logged.isEmpty, "Unexpected log found! \(logged)")
     }
     
     func testLogURLResponseWithErrorLevel() {
@@ -362,7 +362,7 @@ class ClientLoggerTests: XCTestCase {
         
         errorLogger.log(urlResponse, data: testData)
         
-        XCTAssert(logged.isEmpty)
+        XCTAssert(logged.isEmpty, "Unexpected log found! \(logged)")
     }
     
     func testLogErrorWithErrorLevel() {
@@ -373,18 +373,18 @@ class ClientLoggerTests: XCTestCase {
             XCTFail("No logged message!")
             return
         }
-        XCTAssertEqual(logged[0], "❌ test error message Error Domain=test Code=1 \"(null)\" in \(#function)[\(line)]")
+        XCTAssertEqual(logged[0], "❌ test error message Error Domain=test Code=1 \"(null)\" in \(#function)[\(line)]", "Unexpected log found! \(logged)")
     }
     
     func testLogDataWithErrorLevel() {
         errorLogger.log(testData)
         
-        XCTAssert(logged.isEmpty)
+        XCTAssert(logged.isEmpty, "Unexpected log found! \(logged)")
     }
     
     func testLogMessageWithErrorLevel() {
         errorLogger.log("Some message")
         
-        XCTAssert(logged.isEmpty)
+        XCTAssert(logged.isEmpty, "Unexpected log found! \(logged)")
     }
 }
