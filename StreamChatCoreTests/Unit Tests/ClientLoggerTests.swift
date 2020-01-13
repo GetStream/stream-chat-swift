@@ -100,7 +100,7 @@ class ClientLoggerTests: XCTestCase {
             infoLogger.log("Endpoint: \(String(describing: endpoint))", level: .info)
         }
 
-        XCTAssertEqual(logOutput.count, allEndpoints.count, "Unexpected log found! \(logOutput)")
+        XCTAssertEqual(logOutput.filter({ $0.starts(with: "Endpoint:") }).count, allEndpoints.count, "Unexpected log found! \(logOutput)")
     }
 
     func testLogURLRequestWithInfoLevel() {
@@ -211,7 +211,7 @@ class ClientLoggerTests: XCTestCase {
             debugLogger.log("Endpoint: \(String(describing: endpoint))", level: .debug)
         }
         
-        XCTAssertEqual(logOutput.count, allEndpoints.count, "Unexpected log found! \(logOutput)")
+        XCTAssertEqual(logOutput.filter({ $0.starts(with: "Endpoint:") }).count, allEndpoints.count, "Unexpected log found! \(logOutput)")
     }
     
     func testLogURLRequestWithDebugLevel() {
@@ -312,7 +312,7 @@ class ClientLoggerTests: XCTestCase {
             errorLogger.log("Endpoint: \(String(describing: endpoint))", level: .error)
         }
         
-        XCTAssertEqual(logOutput.count, allEndpoints.count, "Unexpected log found! \(logOutput)")
+        XCTAssertEqual(logOutput.filter({ $0.starts(with: "Endpoint:") }).count, allEndpoints.count, "Unexpected log found! \(logOutput)")
     }
     
     func testLogURLRequestWithErrorLevel() {
