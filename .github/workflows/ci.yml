@@ -18,12 +18,14 @@ jobs:
     - uses: actions/checkout@v1
     - name: Cache dependencies
       uses: actions/cache@v1.1.0
+      id: carthage-cache
       with:
         path: Carthage
         key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
         restore-keys: |
           ${{ runner.os }}-carthage-
     - name: Install Carthage dependencies
+      if: steps.carthage-cache.outputs.cache-hit != 'true'
       run: carthage update --platform iOS --new-resolver --no-use-binaries --cache-builds
     - name: Clean and build the StreamChat scheme
       run: xcodebuild clean test -project StreamChat.xcodeproj -scheme StreamChatCore -destination "platform=iOS Simulator,name=iPhone 11 Pro"
