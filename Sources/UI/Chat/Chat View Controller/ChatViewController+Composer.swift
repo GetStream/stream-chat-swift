@@ -485,7 +485,7 @@ extension ChatViewController {
 // MARK: Ephemeral Message Action
 
 extension ChatViewController {
-    func sendActionForEphemeral(message: Message, button: UIButton) {
+    func sendActionForEphemeralMessage(_ message: Message, button: UIButton) {
         let buttonText = button.title(for: .normal)
         
         guard let attachment = message.attachments.first,
@@ -493,6 +493,8 @@ extension ChatViewController {
                 return
         }
         
-        channelPresenter?.dispatch(action: action, message: message).subscribe().disposed(by: disposeBag)
+        channelPresenter?.rx.dispatchEphemeralMessageAction(action, message: message)
+            .subscribe()
+            .disposed(by: disposeBag)
     }
 }

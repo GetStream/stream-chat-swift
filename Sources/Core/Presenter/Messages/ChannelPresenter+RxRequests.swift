@@ -82,6 +82,24 @@ public extension Reactive where Base == ChannelPresenter {
             })
             .void()
     }
+    
+    /// Dispatch an ephemeral message action, e.g. shuffle, send.
+    /// - Parameters:
+    ///   - action: an attachment action for the ephemeral message.
+    ///   - message: an ephemeral message
+    func dispatchEphemeralMessageAction(_ action: Attachment.Action, message: Message) -> Observable<MessageResponse> {
+        if action.isCancelled || action.isSend {
+            base.ephemeralSubject.onNext((nil, true))
+            
+            if action.isCancelled {
+                return .empty()
+            }
+        }
+        
+        return base.channel.rx.send(action: action, for: message)
+            .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
+            .observeOn(MainScheduler.instance)
+    }
 }
 
 extension Reactive where Base == ChannelPresenter {
