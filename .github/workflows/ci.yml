@@ -27,3 +27,5 @@ jobs:
       run: carthage update --platform iOS --new-resolver --no-use-binaries --cache-builds
     - name: Clean and build the StreamChat scheme
       run: xcodebuild clean test -project StreamChat.xcodeproj -scheme StreamChatCore -destination "platform=iOS Simulator,name=iPhone 11 Pro"
+    - name: Post Codecov report
+      run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
