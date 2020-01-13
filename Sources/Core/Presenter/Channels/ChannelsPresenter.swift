@@ -239,7 +239,7 @@ extension ChannelsPresenter {
     }
     
     private func loadChannelMessages(_ channelPresenter: ChannelPresenter) {
-        channelPresenter.parsedMessagesRequest.asObservable()
+        channelPresenter.rxParsedMessagesRequest.asObservable()
             .take(1)
             .subscribe(onNext: { [weak self, weak channelPresenter] _ in
                 guard let self = self,
