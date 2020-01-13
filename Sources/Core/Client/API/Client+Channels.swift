@@ -51,7 +51,7 @@ public extension Client {
     
     /// Mark all messages as readed.
     /// - Parameter completion: an empty completion block.
-    func markAllRead(_ completion: @escaping ClientCompletion<Void>) {
+    func markAllRead(_ completion: @escaping ClientCompletion<Void> = { _ in }) {
         return rx.markAllRead().bindOnce(to: completion)
     }
 }

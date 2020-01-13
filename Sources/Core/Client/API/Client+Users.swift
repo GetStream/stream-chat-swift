@@ -50,7 +50,7 @@ public extension Client {
     /// - Parameters:
     ///   - user: a user.
     ///   - completion: an empty completion block.
-    func unmute(user: User, _ completion: @escaping ClientCompletion<Void>) {
+    func unmute(user: User, _ completion: @escaping ClientCompletion<Void> = { _ in }) {
         return user.unmute().bindOnce(to: completion)
     }
     
