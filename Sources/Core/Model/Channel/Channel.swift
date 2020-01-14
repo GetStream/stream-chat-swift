@@ -80,7 +80,7 @@ public final class Channel: Codable {
         return deleted != nil
     }
     
-    private static var activeChannelIds: [ChannelId] = []
+    static private var activeChannelIds = Set<ChannelId>()
     
     var isActive: Bool {
         return Channel.activeChannelIds.contains(cid)
@@ -202,7 +202,7 @@ public final class Channel: Codable {
         invitedMembers = Set<Member>()
         
         if !isActive {
-            Channel.activeChannelIds.append(cid)
+            Channel.activeChannelIds.insert(cid)
         }
     }
     
