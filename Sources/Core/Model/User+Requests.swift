@@ -13,7 +13,7 @@ import RxSwift
 
 public extension User {
     
-    internal static var flaggedUsers = [User]()
+    internal static var flaggedUsers = Set<User>()
     
     /// Update or create a user.
     ///
@@ -73,7 +73,7 @@ public extension User {
         }
         
         return Client.shared.rx.connectedRequest(flagUnflagUser(endpoint: .flagUser(self))
-            .do(onNext: { _ in User.flaggedUsers.append(self) }))
+            .do(onNext: { _ in User.flaggedUsers.insert(self) }))
     }
      
     /// Unflag a user.

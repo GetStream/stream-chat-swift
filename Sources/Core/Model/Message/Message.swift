@@ -30,7 +30,7 @@ public struct Message: Codable {
         case reactionScores = "reaction_scores"
     }
     
-    static var flaggedIds = [String]()
+    static var flaggedIds = Set<String>()
     
     /// A message id.
     public let id: String

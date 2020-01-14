@@ -206,7 +206,7 @@ extension WebSocket {
             logger?.log(error, message: errorMessage)
             ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
             
-            if !willReconnectAfterError(error) {
+            if !reconnectIfPossible(with: error) {
                 consecutiveFailures = 0
                 
                 if let lastJSONError = lastJSONError, isStopError(error) {
@@ -220,7 +220,7 @@ extension WebSocket {
         return .notConnected
     }
     
-    private func willReconnectAfterError(_ error: Swift.Error) -> Bool {
+    private func reconnectIfPossible(with error: Swift.Error) -> Bool {
         if isStopError(error) {
             return false
         }
