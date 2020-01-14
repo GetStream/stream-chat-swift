@@ -59,7 +59,7 @@ public extension Reactive where Base == Message {
         
         let messageId = base.id
         return Client.shared.rx.connectedRequest(flagUnflagMessage(endpoint: .flagMessage(base))
-            .do(onNext: { _ in Message.flaggedIds.append(messageId) }))
+            .do(onNext: { _ in Message.flaggedIds.insert(messageId) }))
     }
     
     /// Unflag a message.

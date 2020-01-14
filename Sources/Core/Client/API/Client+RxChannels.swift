@@ -23,14 +23,12 @@ public extension Reactive where Base == Client {
             return .empty()
         }
         
-        let query = SearchQuery(filter: filter, query: query, pagination: pagination)
-        
-        if case .none = query.filter {
+        if case .none = filter {
             return .error(SearchQueryError.emptyFilter)
         }
         
+        let query = SearchQuery(filter: filter, query: query, pagination: pagination)
         let searchRequest: Observable<SearchResponse> = request(endpoint: .search(query))
-        
         return connectedRequest(searchRequest.map { $0.messages.compactMap({ $0["message"] }) })
     }
     
