@@ -118,10 +118,10 @@ public final class Client {
     }
     
     /// A subscription for websocket connection status.
-    /// - Parameter completion: a completion block (see `ClientCompletion`).
+    /// - Parameter onNext: a completion block (see `ClientCompletion`).
     /// - Returns: a subscription.
-    public func connection(_ completion: @escaping ClientCompletion<WebSocket.Connection>) -> Subscription {
-        return rxConnection.bind(to: completion)
+    public func connection(_ onNext: @escaping ClientCompletion<WebSocket.Connection>) -> Subscription {
+        return rxConnection.bind(to: onNext)
     }
     
     /// Disconnect from Stream and reset the current user.
