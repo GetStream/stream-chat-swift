@@ -43,34 +43,34 @@ public final class Subscription {
 extension ObservableType {
     
     /// Bind observable result to a completion block.
-    /// - Parameter clientCompletion: a client completion block.
+    /// - Parameter onNext: a client completion block.
     /// - Returns: A subscription.
-    func bind<T>(to clientCompletion: @escaping ClientCompletion<T>) -> Subscription where Element == T {
+    func bind<T>(to onNext: @escaping ClientCompletion<T>) -> Subscription where Element == T {
         let subscription = Subscription()
-        subscribe(to: clientCompletion).disposed(by: subscription.disposeBag)
+        subscribe(to: onNext).disposed(by: subscription.disposeBag)
         return subscription
     }
     
     /// Bind observable for the first event only to a completion block.
-    /// - Parameter clientCompletion: a client completion block.
-    func bindOnce<T>(to clientCompletion: @escaping ClientCompletion<T>) where Element == T {
-        take(1).subscribe(to: clientCompletion).disposed(by: Subscription.shared.disposeBag)
+    /// - Parameter completion: a client completion block.
+    func bindOnce<T>(to completion: @escaping ClientCompletion<T>) where Element == T {
+        take(1).subscribe(to: completion).disposed(by: Subscription.shared.disposeBag)
     }
     
-    private func subscribe<T>(to clientCompletion: @escaping ClientCompletion<T>) -> Disposable where Element == T {
+    private func subscribe<T>(to onNext: @escaping ClientCompletion<T>) -> Disposable where Element == T {
         return subscribe({ event in
             switch event {
             case let .next(element):
-                clientCompletion(.success(element))
+                onNext(.success(element))
                 
             case .completed:
                 break
                 
             case let .error(error):
                 if let clientError = error as? ClientError {
-                    clientCompletion(.failure(clientError))
+                    onNext(.failure(clientError))
                 } else {
-                    clientCompletion(.failure(.unexpectedError(nil, error)))
+                    onNext(.failure(.unexpectedError(nil, error)))
                 }
             }
         })
