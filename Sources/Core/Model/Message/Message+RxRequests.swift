@@ -80,7 +80,7 @@ public extension Reactive where Base == Message {
     }
     
     private func flagUnflagMessage(endpoint: Endpoint) -> Observable<FlagMessageResponse> {
-        let aleradyFlagged = FlagMessageResponse(messageId: base.id, created: Date(), updated: Date())
-        return Client.shared.rx.flagUnflag(endpoint: endpoint, aleradyFlagged: aleradyFlagged)
+        let alreadyFlagged = FlagMessageResponse(messageId: base.id, created: Date(), updated: Date())
+        return Client.shared.rx.flagUnflag(endpoint: endpoint, alreadyFlagged: alreadyFlagged)
     }
 }
