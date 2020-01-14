@@ -63,10 +63,10 @@ public final class WebSocket {
     }
     
     /// Subscribe for websocket response.
-    /// - Parameter completion: a completion block (see `ClientCompletion`).
+    /// - Parameter onNext: a completion block (see `ClientCompletion`).
     /// - Returns: a subscription.
-    public func response(_ completion: @escaping ClientCompletion<WebSocket.Response>) -> Subscription {
-        return rxResponse.bind(to: completion)
+    public func response(_ onNext: @escaping ClientCompletion<WebSocket.Response>) -> Subscription {
+        return rxResponse.bind(to: onNext)
     }
 }
 

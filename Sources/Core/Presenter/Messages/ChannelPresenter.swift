@@ -133,15 +133,15 @@ public final class ChannelPresenter: Presenter {
 public extension ChannelPresenter {
     
     /// Subscribes for `ViewChanges`.
-    /// - Parameter completion: a co    mpletion block with `ViewChanges`.
+    /// - Parameter onNext: a co    mpletion block with `ViewChanges`.
     /// - Returns: a subscription.
-    func changes(_ completion: @escaping ClientCompletion<ViewChanges>) -> Subscription {
-        return rx.changes.asObservable().bind(to: completion)
+    func changes(_ onNext: @escaping ClientCompletion<ViewChanges>) -> Subscription {
+        return rx.changes.asObservable().bind(to: onNext)
     }
     
     /// An observable channel (see `Channel`).
-    func channelDidUpdate(_ completion: @escaping ClientCompletion<Channel>) -> Subscription {
-        return rx.channelDidUpdate.asObservable().bind(to: completion)
+    func channelDidUpdate(_ onNext: @escaping ClientCompletion<Channel>) -> Subscription {
+        return rx.channelDidUpdate.asObservable().bind(to: onNext)
     }
 }
 
