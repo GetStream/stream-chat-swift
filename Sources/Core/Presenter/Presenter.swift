@@ -50,9 +50,9 @@ public class Presenter {
     }
     
     /// Observe connection errors as `ViewChanges`.
-    /// - Parameter completion: a completion block with `ViewChanges`.
+    /// - Parameter onNext: a completion block with `ViewChanges`.
     /// - Returns: a subscription.
-    public func connectionErrors(_ completion: @escaping ClientCompletion<ViewChanges>) -> Subscription {
-        rx.connectionErrors.asObservable().bind(to: completion)
+    public func connectionErrors(_ onNext: @escaping ClientCompletion<ViewChanges>) -> Subscription {
+        rx.connectionErrors.asObservable().bind(to: onNext)
     }
 }
