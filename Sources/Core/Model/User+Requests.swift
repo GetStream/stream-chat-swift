@@ -92,7 +92,7 @@ public extension User {
     
     private func flagUnflagUser(endpoint: Endpoint) -> Observable<FlagUserResponse> {
         return Client.shared.rx.flagUnflag(endpoint: endpoint,
-                                           aleradyFlagged: FlagUserResponse(user: self, created: Date(), updated: Date()))
+                                           alreadyFlagged: FlagUserResponse(user: self, created: Date(), updated: Date()))
     }
 }
 
