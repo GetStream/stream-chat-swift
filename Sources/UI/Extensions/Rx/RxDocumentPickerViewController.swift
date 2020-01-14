@@ -6,7 +6,7 @@
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import StreamChatCore
 import RxSwift
 import RxCocoa
