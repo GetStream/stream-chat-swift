@@ -72,7 +72,7 @@ public extension Reactive where Base == Client {
         return user.unflag()
     }
     
-    func flagUnflag<T: Decodable>(endpoint: Endpoint, aleradyFlagged value: T) -> Observable<T> {
+    func flagUnflag<T: Decodable>(endpoint: Endpoint, alreadyFlagged value: T) -> Observable<T> {
         let flagUnflagRequest: Observable<FlagResponse<T>> = request(endpoint: endpoint)
         
         return flagUnflagRequest.map { $0.flag }
