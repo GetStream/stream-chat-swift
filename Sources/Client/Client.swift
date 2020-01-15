@@ -6,14 +6,15 @@
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
-import RxSwift
-import RxCocoa
+import UIKit
 
 /// A network client.
 public final class Client {
-    /// A request completion block.
+    /// A client completion block type.
     public typealias Completion<T: Decodable> = (Result<T, ClientError>) -> Void
+    /// A token block type.
+    public typealias OnToken = (Token?) -> Void
+    public typealias UserDidUpdate = (User?) -> Void
     
     /// A client config (see `Config`).
     public static var config = Config(apiKey: "")
@@ -37,13 +38,15 @@ public final class Client {
     public internal(set) var database: Database?
     
     var token: Token? {
-        didSet { tokenSubject.onNext(token) }
+        didSet { onToken?(token) }
     }
     
-    let tokenSubject = BehaviorSubject<Token?>(value: nil)
+    /// A token callback.
+    public var onToken: OnToken?
     var tokenProvider: TokenProvider?
-    var expiredTokenDisposeBag = DisposeBag()
     var isExpiredTokenInProgress = false
+    /// A retry requester.
+    public var retryRequester: ClientRetryRequester?
     
     /// A web socket client.
     public internal(set) lazy var webSocket = WebSocket()
@@ -58,22 +61,14 @@ public final class Client {
     let logOptions: ClientLogger.Options
 
     /// An observable user.
-    public internal(set) lazy var userDidUpdate: Driver<User?> = userPublishSubject.asDriver(onErrorJustReturn: nil)
-    private let userPublishSubject = PublishSubject<User?>()
+    public var userDidUpdate: UserDidUpdate?
     
     /// The current user.
     public internal(set) var user: User? {
-        didSet { userPublishSubject.onNext(user) }
+        didSet { userDidUpdate?(user) }
     }
     
     var unreadCountAtomic = Atomic<UnreadCount>((0, 0))
-    
-    /// An observable client web socket connection.
-    /// The connection is responsible for:
-    /// * Checking the Internet connection.
-    /// * Checking the app state, e.g. active, background.
-    /// * Connecting and reconnecting to the web sockets.
-    private(set) lazy var rxConnection = rx.createConnection()
     
     /// Init a network client.
     /// - Parameters:
@@ -120,9 +115,10 @@ public final class Client {
     /// A subscription for websocket connection status.
     /// - Parameter onNext: a completion block (see `ClientCompletion`).
     /// - Returns: a subscription.
-    public func connection(_ onNext: @escaping ClientCompletion<WebSocket.Connection>) -> Subscription {
-        return rxConnection.bind(to: onNext)
-    }
+    #warning("func connection")
+//    public func connection(s_ onNext: @escaping ClientCompletion<WebSocket.Connection>) -> Subscription {
+//        return rxConnection.bind(to: onNext)
+//    }
     
     /// Disconnect from Stream and reset the current user.
     ///
@@ -140,8 +136,15 @@ public final class Client {
         webSocket.disconnect()
         webSocket = WebSocket()
         token = nil
-        Message.flaggedIds = []
-        User.flaggedUsers = []
+        Channel.activeChannelIds.removeAll()
+        Message.flaggedIds.removeAll()
+        User.flaggedUsers.removeAll()
+        
+        DispatchQueue.main.async {
+            if UIApplication.shared.applicationState == .background {
+                InternetConnection.shared.stopObserving()
+            }
+        }
     }
 }
 
@@ -189,5 +192,37 @@ extension Client {
         case get = "GET"
         case post = "POST"
         case delete = "DELETE"
+    }
+}
+
+// MARK: - Retry Requester
+
+/// A retry requester is a helper protocol for implementing retry request logic.
+public protocol ClientRetryRequester {
+    /// You need to reconnect with a new token and retry a request with a given endpoint and completion block.
+    /// When you reconnection was success call `connectedWithNewToken()`.
+    ///
+    /// For example:
+    /// ```
+    /// final class RetryRequester: ClientRetryRequester {
+    ///     func reconnectForExpiredToken<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Client.Completion<T>) {
+    ///         myReconnect {
+    ///           self.connectedWithNewToken()
+    ///           Client.shared.request(endpoint: endpoint, completion)
+    ///         }
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - endpoint: an endpoint.
+    ///   - completion: a completion block with `<T: Decodable>`.
+    func reconnectForExpiredToken<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Client.Completion<T>)
+}
+
+public extension ClientRetryRequester {
+    /// You have to call this function in success reconnect completion block to clear the state of `isExpiredTokenInProgress`.
+    func connectedWithNewToken() {
+        Client.shared.isExpiredTokenInProgress = false
     }
 }

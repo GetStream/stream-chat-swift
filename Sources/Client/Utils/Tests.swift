@@ -8,7 +8,7 @@
 
 import Foundation
 
-func isTests() -> Bool {
+public func isTestsEnvironment() -> Bool {
     #if DEBUG
     return NSClassFromString("XCTest") != nil
     #else

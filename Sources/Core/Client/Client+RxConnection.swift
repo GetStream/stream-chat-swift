@@ -25,19 +25,19 @@ extension Reactive where Base == Client {
         
         let app = UIApplication.shared
         
-        let appState = isTests()
+        let appState = isTestsEnvironment()
             ? .just(.active)
             : app.rx.appState
                 .filter { $0 != .inactive }
                 .distinctUntilChanged()
                 .startWith(app.appState)
-                .do(onNext: { state in
+                .do(onNext: { state in`
                     if Client.shared.logOptions.isEnabled {
                         ClientLogger.log("📱", "App state \(state)")
                     }
                 })
         
-        let internetIsAvailable: Observable<Bool> = isTests()
+        let internetIsAvailable: Observable<Bool> = isTestsEnvironment()
             ? .just(true)
             : InternetConnection.shared.isAvailableObservable
         
@@ -63,6 +63,7 @@ extension Reactive where Base == Client {
             .do(onNext: { [unowned base] in
                 if case .connected(_, let user) = $0 {
                     base.user = user
+                    base.unreadCountAtomic.set((user.channelsUnreadCount, user.messagesUnreadCount))
                 }
             })
             .share(replay: 1)

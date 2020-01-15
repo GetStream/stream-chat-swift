@@ -69,7 +69,7 @@ public final class UploaderItem: Equatable {
     /// The last uploading progress.
     public private(set) var lastProgress: Float = 0
     /// An observable uploading progress.
-    public private(set) lazy var uploading: Observable<ProgressResponse<URL>> = createUploading()
+//    public private(set) lazy var uploading: Observable<ProgressResponse<URL>> = createUploading()
     
     /// Init an uploading item.
     ///
@@ -149,63 +149,63 @@ public final class UploaderItem: Equatable {
         self.attachment = attachment
     }
     
-    private func createUploading() -> Observable<ProgressResponse<URL>> {
-        guard let channel = channel else {
-            return .empty()
-        }
-        
-        let request: Observable<ProgressResponse<URL>>
-        
-        if type == .file || type == .video {
-            if let url = url, let data = try? Data(contentsOf: url) {
-                request = channel.rx.sendFile(fileName: fileName, mimeType: fileType.mimeType, fileData: data)
-            } else {
-                return .error(ClientError.emptyBody(description: "For file at URL: \(url?.absoluteString ?? "<unknown>")"))
-            }
-        } else {
-            let imageData: Data
-            var mimeType: String = fileType.mimeType
-            
-            if let gifData = gifData {
-                imageData = gifData
-                mimeType = AttachmentFileType.gif.mimeType
-            } else if let url = url, let localImageData = try? Data(contentsOf: url) {
-                imageData = localImageData
-            } else if let encodedImageData = image?.jpegData(compressionQuality: 0.9) {
-                imageData = encodedImageData
-                mimeType = AttachmentFileType.jpeg.mimeType
-            } else {
-                let errorDescription = "For image: gifData = \(gifData == nil ? "no" : "yes"), "
-                    + "URL = \(url?.absoluteString ?? "<none>"), "
-                    + "image data: \(image?.description ?? "<none>")"
-                
-                return .error(ClientError.emptyBody(description: errorDescription))
-            }
-            
-            request = channel.rx.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData)
-        }
-        
-        return request
-            .do(onNext: { [weak self] progressResponse in
-                self?.lastProgress = progressResponse.progress
-                
-                guard let self = self, let fileURL = progressResponse.result else {
-                    return
-                }
-                
-                if self.type == .image {
-                    self.attachment = Attachment(type: .image, title: self.fileName, imageURL: fileURL)
-                } else {
-                    let fileAttachment = AttachmentFile(type: self.fileType, size: self.fileSize, mimeType: self.fileType.mimeType)
-                    
-                    self.attachment = Attachment(type: self.type == .video ? .video : .file,
-                                                 title: self.fileName,
-                                                 url: fileURL,
-                                                 file: fileAttachment)
-                }
-            })
-            .share()
-    }
+//    private func createUploading() -> Observable<ProgressResponse<URL>> {
+//        guard let channel = channel else {
+//            return .empty()
+//        }
+//        
+//        let request: Observable<ProgressResponse<URL>>
+//        
+//        if type == .file || type == .video {
+//            if let url = url, let data = try? Data(contentsOf: url) {
+//                request = channel.rx.sendFile(fileName: fileName, mimeType: fileType.mimeType, fileData: data)
+//            } else {
+//                return .error(ClientError.emptyBody(description: "For file at URL: \(url?.absoluteString ?? "<unknown>")"))
+//            }
+//        } else {
+//            let imageData: Data
+//            var mimeType: String = fileType.mimeType
+//            
+//            if let gifData = gifData {
+//                imageData = gifData
+//                mimeType = AttachmentFileType.gif.mimeType
+//            } else if let url = url, let localImageData = try? Data(contentsOf: url) {
+//                imageData = localImageData
+//            } else if let encodedImageData = image?.jpegData(compressionQuality: 0.9) {
+//                imageData = encodedImageData
+//                mimeType = AttachmentFileType.jpeg.mimeType
+//            } else {
+//                let errorDescription = "For image: gifData = \(gifData == nil ? "no" : "yes"), "
+//                    + "URL = \(url?.absoluteString ?? "<none>"), "
+//                    + "image data: \(image?.description ?? "<none>")"
+//                
+//                return .error(ClientError.emptyBody(description: errorDescription))
+//            }
+//            
+//            request = channel.rx.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData)
+//        }
+//        
+//        return request
+//            .do(onNext: { [weak self] progressResponse in
+//                self?.lastProgress = progressResponse.progress
+//                
+//                guard let self = self, let fileURL = progressResponse.result else {
+//                    return
+//                }
+//                
+//                if self.type == .image {
+//                    self.attachment = Attachment(type: .image, title: self.fileName, imageURL: fileURL)
+//                } else {
+//                    let fileAttachment = AttachmentFile(type: self.fileType, size: self.fileSize, mimeType: self.fileType.mimeType)
+//                    
+//                    self.attachment = Attachment(type: self.type == .video ? .video : .file,
+//                                                 title: self.fileName,
+//                                                 url: fileURL,
+//                                                 file: fileAttachment)
+//                }
+//            })
+//            .share()
+//    }
     
     public static func == (lhs: UploaderItem, rhs: UploaderItem) -> Bool {
         return lhs.url == rhs.url

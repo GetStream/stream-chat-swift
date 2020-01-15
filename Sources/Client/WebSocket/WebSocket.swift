@@ -9,16 +9,38 @@
 import UIKit
 import Starscream
 import Reachability
-import RxSwift
-import RxAppState
+
+/// A WebSocket connection callback type.
+public typealias OnConnect = (WebSocket.Connection) -> Void
+/// A WebSocket events callback type.
+public typealias OnEvent = (WebSocket.Event) -> Void
 
 /// A web socket client.
 public final class WebSocket {
     private static let maxBackgroundTime: TimeInterval = 300
+    static var pingTimeInterval = 30
+
+    /// A WebSocket connection callback.
+    public var onConnect: OnConnect? = { _ in }
+    /// A WebSocket events callback.
+    public var onEvent: OnEvent?
     
-    let webSocket: Starscream.WebSocket
-    let stayConnectedInBackground: Bool
-    let logger: ClientLogger?
+    private let webSocket: Starscream.WebSocket
+    private let stayConnectedInBackground: Bool
+    private let logger: ClientLogger?
+    
+    private var webSocketEvent = WebSocket.Event.disconnected(nil) {
+        didSet {
+            onEvent?(webSocketEvent)
+            
+            if let onConnect = onConnect,
+                let connection = parseConnection(appState: UIApplication.shared.applicationState,
+                                                 isInternetAvailable: InternetConnection.shared.isAvailable,
+                                                 event: webSocketEvent) {
+                onConnect(connection)
+            }
+        }
+    }
     
     private(set) var lastJSONError: ClientErrorResponse?
     private(set) var lastConnectionId: String?
@@ -29,19 +51,17 @@ public final class WebSocket {
     private var lastMessageHashValue: Int = 0
     private var lastMessageResponse: Response?
     private let webSocketInitiated: Bool
-
-    private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(30), queue: webSocket.callbackQueue) { [weak self] in
-        self?.logger?.log("🏓", level: .info)
-        self?.webSocket.write(ping: Data())
+    
+    private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval),
+                                                     queue: webSocket.callbackQueue) { [weak self] in
+                                                        self?.logger?.log("🏓", level: .info)
+                                                        self?.webSocket.write(ping: Data())
     }
     
-    /// Check if the web socket is connected.
+    /// Check if the web socket is connected and `connectionId` is not nil.
     public var isConnected: Bool {
         return lastConnectionId != nil && webSocket.isConnected
     }
-    
-    /// An observable event response.
-    private(set) lazy var rxResponse = rx.setupResponse()
     
     init(_ urlRequest: URLRequest, stayConnectedInBackground: Bool = true, logger: ClientLogger? = nil) {
         self.stayConnectedInBackground = stayConnectedInBackground
@@ -49,24 +69,21 @@ public final class WebSocket {
         webSocket = Starscream.WebSocket(request: urlRequest)
         webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
         webSocketInitiated = true
+        webSocket.delegate = self
     }
     
     init() {
         webSocket = .init(url: BaseURL.placeholderURL)
         webSocketInitiated = false
-        stayConnectedInBackground = false
+        stayConnectedInBackground    = false
         logger = nil
     }
     
     deinit {
-        disconnect()
-    }
-    
-    /// Subscribe for websocket response.
-    /// - Parameter onNext: a completion block (see `ClientCompletion`).
-    /// - Returns: a subscription.
-    public func response(_ onNext: @escaping ClientCompletion<WebSocket.Response>) -> Subscription {
-        return rxResponse.bind(to: onNext)
+        if isConnected {
+            logger?.log("💔 Disconnect on deinit")
+            disconnect()
+        }
     }
 }
 
@@ -74,7 +91,15 @@ public final class WebSocket {
 
 extension WebSocket {
     
-    func connect() {
+    /// Connect to websocket.
+    ///
+    /// It's important to parse the connection to finish it. Call `parseConnection` when the connection was established.
+    /// It will happen automatically if you will set `onConnect` callback to observe
+    /// the connection status.
+    /// - Skip if the Internet is not available.
+    /// - Skip if it's already connected.
+    /// - Skip if it's reconnecting.
+    public func connect() {
         guard InternetConnection.shared.isAvailable else {
             disconnectedNoInternet()
             return
@@ -94,7 +119,7 @@ extension WebSocket {
         DispatchQueue.main.async(execute: webSocket.connect)
     }
     
-    func reconnect() {
+    private func reconnect() {
         guard !isReconnecting else {
             return
         }
@@ -109,7 +134,7 @@ extension WebSocket {
         }
     }
     
-    func disconnectInBackground() {
+    private func disconnectInBackground() {
         guard stayConnectedInBackground else {
             disconnect()
             return
@@ -139,7 +164,7 @@ extension WebSocket {
         }
     }
     
-    func cancelBackgroundWork() {
+    private func cancelBackgroundWork() {
         goingToDisconnect?.cancel()
         goingToDisconnect = nil
         
@@ -169,12 +194,6 @@ extension WebSocket {
         }
         
         clearStateAfterDisconnect()
-        
-        DispatchQueue.main.async {
-            if UIApplication.shared.appState == .background {
-                InternetConnection.shared.stopObserving()
-            }
-        }
     }
     
     private func isTokenExpired() -> Bool {
@@ -248,6 +267,7 @@ extension WebSocket {
     private func clearStateAfterDisconnect() {
         handshakeTimer.suspend()
         lastConnectionId = nil
+        onEvent = nil
         cancelBackgroundWork()
     }
     
@@ -260,11 +280,33 @@ extension WebSocket {
     }
 }
 
-// MARK: - Parsing
+// MARK: - Web Socket Delegate
 
-extension WebSocket {
+extension WebSocket: WebSocketDelegate {
     
-    func parseConnection(appState: AppState, isInternetAvailable: Bool, event: WebSocketEvent) -> Connection? {
+    public func websocketDidConnect(socket: Starscream.WebSocketClient) {
+        webSocketEvent = .connected
+    }
+    
+    public func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
+        webSocketEvent = .disconnected(error)
+    }
+    
+    public func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
+        if let webSocketResponse = parseMessage(text) {
+            if case let .healthCheck(_, user) = webSocketResponse.event, user == nil {
+                webSocketEvent = .pong
+            } else {
+                webSocketEvent = .message(webSocketResponse)
+            }
+        }
+    }
+    
+    public func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
+    
+    // MARK: Parsing
+    
+    public func parseConnection(appState: UIApplication.State, isInternetAvailable: Bool, event: WebSocket.Event) -> Connection? {
         guard webSocketInitiated else {
             return .notConnected
         }
@@ -287,18 +329,16 @@ extension WebSocket {
             }
         }
         
-        if case .message = event {
-            if let response = parseMessage(event),
-                case let .healthCheck(connectionId, healthCheckUser) = response.event,
-                let user = healthCheckUser {
-                lastConnectionId = connectionId
-                handshakeTimer.resume()
-                Client.shared.unreadCountAtomic.set((user.channelsUnreadCount, user.messagesUnreadCount))
-                logger?.log("🥰 Connected with id: \(connectionId)")
-                return .connected(connectionId, user)
-            } else if lastJSONError != nil {
-                return nil
-            }
+        if case .message(let response) = event,
+            case let .healthCheck(connectionId, healthCheckUser) = response.event,
+            let user = healthCheckUser {
+            lastConnectionId = connectionId
+            handshakeTimer.resume()
+            logger?.log("🥰 Connected with id: \(connectionId)")
+            return .connected(connectionId, user)
+            
+        } else if lastJSONError != nil {
+            return nil
         }
         
         if appState == .active, !webSocket.isConnected, lastJSONError == nil {
@@ -315,18 +355,11 @@ extension WebSocket {
             return isTokenExpired() ? nil : disconnected(error)
             
         default:
-            break
-        }
-        
-        return nil
-    }
-    
-    func parseMessage(_ event: WebSocketEvent) -> Response? {
-        guard case .message(let message) = event else {
-            lastMessageResponse = nil
             return nil
         }
-        
+    }
+    
+    func parseMessage(_ message: String) -> Response? {
         if lastMessageHashValue == message.hashValue, let response = lastMessageResponse {
             return response
         }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Starscream
 
 extension Client {
     func setupWebSocket(user: User, token: Token) -> WebSocket? {

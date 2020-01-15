@@ -80,7 +80,7 @@ public final class Channel: Codable {
         return deleted != nil
     }
     
-    static private var activeChannelIds = Set<ChannelId>()
+    static var activeChannelIds = Set<ChannelId>()
     
     var isActive: Bool {
         return Channel.activeChannelIds.contains(cid)

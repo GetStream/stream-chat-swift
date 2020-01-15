@@ -68,21 +68,8 @@ extension Client {
             logger.log("Request: \(String(describing: endpoint).prefix(100))...", level: .debug)
         }
         
-        func retryRequestForExpiredToken(_ endpoint: Endpoint) {
-            logger?.log("🀄️ Token expired. The request added to the waiting list", level: .debug)
-            
-            rx.connection.connected()
-                .take(1)
-                .subscribe(onNext: { [unowned self] in
-                    self.logger?.log("Retring the request when token was expired...", level: .debug)
-                    self.isExpiredTokenInProgress = false
-                    self.request(endpoint: endpoint, completion)
-                })
-                .disposed(by: expiredTokenDisposeBag)
-        }
-        
         if isExpiredTokenInProgress {
-            retryRequestForExpiredToken(endpoint)
+            retryRequester?.reconnectForExpiredToken(endpoint: endpoint, completion)
             return URLSessionDataTask()
         }
         
@@ -104,7 +91,8 @@ extension Client {
                 self.parse(data: $0, response: $1, error: $2, completion: completion)
                 
                 if self.isExpiredTokenInProgress {
-                    retryRequestForExpiredToken(endpoint)
+                    self.logger?.log("Reconnect and retry a request when the token was expired...", level: .debug)
+                    self.retryRequester?.reconnectForExpiredToken(endpoint: endpoint, completion)
                 }
             }
             

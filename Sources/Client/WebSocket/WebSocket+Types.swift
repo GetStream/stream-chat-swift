@@ -8,18 +8,38 @@
 
 import Foundation
 
-extension WebSocket {
+/// A typealias for thew Client `Event`.
+public typealias ClientEvent = Event
+
+public extension WebSocket {
     
     /// WebSocket Error
     struct ErrorContainer: Decodable {
-        let error: ClientErrorResponse
+        /// A server error was recieved.
+        public let error: ClientErrorResponse
     }
     
+    /// A websocket event.
+    enum Event {
+        /// The websocket was connected. The `connectiondId` recieved.
+        case connected
+        /// The websocket was disconnected with an error or it wasn't connected.
+        case disconnected(Error?)
+        /// A `Response` was recieved.
+        case message(Response)
+        /// A  pong event.
+        case pong
+    }
+
     /// A web socket connection state.
-    public enum Connection: Equatable {
+    enum Connection: Equatable {
+        /// The websocket is not connected.
         case notConnected
+        /// The websocket was connected, waiting for a `connectionId` for requests.
         case connecting
+        /// The websocket was connected. The `connectiondId` and `User` was recieved.
         case connected(_ connectionId: String, User)
+        /// The websocket was disconnected with an error.
         case disconnected(Swift.Error)
         
         /// Check if the web socket is connected.
@@ -46,7 +66,7 @@ extension WebSocket {
     }
     
     /// A web socket event response.
-    public struct Response: Decodable {
+    struct Response: Decodable {
         private enum CodingKeys: String, CodingKey {
             case cid = "cid"
             case created = "created_at"
@@ -57,14 +77,14 @@ extension WebSocket {
         /// A channel type and id.
         public let cid: ChannelId?
         /// An web socket event.
-        public let event: Event
+        public let event: ClientEvent
         /// A created date.
         public let created: Date
         
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
-            event = try Event(from: decoder)
+            event = try ClientEvent(from: decoder)
             created = try container.decode(Date.self, forKey: .created)
         }
     }
