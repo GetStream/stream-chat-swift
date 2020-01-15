@@ -10,9 +10,6 @@ import Foundation
 
 // MARK: Unread Count
 
-/// A tuple for unread counts of channels and messages.
-public typealias UnreadCount = (channels: Int, messages: Int)
-
 extension Client {
     
     /// Observe an unread count of messages in the channel.

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-@testable import StreamChatCore
+@testable import StreamChatClient
 
 extension User {
     static let user1 = User(id: "broken-waterfall-5", name: "Jon Snow", avatarURL: URL(string: "https://bit.ly/2u9Vc0r"))
