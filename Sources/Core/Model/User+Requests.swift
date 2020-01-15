@@ -13,8 +13,6 @@ import RxSwift
 
 public extension User {
     
-    internal static var flaggedUsers = Set<User>()
-    
     /// Update or create a user.
     ///
     /// - Returns: an observable updated user.
@@ -93,48 +91,5 @@ public extension User {
     private func flagUnflagUser(endpoint: Endpoint) -> Observable<FlagUserResponse> {
         return Client.shared.rx.flagUnflag(endpoint: endpoint,
                                            alreadyFlagged: FlagUserResponse(user: self, created: Date(), updated: Date()))
-    }
-}
-
-/// A response with a list of users.
-public struct UsersResponse: Decodable {
-    /// A list of users.
-    public let users: [User]
-}
-
-/// A response with a list of users by id.
-public struct UpdatedUsersResponse: Decodable {
-    /// A list of users by Id.
-    public let users: [String: User]
-}
-
-/// A response with a list of devices.
-public struct DevicesResponse: Decodable {
-    /// A list of devices.
-    public let devices: [Device]
-}
-
-/// A request object to ban a user.
-public struct UserBan: Encodable {
-    private enum CodingKeys: String, CodingKey {
-        case userId = "target_user_id"
-        case channelType = "type"
-        case channelId = "id"
-        case timeoutInMinutes = "timeout"
-        case reason
-    }
-    
-    let userId: String
-    let channelType: ChannelType
-    let channelId: String
-    let timeoutInMinutes: Int?
-    let reason: String?
-    
-    init(user: User, channel: Channel, timeoutInMinutes: Int?, reason: String?) {
-        userId = user.id
-        channelType = channel.type
-        channelId = channel.id
-        self.timeoutInMinutes = timeoutInMinutes
-        self.reason = reason
     }
 }
