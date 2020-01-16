@@ -134,6 +134,8 @@ extension Client {
         }
         
         database?.user = user
+        webSocket.onConnect = onConnect
+        webSocket.onEvent = onEvent
         self.webSocket = webSocket
         urlSession = setupURLSession(token: token)
         self.token = token

@@ -30,7 +30,7 @@ public extension WebSocket {
         /// A  pong event.
         case pong
     }
-
+    
     /// A web socket connection state.
     enum Connection: Equatable {
         /// The websocket is not connected.

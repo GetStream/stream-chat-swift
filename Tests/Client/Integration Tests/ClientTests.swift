@@ -1,5 +1,5 @@
 //
-//  Client.swift
+//  ClientTests.swift
 //  StreamChatClientTests
 //
 //  Created by Alexey Bukhtin on 15/01/2020.
@@ -9,36 +9,40 @@
 import XCTest
 @testable import StreamChatClient
 
-class ClientTests: TestCase {
+final class ClientTests: TestCase {
 
     func testConnection() {
         expect("WebSocket connection") { expectation in
             TestCase.setupClientUser()
-            Client.shared.webSocket.onConnect = { connection in
+            
+            Client.shared.onConnect = { connection in
                 if case .connected(let connectionId, _) = connection {
                     XCTAssertTrue(!connectionId.isEmpty)
-                    XCTAssertTrue(Client.shared.webSocket.isConnected)
+                    XCTAssertTrue(Client.shared.isConnected)
                     Client.shared.disconnect()
-                    XCTAssertFalse(Client.shared.webSocket.isConnected)
+                    XCTAssertFalse(Client.shared.isConnected)
+                    Client.shared.onConnect = { _ in }
                     expectation.fulfill()
                 }
             }
-
-            Client.shared.webSocket.connect()
+            
+            Client.shared.connect()
         }
     }
     
     func testPong() {
-        expect("WebSocket waiting for pong", timeout: 40) { expectation in
+        expect("WebSocket waiting for pong") { expectation in
             TestCase.setupClientUser()
             
-            Client.shared.webSocket.onEvent = { event in
+            Client.shared.onEvent = { event in
                 if case .pong = event {
+                    Client.shared.disconnect()
+                    Client.shared.onEvent = { _ in }
                     expectation.fulfill()
                 }
             }
             
-            Client.shared.webSocket.connect()
+            Client.shared.connect()
         }
     }
 }
