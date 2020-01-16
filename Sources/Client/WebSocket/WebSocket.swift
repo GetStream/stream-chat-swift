@@ -10,20 +10,15 @@ import UIKit
 import Starscream
 import Reachability
 
-/// A WebSocket connection callback type.
-public typealias OnConnect = (WebSocket.Connection) -> Void
-/// A WebSocket events callback type.
-public typealias OnEvent = (WebSocket.Event) -> Void
-
 /// A web socket client.
 public final class WebSocket {
     private static let maxBackgroundTime: TimeInterval = 300
     static var pingTimeInterval = 30
-
+    
     /// A WebSocket connection callback.
-    public var onConnect: OnConnect? = { _ in }
+    var onConnect: Client.OnConnect = { _ in }
     /// A WebSocket events callback.
-    public var onEvent: OnEvent?
+    var onEvent: Client.OnEvent = { _ in }
     
     private let webSocket: Starscream.WebSocket
     private let stayConnectedInBackground: Bool
@@ -31,12 +26,11 @@ public final class WebSocket {
     
     private var webSocketEvent = WebSocket.Event.disconnected(nil) {
         didSet {
-            onEvent?(webSocketEvent)
+            onEvent(webSocketEvent)
             
-            if let onConnect = onConnect,
-                let connection = parseConnection(appState: UIApplication.shared.applicationState,
-                                                 isInternetAvailable: InternetConnection.shared.isAvailable,
-                                                 event: webSocketEvent) {
+            if let connection = parseConnection(appState: UIApplication.shared.applicationState,
+                                                isInternetAvailable: InternetConnection.shared.isAvailable,
+                                                event: webSocketEvent) {
                 onConnect(connection)
             }
         }
@@ -58,8 +52,8 @@ public final class WebSocket {
                                                         self?.webSocket.write(ping: Data())
     }
     
-    /// Check if the web socket is connected and `connectionId` is not nil.
-    public var isConnected: Bool {
+    /// Checks if the web socket is connected and `connectionId` is not nil.
+    var isConnected: Bool {
         return lastConnectionId != nil && webSocket.isConnected
     }
     
@@ -92,14 +86,11 @@ public final class WebSocket {
 extension WebSocket {
     
     /// Connect to websocket.
-    ///
-    /// It's important to parse the connection to finish it. Call `parseConnection` when the connection was established.
-    /// It will happen automatically if you will set `onConnect` callback to observe
-    /// the connection status.
+    /// - Note:
     /// - Skip if the Internet is not available.
     /// - Skip if it's already connected.
     /// - Skip if it's reconnecting.
-    public func connect() {
+    func connect() {
         guard InternetConnection.shared.isAvailable else {
             disconnectedNoInternet()
             return
@@ -111,7 +102,7 @@ extension WebSocket {
         
         if webSocket.isConnected || isReconnecting {
             logger?.log("Skip connecting: isConnected = \(webSocket.isConnected), isReconnecting = \(isReconnecting)")
-           return
+            return
         }
         
         logger?.log("❤️ Connecting...")
@@ -267,7 +258,6 @@ extension WebSocket {
     private func clearStateAfterDisconnect() {
         handshakeTimer.suspend()
         lastConnectionId = nil
-        onEvent = nil
         cancelBackgroundWork()
     }
     

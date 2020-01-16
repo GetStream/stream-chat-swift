@@ -14,6 +14,11 @@ public final class Client {
     public typealias Completion<T: Decodable> = (Result<T, ClientError>) -> Void
     /// A token block type.
     public typealias OnToken = (Token?) -> Void
+    /// A WebSocket connection callback type.
+    public typealias OnConnect = (WebSocket.Connection) -> Void
+    /// A WebSocket events callback type.
+    public typealias OnEvent = (WebSocket.Event) -> Void
+    /// A user did update block type.
     public typealias UserDidUpdate = (User?) -> Void
     
     /// A client config (see `Config`).
@@ -51,6 +56,16 @@ public final class Client {
     /// A web socket client.
     public internal(set) lazy var webSocket = WebSocket()
     
+    /// A WebSocket connection callback.
+    var onConnect: Client.OnConnect = { _ in } {
+        didSet { webSocket.onConnect = onConnect }
+    }
+    
+    /// A WebSocket events callback.
+    var onEvent: Client.OnEvent = { _ in } {
+        didSet { webSocket.onEvent = onEvent }
+    }
+    
     lazy var urlSession = setupURLSession(token: "")
     private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
     let callbackQueue: DispatchQueue?
@@ -66,6 +81,11 @@ public final class Client {
     /// The current user.
     public internal(set) var user: User? {
         didSet { userDidUpdate?(user) }
+    }
+    
+    /// Check if API key and token are valid and the web socket is connected.
+    public var isConnected: Bool {
+        return !apiKey.isEmpty && (token?.isValidToken() ?? false) && webSocket.isConnected
     }
     
     var unreadCountAtomic = Atomic<UnreadCount>((0, 0))
@@ -111,14 +131,14 @@ public final class Client {
             Thread.callStackSymbols.forEach { ClientLogger.logger("", "", $0) }
         }
     }
-    
-    /// A subscription for websocket connection status.
-    /// - Parameter onNext: a completion block (see `ClientCompletion`).
-    /// - Returns: a subscription.
-    #warning("func connection")
-//    public func connection(s_ onNext: @escaping ClientCompletion<WebSocket.Connection>) -> Subscription {
-//        return rxConnection.bind(to: onNext)
-//    }
+    /// Connect to websocket.
+    /// - Note:
+    ///   - Skip if the Internet is not available.
+    ///   - Skip if it's already connected.
+    ///   - Skip if it's reconnecting.
+    public func connect() {
+        webSocket.connect()
+    }
     
     /// Disconnect from Stream and reset the current user.
     ///
@@ -147,6 +167,8 @@ public final class Client {
         }
     }
 }
+
+// MARK: - Config
 
 extension Client {
     /// A config for a shread `Client`.
