@@ -77,7 +77,7 @@ public final class Client {
     /// A log manager.
     public let logger: ClientLogger?
     let logOptions: ClientLogger.Options
-
+    
     /// An observable user.
     public var userDidUpdate: UserDidUpdate?
     
