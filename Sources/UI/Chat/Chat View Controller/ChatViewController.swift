@@ -51,14 +51,13 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     
     /// Calculates the bottom inset for the `ComposerView` when the keyboard will appear.
     open var calculatedSafeAreaBottom: CGFloat {
-        var bottom = view.safeAreaInsets.bottom
-        bottom = bottom > 0 ? bottom : (parent?.view.safeAreaInsets.bottom ?? 0)
-        
-        if let tabBar = tabBarController?.tabBar, !tabBar.isTranslucent {
-            bottom += tabBar.frame.height
+        if let tabBar = tabBarController?.tabBar, !tabBar.isTranslucent, !hidesBottomBarWhenPushed {
+            return tabBar.frame.height
+        } else {
+            var bottom = view.safeAreaInsets.bottom
+            bottom = bottom > 0 ? bottom : (parent?.view.safeAreaInsets.bottom ?? 0)
+            return bottom
         }
-        
-        return bottom
     }
     
     /// Attachments file types for thw composer view.
