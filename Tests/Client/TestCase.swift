@@ -32,11 +32,7 @@ class TestCase: XCTestCase {
 
 extension XCTestCase {
     
-    func expectRequest(_ description: String, callback: (_ test: XCTestExpectation) -> Void) {
-        expect(description, timeout: 5, callback: callback)
-    }
-    
-    func expect(_ description: String, timeout: TimeInterval = TimeInterval(1), callback: (_ test: XCTestExpectation) -> Void) {
+    func expect(_ description: String, timeout: TimeInterval = TimeInterval(5), callback: (_ test: XCTestExpectation) -> Void) {
         let test = expectation(description: "⏳ expecting \(description)")
         callback(test)
         wait(for: [test], timeout: timeout)
