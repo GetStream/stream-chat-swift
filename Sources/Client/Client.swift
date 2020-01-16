@@ -74,7 +74,7 @@ public final class Client {
     /// A log manager.
     public let logger: ClientLogger?
     let logOptions: ClientLogger.Options
-
+    
     /// An observable user.
     public var userDidUpdate: UserDidUpdate?
     
@@ -99,11 +99,11 @@ public final class Client {
     ///                                  start a background task to stay connected for 5 min
     ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
     init(apiKey: String = Client.config.apiKey,
-                baseURL: BaseURL = Client.config.baseURL,
-                callbackQueue: DispatchQueue? = Client.config.callbackQueue,
-                stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
-                database: Database? = Client.config.database,
-                logOptions: ClientLogger.Options = Client.config.logOptions) {
+         baseURL: BaseURL = Client.config.baseURL,
+         callbackQueue: DispatchQueue? = Client.config.callbackQueue,
+         stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
+         database: Database? = Client.config.database,
+         logOptions: ClientLogger.Options = Client.config.logOptions) {
         if !apiKey.isEmpty, logOptions.isEnabled {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Client.version)")
             ClientLogger.logger("🔑", "", apiKey)
