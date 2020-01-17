@@ -34,7 +34,21 @@ public struct Member: Codable {
     public let inviteAccepted: Date?
     /// A date when an invited was rejected.
     public let inviteRejected: Date?
-
+    
+    /// Checks if the member is the current user.
+    public var isCurrent: Bool {
+        if let currentUser = Client.shared.user {
+            return currentUser == user
+        }
+        
+        return false
+    }
+    
+    /// The current user as a Member.
+    public static var current: Member? {
+        return User.current?.asMember
+    }
+    
     /// Init a member.
     ///
     /// - Parameters:

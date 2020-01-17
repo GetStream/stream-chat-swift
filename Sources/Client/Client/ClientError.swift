@@ -40,7 +40,10 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     case errorMessage(Message)
     /// A device token is empty.
     case emptyDeviceToken
-
+    
+    case channelsSearchQueryEmpty
+    case channelsSearchFilterEmpty
+    
     /// Internal error.
     public var error: Error? {
         switch self {
@@ -85,19 +88,17 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             
             return "A request failed with unknown error"
             
-        case .responseError(let error):
-            return error.localizedDescription
-        case .encodingFailure(let error, _):
-            return "An encoding failed: \(error.localizedDescription)"
-        case .decodingFailure(let error):
-            return "A decoding failed: \(error.localizedDescription)"
-        case .errorMessage(let message):
-            return message.text
-        case .emptyDeviceToken:
-            return "A device token is empty"
+        case .responseError(let error): return error.localizedDescription
+        case .encodingFailure(let error, _): return "An encoding failed: \(error.localizedDescription)"
+        case .decodingFailure(let error): return "A decoding failed: \(error.localizedDescription)"
+        case .errorMessage(let message): return message.text
+        case .emptyDeviceToken: return "A device token is empty"
+            
+        case .channelsSearchQueryEmpty: return "A channels search query is empty"
+        case .channelsSearchFilterEmpty: return "Filter can't be an empty for the message search"
         }
     }
-
+    
     public var debugDescription: String {
         switch self {
         case .unexpectedError(let description, let error):
@@ -152,7 +153,7 @@ public struct ClientErrorResponse: LocalizedError, Decodable, CustomDebugStringC
     public var errorDescription: String? {
         return "Error #\(code): \(message)"
     }
-
+    
     public var debugDescription: String {
         return "ClientErrorResponse(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
     }
@@ -170,7 +171,7 @@ public struct AnyError: Error, Equatable, CustomDebugStringConvertible {
     public var debugDescription: String {
         return "AnyError(error: \(error))"
     }
-
+    
     public static func == (lhs: AnyError, rhs: AnyError) -> Bool {
         return lhs.error.localizedDescription == rhs.error.localizedDescription
     }
@@ -180,14 +181,14 @@ public struct AnyError: Error, Equatable, CustomDebugStringConvertible {
 public enum EncodingError: Error, LocalizedError, CustomDebugStringConvertible {
     /// Attachment's type not supported
     case attachmentUnsupported
-
+    
     public var errorDescription: String? {
         switch self {
         case .attachmentUnsupported:
             return "This attachment type is not supported"
         }
     }
-
+    
     public var debugDescription: String {
         switch self {
         case .attachmentUnsupported:
