@@ -236,3 +236,19 @@ public struct UserBan: Encodable {
         self.reason = reason
     }
 }
+
+/// A flag message response.
+public struct FlagUserResponse: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case user = "target_user"
+        case created = "created_at"
+        case updated = "updated_at"
+    }
+    
+    /// A flagged user.
+    public let user: User
+    /// A created date.
+    public let created: Date
+    /// A updated date.
+    public let updated: Date
+}
