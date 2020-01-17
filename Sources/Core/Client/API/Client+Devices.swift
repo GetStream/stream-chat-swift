@@ -16,7 +16,7 @@ public extension Client {
     /// - Parameters:
     ///   - deviceToken: a device token.
     ///   - completion: an empty completion block.
-    func addDevice(deviceToken: Data, _ completion: @escaping ClientCompletion<Void> = { _ in }) {
+    func addDevice(deviceToken: Data, _ completion: @escaping Client.Completion<Void> = { _ in }) {
         return rx.addDevice(deviceToken: deviceToken).bindOnce(to: completion)
     }
     
@@ -24,13 +24,13 @@ public extension Client {
     /// - Parameters:
     ///   - deviceId: a Push Notifications device identifier.
     ///   - completion: an empty completion block.
-    func addDevice(deviceId: String, _ completion: @escaping ClientCompletion<Void> = { _ in }) {
+    func addDevice(deviceId: String, _ completion: @escaping Client.Completion<Void> = { _ in }) {
         return rx.addDevice(deviceId: deviceId).bindOnce(to: completion)
     }
     
     /// Request az list if devices.
     /// - Parameter completion: a completion block wiith `[Device]`.
-    func requestDevices(_ completion: @escaping ClientCompletion<[Device]>) {
+    func requestDevices(_ completion: @escaping Client.Completion<[Device]>) {
         return rx.requestDevices().bindOnce(to: completion)
     }
     
@@ -38,7 +38,7 @@ public extension Client {
     /// - Parameters:
     ///   - deviceId: a Push Notifications device identifier.
     ///   - completion: an empty completion block.
-    func removeDevice(deviceId: String, _ completion: @escaping ClientCompletion<Void> = { _ in }) {
+    func removeDevice(deviceId: String, _ completion: @escaping Client.Completion<Void> = { _ in }) {
         return rx.removeDevice(deviceId: deviceId).bindOnce(to: completion)
     }
 }

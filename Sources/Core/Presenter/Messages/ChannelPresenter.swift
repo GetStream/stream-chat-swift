@@ -135,12 +135,12 @@ public extension ChannelPresenter {
     /// Subscribes for `ViewChanges`.
     /// - Parameter onNext: a co    mpletion block with `ViewChanges`.
     /// - Returns: a subscription.
-    func changes(_ onNext: @escaping ClientCompletion<ViewChanges>) -> Subscription {
+    func changes(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
         return rx.changes.asObservable().bind(to: onNext)
     }
     
     /// An observable channel (see `Channel`).
-    func channelDidUpdate(_ onNext: @escaping ClientCompletion<Channel>) -> Subscription {
+    func channelDidUpdate(_ onNext: @escaping Client.Completion<Channel>) -> Subscription {
         return rx.channelDidUpdate.asObservable().bind(to: onNext)
     }
 }
@@ -153,7 +153,7 @@ extension ChannelPresenter {
     /// - Parameters:
     ///     - text: a message text
     ///     - completion: a completion block with `MessageResponse`.
-    public func send(text: String, _ completion: @escaping ClientCompletion<MessageResponse>) {
+    public func send(text: String, _ completion: @escaping Client.Completion<MessageResponse>) {
         return rx.send(text: text).bindOnce(to: completion)
     }
     
@@ -203,13 +203,13 @@ extension ChannelPresenter {
     /// - Parameters:
     ///   - isTyping: a user typing action.
     ///   - completion: a completion block with `Event`.
-    public func sendEvent(isTyping: Bool, _ completion: @escaping ClientCompletion<Event>) {
+    public func sendEvent(isTyping: Bool, _ completion: @escaping Client.Completion<Event>) {
         rx.sendEvent(isTyping: isTyping).bindOnce(to: completion)
     }
     
     /// Send Read event if the app is active.
     /// - Returns: an observable completion.
-    public func markReadIfPossible(_ completion: @escaping ClientCompletion<Void> = { _ in }) {
+    public func markReadIfPossible(_ completion: @escaping Client.Completion<Void> = { _ in }) {
         return rx.markReadIfPossible().bindOnce(to: completion)
     }
 }
