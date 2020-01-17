@@ -38,7 +38,10 @@ public enum ClientError: LocalizedError {
     case errorMessage(Message)
     /// A device token is empty.
     case emptyDeviceToken
-
+    
+    case channelsSearchQueryEmpty
+    case channelsSearchFilterEmpty
+    
     /// Internal error.
     public var error: Error? {
         switch self {
@@ -70,20 +73,13 @@ public enum ClientError: LocalizedError {
             
             return errorDescription
             
-        case .emptyAPIKey:
-            return "The Client API Key is empty"
-        case .emptyToken:
-            return "A Client Token is empty"
-        case .tokenInvalid(let description):
-            return "Token is invalid: \(description)"
-        case .emptyUser:
-            return "The current Client user is empty"
-        case .emptyConnectionId:
-            return "A Web Socket connection id is empty. Authorization missed"
-        case .emptyBody(let description):
-            return "A request or response body data is empty: \(description)"
-        case .invalidURL(let url):
-            return "An invalid URL: \(url ?? "<unknown>")"
+        case .emptyAPIKey: return "The Client API Key is empty"
+        case .emptyToken: return "A Client Token is empty"
+        case .tokenInvalid(let description): return "Token is invalid: \(description)"
+        case .emptyUser: return "The current Client user is empty"
+        case .emptyConnectionId: return "A Web Socket connection id is empty. Authorization missed"
+        case .emptyBody(let description): return "A request or response body data is empty: \(description)"
+        case .invalidURL(let url): return "An invalid URL: \(url ?? "<unknown>")"
             
         case .requestFailed(let error):
             if let error = error {
@@ -92,16 +88,14 @@ public enum ClientError: LocalizedError {
             
             return "A request failed with unknown error"
             
-        case .responseError(let error):
-            return "A response failed: \(error)"
-        case .encodingFailure(let error, let object):
-            return "A encoding failed: \(error) for object: \(object)"
-        case .decodingFailure(let error):
-            return "A decoding failed: \(error)"
-        case .errorMessage(let message):
-            return message.text
-        case .emptyDeviceToken:
-            return "A device token is empty"
+        case .responseError(let error): return "A response failed: \(error)"
+        case .encodingFailure(let error, let object): return "A encoding failed: \(error) for object: \(object)"
+        case .decodingFailure(let error): return "A decoding failed: \(error)"
+        case .errorMessage(let message): return message.text
+        case .emptyDeviceToken: return "A device token is empty"
+            
+        case .channelsSearchQueryEmpty: return "A channels search query is empty"
+        case .channelsSearchFilterEmpty: return "Filter can't be an empty for the message search"
         }
     }
 }

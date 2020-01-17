@@ -1,5 +1,5 @@
 //
-//  ClientTests.swift
+//  ClientTests00.swift
 //  StreamChatClientTests
 //
 //  Created by Alexey Bukhtin on 15/01/2020.
@@ -9,10 +9,14 @@
 import XCTest
 @testable import StreamChatClient
 
-final class ClientTests: TestCase {
-
-    func testConnection() {
-        expect("WebSocket connection") { expectation in
+final class ClientTests00: TestCase {
+    
+    override var connectByDefault: Bool {
+        return false
+    }
+    
+    func test00WebSocketConnection() {
+        expect("WebSocket connected") { expectation in
             TestCase.setupClientUser()
             
             Client.shared.onConnect = { connection in
@@ -30,8 +34,8 @@ final class ClientTests: TestCase {
         }
     }
     
-    func testPong() {
-        expect("WebSocket waiting for pong") { expectation in
+    func test01WebSocketPong() {
+        expect("WebSocket recieved a pong") { expectation in
             TestCase.setupClientUser()
             
             Client.shared.onEvent = { event in

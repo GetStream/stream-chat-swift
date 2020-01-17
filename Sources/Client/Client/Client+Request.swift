@@ -61,16 +61,16 @@ extension Client {
     /// - Parameters:
     ///   - endpoint: an endpoint (see `Endpoint`).
     ///   - completion: a completion block.
-    /// - Returns: an URLSessionDataTask that can be canncelled.
+    /// - Returns: an URLSessionTask that can be canncelled.
     @discardableResult
-    public func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionDataTask {
+    public func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask {
         if let logger = logger {
             logger.log("Request: \(String(describing: endpoint).prefix(100))...", level: .debug)
         }
         
         if isExpiredTokenInProgress {
             retryRequester?.reconnectForExpiredToken(endpoint: endpoint, completion)
-            return URLSessionDataTask()
+            return .empty
         }
         
         do {
@@ -107,7 +107,7 @@ extension Client {
             completion(.failure(.unexpectedError(nil, error)))
         }
         
-        return URLSessionDataTask()
+        return .empty
     }
     
     private func requestURL(for endpoint: Endpoint, queryItems: [URLQueryItem]) -> Result<URL, ClientError> {
@@ -304,4 +304,8 @@ extension Client {
             block()
         }
     }
+}
+
+extension URLSessionTask {
+    static let empty = URLSessionTask()
 }
