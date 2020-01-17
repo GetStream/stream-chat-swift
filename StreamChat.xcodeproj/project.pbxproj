@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		465D64C2231808A2006BAE42 /* AttachmentTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */; };
 		798D413C23ACC89500F39EF8 /* ClientLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 798D413B23ACC89400F39EF8 /* ClientLoggerTests.swift */; };
-		8A048E4A2331252400FDB3C0 /* Channel+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E492331252400FDB3C0 /* Channel+Database.swift */; };
 		8A048E4C2332247900FDB3C0 /* ChannelPresenter+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E4B2332247900FDB3C0 /* ChannelPresenter+Request.swift */; };
 		8A048E4E2332259400FDB3C0 /* ChannelPresenter+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E4D2332259400FDB3C0 /* ChannelPresenter+Events.swift */; };
 		8A048E5123326D5F00FDB3C0 /* ChannelPresenter+EphemeralMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E5023326D5F00FDB3C0 /* ChannelPresenter+EphemeralMessages.swift */; };
@@ -32,6 +31,8 @@
 		8A13853023C781A60088DBC7 /* Client+RxChannels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13852F23C781A60088DBC7 /* Client+RxChannels.swift */; };
 		8A1715CA23D1B83500CF8E01 /* ClientTests02+Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1715C923D1B83500CF8E01 /* ClientTests02+Message.swift */; };
 		8A1715CB23D1C17300CF8E01 /* Client+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAE823C789A90085184F /* Client+Users.swift */; };
+		8A1715CD23D1E1E600CF8E01 /* Client+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD82E4C2382F24E0037D47D /* Client+Database.swift */; };
+		8A1715CE23D1E75F00CF8E01 /* Channel+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E492331252400FDB3C0 /* Channel+Database.swift */; };
 		8A1BC0FE23969079006694A1 /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */; };
 		8A1BC1002396A2C1006694A1 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FF2396A2C1006694A1 /* ChannelResponse.swift */; };
 		8A1BC1022396A459006694A1 /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC1012396A459006694A1 /* MessageRead.swift */; };
@@ -235,7 +236,6 @@
 		8AD5EDD522E9BB0C005CFAC9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */; };
 		8AD5EDD622E9BB0C005CFAC9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD222E9BB0C005CFAC9 /* SwiftyGif.framework */; };
 		8AD82E4B2382E25A0037D47D /* Message+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD82E4A2382E25A0037D47D /* Message+Database.swift */; };
-		8AD82E4D2382F24E0037D47D /* Client+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD82E4C2382F24E0037D47D /* Client+Database.swift */; };
 		8AE61E6D237AE25600A585BA /* DataDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE61E692379D3AE00A585BA /* DataDetector.swift */; };
 		8AE61E70237B1D3400A585BA /* UITapGestureRecognizer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE61E6E237B1AA900A585BA /* UITapGestureRecognizer+Extensions.swift */; };
 		8AE6206A23CF63F000AB3426 /* ClientTests00.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE6206923CF63F000AB3426 /* ClientTests00.swift */; };
@@ -707,6 +707,7 @@
 				8AD5ED2722E9BA39005CFAC9 /* Member.swift */,
 				8AD5ED1E22E9BA39005CFAC9 /* Event.swift */,
 				8AD5ED2322E9BA39005CFAC9 /* Channel.swift */,
+				8A048E492331252400FDB3C0 /* Channel+Database.swift */,
 				8A7EE0152385B2F300BDB18D /* ChannelType.swift */,
 				8A7EE0172385B31B00BDB18D /* ChannelId.swift */,
 				8AD5ED2122E9BA39005CFAC9 /* ChannelsQuery.swift */,
@@ -767,6 +768,7 @@
 				8AD5ED3422E9BA39005CFAC9 /* Client+Setup.swift */,
 				8AD5ED3B22E9BA39005CFAC9 /* Client+WebSocket.swift */,
 				8AD5ED3922E9BA39005CFAC9 /* Client+Request.swift */,
+				8AD82E4C2382F24E0037D47D /* Client+Database.swift */,
 				8AD5ED3A22E9BA39005CFAC9 /* ClientError.swift */,
 				8AD5ED3D22E9BA39005CFAC9 /* ClientLogger.swift */,
 				8AD5ED3322E9BA39005CFAC9 /* BaseURL.swift */,
@@ -847,7 +849,6 @@
 				8AD5ED2B22E9BA39005CFAC9 /* Channel+RxRequests.swift */,
 				8A92BAF923C8C4EC0085184F /* Channel+Events.swift */,
 				8A0EB78D22FC6974009481E4 /* Channel+RxEvents.swift */,
-				8A048E492331252400FDB3C0 /* Channel+Database.swift */,
 			);
 			path = Channel;
 			sourceTree = "<group>";
@@ -1189,7 +1190,6 @@
 				8A50697C23CE0886009F127A /* Client+Setup.swift */,
 				8A92BAEE23C793470085184F /* Client+RxConnection.swift */,
 				8AD5ED3822E9BA39005CFAC9 /* Client+RxRequest.swift */,
-				8AD82E4C2382F24E0037D47D /* Client+Database.swift */,
 				8A13852523C767530088DBC7 /* Subscription.swift */,
 				8A92BAF023C8941D0085184F /* WebSocket+Rx.swift */,
 				8A13853123C781B30088DBC7 /* API */,
@@ -1534,6 +1534,7 @@
 				8A5069B223CE0D3D009F127A /* Client+Request.swift in Sources */,
 				8A5069B523CE1221009F127A /* InternetConnection.swift in Sources */,
 				8A50698E23CE0966009F127A /* ClientURLSessionTaskDelegate.swift in Sources */,
+				8A1715CE23D1E75F00CF8E01 /* Channel+Database.swift in Sources */,
 				8A50699723CE09E5009F127A /* Date+Extensions.swift in Sources */,
 				8A1715CB23D1C17300CF8E01 /* Client+Users.swift in Sources */,
 				8A5069AE23CE0BC7009F127A /* UnreadCount.swift in Sources */,
@@ -1554,6 +1555,7 @@
 				8A50697023CE03ED009F127A /* Client.swift in Sources */,
 				8A5069A323CE0AD8009F127A /* Message.swift in Sources */,
 				8A50697723CE0459009F127A /* Database.swift in Sources */,
+				8A1715CD23D1E1E600CF8E01 /* Client+Database.swift in Sources */,
 				8A50699B23CE0A2D009F127A /* Codable+Extensions.swift in Sources */,
 				8A50697223CE03ED009F127A /* User.swift in Sources */,
 				8A5069A723CE0AE6009F127A /* Reaction.swift in Sources */,
@@ -1733,10 +1735,8 @@
 				8A0EB78E22FC6974009481E4 /* Channel+RxEvents.swift in Sources */,
 				8A92BAFE23C8CB930085184F /* Message+Requests.swift in Sources */,
 				8AD5ED4C22E9BA5A005CFAC9 /* RxStarscream.swift in Sources */,
-				8A048E4A2331252400FDB3C0 /* Channel+Database.swift in Sources */,
 				8A92BAF823C8BF360085184F /* Channel+Requests.swift in Sources */,
 				8A92BAFA23C8C4EC0085184F /* Channel+Events.swift in Sources */,
-				8AD82E4D2382F24E0037D47D /* Client+Database.swift in Sources */,
 				8A13853023C781A60088DBC7 /* Client+RxChannels.swift in Sources */,
 				8A04964722E9F57000E94795 /* ViewChanges.swift in Sources */,
 				8AC8C8B822F43D16003BD1D5 /* Client+RxUsers.swift in Sources */,

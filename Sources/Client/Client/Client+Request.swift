@@ -304,6 +304,27 @@ extension Client {
             block()
         }
     }
+}
+
+// MARK: - Client Completion Side Effects
+
+extension Client {
+    
+    /// Performs side effect works for a success result before of an original completion block.
+    /// - Parameters:
+    ///   - completion: an original completion block.
+    ///   - before: a side effect will be executed before the original completion block.
+    func beforeCompletion<T: Decodable>(_ completion: @escaping Client.Completion<T>, _ before: @escaping (T) -> Void) -> Client.Completion<T> {
+        return addSideEffect(for: completion, before: before)
+    }
+    
+    /// Performs side effect works for a success result after of an original completion block.
+    /// - Parameters:
+    ///   - completion: an original completion block.
+    ///   - after: a side effect will be executed after the original completion block.
+    func afterCompletion<T: Decodable>(_ completion: @escaping Client.Completion<T>, _ after: @escaping (T) -> Void) -> Client.Completion<T> {
+        return addSideEffect(for: completion, after: after)
+    }
     
     /// Performs side effect works for a success result before and after of an original completion block.
     /// - Parameters:
