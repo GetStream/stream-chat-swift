@@ -17,7 +17,7 @@ public extension Client {
     ///   - eventType: an event type.
     ///   - onNext: a completion block with `Event`.
     /// - Returns: a subscription.
-    func onEvent(_ eventType: EventType, _ onNext: @escaping ClientCompletion<Event>) -> Subscription {
+    func onEvent(_ eventType: EventType, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
         return rx.onEvent(eventType).bind(to: onNext)
     }
     
@@ -26,7 +26,7 @@ public extension Client {
     ///   - eventTypes: a list of event types.
     ///   - onNext: a completion block with `Event`.
     /// - Returns: a subscription.
-    func onEvent(_ eventTypes: [EventType] = [], _ onNext: @escaping ClientCompletion<Event>) -> Subscription {
+    func onEvent(_ eventTypes: [EventType] = [], _ onNext: @escaping Client.Completion<Event>) -> Subscription {
         return rx.onEvent(eventTypes).bind(to: onNext)
     }
     
@@ -36,7 +36,7 @@ public extension Client {
     ///   - channel: a channel for filtering events.
     ///   - onNext: a completion block with `Event`.
     /// - Returns: a subscription.
-    func onEvent(_ eventType: EventType, channel: Channel, _ onNext: @escaping ClientCompletion<Event>) -> Subscription {
+    func onEvent(_ eventType: EventType, channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
         return rx.onEvent([eventType], channel: channel).bind(to: onNext)
     }
     
@@ -49,7 +49,7 @@ public extension Client {
     /// - Returns: a subscription.
     func onEvent(_ eventTypes: [EventType] = [],
                  channel: Channel,
-                 _ onNext: @escaping ClientCompletion<Event>) -> Subscription {
+                 _ onNext: @escaping Client.Completion<Event>) -> Subscription {
         return rx.onEvent(eventTypes, channel: channel).bind(to: onNext)
     }
 }

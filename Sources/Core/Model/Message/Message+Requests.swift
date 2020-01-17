@@ -12,19 +12,17 @@ public extension Message {
     
     /// Delete the message.
     /// - Parameter completion: a completion block with `MessageResponse`.
-    func delete(_ completion: @escaping ClientCompletion<MessageResponse>) {
+    func delete(_ completion: @escaping Client.Completion<MessageResponse>) {
         return rx.delete().bindOnce(to: completion)
     }
     
     /// Add a reaction to the message.
     ///
     /// - Parameters:
-    ///   - type: a reaction type.
-    ///   - score: a reaction score, e.g. `.cumulative` it could be more then 1.
-    ///   - extraData: a reaction extra data.
-    func addReaction(type: ReactionType, score: Int = 1, extraData: Codable? = nil) -> Observable<MessageResponse> {
-        let reaction = Reaction(type: type, score: score, messageId: id, extraData: extraData)
-        return Client.shared.rx.connectedRequest(endpoint: .addReaction(reaction))
+    ///   - reactionType: a reaction type, e.g. like.
+    ///   - completion: a completion block with `MessageResponse`.
+    func addReaction(_ reactionType: ReactionType, _ completion: @escaping Client.Completion<MessageResponse>) {
+        return rx.addReaction(reactionType).bindOnce(to: completion)
     }
     
     /// Delete a reaction to the message.
@@ -50,7 +48,7 @@ public extension Message {
             .map { (response: MessagesResponse) in response.messages }
             .do(onNext: { self.add(repliesToDatabase: $0) })
     func deleteReaction(_ reactionType: ReactionType,
-                        _ completion: @escaping ClientCompletion<MessageResponse>) {
+                        _ completion: @escaping Client.Completion<MessageResponse>) {
         return rx.deleteReaction(reactionType).bindOnce(to: completion)
     }
     
@@ -58,19 +56,19 @@ public extension Message {
     /// - Parameters:
     ///   - pagination: a pagination (see `Pagination`).
     ///   - completion: a completion block with `[Message]`.
-    func replies(pagination: Pagination, _ completion: @escaping ClientCompletion<[Message]>) {
+    func replies(pagination: Pagination, _ completion: @escaping Client.Completion<[Message]>) {
         return rx.replies(pagination: pagination).bindOnce(to: completion)
     }
     
     /// Flag a message.
     /// - Parameter completion: a completion block with `FlagMessageResponse`.
-    func flag(_ completion: @escaping ClientCompletion<FlagMessageResponse>) {
+    func flag(_ completion: @escaping Client.Completion<FlagMessageResponse>) {
         return rx.flag().bindOnce(to: completion)
     }
     
     /// Unflag a message.
     /// - Parameter completion: a completion block with `FlagMessageResponse`.
-    func unflag(_ completion: @escaping ClientCompletion<FlagMessageResponse>) {
+    func unflag(_ completion: @escaping Client.Completion<FlagMessageResponse>) {
         return rx.unflag().bindOnce(to: completion)
     }
 }
@@ -97,22 +95,6 @@ public struct FlagMessageResponse: Decodable {
     
     /// A flagged message id.
     public let messageId: String
-    /// A created date.
-    public let created: Date
-    /// A updated date.
-    public let updated: Date
-}
-
-/// A flag message response.
-public struct FlagUserResponse: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case user = "target_user"
-        case created = "created_at"
-        case updated = "updated_at"
-    }
-    
-    /// A flagged user.
-    public let user: User
     /// A created date.
     public let created: Date
     /// A updated date.

@@ -80,7 +80,7 @@ extension ChannelPresenter {
     ///   - completion: a completion block with `MessageResponse`.
     public func dispatchEphemeralMessageAction(_ action: Attachment.Action,
                                                message: Message,
-                                               _ completion: @escaping ClientCompletion<MessageResponse>) {
+                                               _ completion: @escaping Client.Completion<MessageResponse>) {
         rx.dispatchEphemeralMessageAction(action, message: message).bindOnce(to: completion)
     }
     
