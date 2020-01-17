@@ -71,19 +71,4 @@ public extension Reactive where Base == Client {
     func unflag(user: User) -> Observable<FlagUserResponse> {
         return user.unflag()
     }
-    
-    func flagUnflag<T: Decodable>(endpoint: Endpoint, alreadyFlagged value: T) -> Observable<T> {
-        let flagUnflagRequest: Observable<FlagResponse<T>> = request(endpoint: endpoint)
-        
-        return flagUnflagRequest.map { $0.flag }
-            .catchError { error -> Observable<T> in
-                if let clientError = error as? ClientError,
-                    case .responseError(let clientResponseError) = clientError,
-                    clientResponseError.message.contains("flag already exists") {
-                    return .just(value)
-                }
-                
-                return .error(error)
-        }
-    }
 }
