@@ -37,6 +37,11 @@
                BlueprintName = "StreamChatClientTests"
                ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "TestCase">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
