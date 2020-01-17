@@ -168,4 +168,6 @@ extension Encodable {
 }
 
 /// Try in the most cases map it to `Void`.
-public struct EmptyData: Codable {}
+public struct EmptyData: Codable {
+    static let empty = EmptyData()
+}
