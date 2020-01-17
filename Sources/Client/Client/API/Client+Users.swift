@@ -114,7 +114,7 @@ public extension Client {
             let result = result.catchError { error in
                 if case .responseError(let clientResponseError) = error,
                     clientResponseError.message.contains("flag already exists") {
-                    return .success(FlagUserResponse(user: user, created: Date(), updated: Date()))
+                    return .success(.init(user: user, created: Date(), updated: Date()))
                 }
                 
                 return .failure(error)
