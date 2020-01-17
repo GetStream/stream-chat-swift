@@ -46,7 +46,11 @@ public extension Client {
     ///   - completion: a completion block with `[ChannelResponse]`.
     @discardableResult
     func channels(query: ChannelsQuery, _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
-        return request(endpoint: .channels(query)) { (result: Result<ChannelsResponse, ClientError>) in
+        return request(endpoint: .channels(query)) { [unowned self] (result: Result<ChannelsResponse, ClientError>) in
+            let completion = self.afterCompletion(completion) { channelsResponse in
+                self.add(channelsToDatabase: channelsResponse, query: query)
+            }
+            
             completion(result.map({ $0.channels }))
         }
     }
@@ -57,7 +61,11 @@ public extension Client {
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
     func channel(query: ChannelQuery, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        return request(endpoint: .channel(query), completion)
+        return request(endpoint: .channel(query), afterCompletion(completion, { response in
+            if query.options.contains(.state) {
+                response.channel.add(messagesToDatabase: response.messages)
+            }
+        }))
     }
 
     /// Get a message by id.
