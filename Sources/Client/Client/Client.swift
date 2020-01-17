@@ -12,6 +12,8 @@ import UIKit
 public final class Client {
     /// A client completion block type.
     public typealias Completion<T: Decodable> = (Result<T, ClientError>) -> Void
+    /// A client progress block type.
+    public typealias Progress = (Float) -> Void
     /// A token block type.
     public typealias OnToken = (Token?) -> Void
     /// A WebSocket connection callback type.
@@ -67,7 +69,7 @@ public final class Client {
     }
     
     lazy var urlSession = setupURLSession(token: "")
-    private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
+    lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
     

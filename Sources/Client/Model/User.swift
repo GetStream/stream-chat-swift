@@ -101,6 +101,11 @@ public struct User: Codable {
         return Member(self)
     }
     
+    /// Checks if the user is flagged (locally).
+    var isFlagged: Bool {
+        return User.flaggedUsers.contains(self)
+    }
+    
     /// Init a user.
     ///
     /// - Parameters:

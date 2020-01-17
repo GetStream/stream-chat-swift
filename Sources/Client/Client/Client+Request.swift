@@ -110,6 +110,26 @@ extension Client {
         return .empty
     }
     
+    /// Send a progress request.
+    ///
+    /// - Parameters:
+    ///   - endpoint: an endpoint (see `Endpoint`).
+    ///   - completion: a completion block.
+    /// - Returns: an URLSessionTask that can be canncelled.
+    @discardableResult
+    public func request<T: Decodable>(endpoint: Endpoint,
+                                      _ progress: @escaping Progress,
+                                      _ completion: @escaping Completion<T>) -> URLSessionTask {
+        let task = request(endpoint: endpoint, completion)
+        let taskIdentifier = task.taskIdentifier
+        
+        urlSession.delegateQueue.addOperation { [unowned self] in
+            self.urlSessionTaskDelegate.progressHandlers[taskIdentifier] = progress
+        }
+        
+        return task
+    }
+    
     private func requestURL(for endpoint: Endpoint, queryItems: [URLQueryItem]) -> Result<URL, ClientError> {
         var urlComponents = URLComponents()
         urlComponents.scheme = baseURL.baseURL.scheme

@@ -304,3 +304,31 @@ public enum MessageType: String, Codable {
     /// A message type.
     case regular, ephemeral, error, reply, system, deleted
 }
+
+// MARK: - Supporting Structs
+
+/// A messages response.
+public struct MessagesResponse: Decodable {
+    /// A list of messages.
+    let messages: [Message]
+}
+
+struct FlagResponse<T: Decodable>: Decodable {
+    let flag: T
+}
+
+/// A flag message response.
+public struct FlagMessageResponse: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case messageId = "target_message_id"
+        case created = "created_at"
+        case updated = "updated_at"
+    }
+    
+    /// A flagged message id.
+    public let messageId: String
+    /// A created date.
+    public let created: Date
+    /// A updated date.
+    public let updated: Date
+}
