@@ -27,12 +27,12 @@
 		8A1207CD238EE3C700E41790 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207CC238EE3C700E41790 /* Reaction.swift */; };
 		8A13852623C767530088DBC7 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13852523C767530088DBC7 /* Subscription.swift */; };
 		8A13852823C767EB0088DBC7 /* Client+RxDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13852723C767EB0088DBC7 /* Client+RxDevices.swift */; };
-		8A13852A23C768D50088DBC7 /* Client+Devices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13852923C768D50088DBC7 /* Client+Devices.swift */; };
 		8A13853023C781A60088DBC7 /* Client+RxChannels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13852F23C781A60088DBC7 /* Client+RxChannels.swift */; };
 		8A1715CA23D1B83500CF8E01 /* ClientTests02+Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1715C923D1B83500CF8E01 /* ClientTests02+Message.swift */; };
 		8A1715CB23D1C17300CF8E01 /* Client+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAE823C789A90085184F /* Client+Users.swift */; };
 		8A1715CD23D1E1E600CF8E01 /* Client+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD82E4C2382F24E0037D47D /* Client+Database.swift */; };
 		8A1715CE23D1E75F00CF8E01 /* Channel+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E492331252400FDB3C0 /* Channel+Database.swift */; };
+		8A1715D123D1E94F00CF8E01 /* Client+Devices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13852923C768D50088DBC7 /* Client+Devices.swift */; };
 		8A1BC0FE23969079006694A1 /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */; };
 		8A1BC1002396A2C1006694A1 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FF2396A2C1006694A1 /* ChannelResponse.swift */; };
 		8A1BC1022396A459006694A1 /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC1012396A459006694A1 /* MessageRead.swift */; };
@@ -655,7 +655,6 @@
 				8A0EB78B22FC608A009481E4 /* Client+RxEvents.swift */,
 				8A92BAFB23C8C7570085184F /* Client+UnreadCount.swift */,
 				8A92BAEA23C78CFF0085184F /* Client+RxUnreadCount.swift */,
-				8A13852923C768D50088DBC7 /* Client+Devices.swift */,
 				8A13852723C767EB0088DBC7 /* Client+RxDevices.swift */,
 			);
 			path = API;
@@ -757,6 +756,7 @@
 			children = (
 				8A13852D23C781930088DBC7 /* Client+Channels.swift */,
 				8A92BAE823C789A90085184F /* Client+Users.swift */,
+				8A13852923C768D50088DBC7 /* Client+Devices.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -1527,6 +1527,7 @@
 				8A5069A023CE0ABF009F127A /* Event.swift in Sources */,
 				8A50697E23CE0938009F127A /* WebSocket.swift in Sources */,
 				8A5069AF23CE0C04009F127A /* Int+Extensions.swift in Sources */,
+				8A1715D123D1E94F00CF8E01 /* Client+Devices.swift in Sources */,
 				8A50699C23CE0A4D009F127A /* String+Extensions.swift in Sources */,
 				8A50698B23CE0940009F127A /* Atomic.swift in Sources */,
 				8A5069A823CE0AEE009F127A /* QueryOptions.swift in Sources */,
@@ -1719,7 +1720,6 @@
 				8A92BB0023C8D0C30085184F /* Presenter+Rx.swift in Sources */,
 				8A92BAEB23C78CFF0085184F /* Client+RxUnreadCount.swift in Sources */,
 				8AD5ED6922E9BA5A005CFAC9 /* Client+RxRequest.swift in Sources */,
-				8A13852A23C768D50088DBC7 /* Client+Devices.swift in Sources */,
 				8A04964422E9F52D00E94795 /* Presenter.swift in Sources */,
 				8A04964522E9F53200E94795 /* ChannelsPresenter.swift in Sources */,
 				8A04964622E9F53900E94795 /* ChannelPresenter.swift in Sources */,
