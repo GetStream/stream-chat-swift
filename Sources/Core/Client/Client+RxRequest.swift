@@ -9,11 +9,6 @@
 import Foundation
 import RxSwift
 
-/// A response type with a progress of a sending data.
-///
-/// The progress property can have float values from 0.0 to 1.0.
-public typealias ProgressResponse<T: Decodable> = (progress: Float, result: T?)
-
 extension Client: ReactiveCompatible {}
 
 public extension Reactive where Base == Client {
