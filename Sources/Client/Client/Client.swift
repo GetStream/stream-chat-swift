@@ -78,9 +78,17 @@ public final class Client {
     /// An observable user.
     public var userDidUpdate: UserDidUpdate?
     
+    private let userAtomic = Atomic<User>()
+    
     /// The current user.
     public internal(set) var user: User? {
-        didSet { userDidUpdate?(user) }
+        get {
+            return userAtomic.get()
+        }
+        set {
+            userAtomic.set(newValue)
+            userDidUpdate?(newValue)
+        }
     }
     
     /// Check if API key and token are valid and the web socket is connected.

@@ -102,9 +102,9 @@ extension Client {
             return task
             
         } catch let error as ClientError {
-            completion(.failure(error))
+            performInCallbackQueue { completion(.failure(error)) }
         } catch {
-            completion(.failure(.unexpectedError(nil, error)))
+            performInCallbackQueue {  completion(.failure(.unexpectedError(nil, error))) }
         }
         
         return .empty
@@ -302,6 +302,26 @@ extension Client {
             callbackQueue.async(execute: block)
         } else {
             block()
+        }
+    }
+    
+    /// Performs side effect works for a success result before and after of an original completion block.
+    /// - Parameters:
+    ///   - completion: an original completion block.
+    ///   - before: a side effect will be executed before the original completion block.
+    ///   - after: a side effect will be executed after the original completion block.
+    func addSideEffect<T: Decodable>(for completion: @escaping Client.Completion<T>,
+                                     before: @escaping (T) -> Void = { _ in },
+                                     after: @escaping (T) -> Void = { _ in }) -> Client.Completion<T> {
+        return { result in
+            guard let value = try? result.get() else {
+                completion(result)
+                return
+            }
+            
+            before(value)
+            completion(result)
+            after(value)
         }
     }
 }
