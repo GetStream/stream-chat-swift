@@ -13,7 +13,7 @@ final class ClientTests01_Channels: TestCase {
     
     func test01Channels() {
         expect("channels with current user member") { expectation in
-            let query = ChannelsQuery(filter: .key("members", .in([Member.current])), pagination: .limit(2))
+            let query = ChannelsQuery(filter: self.memberFilter, pagination: .limit(2))
             Client.shared.channels(query: query) { result in
                 if let channelResponses = try? result.get() {
                     XCTAssertEqual(channelResponses.count, 2)
@@ -28,6 +28,19 @@ final class ClientTests01_Channels: TestCase {
             Client.shared.channel(query: ChannelQuery(channel: self.defaultChannel)) { result in
                 if let channelResponse = try? result.get() {
                     XCTAssertEqual(self.defaultChannel.cid, channelResponse.channel.cid)
+                    expectation.fulfill()
+                }
+            }
+        }
+    }
+    
+    /// - TODO: create a message for search.
+    func test03SearchText() {
+        let query = "test"
+        expect("a message with text: \"\(query)\"") { expectation in
+            Client.shared.search(filter: self.memberFilter, query: query) { result in
+                if let messages = try? result.get() {
+                    XCTAssertFalse(messages.isEmpty)
                     expectation.fulfill()
                 }
             }
