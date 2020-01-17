@@ -59,11 +59,6 @@ public extension User {
     
     // MARK: Flag User
     
-    /// Checks if the user is flagged (locally).
-    var isFlagged: Bool {
-        return User.flaggedUsers.contains(self)
-    }
-    
     /// Flag a user.
     func flag() -> Observable<FlagUserResponse> {
         guard !isCurrent else {
