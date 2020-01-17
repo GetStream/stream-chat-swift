@@ -167,5 +167,5 @@ extension Encodable {
     }
 }
 
-/// ⚠️ Should be internal. Map this value to Void().
-struct EmptyData: Codable {}
+/// Try in the most cases map it to `Void`.
+public struct EmptyData: Codable {}

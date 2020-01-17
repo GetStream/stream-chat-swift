@@ -30,7 +30,7 @@ public struct ChannelQuery: Encodable {
     ///     - channel: a channel.
     ///     - memebers: members of the channel.
     ///     - pagination: a pagination (see `Pagination`).
-    public init(channel: Channel, members: Set<Member>, pagination: Pagination, options: QueryOptions) {
+    public init(channel: Channel, members: Set<Member> = [], pagination: Pagination = .none, options: QueryOptions = []) {
         self.channel = channel
         self.members = members
         self.pagination = pagination

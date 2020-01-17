@@ -56,9 +56,3 @@ struct SearchResponse: Decodable {
     
     let messages: [[String: Message]]
 }
-
-/// A search errors.
-public enum SearchQueryError: String, Error {
-    /// Filter can't be an empty for the message search.
-    case emptyFilter = "Filter can't be an empty for the message search"
-}
