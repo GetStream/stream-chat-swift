@@ -77,7 +77,7 @@ public final class ChannelsPresenter: Presenter {
 public extension ChannelsPresenter {
     
     /// View changes (see `ViewChanges`).
-    func changes(_ onNext: @escaping ClientCompletion<ViewChanges>) -> Subscription {
+    func changes(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
         return rxChanges.asObservable().bind(to: onNext)
     }
     
@@ -89,7 +89,7 @@ public extension ChannelsPresenter {
     ///   - completion: an empty completion block.
     func hide(_ channelPresenter: ChannelPresenter,
               clearHistory: Bool = false,
-              _ completion: @escaping ClientCompletion<Void> = { _ in }) {
+              _ completion: @escaping Client.Completion<Void> = { _ in }) {
         rx.hide(channelPresenter, clearHistory: clearHistory).asObservable().bindOnce(to: completion)
     }
 }

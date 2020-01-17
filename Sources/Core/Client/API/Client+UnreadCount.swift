@@ -17,7 +17,7 @@ extension Client {
     /// - Note: 100 is the maximum unread count of messages.
     /// - Parameter onNext: a completion block with `UnreadCount`.
     /// - Returns: a subscription.
-    public func unreadCount(_ onNext: @escaping ClientCompletion<UnreadCount>) -> Subscription {
+    public func unreadCount(_ onNext: @escaping Client.Completion<UnreadCount>) -> Subscription {
         return rx.unreadCount.asObservable().bind(to: onNext)
     }
     
