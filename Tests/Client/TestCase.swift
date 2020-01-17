@@ -18,6 +18,7 @@ class TestCase: XCTestCase {
     static let apiKey = "qk4nn7rpcn75"
     private static var isClientReady = false
     private(set) lazy var defaultChannel = Channel(type: .messaging, id: "general")
+    private(set) lazy var memberFilter = Filter.key("members", .in([Member.current]))
     
     static func setupClientUser() {
         Client.shared.set(user: .user1, token: .token1)

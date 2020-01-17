@@ -26,6 +26,21 @@ final class ClientTests02_Message: TestCase {
         }
     }
     
+    /// - TODO: make a full flow:
+    ///   - add 2 messages from another member to 2 shared channels.
+    ///   - mark all as read.
+    ///   - check that both messages was read.
+    func test02MarlAllRead() {
+        expect("mark all messages as read") { expectation in
+            Client.shared.markAllRead {
+                XCTAssertNil($0.error)
+                expectation.fulfill()
+            }
+        }
+    }
+}
+
+extension ClientTests02_Message {
     private func message(from channel: Channel, _ completion: @escaping (Message) -> Void) {
         let query = ChannelQuery(channel: channel, pagination: .limit(1), options: .state)
         

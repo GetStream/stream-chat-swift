@@ -19,7 +19,7 @@ public extension Client {
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     ///   - completion: a completion block with `[Message]`.
     @discardableResult
-    func search(filter: Filter = .none,
+    func search(filter: Filter,
                 query: String,
                 pagination: Pagination = .channelsPageSize,
                 _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
