@@ -7,24 +7,31 @@
 //
 
 import Foundation
-import RxSwift
 
 final class ClientURLSessionTaskDelegate: NSObject, URLSessionTaskDelegate {
     
-    let uploadProgress = PublishSubject<(task: URLSessionTask, progress: Float, error: Error?)>()
+    var progressHandlers = [Int: Client.Progress]()
     
     func urlSession(_ session: URLSession,
                     task: URLSessionTask,
                     didSendBodyData bytesSent: Int64,
                     totalBytesSent: Int64,
                     totalBytesExpectedToSend: Int64) {
-        let progress = totalBytesExpectedToSend > 0 ? Float(Double(totalBytesSent) / Double(totalBytesExpectedToSend)) : 0
-        
-        if totalBytesExpectedToSend > 10240 {
-            let message = "⏫ [\(task.taskIdentifier)] \(totalBytesSent)/\(totalBytesExpectedToSend), \((progress * 100).rounded())%"
-            Client.shared.logger?.log(message, level: .info)
+        guard let progressHandler = progressHandlers[task.taskIdentifier] else {
+            return
         }
         
-        uploadProgress.onNext((task, progress, nil))
+        let progress = totalBytesExpectedToSend > 0 ? Float(Double(totalBytesSent) / Double(totalBytesExpectedToSend)) : 0
+        
+        if let logger = Client.shared.logger, totalBytesExpectedToSend > 10240 {
+            logger.log("⏫ [\(task.taskIdentifier)] \(totalBytesSent)/\(totalBytesExpectedToSend), \((progress * 100).rounded())%",
+                       level: .info)
+        }
+        
+        progressHandler(progress)
+        
+        if progress >= 0.99 {
+            progressHandlers.removeValue(forKey: task.taskIdentifier)
+        }
     }
 }
