@@ -57,7 +57,8 @@ public extension Client {
             return .empty
         }
         
-        return request(endpoint: .muteUser(user), addSideEffect(for: completion, before: { Client.shared.user = $0.currentUser }))
+        let completion = beforeCompletion(completion) { Client.shared.user = $0.currentUser }
+        return request(endpoint: .muteUser(user), completion)
     }
     
     /// Unmute a user.
@@ -70,7 +71,7 @@ public extension Client {
             return .empty
         }
         
-        return request(endpoint: .unmuteUser(user), addSideEffect(for: completion, before: { _ in
+        let completion = beforeCompletion(completion) { _ in
             if let currentUser = User.current {
                 var currentUser = currentUser
                 var mutedUsers = currentUser.mutedUsers
@@ -81,7 +82,9 @@ public extension Client {
                     Client.shared.user = currentUser
                 }
             }
-        }))
+        }
+        
+        return request(endpoint: .unmuteUser(user), completion)
     }
     
     // MARK: Flag User
