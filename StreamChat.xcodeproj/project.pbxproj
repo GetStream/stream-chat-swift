@@ -677,7 +677,12 @@
 		8A50696F23CDEDF4009F127A /* Client */ = {
 			isa = PBXGroup;
 			children = (
+				8AD5ED3322E9BA39005CFAC9 /* BaseURL.swift */,
+				8AD5ED3C22E9BA39005CFAC9 /* Token.swift */,
+				8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */,
+				8A150E9E232A8D8400330562 /* Database.swift */,
 				8A5F50D323D0BC9200854B77 /* Client */,
+				8AD5ED2E22E9BA39005CFAC9 /* WebSocket */,
 				8A50699223CE09A8009F127A /* Model */,
 				8AD5ED3E22E9BA39005CFAC9 /* Upload */,
 				8AD5ED1122E9BA39005CFAC9 /* Utils */,
@@ -759,16 +764,6 @@
 			path = Tests;
 			sourceTree = "<group>";
 		};
-		8A5F50D223D0BC8300854B77 /* API */ = {
-			isa = PBXGroup;
-			children = (
-				8A13852D23C781930088DBC7 /* Client+Channels.swift */,
-				8A92BAE823C789A90085184F /* Client+Users.swift */,
-				8A13852923C768D50088DBC7 /* Client+Devices.swift */,
-			);
-			path = API;
-			sourceTree = "<group>";
-		};
 		8A5F50D323D0BC9200854B77 /* Client */ = {
 			isa = PBXGroup;
 			children = (
@@ -777,15 +772,12 @@
 				8AD5ED3B22E9BA39005CFAC9 /* Client+WebSocket.swift */,
 				8AD5ED3922E9BA39005CFAC9 /* Client+Request.swift */,
 				8AD82E4C2382F24E0037D47D /* Client+Database.swift */,
+				8A13852D23C781930088DBC7 /* Client+Channels.swift */,
+				8A92BAE823C789A90085184F /* Client+Users.swift */,
+				8A13852923C768D50088DBC7 /* Client+Devices.swift */,
+				8AD5ED3722E9BA39005CFAC9 /* Endpoint.swift */,
 				8AD5ED3A22E9BA39005CFAC9 /* ClientError.swift */,
 				8AD5ED3D22E9BA39005CFAC9 /* ClientLogger.swift */,
-				8AD5ED3322E9BA39005CFAC9 /* BaseURL.swift */,
-				8AD5ED3C22E9BA39005CFAC9 /* Token.swift */,
-				8AD5ED3722E9BA39005CFAC9 /* Endpoint.swift */,
-				8A150E9E232A8D8400330562 /* Database.swift */,
-				8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */,
-				8AD5ED2E22E9BA39005CFAC9 /* WebSocket */,
-				8A5F50D223D0BC8300854B77 /* API */,
 			);
 			path = Client;
 			sourceTree = "<group>";
