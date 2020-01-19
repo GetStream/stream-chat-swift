@@ -155,7 +155,7 @@ public extension Reactive where Base == Channel {
         return Client.shared.rx.connectedRequest(endpoint: endpoint)
     }
     
-    /// Mark messages in the channel as readed.
+    /// Mark messages in the channel as read.
     ///
     /// - Returns: an observable event response.
     func markRead() -> Observable<Event> {
