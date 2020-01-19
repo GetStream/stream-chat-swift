@@ -61,7 +61,7 @@ public extension Reactive where Base == Client {
         return connectedRequest(.message(messageId))
     }
     
-    /// Mark all messages as readed.
+    /// Mark all messages as read.
     func markAllRead() -> Observable<Void> {
         let markAllReadRequest: Observable<EmptyData> = request(endpoint: .markAllRead)
         return connectedRequest(markAllReadRequest.map({ _ in Void() }))
