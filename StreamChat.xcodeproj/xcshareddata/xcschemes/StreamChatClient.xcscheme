@@ -39,22 +39,16 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "ChannelTests01_Upload">
+               </Test>
+               <Test
                   Identifier = "ClientTests00">
                </Test>
                <Test
-                  Identifier = "ClientTests01_Channels/test01Channels()">
-               </Test>
-               <Test
-                  Identifier = "ClientTests01_Channels/test02Channel()">
-               </Test>
-               <Test
-                  Identifier = "ClientTests01_Channels/test03SearchText()">
+                  Identifier = "ClientTests01_Channels">
                </Test>
                <Test
                   Identifier = "ClientTests02_Message">
-               </Test>
-               <Test
-                  Identifier = "ClientTests02_Message/test01Message()">
                </Test>
                <Test
                   Identifier = "TestCase">

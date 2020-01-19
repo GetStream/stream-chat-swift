@@ -26,9 +26,9 @@ public struct UsersQuery: Encodable {
     /// Init a users query.
     ///
     /// - Parameters:
-    ///   - filter: filter conditions, e.g. .key("name", .equal(to: "rover_curiosity"))
-    ///   - sort: sort options, e.g. .init("last_active", isAscending: false)
-    ///   - options: Query options, e.g. .presence
+    ///   - filter: filter conditions, e.g. `"name".equal(to: "rover_curiosity")`
+    ///   - sort: sort options, e.g. `.init("last_active", isAscending: false)`
+    ///   - options: Query options, e.g. `.presence`
     public init(filter: Filter, sort: Sorting? = nil, options: QueryOptions = []) {
         self.filter = filter
         self.sort = sort

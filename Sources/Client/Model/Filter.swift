@@ -13,19 +13,21 @@ import Foundation
 /// For example:
 /// ```
 /// // Filter channels by type:
-/// var filter: Filter<Channel.DecodingKeys> = .key("type", .equal(to: "messaging"))
+/// var filter = "type".equal(to: "messaging")
 /// // Filter channels by members:
-/// filter = .key("members", .in(["jon"]))
+/// filter = "members".in(["jon"])
 /// // Filter channels by type and members:
-/// filter = .key("type", .equal(to: "messaging")) + .key("members", .in(["jon"]))
+/// filter = "type".equal(to: "messaging") + "members".in(["jon"])
 /// // Filter channels by type or members:
-/// filter = .key("type", .equal(to: "messaging")) | .key("members", .in(["jon"]))
+/// filter = "type".equal(to: "messaging") | "members".in(["jon"])
 /// ```
 public enum Filter: Encodable, CustomStringConvertible {
+    public typealias Key = String
+    
     /// No filter.
     case none
     /// Filter by a given key with a given operator (see Operator).
-    case key(String, Operator)
+    case key(Key, Operator)
     /// Filter with all filters (like `and`).
     indirect case and([Filter])
     /// Filter with any of filters (like `or`).
@@ -208,5 +210,60 @@ public extension Filter {
     
     static func |= (lhs: inout Filter, rhs: Filter) {
         lhs = lhs | rhs
+    }
+}
+
+// MARK: - Key Helper
+
+public extension Filter.Key {
+    
+    /// A filter with a key of the string equal to a given value.
+    func equal(to value: Encodable) -> Filter {
+        return .key(self, .equal(to: value))
+    }
+    
+    /// A filter with a key of the string not equal to a given value.
+    func notEqual(to value: Encodable) -> Filter {
+        return .key(self, .notEqual(to: value))
+    }
+    
+    /// A filter with a key of the string is greater than a given value.
+    func greater(than value: Encodable) -> Filter {
+        return .key(self, .greater(than: value))
+    }
+    
+    /// A filter with a key of the string is greater or equal than a given value.
+    func greaterOrEqual(than value: Encodable) -> Filter {
+        return .key(self, .greaterOrEqual(than: value))
+    }
+    
+    /// A filter with a key of the string is less than a given value.
+    func less(than value: Encodable) -> Filter {
+        return .key(self, .less(than: value))
+    }
+    
+    /// A filter with a key of the string is less or equal than a given value.
+    func lessOrEqual(than value: Encodable) -> Filter {
+        return .key(self, .lessOrEqual(than: value))
+    }
+    
+    /// A filter with a key of the string is in a given list of values.
+    func `in`(_ values: [Encodable]) -> Filter {
+        return .key(self, .in(values))
+    }
+    
+    /// A filter with a key of the string is not in a given list of values.
+    func notIn(_ values: [Encodable]) -> Filter {
+        return .key(self, .notIn(values))
+    }
+    
+    /// A filter with a key of the string with a query of a given value.
+    func query(_ value: String) -> Filter {
+        return .key(self, .query(value))
+    }
+    
+    /// A filter with a key of the string with autocomplete of a given value.
+    func autocomplete(_ value: String) -> Filter {
+        return .key(self, .autocomplete(value))
     }
 }

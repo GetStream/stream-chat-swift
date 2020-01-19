@@ -142,6 +142,7 @@
 		8A92BAFA23C8C4EC0085184F /* Channel+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAF923C8C4EC0085184F /* Channel+Events.swift */; };
 		8A92BAFC23C8C7570085184F /* Client+UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAFB23C8C7570085184F /* Client+UnreadCount.swift */; };
 		8A92BB0023C8D0C30085184F /* Presenter+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAFF23C8D0C30085184F /* Presenter+Rx.swift */; };
+		8AC0D94C23D4ABC50080B8BC /* Client03+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94B23D4ABC50080B8BC /* Client03+Users.swift */; };
 		8AC643C422F9AC8A007373FF /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC643C122F9AAD7007373FF /* BannerView.swift */; };
 		8AC8C8B622F30001003BD1D5 /* User+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B522F30001003BD1D5 /* User+Requests.swift */; };
 		8AC8C8B822F43D16003BD1D5 /* Client+RxUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC8C8B722F43D16003BD1D5 /* Client+RxUsers.swift */; };
@@ -377,6 +378,7 @@
 		8A92BAFB23C8C7570085184F /* Client+UnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+UnreadCount.swift"; sourceTree = "<group>"; };
 		8A92BAFD23C8CB930085184F /* Message+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+Requests.swift"; sourceTree = "<group>"; };
 		8A92BAFF23C8D0C30085184F /* Presenter+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Presenter+Rx.swift"; sourceTree = "<group>"; };
+		8AC0D94B23D4ABC50080B8BC /* Client03+Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client03+Users.swift"; sourceTree = "<group>"; };
 		8AC643C122F9AAD7007373FF /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8AC8C8B522F30001003BD1D5 /* User+Requests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Requests.swift"; sourceTree = "<group>"; };
@@ -771,10 +773,10 @@
 				8AD5ED3422E9BA39005CFAC9 /* Client+Setup.swift */,
 				8AD5ED3B22E9BA39005CFAC9 /* Client+WebSocket.swift */,
 				8AD5ED3922E9BA39005CFAC9 /* Client+Request.swift */,
-				8AD82E4C2382F24E0037D47D /* Client+Database.swift */,
 				8A13852D23C781930088DBC7 /* Client+Channels.swift */,
 				8A92BAE823C789A90085184F /* Client+Users.swift */,
 				8A13852923C768D50088DBC7 /* Client+Devices.swift */,
+				8AD82E4C2382F24E0037D47D /* Client+Database.swift */,
 				8AD5ED3722E9BA39005CFAC9 /* Endpoint.swift */,
 				8AD5ED3A22E9BA39005CFAC9 /* ClientError.swift */,
 				8AD5ED3D22E9BA39005CFAC9 /* ClientLogger.swift */,
@@ -1238,6 +1240,7 @@
 				8AE6206923CF63F000AB3426 /* ClientTests00.swift */,
 				8A1D042523D0FB560099AA7F /* ClientTests01+Channels.swift */,
 				8A1715C923D1B83500CF8E01 /* ClientTests02+Message.swift */,
+				8AC0D94B23D4ABC50080B8BC /* Client03+Users.swift */,
 				8A1715D923D2504500CF8E01 /* ChannelTests01+Upload.swift */,
 			);
 			path = "Integration Tests";
@@ -1572,6 +1575,7 @@
 				8A1D042623D0FB560099AA7F /* ClientTests01+Channels.swift in Sources */,
 				8AE6206D23CF642900AB3426 /* TestCase.swift in Sources */,
 				8A1715CA23D1B83500CF8E01 /* ClientTests02+Message.swift in Sources */,
+				8AC0D94C23D4ABC50080B8BC /* Client03+Users.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

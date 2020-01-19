@@ -15,7 +15,7 @@ public extension Reactive where Base == Client {
     
     /// A message search.
     /// - Parameters:
-    ///   - filter: a filter for channels, e.g. .key("members", .in(["john"]))
+    ///   - filter: a filter for channels, e.g. `"members".in(["john"])`
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     func search(filter: Filter = .none, query: String, pagination: Pagination = .channelsPageSize) -> Observable<[Message]> {
