@@ -42,6 +42,9 @@
                   Identifier = "ChannelTests01_Upload">
                </Test>
                <Test
+                  Identifier = "Client03_Users">
+               </Test>
+               <Test
                   Identifier = "ClientTests00">
                </Test>
                <Test
