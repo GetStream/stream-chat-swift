@@ -36,6 +36,8 @@
 		8A1715D423D1FD1700CF8E01 /* Channel+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAF723C8BF360085184F /* Channel+Requests.swift */; };
 		8A1715D523D2347900CF8E01 /* Message+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A92BAFD23C8CB930085184F /* Message+Requests.swift */; };
 		8A1715D623D2347900CF8E01 /* Message+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD82E4A2382E25A0037D47D /* Message+Database.swift */; };
+		8A1715DA23D2504500CF8E01 /* ChannelTests01+Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1715D923D2504500CF8E01 /* ChannelTests01+Upload.swift */; };
+		8A1715DC23D250CC00CF8E01 /* AttachmentFileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1715DB23D250CC00CF8E01 /* AttachmentFileType.swift */; };
 		8A1BC0FE23969079006694A1 /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */; };
 		8A1BC1002396A2C1006694A1 /* ChannelResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FF2396A2C1006694A1 /* ChannelResponse.swift */; };
 		8A1BC1022396A459006694A1 /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC1012396A459006694A1 /* MessageRead.swift */; };
@@ -316,6 +318,8 @@
 		8A14347823ABBF30002A45BC /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
 		8A150E9E232A8D8400330562 /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		8A1715C923D1B83500CF8E01 /* ClientTests02+Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClientTests02+Message.swift"; sourceTree = "<group>"; };
+		8A1715D923D2504500CF8E01 /* ChannelTests01+Upload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelTests01+Upload.swift"; sourceTree = "<group>"; };
+		8A1715DB23D250CC00CF8E01 /* AttachmentFileType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFileType.swift; sourceTree = "<group>"; };
 		8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelsResponse.swift; sourceTree = "<group>"; };
 		8A1BC0FF2396A2C1006694A1 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8A1BC1012396A459006694A1 /* MessageRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRead.swift; sourceTree = "<group>"; };
@@ -729,6 +733,7 @@
 				8AD5ED2522E9BA39005CFAC9 /* Sorting.swift */,
 				8A34DED32322A92C00271BBF /* Device.swift */,
 				8A5069AD23CE0BC7009F127A /* UnreadCount.swift */,
+				8A1715DB23D250CC00CF8E01 /* AttachmentFileType.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -1241,6 +1246,7 @@
 				8AE6206923CF63F000AB3426 /* ClientTests00.swift */,
 				8A1D042523D0FB560099AA7F /* ClientTests01+Channels.swift */,
 				8A1715C923D1B83500CF8E01 /* ClientTests02+Message.swift */,
+				8A1715D923D2504500CF8E01 /* ChannelTests01+Upload.swift */,
 			);
 			path = "Integration Tests";
 			sourceTree = "<group>";
@@ -1559,6 +1565,7 @@
 				8A50699623CE09D3009F127A /* Member.swift in Sources */,
 				8A50699A23CE0A12009F127A /* MutedUser.swift in Sources */,
 				8A50699923CE0A09009F127A /* Device.swift in Sources */,
+				8A1715DC23D250CC00CF8E01 /* AttachmentFileType.swift in Sources */,
 				8A5069A923CE0AF1009F127A /* SearchQuery.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1568,6 +1575,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AE6206A23CF63F000AB3426 /* ClientTests00.swift in Sources */,
+				8A1715DA23D2504500CF8E01 /* ChannelTests01+Upload.swift in Sources */,
 				8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */,
 				8A1D042623D0FB560099AA7F /* ClientTests01+Channels.swift in Sources */,
 				8AE6206D23CF642900AB3426 /* TestCase.swift in Sources */,

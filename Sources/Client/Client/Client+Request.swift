@@ -121,12 +121,7 @@ extension Client {
                                       _ progress: @escaping Progress,
                                       _ completion: @escaping Completion<T>) -> URLSessionTask {
         let task = request(endpoint: endpoint, completion)
-        let taskIdentifier = task.taskIdentifier
-        
-        urlSession.delegateQueue.addOperation { [unowned self] in
-            self.urlSessionTaskDelegate.progressHandlers[taskIdentifier] = progress
-        }
-        
+        urlSessionTaskDelegate.addProgessHandler(id: task.taskIdentifier, progress)
         return task
     }
     
