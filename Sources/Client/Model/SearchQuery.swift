@@ -16,7 +16,7 @@ public struct SearchQuery: Encodable {
         case query
     }
     
-    /// A filter for channels, e.g. .key("members", .in(["john"]))
+    /// A filter for channels, e.g. `"members".in(["john"])`
     public let filter: Filter
     /// A search query.
     public let query: String
@@ -25,16 +25,10 @@ public struct SearchQuery: Encodable {
     
     /// A message search query.
     /// - Parameters:
-    ///   - filter: a filter for channels, e.g. .key("members", .in(["john"]))
+    ///   - filter: a filter for channels, e.g. `"members", .in(["john"])`
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
-    public init(filter: Filter = .none, query: String, pagination: Pagination = .channelsPageSize) {
-        var filter = filter
-        
-        if case .none = filter, let currentUser = User.current {
-            filter = .key("members", .in([currentUser.asMember]))
-        }
-        
+    public init(filter: Filter, query: String, pagination: Pagination = .channelsPageSize) {
         self.filter = filter
         self.query = query
         self.pagination = pagination

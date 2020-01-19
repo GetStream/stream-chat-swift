@@ -25,8 +25,7 @@ public final class ChannelsPresenter: Presenter {
     /// For example, in your channels view controller:
     /// ```
     /// if let currentUser = User.current {
-    ///     channelPresenter = .init(channelType: .messaging,
-    ///                              filter: .key("members", .in([currentUser.id])))
+    ///     channelPresenter = .init(channelType: .messaging, filter: "members".in([currentUser.id]))
     /// }
     /// ```
     public let filter: Filter
