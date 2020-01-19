@@ -13,34 +13,34 @@ final class FilterTests: XCTestCase {
     
     func testOperators() {
         var filter = "a".equal(to: "b")
-        XCTAssertEqual(filter.encodedString, "{\"a\":\"b\"}")
+        XCTAssertEqual(filter.json, "{\"a\":\"b\"}")
         
         filter = "a".notEqual(to: "b")
-        XCTAssertEqual(filter.encodedString, "{\"a\":{\"$ne\":\"b\"}}")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$ne\":\"b\"}}")
         
         filter = "a".greater(than: "b")
-        XCTAssertEqual(filter.encodedString, "{\"a\":{\"$gt\":\"b\"}}")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$gt\":\"b\"}}")
         
         filter = "a".greaterOrEqual(than: "b")
-        XCTAssertEqual(filter.encodedString, "{\"a\":{\"$gte\":\"b\"}}")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$gte\":\"b\"}}")
         
         filter = "a".less(than: "b")
-        XCTAssertEqual(filter.encodedString, "{\"a\":{\"$lt\":\"b\"}}")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$lt\":\"b\"}}")
         
         filter = "a".lessOrEqual(than: "b")
-        XCTAssertEqual(filter.encodedString, "{\"a\":{\"$lte\":\"b\"}}")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$lte\":\"b\"}}")
         
         filter = "a".in(["b"])
-        XCTAssertEqual(filter.encodedString, "{\"a\":{\"$in\":[\"b\"]}}")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$in\":[\"b\"]}}")
         
         filter = "a".notIn(["b"])
-        XCTAssertEqual(filter.encodedString, "{\"a\":{\"$nin\":[\"b\"]}}")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$nin\":[\"b\"]}}")
         
         filter = "a".query("b")
-        XCTAssertEqual(filter.encodedString, "{\"a\":{\"$q\":\"b\"}}")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$q\":\"b\"}}")
         
         filter = "a".autocomplete("b")
-        XCTAssertEqual(filter.encodedString, "{\"a\":{\"$autocomplete\":\"b\"}}")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$autocomplete\":\"b\"}}")
     }
     
     func testFilter() {
@@ -51,28 +51,28 @@ final class FilterTests: XCTestCase {
         // And
         var filter = filter1
         filter += filter2
-        XCTAssertEqual((filter1 + filter2).encodedString, "{\"$and\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
-        XCTAssertEqual(filter.encodedString, "{\"$and\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
+        XCTAssertEqual((filter1 + filter2).json, "{\"$and\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
+        XCTAssertEqual(filter.json, "{\"$and\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
         
         // Or
         filter = filter1
         filter |= filter2
-        XCTAssertEqual((filter1 | filter2).encodedString, "{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
-        XCTAssertEqual(filter.encodedString, "{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
+        XCTAssertEqual((filter1 | filter2).json, "{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
+        XCTAssertEqual(filter.json, "{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
         
         // Combination of Or + And
-        XCTAssertEqual((filter1 | filter2 + filter3).encodedString,
+        XCTAssertEqual((filter1 | filter2 + filter3).json,
                        "{\"$and\":[{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]},{\"e\":\"f\"}]}")
-        XCTAssertEqual((filter1 | (filter2 + filter3)).encodedString,
+        XCTAssertEqual((filter1 | (filter2 + filter3)).json,
                        "{\"$or\":[{\"a\":\"b\"},{\"$and\":[{\"c\":\"d\"},{\"e\":\"f\"}]}]}")
         
         // Nor
-        XCTAssertEqual(Filter.nor([filter1, filter2]).encodedString, "{\"$nor\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
+        XCTAssertEqual(Filter.nor([filter1, filter2]).json, "{\"$nor\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
     }
 }
 
 extension Filter {
-    var encodedString: String {
+    var json: String {
         let data = try! JSONEncoder.default.encode(self)
         return String(data: data, encoding: .utf8)!
     }
