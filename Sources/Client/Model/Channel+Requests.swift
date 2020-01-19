@@ -173,7 +173,7 @@ public extension Channel {
         return Client.shared.request(endpoint: endpoint, completion)
     }
     
-    /// Mark messages in the channel as readed.
+    /// Mark messages in the channel as read.
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
     func markRead(_ completion: @escaping Client.Completion<Event>) -> URLSessionTask {

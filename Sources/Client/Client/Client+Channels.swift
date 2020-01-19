@@ -77,7 +77,7 @@ public extension Client {
         return request(endpoint: .message(messageId), completion)
     }
 
-    /// Mark all messages as readed.
+    /// Mark all messages as read.
     /// - Parameter completion: an empty completion block.
     @discardableResult
     func markAllRead(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {

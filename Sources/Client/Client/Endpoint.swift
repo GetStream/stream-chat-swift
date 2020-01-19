@@ -31,7 +31,7 @@ public enum Endpoint {
     case channels(ChannelsQuery)
     /// Get a message by id.
     case message(String)
-    /// Mark all messages as readed.
+    /// Mark all messages as read.
     case markAllRead
     
     /// Message search.
