@@ -14,7 +14,7 @@ public extension Client {
     
     /// A message search.
     /// - Parameters:
-    ///   - filter: a filter for channels, e.g. .key("members", .in(["john"]))
+    ///   - filter: a filter for channels, e.g. `"members".in(["john"])`
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     ///   - completion: a completion block with `[Message]`.

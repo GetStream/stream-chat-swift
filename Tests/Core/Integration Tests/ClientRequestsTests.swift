@@ -15,7 +15,7 @@ final class ClientRequestsTests: TestCase {
     
     func testChannelsQuery() {
         do {
-            let query = ChannelsQuery(filter: .key("type", .equal(to: "messaging")))
+            let query = ChannelsQuery(filter: "type".equal(to: "messaging"))
             
             let channels = try Client.shared.rx.channels(query: query)
                 .toBlocking()
@@ -30,7 +30,7 @@ final class ClientRequestsTests: TestCase {
     
     func testUsersQuery() {
         do {
-            let query = UsersQuery(filter: .key("id", .equal(to: User.user1.id)))
+            let query = UsersQuery(filter: "id".equal(to: User.user1.id))
             
             let users = try Client.shared.rx.users(query: query)
                 .toBlocking()
