@@ -10,28 +10,44 @@ import Foundation
 
 final class ClientURLSessionTaskDelegate: NSObject, URLSessionTaskDelegate {
     
-    var progressHandlers = [Int: Client.Progress]()
+    private var progressHandlers = [Int: Client.Progress]()
     
     func urlSession(_ session: URLSession,
                     task: URLSessionTask,
                     didSendBodyData bytesSent: Int64,
                     totalBytesSent: Int64,
                     totalBytesExpectedToSend: Int64) {
-        guard let progressHandler = progressHandlers[task.taskIdentifier] else {
+        guard totalBytesExpectedToSend > 51200 else {
             return
         }
         
         let progress = totalBytesExpectedToSend > 0 ? Float(Double(totalBytesSent) / Double(totalBytesExpectedToSend)) : 0
         
-        if let logger = Client.shared.logger, totalBytesExpectedToSend > 10240 {
-            logger.log("⏫ [\(task.taskIdentifier)] \(totalBytesSent)/\(totalBytesExpectedToSend), \((progress * 100).rounded())%",
-                       level: .info)
+        if let logger = Client.shared.logger {
+            let percent = (progress * 1000).rounded() / 10
+            logger.log("⏫ [\(task.taskIdentifier)] \(totalBytesSent)/\(totalBytesExpectedToSend), \(percent)%", level: .info)
+        }
+        
+        DispatchQueue.main.async {
+            self.updateHandler(id: task.taskIdentifier, progress: progress)
+        }
+    }
+    
+    func addProgessHandler(id: Int, _ progress: @escaping Client.Progress) {
+        DispatchQueue.main.async {
+            self.progressHandlers[id] = progress
+        }
+    }
+    
+    private func updateHandler(id: Int, progress: Float) {
+        guard let progressHandler = progressHandlers[id] else {
+            return
         }
         
         progressHandler(progress)
         
-        if progress >= 0.99 {
-            progressHandlers.removeValue(forKey: task.taskIdentifier)
+        if progress > 0.99 {
+            progressHandlers.removeValue(forKey: id)
         }
     }
 }
