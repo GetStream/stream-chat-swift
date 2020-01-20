@@ -29,7 +29,15 @@ public extension Channel {
                options: QueryOptions = [],
                _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         let channelQuery = ChannelQuery(channel: self, pagination: pagination, options: options)
-        return Client.shared.request(endpoint: .channel(channelQuery), completion)
+        var fullCompletion = completion
+        
+        if options.contains(.state) {
+            fullCompletion = Client.shared.afterCompletion(completion) { response in
+                response.channel.add(messagesToDatabase: response.messages)
+            }
+        }
+        
+        return Client.shared.request(endpoint: .channel(channelQuery), fullCompletion)
     }
     
     /// Loads the initial channel state and watches for changes.
