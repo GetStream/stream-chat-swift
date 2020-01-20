@@ -44,7 +44,7 @@ extension ClientTests02_Message {
     private func message(from channel: Channel, _ completion: @escaping (Message) -> Void) {
         let query = ChannelQuery(channel: channel, pagination: .limit(1), options: .state)
         
-        Client.shared.channel(query: query) { result in
+        Client.shared.queryChannel(query) { result in
             if let channelResponse = try? result.get(), let message = channelResponse.messages.first {
                 completion(message)
             }
