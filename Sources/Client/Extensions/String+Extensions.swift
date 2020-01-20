@@ -123,7 +123,8 @@ extension String {
 // MARK: - Optional String
 
 extension Optional where Wrapped == String {
-    var isBlank: Bool {
+    /// Checks if the optiona String is empty or blank.
+    public var isBlank: Bool {
         return self?.isBlank ?? true
     }
 }
