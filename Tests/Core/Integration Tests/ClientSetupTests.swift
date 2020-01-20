@@ -16,7 +16,7 @@ final class ClientSetupTests: XCTestCase {
     
     override static func setUp() {
         DateFormatter.log = nil
-        Client.config = .init(apiKey: TestCase.apiKey, logOptions: [.webSocketInfo, .requests])
+        Client.config = .init(apiKey: TestCase.apiKey, baseURL: .init(serverLocation: .staging), logOptions: [.webSocketInfo, .requests])
     }
     
     func testUserSetup() {

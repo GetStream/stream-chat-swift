@@ -32,7 +32,7 @@ class TestCase: XCTestCase {
         isClientReady = true
         WebSocket.pingTimeInterval = 3
         ClientLogger.logger = { print($0, $1.isEmpty ? "" : "[\($1)]", $2) }
-        Client.config = .init(apiKey: TestCase.apiKey, logOptions: .info)
+        Client.config = .init(apiKey: TestCase.apiKey, baseURL: .init(serverLocation: .staging), logOptions: .info)
     }
     
     override func setUp() {
