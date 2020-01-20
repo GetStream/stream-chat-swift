@@ -6,22 +6,32 @@
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import Reachability
 
 /// The Internect connection manager.
 public final class InternetConnection {
-    /// A shared InternetConnection.
+    /// A Internet Connection availability changes block type.
+    public typealias OnChange = (Bool) -> Void
+    /// A shared Internet Connection.
     public static let shared = InternetConnection()
     
-//    private let disposeBag = DisposeBag()
-//    private let restartSubject = PublishSubject<Void>()
     private lazy var reachability = Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
     
+    /// A Internet Connection availability changes block.
+    public var onChange: OnChange = { _ in }
+    
+    /// Forces to offline mode.
     public var offlineMode = false {
         didSet {
-            ClientLogger.log("🕸✈️", "Offline mode is \(offlineMode ? "On" : "Off").")
-//            restartSubject.onNext(())
+            log("✈️ Offline mode is \(offlineMode ? "On" : "Off").")
+            onChange(false)
+            
+            if offlineMode {
+                stopObserving()
+            } else if UIApplication.shared.applicationState != .background {
+                startObserving()
+            }
         }
     }
     
@@ -40,72 +50,69 @@ public final class InternetConnection {
         return true
     }
     
-    /// An observable Internet connection status.
-//    public private(set) lazy var isAvailableObservable: Observable<Bool> = restartSubject.asObserver()
-//        .startWith(())
-//        .observeOn(MainScheduler.instance)
-//        .flatMapLatest({ [unowned self] _ -> Observable<Reachability.Connection> in
-//            if self.offlineMode {
-//                return .just(.none)
-//            }
-//            
-//            if let reachability = self.reachability {
-//                return reachability.rx.reachabilityChanged
-//                    .map({ $0.connection })
-//                    .startWith(reachability.connection)
-//            }
-//            
-//            return .empty()
-//        })
-//        .map({
-//            if case .none = $0 {
-//                return false
-//            }
-//            
-//            return true
-//        })
-//        .distinctUntilChanged()
-//        .do(onNext: {
-//            if Client.shared.logOptions.isEnabled {
-//                ClientLogger.log("🕸", ($0 ? "Available 🙋‍♂️" : "Not Available 🤷‍♂️"))
-//            }
-//        })
-//        .share(replay: 1, scope: .forever)
-    
     /// Init InternetConnection.
-    public init() {
-//        if !isTestsEnvironment() {
-//            DispatchQueue.main.async { self.startObserving() }
-//        }
+    init() {
+        if !isTestsEnvironment() {
+            return
+        }
+        
+        reachability?.whenReachable = { [unowned self] reachability in
+            self.log("Available 🙋‍♂️")
+            self.onChange(reachability.connection != .none)
+        }
+        
+        reachability?.whenUnreachable = { [unowned self] reachability in
+            self.log("Not Available 🤷‍♂️")
+            self.onChange(reachability.connection != .none)
+        }
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(appDidBecomeActiveNotification),
+                                               name: UIApplication.didBecomeActiveNotification,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(appDidEnterBackgroundNotification),
+                                               name: UIApplication.didEnterBackgroundNotification,
+                                               object: nil)
+        
+        DispatchQueue.main.async { self.startObserving() }
     }
     
-//    private func startObserving() {
-//        UIApplication.shared.rx.appState
-//            .startWith(UIApplication.shared.appState)
-//            .filter { $0 == .active }
-//            .subscribe(onNext: { [unowned self] _ in
-//                do {
-//                    try self.reachability?.startNotifier()
-//
-//                    if Client.shared.logOptions.isEnabled {
-//                        ClientLogger.log("🕸", "Notifying started 🏃‍♂️")
-//                    }
-//                } catch {
-//                    if Client.shared.logOptions.isEnabled {
-//                        let message = "InternetConnection tried to start notifying when app state became active.\n\(error)"
-//                        ClientLogger.log("🕸", message)
-//                    }
-//                }
-//            })
-//            .disposed(by: disposeBag)
-//    }
+    /// An active app state.
+    @objc private func appDidBecomeActiveNotification() {
+        if !offlineMode {
+            startObserving()
+        }
+    }
+    
+    /// A background app state.
+    @objc private func appDidEnterBackgroundNotification() {
+        stopObserving()
+    }
+    
+    // MARK: Observing Availability
+    
+    private func startObserving() {
+        do {
+            try reachability?.startNotifier()
+            log("Notifying started 🏃‍♂️")
+        } catch {
+            log("InternetConnection tried to start notifying when app state became active.\n\(error)")
+        }
+    }
     
     /// Stop observing the Internet connection.
     public func stopObserving() {
         reachability?.stopNotifier()
-        
+        log("Notifying stopped 🚶‍♂️")
+    }
+    
+    // MARK: Logs
+    
+    private func log(_ message: String) {
         if Client.shared.logOptions.isEnabled {
-            ClientLogger.log("🕸", "Notifying stopped 🚶‍♂️")
+            ClientLogger.log("🕸", message)
         }
     }
 }
