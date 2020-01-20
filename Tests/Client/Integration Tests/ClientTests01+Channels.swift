@@ -25,7 +25,7 @@ final class ClientTests01_Channels: TestCase {
     
     func test02Channel() {
         expect("a default channel") { expectation in
-            Client.shared.queryChannel(ChannelQuery(channel: self.defaultChannel)) { result in
+            self.defaultChannel.query { result in
                 if let channelResponse = try? result.get() {
                     XCTAssertEqual(self.defaultChannel.cid, channelResponse.channel.cid)
                     expectation.fulfill()
