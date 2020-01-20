@@ -17,7 +17,7 @@ public extension Client {
     ///   - query: a users query (see `UsersQuery`).
     ///   - completion: a completion block with `[User]`.
     @discardableResult
-    func users(query: UsersQuery, _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
+    func queryUsers(_ query: UsersQuery, _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
         return request(endpoint: .users(query)) { (result: Result<UsersResponse, ClientError>) in
             completion(result.map({ $0.users }))
         }
