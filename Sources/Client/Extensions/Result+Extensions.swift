@@ -29,6 +29,7 @@ public extension Result {
 }
 
 public extension Result where Success: Decodable, Failure == ClientError {
+    
     /// Map the result to a client completion result type.
     /// - Parameters:
     ///   - completion: a client completion block.
@@ -40,6 +41,8 @@ public extension Result where Success: Decodable, Failure == ClientError {
         return .failure(error ?? .unexpectedError(nil, error))
     }
     
+    /// Catches an error in the result and send it to the error handler to map it to a success result.
+    /// - Parameter errorHandler: an error handler.
     func catchError(_ errorHandler: (Failure) -> Result<Success, ClientError>) -> Result<Success, ClientError> {
         if let error = error {
             return errorHandler(error)
