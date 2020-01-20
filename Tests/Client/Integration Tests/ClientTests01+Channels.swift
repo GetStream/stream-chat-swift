@@ -14,7 +14,7 @@ final class ClientTests01_Channels: TestCase {
     func test01Channels() {
         expect("channels with current user member") { expectation in
             let query = ChannelsQuery(filter: self.memberFilter, pagination: .limit(2))
-            Client.shared.channels(query: query) { result in
+            Client.shared.queryChannels(query) { result in
                 if let channelResponses = try? result.get() {
                     XCTAssertEqual(channelResponses.count, 2)
                     expectation.fulfill()
@@ -25,7 +25,7 @@ final class ClientTests01_Channels: TestCase {
     
     func test02Channel() {
         expect("a default channel") { expectation in
-            Client.shared.channel(query: ChannelQuery(channel: self.defaultChannel)) { result in
+            Client.shared.queryChannel(ChannelQuery(channel: self.defaultChannel)) { result in
                 if let channelResponse = try? result.get() {
                     XCTAssertEqual(self.defaultChannel.cid, channelResponse.channel.cid)
                     expectation.fulfill()
