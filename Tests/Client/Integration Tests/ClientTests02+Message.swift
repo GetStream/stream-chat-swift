@@ -42,9 +42,7 @@ final class ClientTests02_Message: TestCase {
 
 extension ClientTests02_Message {
     private func message(from channel: Channel, _ completion: @escaping (Message) -> Void) {
-        let query = ChannelQuery(channel: channel, pagination: .limit(1), options: .state)
-        
-        Client.shared.queryChannel(query) { result in
+        channel.query(pagination: .limit(1), options: .state) { result in
             if let channelResponse = try? result.get(), let message = channelResponse.messages.first {
                 completion(message)
             }
