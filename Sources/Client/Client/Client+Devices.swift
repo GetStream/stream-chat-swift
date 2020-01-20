@@ -48,7 +48,7 @@ public extension Client {
         return request(endpoint: .addDevice(deviceId: deviceId, currentUser), completion)
     }
     
-    /// Request az list if devices.
+    /// Gets a list of user devices.
     /// - Parameter completion: a completion block wiith `[Device]`.
     @discardableResult
     func devices(_ completion: @escaping Client.Completion<[Device]>) -> URLSessionTask {
