@@ -69,12 +69,7 @@ public struct ChannelsQuery: Encodable {
         try container.encode(messagesLimit.limit, forKey: .messagesLimit)
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
-        
-        if let user = User.current {
-            try container.encode(user, forKey: .user)
-        } else {
-            throw ClientError.emptyUser
-        }
+        try container.encode(Client.shared.user, forKey: .user)
     }
 }
 
