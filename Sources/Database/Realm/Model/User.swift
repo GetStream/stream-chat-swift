@@ -28,7 +28,7 @@ public final class User: Object {
         return "id"
     }
     
-    public var asUser: StreamChatCore.User? {
+    public var asUser: StreamChatCore.User {
         guard let role = StreamChatCore.User.Role(rawValue: role) else {
             return nil
         }

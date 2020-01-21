@@ -13,7 +13,7 @@ import StreamChatCore
 public final class Member: Object {
     
     @objc dynamic var id = ""
-    @objc dynamic var user: User?
+    @objc dynamic var user: User
     @objc dynamic var role = ""
     @objc dynamic var created = Date.default
     @objc dynamic var updated = Date.default

@@ -9,7 +9,7 @@
 import Foundation
 
 /// A reaction for a message.
-public struct Reaction: Codable {
+public struct Reaction: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case type
         case score
