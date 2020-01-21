@@ -99,11 +99,6 @@ extension Client {
             return
         }
         
-        guard let user = user else {
-            logger?.log("❌ User is empty. Skip Token setup.", level: .error)
-            return
-        }
-        
         if token == .guest {
             requestGuestToken()
             return
@@ -142,10 +137,6 @@ extension Client {
     }
     
     private func requestGuestToken() {
-        guard let user = user else {
-            return
-        }
-        
         logger?.log("Sending a request for a Guest Token...")
         
         request(endpoint: .guestToken(user)) { [unowned self] (result: Result<TokenResponse, ClientError>) in
@@ -158,19 +149,14 @@ extension Client {
     }
     
     private func developmentToken() -> Token? {
-        guard let user = user,
-            let json = try? JSONSerialization.data(withJSONObject: ["user_id": user.id]) else {
-                return nil
+        guard let json = try? JSONSerialization.data(withJSONObject: ["user_id": user.id]) else {
+            return nil
         }
         
         return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.\(json.base64EncodedString()).devtoken" // {"alg": "HS256", "typ": "JWT"}
     }
     
     func checkUserAndToken(_ token: Token) -> ClientError? {
-        guard let user = user else {
-            return ClientError.emptyUser
-        }
-        
         guard token.isValidToken(userId: user.id), let payload = token.payload else {
             return ClientError.tokenInvalid(description: "Token is invalid or Token payload is invalid")
         }

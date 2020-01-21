@@ -72,15 +72,13 @@ public extension Client {
         }
         
         let completion = doBefore(completion) { _ in
-            if let currentUser = User.current {
-                var currentUser = currentUser
-                var mutedUsers = currentUser.mutedUsers
-                
-                if let index = mutedUsers.firstIndex(where: { $0.user.id == user.id }) {
-                    mutedUsers.remove(at: index)
-                    currentUser.mutedUsers = mutedUsers
-                    Client.shared.user = currentUser
-                }
+            var currentUser = Client.shared.user
+            var mutedUsers = currentUser.mutedUsers
+            
+            if let index = mutedUsers.firstIndex(where: { $0.user.id == user.id }) {
+                mutedUsers.remove(at: index)
+                currentUser.mutedUsers = mutedUsers
+                Client.shared.user = currentUser
             }
         }
         

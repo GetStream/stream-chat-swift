@@ -28,7 +28,11 @@ public struct User: Codable {
     }
     
     /// An unkown user.
-    public static let unknown = User(id: "", name: "")
+    public static let tempDevelopmentUser: User = {
+        let salt = Int.random(in: 1000...9999)
+        return User(id: "temp_dev_user_\(salt)", name: "User \(salt)")
+    }()
+    
     static var flaggedUsers = Set<User>()
     
     public enum Role: String, Codable {
@@ -70,15 +74,11 @@ public struct User: Codable {
     
     /// Check if the user is the current user.
     public var isCurrent: Bool {
-        if let user = Client.shared.user {
-            return self == user
-        }
-        
-        return false
+        return self == Client.shared.user
     }
     
     /// The current user.
-    public static var current: User? {
+    public static var current: User {
         return Client.shared.user
     }
     
@@ -89,11 +89,7 @@ public struct User: Codable {
     
     /// Checks if the user is muted.
     public var isMuted: Bool {
-        guard !isCurrent, let currentUser = User.current else {
-            return false
-        }
-        
-        return currentUser.mutedUsers.first(where: { $0.user == self }) != nil
+        return isCurrent ? false : Client.shared.user.mutedUsers.first(where: { $0.user == self }) != nil
     }
     
     /// Returns the user as a member.
