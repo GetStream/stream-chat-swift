@@ -23,7 +23,7 @@ public extension Message {
     ///   - completion: a completion block with `[Message]`.
     @discardableResult
     func replies(pagination: Pagination, _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
-        let completion = Client.shared.afterCompletion(completion) { messages in
+        let completion = doAfter(completion) { messages in
             self.add(repliesToDatabase: messages)
         }
         
@@ -64,7 +64,7 @@ public extension Message {
             return .empty
         }
         
-        let completion = Client.shared.afterCompletion(completion) { _ in
+        let completion = doAfter(completion) { _ in
             Message.flaggedIds.insert(self.id)
         }
         
@@ -80,7 +80,7 @@ public extension Message {
             return .empty
         }
         
-        let completion = Client.shared.afterCompletion(completion) { _ in
+        let completion = doAfter(completion) { _ in
             if let index = Message.flaggedIds.firstIndex(where: { $0 == self.id }) {
                 Message.flaggedIds.remove(at: index)
             }
