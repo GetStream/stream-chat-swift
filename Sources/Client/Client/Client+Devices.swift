@@ -34,7 +34,7 @@ public extension Client {
         
         let device = Device(deviceId)
         
-        let completion = beforeCompletion(completion) { [unowned self] _ in
+        let completion = doBefore(completion) { [unowned self] _ in
             // Update the Client state.
             if let currentUser = self.user {
                 var currentUser = currentUser
@@ -57,7 +57,7 @@ public extension Client {
             return .empty
         }
         
-        let completion = beforeCompletion(completion) { [unowned self] devices in
+        let completion = doBefore(completion) { [unowned self] devices in
             if let currentUser = self.user {
                 var currentUser = currentUser
                 currentUser.devices = devices
@@ -82,7 +82,7 @@ public extension Client {
             return .empty
         }
         
-        let completion = beforeCompletion(completion) { [unowned self] devices in
+        let completion = doBefore(completion) { [unowned self] devices in
             if let index = currentUser.devices.firstIndex(where: { $0.id == deviceId }) {
                 var currentUser = currentUser
                 currentUser.devices.remove(at: index)

@@ -32,7 +32,7 @@ public extension Channel {
         var fullCompletion = completion
         
         if options.contains(.state) {
-            fullCompletion = Client.shared.afterCompletion(completion) { response in
+            fullCompletion = doAfter(completion) { response in
                 response.channel.add(messagesToDatabase: response.messages)
             }
         }
@@ -71,7 +71,7 @@ public extension Channel {
     func hide(for user: User? = User.current,
               clearHistory: Bool = false,
               _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
-        let completion = Client.shared.afterCompletion(completion) { [weak self] _ in
+        let completion = doAfter(completion) { [weak self] _ in
             self?.stopWatching()
         }
         
@@ -155,7 +155,7 @@ public extension Channel {
     @discardableResult
     private func sendForActiveChannel(message: Message,
                                       _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        let completion = Client.shared.afterCompletion(completion) { response in
+        let completion = doAfter(completion) { response in
             if response.message.isBan {
                 if let currentUser = User.current, !currentUser.isBanned {
                     var user = currentUser
@@ -330,7 +330,7 @@ public extension Channel {
         let reason = reason ?? banEnabling.reason
         let userBan = UserBan(user: user, channel: self, timeoutInMinutes: timeoutInMinutes, reason: reason)
         
-        let completion = Client.shared.beforeCompletion(completion) { [weak self] _ in
+        let completion = doBefore(completion) { [weak self] _ in
             if timeoutInMinutes == nil {
                 self?.bannedUsers.append(user)
             }
