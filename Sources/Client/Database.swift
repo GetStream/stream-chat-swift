@@ -12,7 +12,7 @@ import RxSwift
 public protocol Database {
     
     /// A user owner of the database.
-    var user: User? { get set }
+    var user: User { get set }
     
     /// A logger.
     var logger: ClientLogger? { get }

@@ -71,7 +71,7 @@ public final class RealmDatabase {
         return realmConfiguration?.fileURL
     }
     
-    public var user: StreamChatCore.User? {
+    public var user: StreamChatCore.User {
         didSet {
             do {
                 try setup()

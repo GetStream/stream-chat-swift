@@ -26,10 +26,6 @@ public extension Reactive where Base == Client {
     /// - Parameter deviceId: a Push Notifications device identifier.
     /// - Returns: an observable completion.
     func addDevice(deviceId: String) -> Observable<Void> {
-        guard let user = base.user else {
-            return .error(ClientError.emptyUser)
-        }
-        
         let device = Device(deviceId)
         
         if user.devices.contains(where: { $0.id == deviceId }) {
@@ -56,10 +52,6 @@ public extension Reactive where Base == Client {
     /// Request a list if devices.
     /// - Returns: an observable list of devices.
     func requestDevices() -> Observable<[Device]> {
-        guard let user = User.current else {
-            return .error(ClientError.emptyUser)
-        }
-        
         let request: Observable<DevicesResponse> = connectedRequest(endpoint: .devices(user))
         
         return request.map { $0.devices }
@@ -77,10 +69,6 @@ public extension Reactive where Base == Client {
     /// - Parameter deviceId: a Push Notifications device identifier.
     /// - Returns: an observable empty data.
     func removeDevice(deviceId: String) -> Observable<Void> {
-        guard let currentUser = User.current else {
-            return .error(ClientError.emptyUser)
-        }
-        
         return connection.connected()
             .flatMapLatest({ [unowned base] _ -> Observable<EmptyData> in
                 if currentUser.devices.firstIndex(where: { $0.id == deviceId }) != nil {

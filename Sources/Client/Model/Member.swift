@@ -37,16 +37,12 @@ public struct Member: Codable {
     
     /// Checks if the member is the current user.
     public var isCurrent: Bool {
-        if let currentUser = Client.shared.user {
-            return currentUser == user
-        }
-        
-        return false
+        return user == User.current
     }
     
     /// The current user as a Member.
-    public static var current: Member? {
-        return User.current?.asMember
+    public static var current: Member {
+        return User.current.asMember
     }
     
     /// Init a member.
