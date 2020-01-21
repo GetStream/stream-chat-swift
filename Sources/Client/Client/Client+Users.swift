@@ -57,7 +57,7 @@ public extension Client {
             return .empty
         }
         
-        let completion = beforeCompletion(completion) { Client.shared.user = $0.currentUser }
+        let completion = doBefore(completion) { Client.shared.user = $0.currentUser }
         return request(endpoint: .muteUser(user), completion)
     }
     
@@ -71,7 +71,7 @@ public extension Client {
             return .empty
         }
         
-        let completion = beforeCompletion(completion) { _ in
+        let completion = doBefore(completion) { _ in
             if let currentUser = User.current {
                 var currentUser = currentUser
                 var mutedUsers = currentUser.mutedUsers

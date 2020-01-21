@@ -23,18 +23,7 @@ public extension Client {
                 query: String,
                 pagination: Pagination = .channelsPageSize,
                 _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
-        if query.isBlank {
-            completion(.failure(.channelsSearchQueryEmpty))
-            return .empty
-        }
-        
-        if case .none = filter {
-            completion(.failure(.channelsSearchFilterEmpty))
-            return .empty
-        }
-        
         let query = SearchQuery(filter: filter, query: query, pagination: pagination)
-        
         return request(endpoint: .search(query)) { (result: Result<SearchResponse, ClientError>) in
             completion(result.map({ $0.messages.compactMap({ $0["message"] }) }))
         }
@@ -47,7 +36,7 @@ public extension Client {
     @discardableResult
     func queryChannels(_ query: ChannelsQuery, _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
         return request(endpoint: .channels(query)) { [unowned self] (result: Result<ChannelsResponse, ClientError>) in
-            let completion = self.afterCompletion(completion) { channelsResponse in
+            let completion = doAfter(completion) { channelsResponse in
                 self.add(channelsToDatabase: channelsResponse, query: query)
             }
             
