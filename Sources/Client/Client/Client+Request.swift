@@ -144,10 +144,6 @@ extension Client {
             return .failure(.emptyAPIKey)
         }
         
-        guard let user = user else {
-            return .failure(.emptyUser)
-        }
-        
         var queryItems = [URLQueryItem(name: "api_key", value: apiKey),
                           URLQueryItem(name: "user_id", value: user.id)]
         

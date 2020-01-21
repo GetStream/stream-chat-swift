@@ -139,7 +139,7 @@ public struct Message: Codable {
                 text: String,
                 command: String? = nil,
                 args: String? = nil,
-                user: User = .unknown,
+                user: User,
                 attachments: [Attachment] = [],
                 mentionedUsers: [User] = [],
                 extraData: Codable? = nil,

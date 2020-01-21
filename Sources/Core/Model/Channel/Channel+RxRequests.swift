@@ -58,14 +58,14 @@ public extension Reactive where Base == Channel {
     /// - Parameters:
     ///   - user: the current user.
     ///   - clearHistory: checks if needs to remove a message history of the channel.
-    func hide(for user: User? = User.current, clearHistory: Bool = false) -> Observable<Void> {
+    func hide(for user: User = User.current, clearHistory: Bool = false) -> Observable<Void> {
         return Client.shared.rx.connectedRequest(endpoint: .hideChannel(base, user, clearHistory))
             .flatMapLatest { (_: EmptyData) in self.stopWatching() }
     }
     
     /// Removes the hidden status for a channel.
     /// - Parameter user: the current user.
-    func show(for user: User? = User.current) -> Observable<Void> {
+    func show(for user: User = User.current) -> Observable<Void> {
         guard let user = user else {
             return .empty()
         }

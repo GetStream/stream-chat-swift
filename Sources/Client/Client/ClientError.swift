@@ -76,7 +76,7 @@ public enum ClientError: LocalizedError {
         case .emptyAPIKey: return "The Client API Key is empty"
         case .emptyToken: return "A Client Token is empty"
         case .tokenInvalid(let description): return "Token is invalid: \(description)"
-        case .emptyUser: return "The current Client user is empty"
+        case .emptyUser: return "The user is empty"
         case .emptyConnectionId: return "A Web Socket connection id is empty. Authorization missed"
         case .emptyBody(let description): return "A request or response body data is empty: \(description)"
         case .invalidURL(let url): return "An invalid URL: \(url ?? "<unknown>")"

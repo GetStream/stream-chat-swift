@@ -56,7 +56,6 @@ public enum ReactionType: String, Codable, Hashable, CaseIterable {
 
 /// A reaction for a message.
 public struct Reaction: Codable, Equatable {
-    
     private enum CodingKeys: String, CodingKey {
         case type
         case user
@@ -84,7 +83,7 @@ public struct Reaction: Codable, Equatable {
     ///   - messageId: a message id.
     ///   - user: a user owner of the reaction.
     ///   - created: a created date.
-    public init(type: ReactionType, messageId: String, user: User? = nil, created: Date = Date()) {
+    public init(type: ReactionType, messageId: String, user: User, created: Date = Date()) {
         self.type = type
         self.messageId = messageId
         self.user = user

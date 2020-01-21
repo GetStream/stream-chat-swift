@@ -116,8 +116,8 @@ public final class Channel: Codable {
     public convenience init(type: ChannelType, with member: Member, extraData: Codable? = nil) {
         var members = [member]
         
-        if let currentUser = User.current, member.user != currentUser {
-            members.append(currentUser.asMember)
+        if member.user != Client.shared.user {
+            members.append(Client.shared.user.asMember)
         }
         
         self.init(type: type,
@@ -164,20 +164,6 @@ public final class Channel: Codable {
         self.config = config
         self.invitedMembers = Set(invitedMembers)
         self.extraData = ExtraData(extraData)
-        
-        if type == .unknown, Client.shared.logOptions.isEnabled {
-            ClientLogger.log("❌", "Created a bad channel unknown type")
-        }
-        
-        if id.isEmpty, members.count < 2, let currentUser = User.current {
-            if let anotherMember = members.first, anotherMember.user != currentUser {
-                return
-            }
-            
-            if Client.shared.logOptions.isEnabled {
-                ClientLogger.log("❌", "Created a bad channel without id and without members")
-            }
-        }
     }
     
     required public init(from decoder: Decoder) throws {
@@ -250,10 +236,6 @@ extension Channel {
     /// - Returns: true, if unread count was updated.
     @discardableResult
     func updateUnreadCount(_ response: WebSocket.Response) -> Bool {
-        guard let currentUser = User.current else {
-            return false
-        }
-        
         guard let cid = response.cid, cid.id == id, cid.type == type else {
             if case .notificationMarkRead(let notificationChannel, let unreadCount, _, _) = response.event,
                 let channel = notificationChannel,
@@ -268,7 +250,7 @@ extension Channel {
         if case .messageNew(let message, let unreadCount, _, _, _) = response.event {
             unreadCountAtomic.set(unreadCount)
             
-            if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
+            if message.user != Client.shared.user, message.mentionedUsers.contains(Client.shared.user) {
                 mentionedUnreadCountAtomic += 1
             }
             
@@ -288,7 +270,7 @@ extension Channel {
         unreadCountAtomic.set(0)
         mentionedUnreadCountAtomic.set(0)
         
-        guard let currentUser = User.current, let unreadMessageRead = channelResponse.unreadMessageRead else {
+        guard let unreadMessageRead = channelResponse.unreadMessageRead else {
             return
         }
         
@@ -299,7 +281,7 @@ extension Channel {
             if message.created > unreadMessageRead.lastReadDate {
                 count += 1
                 
-                if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
+                if message.user != Client.shared.user, message.mentionedUsers.contains(Client.shared.user) {
                     mentionedCount += 1
                 }
             } else {

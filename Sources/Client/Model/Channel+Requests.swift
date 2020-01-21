@@ -68,7 +68,7 @@ public extension Channel {
     ///   - clearHistory: checks if needs to remove a message history of the channel.
     ///   - completion: an empty completion block.
     @discardableResult
-    func hide(for user: User? = User.current,
+    func hide(for user: User = User.current,
               clearHistory: Bool = false,
               _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
         let completion = doAfter(completion) { [weak self] _ in
@@ -83,12 +83,7 @@ public extension Channel {
     ///   - user: the current user.
     ///   - completion: an empty completion block.
     @discardableResult
-    func show(for user: User? = User.current, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
-        guard let user = user else {
-            completion(.failure(.emptyUser))
-            return .empty
-        }
-        
+    func show(for user: User = User.current, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
         return Client.shared.request(endpoint: .showChannel(self, user), completion)
     }
     
@@ -157,8 +152,8 @@ public extension Channel {
                                       _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         let completion = doAfter(completion) { response in
             if response.message.isBan {
-                if let currentUser = User.current, !currentUser.isBanned {
-                    var user = currentUser
+                if !Client.shared.user.isBanned {
+                    var user = Client.shared.user
                     user.isBanned = true
                     Client.shared.user = user
                 }

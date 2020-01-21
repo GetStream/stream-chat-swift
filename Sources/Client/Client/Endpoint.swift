@@ -48,9 +48,9 @@ public enum Endpoint {
     /// Delete a channel.
     case deleteChannel(Channel)
     /// Hide a channel.
-    case hideChannel(Channel, User?, _ clearHistory: Bool)
+    case hideChannel(Channel, User, _ clearHistory: Bool)
     /// Show a channel if it was hidden.
-    case showChannel(Channel, User?)
+    case showChannel(Channel, User)
     /// Send a message to a channel.
     case sendMessage(Message, Channel)
     /// Upload an image to a channel.
@@ -269,18 +269,10 @@ extension Endpoint {
             return query
             
         case .showChannel(_, let user):
-            if let user = user {
-                return ["user_id": user.id]
-            }
-            
-            return nil
+            return ["user_id": user.id]
             
         case .hideChannel(_, let user, let clearHistory):
-            if let user = user {
-                return HiddenChannelRequest(userId: user.id, clearHistory: clearHistory)
-            }
-            
-            return nil
+            return HiddenChannelRequest(userId: user.id, clearHistory: clearHistory)
             
         case .sendMessage(let message, _):
             return ["message": message]

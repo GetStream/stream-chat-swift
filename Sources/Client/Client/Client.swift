@@ -21,7 +21,7 @@ public final class Client {
     /// A WebSocket events callback type.
     public typealias OnEvent = (WebSocket.Event) -> Void
     /// A user did update block type.
-    public typealias UserDidUpdate = (User?) -> Void
+    public typealias UserDidUpdate = (User) -> Void
     
     /// A client config (see `Config`).
     public static var config = Config(apiKey: "")
@@ -83,9 +83,9 @@ public final class Client {
     private let userAtomic = Atomic<User>()
     
     /// The current user.
-    public internal(set) var user: User? {
+    public internal(set) var user: User {
         get {
-            return userAtomic.get()
+            return userAtomic.get() ?? .tempDevelopmentUser
         }
         set {
             userAtomic.set(newValue)
@@ -156,19 +156,15 @@ public final class Client {
     ///
     /// - Note: To restore the connection, use `Client.set(user:, token:)` to set a valid user/token pair.
     public func disconnect() {
-        guard user != nil else {
-            return
-        }
-        
         logger?.log("🧹 Reset Client User, Token, URLSession and WebSocket.")
-        user = nil
         urlSession = setupURLSession(token: "")
         webSocket.disconnect()
         webSocket = WebSocket()
-        token = nil
         Channel.activeChannelIds.removeAll()
         Message.flaggedIds.removeAll()
         User.flaggedUsers.removeAll()
+        token = nil
+        user = .tempDevelopmentUser
         
         DispatchQueue.main.async {
             if UIApplication.shared.applicationState == .background {
