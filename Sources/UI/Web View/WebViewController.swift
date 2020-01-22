@@ -37,6 +37,18 @@ open class WebViewController: UIViewController, WKNavigationDelegate {
         }
     }
     
+    override open func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        setDocumentMenuViewControllerSoureViewsIfNeeded(viewControllerToPresent)
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
+    }
+    
+    func setDocumentMenuViewControllerSoureViewsIfNeeded(_ viewControllerToPresent: UIViewController) {
+        if #available(iOS 13, *), viewControllerToPresent is UIDocumentMenuViewController && UIDevice.current.userInterfaceIdiom == .phone {
+            // Prevent the app from crashing if the WKWebView decides to present a UIDocumentMenuViewController while it self is presented modally.
+            viewControllerToPresent.popoverPresentationController?.sourceView = webView
+            viewControllerToPresent.popoverPresentationController?.sourceRect = CGRect(x: webView.center.x, y: webView.center.y, width: 1, height: 1)
+        }
+    }
     
     /// Makes a request with a given `URL` to load the web view.
     ///
@@ -136,6 +148,25 @@ extension UIViewController {
         let webViewController = WebViewController()
         webViewController.url = url
         webViewController.title = title
-        present(UINavigationController(rootViewController: webViewController), animated: animated)
+        present(WebViewNavigationController(with: webViewController), animated: animated)
+    }
+}
+
+fileprivate class WebViewNavigationController: UINavigationController {
+    private let webViewController: WebViewController
+    
+    init(with webViewController: WebViewController) {
+        self.webViewController = webViewController
+        super.init(rootViewController: webViewController)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        webViewController = WebViewController(nibName: nil, bundle: nil)
+        super.init(coder: aDecoder)
+    }
+    
+    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        webViewController.setDocumentMenuViewControllerSoureViewsIfNeeded(viewControllerToPresent)
+        super.present(viewControllerToPresent, animated: flag, completion: completion)
     }
 }
