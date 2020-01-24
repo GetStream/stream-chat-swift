@@ -215,13 +215,13 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     private func updateTableView(with changes: ViewChanges) {
         // Update items.
         switch changes {
-        case .itemAdded(_, _, _, let items),
+        case .itemsAdded(_, _, _, let items),
              .itemMoved(fromRow: _, toRow: _, let items),
              .itemRemoved(_, let items),
              .reloaded(_, let items):
             self.items = items
             
-        case .itemUpdated(let rows, _, let items):
+        case .itemsUpdated(let rows, _, let items):
             self.items = items
             
             if !isVisible {
@@ -249,8 +249,8 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         
         // Update tableView.
         switch changes {
-        case let .itemAdded(row, _, _, _):
-            tableView.insertRows(at: [.row(row)], with: .none)
+        case let .itemsAdded(rows, _, _, _):
+            tableView.insertRows(at: rows.map(IndexPath.row), with: .none)
             
         case let .itemMoved(fromRow: row1, toRow: row2, _):
             tableView.performBatchUpdates({
@@ -258,7 +258,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
                 tableView.insertRows(at: [.row(row2)], with: .none)
             })
             
-        case let .itemUpdated(rows, _, _):
+        case let .itemsUpdated(rows, _, _):
             tableView.reloadRows(at: rows.map({ .row($0) }), with: .none)
             
         case .itemRemoved(let row, _):
