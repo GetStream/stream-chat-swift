@@ -14,7 +14,7 @@
     <a title="Client Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (90% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (89% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -190,6 +190,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/ObservableType.html">ObservableType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:12ReachabilityAAC">Reachability</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Reactive.html">Reactive</a>
@@ -409,6 +412,7 @@
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">Client</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Client</span><span class="p">:</span> <span class="kt">ReactiveCompatible</span></code></pre>
 
                 </div>
               </div>
@@ -771,10 +775,6 @@ You can do requests directly.</p>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -877,9 +877,11 @@ You can do requests directly.</p>
               <div class="task-name-container">
                 <a name="/Events"></a>
                 <a name="//apple_ref/swift/Section/Events" class="dashAnchor"></a>
-                <a href="#/Events">
-                  <h3 class="section-name">Events</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Events"></a>
+                  <h3 class="section-name"><p>Events</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1112,9 +1114,11 @@ You can do requests directly.</p>
               <div class="task-name-container">
                 <a name="/Unread%20Count"></a>
                 <a name="//apple_ref/swift/Section/Unread Count" class="dashAnchor"></a>
-                <a href="#/Unread%20Count">
-                  <h3 class="section-name">Unread Count</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Unread%20Count"></a>
+                  <h3 class="section-name"><p>Unread Count</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1162,8 +1166,7 @@ You can do requests directly.</p>
     <p class="aside-title">Note</p>
     Be sure the current user is a member of the channel.
 
-</div>
-<div class="aside aside-note">
+</div><div class="aside aside-note">
     <p class="aside-title">Note</p>
     100 is the maximum unread count of messages.
 
@@ -1181,10 +1184,6 @@ You can do requests directly.</p>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -1233,7 +1232,7 @@ You can do requests directly.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
-<span class="kd">public</span> <span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt">T</span><span class="p">:</span> <span class="kt">Decodable</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">endpoint</span><span class="p">:</span> <span class="kt"><a href="../Enums/Endpoint.html">Endpoint</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/Client.html#/s:14StreamChatCore6ClientC10Completiona">Completion</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">URLSessionDataTask</span></code></pre>
+<span class="kd">public</span> <span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="nv">endpoint</span><span class="p">:</span> <span class="kt"><a href="../Enums/Endpoint.html">Endpoint</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/Client.html#/s:14StreamChatCore6ClientC10Completiona">Completion</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">URLSessionDataTask</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
 
                         </div>
                       </div>
@@ -1281,9 +1280,11 @@ You can do requests directly.</p>
               <div class="task-name-container">
                 <a name="/Channels%20Requests"></a>
                 <a name="//apple_ref/swift/Section/Channels Requests" class="dashAnchor"></a>
-                <a href="#/Channels%20Requests">
-                  <h3 class="section-name">Channels Requests</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Channels%20Requests"></a>
+                  <h3 class="section-name"><p>Channels Requests</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1322,7 +1323,7 @@ You can do requests directly.</p>
                               </td>
                               <td>
                                 <div>
-                                  <p>a filter for channels, e.g. .key(<q>members</q>, .in([<q>john</q>]))</p>
+                                  <p>a filter for channels, e.g. .key(&ldquo;members&rdquo;, .in([&ldquo;john&rdquo;]))</p>
                                 </div>
                               </td>
                             </tr>
@@ -1535,9 +1536,11 @@ You can do requests directly.</p>
               <div class="task-name-container">
                 <a name="/Users%20Requests"></a>
                 <a name="//apple_ref/swift/Section/Users Requests" class="dashAnchor"></a>
-                <a href="#/Users%20Requests">
-                  <h3 class="section-name">Users Requests</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Users%20Requests"></a>
+                  <h3 class="section-name"><p>Users Requests</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1596,9 +1599,11 @@ You can do requests directly.</p>
               <div class="task-name-container">
                 <a name="/Update%20User"></a>
                 <a name="//apple_ref/swift/Section/Update User" class="dashAnchor"></a>
-                <a href="#/Update%20User">
-                  <h3 class="section-name">Update User</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Update%20User"></a>
+                  <h3 class="section-name"><p>Update User</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1688,9 +1693,11 @@ You can do requests directly.</p>
               <div class="task-name-container">
                 <a name="/Mute%20User"></a>
                 <a name="//apple_ref/swift/Section/Mute User" class="dashAnchor"></a>
-                <a href="#/Mute%20User">
-                  <h3 class="section-name">Mute User</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Mute%20User"></a>
+                  <h3 class="section-name"><p>Mute User</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1799,9 +1806,11 @@ You can do requests directly.</p>
               <div class="task-name-container">
                 <a name="/Flag%20User"></a>
                 <a name="//apple_ref/swift/Section/Flag User" class="dashAnchor"></a>
-                <a href="#/Flag%20User">
-                  <h3 class="section-name">Flag User</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Flag%20User"></a>
+                  <h3 class="section-name"><p>Flag User</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1929,9 +1938,11 @@ You can do requests directly.</p>
               <div class="task-name-container">
                 <a name="/Devices"></a>
                 <a name="//apple_ref/swift/Section/Devices" class="dashAnchor"></a>
-                <a href="#/Devices">
-                  <h3 class="section-name">Devices</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Devices"></a>
+                  <h3 class="section-name"><p>Devices</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2121,9 +2132,11 @@ You can do requests directly.</p>
               <div class="task-name-container">
                 <a name="/Setup"></a>
                 <a name="//apple_ref/swift/Section/Setup" class="dashAnchor"></a>
-                <a href="#/Setup">
-                  <h3 class="section-name">Setup</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Setup"></a>
+                  <h3 class="section-name"><p>Setup</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2264,10 +2277,6 @@ Then you send it to the client to complete the setup with a callback function fr
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -2301,8 +2310,8 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

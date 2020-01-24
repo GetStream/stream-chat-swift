@@ -14,7 +14,7 @@
     <a title="ChannelTableViewCell Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (86% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (87% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -51,6 +51,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ChatViewController/ComposerAddFileType.html">– ComposerAddFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChatViewController/MessageAction.html">– MessageAction</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ComposerAddFileView.html">ComposerAddFileView</a>
@@ -100,6 +103,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/IndexPath.html">IndexPath</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:Si">Int</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:SS">String</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
@@ -157,7 +166,13 @@
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Structs/AvatarViewStyle.html">AvatarViewStyle</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/ChannelViewStyle.html">ChannelViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelViewStyle/VerticalTextAlignment.html">– VerticalTextAlignment</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChatViewStyle.html">ChatViewStyle</a>
@@ -189,6 +204,12 @@
               <li class="nav-group-task">
                 <a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a>
               </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SeparatorStyle.html">SeparatorStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Spacing.html">Spacing</a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -199,7 +220,7 @@
             <h1>ChannelTableViewCell</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">ChannelTableViewCell</span> <span class="p">:</span> <span class="kt">UITableViewCell</span><span class="p">,</span> <span class="kt">Reusable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ChannelTableViewCell</span> <span class="p">:</span> <span class="kt">UITableViewCell</span><span class="p">,</span> <span class="kt">Reusable</span></code></pre>
 
                 </div>
               </div>
@@ -209,6 +230,60 @@
           <section class="section task-group-section">
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat20ChannelTableViewCellC5styleAA0cE5StyleVvp"></a>
+                    <a name="//apple_ref/swift/Property/style" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat20ChannelTableViewCellC5styleAA0cE5StyleVvp">style</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A channel style.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Structs/ChannelViewStyle.html">ChannelViewStyle</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat20ChannelTableViewCellC12needsToSetupSbvp"></a>
+                    <a name="//apple_ref/swift/Property/needsToSetup" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat20ChannelTableViewCellC12needsToSetupSbvp">needsToSetup</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if needds setup layout.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">needsToSetup</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -229,7 +304,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">avatarView</span><span class="p">:</span> <span class="kt"><a href="../Classes/AvatarView.html">AvatarView</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="kd">lazy</span> <span class="k">var</span> <span class="nv">avatarView</span><span class="p">:</span> <span class="kt"><a href="../Classes/AvatarView.html">AvatarView</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -347,33 +422,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat20ChannelTableViewCellC5styleAA0cE5StyleVSgvp"></a>
-                    <a name="//apple_ref/swift/Property/style" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat20ChannelTableViewCellC5styleAA0cE5StyleVSgvp">style</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A channel style.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Structs/ChannelViewStyle.html">ChannelViewStyle</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/c:@M@StreamChat@objc(cs)ChannelTableViewCell(im)prepareForReuse"></a>
                     <a name="//apple_ref/swift/Method/prepareForReuse()" class="dashAnchor"></a>
                     <a class="token" href="#/c:@M@StreamChat@objc(cs)ChannelTableViewCell(im)prepareForReuse">prepareForReuse()</a>
@@ -394,6 +442,52 @@
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">override</span> <span class="kd">func</span> <span class="nf">prepareForReuse</span><span class="p">()</span></code></pre>
 
                         </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat20ChannelTableViewCellC13setupIfNeeded5styleyAA0cE5StyleV_tF"></a>
+                    <a name="//apple_ref/swift/Method/setupIfNeeded(style:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat20ChannelTableViewCellC13setupIfNeeded5styleyAA0cE5StyleV_tF">setupIfNeeded(style:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Setup style and layouts.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">setupIfNeeded</span><span class="p">(</span><span class="nv">style</span><span class="p">:</span> <span class="kt"><a href="../Structs/ChannelViewStyle.html">ChannelViewStyle</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>style</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a message view style.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -531,8 +625,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

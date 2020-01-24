@@ -14,7 +14,7 @@
     <a title="Extensions  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">StreamChatCore Docs</a> (90% documented)</p>
+        <p><a href="index.html">StreamChatCore Docs</a> (89% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -190,6 +190,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/ObservableType.html">ObservableType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions.html#/s:12ReachabilityAAC">Reachability</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/Reactive.html">Reactive</a>
@@ -433,16 +436,13 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">Reactive</span> <span class="k">where</span> <span class="kt">Base</span> <span class="o">==</span> <span class="kt"><a href="Classes/Client.html">Client</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Reactive</span> <span class="k">where</span> <span class="kt">Base</span><span class="p">:</span> <span class="kt">WebSocketClient</span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -497,10 +497,6 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -528,17 +524,6 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Rx"></a>
-                <a name="//apple_ref/swift/Section/Rx" class="dashAnchor"></a>
-                <a href="#/Rx">
-                  <h3 class="section-name">Rx</h3>
-                </a>
-              </div>
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -559,7 +544,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ObservableType</span> <span class="k">where</span> <span class="kt">Element</span> <span class="o">==</span> <span class="kt"><a href="Classes/WebSocket.html">WebSocket</a></span><span class="o">.</span><span class="kt">Connection</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">ObservableType</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ObservableType</span> <span class="k">where</span> <span class="kt">Element</span> <span class="o">==</span> <span class="kt"><a href="Classes/WebSocket.html">WebSocket</a></span><span class="o">.</span><span class="kt">Connection</span></code></pre>
 
                         </div>
                       </div>
@@ -572,9 +558,11 @@
               <div class="task-name-container">
                 <a name="/JSONDecoder%20Stream"></a>
                 <a name="//apple_ref/swift/Section/JSONDecoder Stream" class="dashAnchor"></a>
-                <a href="#/JSONDecoder%20Stream">
-                  <h3 class="section-name">JSONDecoder Stream</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/JSONDecoder%20Stream"></a>
+                  <h3 class="section-name"><p>JSONDecoder Stream</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -610,9 +598,11 @@
               <div class="task-name-container">
                 <a name="/JSONEncoder%20Stream"></a>
                 <a name="//apple_ref/swift/Section/JSONEncoder Stream" class="dashAnchor"></a>
-                <a href="#/JSONEncoder%20Stream">
-                  <h3 class="section-name">JSONEncoder Stream</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/JSONEncoder%20Stream"></a>
+                  <h3 class="section-name"><p>JSONEncoder Stream</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -643,10 +633,6 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -667,18 +653,13 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@frozen</span>
-<span class="kd">extension</span> <span class="kt">Data</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Data</span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -699,18 +680,13 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@frozen</span>
-<span class="kd">extension</span> <span class="kt">Int</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -731,8 +707,33 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@frozen</span>
-<span class="kd">extension</span> <span class="kt">Result</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Result</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:12ReachabilityAAC"></a>
+                    <a name="//apple_ref/swift/Extension/Reachability" class="dashAnchor"></a>
+                    <a class="token" href="#/s:12ReachabilityAAC">Reachability</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Reachability</span><span class="p">:</span> <span class="kt">ReactiveCompatible</span></code></pre>
 
                         </div>
                       </div>
@@ -745,9 +746,11 @@
               <div class="task-name-container">
                 <a name="/Hashing"></a>
                 <a name="//apple_ref/swift/Section/Hashing" class="dashAnchor"></a>
-                <a href="#/Hashing">
-                  <h3 class="section-name">Hashing</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Hashing"></a>
+                  <h3 class="section-name"><p>Hashing</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -770,18 +773,13 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@frozen</span>
-<span class="kd">extension</span> <span class="kt">String</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -809,10 +807,6 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -846,9 +840,11 @@
               <div class="task-name-container">
                 <a name="/Array%20extension%20for%20ChatItem"></a>
                 <a name="//apple_ref/swift/Section/Array extension for ChatItem" class="dashAnchor"></a>
-                <a href="#/Array%20extension%20for%20ChatItem">
-                  <h3 class="section-name">Array extension for ChatItem</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Array%20extension%20for%20ChatItem"></a>
+                  <h3 class="section-name"><p>Array extension for ChatItem</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -871,8 +867,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@frozen</span>
-<span class="kd">public</span> <span class="kd">extension</span> <span class="kt">Array</span> <span class="k">where</span> <span class="kt">Element</span> <span class="o">==</span> <span class="kt"><a href="Enums/ChatItem.html">ChatItem</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">Array</span> <span class="k">where</span> <span class="kt">Element</span> <span class="o">==</span> <span class="kt"><a href="Enums/ChatItem.html">ChatItem</a></span></code></pre>
 
                         </div>
                       </div>
@@ -884,8 +879,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

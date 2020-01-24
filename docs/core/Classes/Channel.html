@@ -14,7 +14,7 @@
     <a title="Channel Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (90% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (89% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -190,6 +190,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/ObservableType.html">ObservableType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:12ReachabilityAAC">Reachability</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Reactive.html">Reactive</a>
@@ -409,6 +412,7 @@
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">Channel</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Channel</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 
                 </div>
               </div>
@@ -952,7 +956,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="n">convenience</span> <span class="nf">init</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">member</span><span class="p">:</span> <span class="kt"><a href="../Structs/Member.html">Member</a></span><span class="p">,</span> <span class="nv">extraData</span><span class="p">:</span> <span class="kt">Codable</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">convenience</span> <span class="nf">init</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">member</span><span class="p">:</span> <span class="kt"><a href="../Structs/Member.html">Member</a></span><span class="p">,</span> <span class="nv">extraData</span><span class="p">:</span> <span class="kt">Codable</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1190,9 +1194,11 @@
               <div class="task-name-container">
                 <a name="/Database"></a>
                 <a name="//apple_ref/swift/Section/Database" class="dashAnchor"></a>
-                <a href="#/Database">
-                  <h3 class="section-name">Database</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Database"></a>
+                  <h3 class="section-name"><p>Database</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1324,9 +1330,11 @@
               <div class="task-name-container">
                 <a name="/Database%20Members"></a>
                 <a name="//apple_ref/swift/Section/Database Members" class="dashAnchor"></a>
-                <a href="#/Database%20Members">
-                  <h3 class="section-name">Database Members</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Database%20Members"></a>
+                  <h3 class="section-name"><p>Database Members</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1443,9 +1451,11 @@
               <div class="task-name-container">
                 <a name="/Events"></a>
                 <a name="//apple_ref/swift/Section/Events" class="dashAnchor"></a>
-                <a href="#/Events">
-                  <h3 class="section-name">Events</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Events"></a>
+                  <h3 class="section-name"><p>Events</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1554,9 +1564,11 @@
               <div class="task-name-container">
                 <a name="/Unread%20Count"></a>
                 <a name="//apple_ref/swift/Section/Unread Count" class="dashAnchor"></a>
-                <a href="#/Unread%20Count">
-                  <h3 class="section-name">Unread Count</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Unread%20Count"></a>
+                  <h3 class="section-name"><p>Unread Count</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1604,8 +1616,7 @@
     <p class="aside-title">Note</p>
     Be sure the current user is a member of the channel.
 
-</div>
-<div class="aside aside-note">
+</div><div class="aside aside-note">
     <p class="aside-title">Note</p>
     100 is the maximum unread count of messages.
 
@@ -1641,8 +1652,7 @@
     <p class="aside-title">Note</p>
     Be sure the current user is a member of the channel.
 
-</div>
-<div class="aside aside-note">
+</div><div class="aside aside-note">
     <p class="aside-title">Note</p>
     100 is the maximum unread count of messages.
 
@@ -1666,9 +1676,11 @@
               <div class="task-name-container">
                 <a name="/Users%20Presence"></a>
                 <a name="//apple_ref/swift/Section/Users Presence" class="dashAnchor"></a>
-                <a href="#/Users%20Presence">
-                  <h3 class="section-name">Users Presence</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Users%20Presence"></a>
+                  <h3 class="section-name"><p>Users Presence</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -1709,9 +1721,11 @@
               <div class="task-name-container">
                 <a name="/Channel%20Requests"></a>
                 <a name="//apple_ref/swift/Section/Channel Requests" class="dashAnchor"></a>
-                <a href="#/Channel%20Requests">
-                  <h3 class="section-name">Channel Requests</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Channel%20Requests"></a>
+                  <h3 class="section-name"><p>Channel Requests</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2095,9 +2109,11 @@
               <div class="task-name-container">
                 <a name="/Message"></a>
                 <a name="//apple_ref/swift/Section/Message" class="dashAnchor"></a>
-                <a href="#/Message">
-                  <h3 class="section-name">Message</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Message"></a>
+                  <h3 class="section-name"><p>Message</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2299,9 +2315,11 @@
               <div class="task-name-container">
                 <a name="/Members"></a>
                 <a name="//apple_ref/swift/Section/Members" class="dashAnchor"></a>
-                <a href="#/Members">
-                  <h3 class="section-name">Members</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Members"></a>
+                  <h3 class="section-name"><p>Members</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2494,9 +2512,11 @@
               <div class="task-name-container">
                 <a name="/User%20Ban"></a>
                 <a name="//apple_ref/swift/Section/User Ban" class="dashAnchor"></a>
-                <a href="#/User%20Ban">
-                  <h3 class="section-name">User Ban</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/User%20Ban"></a>
+                  <h3 class="section-name"><p>User Ban</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2597,9 +2617,11 @@
               <div class="task-name-container">
                 <a name="/Invite%20Requests"></a>
                 <a name="//apple_ref/swift/Section/Invite Requests" class="dashAnchor"></a>
-                <a href="#/Invite%20Requests">
-                  <h3 class="section-name">Invite Requests</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Invite%20Requests"></a>
+                  <h3 class="section-name"><p>Invite Requests</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -2808,9 +2830,11 @@
               <div class="task-name-container">
                 <a name="/File%20Requests"></a>
                 <a name="//apple_ref/swift/Section/File Requests" class="dashAnchor"></a>
-                <a href="#/File%20Requests">
-                  <h3 class="section-name">File Requests</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/File%20Requests"></a>
+                  <h3 class="section-name"><p>File Requests</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -3043,9 +3067,11 @@
               <div class="task-name-container">
                 <a name="/Messages%20Requests"></a>
                 <a name="//apple_ref/swift/Section/Messages Requests" class="dashAnchor"></a>
-                <a href="#/Messages%20Requests">
-                  <h3 class="section-name">Messages Requests</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Messages%20Requests"></a>
+                  <h3 class="section-name"><p>Messages Requests</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -3384,10 +3410,6 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -3446,9 +3468,11 @@
               <div class="task-name-container">
                 <a name="/Config"></a>
                 <a name="//apple_ref/swift/Section/Config" class="dashAnchor"></a>
-                <a href="#/Config">
-                  <h3 class="section-name">Config</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Config"></a>
+                  <h3 class="section-name"><p>Config</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -3512,8 +3536,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>
