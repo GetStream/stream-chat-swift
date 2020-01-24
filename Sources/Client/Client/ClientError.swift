@@ -22,6 +22,8 @@ public enum ClientError: LocalizedError {
     case emptyUser
     /// A connection id is empty.
     case emptyConnectionId
+    /// A channel id is empty.
+    case emptyChannelId
     /// A response bofy is empty.
     case emptyBody(description: String)
     /// An invalid URL.
@@ -78,6 +80,7 @@ public enum ClientError: LocalizedError {
         case .tokenInvalid(let description): return "Token is invalid: \(description)"
         case .emptyUser: return "The user is empty"
         case .emptyConnectionId: return "A Web Socket connection id is empty. Authorization missed"
+        case .emptyChannelId: return "A channel id is empty. Probably the channel is a direct message channel without id."
         case .emptyBody(let description): return "A request or response body data is empty: \(description)"
         case .invalidURL(let url): return "An invalid URL: \(url ?? "<unknown>")"
             

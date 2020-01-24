@@ -49,7 +49,10 @@ extension Client {
         var request = URLRequest(url: url)
         request.allHTTPHeaderFields = authHeaders(token: token)
         
-        return WebSocket(request, stayConnectedInBackground: stayConnectedInBackground, logger: logger)
+        return WebSocket(request,
+                         callbackQueue: callbackQueue,
+                         stayConnectedInBackground: stayConnectedInBackground,
+                         logger: logger)
     }
 }
 

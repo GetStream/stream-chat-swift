@@ -139,7 +139,6 @@ public struct Message: Codable {
                 text: String,
                 command: String? = nil,
                 args: String? = nil,
-                user: User,
                 attachments: [Attachment] = [],
                 mentionedUsers: [User] = [],
                 extraData: Codable? = nil,
@@ -148,6 +147,7 @@ public struct Message: Codable {
                 reactionCounts: ReactionCounts? = nil,
                 replyCount: Int = 0,
                 showReplyInChannel: Bool = false) {
+        user = User.current
         self.id = id
         self.type = type
         self.parentId = parentId
@@ -157,7 +157,6 @@ public struct Message: Codable {
         self.text = text
         self.command = command
         self.args = args
-        self.user = user
         self.attachments = attachments
         self.mentionedUsers = mentionedUsers
         self.extraData = ExtraData(extraData)
@@ -229,12 +228,16 @@ extension Message {
 }
 
 extension Message: Hashable {
+    
     public static func == (lhs: Message, rhs: Message) -> Bool {
         return lhs.id == rhs.id
             && lhs.type == rhs.type
+            && lhs.parentId == rhs.parentId
             && lhs.user == rhs.user
             && lhs.text == rhs.text
             && lhs.command == rhs.command
+            && lhs.attachments == rhs.attachments
+            && lhs.showReplyInChannel == rhs.showReplyInChannel
             && lhs.created == rhs.created
             && lhs.updated == rhs.updated
             && lhs.deleted == rhs.deleted
@@ -243,9 +246,12 @@ extension Message: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(type)
+        hasher.combine(parentId)
         hasher.combine(user)
         hasher.combine(text)
         hasher.combine(command)
+        hasher.combine(attachments)
+        hasher.combine(showReplyInChannel)
         hasher.combine(created)
         hasher.combine(updated)
         hasher.combine(deleted)

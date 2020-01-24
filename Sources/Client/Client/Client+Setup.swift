@@ -82,7 +82,7 @@ extension Client {
         
         isExpiredTokenInProgress = true
         logger?.log("🀄️ Request for a new token from a token provider.")
-        tokenProvider { [unowned self] in self.setup(token: $0) }
+        tokenProvider(setup)
         
         return true
     }

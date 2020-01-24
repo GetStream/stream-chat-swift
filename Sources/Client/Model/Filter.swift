@@ -267,3 +267,11 @@ public extension Filter.Key {
         return .key(self, .autocomplete(value))
     }
 }
+
+/// MARK: - Current User
+
+extension Filter {
+    public static func currentUserInMembers() -> Filter {
+        return "members".in([Client.shared.user.id])
+    }
+}

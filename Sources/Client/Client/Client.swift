@@ -17,9 +17,9 @@ public final class Client {
     /// A token block type.
     public typealias OnToken = (Token?) -> Void
     /// A WebSocket connection callback type.
-    public typealias OnConnect = (WebSocket.Connection) -> Void
+    public typealias OnConnect = (Connection) -> Void
     /// A WebSocket events callback type.
-    public typealias OnEvent = (WebSocket.Event) -> Void
+    public typealias OnEvent = (Event) -> Void
     /// A user did update block type.
     public typealias UserDidUpdate = (User) -> Void
     
@@ -65,7 +65,16 @@ public final class Client {
     
     /// A WebSocket events callback.
     var onEvent: Client.OnEvent = { _ in } {
-        didSet { webSocket.onEvent = onEvent }
+        didSet {
+            webSocket.onEvent = { [unowned self] event in
+                if case let .healthCheck(_, user) = event {
+                    self.user = user
+                    return
+                }
+                
+                self.onEvent(event)
+            }
+        }
     }
     
     lazy var urlSession = setupURLSession(token: "")
@@ -85,18 +94,17 @@ public final class Client {
     /// The current user.
     public internal(set) var user: User {
         get {
-            return userAtomic.get() ?? .tempDevelopmentUser
+            return userAtomic.get() ?? .unknown
         }
         set {
+            unreadCountAtomic.set((newValue.channelsUnreadCount, newValue.messagesUnreadCount))
             userAtomic.set(newValue)
             userDidUpdate?(newValue)
         }
     }
     
     /// Check if API key and token are valid and the web socket is connected.
-    public var isConnected: Bool {
-        return !apiKey.isEmpty && (token?.isValidToken() ?? false) && webSocket.isConnected
-    }
+    public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     
     var unreadCountAtomic = Atomic<UnreadCount>((0, 0))
     
@@ -160,11 +168,10 @@ public final class Client {
         urlSession = setupURLSession(token: "")
         webSocket.disconnect()
         webSocket = WebSocket()
-        Channel.activeChannelIds.removeAll()
         Message.flaggedIds.removeAll()
         User.flaggedUsers.removeAll()
         token = nil
-        user = .tempDevelopmentUser
+        user = .unknown
         
         DispatchQueue.main.async {
             if UIApplication.shared.applicationState == .background {

@@ -28,9 +28,9 @@ public struct User: Codable {
     }
     
     /// An unkown user.
-    public static let tempDevelopmentUser: User = {
-        let salt = Int.random(in: 1000...9999)
-        return User(id: "temp_dev_user_\(salt)", name: "User \(salt)")
+    public static let unknown: User = {
+        let salt = Int.random(in: 10000...99999)
+        return User(id: "unknown_\(salt)", name: "Unknown \(salt)")
     }()
     
     static var flaggedUsers = Set<User>()

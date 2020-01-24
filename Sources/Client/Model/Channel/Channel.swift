@@ -80,12 +80,6 @@ public final class Channel: Codable {
         return deleted != nil
     }
     
-    static var activeChannelIds = Set<ChannelId>()
-    
-    var isActive: Bool {
-        return Channel.activeChannelIds.contains(cid)
-    }
-    
     var unreadCountAtomic = Atomic(0)
     var mentionedUnreadCountAtomic = Atomic(0)
     var onlineUsersAtomic = Atomic<[User]>([])
@@ -186,10 +180,6 @@ public final class Channel: Codable {
         let name = try? container.decodeIfPresent(String.self, forKey: .name)
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         invitedMembers = Set<Member>()
-        
-        if !isActive {
-            Channel.activeChannelIds.insert(cid)
-        }
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -209,7 +199,7 @@ public final class Channel: Codable {
     }
 }
 
-extension Channel: Hashable {
+extension Channel: Hashable, CustomStringConvertible {
     
     public static func == (lhs: Channel, rhs: Channel) -> Bool {
         return lhs.cid == rhs.cid
@@ -217,6 +207,11 @@ extension Channel: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(cid)
+    }
+    
+    public var description: String {
+        let opaque: UnsafeMutableRawPointer = Unmanaged.passUnretained(self).toOpaque()
+        return "Channel<\(opaque)>:\(cid):\(name)"
     }
 }
 
@@ -235,11 +230,11 @@ extension Channel {
     /// - Parameter response: a web socket event.
     /// - Returns: true, if unread count was updated.
     @discardableResult
-    func updateUnreadCount(_ response: WebSocket.Response) -> Bool {
-        guard let cid = response.cid, cid.id == id, cid.type == type else {
-            if case .notificationMarkRead(let notificationChannel, let unreadCount, _, _) = response.event,
+    func updateUnreadCount(_ event: Event) -> Bool {
+        guard let cid = event.cid, cid == self.cid else {
+            if case .notificationMarkRead(let notificationChannel, let unreadCount, _, _, _) = event,
                 let channel = notificationChannel,
-                channel.id == id {
+                channel.cid == self.cid {
                 unreadCountAtomic.set(unreadCount)
                 return true
             }
@@ -247,7 +242,7 @@ extension Channel {
             return false
         }
         
-        if case .messageNew(let message, let unreadCount, _, _, _) = response.event {
+        if case .messageNew(let message, let unreadCount, _, _, _, _) = event {
             unreadCountAtomic.set(unreadCount)
             
             if message.user != Client.shared.user, message.mentionedUsers.contains(Client.shared.user) {
@@ -257,7 +252,7 @@ extension Channel {
             return true
         }
         
-        if case .messageRead(let messageRead, _) = response.event, messageRead.user.isCurrent {
+        if case .messageRead(let messageRead, _, _) = event, messageRead.user.isCurrent {
             unreadCountAtomic.set(0)
             mentionedUnreadCountAtomic.set(0)
             return true

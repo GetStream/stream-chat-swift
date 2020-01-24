@@ -23,6 +23,7 @@
 		8A0EB78C22FC608A009481E4 /* Client+RxEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78B22FC608A009481E4 /* Client+RxEvents.swift */; };
 		8A0EB78E22FC6974009481E4 /* Channel+RxEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78D22FC6974009481E4 /* Channel+RxEvents.swift */; };
 		8A104FC522F4B95B002B2DC1 /* Banners.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A104FC322F49233002B2DC1 /* Banners.swift */; };
+		8A104FD223DA47D800D59FFA /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A104FD123DA47D800D59FFA /* Connection.swift */; };
 		8A1207CB238ED68000E41790 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207C9238ED66500E41790 /* Message.swift */; };
 		8A1207CD238EE3C700E41790 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207CC238EE3C700E41790 /* Reaction.swift */; };
 		8A13852623C767530088DBC7 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A13852523C767530088DBC7 /* Subscription.swift */; };
@@ -59,6 +60,8 @@
 		8A2DD95423855690007775E9 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2B02384580700C2F9DE /* Channel.swift */; };
 		8A2DD956238556A7007775E9 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD955238556A7007775E9 /* Member.swift */; };
 		8A30D07B237D81C20082B951 /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */; };
+		8A4601EF23D857100025EFF0 /* AttachmentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4601EE23D857100025EFF0 /* AttachmentType.swift */; };
+		8A4601F123D857320025EFF0 /* AttachmentFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4601F023D857320025EFF0 /* AttachmentFile.swift */; };
 		8A50695823CDEA31009F127A /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; };
 		8A50696B23CDEDA6009F127A /* StreamChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A50696723CDEDA3009F127A /* StreamChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A50696C23CDEDAC009F127A /* StreamChatClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A50696823CDEDA3009F127A /* StreamChatClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -76,7 +79,6 @@
 		8A50697B23CE064C009F127A /* AssociatedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A50697A23CE064C009F127A /* AssociatedValue.swift */; };
 		8A50697D23CE0886009F127A /* Client+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A50697C23CE0886009F127A /* Client+Setup.swift */; };
 		8A50697E23CE0938009F127A /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */; };
-		8A50698A23CE0940009F127A /* WebSocket+Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Types.swift */; };
 		8A50698B23CE0940009F127A /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1222E9BA39005CFAC9 /* Atomic.swift */; };
 		8A50698C23CE0940009F127A /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1322E9BA39005CFAC9 /* RepeatingTimer.swift */; };
 		8A50698D23CE0940009F127A /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED1B22E9BA39005CFAC9 /* Data+Extensions.swift */; };
@@ -312,6 +314,7 @@
 		8A0EB78B22FC608A009481E4 /* Client+RxEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxEvents.swift"; sourceTree = "<group>"; };
 		8A0EB78D22FC6974009481E4 /* Channel+RxEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+RxEvents.swift"; sourceTree = "<group>"; };
 		8A104FC322F49233002B2DC1 /* Banners.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Banners.swift; sourceTree = "<group>"; };
+		8A104FD123DA47D800D59FFA /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		8A1207C9238ED66500E41790 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		8A1207CC238EE3C700E41790 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8A13852523C767530088DBC7 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
@@ -341,6 +344,8 @@
 		8A2DD955238556A7007775E9 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
 		8A34DED32322A92C00271BBF /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		8A4601EE23D857100025EFF0 /* AttachmentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentType.swift; sourceTree = "<group>"; };
+		8A4601F023D857320025EFF0 /* AttachmentFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentFile.swift; sourceTree = "<group>"; };
 		8A50694F23CDEA31009F127A /* StreamChatClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A50695723CDEA31009F127A /* StreamChatClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A50696723CDEDA3009F127A /* StreamChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChat.h; sourceTree = "<group>"; };
@@ -502,7 +507,6 @@
 		8AD5ED2A22E9BA39005CFAC9 /* Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pagination.swift; sourceTree = "<group>"; };
 		8AD5ED2B22E9BA39005CFAC9 /* Channel+RxRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+RxRequests.swift"; sourceTree = "<group>"; };
 		8AD5ED2C22E9BA39005CFAC9 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
-		8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebSocket+Types.swift"; sourceTree = "<group>"; };
 		8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InternetConnection.swift; sourceTree = "<group>"; };
 		8AD5ED3322E9BA39005CFAC9 /* BaseURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
@@ -673,6 +677,56 @@
 			path = API;
 			sourceTree = "<group>";
 		};
+		8A4601EA23D856900025EFF0 /* Attachment */ = {
+			isa = PBXGroup;
+			children = (
+				8AD5ED1D22E9BA39005CFAC9 /* Attachment.swift */,
+				8A4601EE23D857100025EFF0 /* AttachmentType.swift */,
+				8A4601F023D857320025EFF0 /* AttachmentFile.swift */,
+				8A1715DB23D250CC00CF8E01 /* AttachmentFileType.swift */,
+			);
+			path = Attachment;
+			sourceTree = "<group>";
+		};
+		8A4601EB23D856A20025EFF0 /* Channel */ = {
+			isa = PBXGroup;
+			children = (
+				8AD5ED2322E9BA39005CFAC9 /* Channel.swift */,
+				8A7EE0152385B2F300BDB18D /* ChannelType.swift */,
+				8A7EE0172385B31B00BDB18D /* ChannelId.swift */,
+				8A92BAF723C8BF360085184F /* Channel+Requests.swift */,
+				8A048E492331252400FDB3C0 /* Channel+Database.swift */,
+				8AD5ED2122E9BA39005CFAC9 /* ChannelsQuery.swift */,
+				8AD5ED2022E9BA39005CFAC9 /* ChannelQuery.swift */,
+				8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */,
+			);
+			path = Channel;
+			sourceTree = "<group>";
+		};
+		8A4601EC23D856C60025EFF0 /* Message */ = {
+			isa = PBXGroup;
+			children = (
+				8AD5ED2222E9BA39005CFAC9 /* Message.swift */,
+				8A92BAFD23C8CB930085184F /* Message+Requests.swift */,
+				8AD82E4A2382E25A0037D47D /* Message+Database.swift */,
+				8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */,
+				8AD5ED2422E9BA39005CFAC9 /* MessageRead.swift */,
+				8A4601EA23D856900025EFF0 /* Attachment */,
+			);
+			path = Message;
+			sourceTree = "<group>";
+		};
+		8A4601ED23D856E10025EFF0 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				8AD5ED2622E9BA39005CFAC9 /* User.swift */,
+				8A04965022EF4B2400E94795 /* UsersQuery.swift */,
+				8A7EE00923857FEC00BDB18D /* MutedUser.swift */,
+				8AD5ED2722E9BA39005CFAC9 /* Member.swift */,
+			);
+			path = User;
+			sourceTree = "<group>";
+		};
 		8A50696623CDEA7D009F127A /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -720,25 +774,9 @@
 			children = (
 				8AD5ED1E22E9BA39005CFAC9 /* Event.swift */,
 				8AD5ED1F22E9BA39005CFAC9 /* ExtraData.swift */,
-				8AD5ED2622E9BA39005CFAC9 /* User.swift */,
-				8A04965022EF4B2400E94795 /* UsersQuery.swift */,
-				8A7EE00923857FEC00BDB18D /* MutedUser.swift */,
-				8AD5ED2722E9BA39005CFAC9 /* Member.swift */,
-				8A7EE0152385B2F300BDB18D /* ChannelType.swift */,
-				8A7EE0172385B31B00BDB18D /* ChannelId.swift */,
-				8AD5ED2322E9BA39005CFAC9 /* Channel.swift */,
-				8A92BAF723C8BF360085184F /* Channel+Requests.swift */,
-				8A048E492331252400FDB3C0 /* Channel+Database.swift */,
-				8AD5ED2122E9BA39005CFAC9 /* ChannelsQuery.swift */,
-				8AD5ED2022E9BA39005CFAC9 /* ChannelQuery.swift */,
-				8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */,
-				8AD5ED2222E9BA39005CFAC9 /* Message.swift */,
-				8A92BAFD23C8CB930085184F /* Message+Requests.swift */,
-				8AD82E4A2382E25A0037D47D /* Message+Database.swift */,
-				8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */,
-				8AD5ED2422E9BA39005CFAC9 /* MessageRead.swift */,
-				8AD5ED1D22E9BA39005CFAC9 /* Attachment.swift */,
-				8A1715DB23D250CC00CF8E01 /* AttachmentFileType.swift */,
+				8A4601ED23D856E10025EFF0 /* User */,
+				8A4601EB23D856A20025EFF0 /* Channel */,
+				8A4601EC23D856C60025EFF0 /* Message */,
 				8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */,
 				8AF4DCB923757AF300F534F5 /* SearchQuery.swift */,
 				8A04964E22EF1A8900E94795 /* QueryOptions.swift */,
@@ -1209,7 +1247,7 @@
 			isa = PBXGroup;
 			children = (
 				8AD5ED3022E9BA39005CFAC9 /* WebSocket.swift */,
-				8AD5ED2F22E9BA39005CFAC9 /* WebSocket+Types.swift */,
+				8A104FD123DA47D800D59FFA /* Connection.swift */,
 			);
 			path = WebSocket;
 			sourceTree = "<group>";
@@ -1523,6 +1561,7 @@
 				8A1715D623D2347900CF8E01 /* Message+Database.swift in Sources */,
 				8A5069B123CE0D1E009F127A /* Client+WebSocket.swift in Sources */,
 				8A50699823CE09FF009F127A /* ExtraData.swift in Sources */,
+				8A4601F123D857320025EFF0 /* AttachmentFile.swift in Sources */,
 				8A50699523CE09C8009F127A /* ChannelType.swift in Sources */,
 				8A5069A523CE0ADE009F127A /* MessageRead.swift in Sources */,
 				8A50697323CE03F6009F127A /* ClientLogger.swift in Sources */,
@@ -1531,6 +1570,7 @@
 				8A5069AA23CE0AF5009F127A /* Filter.swift in Sources */,
 				8A5069A123CE0ACB009F127A /* ChannelQuery.swift in Sources */,
 				8A50699323CE09B5009F127A /* Channel.swift in Sources */,
+				8A4601EF23D857100025EFF0 /* AttachmentType.swift in Sources */,
 				8A50697123CE03ED009F127A /* Client+Setup.swift in Sources */,
 				8A5069B323CE0D56009F127A /* Result+Extensions.swift in Sources */,
 				8A5069A023CE0ABF009F127A /* Event.swift in Sources */,
@@ -1564,7 +1604,6 @@
 				8A1715D523D2347900CF8E01 /* Message+Requests.swift in Sources */,
 				8A9F946D23D70AA000AE5348 /* Functions.swift in Sources */,
 				8A50699F23CE0AB3009F127A /* UsersQuery.swift in Sources */,
-				8A50698A23CE0940009F127A /* WebSocket+Types.swift in Sources */,
 				8A50697023CE03ED009F127A /* Client.swift in Sources */,
 				8A5069A323CE0AD8009F127A /* Message.swift in Sources */,
 				8A50697723CE0459009F127A /* Database.swift in Sources */,
@@ -1574,6 +1613,7 @@
 				8A5069A723CE0AE6009F127A /* Reaction.swift in Sources */,
 				8A50697823CE0469009F127A /* Token.swift in Sources */,
 				8A50699623CE09D3009F127A /* Member.swift in Sources */,
+				8A104FD223DA47D800D59FFA /* Connection.swift in Sources */,
 				8A50699A23CE0A12009F127A /* MutedUser.swift in Sources */,
 				8A50699923CE0A09009F127A /* Device.swift in Sources */,
 				8A1715DC23D250CC00CF8E01 /* AttachmentFileType.swift in Sources */,

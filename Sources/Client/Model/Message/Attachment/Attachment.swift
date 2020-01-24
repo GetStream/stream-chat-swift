@@ -173,6 +173,29 @@ public struct Attachment: Codable {
     }
 }
 
+extension Attachment: Hashable {
+    
+    public static func == (lhs: Attachment, rhs: Attachment) -> Bool {
+        return lhs.title == rhs.title
+            && lhs.author == rhs.author
+            && lhs.text == rhs.text
+            && lhs.type == rhs.type
+            && lhs.url == rhs.url
+            && lhs.imageURL == rhs.imageURL
+            && lhs.file == rhs.file
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(title)
+        hasher.combine(author)
+        hasher.combine(text)
+        hasher.combine(type)
+        hasher.combine(url)
+        hasher.combine(imageURL)
+        hasher.combine(file)
+    }
+}
+
 // MARK: - Attachment Action
 
 public extension Attachment {
@@ -224,149 +247,5 @@ public extension Attachment {
     enum ActionStyle: String, Decodable {
         case `default`
         case primary
-    }
-}
-
-// MARK: - Attachment Type
-
-/// An attachment type.
-public enum AttachmentType: RawRepresentable, Codable, Equatable {
-    /// An attachment type.
-    case unknown
-    case custom(type: String)
-    case image
-    case imgur
-    case giphy
-    case video
-    case youtube
-    case product
-    case file
-    case link
-
-    public var rawValue: String? {
-        switch self {
-        case .unknown:
-            return nil
-        case .custom(type: let raw):
-            return raw
-        case .image:
-            return "image"
-        case .imgur:
-            return "imgur"
-        case .giphy:
-            return "giphy"
-        case .video:
-            return "video"
-        case .youtube:
-            return "youtube"
-        case .product:
-            return "product"
-        case .file:
-            return "file"
-        case .link:
-            return "link"
-        }
-    }
-
-    public init(rawValue: String?) {
-        switch rawValue {
-        case "image":
-            self = .image
-        case "imgur":
-            self = .imgur
-        case "giphy":
-            self = .giphy
-        case "video":
-            self = .video
-        case "youtube":
-            self = .youtube
-        case "product":
-            self = .product
-        case "file":
-            self = .file
-        case "link":
-            self = .link
-        case .some(let raw) where !raw.isEmpty:
-            self = .custom(type: raw)
-        default:
-            self = .unknown
-        }
-    }
-
-    public init(from decoder: Decoder) throws {
-        let rawValue = try decoder.singleValueContainer().decode(String.self)
-        self = AttachmentType(rawValue: rawValue)
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        guard self != .unknown else {
-            throw ClientError.encodingFailure(EncodingError.valueUnsupported, object: self)
-        }
-        var container = encoder.singleValueContainer()
-        try container.encode(rawValue)
-    }
-    
-    fileprivate var isImage: Bool {
-        return self == .image || self == .imgur || self == .giphy
-    }
-}
-
-// MARK: - Attachment File
-
-/// An attachment file description.
-public struct AttachmentFile: Codable {
-    private enum CodingKeys: String, CodingKey {
-        case mimeType = "mime_type"
-        case size = "file_size"
-    }
-    
-    /// An attachment file type (see `AttachmentFileType`).
-    public let type: AttachmentFileType
-    /// A size of the file.
-    public let size: Int64
-    /// A mime type.
-    public let mimeType: String?
-    /// A file size formatter.
-    public static let sizeFormatter = ByteCountFormatter()
-    
-    /// A formatted file size.
-    public var sizeString: String {
-        return AttachmentFile.sizeFormatter.string(fromByteCount: size)
-    }
-    
-    /// Init an attachment file.
-    /// - Parameters:
-    ///   - type: a file type.
-    ///   - size: a file size.
-    ///   - mimeType: a mime type.
-    public init(type: AttachmentFileType, size: Int64, mimeType: String?) {
-        self.type = type
-        self.size = size
-        self.mimeType = mimeType
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        mimeType = try? container.decodeIfPresent(String.self, forKey: .mimeType)
-        
-        if let mimeType = mimeType {
-            type = AttachmentFileType(mimeType: mimeType)
-        } else {
-            type = .generic
-        }
-        
-        if let size = try? container.decodeIfPresent(Int64.self, forKey: .size) {
-            self.size = size
-        } else if let floatSize = try? container.decodeIfPresent(Float64.self, forKey: .size) {
-            size = Int64(floatSize.rounded())
-        } else {
-            size = 0
-        }
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(size, forKey: .size)
-        try container.encodeIfPresent(mimeType, forKey: .mimeType)
     }
 }
