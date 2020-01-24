@@ -15,11 +15,11 @@ public enum ViewChanges: Equatable {
     /// No changes.
     case none
     /// Reload all views.
-    case reloaded(_ row: Int, _ items: [ChatItem])
+    case reloaded(_ scrollToRow: Int, _ items: [ChatItem])
     /// Add item at row and reload another one.
-    case itemAdded(_ row: Int, _ reloadRow: Int?, _ forceToScroll: Bool, _ items: [ChatItem])
+    case itemsAdded(_ rows: [Int], _ reloadRow: Int?, _ forceToScroll: Bool, _ items: [ChatItem])
     /// Update items with messages.
-    case itemUpdated(_ rows: [Int], [Message], _ items: [ChatItem])
+    case itemsUpdated(_ rows: [Int], [Message], _ items: [ChatItem])
     /// Remove item at row.
     case itemRemoved(_ row: Int, _ items: [ChatItem])
     /// Move item from row to another.
@@ -39,10 +39,10 @@ extension ViewChanges: CustomStringConvertible {
             return "<none>"
         case let .reloaded(row, items):
             return "<reloaded\(items.count): \(row)>"
-        case let .itemAdded(row, reloadRow, _, items):
-            return "<itemAdded\(items.count): \(row) -> \(reloadRow ?? -1)>"
-        case let .itemUpdated(rows, messages, items):
-            return "<itemUpdated\(items.count): \(rows)> \(messages.map({ $0.textOrArgs }).joined(separator: ", "))"
+        case let .itemsAdded(rows, reloadRow, _, items):
+            return "<itemsAdded\(items.count): \(rows) -> \(reloadRow ?? -1)>"
+        case let .itemsUpdated(rows, messages, items):
+            return "<itemsUpdated\(items.count): \(rows)> \(messages.map({ $0.textOrArgs }).joined(separator: ", "))"
         case let .itemRemoved(row, items):
             return "<itemRemoved\(items.count): \(row)>"
         case let .itemMoved(fromRow, toRow, items):
