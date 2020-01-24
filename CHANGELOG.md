@@ -1,12 +1,19 @@
 # Upcoming
 
-### ⚠️ Breaking Changes
-- Default `UITableView.loadingCell` changed:
-  - from `func loadingCell(at indexPath: IndexPath) -> UITableViewCell`
-  - to `func loadingCell(at indexPath: IndexPath, textColor: UIColor) -> UITableViewCell`
-- Default `UITableView.statusCell` changed:
-  - from `func statusCell(... subtitle: String? = nil, highlighted: Bool) -> UITableViewCell`
-  - to `func statusCell(... subtitle: String? = nil, textColor: UIColor) -> UITableViewCell`
+### 🔄 Changed
+
+
+### ✅ Added
+
+
+### 🐞 Fixed
+
+
+# 1.5.5
+_January 24, 2020_
+
+### 🔄 Changed
+- Handling keyboard notifications for ChatViewController in rx, robust way.
 
 ### ✅ Added
 - Banner animation without bouncing.
@@ -33,12 +40,15 @@
 - Added a customization for [message actions](https://github.com/GetStream/stream-chat-swift/wiki/Message-Actions).
 
 ### 🐞 Fixed
-- Example app for a memory leak.
-- Keyboard events replays.
-- Handling keyboard notifications for ChatViewController in rx way.
+- Fixed example app memory leak.
+- Fixed keyboard events replaying unexpectedly.
 - Scroll the table view to the bottom safely.
 - Fixed a crash when the token was expired.
 - Fixed `StatusTableViewCell` layout.
+- Fixed video attachments are not recognized and not clickable. [#56](https://github.com/GetStream/stream-chat-swift/issues/56)
+- Fixed ComposerView going behind keyboard when an opaque TabBar is used. [#64](https://github.com/GetStream/stream-chat-swift/issues/64)
+- Fixed WebView crashing when file picker is presented in a website in iPhones. [#69](https://github.com/GetStream/stream-chat-swift/issues/69)
+- Fixed messages not being grouped correctly after one day. [#72](https://github.com/GetStream/stream-chat-swift/issues/72)
 
 # 1.5.4
 _December 16th, 2019_
