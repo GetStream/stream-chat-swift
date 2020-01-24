@@ -31,7 +31,7 @@ extension Reactive where Base == Client {
                 .filter { $0 != .inactive }
                 .distinctUntilChanged()
                 .startWith(app.appState)
-                .do(onNext: { state in`
+                .do(onNext: { state in
                     if Client.shared.logOptions.isEnabled {
                         ClientLogger.log("📱", "App state \(state)")
                     }
@@ -60,12 +60,6 @@ extension Reactive where Base == Client {
         return Observable.combineLatest(appState, internetIsAvailable, webSocketResponse)
             .compactMap { [unowned base] in base.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
             .distinctUntilChanged()
-            .do(onNext: { [unowned base] in
-                if case .connected(_, let user) = $0 {
-                    base.user = user
-                    base.unreadCountAtomic.set((user.channelsUnreadCount, user.messagesUnreadCount))
-                }
-            })
             .share(replay: 1)
     }
     

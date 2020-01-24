@@ -10,6 +10,8 @@ import Foundation
 
 extension Data {
     
+    static let empty = Data()
+    
     func prettyPrintedJSONString() throws -> String {
         let object = try JSONSerialization.jsonObject(with: self)
         let data = try JSONSerialization.data(withJSONObject: object, options: [.prettyPrinted])
