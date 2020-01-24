@@ -9,7 +9,17 @@
 import Foundation
 
 public extension Result {
-    /// Get the error from the result if it failed.
+    
+    /// Get a value from the result.
+    var value: Success? {
+        if case .success(let successValue) = self {
+            return successValue
+        }
+        
+        return nil
+    }
+    
+    /// Get an error from the result if it failed.
     var error: Failure? {
         if case .failure(let error) = self {
             return error
