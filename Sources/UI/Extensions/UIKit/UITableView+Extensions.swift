@@ -56,7 +56,7 @@ extension UITableView {
     ///   - indexPath: an index path.
     ///   - textColor: a text color of the status.
     /// - Returns: a loading table view cell.
-    public func loadingCell(at indexPath: IndexPath, textColor: UIColor) -> UITableViewCell {
+    public func loadingCell(at indexPath: IndexPath, textColor: UIColor = .chatGray) -> UITableViewCell {
         return statusCell(at: indexPath, title: TableView.loadingTitle, textColor: textColor)
     }
     
@@ -71,7 +71,7 @@ extension UITableView {
     public func statusCell(at indexPath: IndexPath,
                            title: String,
                            subtitle: String? = nil,
-                           textColor: UIColor) -> UITableViewCell {
+                           textColor: UIColor = .chatGray) -> UITableViewCell {
         let cell = dequeueReusableCell(for: indexPath, cellType: StatusTableViewCell.self) as StatusTableViewCell
         cell.backgroundColor = backgroundColor
         cell.update(title: title, subtitle: subtitle, textColor: textColor)
