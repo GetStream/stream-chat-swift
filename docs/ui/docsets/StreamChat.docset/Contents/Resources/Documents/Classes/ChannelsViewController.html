@@ -14,7 +14,7 @@
     <a title="ChannelsViewController Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (86% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (87% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -51,6 +51,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ChatViewController/ComposerAddFileType.html">– ComposerAddFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChatViewController/MessageAction.html">– MessageAction</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ComposerAddFileView.html">ComposerAddFileView</a>
@@ -100,6 +103,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/IndexPath.html">IndexPath</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:Si">Int</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:SS">String</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
@@ -157,7 +166,13 @@
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Structs/AvatarViewStyle.html">AvatarViewStyle</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/ChannelViewStyle.html">ChannelViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelViewStyle/VerticalTextAlignment.html">– VerticalTextAlignment</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChatViewStyle.html">ChatViewStyle</a>
@@ -189,6 +204,12 @@
               <li class="nav-group-task">
                 <a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a>
               </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SeparatorStyle.html">SeparatorStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Spacing.html">Spacing</a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -200,6 +221,7 @@
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">ChannelsViewController</span> <span class="p">:</span> <span class="kt"><a href="../Classes/ViewController.html">ViewController</a></span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ChannelsViewController</span><span class="p">:</span> <span class="kt">UITableViewDataSource</span><span class="p">,</span> <span class="kt">UITableViewDelegate</span></code></pre>
 
                 </div>
               </div>
@@ -508,9 +530,11 @@
               <div class="task-name-container">
                 <a name="/Channel%20Cell"></a>
                 <a name="//apple_ref/swift/Section/Channel Cell" class="dashAnchor"></a>
-                <a href="#/Channel%20Cell">
-                  <h3 class="section-name">Channel Cell</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Channel%20Cell"></a>
+                  <h3 class="section-name"><p>Channel Cell</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -546,9 +570,11 @@
               <div class="task-name-container">
                 <a name="/Loading%20Cell"></a>
                 <a name="//apple_ref/swift/Section/Loading Cell" class="dashAnchor"></a>
-                <a href="#/Loading%20Cell">
-                  <h3 class="section-name">Loading Cell</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Loading%20Cell"></a>
+                  <h3 class="section-name"><p>Loading Cell</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -619,9 +645,11 @@
               <div class="task-name-container">
                 <a name="/Show%20Chat"></a>
                 <a name="//apple_ref/swift/Section/Show Chat" class="dashAnchor"></a>
-                <a href="#/Show%20Chat">
-                  <h3 class="section-name">Show Chat</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Show%20Chat"></a>
+                  <h3 class="section-name"><p>Show Chat</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -765,9 +793,11 @@
               <div class="task-name-container">
                 <a name="/Table%20View"></a>
                 <a name="//apple_ref/swift/Section/Table View" class="dashAnchor"></a>
-                <a href="#/Table%20View">
-                  <h3 class="section-name">Table View</h3>
-                </a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Table%20View"></a>
+                  <h3 class="section-name"><p>Table View</p>
+</h3>
+                </div>
               </div>
               <ul>
                 <li class="item">
@@ -910,8 +940,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

@@ -14,7 +14,7 @@
     <a title="ChannelViewStyle Structure Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (86% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (87% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -51,6 +51,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ChatViewController/ComposerAddFileType.html">– ComposerAddFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChatViewController/MessageAction.html">– MessageAction</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ComposerAddFileView.html">ComposerAddFileView</a>
@@ -100,6 +103,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/IndexPath.html">IndexPath</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:Si">Int</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:SS">String</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
@@ -157,7 +166,13 @@
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Structs/AvatarViewStyle.html">AvatarViewStyle</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/ChannelViewStyle.html">ChannelViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelViewStyle/VerticalTextAlignment.html">– VerticalTextAlignment</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChatViewStyle.html">ChatViewStyle</a>
@@ -189,6 +204,12 @@
               <li class="nav-group-task">
                 <a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a>
               </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SeparatorStyle.html">SeparatorStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Spacing.html">Spacing</a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -200,6 +221,7 @@
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ChannelViewStyle</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ChannelViewStyle</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 
                 </div>
               </div>
@@ -239,9 +261,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV14separatorColorSo7UIColorCvp"></a>
-                    <a name="//apple_ref/swift/Property/separatorColor" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV14separatorColorSo7UIColorCvp">separatorColor</a>
+                    <a name="/s:10StreamChat16ChannelViewStyleV09separatorE0AA09SeparatorE0Vvp"></a>
+                    <a name="//apple_ref/swift/Property/separatorStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV09separatorE0AA09SeparatorE0Vvp">separatorStyle</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -249,14 +271,68 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A separator color.</p>
+                        <p>A separator style.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">separatorColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">separatorStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/SeparatorStyle.html">SeparatorStyle</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV06avatardE0AA06AvatardE0VSgvp"></a>
+                    <a name="//apple_ref/swift/Property/avatarViewStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV06avatardE0AA06AvatardE0VSgvp">avatarViewStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Avatars style.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">avatarViewStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/AvatarViewStyle.html">AvatarViewStyle</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV17nameNumberOfLinesSivp"></a>
+                    <a name="//apple_ref/swift/Property/nameNumberOfLines" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV17nameNumberOfLinesSivp">nameNumberOfLines</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A name number of lines.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">nameNumberOfLines</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
@@ -365,6 +441,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">nameUnreadColor</span><span class="p">:</span> <span class="kt">UIColor</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV20messageNumberOfLinesSivp"></a>
+                    <a name="//apple_ref/swift/Property/messageNumberOfLines" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV20messageNumberOfLinesSivp">messageNumberOfLines</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A message number of lines.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">messageNumberOfLines</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
 
                         </div>
                       </div>
@@ -536,6 +639,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV21verticalTextAlignmentAC08VerticalgH0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/verticalTextAlignment" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV21verticalTextAlignmentAC08VerticalgH0Ovp">verticalTextAlignment</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A name and messagin vertical alignment.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">verticalTextAlignment</span><span class="p">:</span> <span class="kt"><a href="../Structs/ChannelViewStyle/VerticalTextAlignment.html">VerticalTextAlignment</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10StreamChat16ChannelViewStyleV8dateFontSo6UIFontCvp"></a>
                     <a name="//apple_ref/swift/Property/dateFont" class="dashAnchor"></a>
                     <a class="token" href="#/s:10StreamChat16ChannelViewStyleV8dateFontSo6UIFontCvp">dateFont</a>
@@ -590,9 +720,90 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorG08nameFont0iG00i6UnreadJ00ikG007messageJ00lG00lkJ00lkG00l7DeletedJ00lmG004dateJ00nG0ACSo7UIColorC_ASSo6UIFontCAsususususuStcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(backgroundColor:separatorColor:nameFont:nameColor:nameUnreadFont:nameUnreadColor:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:dateFont:dateColor:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorG08nameFont0iG00i6UnreadJ00ikG007messageJ00lG00lkJ00lkG00l7DeletedJ00lmG004dateJ00nG0ACSo7UIColorC_ASSo6UIFontCAsususususuStcfc">init(backgroundColor:separatorColor:nameFont:nameColor:nameUnreadFont:nameUnreadColor:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:dateFont:dateColor:)</a>
+                    <a name="/s:10StreamChat16ChannelViewStyleV6height12CoreGraphics7CGFloatVvp"></a>
+                    <a name="//apple_ref/swift/Property/height" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV6height12CoreGraphics7CGFloatVvp">height</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A channel cell height.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">height</span><span class="p">:</span> <span class="kt">CGFloat</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV7spacingAA7SpacingVvp"></a>
+                    <a name="//apple_ref/swift/Property/spacing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV7spacingAA7SpacingVvp">spacing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Spacings between elements.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">spacing</span><span class="p">:</span> <span class="kt"><a href="../Structs/Spacing.html">Spacing</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV10edgeInsetsSo06UIEdgeG0Vvp"></a>
+                    <a name="//apple_ref/swift/Property/edgeInsets" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV10edgeInsetsSo06UIEdgeG0Vvp">edgeInsets</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A margin.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">edgeInsets</span><span class="p">:</span> <span class="kt">UIEdgeInsets</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorE006avatardE017nameNumberOfLines0J4Font0jG00j6UnreadN00joG007messageklM00pN00pG00poN00poG00p7DeletedN00pqG021verticalTextAlignment04dateN00uG06height7spacing10edgeInsetsACSo7UIColorC_AA09SeparatorE0VAA06AvatardE0VSgSiSo6UIFontCAZA5_AZSiA5_AZA5_AZA5_AzC08VerticalsT0OA5_AZ12CoreGraphics7CGFloatVAA7SpacingVSo06UIEdgeY0Vtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(backgroundColor:separatorStyle:avatarViewStyle:nameNumberOfLines:nameFont:nameColor:nameUnreadFont:nameUnreadColor:messageNumberOfLines:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:verticalTextAlignment:dateFont:dateColor:height:spacing:edgeInsets:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV15backgroundColor09separatorE006avatardE017nameNumberOfLines0J4Font0jG00j6UnreadN00joG007messageklM00pN00pG00poN00poG00p7DeletedN00pqG021verticalTextAlignment04dateN00uG06height7spacing10edgeInsetsACSo7UIColorC_AA09SeparatorE0VAA06AvatardE0VSgSiSo6UIFontCAZA5_AZSiA5_AZA5_AZA5_AzC08VerticalsT0OA5_AZ12CoreGraphics7CGFloatVAA7SpacingVSo06UIEdgeY0Vtcfc">init(backgroundColor:separatorStyle:avatarViewStyle:nameNumberOfLines:nameFont:nameColor:nameUnreadFont:nameUnreadColor:messageNumberOfLines:messageFont:messageColor:messageUnreadFont:messageUnreadColor:messageDeletedFont:messageDeletedColor:verticalTextAlignment:dateFont:dateColor:height:spacing:edgeInsets:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -608,19 +819,29 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">backgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">white</span><span class="p">,</span>
-            <span class="nv">separatorColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatSeparator</span><span class="p">,</span>
+            <span class="nv">separatorStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/SeparatorStyle.html">SeparatorStyle</a></span> <span class="o">=</span> <span class="o">.</span><span class="k">none</span><span class="p">,</span>
+            <span class="nv">avatarViewStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/AvatarViewStyle.html">AvatarViewStyle</a></span><span class="p">?</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">radius</span><span class="p">:</span> <span class="o">.</span><span class="n">channelAvatarRadius</span><span class="p">,</span> <span class="nv">placeholderFont</span><span class="p">:</span> <span class="kc">nil</span><span class="p">),</span>
+            <span class="nv">nameNumberOfLines</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nv">nameFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatXRegularMedium</span><span class="p">,</span>
             <span class="nv">nameColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span>
             <span class="nv">nameUnreadFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatXRegularMedium</span><span class="p">,</span>
             <span class="nv">nameUnreadColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">black</span><span class="p">,</span>
+            <span class="nv">messageNumberOfLines</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nv">messageFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatMedium</span><span class="p">,</span>
             <span class="nv">messageColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span>
             <span class="nv">messageUnreadFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatMediumMedium</span><span class="p">,</span>
             <span class="nv">messageUnreadColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">black</span><span class="p">,</span>
             <span class="nv">messageDeletedFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatMediumItalic</span><span class="p">,</span>
             <span class="nv">messageDeletedColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span>
+            <span class="nv">verticalTextAlignment</span><span class="p">:</span> <span class="kt"><a href="../Structs/ChannelViewStyle/VerticalTextAlignment.html">VerticalTextAlignment</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">center</span><span class="p">,</span>
             <span class="nv">dateFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatSmall</span><span class="p">,</span>
-            <span class="nv">dateColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">)</span></code></pre>
+            <span class="nv">dateColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span>
+            <span class="nv">height</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="kt">UITableView</span><span class="o">.</span><span class="n">automaticDimension</span><span class="p">,</span>
+            <span class="nv">spacing</span><span class="p">:</span> <span class="kt"><a href="../Structs/Spacing.html">Spacing</a></span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">horizontal</span><span class="p">:</span> <span class="o">.</span><span class="n">messageInnerPadding</span><span class="p">,</span> <span class="nv">vertical</span><span class="p">:</span> <span class="mi">0</span><span class="p">),</span>
+            <span class="nv">edgeInsets</span><span class="p">:</span> <span class="kt">UIEdgeInsets</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">top</span><span class="p">:</span> <span class="o">.</span><span class="n">messageInnerPadding</span><span class="p">,</span>
+                                             <span class="nv">left</span><span class="p">:</span> <span class="o">.</span><span class="n">messageEdgePadding</span><span class="p">,</span>
+                                             <span class="nv">bottom</span><span class="p">:</span> <span class="o">.</span><span class="n">messageInnerPadding</span><span class="p">,</span>
+                                             <span class="nv">right</span><span class="p">:</span> <span class="o">.</span><span class="n">messageEdgePadding</span><span class="p">))</span></code></pre>
 
                         </div>
                       </div>
@@ -643,12 +864,36 @@
                             <tr>
                               <td>
                                 <code>
-                                <em>separatorColor</em>
+                                <em>separatorStyle</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
                                   <p>a separator color.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>avatarViewStyle</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an avatar style.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>nameNumberOfLines</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a name number of lines (default 1).</p>
                                 </div>
                               </td>
                             </tr>
@@ -697,6 +942,18 @@
                               <td>
                                 <div>
                                   <p>a channel unread name color.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>messageNumberOfLines</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a message number of lines (default 1).</p>
                                 </div>
                               </td>
                             </tr>
@@ -796,16 +1053,78 @@
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>height</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a height of a channel cell (default .automaticDimension).
+    If nameNumberOfLines = 1, messageNumberOfLines = 1, avatarSize &gt; 0
+    then height = avatarSize + top and bottom edges.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>spacing</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a spacing between elements.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>edgeInsets</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>edge insets.</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16ChannelViewStyleV21VerticalTextAlignmentO"></a>
+                    <a name="//apple_ref/swift/Enum/VerticalTextAlignment" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16ChannelViewStyleV21VerticalTextAlignmentO">VerticalTextAlignment</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The name and message vertical alignment.</p>
+
+                        <a href="../Structs/ChannelViewStyle/VerticalTextAlignment.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">enum</span> <span class="kt">VerticalTextAlignment</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -863,8 +1182,8 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>

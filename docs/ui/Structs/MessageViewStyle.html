@@ -14,7 +14,7 @@
     <a title="MessageViewStyle Structure Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (86% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (87% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -51,6 +51,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ChatViewController/ComposerAddFileType.html">– ComposerAddFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChatViewController/MessageAction.html">– MessageAction</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/ComposerAddFileView.html">ComposerAddFileView</a>
@@ -100,6 +103,12 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/IndexPath.html">IndexPath</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:Si">Int</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:SS">String</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
@@ -157,7 +166,13 @@
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Structs/AvatarViewStyle.html">AvatarViewStyle</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/ChannelViewStyle.html">ChannelViewStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelViewStyle/VerticalTextAlignment.html">– VerticalTextAlignment</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/ChatViewStyle.html">ChatViewStyle</a>
@@ -189,6 +204,12 @@
               <li class="nav-group-task">
                 <a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a>
               </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SeparatorStyle.html">SeparatorStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Spacing.html">Spacing</a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -200,6 +221,7 @@
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MessageViewStyle</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">MessageViewStyle</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 
                 </div>
               </div>
@@ -239,9 +261,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16MessageViewStyleV21showCurrentUserAvatarSbvp"></a>
-                    <a name="//apple_ref/swift/Property/showCurrentUserAvatar" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV21showCurrentUserAvatarSbvp">showCurrentUserAvatar</a>
+                    <a name="/s:10StreamChat16MessageViewStyleV06avatardE0AA06AvatardE0VSgvp"></a>
+                    <a name="//apple_ref/swift/Property/avatarViewStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV06avatardE0AA06AvatardE0VSgvp">avatarViewStyle</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -249,14 +271,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Shows the current user avatar for outgoing messages.</p>
+                        <p>Avatars style.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">showCurrentUserAvatar</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">avatarViewStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/AvatarViewStyle.html">AvatarViewStyle</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -672,6 +694,60 @@ It should be more then 60 seconds between messages to make it works.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10StreamChat16MessageViewStyleV7spacingAA7SpacingVvp"></a>
+                    <a name="//apple_ref/swift/Property/spacing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV7spacingAA7SpacingVvp">spacing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">spacing</span><span class="p">:</span> <span class="kt"><a href="../Structs/Spacing.html">Spacing</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16MessageViewStyleV10edgeInsetsSo06UIEdgeG0Vvp"></a>
+                    <a name="//apple_ref/swift/Property/edgeInsets" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV10edgeInsetsSo06UIEdgeG0Vvp">edgeInsets</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A margin.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">edgeInsets</span><span class="p">:</span> <span class="kt">UIEdgeInsets</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10StreamChat16MessageViewStyleV08reactiondE0AA08ReactiondE0Vvp"></a>
                     <a name="//apple_ref/swift/Property/reactionViewStyle" class="dashAnchor"></a>
                     <a class="token" href="#/s:10StreamChat16MessageViewStyleV08reactiondE0AA08ReactiondE0Vvp">reactionViewStyle</a>
@@ -711,7 +787,7 @@ It should be more then 60 seconds between messages to make it works.</p>
                       <div class="abstract">
                         <p>Shows markdown text with text attributes.</p>
 
-<p>For example: makes italic text for <q>*italic*</q>, bold text for <q>**bold**</q>.</p>
+<p>For example: makes italic text for &ldquo;<em>italic</em>&rdquo;, bold text for &ldquo;<strong>bold</strong>&rdquo;.</p>
 
                       </div>
                       <div class="declaration">
@@ -755,9 +831,36 @@ It should be more then 60 seconds between messages to make it works.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat16MessageViewStyleV9alignment21showCurrentUserAvatar19chatBackgroundColor4font9replyFont04nameP004infoP005emojiP004textM00oM00rM0010backgroundM006borderM00V5Width12cornerRadius08reactiondE00G13TimeThreshold014additionalDateE015markdownEnabledA2C9AlignmentO_SbSo7UIColorCSo6UIFontCA0_A0_A0_A0_A5Z12CoreGraphics7CGFloatVA3_AA08ReactiondE0VSdAC014AdditionalDateE0OSbtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(alignment:showCurrentUserAvatar:chatBackgroundColor:font:replyFont:nameFont:infoFont:emojiFont:textColor:replyColor:infoColor:backgroundColor:borderColor:borderWidth:cornerRadius:reactionViewStyle:showTimeThreshold:additionalDateStyle:markdownEnabled:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV9alignment21showCurrentUserAvatar19chatBackgroundColor4font9replyFont04nameP004infoP005emojiP004textM00oM00rM0010backgroundM006borderM00V5Width12cornerRadius08reactiondE00G13TimeThreshold014additionalDateE015markdownEnabledA2C9AlignmentO_SbSo7UIColorCSo6UIFontCA0_A0_A0_A0_A5Z12CoreGraphics7CGFloatVA3_AA08ReactiondE0VSdAC014AdditionalDateE0OSbtcfc">init(alignment:showCurrentUserAvatar:chatBackgroundColor:font:replyFont:nameFont:infoFont:emojiFont:textColor:replyColor:infoColor:backgroundColor:borderColor:borderWidth:cornerRadius:reactionViewStyle:showTimeThreshold:additionalDateStyle:markdownEnabled:)</a>
+                    <a name="/s:10StreamChat16MessageViewStyleV22marginWithAvatarOffset12CoreGraphics7CGFloatVvp"></a>
+                    <a name="//apple_ref/swift/Property/marginWithAvatarOffset" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV22marginWithAvatarOffset12CoreGraphics7CGFloatVvp">marginWithAvatarOffset</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A margin left or right offset with avatar size.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">marginWithAvatarOffset</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat16MessageViewStyleV9alignment06avatardE019chatBackgroundColor4font9replyFont04nameM004infoM005emojiM004textJ00lJ00oJ0010backgroundJ006borderJ00S5Width12cornerRadius7spacing10edgeInsets08reactiondE017showTimeThreshold014additionalDateE015markdownEnabledA2C9AlignmentO_AA06AvatardE0VSgSo7UIColorCSo6UIFontCA5_A5_A5_A5_A3_A3_A3_A3_A3_12CoreGraphics7CGFloatVA8_AA7SpacingVSo06UIEdgeY0VAA08ReactiondE0VSdAC014AdditionalDateE0OSbtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(alignment:avatarViewStyle:chatBackgroundColor:font:replyFont:nameFont:infoFont:emojiFont:textColor:replyColor:infoColor:backgroundColor:borderColor:borderWidth:cornerRadius:spacing:edgeInsets:reactionViewStyle:showTimeThreshold:additionalDateStyle:markdownEnabled:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat16MessageViewStyleV9alignment06avatardE019chatBackgroundColor4font9replyFont04nameM004infoM005emojiM004textJ00lJ00oJ0010backgroundJ006borderJ00S5Width12cornerRadius7spacing10edgeInsets08reactiondE017showTimeThreshold014additionalDateE015markdownEnabledA2C9AlignmentO_AA06AvatardE0VSgSo7UIColorCSo6UIFontCA5_A5_A5_A5_A3_A3_A3_A3_A3_12CoreGraphics7CGFloatVA8_AA7SpacingVSo06UIEdgeY0VAA08ReactiondE0VSdAC014AdditionalDateE0OSbtcfc">init(alignment:avatarViewStyle:chatBackgroundColor:font:replyFont:nameFont:infoFont:emojiFont:textColor:replyColor:infoColor:backgroundColor:borderColor:borderWidth:cornerRadius:spacing:edgeInsets:reactionViewStyle:showTimeThreshold:additionalDateStyle:markdownEnabled:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -773,7 +876,7 @@ It should be more then 60 seconds between messages to make it works.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">alignment</span><span class="p">:</span> <span class="kt"><a href="../Structs/MessageViewStyle/Alignment.html">Alignment</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">left</span><span class="p">,</span>
-            <span class="nv">showCurrentUserAvatar</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nv">avatarViewStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/AvatarViewStyle.html">AvatarViewStyle</a></span><span class="p">?</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(),</span>
             <span class="nv">chatBackgroundColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">white</span><span class="p">,</span>
             <span class="nv">font</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatRegular</span><span class="p">,</span>
             <span class="nv">replyFont</span><span class="p">:</span> <span class="kt">UIFont</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatSmallBold</span><span class="p">,</span>
@@ -787,6 +890,11 @@ It should be more then 60 seconds between messages to make it works.</p>
             <span class="nv">borderColor</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="o">=</span> <span class="o">.</span><span class="n">chatSuperLightGray</span><span class="p">,</span>
             <span class="nv">borderWidth</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="nv">cornerRadius</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="o">.</span><span class="n">messageCornerRadius</span><span class="p">,</span>
+            <span class="nv">spacing</span><span class="p">:</span> <span class="kt"><a href="../Structs/Spacing.html">Spacing</a></span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">horizontal</span><span class="p">:</span> <span class="o">.</span><span class="n">messageInnerPadding</span><span class="p">,</span> <span class="nv">vertical</span><span class="p">:</span> <span class="o">.</span><span class="n">messageSpacing</span><span class="p">),</span>
+            <span class="nv">edgeInsets</span><span class="p">:</span> <span class="kt">UIEdgeInsets</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">top</span><span class="p">:</span> <span class="o">.</span><span class="n">messageSpacing</span><span class="p">,</span>
+                                             <span class="nv">left</span><span class="p">:</span> <span class="o">.</span><span class="n">messageEdgePadding</span><span class="p">,</span>
+                                             <span class="nv">bottom</span><span class="p">:</span> <span class="o">.</span><span class="n">messageBottomPadding</span><span class="p">,</span>
+                                             <span class="nv">right</span><span class="p">:</span> <span class="o">.</span><span class="n">messageEdgePadding</span><span class="p">),</span>
             <span class="nv">reactionViewStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/ReactionViewStyle.html">ReactionViewStyle</a></span><span class="p">(),</span>
             <span class="nv">showTimeThreshold</span><span class="p">:</span> <span class="kt">TimeInterval</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
             <span class="nv">additionalDateStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/MessageViewStyle/AdditionalDateStyle.html">AdditionalDateStyle</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">userNameAndDate</span><span class="p">,</span>
@@ -813,12 +921,12 @@ It should be more then 60 seconds between messages to make it works.</p>
                             <tr>
                               <td>
                                 <code>
-                                <em>showCurrentUserAvatar</em>
+                                <em>avatarViewStyle</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>shows the current user avatar for outgoing messages.</p>
+                                  <p>avatars style.</p>
                                 </div>
                               </td>
                             </tr>
@@ -981,6 +1089,30 @@ It should be more then 60 seconds between messages to make it works.</p>
                             <tr>
                               <td>
                                 <code>
+                                <em>spacing</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>spacings between elements.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>edgeInsets</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>edge insets.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>reactionViewStyle</em>
                                 </code>
                               </td>
@@ -1005,6 +1137,18 @@ It should be more then 60 seconds between messages to make it works.</p>
                             <tr>
                               <td>
                                 <code>
+                                <em>additionalDateStyle</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>additional date style will work with showTimeThreshold paramenter.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>markdownEnabled</em>
                                 </code>
                               </td>
@@ -1020,10 +1164,6 @@ It should be more then 60 seconds between messages to make it works.</p>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -1065,7 +1205,7 @@ It should be more then 60 seconds between messages to make it works.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Additiona date style will work with <code><a href="../Structs/MessageViewStyle.html#/s:10StreamChat16MessageViewStyleV17showTimeThresholdSdvp">showTimeThreshold</a></code> paramenter.</p>
+                        <p>Additional date style will work with <code><a href="../Structs/MessageViewStyle.html#/s:10StreamChat16MessageViewStyleV17showTimeThresholdSdvp">showTimeThreshold</a></code> paramenter.</p>
 
                         <a href="../Structs/MessageViewStyle/AdditionalDateStyle.html" class="slightly-smaller">See more</a>
                       </div>
@@ -1080,10 +1220,6 @@ It should be more then 60 seconds between messages to make it works.</p>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -1141,8 +1277,8 @@ It should be more then 60 seconds between messages to make it works.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2019 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2019-12-16)</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
     </div>
