@@ -36,6 +36,7 @@ public extension Channel {
     
     /// Add messages to a database.
     /// - Parameter messages: messages
+    #warning("Rename to addMessagesToDatabase")
     func add(messagesToDatabase messages: [Message]) {
         guard let database = Client.shared.database, !messages.isEmpty else {
             return

@@ -140,16 +140,6 @@ public extension Channel {
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
     func send(message: Message, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        if isActive {
-            return sendForActiveChannel(message: message, completion)
-        }
-        
-        return query { [weak self] _ in self?.sendForActiveChannel(message: message, completion) }
-    }
-    
-    @discardableResult
-    private func sendForActiveChannel(message: Message,
-                                      _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         let completion = doAfter(completion) { response in
             if response.message.isBan {
                 if !Client.shared.user.isBanned {
@@ -158,6 +148,11 @@ public extension Channel {
                     Client.shared.user = user
                 }
             }
+        }
+        
+        if id.isEmpty {
+            completion(.failure(.emptyChannelId))
+            return .empty
         }
         
         return Client.shared.request(endpoint: .sendMessage(message, self), completion)
@@ -304,7 +299,7 @@ public extension Channel {
         return Client.shared.request(endpoint: .removeMembers(members, self), completion)
     }
     
-    // MARK: User Ban
+    // MARK: - User Ban
     
     /// Ban a user.
     /// - Parameters:
