@@ -320,8 +320,8 @@ extension ChatViewController {
         switch changes {
         case .none, .itemMoved:
             return
-        case let .reloaded(row, items):
-            let needsToScroll = !items.isEmpty && ((row == (items.count - 1)))
+        case let .reloaded(scrollToRow, items):
+            let needsToScroll = !items.isEmpty && ((scrollToRow == (items.count - 1)))
             var isLoading = false
             self.items = items
             
@@ -332,17 +332,16 @@ extension ChatViewController {
             
             tableView.reloadData()
             
-            if row >= 0 && (isLoading || (scrollEnabled && needsToScroll)) {
-                tableView.scrollToRowIfPossible(at: row, animated: false)
+            if scrollToRow >= 0 && (isLoading || (scrollEnabled && needsToScroll)) {
+                tableView.scrollToRowIfPossible(at: scrollToRow, animated: false)
             }
             
             if !items.isEmpty, case .loading = items[0] {
                 self.items[0] = .loading(false)
             }
             
-        case let .itemAdded(row, reloadRow, forceToScroll, items):
+        case let .itemsAdded(rows, reloadRow, forceToScroll, items):
             self.items = items
-            let indexPath = IndexPath.row(row)
             let needsToScroll = tableView.bottomContentOffset < bottomThreshold
             tableView.stayOnScrollOnce = scrollEnabled && needsToScroll && !forceToScroll
             
@@ -352,18 +351,18 @@ extension ChatViewController {
             
             UIView.performWithoutAnimation {
                 tableView.performBatchUpdates({
-                    tableView.insertRows(at: [indexPath], with: .none)
+                    tableView.insertRows(at: rows.map(IndexPath.row), with: .none)
                     
                     if let reloadRow = reloadRow {
                         tableView.reloadRows(at: [.row(reloadRow)], with: .none)
                     }
                 })
                 
-                if (scrollEnabled && needsToScroll) || forceToScroll {
-                    tableView.scrollToRowIfPossible(at: row, animated: false)
+                if let maxRow = rows.max(), (scrollEnabled && needsToScroll) || forceToScroll {
+                    tableView.scrollToRowIfPossible(at: maxRow, animated: false)
                 }
             }
-        case let .itemUpdated(rows, messages, items):
+        case let .itemsUpdated(rows, messages, items):
             self.items = items
             
             UIView.performWithoutAnimation {

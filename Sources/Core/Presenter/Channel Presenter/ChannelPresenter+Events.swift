@@ -91,10 +91,11 @@ extension ChannelPresenter {
                 }
             }
             
+            let newStatusAdded = addStatusIfNeeded(for: message)
             let nextRow = items.count
             let reloadRow: Int? = items.last?.message?.user == message.user ? nextRow - 1 : nil
             appendOrUpdateMessageItem(message)
-            let viewChanges = ViewChanges.itemAdded(nextRow, reloadRow, message.user.isCurrent, items)
+            let viewChanges = ViewChanges.itemsAdded(newStatusAdded ? [nextRow - 1, nextRow] : [nextRow], reloadRow, message.user.isCurrent, items)
             lastWebSocketEventViewChanges = viewChanges
             channel.add(messagesToDatabase: [message])
             Notifications.shared.showIfNeeded(newMessage: message, in: channel)
@@ -109,7 +110,7 @@ extension ChannelPresenter {
             
             if let index = items.lastIndex(whereMessageId: message.id) {
                 appendOrUpdateMessageItem(message, at: index)
-                let viewChanges = ViewChanges.itemUpdated([index], [message], items)
+                let viewChanges = ViewChanges.itemsUpdated([index], [message], items)
                 lastWebSocketEventViewChanges = viewChanges
                 return viewChanges
             }
@@ -132,7 +133,7 @@ extension ChannelPresenter {
                 }
                 
                 appendOrUpdateMessageItem(message, at: index)
-                let viewChanges = ViewChanges.itemUpdated([index], [message], items)
+                let viewChanges = ViewChanges.itemsUpdated([index], [message], items)
                 lastWebSocketEventViewChanges = viewChanges
                 return viewChanges
             }
@@ -178,7 +179,7 @@ extension ChannelPresenter {
                 messageReadsToMessageId[messageRead] = lastAddedOwnMessage.id
             }
             
-            return .itemUpdated(rows, messages, items)
+            return .itemsUpdated(rows, messages, items)
             
         case .channelUpdated(let response, _):
             channelAtomic.set(response.channel)
@@ -188,6 +189,16 @@ extension ChannelPresenter {
         }
         
         return .none
+    }
+    
+    private func addStatusIfNeeded(for newMessage: Message) -> Bool {
+        guard let lastMessage = items.last?.message else { return false }
+        guard newMessage.created.isToday, !lastMessage.created.isToday else { return false }
+        
+        items.append(.status(ChatItem.statusTodayTitle,
+                             "at \(DateFormatter.time.string(from: newMessage.created))",
+                             false))
+        return true
     }
     
     private func appendOrUpdateMessageItem(_ message: Message, at index: Int = -1) {

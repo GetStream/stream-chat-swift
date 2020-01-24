@@ -20,10 +20,10 @@ extension ChannelPresenter {
             items.append(.message(message, []))
             
             if ephemeralType.updated {
-                return .itemUpdated([row], [message], items)
+                return .itemsUpdated([row], [message], items)
             }
             
-            return .itemAdded(row, nil, true, items)
+            return .itemsAdded([row], nil, true, items)
         }
         
         return .itemRemoved(items.count, items)
@@ -43,15 +43,15 @@ extension ChannelPresenter {
             items.append(.message(ephemeralMessage, []))
             return .reloaded(row, items)
             
-        case let .itemAdded(row, reloadRow, forceToScroll, items):
+        case let .itemsAdded(rows, reloadRow, forceToScroll, items):
             var items = items
             items.append(.message(ephemeralMessage, []))
-            return .itemAdded(row, reloadRow, forceToScroll, items)
+            return .itemsAdded(rows, reloadRow, forceToScroll, items)
             
-        case let .itemUpdated(row, message, items):
+        case let .itemsUpdated(row, message, items):
             var items = items
             items.append(.message(ephemeralMessage, []))
-            return .itemUpdated(row, message, items)
+            return .itemsUpdated(row, message, items)
             
         case let .itemRemoved(row, items):
             var items = items
