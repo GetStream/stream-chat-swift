@@ -43,7 +43,7 @@ public struct ChannelsQuery: Encodable {
     /// - Parameter pagination: a channels pagination.
     /// - Parameter messagesLimit: a messages pagination for the each channel.
     /// - Parameter options: a query options (see `QueryOptions`).
-    public init(filter: Filter,
+    public init(filter: Filter = .none,
                 sort: [Sorting] = [],
                 pagination: Pagination = .channelsPageSize,
                 messagesLimit: Pagination = .messagesPageSize,

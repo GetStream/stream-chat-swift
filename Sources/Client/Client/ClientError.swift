@@ -22,6 +22,8 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     case emptyUser
     /// A connection id is empty.
     case emptyConnectionId
+    /// A channel id is empty.
+    case emptyChannelId
     /// A response bofy is empty.
     case emptyBody(description: String)
     /// An invalid URL.
