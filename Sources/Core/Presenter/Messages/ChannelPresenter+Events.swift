@@ -94,7 +94,7 @@ extension ChannelPresenter {
             let nextRow = items.count
             let reloadRow: Int? = items.last?.message?.user == message.user ? nextRow - 1 : nil
             appendOrUpdateMessageItem(message)
-            let viewChanges = ViewChanges.itemAdded(nextRow, reloadRow, message.user.isCurrent, items)
+            let viewChanges = ViewChanges.itemsAdded([nextRow], reloadRow, message.user.isCurrent, items)
             lastWebSocketEventViewChanges = viewChanges
             channel.add(messagesToDatabase: [message])
             Notifications.shared.showIfNeeded(newMessage: message, in: channel)
@@ -109,7 +109,7 @@ extension ChannelPresenter {
             
             if let index = items.lastIndex(whereMessageId: message.id) {
                 appendOrUpdateMessageItem(message, at: index)
-                let viewChanges = ViewChanges.itemUpdated([index], [message], items)
+                let viewChanges = ViewChanges.itemsUpdated([index], [message], items)
                 lastWebSocketEventViewChanges = viewChanges
                 return viewChanges
             }
@@ -132,7 +132,7 @@ extension ChannelPresenter {
                 }
                 
                 appendOrUpdateMessageItem(message, at: index)
-                let viewChanges = ViewChanges.itemUpdated([index], [message], items)
+                let viewChanges = ViewChanges.itemsUpdated([index], [message], items)
                 lastWebSocketEventViewChanges = viewChanges
                 return viewChanges
             }
@@ -178,7 +178,7 @@ extension ChannelPresenter {
                 messageReadsToMessageId[messageRead] = lastAddedOwnMessage.id
             }
             
-            return .itemUpdated(rows, messages, items)
+            return .itemsUpdated(rows, messages, items)
             
         case .channelUpdated(let response, _):
             channelAtomic.set(response.channel)
