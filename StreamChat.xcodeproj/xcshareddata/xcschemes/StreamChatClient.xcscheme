@@ -39,7 +39,7 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "ClientTests01_Channels">
+                  Identifier = "ChannelTests01_Upload">
                </Test>
                <Test
                   Identifier = "ClientTests01_Channels/test05WebSocketEvents()">
