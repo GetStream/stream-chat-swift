@@ -57,7 +57,7 @@ public extension Client {
             return .empty
         }
         
-        let completion = doBefore(completion) { Client.shared.user = $0.currentUser }
+        let completion = doBefore(completion) { [unowned self] in self.user = $0.currentUser }
         return request(endpoint: .muteUser(user), completion)
     }
     
@@ -71,14 +71,14 @@ public extension Client {
             return .empty
         }
         
-        let completion = doBefore(completion) { _ in
-            var currentUser = Client.shared.user
+        let completion = doBefore(completion) { [unowned self] _ in
+            var currentUser = self.user
             var mutedUsers = currentUser.mutedUsers
             
             if let index = mutedUsers.firstIndex(where: { $0.user.id == user.id }) {
                 mutedUsers.remove(at: index)
                 currentUser.mutedUsers = mutedUsers
-                Client.shared.user = currentUser
+                self.user = currentUser
             }
         }
         

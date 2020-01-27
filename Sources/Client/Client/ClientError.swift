@@ -18,6 +18,8 @@ public enum ClientError: LocalizedError {
     case emptyToken
     /// A token is invalid.
     case tokenInvalid(description: String)
+    /// A token is expired.
+    case expiredToken
     /// The current user is empty.
     case emptyUser
     /// A connection id is empty.
@@ -77,6 +79,7 @@ public enum ClientError: LocalizedError {
             
         case .emptyAPIKey: return "The Client API Key is empty"
         case .emptyToken: return "A Client Token is empty"
+        case .expiredToken: return "A Client Token is expired"
         case .tokenInvalid(let description): return "Token is invalid: \(description)"
         case .emptyUser: return "The user is empty"
         case .emptyConnectionId: return "A Web Socket connection id is empty. Authorization missed"

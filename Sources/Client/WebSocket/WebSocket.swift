@@ -178,16 +178,6 @@ extension WebSocket {
         clearStateAfterDisconnect()
     }
     
-    private func isTokenExpired() -> Bool {
-        guard let lastJSONError = lastJSONError else {
-            return false
-        }
-        
-        let isTokenExpired = lastJSONError.code == ClientErrorResponse.tokenExpiredErrorCode
-        #warning("Move touchTokenProvider from here")
-        return isTokenExpired && Client.shared.touchTokenProvider()
-    }
-    
     private func disconnectedNoInternet() {
         logger?.log("💔🕸 Disconnected: No Internet")
         clearStateAfterDisconnect()
@@ -272,12 +262,14 @@ extension WebSocket: WebSocketDelegate {
     }
     
     public func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
-        if isTokenExpired() {
-            logger?.log("🀄️ Token is expired")
-        } else {
+        guard let lastJSONError = lastJSONError, lastJSONError.code == ClientErrorResponse.tokenExpiredErrorCode else {
             logger?.log("💔 Disconnected")
             performInCallbackQueue { [weak self] in self?.onConnect(.disconnected(error)) }
+            return
         }
+        
+        logger?.log("Disconnected. 🀄️ Token is expired")
+        performInCallbackQueue { [weak self] in self?.onConnect(.disconnected(ClientError.expiredToken)) }
     }
     
     public func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {

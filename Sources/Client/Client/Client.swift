@@ -60,7 +60,18 @@ public final class Client {
     
     /// A WebSocket connection callback.
     var onConnect: Client.OnConnect = { _ in } {
-        didSet { webSocket.onConnect = onConnect }
+        didSet {
+            webSocket.onConnect = { [unowned self] connection in
+                if case .disconnected(let error) = connection,
+                    let clientError = error as? ClientError,
+                    case .expiredToken = clientError,
+                    self.touchTokenProvider() {
+                    return
+                }
+                
+                self.onConnect(connection)
+            }
+        }
     }
     
     /// A WebSocket events callback.
