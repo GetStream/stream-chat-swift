@@ -28,12 +28,10 @@ public final class WebSocket {
     private var isReconnecting = false
     private var goingToDisconnect: DispatchWorkItem?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
-    private var lastEventHashValue: Int = 0
-    private var lastEvent: Event?
     private let webSocketInitiated: Bool
     private(set) var lastConnectionId: String?
     private(set) var lastJSONError: ClientErrorResponse?
-
+    
     private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval),
                                                      queue: webSocket.callbackQueue) { [weak self] in
                                                         self?.logger?.log("🏓", level: .info)
@@ -317,12 +315,6 @@ extension WebSocket: WebSocketDelegate {
 extension WebSocket {
     
     private func parseEvent(with message: String) -> Event? {
-        if lastEventHashValue == message.hashValue, let event = lastEvent {
-            return event
-        }
-        
-        lastEvent = nil
-        
         guard let data = message.data(using: .utf8) else {
             logger?.log("📦 Can't get a data from the message: \(message)", level: .error)
             return nil
@@ -332,16 +324,20 @@ extension WebSocket {
         
         do {
             let event = try JSONDecoder.default.decode(Event.self, from: data)
-            lastEvent = event
-            lastEventHashValue = message.hashValue
             consecutiveFailures = 0
             
             if let logger = logger {
                 if case .pong = event.type {} else {
+                    var userId = ""
+                    
+                    if let user = event.user {
+                        userId = " 👤 \(user.id)"
+                    }
+                    
                     if let cid = event.cid {
-                        logger.log("\(event.type) 🆔 \(cid)")
+                        logger.log("\(event.type) 🆔 \(cid)\(userId)")
                     } else {
-                        logger.log("\(event.type)")
+                        logger.log("\(event.type)\(userId)")
                     }
                 }
                 
