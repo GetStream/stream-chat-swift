@@ -13,8 +13,8 @@ public extension Message {
     /// Delete the message.
     /// - Parameter completion: a completion block with `MessageResponse`.
     @discardableResult
-    func delete(_ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        return Client.shared.request(endpoint: .deleteMessage(self), completion)
+    func delete(client: Client = .shared, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+        return client.request(endpoint: .deleteMessage(self), completion)
     }
     
     /// Send a request for reply messages.
@@ -22,12 +22,14 @@ public extension Message {
     ///   - pagination: a pagination (see `Pagination`).
     ///   - completion: a completion block with `[Message]`.
     @discardableResult
-    func replies(pagination: Pagination, _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
+    func replies(pagination: Pagination,
+                 client: Client = .shared,
+                 _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
         let completion = doAfter(completion) { messages in
             self.add(repliesToDatabase: messages)
         }
         
-        return Client.shared.request(endpoint: .replies(self, pagination)) { (result: Result<MessagesResponse, ClientError>) in
+        return client.request(endpoint: .replies(self, pagination)) { (result: Result<MessagesResponse, ClientError>) in
             completion(result.map({ $0.messages }))
         }
     }
@@ -39,8 +41,10 @@ public extension Message {
     ///   - reactionType: a reaction type, e.g. like.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func addReaction(_ reactionType: ReactionType, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        return Client.shared.request(endpoint: .addReaction(reactionType, self), completion)
+    func addReaction(_ reactionType: ReactionType,
+                     client: Client = .shared,
+                     _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+        return client.request(endpoint: .addReaction(reactionType, self), completion)
     }
     
     /// Delete a reaction to the message.
@@ -49,8 +53,9 @@ public extension Message {
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
     func deleteReaction(_ reactionType: ReactionType,
+                        client: Client = .shared,
                         _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        return Client.shared.request(endpoint: .deleteReaction(reactionType, self), completion)
+        return client.request(endpoint: .deleteReaction(reactionType, self), completion)
     }
     
     // MARK: Flag Message
@@ -58,7 +63,7 @@ public extension Message {
     /// Flag a message.
     /// - Parameter completion: a completion block with `FlagMessageResponse`.
     @discardableResult
-    func flag(_ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+    func flag(client: Client = .shared, _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
         if user.isCurrent {
             completion(.success(.init(messageId: id, created: Date(), updated: Date())))
             return .empty
@@ -68,13 +73,13 @@ public extension Message {
             Message.flaggedIds.insert(self.id)
         }
         
-        return flagUnflagMessage(endpoint: .flagMessage(self), completion)
+        return flagUnflagMessage(endpoint: .flagMessage(self), client: client, completion)
     }
     
     /// Unflag a message.
     /// - Parameter completion: a completion block with `FlagMessageResponse`.
     @discardableResult
-    func unflag(_ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+    func unflag(client: Client = .shared, _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
         if user.isCurrent {
             completion(.success(.init(messageId: id, created: Date(), updated: Date())))
             return .empty
@@ -86,12 +91,13 @@ public extension Message {
             }
         }
         
-        return flagUnflagMessage(endpoint: .unflagMessage(self), completion)
+        return flagUnflagMessage(endpoint: .unflagMessage(self), client: client, completion)
     }
     
     private func flagUnflagMessage(endpoint: Endpoint,
+                                   client: Client,
                                    _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
-        return Client.shared.request(endpoint: endpoint) { (result: Result<FlagMessageResponse, ClientError>) in
+        return client.request(endpoint: endpoint) { (result: Result<FlagMessageResponse, ClientError>) in
             let result = result.catchError { error in
                 if case .responseError(let clientResponseError) = error,
                     clientResponseError.message.contains("flag already exists") {
