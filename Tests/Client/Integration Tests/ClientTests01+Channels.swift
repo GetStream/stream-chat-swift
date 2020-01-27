@@ -26,12 +26,6 @@ var websocketForUser2: WebSocket?
 ///   - Delete a channel.
 final class ClientTests01_Channels: TestCase {
     
-    enum StorageKey: String {
-        case websocketForUser2
-        case notificationAddedToChannel
-        case notificationMessageNew
-    }
-    
     override var connectByDefault: Bool {
         return false
     }
@@ -49,7 +43,7 @@ final class ClientTests01_Channels: TestCase {
             connect(withUser: .user2, token: .token2) {
                 Client.shared.update(user: .user2) { result in
                     Client.shared.webSocket.disconnect()
-                    StorageHelper.shared.add(Client.shared.webSocket, key: StorageKey.websocketForUser2.rawValue)
+                    StorageHelper.shared.add(Client.shared.webSocket, key: .websocketForUser2)
                     
                     if result.isSuccess {
                         self.connect(withUser: .user1, token: .token1) {
@@ -64,7 +58,7 @@ final class ClientTests01_Channels: TestCase {
             }
         }
         
-        guard let websocketForUser2: WebSocket = StorageHelper.shared.value(key: StorageKey.websocketForUser2.rawValue) else {
+        guard let websocketForUser2: WebSocket = StorageHelper.shared.value(key: .websocketForUser2) else {
             XCTFail("websocketForUser2 not found")
             return
         }
@@ -77,14 +71,12 @@ final class ClientTests01_Channels: TestCase {
             }
             
             websocketForUser2.onEvent = { event in
-                print("🌈🦄", websocketForUser2.lastConnectionId, event.user?.id, event)
-                
                 if case .notificationAddedToChannel = event {
-                    StorageHelper.shared.increment(key: StorageKey.notificationAddedToChannel.rawValue)
+                    StorageHelper.shared.increment(key: .notificationAddedToChannel)
                 }
                 
                 if case .messageNew(_, _, _, _, _, let eventType) = event, case .notificationMessageNew = eventType {
-                    StorageHelper.shared.increment(key: StorageKey.notificationMessageNew.rawValue)
+                    StorageHelper.shared.increment(key: .notificationMessageNew)
                 }
             }
 
@@ -159,8 +151,8 @@ final class ClientTests01_Channels: TestCase {
     }
     
     func test04WebSocketEvents() {
-        XCTAssertEqual(StorageHelper.shared.value(key: StorageKey.notificationMessageNew.rawValue), 2)
-        XCTAssertEqual(StorageHelper.shared.value(key: StorageKey.notificationAddedToChannel.rawValue), 2)
+        XCTAssertEqual(StorageHelper.shared.value(key: .notificationMessageNew), 2)
+        XCTAssertEqual(StorageHelper.shared.value(key: .notificationAddedToChannel), 2)
     }
     
     func sendMessage(_ channel: Channel) {

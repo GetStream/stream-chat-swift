@@ -110,18 +110,25 @@ class TestCase: XCTestCase {
 }
 
 final class StorageHelper {
-    static let shared = StorageHelper()
-    private var storage = [String: Any]()
     
-    func add<T>(_ value: T, key: String) {
+    enum StorageKey: String {
+        case websocketForUser2
+        case notificationAddedToChannel
+        case notificationMessageNew
+    }
+    
+    static let shared = StorageHelper()
+    private var storage = [StorageKey: Any]()
+    
+    func add<T>(_ value: T, key: StorageKey) {
         storage[key] = value
     }
     
-    func value<T>(key: String, default: T? = nil) -> T? {
+    func value<T>(key: StorageKey, default: T? = nil) -> T? {
         return (storage[key] as? T) ?? `default`
     }
     
-    func increment(key: String) {
+    func increment(key: StorageKey) {
         if let value = value(key: key, default: 0) {
             storage[key] = value + 1
         }
