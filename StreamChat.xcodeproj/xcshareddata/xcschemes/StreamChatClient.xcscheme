@@ -39,31 +39,13 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "ChannelTests01_Upload">
-               </Test>
-               <Test
-                  Identifier = "Client03_Users">
-               </Test>
-               <Test
-                  Identifier = "ClientTests00">
+                  Identifier = "ClientTests01_Channels">
                </Test>
                <Test
                   Identifier = "ClientTests01_Channels/test05WebSocketEvents()">
                </Test>
                <Test
-                  Identifier = "ClientTests02_Message">
-               </Test>
-               <Test
                   Identifier = "ClientTests02_Message/test01Message()">
-               </Test>
-               <Test
-                  Identifier = "FilterTests">
-               </Test>
-               <Test
-                  Identifier = "LazyVar">
-               </Test>
-               <Test
-                  Identifier = "TestCase">
                </Test>
             </SkippedTests>
          </TestableReference>
