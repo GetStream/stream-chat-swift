@@ -52,12 +52,10 @@ class TestCase: XCTestCase {
         StorageHelper.shared.removeAll()
     }
     
-    func test00Connected(withUser user: User = .user1, token: Token = .token1) {
+    func test00Connection() {
         guard connectByDefault else {
             return
         }
-        
-        Client.shared.set(user: user, token: token)
         
         expect("Client should be connected") { expectation in
             if Client.shared.isConnected {
@@ -72,6 +70,9 @@ class TestCase: XCTestCase {
             }
         }
     }
+}
+
+extension TestCase {
     
     func connect(withUser user: User = .user1, token: Token = .token1, _ completion: @escaping () -> Void) {
         var connected = false
