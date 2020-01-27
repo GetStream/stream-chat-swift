@@ -143,7 +143,7 @@ extension ChannelsPresenter {
             if let index = items.firstIndex(where: channelResponse.channel.cid),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseEvents(event: response.event)
-                return .itemUpdated([index], [], items)
+                return .itemsUpdated([index], [], items)
             }
             
         case .channelDeleted:
@@ -165,12 +165,12 @@ extension ChannelsPresenter {
             if let index = items.firstIndex(where: cid),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parseEvents(event: response.event)
-                return .itemUpdated([index], [message], items)
+                return .itemsUpdated([index], [message], items)
             }
             
         case .messageRead:
             if let index = items.firstIndex(where: cid) {
-                return .itemUpdated([index], [], items)
+                return .itemsUpdated([index], [], items)
             }
             
         default:
@@ -190,7 +190,7 @@ extension ChannelsPresenter {
                 let index = items.firstIndex(whereChannelId: channel.id, channelType: channel.type),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.unreadMessageReadAtomic.set(nil)
-                return .itemUpdated([index], [], items)
+                return .itemsUpdated([index], [], items)
             }
         default:
             break
@@ -207,7 +207,7 @@ extension ChannelsPresenter {
             items.insert(.channelPresenter(channelPresenter), at: 0)
             
             if index == 0 {
-                return .itemUpdated([0], [], items)
+                return .itemsUpdated([0], [], items)
             }
             
             return .itemMoved(fromRow: index, toRow: 0, items)
@@ -235,7 +235,7 @@ extension ChannelsPresenter {
             next = .channelsNextPageSize + .offset(next.offset + 1)
         }
         
-        return .itemAdded(0, nil, false, items)
+        return .itemsAdded([0], nil, false, items)
     }
     
     private func loadChannelMessages(_ channelPresenter: ChannelPresenter) {
@@ -249,7 +249,7 @@ extension ChannelsPresenter {
                     return
                 }
                 
-                self.actions.onNext(.itemUpdated([index], [], self.items))
+                self.actions.onNext(.itemsUpdated([index], [], self.items))
             })
             .disposed(by: disposeBagForInternalRequests)
     }
