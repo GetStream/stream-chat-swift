@@ -42,10 +42,25 @@
                   Identifier = "ChannelTests01_Upload">
                </Test>
                <Test
-                  Identifier = "ClientTests01_Channels/test03SearchText()">
+                  Identifier = "Client03_Users">
+               </Test>
+               <Test
+                  Identifier = "ClientTests00">
+               </Test>
+               <Test
+                  Identifier = "ClientTests01_Channels/test05WebSocketEvents()">
+               </Test>
+               <Test
+                  Identifier = "ClientTests02_Message">
                </Test>
                <Test
                   Identifier = "ClientTests02_Message/test01Message()">
+               </Test>
+               <Test
+                  Identifier = "FilterTests">
+               </Test>
+               <Test
+                  Identifier = "LazyVar">
                </Test>
                <Test
                   Identifier = "TestCase">

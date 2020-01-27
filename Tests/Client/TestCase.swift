@@ -18,7 +18,6 @@ class TestCase: XCTestCase {
     static let apiKey = "qk4nn7rpcn75"
     private static var isClientReady = false
     private(set) lazy var defaultChannel = Channel(type: .messaging, id: "general")
-    private(set) lazy var memberFilter = "members".in([Member.current])
     
     static func setupClientUser() {
         Client.shared.set(user: .user1, token: .token1)
@@ -31,8 +30,12 @@ class TestCase: XCTestCase {
         
         isClientReady = true
         WebSocket.pingTimeInterval = 3
-        ClientLogger.logger = { print($0, $1.isEmpty ? "" : "[\($1)]", $2) }
-        Client.config = .init(apiKey: TestCase.apiKey, baseURL: .init(serverLocation: .staging), logOptions: .info)
+        ClientLogger.logger = { print($0, $2) }
+        
+        Client.config = .init(apiKey: TestCase.apiKey,
+                              baseURL: .init(serverLocation: .staging),
+                              callbackQueue: .main,
+                              logOptions: .error)
     }
     
     override func setUp() {
@@ -44,12 +47,17 @@ class TestCase: XCTestCase {
     
     override static func tearDown() {
         Client.shared.disconnect()
+        Client.shared.onConnect = { _ in }
+        Client.shared.onEvent = { _ in }
+        StorageHelper.shared.removeAll()
     }
     
-    func test00Connected() {
+    func test00Connected(withUser user: User = .user1, token: Token = .token1) {
         guard connectByDefault else {
             return
         }
+        
+        Client.shared.set(user: user, token: token)
         
         expect("Client should be connected") { expectation in
             if Client.shared.isConnected {
@@ -65,11 +73,61 @@ class TestCase: XCTestCase {
         }
     }
     
+    func connect(withUser user: User = .user1, token: Token = .token1, _ completion: @escaping () -> Void) {
+        var connected = false
+        
+        func finish() {
+            if !connected {
+                connected = true
+                completion()
+            }
+        }
+        
+        Client.shared.set(user: user, token: token)
+        
+        if Client.shared.isConnected {
+            finish()
+            return
+        }
+        
+        Client.shared.onConnect = {
+            if case .connected = $0 {
+                finish()
+            }
+        }
+        
+        Client.shared.onEvent = { _ in }
+        Client.shared.connect()
+    }
+    
     func expect(_ description: String,
                 timeout: TimeInterval = TimeInterval(5),
                 callback: (_ test: XCTestExpectation) -> Void) {
-        let test = expectation(description: "⏳ expecting \(description)")
+        let test = expectation(description: "\n💥💀✝️ expecting \(description)")
         callback(test)
         wait(for: [test], timeout: timeout)
+    }
+}
+
+final class StorageHelper {
+    static let shared = StorageHelper()
+    private var storage = [String: Any]()
+    
+    func add<T>(_ value: T, key: String) {
+        storage[key] = value
+    }
+    
+    func value<T>(key: String, default: T? = nil) -> T? {
+        return (storage[key] as? T) ?? `default`
+    }
+    
+    func increment(key: String) {
+        if let value = value(key: key, default: 0) {
+            storage[key] = value + 1
+        }
+    }
+    
+    fileprivate func removeAll() {
+        storage.removeAll()
     }
 }

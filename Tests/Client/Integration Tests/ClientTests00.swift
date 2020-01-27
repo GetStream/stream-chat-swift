@@ -20,8 +20,7 @@ final class ClientTests00: TestCase {
             TestCase.setupClientUser()
             
             Client.shared.onConnect = { connection in
-                if case .connected(let connectionId, _) = connection {
-                    XCTAssertTrue(!connectionId.isEmpty)
+                if case .connected = connection {
                     XCTAssertTrue(Client.shared.isConnected)
                     Client.shared.disconnect()
                     XCTAssertFalse(Client.shared.isConnected)
