@@ -31,6 +31,8 @@ public struct ChannelsQuery: Encodable {
     public let messagesLimit: Pagination
     /// Query options.
     public let options: QueryOptions
+    /// A user.
+    private let user: User
     
     /// An hash id for filter and sorting properties.
     public var id: String {
@@ -38,21 +40,25 @@ public struct ChannelsQuery: Encodable {
     }
     
     /// Init a channels query.
-    /// - Parameter filter: a channels filter.
-    /// - Parameter sort: a sorting list for channels.
-    /// - Parameter pagination: a channels pagination.
-    /// - Parameter messagesLimit: a messages pagination for the each channel.
-    /// - Parameter options: a query options (see `QueryOptions`).
+    /// - Parameters:
+    ///   - filter: a channels filter.
+    ///   - sort: a sorting list for channels.
+    ///   - pagination: a channels pagination.
+    ///   - messagesLimit: a messages pagination for the each channel.
+    ///   - options: a query options (see `QueryOptions`).
+    ///   - currentUser: should be a `Client.shared.user`.
     public init(filter: Filter = .none,
                 sort: [Sorting] = [],
                 pagination: Pagination = .channelsPageSize,
                 messagesLimit: Pagination = .messagesPageSize,
-                options: QueryOptions = []) {
+                options: QueryOptions = [],
+                currentUser: User = Client.shared.user) {
         self.filter = filter
         self.sort = sort
         self.pagination = pagination
         self.messagesLimit = messagesLimit
         self.options = options
+        user = currentUser
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -69,7 +75,7 @@ public struct ChannelsQuery: Encodable {
         try container.encode(messagesLimit.limit, forKey: .messagesLimit)
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
-        try container.encode(Client.shared.user, forKey: .user)
+        try container.encode(user, forKey: .user)
     }
 }
 

@@ -23,9 +23,9 @@ final class ClientURLSessionTaskDelegate: NSObject, URLSessionTaskDelegate {
         
         let progress = totalBytesExpectedToSend > 0 ? Float(Double(totalBytesSent) / Double(totalBytesExpectedToSend)) : 0
         
-        if let logger = Client.shared.logger {
+        if Client.shared.logOptions.contains(.requestsInfo) {
             let percent = (progress * 1000).rounded() / 10
-            logger.log("⏫ [\(task.taskIdentifier)] \(totalBytesSent)/\(totalBytesExpectedToSend), \(percent)%", level: .info)
+            ClientLogger.log("⏫", "[\(task.taskIdentifier)] \(totalBytesSent)/\(totalBytesExpectedToSend), \(percent)%")
         }
         
         DispatchQueue.main.async {
