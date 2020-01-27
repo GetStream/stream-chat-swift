@@ -18,6 +18,8 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     case emptyToken
     /// A token is invalid.
     case tokenInvalid(description: String)
+    /// A token is expired.
+    case expiredToken
     /// The current user is empty.
     case emptyUser
     /// A connection id is empty.
