@@ -42,10 +42,28 @@
                   Identifier = "ChannelTests01_Upload">
                </Test>
                <Test
+                  Identifier = "ClientTests00">
+               </Test>
+               <Test
+                  Identifier = "ClientTests00/test00WebSocketConnection()">
+               </Test>
+               <Test
+                  Identifier = "ClientTests01_Channels/test00Connection()">
+               </Test>
+               <Test
                   Identifier = "ClientTests01_Channels/test05WebSocketEvents()">
                </Test>
                <Test
+                  Identifier = "ClientTests02_Message">
+               </Test>
+               <Test
                   Identifier = "ClientTests02_Message/test01Message()">
+               </Test>
+               <Test
+                  Identifier = "ClientTests02_Users">
+               </Test>
+               <Test
+                  Identifier = "TestCase">
                </Test>
             </SkippedTests>
          </TestableReference>

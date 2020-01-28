@@ -100,24 +100,23 @@ public final class Client {
     /// An observable user.
     public var userDidUpdate: UserDidUpdate?
     
-    private let userAtomic = Atomic<User>()
+    private(set) lazy var userAtomic = Atomic<User>(callbackQueue: callbackQueue) { [unowned self] newValue, _ in
+            if let user = newValue {
+                self.userDidUpdate?(user)
+            }
+    }
     
     /// The current user.
     public internal(set) var user: User {
-        get {
-            return userAtomic.get() ?? .unknown
-        }
-        set {
-            unreadCountAtomic.set((newValue.channelsUnreadCount, newValue.messagesUnreadCount))
-            userAtomic.set(newValue)
-            userDidUpdate?(newValue)
-        }
+        get { return userAtomic.get() ?? .unknown }
+        set { userAtomic.set(newValue) }
     }
     
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     
-    var unreadCountAtomic = Atomic<UnreadCount>((0, 0))
+    /// Unread count state for channels and messages.
+    public var unreadCount: UnreadCount { (user.channelsUnreadCount, user.messagesUnreadCount) }
     
     /// Init a network client.
     /// - Parameters:

@@ -277,10 +277,6 @@ extension WebSocket: WebSocketDelegate {
             return
         }
         
-        if case .pong = event {
-            return
-        }
-        
         if case let .healthCheck(connectionId, _) = event {
             lastConnectionId = connectionId
             handshakeTimer.resume()
