@@ -9,9 +9,11 @@
 import XCTest
 @testable import StreamChatClient
 
-final class Client03_Users: TestCase {
+final class ClientTests02_Users: TestCase {
     
-    func test01Users() {
+    func test00Users() {
+        expectConnection()
+        
         expect("users list") { expectation in
             let filter = "id".equal(to: User.current.id) + "name".equal(to: User.current.name)
             Client.shared.queryUsers(.init(filter: filter)) {

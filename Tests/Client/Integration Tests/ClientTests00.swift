@@ -11,11 +11,7 @@ import XCTest
 
 final class ClientTests00: TestCase {
     
-    override var connectByDefault: Bool {
-        return false
-    }
-    
-    func test00WebSocketConnection() {
+    func test01WebSocketConnection() {
         expect("WebSocket connected") { expectation in
             TestCase.setupClientUser()
             
@@ -33,14 +29,16 @@ final class ClientTests00: TestCase {
         }
     }
     
-    func test01WebSocketPong() {
+    func test02WebSocketPong() {
         expect("WebSocket recieved a pong") { expectation in
+            WebSocket.pingTimeInterval = 2
             TestCase.setupClientUser()
             
             Client.shared.onEvent = { event in
                 if case .pong = event {
                     Client.shared.disconnect()
                     Client.shared.onEvent = { _ in }
+                    WebSocket.pingTimeInterval = 30
                     expectation.fulfill()
                 }
             }
