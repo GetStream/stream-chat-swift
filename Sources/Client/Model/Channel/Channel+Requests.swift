@@ -16,7 +16,7 @@ public extension Channel {
     /// - Parameter completion: a completion block with `ChannelResponse`.
     @discardableResult
     func create(_ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        return query(completion)
+        query(completion)
     }
     
     /// Request for a channel data, e.g. messages, members, read states, etc
@@ -27,8 +27,15 @@ public extension Channel {
     @discardableResult
     func query(pagination: Pagination = .none,
                options: QueryOptions = [],
-               client: Client = .shared,
                _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        query(pagination: pagination, options: options, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func query(pagination: Pagination = .none,
+                        options: QueryOptions = [],
+                        client: Client,
+                        _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         let channelQuery = ChannelQuery(channel: self, pagination: pagination, options: options)
         var fullCompletion = completion
         
@@ -59,8 +66,13 @@ public extension Channel {
     /// Stop watching the channel for a state changes.
     /// - Parameter completion: an empty completion block.
     @discardableResult
-    func stopWatching(client: Client = .shared, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
-        return client.request(endpoint: .stopWatching(self), completion)
+    func stopWatching(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        stopWatching(client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func stopWatching(client: Client, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        client.request(endpoint: .stopWatching(self), completion)
     }
     
     /// Hide the channel from queryChannels for the user until a message is added.
@@ -71,8 +83,15 @@ public extension Channel {
     @discardableResult
     func hide(for user: User = User.current,
               clearHistory: Bool = false,
-              client: Client = .shared,
               _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        hide(for: user, clearHistory: clearHistory, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func hide(for user: User = User.current,
+                       clearHistory: Bool = false,
+                       client: Client,
+                       _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
         let completion = doAfter(completion) { [weak self] _ in
             self?.stopWatching()
         }
@@ -85,10 +104,15 @@ public extension Channel {
     ///   - user: the current user.
     ///   - completion: an empty completion block.
     @discardableResult
-    func show(for user: User = User.current,
-              client: Client = .shared,
-              _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
-        return client.request(endpoint: .showChannel(self, user), completion)
+    func show(for user: User = User.current, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        show(for: user, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func show(for user: User = User.current,
+                       client: Client,
+                       _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        client.request(endpoint: .showChannel(self, user), completion)
     }
     
     /// Update channel data.
@@ -101,8 +125,16 @@ public extension Channel {
     func update(name: String? = nil,
                 imageURL: URL? = nil,
                 extraData: Codable? = nil,
-                client: Client = .shared,
                 _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        update(name: name, imageURL: imageURL, extraData: extraData, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func update(name: String? = nil,
+                         imageURL: URL? = nil,
+                         extraData: Codable? = nil,
+                         client: Client,
+                         _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         var changed = false
         
         if let name = name, !name.isEmpty {
@@ -131,8 +163,13 @@ public extension Channel {
     /// Delete the channel.
     /// - Parameter completion: a completion block with `Channel`.
     @discardableResult
-    func delete(client: Client = .shared, _ completion: @escaping Client.Completion<Channel>) -> URLSessionTask {
-        return client.request(endpoint: .deleteChannel(self)) { (result: Result<ChannelDeletedResponse, ClientError>) in
+    func delete(_ completion: @escaping Client.Completion<Channel>) -> URLSessionTask {
+        delete(client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func delete(client: Client, _ completion: @escaping Client.Completion<Channel>) -> URLSessionTask {
+        client.request(endpoint: .deleteChannel(self)) { (result: Result<ChannelDeletedResponse, ClientError>) in
             completion(result.map({ $0.channel }))
         }
     }
@@ -144,9 +181,14 @@ public extension Channel {
     ///   - message: a message.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func send(message: Message,
-              client: Client = .shared,
-              _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+    func send(message: Message, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+        send(message: message, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func send(message: Message,
+                       client: Client,
+                       _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         let completion = doAfter(completion) { [unowned client] response in
             if response.message.isBan {
                 if !client.user.isBanned {
@@ -173,8 +215,15 @@ public extension Channel {
     @discardableResult
     func send(action: Attachment.Action,
               for ephemeralMessage: Message,
-              client: Client = .shared,
               _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+        send(action: action, for: ephemeralMessage, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func send(action: Attachment.Action,
+                       for ephemeralMessage: Message,
+                       client: Client,
+                       _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         let endpoint = Endpoint.sendMessageAction(.init(channel: self, message: ephemeralMessage, action: action))
         return client.request(endpoint: endpoint, completion)
     }
@@ -182,7 +231,12 @@ public extension Channel {
     /// Mark messages in the channel as read.
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
-    func markRead(client: Client = .shared, _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
+    func markRead(_ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
+        markRead(client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func markRead(client: Client, _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
         guard config.readEventsEnabled else {
             return .empty
         }
@@ -199,13 +253,15 @@ public extension Channel {
     ///   - eventType: an event type.
     ///   - completion: a completion block with `Event`.
     @discardableResult
-    func send(eventType: EventType,
-              client: Client = .shared,
-              _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
-        return client
-            .request(endpoint: .sendEvent(eventType, self)) { [unowned client] (result: Result<EventResponse, ClientError>) in
-                client.logger?.log("🎫 \(eventType.rawValue)")
-                completion(result.map({ $0.event }))
+    func send(eventType: EventType, _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
+        send(eventType: eventType, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func send(eventType: EventType, client: Client, _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
+        client.request(endpoint: .sendEvent(eventType, self)) { [unowned client] (result: Result<EventResponse, ClientError>) in
+            client.logger?.log("🎫 \(eventType.rawValue)")
+            completion(result.map({ $0.event }))
         }
     }
     
@@ -215,7 +271,7 @@ public extension Channel {
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
     func delete(message: Message, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        return message.delete(completion)
+        message.delete(completion)
     }
     
     /// Flag a message.
@@ -254,7 +310,7 @@ public extension Channel {
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
     func add(_ member: Member, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        return add(Set([member]), completion)
+        add(Set([member]), client: .shared, completion)
     }
     
     /// Add members to the channel.
@@ -262,9 +318,14 @@ public extension Channel {
     ///   - members: members.
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
-    func add(_ members: Set<Member>,
-             client: Client = .shared,
-             _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+    func add(_ members: Set<Member>, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        add(members, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func add(_ members: Set<Member>,
+                      client: Client,
+                      _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         var members = members
         
         self.members.forEach { existsMember in
@@ -287,7 +348,7 @@ public extension Channel {
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
     func remove(_ member: Member, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        return remove(Set([member]), completion)
+        return remove(Set([member]), client: .shared, completion)
     }
     
     /// Remove members from the channel.
@@ -295,9 +356,14 @@ public extension Channel {
     ///   - members: members.
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
-    func remove(_ members: Set<Member>,
-                client: Client = .shared,
-                _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+    func remove(_ members: Set<Member>, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        remove(members, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func remove(_ members: Set<Member>,
+                         client: Client,
+                         _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         var existsMembers = Set<Member>()
         
         self.members.forEach { existsMember in
@@ -325,8 +391,16 @@ public extension Channel {
     func ban(user: User,
              timeoutInMinutes: Int? = nil,
              reason: String? = nil,
-             client: Client = .shared,
              _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        ban(user: user, timeoutInMinutes: timeoutInMinutes, reason: reason, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func ban(user: User,
+                      timeoutInMinutes: Int? = nil,
+                      reason: String? = nil,
+                      client: Client,
+                      _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
         if isBanned(user) || !banEnabling.isEnabled(for: self) {
             completion(.success(.empty))
             return .empty
@@ -353,7 +427,7 @@ public extension Channel {
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
     func invite(_ member: Member, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        return invite([member], completion)
+        return invite([member], client: .shared, completion)
     }
     
     /// Invite members to the channel.
@@ -362,8 +436,14 @@ public extension Channel {
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
     func invite(_ members: [Member],
-                client: Client = .shared,
                 _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        invite(members, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func invite(_ members: [Member],
+                         client: Client,
+                         _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         var membersSet = Set<Member>()
         
         for member in members where !self.members.contains(member) {
@@ -385,9 +465,8 @@ public extension Channel {
     ///   - completion: a completion block with `ChannelInviteResponse`.
     @discardableResult
     func acceptInvite(with message: Message? = nil,
-                      client: Client = .shared,
                       _ completion: @escaping Client.Completion<ChannelInviteResponse>) -> URLSessionTask {
-        return sendInviteAnswer(accept: true, reject: nil, message: message, client: client, completion)
+        sendInviteAnswer(accept: true, reject: nil, message: message, client: .shared, completion)
     }
     
     /// Reject an invite to the channel.
@@ -396,16 +475,15 @@ public extension Channel {
     ///   - completion: a completion block with `ChannelInviteResponse`.
     @discardableResult
     func rejectInvite(with message: Message? = nil,
-                      client: Client = .shared,
                       _ completion: @escaping Client.Completion<ChannelInviteResponse>) -> URLSessionTask {
-        return sendInviteAnswer(accept: nil, reject: true, message: message, client: client, completion)
+        sendInviteAnswer(accept: nil, reject: true, message: message, client: .shared, completion)
     }
     
-    private func sendInviteAnswer(accept: Bool?,
-                                  reject: Bool?,
-                                  message: Message?,
-                                  client: Client,
-                                  _ completion: @escaping Client.Completion<ChannelInviteResponse>) -> URLSessionTask {
+    internal func sendInviteAnswer(accept: Bool?,
+                                   reject: Bool?,
+                                   message: Message?,
+                                   client: Client,
+                                   _ completion: @escaping Client.Completion<ChannelInviteResponse>) -> URLSessionTask {
         let answer = ChannelInviteAnswer(channel: self, accept: accept, reject: reject, message: message)
         return client.request(endpoint: .inviteAnswer(answer), completion)
     }
@@ -421,10 +499,9 @@ public extension Channel {
     func sendImage(fileName: String,
                    mimeType: String,
                    imageData: Data,
-                   client: Client = .shared,
                    _ progress: @escaping Client.Progress,
                    _ completion: @escaping Client.Completion<URL>) -> URLSessionTask {
-        return sendFile(endpoint: .sendImage(fileName, mimeType, imageData, self), client: client, progress, completion)
+        sendFile(endpoint: .sendImage(fileName, mimeType, imageData, self), client: .shared, progress, completion)
     }
     
     /// Upload a file to the channel.
@@ -436,16 +513,15 @@ public extension Channel {
     func sendFile(fileName: String,
                   mimeType: String,
                   fileData: Data,
-                  client: Client = .shared,
                   _ progress: @escaping Client.Progress,
                   _ completion: @escaping Client.Completion<URL>) -> URLSessionTask {
-        return sendFile(endpoint: .sendFile(fileName, mimeType, fileData, self), client: client, progress, completion)
+        sendFile(endpoint: .sendFile(fileName, mimeType, fileData, self), client: .shared, progress, completion)
     }
     
-    private func sendFile(endpoint: Endpoint,
-                          client: Client,
-                          _ progress: @escaping Client.Progress,
-                          _ completion: @escaping Client.Completion<URL>) -> URLSessionTask {
+    internal func sendFile(endpoint: Endpoint,
+                           client: Client,
+                           _ progress: @escaping Client.Progress,
+                           _ completion: @escaping Client.Completion<URL>) -> URLSessionTask {
         return client.request(endpoint: endpoint, progress) { (result: Result<FileUploadResponse, ClientError>) in
             completion(result.map({ $0.file }))
         }
@@ -456,10 +532,15 @@ public extension Channel {
     ///   - url: an image URL.
     ///   - completion: an empty completion block.
     @discardableResult
-    func deleteImage(url: URL,
-                     client: Client = .shared,
-                     _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
-        return client.request(endpoint: .deleteImage(url, self), completion)
+    func deleteImage(url: URL, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        deleteImage(url: url, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func deleteImage(url: URL,
+                              client: Client,
+                              _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        client.request(endpoint: .deleteImage(url, self), completion)
     }
     
     /// Delete a file with a given URL.
@@ -467,9 +548,12 @@ public extension Channel {
     ///   - url: a file URL.
     ///   - completion: an empty completion block.
     @discardableResult
-    func deleteFile(url: URL,
-                    client: Client = .shared,
-                    _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
-        return client.request(endpoint: .deleteFile(url, self), completion)
+    func deleteFile(url: URL, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        deleteFile(url: url, client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func deleteFile(url: URL, client: Client, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        client.request(endpoint: .deleteFile(url, self), completion)
     }
 }
