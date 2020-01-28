@@ -11,11 +11,8 @@ import XCTest
 
 class TestCase: XCTestCase {
     
-    var connectByDefault: Bool {
-        return true
-    }
-    
     static let apiKey = "qk4nn7rpcn75"
+    static let baseURL = BaseURL(serverLocation: .staging)
     private static var isClientReady = false
     private(set) lazy var defaultChannel = Channel(type: .messaging, id: "general")
     
@@ -29,20 +26,13 @@ class TestCase: XCTestCase {
         }
         
         isClientReady = true
-        WebSocket.pingTimeInterval = 3
         ClientLogger.logger = { print($0, $2) }
         
-        Client.config = .init(apiKey: TestCase.apiKey,
-                              baseURL: .init(serverLocation: .staging),
+        Client.config = .init(apiKey: Self.apiKey,
+                              baseURL: Self.baseURL,
                               callbackQueue: .main,
-                              logOptions: .error)
-    }
-    
-    override func setUp() {
-        if connectByDefault, !Client.shared.isConnected {
-            TestCase.setupClientUser()
-            Client.shared.connect()
-        }
+                              stayConnectedInBackground: false,
+                              logOptions: .webSocketInfo)
     }
     
     override static func tearDown() {
@@ -51,18 +41,19 @@ class TestCase: XCTestCase {
         Client.shared.onEvent = { _ in }
         StorageHelper.shared.removeAll()
     }
+}
+
+extension TestCase {
     
-    func test00Connection() {
-        guard connectByDefault else {
+    func expectConnection() {
+        if Client.shared.isConnected {
             return
         }
         
+        TestCase.setupClientUser()
+        Client.shared.connect()
+        
         expect("Client should be connected") { expectation in
-            if Client.shared.isConnected {
-                expectation.fulfill()
-                return
-            }
-            
             Client.shared.onConnect = {
                 if case .connected = $0 {
                     expectation.fulfill()
@@ -70,11 +61,8 @@ class TestCase: XCTestCase {
             }
         }
     }
-}
-
-extension TestCase {
     
-    func connect(withUser user: User = .user1, token: Token = .token1, _ completion: @escaping () -> Void) {
+    func connect(_ client: Client, user: User = .user1, token: Token = .token1, _ completion: @escaping () -> Void) {
         var connected = false
         
         func finish() {
@@ -84,21 +72,20 @@ extension TestCase {
             }
         }
         
-        Client.shared.set(user: user, token: token)
+        client.set(user: user, token: token)
         
-        if Client.shared.isConnected {
+        if client.isConnected {
             finish()
             return
         }
         
-        Client.shared.onConnect = {
+        client.onConnect = {
             if case .connected = $0 {
                 finish()
             }
         }
         
-        Client.shared.onEvent = { _ in }
-        Client.shared.connect()
+        client.connect()
     }
     
     func expect(_ description: String,
@@ -113,7 +100,8 @@ extension TestCase {
 final class StorageHelper {
     
     enum StorageKey: String {
-        case websocketForUser2
+        case client1
+        case client2
         case notificationAddedToChannel
         case notificationMessageNew
     }
