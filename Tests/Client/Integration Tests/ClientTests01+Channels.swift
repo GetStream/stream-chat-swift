@@ -9,10 +9,6 @@
 import XCTest
 @testable import StreamChatClient
 
-
-
-var websocketForUser2: WebSocket?
-
 /// Test Flow:
 ///   - Create `user1` and `user2`.
 ///   - Create a team channel with id .
@@ -26,10 +22,6 @@ var websocketForUser2: WebSocket?
 ///   - Delete a channel.
 final class ClientTests01_Channels: TestCase {
     
-    override var connectByDefault: Bool {
-        return false
-    }
-    
     static let salt = Int.random(in: 1000...9999)
     static let cid = ChannelId(type: .team, id: "test_\(salt)")
     /// Temporary the search text changed from: `"Text \(Self.salt)"` to `"Text\(Self.salt)"`,
@@ -39,58 +31,67 @@ final class ClientTests01_Channels: TestCase {
     let member2 = User.user2.asMember
     
     func test01CreateUsers() {
-        expect("setup users") { expectation in
-            connect(withUser: .user2, token: .token2) {
-                Client.shared.update(user: .user2) { result in
-                    Client.shared.webSocket.disconnect()
-                    StorageHelper.shared.add(Client.shared.webSocket, key: .websocketForUser2)
-                    
-                    if result.isSuccess {
-                        self.connect(withUser: .user1, token: .token1) {
-                            Client.shared.update(user: .user1) { result in
-                                if result.isSuccess {
-                                    expectation.fulfill()
-                                }
-                            }
-                        }
+        let client1 = Client(apiKey: TestCase.apiKey,
+                             baseURL: TestCase.baseURL,
+                             callbackQueue: .main,
+                             stayConnectedInBackground: false,
+                             logOptions: .requestsInfo)
+        
+        let client2 = Client(apiKey: TestCase.apiKey,
+                             baseURL: TestCase.baseURL,
+                             callbackQueue: .main,
+                             stayConnectedInBackground: false,
+                             logOptions: .webSocketInfo)
+        
+        client2.onEvent = { event in
+            if case .notificationAddedToChannel = event {
+                StorageHelper.shared.increment(key: .notificationAddedToChannel)
+            }
+            
+            if case .messageNew(_, _, _, _, _, let eventType) = event, case .notificationMessageNew = eventType {
+                StorageHelper.shared.increment(key: .notificationMessageNew)
+            }
+        }
+
+        StorageHelper.shared.add(client1, key: .client1)
+        StorageHelper.shared.add(client2, key: .client2)
+        
+        expect("setup user1") { expectation in
+            connect(client1, user: .user1, token: .token1) { [weak client1] in
+                client1?.update(users: [.user1, .user2]) {
+                    if $0.isSuccess {
+                        expectation.fulfill()
+                    }
+                }
+            }
+        }
+
+        expect("setup user2") { expectation in
+            connect(client2, user: .user2, token: .token2) { [weak client2] in
+                client2?.update(user: .user2) {
+                    if $0.isSuccess {
+                        expectation.fulfill()
                     }
                 }
             }
         }
         
-        guard let websocketForUser2: WebSocket = StorageHelper.shared.value(key: .websocketForUser2) else {
-            XCTFail("websocketForUser2 not found")
-            return
-        }
-        
-        expect("separate websocket for user2 connected") { expectation in
-            websocketForUser2.onConnect = { connection in
-                if case .connected = connection {
-                    DispatchQueue.main.async { expectation.fulfill() }
-                }
-            }
-            
-            websocketForUser2.onEvent = { event in
-                if case .notificationAddedToChannel = event {
-                    StorageHelper.shared.increment(key: .notificationAddedToChannel)
-                }
-                
-                if case .messageNew(_, _, _, _, _, let eventType) = event, case .notificationMessageNew = eventType {
-                    StorageHelper.shared.increment(key: .notificationMessageNew)
-                }
-            }
-
-            websocketForUser2.connect()
-        }
+        createChannel(client1)
+        createChannel1By1(client1)
     }
     
-    func test02CreateChannel() {
+    func test02WebSocketEvents() {
+        XCTAssertEqual(StorageHelper.shared.value(key: .notificationMessageNew), 2)
+        XCTAssertEqual(StorageHelper.shared.value(key: .notificationAddedToChannel), 2)
+    }
+    
+    func createChannel(_ client: Client) {
         var createdChannel: Channel?
         
         expect("a new channel") { expectation in
             let channel = Channel(type: .team, id: Self.cid.id)
             channel.members.insert(User.user1.asMember)
-            channel.query(options: .all) {
+            channel.query(options: .all, client: client) {
                 if let value = $0.value {
                     XCTAssertEqual(channel.cid, value.channel.cid)
                     createdChannel = value.channel
@@ -100,15 +101,15 @@ final class ClientTests01_Channels: TestCase {
         }
         
         XCTAssertNotNil(createdChannel)
-        addMember(to: createdChannel!)
-        sendMessage(createdChannel!)
-        removeMember(to: createdChannel!)
-        deleteChannel(createdChannel!)
+        addMember(to: createdChannel!, client)
+        sendMessage(createdChannel!, client)
+        removeMember(to: createdChannel!, client)
+        deleteChannel(createdChannel!, client)
     }
     
-    func addMember(to channel: Channel) {
+    func addMember(to channel: Channel, _ client: Client) {
         expect("added a member2") { expectation in
-            channel.add(member2) {
+            channel.add([member2], client: client) {
                 if let response = $0.value {
                     XCTAssertTrue(response.channel.members.contains(self.member2))
                     expectation.fulfill()
@@ -117,9 +118,9 @@ final class ClientTests01_Channels: TestCase {
         }
     }
     
-    func removeMember(to channel: Channel) {
+    func removeMember(to channel: Channel, _ client: Client) {
         expect("removed a member2") { expectation in
-            channel.remove(member2) {
+            channel.remove([member2], client: client) {
                 if let response = $0.value {
                     XCTAssertFalse(response.channel.members.contains(self.member2))
                     expectation.fulfill()
@@ -128,12 +129,12 @@ final class ClientTests01_Channels: TestCase {
         }
     }
     
-    func test03CreateChannel1By1() {
+    func createChannel1By1(_ client: Client) {
         var createdChannel: Channel?
         
         expect("a 1 by 1 channel") { expectation in
-            let channel = Channel(type: .messaging, with: User.user2.asMember)
-            channel.create {
+            let channel = Channel(type: .messaging, with: User.user2.asMember, currentUser: client.user)
+            channel.query(options: .all, client: client) {
                 if let value = $0.value {
                     XCTAssertTrue(value.channel.isDirectMessage)
                     XCTAssertEqual(value.channel.members.count, 2)
@@ -146,21 +147,16 @@ final class ClientTests01_Channels: TestCase {
         }
         
         XCTAssertNotNil(createdChannel)
-        sendMessage(createdChannel!)
-        deleteChannel(createdChannel!)
+        sendMessage(createdChannel!, client)
+        deleteChannel(createdChannel!, client)
     }
     
-    func test04WebSocketEvents() {
-        XCTAssertEqual(StorageHelper.shared.value(key: .notificationMessageNew), 2)
-        XCTAssertEqual(StorageHelper.shared.value(key: .notificationAddedToChannel), 2)
-    }
-    
-    func sendMessage(_ channel: Channel) {
+    func sendMessage(_ channel: Channel, _ client: Client) {
         var createdMessage: Message?
         
         expect("a message sent") { expectation in
             let message = Message(text: Self.messageText)
-            channel.send(message: message) {
+            channel.send(message: message, client: client) {
                 if let response = $0.value {
                     XCTAssertEqual(response.message.text, message.text)
                     createdMessage = response.message
@@ -170,15 +166,39 @@ final class ClientTests01_Channels: TestCase {
         }
         
         XCTAssertNotNil(createdMessage)
-        getMessage(by: createdMessage!.id)
-//        searchText()
-        addReaction(createdMessage!)
-        deleteMessage(createdMessage!)
+        getMessage(by: createdMessage!.id, client)
+        queryChannels(client)
+//        searchText(client)
+        addReaction(createdMessage!, client)
+        deleteMessage(createdMessage!, client)
     }
     
-    func searchText() {
+    func getMessage(by messageId: String, _ client: Client) {
+        expect("a message by id: \"\(messageId)\"") { expectation in
+            client.message(with: messageId) {
+                if $0.isSuccess {
+                    expectation.fulfill()
+                }
+            }
+        }
+    }
+    
+    func queryChannels(_ client: Client) {
+        expect("channels with current user member") { expectation in
+            let query = ChannelsQuery(pagination: .limit(1))
+            client.queryChannels(query) { result in
+                if let channelResponses = try? result.get() {
+                    XCTAssertEqual(channelResponses.count, 1)
+                    channelResponses.forEach { XCTAssertTrue($0.channel.cid == Self.cid || $0.channel.isDirectMessage) }
+                    expectation.fulfill()
+                }
+            }
+        }
+    }
+    
+    func searchText(_ client: Client) {
         expect("a message with text") { expectation in
-            Client.shared.search(filter: .currentUserInMembers(), query: Self.messageText) {
+            client.search(filter: .currentUserInMembers(), query: Self.messageText) {
                 if let messages = try? $0.get() {
                     XCTAssertFalse(messages.isEmpty)
                     expectation.fulfill()
@@ -187,34 +207,11 @@ final class ClientTests01_Channels: TestCase {
         }
     }
     
-    func queryChannels() {
-        expect("channels with current user member") { expectation in
-            let query = ChannelsQuery(pagination: .limit(2))
-            Client.shared.queryChannels(query) { result in
-                if let channelResponses = try? result.get() {
-                    XCTAssertEqual(channelResponses.count, 2)
-                    channelResponses.forEach { XCTAssertTrue($0.channel.cid == Self.cid || $0.channel.isDirectMessage) }
-                    expectation.fulfill()
-                }
-            }
-        }
-    }
-    
-    func getMessage(by messageId: String) {
-        expect("a message by id: \"\(messageId)\"") { expectation in
-            Client.shared.message(with: messageId) {
-                if $0.isSuccess {
-                    expectation.fulfill()
-                }
-            }
-        }
-    }
-    
-    func addReaction(_ message: Message) {
+    func addReaction(_ message: Message, _ client: Client) {
         var likedMessage: Message?
         
         expect("a message with reaction like") { expectation in
-            message.addReaction(.like) { result in
+            message.addReaction(.like, client: client) { result in
                 if let response = try? result.get() {
                     XCTAssertEqual(response.message.id, message.id)
                     XCTAssertNotEqual(response.message, message)
@@ -228,12 +225,12 @@ final class ClientTests01_Channels: TestCase {
         }
         
         XCTAssertNotNil(likedMessage)
-        deleteReaction(likedMessage!)
+        deleteReaction(likedMessage!, client)
     }
     
-    func deleteReaction(_ message: Message) {
+    func deleteReaction(_ message: Message, _ client: Client) {
         expect("a message without deleted reaction like") { expectation in
-            message.deleteReaction(.like) { result in
+            message.deleteReaction(.like, client: client) { result in
                 if let response = try? result.get() {
                     XCTAssertEqual(response.message.id, message.id)
                     XCTAssertNotEqual(response.message, message)
@@ -246,9 +243,9 @@ final class ClientTests01_Channels: TestCase {
         }
     }
     
-    func deleteMessage(_ message: Message) {
+    func deleteMessage(_ message: Message, _ client: Client) {
         expect("a deleted message") { expectation in
-            message.delete { result in
+            message.delete(client: client) { result in
                 if let response = try? result.get() {
                     XCTAssertEqual(response.message.id, message.id)
                     XCTAssertTrue(response.message.isDeleted)
@@ -258,9 +255,9 @@ final class ClientTests01_Channels: TestCase {
         }
     }
     
-    func deleteChannel(_ channel: Channel) {
+    func deleteChannel(_ channel: Channel, _ client: Client) {
         expect("deleted channels") { expectation in
-            channel.delete { result in
+            channel.delete(client: client) { result in
                 if let channel = result.value {
                     XCTAssertEqual(channel.id, channel.id)
                     XCTAssertTrue(channel.isDeleted)

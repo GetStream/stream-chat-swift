@@ -16,14 +16,16 @@ public final class Atomic<T> {
     private let queue = DispatchQueue(label: "io.getstream.Chat.Atomic", qos: .userInitiated, attributes: .concurrent)
     private var value: T?
     private var didSet: DidSetCallback?
+    private var callbackQueue: DispatchQueue?
     
     /// Init a Atomic.
     ///
     /// - Parameters:
     ///   - value: an initial value.
     ///   - didSet: a didSet callback.
-    public init(_ value: T? = nil, _ didSet: DidSetCallback? = nil) {
+    public init(_ value: T? = nil, callbackQueue: DispatchQueue? = .global(qos: .userInitiated), _ didSet: DidSetCallback? = nil) {
         self.value = value
+        self.callbackQueue = callbackQueue
         self.didSet = didSet
     }
     
@@ -32,7 +34,7 @@ public final class Atomic<T> {
         queue.async(flags: .barrier) {
             let oldValue = self.value
             self.value = newValue
-            self.didSet?(newValue, oldValue)
+            self.valueChanged(from: oldValue, to: newValue)
         }
     }
     
@@ -49,6 +51,30 @@ public final class Atomic<T> {
     /// - Returns: a stored value or default.
     public func get(defaultValue: T) -> T {
         return get() ?? defaultValue
+    }
+    
+    /// Update the value safely.
+    /// - Parameter changes: a block with changes. It should return a new value.
+    public func update(_ changes: @escaping (T) -> T) {
+        queue.async(flags: .barrier) {
+            guard let oldValue = self.value else {
+                return
+            }
+            
+            let newValue = changes(oldValue)
+            self.value = newValue
+            self.valueChanged(from: oldValue, to: newValue)
+        }
+    }
+    
+    private func valueChanged(from oldValue: T?, to newValue: T?) {
+        if let callbackQueue = callbackQueue {
+            callbackQueue.async { [weak self] in
+                self?.didSet?(newValue, oldValue)
+            }
+        } else {
+            didSet?(newValue, oldValue)
+        }
     }
 }
 

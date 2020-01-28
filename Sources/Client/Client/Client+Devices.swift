@@ -30,11 +30,13 @@ public extension Client {
         let device = Device(deviceId)
         
         let completion = doBefore(completion) { [unowned self] _ in
-            // Update the Client state.
-            var currentUser = self.user
-            currentUser.devices.append(device)
-            currentUser.currentDevice = device
-            self.user = currentUser
+            self.userAtomic.update { oldUser in
+                var currentUser = oldUser
+                currentUser.devices.append(device)
+                currentUser.currentDevice = device
+                return currentUser
+            }
+            
             self.logger?.log("📱 Device added with id: \(deviceId)")
         }
         
@@ -46,9 +48,12 @@ public extension Client {
     @discardableResult
     func devices(_ completion: @escaping Client.Completion<[Device]>) -> URLSessionTask {
         let completion = doBefore(completion) { [unowned self] devices in
-            var currentUser = self.user
-            currentUser.devices = devices
-            self.user = currentUser
+            self.userAtomic.update { oldUser in
+                var currentUser = oldUser
+                currentUser.devices = devices
+                return currentUser
+            }
+            
             self.logger?.log("📱 Devices updated")
         }
         
@@ -64,12 +69,17 @@ public extension Client {
     @discardableResult
     func removeDevice(deviceId: String, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
         let completion = doBefore(completion) { [unowned self] devices in
-            if let index = self.user.devices.firstIndex(where: { $0.id == deviceId }) {
-                var currentUser = self.user
-                currentUser.devices.remove(at: index)
-                self.user = currentUser
-                self.logger?.log("📱 Device removed with id: \(deviceId)")
+            self.userAtomic.update { oldUser in
+                if let index = self.user.devices.firstIndex(where: { $0.id == deviceId }) {
+                    var currentUser = oldUser
+                    currentUser.devices.remove(at: index)
+                    return currentUser
+                }
+                
+                return oldUser
             }
+            
+            self.logger?.log("📱 Device removed with id: \(deviceId)")
         }
         
         return request(endpoint: .removeDevice(deviceId: deviceId, user), completion)
