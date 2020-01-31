@@ -9,7 +9,7 @@
 import UIKit
 import Photos.PHPhotoLibrary
 
-extension UIViewController {
+extension ViewController {
     typealias ImagePickerCompletion = (_ imagePickedInfo: PickedImage?, _ authorizationStatus: PHAuthorizationStatus) -> Void
     
     func showImagePicker(sourceType: UIImagePickerController.SourceType, _ completion: @escaping ImagePickerCompletion) {
@@ -70,8 +70,8 @@ extension UIViewController {
         present(imagePickerViewController, animated: true)
     }
     
-    func showImpagePickerAuthorizationStatusAlert(_ status: PHAuthorizationStatus) {
-        var message = ""
+    func showImagePickerAuthorizationStatusAlert(_ status: PHAuthorizationStatus) {
+        let message: String
         
         switch status {
         case .notDetermined:
@@ -84,9 +84,16 @@ extension UIViewController {
             return
         }
         
-        let alert = UIAlertController(title: "The Photo Library Permissions", message: message, preferredStyle: .alert)
-        alert.addAction(.init(title: "Ok", style: .default, handler: nil))
-        present(alert, animated: true)
+        showAlert(title: "Photo Library Permission",
+                  message: message,
+                  actions: [.init(title: "Settings",
+                                  style: .default,
+                                  handler: { _ in
+                                      if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                                          UIApplication.shared.open(settingsURL)
+                                      }
+                                  }),
+                            .init(title: "Ok", style: .default, handler: nil)])
     }
 }
 
@@ -94,22 +101,22 @@ extension UIViewController {
 
 fileprivate final class ImagePickerDelegate: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     typealias Cancel = () -> Void
-    let completion: UIViewController.ImagePickerCompletion
+    let completion: ViewController.ImagePickerCompletion
     let cancellation: Cancel
     
-    init(_ completion: @escaping UIViewController.ImagePickerCompletion, cancellation: @escaping Cancel) {
+    init(_ completion: @escaping ViewController.ImagePickerCompletion, cancellation: @escaping Cancel) {
         self.completion = completion
         self.cancellation = cancellation
     }
     
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        completion(PickedImage(info: info), .authorized)
         picker.dismiss(animated: true)
+        completion(PickedImage(info: info), .authorized)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        cancellation()
         picker.dismiss(animated: true)
+        cancellation()
     }
 }

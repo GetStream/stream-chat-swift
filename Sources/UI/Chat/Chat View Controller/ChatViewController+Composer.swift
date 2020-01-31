@@ -448,7 +448,14 @@ extension ChatViewController {
         
         showImagePicker(sourceType: pickerSourceType) { [weak self] pickedImage, status in
             guard status == .authorized else {
-                self?.showImpagePickerAuthorizationStatusAlert(status)
+                self?.showImagePickerAuthorizationStatusAlert(status)
+                return
+            }
+            
+            if let resources = try? pickedImage?.fileURL?.resourceValues(forKeys: [.fileSizeKey]),
+               let fileSize = resources.fileSize,
+               fileSize >= 20 * 1_048_576 { // 20 MB Upload limit
+                self?.show(errorMessage: "File size exceeds limit of 20MB")
                 return
             }
             

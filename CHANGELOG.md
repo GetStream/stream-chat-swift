@@ -1,13 +1,14 @@
 # Upcoming
 
 ### 🔄 Changed
-
+- Failed uploads now retry up to 3 times [#85](https://github.com/GetStream/stream-chat-swift/issues/85)
 
 ### ✅ Added
-
+- `ViewController.showAlert(title:message:actions:)` now you can override this function to decide when/how alerts should be handled [#85](https://github.com/GetStream/stream-chat-swift/issues/85)
 
 ### 🐞 Fixed
-
+- Fixed allowing file uploads exceeding API file limit (20MB) and crashing [#81](https://github.com/GetStream/stream-chat-swift/issues/81)
+- Fixed internet connection losses during image uploads cause crashing [#82](https://github.com/GetStream/stream-chat-swift/issues/81)
 
 # 1.5.5
 _January 24, 2020_
