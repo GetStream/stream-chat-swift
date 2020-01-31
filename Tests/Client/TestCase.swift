@@ -32,7 +32,7 @@ class TestCase: XCTestCase {
                               baseURL: Self.baseURL,
                               callbackQueue: .main,
                               stayConnectedInBackground: false,
-                              logOptions: .webSocketInfo)
+                              logOptions: [])
     }
     
     override static func tearDown() {
@@ -104,6 +104,9 @@ final class StorageHelper {
         case client2
         case notificationAddedToChannel
         case notificationMessageNew
+        case user2UnreadCounts
+        case deleteChannels
+        case deleteMessages
     }
     
     static let shared = StorageHelper()
@@ -111,6 +114,16 @@ final class StorageHelper {
     
     func add<T>(_ value: T, key: StorageKey) {
         storage[key] = value
+    }
+    
+    func append<T>(_ value: T, key: StorageKey) {
+        guard let storedValues = storage[key, default: [T]()] as? [T] else {
+            return
+        }
+        
+        var values = storedValues
+        values.append(value)
+        storage[key] = values
     }
     
     func value<T>(key: StorageKey, default: T? = nil) -> T? {

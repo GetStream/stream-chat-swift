@@ -69,8 +69,15 @@ public struct User: Codable {
     public internal(set) var currentDevice: Device?
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
-    let messagesUnreadCount: Int
-    let channelsUnreadCount: Int
+    
+    let messagesUnreadCountAtomic = Atomic<Int>(0)
+    let channelsUnreadCountAtomic = Atomic<Int>(0)
+    
+    /// Channels and messages unread counts.
+    public var unreadCount: UnreadCount {
+        UnreadCount(channels: channelsUnreadCountAtomic.get(default: 0),
+                    messages: messagesUnreadCountAtomic.get(default: 0))
+    }
     
     /// Check if the user is the current user.
     public var isCurrent: Bool {
@@ -130,8 +137,6 @@ public struct User: Codable {
         self.isInvisible = isInvisible
         self.isBanned = isBanned
         self.mutedUsers = mutedUsers
-        messagesUnreadCount = 0
-        channelsUnreadCount = 0
         devices = []
         self.extraData = ExtraData(extraData)
     }
@@ -148,9 +153,12 @@ public struct User: Codable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
-        messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
-        channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
         extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isUser })?.decode(from: decoder))
+        
+        let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
+        let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
+        messagesUnreadCountAtomic.set(messagesUnreadCount)
+        channelsUnreadCountAtomic.set(channelsUnreadCount)
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
             self.name = name

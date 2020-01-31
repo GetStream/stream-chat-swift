@@ -20,8 +20,6 @@ public final class Client {
     public typealias OnConnect = (Connection) -> Void
     /// A WebSocket events callback type.
     public typealias OnEvent = (Event) -> Void
-    /// A user did update block type.
-    public typealias UserDidUpdate = (User) -> Void
     
     /// A client config (see `Config`).
     public static var config = Config(apiKey: "")
@@ -63,32 +61,12 @@ public final class Client {
     
     /// A WebSocket connection callback.
     var onConnect: Client.OnConnect = { _ in } {
-        didSet {
-            webSocket.onConnect = { [unowned self] connection in
-                if case .disconnected(let error) = connection,
-                    let clientError = error as? ClientError,
-                    case .expiredToken = clientError,
-                    self.touchTokenProvider() {
-                    return
-                }
-                
-                self.onConnect(connection)
-            }
-        }
+        didSet { setupWebSocketOnConnect(webSocket) }
     }
     
     /// A WebSocket events callback.
     var onEvent: Client.OnEvent = { _ in } {
-        didSet {
-            webSocket.onEvent = { [unowned self] event in
-                if case let .healthCheck(_, user) = event {
-                    self.user = user
-                    return
-                }
-                
-                self.onEvent(event)
-            }
-        }
+        didSet { setupWebSocketOnEvent(webSocket) }
     }
     
     lazy var urlSession = setupURLSession(token: "")
@@ -101,13 +79,15 @@ public final class Client {
     let logOptions: ClientLogger.Options
     
     /// An observable user.
-    public var userDidUpdate: UserDidUpdate?
+    public var userDidUpdate: DidUpdate<User>?
     
-    private(set) lazy var userAtomic = Atomic<User>(callbackQueue: callbackQueue) { [unowned self] newValue, _ in
-            if let user = newValue {
-                self.userDidUpdate?(user)
-            }
+    private(set) lazy var userAtomic = Atomic<User> { [unowned self] newValue, _ in
+        if let user = newValue {
+            self.userDidUpdate?(user)
+        }
     }
+    
+    var channels = [WeakRef<Channel>]()
     
     /// The current user.
     public internal(set) var user: User {
@@ -117,9 +97,6 @@ public final class Client {
     
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
-    
-    /// Unread count state for channels and messages.
-    public var unreadCount: UnreadCount { (user.channelsUnreadCount, user.messagesUnreadCount) }
     
     /// Init a network client.
     /// - Parameters:
@@ -148,6 +125,7 @@ public final class Client {
         
         self.apiKey = apiKey
         self.baseURL = baseURL
+        self.callbackQueue = callbackQueue ?? .global(qos: .userInitiated)
         self.callbackQueue = callbackQueue
         self.reactionTypes = reactionTypes
         self.stayConnectedInBackground = stayConnectedInBackground
@@ -168,6 +146,7 @@ public final class Client {
             Thread.callStackSymbols.forEach { ClientLogger.logger("", "", $0) }
         }
     }
+    
     /// Connect to websocket.
     /// - Note:
     ///   - Skip if the Internet is not available.
