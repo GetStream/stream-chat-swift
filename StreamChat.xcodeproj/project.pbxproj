@@ -175,7 +175,7 @@
 		8AD5EDA622E9BA98005CFAC9 /* UIImagePickerController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECB622E9BA39005CFAC9 /* UIImagePickerController+Extensions.swift */; };
 		8AD5EDA722E9BA98005CFAC9 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECB722E9BA39005CFAC9 /* UIColor+Extensions.swift */; };
 		8AD5EDA822E9BA98005CFAC9 /* UIDevice+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECB822E9BA39005CFAC9 /* UIDevice+Extensions.swift */; };
-		8AD5EDA922E9BA98005CFAC9 /* UIViewController+ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBA22E9BA39005CFAC9 /* UIViewController+ImagePicker.swift */; };
+		8AD5EDA922E9BA98005CFAC9 /* ViewController+ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBA22E9BA39005CFAC9 /* ViewController+ImagePicker.swift */; };
 		8AD5EDAB22E9BA98005CFAC9 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBC22E9BA39005CFAC9 /* UIViewController+Extensions.swift */; };
 		8AD5EDAC22E9BA98005CFAC9 /* TableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBD22E9BA39005CFAC9 /* TableView.swift */; };
 		8AD5EDAD22E9BA98005CFAC9 /* UIStackView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECBE22E9BA39005CFAC9 /* UIStackView+Extensions.swift */; };
@@ -337,7 +337,7 @@
 		8AD5ECB622E9BA39005CFAC9 /* UIImagePickerController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImagePickerController+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ECB722E9BA39005CFAC9 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ECB822E9BA39005CFAC9 /* UIDevice+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extensions.swift"; sourceTree = "<group>"; };
-		8AD5ECBA22E9BA39005CFAC9 /* UIViewController+ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+ImagePicker.swift"; sourceTree = "<group>"; };
+		8AD5ECBA22E9BA39005CFAC9 /* ViewController+ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+ImagePicker.swift"; sourceTree = "<group>"; };
 		8AD5ECBC22E9BA39005CFAC9 /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		8AD5ECBD22E9BA39005CFAC9 /* TableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableView.swift; sourceTree = "<group>"; };
 		8AD5ECBE22E9BA39005CFAC9 /* UIStackView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Extensions.swift"; sourceTree = "<group>"; };
@@ -740,6 +740,7 @@
 			isa = PBXGroup;
 			children = (
 				8AD54F1B231E91E500364657 /* ViewController.swift */,
+				8AD5ECBA22E9BA39005CFAC9 /* ViewController+ImagePicker.swift */,
 				8AD5ED0022E9BA39005CFAC9 /* Style */,
 				8AD5ED0722E9BA39005CFAC9 /* Channels */,
 				8AD5ECD822E9BA39005CFAC9 /* Chat */,
@@ -808,7 +809,6 @@
 		8AD5ECB922E9BA39005CFAC9 /* UIViewController */ = {
 			isa = PBXGroup;
 			children = (
-				8AD5ECBA22E9BA39005CFAC9 /* UIViewController+ImagePicker.swift */,
 				8AD5ECBC22E9BA39005CFAC9 /* UIViewController+Extensions.swift */,
 			);
 			path = UIViewController;
@@ -1388,7 +1388,7 @@
 				8AD5EDB022E9BA98005CFAC9 /* UILabel+Extensions.swift in Sources */,
 				8AD5ED9922E9BA98005CFAC9 /* ChatViewStyle.swift in Sources */,
 				8AD5EDB422E9BA98005CFAC9 /* Reusable.swift in Sources */,
-				8AD5EDA922E9BA98005CFAC9 /* UIViewController+ImagePicker.swift in Sources */,
+				8AD5EDA922E9BA98005CFAC9 /* ViewController+ImagePicker.swift in Sources */,
 				8AD5EDBE22E9BA98005CFAC9 /* RxDocumentPickerViewController.swift in Sources */,
 				8AD5ED9D22E9BA98005CFAC9 /* ChannelTableViewCell.swift in Sources */,
 				8AD5ED9F22E9BA98005CFAC9 /* UIImage+Extensions.swift in Sources */,

@@ -186,6 +186,7 @@ public final class UploaderItem: Equatable {
         }
         
         return request
+            .retry(3)
             .do(onNext: { [weak self] progressResponse in
                 self?.lastProgress = progressResponse.progress
                 
@@ -202,8 +203,9 @@ public final class UploaderItem: Equatable {
                                                  title: self.fileName,
                                                  url: fileURL,
                                                  file: fileAttachment)
-                }
-            })
+                }},
+                onError: { [weak self] in self?.error = $0 }
+            )
             .share()
     }
     

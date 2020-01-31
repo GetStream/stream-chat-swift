@@ -118,6 +118,7 @@ extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
                         }
                 })
                 .map { $0.progress }
+                .catchErrorJustReturn(0)
                 .bind(to: cell.progressView.rx.progress)
                 .disposed(by: cell.disposeBag)
             

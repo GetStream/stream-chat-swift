@@ -63,6 +63,7 @@ extension ComposerView {
                         }
                 })
                 .map { $0.progress }
+                .catchErrorJustReturn(0)
                 .bind(to: fileView.progressView.rx.progress)
                 .disposed(by: fileView.disposeBag)
             
