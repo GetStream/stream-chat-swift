@@ -34,6 +34,13 @@ public struct ChannelResponse: Decodable {
         messages = try container.decodeIfPresent([Message].self, forKey: .messages) ?? []
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         updateUnreadMessageRead()
+        
+        guard !messages.isEmpty, let unreadMessageRead = unreadMessageRead else {
+            return
+        }
+        
+        calculateChannelUnreadCount(unreadMessageRead)
+        Client.shared.channels.append(WeakRef(channel))
     }
     
     /// Init a channel response.
@@ -56,6 +63,29 @@ public struct ChannelResponse: Decodable {
             lastMessage.updated > messageRead.lastReadDate {
             unreadMessageRead = messageRead
         }
+    }
+    
+    func calculateChannelUnreadCount(_ unreadMessageRead: MessageRead) {
+        channel.unreadCountAtomic.set(0)
+        channel.mentionedUnreadCountAtomic.set(0)
+        
+        var count = 0
+        var mentionedCount = 0
+        
+        for message in messages.reversed() {
+            if message.created > unreadMessageRead.lastReadDate {
+                count += 1
+                
+                if message.user != Client.shared.user, message.mentionedUsers.contains(Client.shared.user) {
+                    mentionedCount += 1
+                }
+            } else {
+                break
+            }
+        }
+        
+        channel.unreadCountAtomic.set(count)
+        channel.mentionedUnreadCountAtomic.set(mentionedCount)
     }
 }
 
