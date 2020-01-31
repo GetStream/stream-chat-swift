@@ -49,10 +49,42 @@ extension Client {
         var request = URLRequest(url: url)
         request.allHTTPHeaderFields = authHeaders(token: token)
         
-        return WebSocket(request,
+        let webSocket = WebSocket(request,
                          callbackQueue: callbackQueue,
                          stayConnectedInBackground: stayConnectedInBackground,
                          logger: logger)
+        
+        setupWebSocketOnConnect(webSocket)
+        setupWebSocketOnEvent(webSocket)
+        
+        return webSocket
+    }
+    
+    func setupWebSocketOnConnect(_ webSocket: WebSocket) {
+        webSocket.onConnect = { [unowned self] connection in
+            if case .disconnected(let error) = connection,
+                let clientError = error as? ClientError,
+                case .expiredToken = clientError,
+                self.touchTokenProvider() {
+                return
+            }
+            
+            self.onConnect(connection)
+        }
+    }
+    
+    func setupWebSocketOnEvent(_ webSocket: WebSocket) {
+        webSocket.onEvent = { [unowned self] event in
+            // Update the current user on login.
+            if case let .healthCheck(_, user) = event {
+                self.user = user
+                return
+            }
+          
+            self.updateUserUnreadCount(with: event)
+            self.updateChannelsUnreadCount(with: event)
+            self.onEvent(event)
+        }
     }
 }
 

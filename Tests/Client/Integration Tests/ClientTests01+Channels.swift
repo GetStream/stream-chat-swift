@@ -22,11 +22,9 @@ import XCTest
 ///   - Delete a channel.
 final class ClientTests01_Channels: TestCase {
     
-    static let salt = Int.random(in: 1000...9999)
-    static let cid = ChannelId(type: .team, id: "test_\(salt)")
     /// Temporary the search text changed from: `"Text \(Self.salt)"` to `"Text\(Self.salt)"`,
     /// because on the issue for the search of a text in direct message channels with spaces.
-    static let messageText = "Text \(salt)"
+    static let messageText = "Text \(UUID().uuidString)"
     
     let member2 = User.user2.asMember
     
@@ -35,7 +33,7 @@ final class ClientTests01_Channels: TestCase {
                              baseURL: TestCase.baseURL,
                              callbackQueue: .main,
                              stayConnectedInBackground: false,
-                             logOptions: .requestsInfo)
+                             logOptions: [])
         
         let client2 = Client(apiKey: TestCase.apiKey,
                              baseURL: TestCase.baseURL,
@@ -43,16 +41,24 @@ final class ClientTests01_Channels: TestCase {
                              stayConnectedInBackground: false,
                              logOptions: .webSocketInfo)
         
-        client2.onEvent = { event in
+        client2.onEvent = { [weak client2] event in
             if case .notificationAddedToChannel = event {
                 StorageHelper.shared.increment(key: .notificationAddedToChannel)
+                
+                if let client2 = client2 {
+                    StorageHelper.shared.append(client2.user.unreadCount, key: .user2UnreadCounts)
+                }
             }
             
             if case .messageNew(_, _, _, _, _, let eventType) = event, case .notificationMessageNew = eventType {
                 StorageHelper.shared.increment(key: .notificationMessageNew)
+                
+                if let client2 = client2 {
+                    StorageHelper.shared.append(client2.user.unreadCount, key: .user2UnreadCounts)
+                }
             }
         }
-
+        
         StorageHelper.shared.add(client1, key: .client1)
         StorageHelper.shared.add(client2, key: .client2)
         
@@ -60,23 +66,31 @@ final class ClientTests01_Channels: TestCase {
             connect(client1, user: .user1, token: .token1) { [weak client1] in
                 client1?.update(users: [.user1, .user2]) {
                     if $0.isSuccess {
-                        expectation.fulfill()
-                    }
-                }
-            }
-        }
-
-        expect("setup user2") { expectation in
-            connect(client2, user: .user2, token: .token2) { [weak client2] in
-                client2?.update(user: .user2) {
-                    if $0.isSuccess {
-                        expectation.fulfill()
+                        client1?.markAllRead {
+                            if $0.isSuccess {
+                                expectation.fulfill()
+                            }
+                        }
                     }
                 }
             }
         }
         
-        createChannel(client1)
+        expect("setup user2") { expectation in
+            connect(client2, user: .user2, token: .token2) { [weak client2] in
+                client2?.update(user: .user2) {
+                    if $0.isSuccess {
+                        client2?.markAllRead {
+                            if $0.isSuccess {
+                                expectation.fulfill()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        createChannel(client1, cid: ChannelId(type: .team, id: UUID().uuidString))
         createChannel1By1(client1)
     }
     
@@ -85,11 +99,50 @@ final class ClientTests01_Channels: TestCase {
         XCTAssertEqual(StorageHelper.shared.value(key: .notificationAddedToChannel), 2)
     }
     
-    func createChannel(_ client: Client) {
+    func test03CleanUp() {
+        guard let client1: Client = StorageHelper.shared.value(key: .client1) else {
+            XCTFail("Client1 unread counts not found")
+            return
+        }
+        
+        guard let deleteChannels: [Channel] = StorageHelper.shared.value(key: .deleteChannels) else {
+            XCTFail("Channels for deleting not found")
+            return
+        }
+        
+        guard let deleteMessages: [Message] = StorageHelper.shared.value(key: .deleteMessages) else {
+            XCTFail("Messages for deleting not found")
+            return
+        }
+        
+        deleteMessages.forEach { self.deleteMessage($0, client1) }
+        
+        deleteChannels.forEach {
+            if !$0.isDirectMessage {
+                self.removeMember(to: $0, client1)
+            }
+            
+            self.deleteChannel($0, client1)
+        }
+    }
+    
+    func test04CheckUnreadCount() {
+        guard let unreadCounts: [UnreadCount] = StorageHelper.shared.value(key: .user2UnreadCounts) else {
+            XCTFail("User2 unread counts not found")
+            return
+        }
+        
+        XCTAssertEqual(unreadCounts, [.init(channels: 0, messages: 0),
+                                      .init(channels: 1, messages: 1),
+                                      .init(channels: 1, messages: 1),
+                                      .init(channels: 2, messages: 2)])
+    }
+    
+    func createChannel(_ client: Client, cid: ChannelId) {
         var createdChannel: Channel?
         
         expect("a new channel") { expectation in
-            let channel = Channel(type: .team, id: Self.cid.id)
+            let channel = Channel(type: cid.type, id: cid.id)
             channel.members.insert(User.user1.asMember)
             channel.query(options: .all, client: client) {
                 if let value = $0.value {
@@ -103,8 +156,7 @@ final class ClientTests01_Channels: TestCase {
         XCTAssertNotNil(createdChannel)
         addMember(to: createdChannel!, client)
         sendMessage(createdChannel!, client)
-        removeMember(to: createdChannel!, client)
-        deleteChannel(createdChannel!, client)
+        StorageHelper.shared.append(createdChannel, key: .deleteChannels)
     }
     
     func addMember(to channel: Channel, _ client: Client) {
@@ -148,7 +200,7 @@ final class ClientTests01_Channels: TestCase {
         
         XCTAssertNotNil(createdChannel)
         sendMessage(createdChannel!, client)
-        deleteChannel(createdChannel!, client)
+        StorageHelper.shared.append(createdChannel, key: .deleteChannels)
     }
     
     func sendMessage(_ channel: Channel, _ client: Client) {
@@ -167,10 +219,10 @@ final class ClientTests01_Channels: TestCase {
         
         XCTAssertNotNil(createdMessage)
         getMessage(by: createdMessage!.id, client)
-        queryChannels(client)
-//        searchText(client)
+        queryChannels(client, cid: channel.cid)
+        // TODO: searchText(client)
         addReaction(createdMessage!, client)
-        deleteMessage(createdMessage!, client)
+        StorageHelper.shared.append(createdMessage, key: .deleteMessages)
     }
     
     func getMessage(by messageId: String, _ client: Client) {
@@ -183,13 +235,13 @@ final class ClientTests01_Channels: TestCase {
         }
     }
     
-    func queryChannels(_ client: Client) {
+    func queryChannels(_ client: Client, cid: ChannelId) {
         expect("channels with current user member") { expectation in
             let query = ChannelsQuery(pagination: .limit(1))
             client.queryChannels(query) { result in
                 if let channelResponses = try? result.get() {
                     XCTAssertEqual(channelResponses.count, 1)
-                    channelResponses.forEach { XCTAssertTrue($0.channel.cid == Self.cid || $0.channel.isDirectMessage) }
+                    channelResponses.forEach { XCTAssertTrue($0.channel.cid == cid || $0.channel.isDirectMessage) }
                     expectation.fulfill()
                 }
             }

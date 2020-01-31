@@ -74,34 +74,27 @@ public final class Channel: Codable {
     let invitedMembers: Set<Member>
     /// An extra data for the channel.
     public internal(set) var extraData: ExtraData?
-    
     /// Check if the channel was deleted.
-    public var isDeleted: Bool {
-        return deleted != nil
-    }
+    public var isDeleted: Bool { deleted != nil }
     
-    var unreadCountAtomic = Atomic(0)
-    var mentionedUnreadCountAtomic = Atomic(0)
-    var onlineUsersAtomic = Atomic<[User]>([])
+    let unreadCountAtomic = Atomic(0)
+    let mentionedUnreadCountAtomic = Atomic(0)
+    let onlineUsersAtomic = Atomic<[User]>([])
     
     /// Returns the current unread count.
-    public var currentUnreadCount: Int {
-        return unreadCountAtomic.get(defaultValue: 0)
-    }
-    
+    public var currentUnreadCount: Int { unreadCountAtomic.get(default: 0) }
     /// Returns the current user mentioned unread count.
-    public var currentMentionedUnreadCount: Int {
-        return mentionedUnreadCountAtomic.get(defaultValue: 0)
-    }
+    public var currentMentionedUnreadCount: Int { mentionedUnreadCountAtomic.get(default: 0) }
     
     /// An option to enable ban users.
     public var banEnabling = BanEnabling.disabled
     var bannedUsers = [User]()
     
     /// Checks if the channel is direct message type between 2 users.
-    public var isDirectMessage: Bool {
-        return id.hasPrefix("!members") && members.count == 2
-    }
+    public var isDirectMessage: Bool { id.hasPrefix("!members") && members.count == 2 }
+    
+    /// An event when the channel was updated.
+    public var didUpdate: DidUpdate<Channel>?
     
     /// Init a channel 1-by-1 (direct message) with another member.
     /// - Parameters:
@@ -228,69 +221,6 @@ extension Channel {
     /// - Parameter user: a user.
     public func isBanned(_ user: User) -> Bool {
         return bannedUsers.contains(user)
-    }
-    
-    /// Update the unread count if needed.
-    ///
-    /// - Parameter response: a web socket event.
-    /// - Returns: true, if unread count was updated.
-    @discardableResult
-    func updateUnreadCount(_ event: Event, for currentUser: User = Client.shared.user) -> Bool {
-        guard let cid = event.cid, cid == self.cid else {
-            if case .notificationMarkRead(let notificationChannel, let unreadCount, _, _, _) = event,
-                let channel = notificationChannel,
-                channel.cid == self.cid {
-                unreadCountAtomic.set(unreadCount)
-                return true
-            }
-            
-            return false
-        }
-        
-        if case .messageNew(let message, let unreadCount, _, _, _, _) = event {
-            unreadCountAtomic.set(unreadCount)
-            
-            if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
-                mentionedUnreadCountAtomic += 1
-            }
-            
-            return true
-        }
-        
-        if case .messageRead(let messageRead, _, _) = event, messageRead.user.isCurrent {
-            unreadCountAtomic.set(0)
-            mentionedUnreadCountAtomic.set(0)
-            return true
-        }
-        
-        return false
-    }
-    
-    func calculateUnreadCount(_ channelResponse: ChannelResponse, for currentUser: User = Client.shared.user) {
-        unreadCountAtomic.set(0)
-        mentionedUnreadCountAtomic.set(0)
-        
-        guard let unreadMessageRead = channelResponse.unreadMessageRead else {
-            return
-        }
-        
-        var count = 0
-        var mentionedCount = 0
-        
-        for message in channelResponse.messages.reversed() {
-            if message.created > unreadMessageRead.lastReadDate {
-                count += 1
-                
-                if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
-                    mentionedCount += 1
-                }
-            } else {
-                break
-            }
-        }
-        
-        unreadCountAtomic.set(count)
-        mentionedUnreadCountAtomic.set(mentionedCount)
     }
 }
 
