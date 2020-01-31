@@ -160,6 +160,11 @@ fileprivate class WebViewNavigationController: UINavigationController {
         super.init(rootViewController: webViewController)
     }
     
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        self.webViewController = WebViewController(nibName: nil, bundle: nil)
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         webViewController = WebViewController(nibName: nil, bundle: nil)
         super.init(coder: aDecoder)

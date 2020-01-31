@@ -5,10 +5,12 @@
 
 ### ✅ Added
 - `ViewController.showAlert(title:message:actions:)` now you can override this function to decide when/how alerts should be handled [#85](https://github.com/GetStream/stream-chat-swift/issues/85)
+- Allow user to go directly to iOS settings if they've disabled photo library access and trying to upload image/video [#85](https://github.com/GetStream/stream-chat-swift/issues/85)
 
 ### 🐞 Fixed
 - Fixed allowing file uploads exceeding API file limit (20MB) and crashing [#81](https://github.com/GetStream/stream-chat-swift/issues/81)
-- Fixed internet connection losses during image uploads cause crashing [#82](https://github.com/GetStream/stream-chat-swift/issues/81)
+- Fixed internet connection losses during image uploads cause crashing [#82](https://github.com/GetStream/stream-chat-swift/issues/82)
+- Fixed previewing uploaded videos crashing on iOS12 [#83](https://github.com/GetStream/stream-chat-swift/issues/83)
 
 # 1.5.5
 _January 24, 2020_
