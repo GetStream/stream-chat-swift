@@ -31,26 +31,26 @@ public final class Atomic<T> {
     
     /// Set a value.
     public func set(_ newValue: T?) {
-        queue.async(flags: .barrier) {
-            let oldValue = self.value
-            self.value = newValue
-            self.valueChanged(from: oldValue, to: newValue)
+        queue.async(flags: .barrier) { [weak self] in
+            let oldValue = self?.value
+            self?.value = newValue
+            self?.valueChanged(newValue, oldValue)
         }
     }
     
     /// Get the value.
     public func get() -> T? {
         var currentValue: T?
-        queue.sync { currentValue = self.value }
+        queue.sync { [weak self] in currentValue = self?.value }
         return currentValue
     }
     
     /// Get the value if exists or return a default value.
     ///
-    /// - Parameter defaultValue: a default value.
+    /// - Parameter default: a default value.
     /// - Returns: a stored value or default.
-    public func get(defaultValue: T) -> T {
-        return get() ?? defaultValue
+    public func get(default: T) -> T {
+        return get() ?? `default`
     }
     
     /// Update the value safely.
@@ -63,15 +63,13 @@ public final class Atomic<T> {
             
             let newValue = changes(oldValue)
             self.value = newValue
-            self.valueChanged(from: oldValue, to: newValue)
+            self.valueChanged(newValue, oldValue)
         }
     }
     
-    private func valueChanged(from oldValue: T?, to newValue: T?) {
+    private func valueChanged(_ newValue: T?, _ oldValue: T?) {
         if let callbackQueue = callbackQueue {
-            callbackQueue.async { [weak self] in
-                self?.didSet?(newValue, oldValue)
-            }
+            callbackQueue.async { [weak self] in self?.didSet?(newValue, oldValue) }
         } else {
             didSet?(newValue, oldValue)
         }

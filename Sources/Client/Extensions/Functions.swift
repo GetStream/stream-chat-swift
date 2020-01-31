@@ -6,10 +6,19 @@
 //  Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-// MARK: Side Effects
+/// A did update block type.
+public typealias DidUpdate<T> = (T) -> Void
+
+/// A tuple for unread counts of channels and messages.
+public struct UnreadCount: Hashable {
+    public let channels: Int
+    public let messages: Int
+}
 
 /// A completion block type with a `Result`.
 public typealias Completion<T, E: Error> = (Result<T, E>) -> Void
+
+// MARK: Side Effects
 
 /// Performs side effect work for a success result before of the original completion block.
 /// - Parameters:
