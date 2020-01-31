@@ -45,7 +45,7 @@ struct PickedImage {
     let fileName: String
     let isVideo: Bool
     
-    init?(info: [UIImagePickerController.InfoKey : Any]) {
+    init?(info: [UIImagePickerController.InfoKey: Any]) {
         if let videoURL = info[.mediaURL] as? URL, (info[.mediaType] as? String) == .movieFileType {
             isVideo = true
             fileURL = videoURL

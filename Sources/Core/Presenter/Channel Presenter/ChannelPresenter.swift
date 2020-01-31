@@ -218,7 +218,7 @@ extension ChannelPresenter {
         let messageId = editMessage?.id ?? ""
         var attachments = uploader.items.compactMap({ $0.attachment })
         let parentId = parentMessage?.id
-        var extraData: Codable? = nil
+        var extraData: Codable?
         
         if attachments.isEmpty, let editMessage = editMessage, !editMessage.attachments.isEmpty {
             attachments = editMessage.attachments

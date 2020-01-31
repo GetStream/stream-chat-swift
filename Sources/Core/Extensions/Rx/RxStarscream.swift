@@ -17,14 +17,14 @@ public enum WebSocketEvent {
     case pong
 }
 
-public class RxWebSocketDelegateProxy<Client: WebSocketClient>: DelegateProxy<Client, NSObjectProtocol>, DelegateProxyType, WebSocketDelegate, WebSocketPongDelegate {
+public class RxWebSocketDelegateProxy<Client: WebSocketClient>: DelegateProxy<Client, NSObjectProtocol>, DelegateProxyType, WebSocketDelegate, WebSocketPongDelegate { // swiftlint:disable:this line_length
     
     private weak var forwardDelegate: WebSocketDelegate?
     private weak var forwardPongDelegate: WebSocketPongDelegate?
     
     fileprivate let subject = PublishSubject<WebSocketEvent>()
     
-    required public init(websocket: Client) {
+    public required init(websocket: Client) {
         super.init(parentObject: websocket, delegateProxy: RxWebSocketDelegateProxy.self)
     }
     

@@ -52,7 +52,7 @@ extension Client {
     }
 }
 
-fileprivate struct WebSocketPayload: Encodable {
+private struct WebSocketPayload: Encodable {
     private enum CodingKeys: String, CodingKey {
         case userId = "user_id"
         case userDetails = "user_details"

@@ -24,7 +24,7 @@ public final class ComposerAddFileView: UIView {
     /// A source type.
     public let sourceType: SourceType
     
-    public override var backgroundColor: UIColor? {
+    override public var backgroundColor: UIColor? {
         didSet {
             titleLabel.textColor = backgroundColor?.oppositeBlackAndWhite ?? .black
             iconImageView?.tintColor = titleLabel.textColor
@@ -83,7 +83,8 @@ public final class ComposerAddFileView: UIView {
             }
         }
         
-        rx.tapGesture().when(.recognized)
+        rx.tapGesture()
+            .when(.recognized)
             .subscribe(onNext: { _ in action(sourceType) })
             .disposed(by: disposeBag)
     }

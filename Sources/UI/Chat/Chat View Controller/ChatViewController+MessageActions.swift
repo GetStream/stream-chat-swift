@@ -155,7 +155,8 @@ extension ChatViewController {
             popoverPresentationController.sourceView = cell
             popoverPresentationController.sourceRect = CGRect(x: locationInView.x,
                                                               y: locationInView.y + (isAtBottom ? -15 : 15),
-                                                              width: 0, height: 0)
+                                                              width: 0,
+                                                              height: 0)
         }
         
         present(alert, animated: true)
@@ -178,7 +179,7 @@ extension ChatViewController {
     
     private func addCopyAction(to alert: UIAlertController, message: Message) {
         let copyText: String = message.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        var copyURL: URL? = nil
+        var copyURL: URL?
         
         if let first = message.attachments.first, let url = first.url {
             copyURL = url
@@ -196,7 +197,7 @@ extension ChatViewController {
     }
     
     private func conformDeleting(message: Message) {
-        var text: String? = nil
+        var text: String?
         
         if message.textOrArgs.isEmpty {
             if let attachment = message.attachments.first {

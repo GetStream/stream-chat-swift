@@ -11,7 +11,7 @@ import StreamChatCore
 
 extension UIImage {
     /// A file types images.
-    public struct FileTypes {
+    public enum FileTypes {
         /// A CSV file image.
         public static let csv: UIImage = UIImage.chat(named: "csv")
         /// A DOC file image.
@@ -33,7 +33,7 @@ extension UIImage {
     }
     
     /// An icons images.
-    public struct Icons {
+    public enum Icons {
         /// A close icon.
         public static let close: UIImage = UIImage.chat(named: "closeIcon")
         /// A delivered icon.
@@ -61,7 +61,7 @@ extension UIImage {
     }
     
     /// A logo images.
-    public struct Logo {
+    public enum Logo {
         /// A giphy logo image.
         public static let giphy: UIImage = UIImage.chat(named: "giphy")
     }

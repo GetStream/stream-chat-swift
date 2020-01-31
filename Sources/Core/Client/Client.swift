@@ -49,7 +49,7 @@ public final class Client {
     public internal(set) lazy var webSocket = WebSocket()
     
     lazy var urlSession = setupURLSession(token: "")
-    private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
+    private(set) lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
     
@@ -69,7 +69,7 @@ public final class Client {
     var unreadCountAtomic = Atomic<UnreadCount>((0, 0))
     
     /// An observable client web socket connection.
-    /// 
+    ///
     /// The connection is responsible for:
     /// * Checking the Internet connection.
     /// * Checking the app state, e.g. active, background.
@@ -124,11 +124,11 @@ public final class Client {
     ///                                  start a background task to stay connected for 5 min
     ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
     init(apiKey: String = Client.config.apiKey,
-                baseURL: BaseURL = Client.config.baseURL,
-                callbackQueue: DispatchQueue? = Client.config.callbackQueue,
-                stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
-                database: Database? = Client.config.database,
-                logOptions: ClientLogger.Options = Client.config.logOptions) {
+         baseURL: BaseURL = Client.config.baseURL,
+         callbackQueue: DispatchQueue? = Client.config.callbackQueue,
+         stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
+         database: Database? = Client.config.database,
+         logOptions: ClientLogger.Options = Client.config.logOptions) {
         if !apiKey.isEmpty, logOptions.isEnabled {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Client.version)")
             ClientLogger.logger("🔑", "", apiKey)

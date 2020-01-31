@@ -300,7 +300,7 @@ public extension ComposerView {
         let isAnyFileUploaded = uploader?.items.first(where: { $0.attachment != nil }) != nil
         
         if let style = style {
-            let isHidden = text.count == 0 && !isAnyFileUploaded
+            let isHidden = text.isEmpty && !isAnyFileUploaded
             
             if style.sendButtonVisibility == .whenActive {
                 sendButton.isHidden = isHidden

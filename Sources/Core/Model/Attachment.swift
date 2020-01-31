@@ -117,6 +117,7 @@ public struct Attachment: Codable {
                 type = existsType
             }
         } else if let _ = try? container.decodeIfPresent(String.self, forKey: .ogURL) {
+            // swiftlint:disable:previous unused_optional_binding
             type = .link
         } else {
             type = .unknown

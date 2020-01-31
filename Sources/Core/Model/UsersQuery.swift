@@ -22,7 +22,6 @@ public struct UsersQuery: Encodable {
     /// Query options, e.g. .presence
     public let options: QueryOptions
     
-    
     /// Init a users query.
     ///
     /// - Parameters:

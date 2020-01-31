@@ -129,7 +129,7 @@ extension RealmDatabase {
         logger?.log(realmURL.absoluteString)
         
         // Setup encryption key.
-        var encryptionKey: Data? = nil
+        var encryptionKey: Data?
         
         if encrypted {
             encryptionKey = try Data.encryptionKey(userKey: userKey)

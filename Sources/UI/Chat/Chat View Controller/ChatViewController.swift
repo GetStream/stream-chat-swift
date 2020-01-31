@@ -62,7 +62,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     public lazy var composerAddFileTypes = defaultComposerAddFileTypes
     
     /// Default attachments file types for thw composer view. This is useful for subclasses.
-    public var defaultComposerAddFileTypes: [ComposerAddFileType]  {
+    public var defaultComposerAddFileTypes: [ComposerAddFileType] {
         return [.photo, .camera, .file]
     }
     
@@ -106,7 +106,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     
     // MARK: - View Life Cycle
     
-    open override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = style.incomingMessage.chatBackgroundColor
         
@@ -152,7 +152,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         Keyboard.shared.notification.bind(to: rx.keyboard).disposed(by: self.disposeBag)
     }
     
-    open override func viewDidAppear(_ animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         startGifsAnimations()
         markReadIfPossible()
@@ -163,16 +163,16 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         }
     }
     
-    open override func viewWillDisappear(_ animated: Bool) {
+    override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopGifsAnimations()
     }
     
-    open override var preferredStatusBarStyle: UIStatusBarStyle {
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
         return style.incomingMessage.textColor.isDark ? .default : .lightContent
     }
     
-    open override func willTransition(to newCollection: UITraitCollection,
+    override open func willTransition(to newCollection: UITraitCollection,
                                       with coordinator: UIViewControllerTransitionCoordinator) {
         super.willTransition(to: newCollection, with: coordinator)
         

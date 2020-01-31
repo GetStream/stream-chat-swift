@@ -202,7 +202,7 @@ public enum Pagination: Codable, Equatable {
 
 extension Pagination {
     /// An operator for combining Pagination's.
-    public static func +(lhs: Pagination, rhs: Pagination) -> Pagination {
+    public static func + (lhs: Pagination, rhs: Pagination) -> Pagination {
         if case .none = lhs {
             return rhs
         }
@@ -215,7 +215,7 @@ extension Pagination {
     }
     
     /// An operator for combining Pagination's.
-    public static func +=(lhs: inout Pagination, rhs: Pagination) {
-        lhs = lhs + rhs
+    public static func += (lhs: inout Pagination, rhs: Pagination) {
+        lhs = lhs + rhs // swiftlint:disable:this shorthand_operator
     }
 }

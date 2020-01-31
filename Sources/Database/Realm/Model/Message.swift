@@ -36,7 +36,7 @@ public final class Message: Object {
         return "id"
     }
     
-    public override class func indexedProperties() -> [String] {
+    override public class func indexedProperties() -> [String] {
         return indexedPropertiesKeyPaths([\Message.created])
     }
     

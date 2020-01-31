@@ -63,9 +63,9 @@ public final class UploaderItem: Equatable {
     /// An uploading type.
     public let type: UploadingType
     /// An uploaded attachment.
-    public private(set) var attachment: Attachment? = nil
+    public private(set) var attachment: Attachment?
     /// An error with uploading.
-    public private(set) var error: Error? = nil
+    public private(set) var error: Error?
     /// The last uploading progress.
     public private(set) var lastProgress: Float = 0
     /// An observable uploading progress.

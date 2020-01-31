@@ -46,7 +46,9 @@ open class ViewController: UIViewController {
         Banners.shared.show(error: error)
     }
     
-    open func showAlert(title: String?, message: String?, actions: [UIAlertAction] = [.init(title: "Ok", style: .default, handler: nil)]) {
+    open func showAlert(title: String?,
+                        message: String?,
+                        actions: [UIAlertAction] = [.init(title: "Ok", style: .default, handler: nil)]) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         actions.forEach(alert.addAction)
         present(alert, animated: true)

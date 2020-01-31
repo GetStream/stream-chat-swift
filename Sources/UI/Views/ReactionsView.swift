@@ -89,7 +89,7 @@ final class ReactionsView: UIView {
         }
         
         let count = (reactionCounts?[reactionType] ?? 0) + increment
-        label.text = count > 0 ? count.shortString() : nil
+        label.text = count > 0 ? count.shortString() : nil // swiftlint:disable:this empty_count
         
         if increment > 0 {
             if let avatarView = avatarsStackView.subviews[index].subviews.first as? AvatarView {
@@ -203,7 +203,7 @@ final class ReactionsView: UIView {
         viewContainer.snp.makeConstraints { $0.width.height.equalTo(CGFloat.reactionsPickerButtonWidth).priority(999) }
         
         let label = UILabel(frame: .zero)
-        label.text = count > 0 ? count.shortString() : nil
+        label.text = count > 0 ? count.shortString() : nil // swiftlint:disable:this empty_count
         label.font = .chatSmall
         label.textColor = reactionsView.backgroundColor?.oppositeBlackAndWhite
         label.makeCenterEqualToSuperview(superview: viewContainer)

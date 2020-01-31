@@ -56,7 +56,7 @@ public final class Channel: Codable {
     public internal(set) var name: String
     /// An image of the channel.
     public internal(set) var imageURL: URL?
-    /// The last message date.  
+    /// The last message date.
     public let lastMessageDate: Date?
     /// A channel created date.
     public let created: Date
@@ -80,7 +80,7 @@ public final class Channel: Codable {
         return deleted != nil
     }
     
-    static private var activeChannelIds: [ChannelId] = []
+    private static var activeChannelIds: [ChannelId] = []
     
     var isActive: Bool {
         return Channel.activeChannelIds.contains(cid)
@@ -180,7 +180,7 @@ public final class Channel: Codable {
         }
     }
     
-    required public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: DecodingKeys.self)
         let id = try container.decode(String.self, forKey: .id)
         self.id = id
@@ -239,6 +239,7 @@ extension Channel: Hashable {
 public extension Channel {
     /// A channel config.
     struct Config: Decodable {
+        // swiftlint:disable:next nesting
         private enum CodingKeys: String, CodingKey {
             case reactionsEnabled = "reactions"
             case typingEventsEnabled = "typing_events"

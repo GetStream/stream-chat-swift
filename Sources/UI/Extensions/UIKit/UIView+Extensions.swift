@@ -120,8 +120,8 @@ extension UIView {
         private let velocity: CGFloat
         private let options: AnimationOptions
         private let animations: Animations
-        private var completion: AnimationsCompletion? = nil
-        private var next: Chain? = nil
+        private var completion: AnimationsCompletion?
+        private var next: Chain?
         
         init(duration: TimeInterval,
              dampingRatio: CGFloat,

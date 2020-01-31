@@ -126,7 +126,7 @@ private extension MessageTextEnrichment {
     
     private func addAttributes(to attributedText: NSMutableAttributedString,
                                text: String,
-                               attributes: [NSAttributedString.Key : Any]) -> Bool {
+                               attributes: [NSAttributedString.Key: Any]) -> Bool {
         var affected = false
         
         for name in mentionedUserNames {

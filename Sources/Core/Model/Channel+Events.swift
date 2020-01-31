@@ -188,7 +188,7 @@ extension Channel {
             }
             // Map members to online users.
             .map { $0.channel.members.filter({ $0.user.isOnline }).map({ $0.user }) }
-            .flatMapLatest{ [weak self] onlineUsers -> Observable<[User]> in
+            .flatMapLatest { [weak self] onlineUsers -> Observable<[User]> in
                 guard let self = self else {
                     return .empty()
                 }

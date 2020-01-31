@@ -43,6 +43,7 @@ extension WebSocket {
 extension WebSocket {
     /// A web socket event response.
     public struct Response: Decodable {
+        // swiftlint:disable:next nesting
         private enum CodingKeys: String, CodingKey {
             case cid = "cid"
             case created = "created_at"

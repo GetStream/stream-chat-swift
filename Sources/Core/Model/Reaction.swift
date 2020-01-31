@@ -92,7 +92,7 @@ public struct Reaction: Codable, Equatable {
     }
 }
 
-// MARK - Reaction Counts
+// MARK: - Reaction Counts
 
 /// A reaction counts.
 public struct ReactionCounts: Decodable {
@@ -154,7 +154,7 @@ public struct ReactionCounts: Decodable {
     mutating func update(type: ReactionType, increment: Int) {
         let count = increment + (counts[type] ?? 0)
         
-        if count <= 0 {
+        if count <= 0 { // swiftlint:disable:this empty_count
             counts.removeValue(forKey: type)
         } else {
             counts[type] = count

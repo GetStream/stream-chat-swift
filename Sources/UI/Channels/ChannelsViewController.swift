@@ -68,7 +68,7 @@ open class ChannelsViewController: ViewController {
     private var needsToReload = false
     private var needsToReloadIndexRows = Set<IndexPath>()
     
-    open override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         hideBackButtonTitle()
         view.backgroundColor = style.channel.backgroundColor
@@ -80,7 +80,7 @@ open class ChannelsViewController: ViewController {
         }
     }
     
-    open override func viewDidAppear(_ animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         if needsToReload {
@@ -141,7 +141,7 @@ open class ChannelsViewController: ViewController {
             
             if text.isEmpty, let first = lastMessage.attachments.first {
                 text = first.title.isEmpty ? ((first.url ?? first.imageURL)?.lastPathComponent) ?? "" : first.title
-            } else if !text.isEmpty{
+            } else if !text.isEmpty {
                 text = text.replacingOccurrences(of: CharacterSet.markdown, with: "")
             }
             

@@ -19,7 +19,7 @@ private final class RxUIDocumentPickerDelegateProxy: DelegateProxy<UIDocumentPic
                                                      DelegateProxyType,
                                                      UIDocumentPickerDelegate {
     
-    weak private (set) var controller: UIDocumentPickerViewController?
+    private (set) weak var controller: UIDocumentPickerViewController?
     
     init(controller: ParentObject) {
         self.controller = controller

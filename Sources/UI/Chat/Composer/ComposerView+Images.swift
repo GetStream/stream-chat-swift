@@ -129,7 +129,9 @@ extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
         return cell
     }
     
-    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView,
+                               willDisplay cell: UICollectionViewCell,
+                               forItemAt indexPath: IndexPath) {
         if let cell = cell as? AttachmentCollectionViewCell,
             let item = uploaderItem(at: indexPath),
             let gifData = item.gifData {

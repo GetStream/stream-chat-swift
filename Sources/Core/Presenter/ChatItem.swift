@@ -151,7 +151,7 @@ public extension Array where Element == ChatItem {
             return nil
         }
         
-        for (index, item) in enumerated().reversed() where index < beforeIndex  {
+        for (index, item) in enumerated().reversed() where index < beforeIndex {
             if case .message(let message, _) = item {
                 return (index, message)
             }

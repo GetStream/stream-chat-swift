@@ -95,7 +95,10 @@ extension ChannelPresenter {
             let nextRow = items.count
             let reloadRow: Int? = items.last?.message?.user == message.user ? nextRow - 1 : nil
             appendOrUpdateMessageItem(message)
-            let viewChanges = ViewChanges.itemsAdded(newStatusAdded ? [nextRow - 1, nextRow] : [nextRow], reloadRow, message.user.isCurrent, items)
+            let viewChanges = ViewChanges.itemsAdded(newStatusAdded ? [nextRow - 1, nextRow] : [nextRow],
+                                                     reloadRow,
+                                                     message.user.isCurrent,
+                                                     items)
             lastWebSocketEventViewChanges = viewChanges
             channel.add(messagesToDatabase: [message])
             Notifications.shared.showIfNeeded(newMessage: message, in: channel)
