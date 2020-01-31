@@ -39,7 +39,7 @@ public final class Notifications: NSObject {
     public var showNewMessage: ShowNewMessageCallback?
     
     /// Enablde clearing application icon badge number when app become active.
-    public var clearApplicationIconBadgeNumberOnAppActive = false {
+    public var clearApplicationIconBadgeNumberOnAppActive = false { // swiftlint:disable:this identifier_name
         didSet {
             if clearApplicationIconBadgeNumberOnAppActive {
                 observeActiveAppStateForClearing()

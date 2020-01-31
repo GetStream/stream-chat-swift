@@ -30,7 +30,7 @@ public final class Channel: Object {
         return "cid"
     }
     
-    public override class func indexedProperties() -> [String] {
+    override public class func indexedProperties() -> [String] {
         return indexedPropertiesKeyPaths([\Channel.id, \Channel.type, \Channel.created])
     }
     

@@ -1,0 +1,59 @@
+disabled_rules:
+  - large_tuple
+  - multiple_closures_with_trailing_closure
+  - todo
+
+opt_in_rules:
+  - empty_count
+  - convenience_type
+  - empty_string
+  - fatal_error_message
+  - first_where
+  - modifier_order
+  - toggle_bool
+  - identical_operands
+  - joined_default_parameter
+  - unavailable_function
+  - overridden_super_call
+  - explicit_init
+  - redundant_optional_initialization
+  - syntactic_sugar
+  - multiline_arguments
+  - multiline_function_chains
+  - prefer_self_type_over_type_of_self
+  - unused_import
+  - attributes
+
+multiline_arguments:
+  only_enforce_after_first_closure_on_first_line: true
+
+attributes:
+  always_on_same_line: ["@IBAction", "@NSManaged", "@objc"]
+
+trailing_whitespace:
+  ignores_empty_lines: true
+
+force_try:
+  severity: warning
+
+function_body_length:
+  warning: 120
+  error: 200
+
+identifier_name:
+  excluded: [r, g, b, a, x, y, z, dx, dy, dz, i, j, k, id, op, or, me, at, to, in]
+
+line_length: 
+  warning: 134
+  ignores_comments: true
+
+cyclomatic_complexity:
+  ignores_case_statements: true
+  warning: 25
+  error: 30
+
+file_length: 510
+
+function_parameter_count: 6
+
+type_body_length: 300

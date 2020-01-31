@@ -24,7 +24,7 @@ public final class TableView: UITableView {
         }
     }
     
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         
         if stayOnScrollOnce, oldContentSize.height != contentSize.height {

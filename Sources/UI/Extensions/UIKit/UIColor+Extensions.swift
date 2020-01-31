@@ -58,13 +58,13 @@ extension UIColor {
     /// - Parameter coverColor: a transparent cover color.
     /// - Returns: a solid color.
     public func blendAlpha(coverColor: UIColor) -> UIColor {
-        let c1 = coverColor.rgbaTuple()
-        let c2 = rgbaTuple()
+        let c1 = coverColor.rgbaTuple() // swiftlint:disable:this identifier_name
+        let c2 = rgbaTuple() // swiftlint:disable:this identifier_name
         let r = c1.r * c1.a + c2.r  * (1 - c1.a)
         let g = c1.g * c1.a + c2.g  * (1 - c1.a)
         let b = c1.b * c1.a + c2.b  * (1 - c1.a)
         
-        return UIColor.init(red: r, green: g, blue: b, alpha: 1)
+        return UIColor(red: r, green: g, blue: b, alpha: 1)
     }
     
     func rgbaTuple() -> (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {

@@ -118,9 +118,9 @@ extension ChatViewController {
             .unwrap()
             .do(onNext: { [weak self] in self?.dispatchCommands(in: $0) })
             .filter { [weak self] in !$0.isBlank && (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
-            .flatMapLatest { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: true) ?? .empty() }
+            .flatMapLatest { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: true) ?? .empty() }
             .debounce(.seconds(3), scheduler: MainScheduler.instance)
-            .flatMapLatest { [weak self] text in self?.channelPresenter?.sendEvent(isTyping: false) ?? .empty() }
+            .flatMapLatest { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: false) ?? .empty() }
             .subscribe()
             .disposed(by: disposeBag)
         
@@ -247,7 +247,8 @@ extension ChatViewController {
                 view.update(command: command.name, args: command.args, description: command.description)
                 container.containerView.addArrangedSubview(view)
                 
-                view.rx.tapGesture().when(.recognized)
+                view.rx.tapGesture()
+                    .when(.recognized)
                     .subscribe(onNext: { [weak self] _ in self?.addCommandToComposer(command: command.name) })
                     .disposed(by: self.disposeBag)
             }

@@ -185,7 +185,7 @@ public extension Filter {
     }
     
     static func += (lhs: inout Filter, rhs: Filter) {
-        lhs = lhs + rhs
+        lhs = lhs + rhs // swiftlint:disable:this shorthand_operator
     }
     
     static func | (lhs: Filter, rhs: Filter) -> Filter {
@@ -195,7 +195,7 @@ public extension Filter {
             newFilter.append(contentsOf: filter)
         } else {
             newFilter.append(lhs)
-        }   
+        }
         
         if case .or(let filter) = rhs {
             newFilter.append(contentsOf: filter)

@@ -96,7 +96,7 @@ extension JSONEncoder.DateEncodingStrategy {
 
 extension DateFormatter {
     /// A Stream Chat date formatters.
-    public struct Stream {
+    public enum Stream {
         
         /// Creates and returns a date object from the specified ISO 8601 formatted string representation.
         ///

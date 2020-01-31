@@ -64,7 +64,7 @@ extension ChatViewStyle {
         
         var outgoingMessage = incomingMessage
         outgoingMessage.alignment = .right
-        outgoingMessage.backgroundColor = UIColor(red:0.88, green:0.96, blue:0.79, alpha:1.00)
+        outgoingMessage.backgroundColor = UIColor(red: 0.88, green: 0.96, blue: 0.79, alpha: 1.00)
         
         outgoingMessage.reactionViewStyle = ReactionViewStyle(alignment: .right,
                                                               textColor: .black,
@@ -72,7 +72,7 @@ extension ChatViewStyle {
                                                               chatBackgroundColor: backgroundColor,
                                                               tailMessageCornerRadius: 8)
         
-        let composer = ComposerViewStyle(backgroundColor: UIColor(red:0.97, green:0.96, blue:0.96, alpha:0.5),
+        let composer = ComposerViewStyle(backgroundColor: UIColor(red: 0.97, green: 0.96, blue: 0.96, alpha: 0.5),
                                          cornerRadius: 0,
                                          height: 44,
                                          edgeInsets: .zero,

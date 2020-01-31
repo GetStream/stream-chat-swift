@@ -340,7 +340,7 @@ extension Endpoint {
     }
     
     private func path(to channel: Channel, _ subPath: String? = nil) -> String {
-        return "channels/\(channel.type.rawValue)\(channel.id.isEmpty ? "" : "/\(channel.id)")\(subPath == nil ? "" : "/\(subPath ?? "")")"
+        "channels/\(channel.type.rawValue)\(channel.id.isEmpty ? "" : "/\(channel.id)")\(subPath == nil ? "" : "/\(subPath ?? "")")"
     }
     
     private func path(to message: Message, _ subPath: String? = nil) -> String {

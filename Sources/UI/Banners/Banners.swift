@@ -100,14 +100,14 @@ public final class Banners {
                        initialSpringVelocity: 0,
                        options: (bannerItem.bouncing < 1 ? .curveLinear : .curveEaseOut),
                        animations: { self.window.transform = .identity },
-                       completion: { finished in
+                       completion: { _ in
                         UIView.animate(withDuration: 0.3,
                                        delay: bannerItem.delay,
                                        usingSpringWithDamping: 1,
                                        initialSpringVelocity: 0,
                                        options: .curveEaseIn,
                                        animations: { self.window.transform = Banners.hiddenTransform },
-                                       completion: { finished in
+                                       completion: { _ in
                                         self.window.isHidden = true
                                         bannerView.removeFromSuperview()
                                         self.showNext()

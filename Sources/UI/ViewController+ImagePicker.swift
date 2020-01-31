@@ -41,7 +41,8 @@ extension ViewController {
         }
     }
     
-    private func showAuthorizeImagePicker(sourceType: UIImagePickerController.SourceType, _ completion: @escaping ImagePickerCompletion) {
+    private func showAuthorizeImagePicker(sourceType: UIImagePickerController.SourceType,
+                                          _ completion: @escaping ImagePickerCompletion) {
         let delegateKey = String(ObjectIdentifier(self).hashValue) + "ImagePickerDelegate"
         let imagePickerViewController = UIImagePickerController()
         imagePickerViewController.sourceType = sourceType
@@ -110,7 +111,7 @@ fileprivate final class ImagePickerDelegate: NSObject, UINavigationControllerDel
     }
     
     func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true)
         completion(PickedImage(info: info), .authorized)
     }

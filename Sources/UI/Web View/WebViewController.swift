@@ -23,7 +23,7 @@ open class WebViewController: UIViewController, WKNavigationDelegate {
     private lazy var goBackButton = UIBarButtonItem(title: "←", style: .plain, target: self, action: #selector(goBack))
     private lazy var goForwardButton = UIBarButtonItem(title: "→", style: .plain, target: self, action: #selector(goForward))
     
-    open override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupWebView()
@@ -43,10 +43,14 @@ open class WebViewController: UIViewController, WKNavigationDelegate {
     }
     
     func setDocumentMenuViewControllerSoureViewsIfNeeded(_ viewControllerToPresent: UIViewController) {
-        if #available(iOS 13, *), viewControllerToPresent is UIDocumentMenuViewController && UIDevice.current.userInterfaceIdiom == .phone {
+        if #available(iOS 13, *),
+           viewControllerToPresent is UIDocumentMenuViewController && UIDevice.current.userInterfaceIdiom == .phone {
             // Prevent the app from crashing if the WKWebView decides to present a UIDocumentMenuViewController while it self is presented modally.
             viewControllerToPresent.popoverPresentationController?.sourceView = webView
-            viewControllerToPresent.popoverPresentationController?.sourceRect = CGRect(x: webView.center.x, y: webView.center.y, width: 1, height: 1)
+            viewControllerToPresent.popoverPresentationController?.sourceRect = CGRect(x: webView.center.x,
+                                                                                       y: webView.center.y,
+                                                                                       width: 1,
+                                                                                       height: 1)
         }
     }
     
@@ -56,7 +60,6 @@ open class WebViewController: UIViewController, WKNavigationDelegate {
     public func open(_ url: URL) {
         open(URLRequest(url: url))
     }
-    
     
     /// Makes a request with a given `URLRequest` to load the web view.
     ///
@@ -152,7 +155,7 @@ extension UIViewController {
     }
 }
 
-fileprivate class WebViewNavigationController: UINavigationController {
+private class WebViewNavigationController: UINavigationController {
     private let webViewController: WebViewController
     
     init(with webViewController: WebViewController) {

@@ -38,7 +38,7 @@ public class MediaGalleryViewController: UIViewController {
     public var items: [MediaGalleryItem] = []
     public var selected: Int = 0
     
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         ImagePipeline.Configuration.isAnimatedImageDataEnabled = true
         view.backgroundColor = .chatSuperDarkGray
@@ -254,7 +254,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         return tap
     }()
     
-    fileprivate override init(frame: CGRect) {
+    override fileprivate init(frame: CGRect) {
         super.init(frame: frame)
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
@@ -284,7 +284,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         super.init(coder: aDecoder)
     }
     
-    fileprivate override func prepareForReuse() {
+    override fileprivate func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }

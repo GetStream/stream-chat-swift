@@ -16,7 +16,7 @@ public final class ChannelResponse: Object {
     let messages = List<Message>()
     let messageReads = List<MessageRead>()
     
-    public override class func primaryKey() -> String? {
+    override public class func primaryKey() -> String? {
         return "id"
     }
     

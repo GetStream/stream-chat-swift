@@ -42,7 +42,7 @@ public final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable 
         reset()
     }
     
-    public override func prepareForReuse() {
+    override public func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }
@@ -130,7 +130,8 @@ public final class AttachmentCollectionViewCell: UICollectionViewCell, Reusable 
         imageView.backgroundColor = tintColor?.withAlphaComponent(0.1)
         imageView.isUserInteractionEnabled = true
         
-        imageView.rx.tapGesture().when(.recognized)
+        imageView.rx.tapGesture()
+            .when(.recognized)
             .subscribe(onNext: action)
             .disposed(by: disposeBag)
     }

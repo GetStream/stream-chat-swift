@@ -156,7 +156,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         didSet { bottomPaddingView.isHidden = paddingType == .small }
     }
     
-    public override func prepareForReuse() {
+    override public func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }
@@ -303,11 +303,13 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
             if style.reactionViewStyle.alignment == .left {
                 make.left.greaterThanOrEqualToSuperview().offset(style.marginWithAvatarOffset).priority(999)
                 make.right.greaterThanOrEqualTo(reactionsTailImage.snp.right)
-                    .offset(style.reactionViewStyle.cornerRadius - tailAdditionalOffset).priority(998)
+                    .offset(style.reactionViewStyle.cornerRadius - tailAdditionalOffset)
+                    .priority(998)
             } else {
                 make.right.lessThanOrEqualToSuperview().offset(-style.marginWithAvatarOffset).priority(999)
                 make.left.lessThanOrEqualTo(reactionsTailImage.snp.left)
-                    .offset(tailAdditionalOffset - style.reactionViewStyle.cornerRadius).priority(998)
+                    .offset(tailAdditionalOffset - style.reactionViewStyle.cornerRadius)
+                    .priority(998)
             }
         }
         

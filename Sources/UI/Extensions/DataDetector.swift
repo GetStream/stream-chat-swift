@@ -30,7 +30,7 @@ final class DataDetector {
         var items: [DataDetectorURLItem] = []
         let range = NSRange(text.startIndex..<text.endIndex, in: text)
         
-        detector.enumerateMatches(in: text, options: [], range: range) { (match, flags, _) in
+        detector.enumerateMatches(in: text, options: [], range: range) { (match, _, _) in
             guard let match = match, case .link = match.resultType, let url = match.url else {
                 return
             }

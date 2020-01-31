@@ -262,7 +262,7 @@ public enum Event: Decodable {
             let watcherCount = try container.decode(Int.self, forKey: .watcherCount)
             self = .userStopWatching(try user(), watcherCount, type)
         case .userBanned:
-            var channelId: ChannelId? = nil
+            var channelId: ChannelId?
             
             if let channelType = try container.decodeIfPresent(ChannelType.self, forKey: .channelType),
                 let id = try container.decodeIfPresent(String.self, forKey: .channelId) {

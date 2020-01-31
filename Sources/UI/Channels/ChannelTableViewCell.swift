@@ -54,7 +54,7 @@ open class ChannelTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    public override func prepareForReuse() {
+    override public func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }
