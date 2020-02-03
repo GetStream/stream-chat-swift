@@ -52,9 +52,6 @@
                   Identifier = "ClientTests01_Channels/test00Connection()">
                </Test>
                <Test
-                  Identifier = "ClientTests01_Channels/test02WebSocketEvents()">
-               </Test>
-               <Test
                   Identifier = "ClientTests01_Channels/test05WebSocketEvents()">
                </Test>
                <Test

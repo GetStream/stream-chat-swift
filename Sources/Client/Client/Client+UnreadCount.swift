@@ -11,17 +11,29 @@ import Foundation
 extension Client {
     
     // MARK: User Unread Count
-
+    
     func updateUserUnreadCount(with event: Event) {
+        var updatedChannelsUnreadCount = -1
+        var updatedMssagesUnreadCount = -1
+        
         switch event {
         case let .notificationAddedToChannel(_, channelsUnreadCount, messagesUnreadCount, _),
-             let .messageNew(_, channelsUnreadCount, messagesUnreadCount, _, _, _),
              let .notificationMarkRead(_, channelsUnreadCount, messagesUnreadCount, _, _):
-            user.channelsUnreadCountAtomic.set(channelsUnreadCount)
-            user.messagesUnreadCountAtomic.set(messagesUnreadCount)
-            userDidUpdate?(user)
+            updatedChannelsUnreadCount = channelsUnreadCount
+            updatedMssagesUnreadCount = messagesUnreadCount
+        case let .messageNew(_, channelsUnreadCount, messagesUnreadCount, _, _, eventType):
+            if case .notificationMessageNew = eventType {
+                updatedChannelsUnreadCount = channelsUnreadCount
+                updatedMssagesUnreadCount = messagesUnreadCount
+            }
         default:
             break
+        }
+        
+        if updatedChannelsUnreadCount != -1 {
+            user.channelsUnreadCountAtomic.set(updatedChannelsUnreadCount)
+            user.messagesUnreadCountAtomic.set(updatedMssagesUnreadCount)
+            userDidUpdate?(user)
         }
     }
     
@@ -30,19 +42,16 @@ extension Client {
     func updateChannelsUnreadCount(with event: Event) {
         channels.flush()
         
-        channels.forEach { weakChannel in
-            if let channel = weakChannel.value {
+        channels.forEach {
+            if let channel = $0.value {
                 updateChannelUnreadCount(channel: channel, event: event)
             }
         }
     }
-
+    
     /// Update the unread count if needed.
-    ///
     /// - Parameter response: a web socket event.
-    /// - Returns: true, if unread count was updated.
-    @discardableResult
-    func updateChannelUnreadCount(channel: Channel, event: Event) -> Bool {
+    func updateChannelUnreadCount(channel: Channel, event: Event) {
         let oldUnreadCount = channel.unreadCountAtomic.get(default: 0)
         
         guard let cid = event.cid, cid == channel.cid else {
@@ -50,36 +59,34 @@ extension Client {
                 notificationChannel?.cid == channel.cid {
                 channel.unreadCountAtomic.set(unreadCount)
                 channel.didUpdate?(channel)
-                return true
             }
             
-            return false
+            return
         }
         
-        if case .messageNew(let message, let unreadCount, _, _, _, _) = event {
+        if case let .messageNew(message, unreadCount, _, _, _, eventType) = event, case .messageNew = eventType {
             channel.unreadCountAtomic.set(unreadCount)
-            updateUserUnreadCountForChannelUpdate(channels: oldUnreadCount == 0 ? 1 : 0, messages: unreadCount - oldUnreadCount)
+            updateUserUnreadCountForChannelUpdate(channelsDiff: oldUnreadCount == 0 ? 1 : 0,
+                                                  messagesDiff: unreadCount - oldUnreadCount)
             
             if message.user != user, message.mentionedUsers.contains(user) {
                 channel.mentionedUnreadCountAtomic += 1
             }
             
             channel.didUpdate?(channel)
-            return true
+            return
         }
         
         if case .messageRead(let messageRead, _, _) = event, messageRead.user.isCurrent {
             channel.unreadCountAtomic.set(0)
             channel.mentionedUnreadCountAtomic.set(0)
             channel.didUpdate?(channel)
-            updateUserUnreadCountForChannelUpdate(channels: oldUnreadCount > 0 ? -1 : 0, messages: -oldUnreadCount)
-            return true
+            updateUserUnreadCountForChannelUpdate(channelsDiff: oldUnreadCount > 0 ? -1 : 0, messagesDiff: -oldUnreadCount)
+            return
         }
-        
-        return false
     }
     
-    private func updateUserUnreadCountForChannelUpdate(channels: Int, messages: Int) {
+    private func updateUserUnreadCountForChannelUpdate(channelsDiff channels: Int, messagesDiff messages: Int) {
         // Update user unread counts.
         if channels != 0  {
             user.channelsUnreadCountAtomic += channels
