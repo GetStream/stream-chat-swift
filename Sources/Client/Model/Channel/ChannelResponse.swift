@@ -18,13 +18,11 @@ public struct ChannelResponse: Decodable {
     }
     
     /// A channel.
-    public let channel: Channel
+    public private(set) var channel: Channel
     /// Messages (see `Message`).
     public let messages: [Message]
     /// Message read states (see `MessageRead`)
     public let messageReads: [MessageRead]
-    /// Unread message state by the current user.
-    public private(set) var unreadMessageRead: MessageRead?
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -34,12 +32,7 @@ public struct ChannelResponse: Decodable {
         messages = try container.decodeIfPresent([Message].self, forKey: .messages) ?? []
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         updateUnreadMessageRead()
-        
-        guard !messages.isEmpty, let unreadMessageRead = unreadMessageRead else {
-            return
-        }
-        
-        calculateChannelUnreadCount(unreadMessageRead)
+        calculateChannelUnreadCount()
         Client.shared.channels.append(WeakRef(channel))
     }
     
@@ -61,27 +54,37 @@ public struct ChannelResponse: Decodable {
         if let lastMessage = messages.last,
             let messageRead = messageReads.first(where: { $0.user.isCurrent }),
             lastMessage.updated > messageRead.lastReadDate {
-            unreadMessageRead = messageRead
+            channel.unreadMessageRead = messageRead
         }
     }
     
-    func calculateChannelUnreadCount(_ unreadMessageRead: MessageRead) {
+    func calculateChannelUnreadCount() {
         channel.unreadCountAtomic.set(0)
         channel.mentionedUnreadCountAtomic.set(0)
         
+        if messages.isEmpty {
+            return
+        }
+        
         var count = 0
         var mentionedCount = 0
+        let currentUser = Client.shared.user
         
-        for message in messages.reversed() {
-            if message.created > unreadMessageRead.lastReadDate {
-                count += 1
-                
-                if message.user != Client.shared.user, message.mentionedUsers.contains(Client.shared.user) {
-                    mentionedCount += 1
+        if let unreadMessageRead = channel.unreadMessageRead {
+            for message in messages.reversed() {
+                if message.created > unreadMessageRead.lastReadDate {
+                    count += 1
+                    
+                    if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
+                        mentionedCount += 1
+                    }
+                } else {
+                    break
                 }
-            } else {
-                break
             }
+        } else {
+            count = messages.count
+            mentionedCount = messages.filter({ $0.user != currentUser && $0.mentionedUsers.contains(currentUser) }).count
         }
         
         channel.unreadCountAtomic.set(count)
