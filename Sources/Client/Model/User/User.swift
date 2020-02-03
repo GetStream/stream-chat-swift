@@ -70,8 +70,8 @@ public struct User: Codable {
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
     
-    let messagesUnreadCountAtomic = Atomic<Int>(0)
     let channelsUnreadCountAtomic = Atomic<Int>(0)
+    let messagesUnreadCountAtomic = Atomic<Int>(0)
     
     /// Channels and messages unread counts.
     public var unreadCount: UnreadCount {
