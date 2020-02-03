@@ -17,7 +17,7 @@ class TestCase: XCTestCase {
     private(set) lazy var defaultChannel = Channel(type: .messaging, id: "general")
     
     static func setupClientUser() {
-        Client.shared.set(user: .user1, token: .token1)
+        Client.shared.set(user: .user2, token: .token2)
     }
     
     override static func setUp() {

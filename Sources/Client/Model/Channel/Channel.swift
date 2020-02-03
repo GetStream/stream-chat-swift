@@ -85,6 +85,8 @@ public final class Channel: Codable {
     public var currentUnreadCount: Int { unreadCountAtomic.get(default: 0) }
     /// Returns the current user mentioned unread count.
     public var currentMentionedUnreadCount: Int { mentionedUnreadCountAtomic.get(default: 0) }
+    /// Unread message state for the current user.
+    public internal(set) var unreadMessageRead: MessageRead?
     
     /// An option to enable ban users.
     public var banEnabling = BanEnabling.disabled
@@ -193,7 +195,9 @@ public final class Channel: Codable {
             try container.encode(invitedMembers, forKey: .invites)
         }
         
-        try container.encode(allMembers, forKey: .members)
+        if !allMembers.isEmpty {
+            try container.encode(allMembers, forKey: .members)
+        }
     }
 }
 

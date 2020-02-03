@@ -204,6 +204,22 @@ public extension Channel {
             return .empty
         }
         
+        // Add mentiond users
+        var message = message
+        var mentionedUsers = [User]()
+        
+        if !message.text.isEmpty, message.text.contains("@"), !members.isEmpty {
+            let text = message.text.lowercased()
+            
+            members.forEach { member in
+                if text.contains("@\(member.user.name.lowercased())") {
+                    mentionedUsers.append(member.user)
+                }
+            }
+        }
+        
+        message.mentionedUsers = mentionedUsers
+        
         return client.request(endpoint: .sendMessage(message, self), completion)
     }
     
