@@ -16,7 +16,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Cache dependencies
+    - name: Cache Carthage dependencies
       uses: actions/cache@v1.1.0
       id: carthage-cache
       with:
@@ -24,10 +24,24 @@ jobs:
         key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
         restore-keys: |
           ${{ runner.os }}-carthage-stable-
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
     - name: Install Carthage dependencies
       if: steps.carthage-cache.outputs.cache-hit != 'true'
       run: echo 'BUILD_LIBRARY_FOR_DISTRIBUTION=YES'>/tmp/config.xcconfig; XCODE_XCCONFIG_FILE=/tmp/config.xcconfig carthage update --platform iOS --new-resolver --no-use-binaries --cache-builds; rm /tmp/config.xcconfig
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
     - name: Clean and build the StreamChat scheme
       run: xcodebuild clean test -project StreamChat.xcodeproj -scheme StreamChatCore -destination "platform=iOS Simulator,name=iPhone 11 Pro"
     - name: Post Codecov report
       run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
+    - name: Run Danger - Code conventions & linting
+      run: bundle exec danger
+      env:
+        GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}

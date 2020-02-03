@@ -68,3 +68,4 @@ fastlane/screenshots
 fastlane/test_output
 StreamChatCore.framework.coverage.txt
 StreamChatCoreTests.xctest.coverage.txt
+vendor/bundle/
