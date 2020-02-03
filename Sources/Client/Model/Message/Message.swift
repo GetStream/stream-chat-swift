@@ -57,7 +57,7 @@ public struct Message: Codable {
     /// Check if this reply message needs to show in the channel.
     public let showReplyInChannel: Bool
     /// Mentioned users (see `User`).
-    public let mentionedUsers: [User]
+    public internal(set) var mentionedUsers: [User]
     /// Reply count.
     public let replyCount: Int
     /// An extra data for the message.

@@ -38,7 +38,10 @@ public struct ChannelQuery: Encodable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try options.encode(to: encoder)
         try container.encode(channel, forKey: .data)
-        try container.encode(pagination, forKey: .messages)
+        
+        if case .none = pagination {} else {
+            try container.encode(pagination, forKey: .messages)
+        }
     }
 }
 
