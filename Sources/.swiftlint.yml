@@ -20,7 +20,6 @@ opt_in_rules:
   - syntactic_sugar
   - multiline_arguments
   - multiline_function_chains
-  - prefer_self_type_over_type_of_self
   - unused_import
   - attributes
 
