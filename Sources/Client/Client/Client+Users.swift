@@ -18,7 +18,7 @@ public extension Client {
     ///   - completion: a completion block with `[User]`.
     @discardableResult
     func queryUsers(_ query: UsersQuery, _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
-        return request(endpoint: .users(query)) { (result: Result<UsersResponse, ClientError>) in
+        request(endpoint: .users(query)) { (result: Result<UsersResponse, ClientError>) in
             completion(result.map({ $0.users }))
         }
     }
@@ -29,7 +29,7 @@ public extension Client {
     /// - Parameter completion: a completion block with `[User]`.
     @discardableResult
     func update(users: [User], _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
-        return request(endpoint: .updateUsers(users)) { (result: Result<UpdatedUsersResponse, ClientError>) in
+        request(endpoint: .updateUsers(users)) { (result: Result<UpdatedUsersResponse, ClientError>) in
             completion(result.map({ $0.users.compactMap({ $0.value }) }))
         }
     }
@@ -40,7 +40,7 @@ public extension Client {
     ///   - completion: a completion block with `User`.
     @discardableResult
     func update(user: User, _ completion: @escaping Client.Completion<User>) -> URLSessionTask {
-        return update(users: [user]) { (result: Result<[User], ClientError>) in
+        update(users: [user]) { (result: Result<[User], ClientError>) in
             completion(result.first(orError: .emptyUser))
         }
     }
@@ -96,7 +96,7 @@ public extension Client {
     ///   - completion: a completion block with `FlagUserResponse`.
     @discardableResult
     func flag(user: User, _ completion: @escaping Client.Completion<FlagUserResponse>) -> URLSessionTask {
-        return flagUnflag(user, endpoint: .flagUser(user), completion)
+        flagUnflag(user, endpoint: .flagUser(user), completion)
     }
     
     /// Unflag a user.
@@ -105,13 +105,13 @@ public extension Client {
     ///   - completion: a completion block with `FlagUserResponse`.
     @discardableResult
     func unflag(user: User, _ completion: @escaping Client.Completion<FlagUserResponse>) -> URLSessionTask {
-        return flagUnflag(user, endpoint: .unflagUser(user), completion)
+        flagUnflag(user, endpoint: .unflagUser(user), completion)
     }
     
     private func flagUnflag(_ user: User,
                             endpoint: Endpoint,
                             _ completion: @escaping Client.Completion<FlagUserResponse>) -> URLSessionTask {
-        return request(endpoint: endpoint) { (result: Result<FlagUserResponse, ClientError>) in
+        request(endpoint: endpoint) { (result: Result<FlagUserResponse, ClientError>) in
             let result = result.catchError { error in
                 if case .responseError(let clientResponseError) = error,
                     clientResponseError.message.contains("flag already exists") {
