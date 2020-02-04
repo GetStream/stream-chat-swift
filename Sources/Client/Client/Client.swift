@@ -53,20 +53,19 @@ public final class Client {
     public var onToken: OnTokenChange?
     var tokenProvider: TokenProvider?
     var isExpiredTokenInProgress = false
-    /// A retry requester.
-    public var retryRequester: ClientRetryRequester?
+    var waitingRequests = [WaitingRequest]()
     
     /// A web socket client.
     public internal(set) lazy var webSocket = WebSocket()
     
     /// A WebSocket connection callback.
     var onConnect: Client.OnConnect = { _ in } {
-        didSet { setupWebSocketOnConnect(webSocket) }
+        didSet { webSocket.onConnect = setupWebSocketOnConnect }
     }
     
     /// A WebSocket events callback.
     var onEvent: Client.OnEvent = { _ in } {
-        didSet { setupWebSocketOnEvent(webSocket) }
+        didSet { webSocket.onEvent = setupWebSocketOnEvent }
     }
     
     lazy var urlSession = setupURLSession(token: "")
@@ -170,6 +169,12 @@ public final class Client {
         User.flaggedUsers.removeAll()
         token = nil
         user = .unknown
+        isExpiredTokenInProgress = false
+        
+        performInCallbackQueue { [unowned self] in
+            self.waitingRequests.forEach { $0.cancel() }
+            self.waitingRequests = []
+        }
         
         DispatchQueue.main.async {
             if UIApplication.shared.applicationState == .background {
