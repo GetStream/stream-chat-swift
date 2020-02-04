@@ -47,7 +47,7 @@ public extension Client {
                  pagination: Pagination,
                  _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
         return request(endpoint: .replies(message, pagination)) { (result: Result<MessagesResponse, ClientError>) in
-            completion(result.map({ $0.messages }))
+            completion(result.map(to: \.messages))
         }
     }
     
