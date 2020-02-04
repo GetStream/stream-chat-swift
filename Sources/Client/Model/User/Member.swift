@@ -52,8 +52,8 @@ public struct Member: Codable {
     ///   - role: a role.
     public init(_ user: User,
                 role: Role = .member,
-                created: Date = .default,
-                updated: Date = .default,
+                created: Date = .init(),
+                updated: Date = .init(),
                 isInvited: Bool = false,
                 inviteAccepted: Date? = nil,
                 inviteRejected: Date? = nil) {
