@@ -7,7 +7,7 @@
 //
 
 /// A did update block type.
-public typealias DidUpdate<T> = (T) -> Void
+public typealias OnUpdate<T> = (T) -> Void
 
 /// A tuple for unread counts of channels and messages.
 public struct UnreadCount: Hashable {

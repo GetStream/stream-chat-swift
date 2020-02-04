@@ -33,7 +33,7 @@ extension Client {
         if updatedChannelsUnreadCount != -1 {
             user.channelsUnreadCountAtomic.set(updatedChannelsUnreadCount)
             user.messagesUnreadCountAtomic.set(updatedMssagesUnreadCount)
-            userDidUpdate?(user)
+            onUserUpdate?(user)
         }
     }
     
@@ -58,7 +58,7 @@ extension Client {
             if case .notificationMarkRead(let notificationChannel, let unreadCount, _, _, _) = event,
                 notificationChannel?.cid == channel.cid {
                 channel.unreadCountAtomic.set(unreadCount)
-                channel.didUpdate?(channel)
+                channel.onUpdate?(channel)
             }
             
             return
@@ -73,14 +73,14 @@ extension Client {
                 channel.mentionedUnreadCountAtomic += 1
             }
             
-            channel.didUpdate?(channel)
+            channel.onUpdate?(channel)
             return
         }
         
         if case .messageRead(let messageRead, _, _) = event, messageRead.user.isCurrent {
             channel.unreadCountAtomic.set(0)
             channel.mentionedUnreadCountAtomic.set(0)
-            channel.didUpdate?(channel)
+            channel.onUpdate?(channel)
             updateUserUnreadCountForChannelUpdate(channelsDiff: oldUnreadCount > 0 ? -1 : 0, messagesDiff: -oldUnreadCount)
             return
         }
@@ -93,7 +93,7 @@ extension Client {
         }
         
         user.messagesUnreadCountAtomic += messages
-        userDidUpdate?(user)
+        onUserUpdate?(user)
     }
 }
 
