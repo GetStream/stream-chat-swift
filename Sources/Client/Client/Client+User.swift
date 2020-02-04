@@ -1,5 +1,5 @@
 //
-//  Client+Users.swift
+//  Client+User.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 09/01/2020.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: Users Requests
+// MARK: User Requests
 
 public extension Client {
     
