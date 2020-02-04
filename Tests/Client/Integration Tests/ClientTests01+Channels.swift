@@ -116,12 +116,12 @@ final class ClientTests01_Channels: TestCase {
         if let unreadCounts: [UnreadCount] = StorageHelper.shared.value(key: .user2UnreadCounts),
             unreadCounts.count != self.unreadCounts.count {
             expect("finished big flow with \(self.unreadCounts.count) notification events") { expectation in
-                Client.shared.userDidUpdate = { user in
+                Client.shared.onUserUpdate = { user in
                     DispatchQueue.main.async {
                         if let unreadCounts: [UnreadCount] = StorageHelper.shared.value(key: .user2UnreadCounts),
                             unreadCounts.count == self.unreadCounts.count {
                             expectation.fulfill()
-                            Client.shared.userDidUpdate = nil
+                            Client.shared.onUserUpdate = nil
                         }
                     }
                 }

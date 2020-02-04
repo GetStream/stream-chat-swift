@@ -132,6 +132,10 @@ extension Client {
         self.webSocket = webSocket
         urlSession = setupURLSession(token: token)
         self.token = token
+        
+        if isExpiredTokenInProgress {
+            connect()
+        }
     }
     
     private func requestGuestToken() {
@@ -156,13 +160,13 @@ extension Client {
     
     private func checkUserAndToken(_ token: Token) -> ClientError? {
         guard token.isValidToken(userId: user.id), let payload = token.payload else {
-            return .tokenInvalid(description: "Token is invalid or Token payload is invalid")
+            return ClientError.tokenInvalid(description: "Token is invalid or Token payload is invalid")
         }
         
         if let userId = payload["user_id"] as? String, userId == user.id {
             return nil
         }
         
-        return .tokenInvalid(description: "Token payload user_id doesn't equal to the client user id")
+        return ClientError.tokenInvalid(description: "Token payload user_id doesn't equal to the client user id")
     }
 }
