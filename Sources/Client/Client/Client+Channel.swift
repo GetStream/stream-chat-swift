@@ -45,13 +45,7 @@ public extension Client {
     func watch(channel: Channel,
                options: QueryOptions = [],
                _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        var options = options
-        
-        if !options.contains(.watch) {
-            options = options.union(.watch)
-        }
-        
-        return queryChannel(channel, options: .watch, completion)
+        return queryChannel(channel, options: options.union(.watch), completion)
     }
     
     /// Stop watching the channel for a state changes.
