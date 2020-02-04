@@ -134,7 +134,7 @@ final class ClientTests01_Channels: TestCase {
         
         // Check channel for unread messages.
         expect("get a channel by cid with unread count") { expectation in
-            Channel(type: cid.type, id: cid.id).query(options: .all, client: client) {
+            client.queryChannel(Channel(type: cid.type, id: cid.id), options: .all) {
                 if let response = $0.value {
                     XCTAssertEqual(response.messages.count, 3)
                     XCTAssertEqual(response.channel.currentUnreadCount, 2)
@@ -149,11 +149,11 @@ final class ClientTests01_Channels: TestCase {
         
         // Mark channel as read.
         expect("messages read") { expectation in
-            channel!.markRead(client: client, { result in
+            client.markRead(channel: channel!) { result in
                 if result.value != nil {
                     expectation.fulfill()
                 }
-            })
+            }
         }
     }
     
@@ -204,7 +204,8 @@ final class ClientTests01_Channels: TestCase {
         expect("a new channel") { expectation in
             let channel = Channel(type: cid.type, id: cid.id)
             channel.members.insert(User.user1.asMember)
-            channel.query(options: .all, client: client) {
+            
+            client.queryChannel(channel, options: .all) {
                 if let value = $0.value {
                     XCTAssertEqual(channel.cid, value.channel.cid)
                     createdChannel = value.channel
@@ -243,7 +244,7 @@ final class ClientTests01_Channels: TestCase {
     
     func addMember(to channel: Channel, _ client: Client) {
         expect("added a member2") { expectation in
-            channel.add([member2], client: client) {
+            client.add(member: member2, to: channel) {
                 if let response = $0.value {
                     XCTAssertTrue(response.channel.members.contains(self.member2))
                     expectation.fulfill()
@@ -254,7 +255,7 @@ final class ClientTests01_Channels: TestCase {
     
     func removeMember(to channel: Channel, _ client: Client) {
         expect("removed a member2") { expectation in
-            channel.remove([member2], client: client) {
+            client.remove(member: member2, from: channel) {
                 if let response = $0.value {
                     XCTAssertFalse(response.channel.members.contains(self.member2))
                     expectation.fulfill()
@@ -268,7 +269,7 @@ final class ClientTests01_Channels: TestCase {
         
         expect("a 1 by 1 channel") { expectation in
             let channel = Channel(type: .messaging, with: User.user2.asMember, currentUser: client.user)
-            channel.query(options: .all, client: client) {
+            client.queryChannel(channel, options: .all) {
                 if let value = $0.value {
                     XCTAssertTrue(value.channel.isDirectMessage)
                     XCTAssertEqual(value.channel.members.count, 2)
@@ -292,7 +293,7 @@ final class ClientTests01_Channels: TestCase {
         
         expect("a message sent") { expectation in
             let message = Message(text: text)
-            channel.send(message: message, client: client) {
+            client.send(message: message, to: channel) {
                 if let response = $0.value {
                     XCTAssertEqual(response.message.text, text)
                     createdMessage = response.message
@@ -319,8 +320,7 @@ final class ClientTests01_Channels: TestCase {
     
     func queryChannels(_ client: Client, cid: ChannelId) {
         expect("channels with current user member") { expectation in
-            let query = ChannelsQuery(pagination: .limit(1), currentUser: client.user)
-            client.queryChannels(query) { result in
+            client.queryChannels(pagination: .limit(1)) { result in
                 if let channelResponses = try? result.get() {
                     XCTAssertEqual(channelResponses.count, 1)
                     channelResponses.forEach { XCTAssertTrue($0.channel.cid == cid || $0.channel.isDirectMessage) }
@@ -345,7 +345,7 @@ final class ClientTests01_Channels: TestCase {
         var likedMessage: Message?
         
         expect("a message with reaction like") { expectation in
-            message.addReaction(.like, client: client) { result in
+            client.addReaction(to: message, reactionType: .like) { result in
                 if let response = try? result.get() {
                     XCTAssertEqual(response.message.id, message.id)
                     XCTAssertNotEqual(response.message, message)
@@ -364,7 +364,7 @@ final class ClientTests01_Channels: TestCase {
     
     func deleteReaction(_ message: Message, _ client: Client) {
         expect("a message without deleted reaction like") { expectation in
-            message.deleteReaction(.like, client: client) { result in
+            client.deleteReaction(from: message, reactionType: .like) { result in
                 if let response = try? result.get() {
                     XCTAssertEqual(response.message.id, message.id)
                     XCTAssertNotEqual(response.message, message)
@@ -379,7 +379,7 @@ final class ClientTests01_Channels: TestCase {
     
     func deleteMessage(_ message: Message, _ client: Client) {
         expect("a deleted message") { expectation in
-            message.delete(client: client) { result in
+            client.delete(message: message) { result in
                 if let response = try? result.get() {
                     XCTAssertEqual(response.message.id, message.id)
                     XCTAssertTrue(response.message.isDeleted)
@@ -391,7 +391,7 @@ final class ClientTests01_Channels: TestCase {
     
     func deleteChannel(_ channel: Channel, _ client: Client) {
         expect("deleted channels") { expectation in
-            channel.delete(client: client) { result in
+            client.delete(channel: channel) { result in
                 if let channel = result.value {
                     XCTAssertEqual(channel.id, channel.id)
                     XCTAssertTrue(channel.isDeleted)
