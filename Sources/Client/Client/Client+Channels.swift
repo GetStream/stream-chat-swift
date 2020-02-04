@@ -31,15 +31,26 @@ public extension Client {
     
     /// Requests channels with a given query.
     /// - Parameters:
-    ///   - query: a channels query (see `ChannelsQuery`).
-    ///   - completion: a completion block with `[ChannelResponse]`.
+    ///   - filter: a channels filter, e.g. "members".in([User.current])
+    ///   - sort: a sorting list for channels.
+    ///   - pagination: a channels pagination.
+    ///   - messagesLimit: a messages pagination for the each channel.
+    ///   - options: a query options (see `QueryOptions`).
+    ///   - completion: a completion block with `Client.Completion<[ChannelResponse]`.
     @discardableResult
-    func queryChannels(_ query: ChannelsQuery, _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
-        return request(endpoint: .channels(query)) { [unowned self] (result: Result<ChannelsResponse, ClientError>) in
-            let completion = doAfter(completion) { channelsResponse in
-                self.add(channelsToDatabase: channelsResponse, query: query)
-            }
-            
+    func queryChannels(filter: Filter = .none,
+                       sort: [Sorting] = [],
+                       pagination: Pagination = .channelsPageSize,
+                       messagesLimit: Pagination = .messagesPageSize,
+                       options: QueryOptions = [],
+                       _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
+        let query = ChannelsQuery(filter: filter,
+                                  sort: sort,
+                                  pagination: pagination,
+                                  messagesLimit: messagesLimit,
+                                  options: options)
+        
+        return request(endpoint: .channels(query)) { (result: Result<ChannelsResponse, ClientError>) in
             completion(result.map({ $0.channels }))
         }
     }
@@ -50,13 +61,13 @@ public extension Client {
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
     func message(with messageId: String, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        return request(endpoint: .message(messageId), completion)
+        request(endpoint: .message(messageId), completion)
     }
-
+    
     /// Mark all messages as read.
     /// - Parameter completion: an empty completion block.
     @discardableResult
     func markAllRead(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
-        return request(endpoint: .markAllRead, completion)
+        request(endpoint: .markAllRead, completion)
     }
 }
