@@ -83,7 +83,7 @@ extension Client {
         }
         
         if isExpiredTokenInProgress {
-            retryRequester?.reconnectForExpiredToken(endpoint: endpoint, completion)
+            addWaitingRequest(endpoint: endpoint, completion)
             return .empty
         }
         
@@ -106,7 +106,7 @@ extension Client {
                 
                 if self.isExpiredTokenInProgress {
                     self.logger?.log("Reconnect and retry a request when the token was expired...", level: .debug)
-                    self.retryRequester?.reconnectForExpiredToken(endpoint: endpoint, completion)
+                    self.addWaitingRequest(endpoint: endpoint, completion)
                 }
             }
             
@@ -223,6 +223,25 @@ extension Client {
         
         return .success(urlRequest)
     }
+    
+    private func addWaitingRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) {
+        performInCallbackQueue { [unowned self] in
+            let item = WaitingRequest { self.request(endpoint: endpoint, completion) }
+            self.waitingRequests.append(item)
+        }
+    }
+    
+    func sendWaitingRequests() {
+        isExpiredTokenInProgress = false
+        waitingRequests.forEach { $0.perform() }
+        
+        performInCallbackQueue { [unowned self] in
+            if !self.isExpiredTokenInProgress {
+                self.waitingRequests = []
+                self.onConnect(.connected)
+            }
+        }
+    }
 }
 
 // MARK: - Upload files
@@ -317,7 +336,7 @@ extension Client {
         }
     }
     
-    private func performInCallbackQueue(execute block: @escaping () -> Void) {
+    func performInCallbackQueue(execute block: @escaping () -> Void) {
         if let callbackQueue = callbackQueue {
             callbackQueue.async(execute: block)
         } else {
