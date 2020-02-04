@@ -25,7 +25,7 @@ public extension Client {
                 _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
         let query = SearchQuery(filter: filter, query: query, pagination: pagination)
         return request(endpoint: .search(query)) { (result: Result<SearchResponse, ClientError>) in
-            completion(result.map({ $0.messages.compactMap({ $0["message"] }) }))
+            completion(result.map(to: \.messages).compactMap({ $0["message"] }))
         }
     }
     
@@ -51,7 +51,7 @@ public extension Client {
                                   options: options)
         
         return request(endpoint: .channels(query)) { (result: Result<ChannelsResponse, ClientError>) in
-            completion(result.map({ $0.channels }))
+            completion(result.map(to: \.channels))
         }
     }
 }
