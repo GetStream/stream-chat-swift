@@ -79,11 +79,11 @@ public final class Client {
     let logOptions: ClientLogger.Options
     
     /// An observable user.
-    public var userDidUpdate: DidUpdate<User>?
+    public var onUserUpdate: OnUpdate<User>?
     
     private(set) lazy var userAtomic = Atomic<User> { [unowned self] newValue, _ in
         if let user = newValue {
-            self.userDidUpdate?(user)
+            self.onUserUpdate?(user)
         }
     }
     
