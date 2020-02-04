@@ -99,7 +99,7 @@ public extension Client {
             Message.flaggedIds.insert(message.id)
         }
         
-        return flagUnflagMessage(message, endpoint: .flagMessage(message), completion)
+        return toggleFlagMessage(message, endpoint: .flagMessage(message), completion)
     }
     
     /// Unflag a message.
@@ -124,10 +124,10 @@ public extension Client {
             }
         }
         
-        return flagUnflagMessage(message, endpoint: .unflagMessage(message), completion)
+        return toggleFlagMessage(message, endpoint: .unflagMessage(message), completion)
     }
     
-    internal func flagUnflagMessage(_ message: Message,
+    private func toggleFlagMessage(_ message: Message,
                                     endpoint: Endpoint,
                                     _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
         request(endpoint: endpoint) { (result: Result<FlagMessageResponse, ClientError>) in

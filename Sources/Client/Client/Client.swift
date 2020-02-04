@@ -15,7 +15,7 @@ public final class Client {
     /// A client progress block type.
     public typealias Progress = (Float) -> Void
     /// A token block type.
-    public typealias OnToken = (Token?) -> Void
+    public typealias OnTokenChange = (Token?) -> Void
     /// A WebSocket connection callback type.
     public typealias OnConnect = (Connection) -> Void
     /// A WebSocket events callback type.
@@ -47,7 +47,7 @@ public final class Client {
     }
     
     /// A token callback.
-    public var onToken: OnToken?
+    public var onToken: OnTokenChange?
     var tokenProvider: TokenProvider?
     var isExpiredTokenInProgress = false
     /// A retry requester.
