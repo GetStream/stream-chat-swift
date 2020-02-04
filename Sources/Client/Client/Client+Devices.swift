@@ -18,7 +18,7 @@ public extension Client {
     ///   - completion: an empty completion block.
     @discardableResult
     func addDevice(deviceToken: Data, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
-        return addDevice(deviceId: deviceToken.deviceToken, completion)
+        addDevice(deviceId: deviceToken.deviceToken, completion)
     }
     
     /// Add a device for Push Notifications.

@@ -51,14 +51,13 @@ public struct ChannelsQuery: Encodable {
                 sort: [Sorting] = [],
                 pagination: Pagination = .channelsPageSize,
                 messagesLimit: Pagination = .messagesPageSize,
-                options: QueryOptions = [],
-                currentUser: User = Client.shared.user) {
+                options: QueryOptions = []) {
         self.filter = filter
         self.sort = sort
         self.pagination = pagination
         self.messagesLimit = messagesLimit
         self.options = options
-        user = currentUser
+        user = Client.shared.user
     }
     
     public func encode(to encoder: Encoder) throws {
