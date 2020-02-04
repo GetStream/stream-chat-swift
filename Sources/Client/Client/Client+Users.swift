@@ -17,8 +17,12 @@ public extension Client {
     ///   - query: a users query (see `UsersQuery`).
     ///   - completion: a completion block with `[User]`.
     @discardableResult
-    func queryUsers(_ query: UsersQuery, _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
-        request(endpoint: .users(query)) { (result: Result<UsersResponse, ClientError>) in
+    func queryUsers(filter: Filter,
+                    sort: Sorting? = nil,
+                    options: QueryOptions = [],
+                    _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
+        let query = UsersQuery(filter: filter, sort: sort, options: options)
+        return request(endpoint: .users(query)) { (result: Result<UsersResponse, ClientError>) in
             completion(result.map({ $0.users }))
         }
     }
