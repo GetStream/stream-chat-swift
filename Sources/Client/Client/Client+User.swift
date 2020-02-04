@@ -100,7 +100,7 @@ public extension Client {
     ///   - completion: a completion block with `FlagUserResponse`.
     @discardableResult
     func flag(user: User, _ completion: @escaping Client.Completion<FlagUserResponse>) -> URLSessionTask {
-        flagUnflag(user, endpoint: .flagUser(user), completion)
+        toggleFlag(user, endpoint: .flagUser(user), completion)
     }
     
     /// Unflag a user.
@@ -109,10 +109,10 @@ public extension Client {
     ///   - completion: a completion block with `FlagUserResponse`.
     @discardableResult
     func unflag(user: User, _ completion: @escaping Client.Completion<FlagUserResponse>) -> URLSessionTask {
-        flagUnflag(user, endpoint: .unflagUser(user), completion)
+        toggleFlag(user, endpoint: .unflagUser(user), completion)
     }
     
-    private func flagUnflag(_ user: User,
+    private func toggleFlag(_ user: User,
                             endpoint: Endpoint,
                             _ completion: @escaping Client.Completion<FlagUserResponse>) -> URLSessionTask {
         request(endpoint: endpoint) { (result: Result<FlagUserResponse, ClientError>) in
