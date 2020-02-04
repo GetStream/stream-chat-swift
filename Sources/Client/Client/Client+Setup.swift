@@ -154,7 +154,7 @@ extension Client {
         return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.\(json.base64EncodedString()).devtoken" // {"alg": "HS256", "typ": "JWT"}
     }
     
-    func checkUserAndToken(_ token: Token) -> ClientError? {
+    private func checkUserAndToken(_ token: Token) -> ClientError? {
         guard token.isValidToken(userId: user.id), let payload = token.payload else {
             return ClientError.tokenInvalid(description: "Token is invalid or Token payload is invalid")
         }
