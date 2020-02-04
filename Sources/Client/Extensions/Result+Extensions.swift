@@ -41,9 +41,14 @@ public extension Result {
 public extension Result where Success: Decodable, Failure == ClientError {
     
     /// Map the result to a client completion result type.
-    /// - Parameters:
-    ///   - completion: a client completion block.
-    func map<T: Decodable>(_ map: (Success) -> T) -> Result<T, ClientError> {
+    /// - Parameter keyPath: a key path to the success type for mapping.
+    func map<T: Decodable>(to keyPath: KeyPath<Success, T>) -> Result<T, Failure> {
+        map { $0[keyPath: keyPath] }
+    }
+    
+    /// Map the result to a client completion result type.
+    /// - Parameter completion: a client completion block.
+    func map<T: Decodable>(_ map: (Success) -> T) -> Result<T, Failure> {
         if let value = try? get() {
             return .success(map(value))
         }
@@ -53,7 +58,7 @@ public extension Result where Success: Decodable, Failure == ClientError {
     
     /// Catches an error in the result and send it to the error handler to map it to a success result.
     /// - Parameter errorHandler: an error handler.
-    func catchError(_ errorHandler: (Failure) -> Result<Success, ClientError>) -> Result<Success, ClientError> {
+    func catchError(_ errorHandler: (Failure) -> Result<Success, Failure>) -> Result<Success, Failure> {
         if let error = error {
             return errorHandler(error)
         }
@@ -63,15 +68,32 @@ public extension Result where Success: Decodable, Failure == ClientError {
 }
 
 public extension Result where Success: Collection, Failure == ClientError {
+    
     /// Map values from the result to the first value. If array is empty, will map to an error.
     /// - Parameter notFoundError: a not forund client error.
-    func first(orError notFoundError: ClientError) -> Result<Success.Element, ClientError> {
+    func first(orError notFoundError: Failure) -> Result<Success.Element, Failure> {
         if let values = try? get() {
             if let first = values.first {
                 return .success(first)
             }
             
             return .failure(notFoundError)
+        }
+        
+        return .failure(error ?? .unexpectedError(nil, error))
+    }
+    
+    /// Returns an array containing the non-nil results of calling the given transformation with each element of this sequence.
+    /// - Parameter keyPath: a key path to the success collection type for compact mapping.
+    func compactMap<T>(to keyPath: KeyPath<Success.Element, T>) -> Result<[T], Failure> {
+        return compactMap { $0[keyPath: keyPath] }
+    }
+    
+    /// Returns an array containing the non-nil results of calling the given transformation with each element of this sequence.
+    /// - Parameter transform: A closure that accepts an element of this sequence as its argument and returns an optional value.
+    func compactMap<T>(_ transform: (Success.Element) throws -> T?) -> Result<[T], Failure> {
+        if let values = try? get() {
+            return .success((try? values.compactMap(transform)) ?? [])
         }
         
         return .failure(error ?? .unexpectedError(nil, error))

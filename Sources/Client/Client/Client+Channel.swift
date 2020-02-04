@@ -136,7 +136,7 @@ public extension Client {
     @discardableResult
     func delete(channel: Channel, _ completion: @escaping Client.Completion<Channel>) -> URLSessionTask {
         request(endpoint: .deleteChannel(channel)) { (result: Result<ChannelDeletedResponse, ClientError>) in
-            completion(result.map({ $0.channel }))
+            completion(result.map(to: \.channel))
         }
     }
     
@@ -211,7 +211,7 @@ public extension Client {
         logger?.log("🎫 Send Message Read. For a new message of the current user.")
         
         return request(endpoint: .markRead(channel)) { (result: Result<EventResponse, ClientError>) in
-            completion(result.map({ $0.event }))
+            completion(result.map(to: \.event))
         }
     }
     
@@ -224,7 +224,7 @@ public extension Client {
     func send(eventType: EventType, to channel: Channel, _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
         request(endpoint: .sendEvent(eventType, channel)) { [unowned self] (result: Result<EventResponse, ClientError>) in
             self.logger?.log("🎫 \(eventType.rawValue)")
-            completion(result.map({ $0.event }))
+            completion(result.map(to: \.event))
         }
     }
     
@@ -403,7 +403,7 @@ public extension Client {
                            _ progress: @escaping Client.Progress,
                            _ completion: @escaping Client.Completion<URL>) -> URLSessionTask {
         request(endpoint: endpoint, progress) { (result: Result<FileUploadResponse, ClientError>) in
-            completion(result.map({ $0.file }))
+            completion(result.map(to: \.file))
         }
     }
     
