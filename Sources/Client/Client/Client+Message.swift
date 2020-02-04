@@ -12,6 +12,22 @@ import Foundation
 
 public extension Client {
     
+    /// Get a message by id.
+    /// - Parameters:
+    ///   - messageId: a message id.
+    ///   - completion: a completion block with `MessageResponse`.
+    @discardableResult
+    func message(with messageId: String, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+        request(endpoint: .message(messageId), completion)
+    }
+    
+    /// Mark all messages as read.
+    /// - Parameter completion: an empty completion block.
+    @discardableResult
+    func markAllRead(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+        request(endpoint: .markAllRead, completion)
+    }
+    
     /// Delete the message.
     /// - Parameters:
     ///   - message: a message for deleting.
@@ -68,8 +84,7 @@ public extension Client {
     ///   - message: a message.
     ///   - completion: a completion block with `FlagMessageResponse`.
     @discardableResult
-    func flag(message: Message,
-              _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+    func flag(message: Message, _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
         if message.id.isEmpty {
             completion(.failure(.emptyMessageId))
             return .empty
