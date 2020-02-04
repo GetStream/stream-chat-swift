@@ -26,6 +26,8 @@ public enum ClientError: LocalizedError {
     case emptyConnectionId
     /// A channel id is empty.
     case emptyChannelId
+    /// A message id is empty.
+    case emptyMessageId
     /// A response bofy is empty.
     case emptyBody(description: String)
     /// An invalid URL.
