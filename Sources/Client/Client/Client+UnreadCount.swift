@@ -8,9 +8,9 @@
 
 import Foundation
 
+// MARK: User Unread Count
+
 extension Client {
-    
-    // MARK: User Unread Count
     
     func updateUserUnreadCount(with event: Event) {
         var updatedChannelsUnreadCount = -1

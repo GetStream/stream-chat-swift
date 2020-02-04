@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import RxSwift
 
 public protocol Database {
     
@@ -25,7 +24,7 @@ public protocol Database {
     /// Fetch channels and messages from a database.
     /// - Parameter query: a channels query
     /// - Returns: an observable channels response.
-    func channels(_ query: ChannelsQuery) -> Observable<[ChannelResponse]>
+    func channelsFromDatabase(query: ChannelsQuery) -> [ChannelResponse]
     
     // MARK: Channel
     
@@ -35,36 +34,36 @@ public protocol Database {
     ///   - channelId: a channel id.
     ///   - pagination: a pagination.
     /// - Returns: an observable channel response.
-    func channel(channelType: ChannelType, channelId: String, pagination: Pagination) -> Observable<ChannelResponse>
+    func channelFromDatabase(channelType: ChannelType, channelId: String, pagination: Pagination) -> ChannelResponse
+    
+    /// Add channels with messages and members.
+    /// - Parameter channels: channel responses.
+    func addToDatabase(channels: [ChannelResponse], query: ChannelsQuery)
+    
+    /// Add or update a channel.
+    /// - Parameter channel: a channel.
+    func addOrUpdateInDatabase(channel: Channel)
+    
+    // MARK: - Message
+    
+    /// Add messages to a channel. The channel and members should be added/updated too.
+    /// - Parameters:
+    ///   - messages: messages of a channel
+    ///   - channel: a channel
+    func addToDatabase(messages: [Message], to channel: Channel)
     
     /// Fetch message replies.
     /// - Parameters:
     ///   - message: a parent message.
     ///   - pagination: a pagination.
     /// - Returns: an observable messages.
-    func replies(for message: Message, pagination: Pagination) -> Observable<[Message]>
-    
-    /// Add channels with messages and members.
-    /// - Parameter channels: channel responses.
-    func add(channels: [ChannelResponse], query: ChannelsQuery)
-    
-    /// Add or update a channel.
-    /// - Parameter channel: a channel.
-    func addOrUpdate(channel: Channel)
-    
-    /// Add messages to a channel. The channel and members should be added/updated too.
-    /// - Parameters:
-    ///   - messages: messages of a channel
-    ///   - channel: a channel
-    func add(messages: [Message], to channel: Channel)
-    
-    // MARK: - Message
+    func repliesFromDatabase(for message: Message, pagination: Pagination) -> [Message]
     
     /// Add replies for a message.
     /// - Parameters:
     ///   - messages: replies.
     ///   - message: a parent message.
-    func add(replies: [Message], for message: Message)
+    func addToDatabase(replies: [Message], for message: Message)
     
     // MARK: - Members
     
@@ -72,23 +71,23 @@ public protocol Database {
     /// - Parameters:
     ///   - members: members of a channel
     ///   - channel: a channel
-    func set(members: Set<Member>, for channel: Channel)
+    func setToDatabase(members: Set<Member>, for channel: Channel)
     
     /// Add a new member for a channel.
     /// - Parameters:
     ///   - member: a new members of a channel
     ///   - channel: a channel
-    func add(members: Set<Member>, for channel: Channel)
+    func addToDatabase(members: Set<Member>, for channel: Channel)
     
     /// Remove a member from a channel.
     /// - Parameters:
     ///   - member: members of a channel
     ///   - channel: a channel
-    func remove(members: Set<Member>, from channel: Channel)
+    func removeFromDatabase(members: Set<Member>, from channel: Channel)
     
     /// Update a member in a channel.
     /// - Parameters:
     ///   - members: members of a channel
     ///   - channel: a channel
-    func update(members: Set<Member>, from channel: Channel)
+    func updateInDatabase(members: Set<Member>, from channel: Channel)
 }

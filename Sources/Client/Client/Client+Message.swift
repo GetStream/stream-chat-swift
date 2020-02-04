@@ -8,6 +8,8 @@
 
 import Foundation
 
+// MARK: Message Requests
+
 public extension Client {
     
     /// Delete the message.
@@ -15,7 +17,7 @@ public extension Client {
     ///   - message: a message for deleting.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func deleteMessage(_ message: Message, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+    func delete(message: Message, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         request(endpoint: .deleteMessage(message), completion)
     }
     
@@ -28,11 +30,6 @@ public extension Client {
     func replies(for message: Message,
                  pagination: Pagination,
                  _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
-        let completion = doAfter(completion) { messages in
-            #warning("FIXIT")
-            //            self.add(repliesToDatabase: messages)
-        }
-        
         return request(endpoint: .replies(message, pagination)) { (result: Result<MessagesResponse, ClientError>) in
             completion(result.map({ $0.messages }))
         }
@@ -71,8 +68,8 @@ public extension Client {
     ///   - message: a message.
     ///   - completion: a completion block with `FlagMessageResponse`.
     @discardableResult
-    func flagMessage(_ message: Message,
-                     _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+    func flag(message: Message,
+              _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
         if message.id.isEmpty {
             completion(.failure(.emptyMessageId))
             return .empty
@@ -95,7 +92,7 @@ public extension Client {
     ///   - message: a message.
     ///   - completion: a completion block with `FlagMessageResponse`.
     @discardableResult
-    func unflagMessage(_ message: Message, _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+    func unflag(message: Message, _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
         if message.id.isEmpty {
             completion(.failure(.emptyMessageId))
             return .empty

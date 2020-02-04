@@ -14,7 +14,7 @@ public extension Message {
     /// - Parameter completion: a completion block with `MessageResponse`.
     @discardableResult
     func delete(_ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        Client.shared.deleteMessage(self, completion)
+        Client.shared.delete(message: self, completion)
     }
     
     /// Send a request for reply messages.
@@ -53,13 +53,13 @@ public extension Message {
     /// - Parameter completion: a completion block with `FlagMessageResponse`.
     @discardableResult
     func flag(_ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
-        Client.shared.flagMessage(self, completion)
+        Client.shared.flag(message: self, completion)
     }
     
     /// Unflag a message.
     /// - Parameter completion: a completion block with `FlagMessageResponse`.
     @discardableResult
     func unflag(_ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
-        Client.shared.unflagMessage(self, completion)
+        Client.shared.unflag(message: self, completion)
     }
 }
