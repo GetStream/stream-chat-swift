@@ -58,7 +58,7 @@ public extension Client {
         }
         
         return request(endpoint: .devices(user)) { (result: Result<DevicesResponse, ClientError>) in
-            completion(result.map({ $0.devices }))
+            completion(result.map(to: \.devices))
         }
     }
     

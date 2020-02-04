@@ -23,7 +23,7 @@ public extension Client {
                     _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
         let query = UsersQuery(filter: filter, sort: sort, options: options)
         return request(endpoint: .users(query)) { (result: Result<UsersResponse, ClientError>) in
-            completion(result.map({ $0.users }))
+            completion(result.map(to: \.users))
         }
     }
     
@@ -34,7 +34,7 @@ public extension Client {
     @discardableResult
     func update(users: [User], _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
         request(endpoint: .updateUsers(users)) { (result: Result<UpdatedUsersResponse, ClientError>) in
-            completion(result.map({ $0.users.compactMap({ $0.value }) }))
+            completion(result.map(to: \.users).compactMap(to: \.value))
         }
     }
     
