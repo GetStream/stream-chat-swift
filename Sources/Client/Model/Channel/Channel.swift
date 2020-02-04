@@ -96,7 +96,7 @@ public final class Channel: Codable {
     public var isDirectMessage: Bool { id.hasPrefix("!members") && members.count == 2 }
     
     /// An event when the channel was updated.
-    public var didUpdate: DidUpdate<Channel>?
+    public var onUpdate: OnUpdate<Channel>?
     
     /// Init a channel 1-by-1 (direct message) with another member.
     /// - Parameters:
