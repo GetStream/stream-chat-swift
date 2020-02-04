@@ -54,37 +54,31 @@ extension Client {
                          stayConnectedInBackground: stayConnectedInBackground,
                          logger: logger)
         
-        setupWebSocketOnConnect(webSocket)
-        setupWebSocketOnEvent(webSocket)
+        webSocket.onConnect = setupWebSocketOnConnect
+        webSocket.onEvent = setupWebSocketOnEvent
         
         return webSocket
     }
     
-    func setupWebSocketOnConnect(_ webSocket: WebSocket) {
-        webSocket.onConnect = { [unowned self] connection in
-            if case .disconnected(let error) = connection,
-                let clientError = error as? ClientError,
-                case .expiredToken = clientError,
-                self.touchTokenProvider() {
-                return
-            }
-            
-            self.onConnect(connection)
+    func setupWebSocketOnConnect(_ connection: Connection) {
+        guard isExpiredTokenInProgress, case .connected = connection else {
+            onConnect(connection)
+            return
         }
+        
+        performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
     }
     
-    func setupWebSocketOnEvent(_ webSocket: WebSocket) {
-        webSocket.onEvent = { [unowned self] event in
-            // Update the current user on login.
-            if case let .healthCheck(_, user) = event {
-                self.user = user
-                return
-            }
-          
-            self.updateUserUnreadCount(with: event)
-            self.updateChannelsUnreadCount(with: event)
-            self.onEvent(event)
+    func setupWebSocketOnEvent(_ event: Event) {
+        // Update the current user on login.
+        if case let .healthCheck(_, user) = event {
+            self.user = user
+            return
         }
+        
+        updateUserUnreadCount(with: event)
+        updateChannelsUnreadCount(with: event)
+        onEvent(event)
     }
 }
 

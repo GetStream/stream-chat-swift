@@ -50,20 +50,19 @@ public final class Client {
     public var onToken: OnTokenChange?
     var tokenProvider: TokenProvider?
     var isExpiredTokenInProgress = false
-    /// A retry requester.
-    public var retryRequester: ClientRetryRequester?
+    var waitingRequests = [WaitingRequest]()
     
     /// A web socket client.
     public internal(set) lazy var webSocket = WebSocket()
     
     /// A WebSocket connection callback.
     var onConnect: Client.OnConnect = { _ in } {
-        didSet { setupWebSocketOnConnect(webSocket) }
+        didSet { webSocket.onConnect = setupWebSocketOnConnect }
     }
     
     /// A WebSocket events callback.
     var onEvent: Client.OnEvent = { _ in } {
-        didSet { setupWebSocketOnEvent(webSocket) }
+        didSet { webSocket.onEvent = setupWebSocketOnEvent }
     }
     
     lazy var urlSession = setupURLSession(token: "")
@@ -160,6 +159,12 @@ public final class Client {
         User.flaggedUsers.removeAll()
         token = nil
         user = .unknown
+        isExpiredTokenInProgress = false
+        
+        performInCallbackQueue { [unowned self] in
+            self.waitingRequests.forEach { $0.cancel() }
+            self.waitingRequests = []
+        }
         
         DispatchQueue.main.async {
             if UIApplication.shared.applicationState == .background {
@@ -218,34 +223,27 @@ extension Client {
     }
 }
 
-// MARK: - Retry Requester
+// MARK: - Waiting Request
 
-/// A retry requester is a helper protocol for implementing retry request logic.
-public protocol ClientRetryRequester {
-    /// You need to reconnect with a new token and retry a request with a given endpoint and completion block.
-    /// When you reconnection was success call `connectedWithNewToken()`.
-    ///
-    /// For example:
-    /// ```
-    /// final class RetryRequester: ClientRetryRequester {
-    ///     func reconnectForExpiredToken<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Client.Completion<T>) {
-    ///         myReconnect {
-    ///           self.connectedWithNewToken()
-    ///           Client.shared.request(endpoint: endpoint, completion)
-    ///         }
-    ///     }
-    /// }
-    /// ```
-    ///
-    /// - Parameters:
-    ///   - endpoint: an endpoint.
-    ///   - completion: a completion block with `<T: Decodable>`.
-    func reconnectForExpiredToken<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Client.Completion<T>)
-}
-
-public extension ClientRetryRequester {
-    /// You have to call this function in success reconnect completion block to clear the state of `isExpiredTokenInProgress`.
-    func connectedWithNewToken() {
-        Client.shared.isExpiredTokenInProgress = false
+extension Client {
+    final class WaitingRequest {
+        typealias Request = () -> URLSessionTask
+        
+        var urlSessionTask: URLSessionTask?
+        let request: Request
+        
+        init(request: @escaping Request) {
+            self.request = request
+        }
+        
+        func perform() {
+            if urlSessionTask == nil {
+                urlSessionTask = request()
+            }
+        }
+        
+        func cancel() {
+            urlSessionTask?.cancel()
+        }
     }
 }
