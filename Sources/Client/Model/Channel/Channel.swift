@@ -317,8 +317,8 @@ public extension Channel {
                     messageRetention: String = "",
                     maxMessageLength: Int = 0,
                     commands: [Command] = [],
-                    created: Date = .default,
-                    updated: Date = .default,
+                    created: Date = .init(),
+                    updated: Date = .init(),
                     isEmpty: Bool = false) {
             self.reactionsEnabled = reactionsEnabled
             self.typingEventsEnabled = typingEventsEnabled
