@@ -84,8 +84,7 @@ public final class UploaderItem: Equatable {
     ///   - fileSize: a file size.
     public init(channel: Channel,
                 url: URL?,
-                type: UploadingType = .file,
-                image: UIImage? = nil,
+                type: UploadingType = .file, image: UIImage? = nil,
                 gifData: Data? = nil,
                 fileName: String? = nil,
                 fileType: AttachmentFileType? = nil,
@@ -120,7 +119,8 @@ public final class UploaderItem: Equatable {
     ///     - attachment: an uploaded attachment.
     ///     - previewImage: a preview of the uploaded image.
     ///     - previewImageGifData: a preview of the uploaded gif image data.
-    public init(attachment: Attachment, previewImage image: UIImage, previewImageGifData gifData: Data? = nil) {
+    public init(attachment: Attachment,
+                previewImage image: UIImage, previewImageGifData gifData: Data? = nil) {
         channel = nil
         url = attachment.url
         type = .image
@@ -185,8 +185,7 @@ public final class UploaderItem: Equatable {
             request = channel.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData)
         }
         
-        return request
-            .retry(3)
+        return request.retry(3)
             .do(onNext: { [weak self] progressResponse in
                 self?.lastProgress = progressResponse.progress
                 
