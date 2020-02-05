@@ -27,7 +27,7 @@ extension Client {
             "X-Stream-OS": Environment.systemName,
             "X-Stream-App-Environment": Environment.name]
         
-        if token.isBlank {
+        if token.isBlank || user.isAnonymous {
             headers["Stream-Auth-Type"] = "anonymous"
         } else {
             headers["Stream-Auth-Type"] = "jwt"
