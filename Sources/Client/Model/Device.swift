@@ -9,7 +9,7 @@
 import Foundation
 
 /// A device for Push Notifications.
-public struct Device: Codable {
+public struct Device: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case id
         case created = "created_at"
