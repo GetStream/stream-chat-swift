@@ -54,9 +54,9 @@ extension Client {
         request.allHTTPHeaderFields = authHeaders(token: token)
         
         let webSocket = WebSocket(request,
-                         callbackQueue: callbackQueue,
-                         stayConnectedInBackground: stayConnectedInBackground,
-                         logger: logger)
+                                  callbackQueue: callbackQueue,
+                                  stayConnectedInBackground: stayConnectedInBackground,
+                                  logger: logger)
         
         webSocket.onConnect = setupWebSocketOnConnect
         webSocket.onEvent = setupWebSocketOnEvent
