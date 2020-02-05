@@ -86,7 +86,7 @@ public struct Member: Codable {
 extension Member: Hashable {
     
     public static func == (lhs: Member, rhs: Member) -> Bool {
-        return lhs.user == rhs.user
+        lhs.user == rhs.user
     }
     
     public func hash(into hasher: inout Hasher) {

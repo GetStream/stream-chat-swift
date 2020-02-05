@@ -177,7 +177,7 @@ public struct Attachment: Codable {
 extension Attachment: Hashable {
     
     public static func == (lhs: Attachment, rhs: Attachment) -> Bool {
-        return lhs.title == rhs.title
+        lhs.title == rhs.title
             && lhs.author == rhs.author
             && lhs.text == rhs.text
             && lhs.type == rhs.type

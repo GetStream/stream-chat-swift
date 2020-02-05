@@ -204,7 +204,7 @@ public final class Channel: Codable {
 extension Channel: Hashable, CustomStringConvertible {
     
     public static func == (lhs: Channel, rhs: Channel) -> Bool {
-        return lhs.cid == rhs.cid
+        lhs.cid == rhs.cid
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -224,7 +224,7 @@ extension Channel {
     /// Check is the user is banned for the channel.
     /// - Parameter user: a user.
     public func isBanned(_ user: User) -> Bool {
-        return bannedUsers.contains(user)
+        bannedUsers.contains(user)
     }
 }
 
@@ -360,11 +360,11 @@ public extension Channel {
         }
         
         public static func == (lhs: Command, rhs: Command) -> Bool {
-            return lhs.name == rhs.name
+            lhs.name == rhs.name
         }
         
         public func hash(into hasher: inout Hasher) {
-            return hasher.combine(name)
+            hasher.combine(name)
         }
     }
 }

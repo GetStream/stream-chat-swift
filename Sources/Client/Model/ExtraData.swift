@@ -85,7 +85,7 @@ public struct ExtraData: Codable {
         ///   - decodableType: a custom decodable type.
         /// - Returns: an extra data.
         func decode(from decoder: Decoder) -> Codable? {
-            return try? codableType().init(from: decoder)
+            try? codableType().init(from: decoder)
         }
     }
     
@@ -108,7 +108,7 @@ public struct ExtraData: Codable {
     /// Encodes an extra data to the Data.
     /// - Returns: an encoded extra data.
     public func encode() -> Data? {
-        return try? JSONEncoder.default.encode(self)
+        try? JSONEncoder.default.encode(self)
     }
     
     public func encode(to encoder: Encoder) throws {

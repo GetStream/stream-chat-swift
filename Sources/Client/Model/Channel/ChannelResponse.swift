@@ -95,7 +95,7 @@ public struct ChannelResponse: Decodable {
 extension ChannelResponse: Hashable {
     
     public static func == (lhs: ChannelResponse, rhs: ChannelResponse) -> Bool {
-        return lhs.channel.cid == rhs.channel.cid
+        lhs.channel.cid == rhs.channel.cid
             && lhs.channel.members == rhs.channel.members
             && lhs.messages == rhs.messages
             && lhs.messageReads == rhs.messageReads
