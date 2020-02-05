@@ -69,8 +69,8 @@ extension Client {
         
         if case let .messageNew(message, unreadCount, _, _, _, eventType) = event, case .messageNew = eventType {
             channel.unreadCountAtomic.set(unreadCount)
-            updateUserUnreadCountForChannelUpdate(channelsDiff: oldUnreadCount == 0 ? 1 : 0,
-                                                  messagesDiff: unreadCount - oldUnreadCount)
+            updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: oldUnreadCount == 0 ? 1 : 0,
+                                                  messagesUnreadCountDiff: unreadCount - oldUnreadCount)
             
             if message.user != user, message.mentionedUsers.contains(user) {
                 channel.mentionedUnreadCountAtomic += 1
@@ -84,18 +84,19 @@ extension Client {
             channel.unreadCountAtomic.set(0)
             channel.mentionedUnreadCountAtomic.set(0)
             channel.onUpdate?(channel)
-            updateUserUnreadCountForChannelUpdate(channelsDiff: oldUnreadCount > 0 ? -1 : 0, messagesDiff: -oldUnreadCount)
+            updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: oldUnreadCount > 0 ? -1 : 0,
+                                                  messagesUnreadCountDiff: -oldUnreadCount)
             return
         }
     }
     
-    private func updateUserUnreadCountForChannelUpdate(channelsDiff channels: Int, messagesDiff messages: Int) {
+    private func updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: Int, messagesUnreadCountDiff: Int) {
         // Update user unread counts.
-        if channels != 0  {
-            user.channelsUnreadCountAtomic += channels
+        if channelsUnreadCountDiff != 0  {
+            user.channelsUnreadCountAtomic += channelsUnreadCountDiff
         }
         
-        user.messagesUnreadCountAtomic += messages
+        user.messagesUnreadCountAtomic += messagesUnreadCountDiff
         onUserUpdate?(user)
     }
 }
