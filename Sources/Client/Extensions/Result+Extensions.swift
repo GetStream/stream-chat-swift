@@ -86,7 +86,7 @@ public extension Result where Success: Collection, Failure == ClientError {
     /// Returns an array containing the non-nil results of calling the given transformation with each element of this sequence.
     /// - Parameter keyPath: a key path to the success collection type for compact mapping.
     func compactMap<T>(to keyPath: KeyPath<Success.Element, T>) -> Result<[T], Failure> {
-        return compactMap { $0[keyPath: keyPath] }
+        compactMap { $0[keyPath: keyPath] }
     }
     
     /// Returns an array containing the non-nil results of calling the given transformation with each element of this sequence.

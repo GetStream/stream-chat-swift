@@ -112,11 +112,11 @@ extension String {
     }
     
     private func isSpaceOrNewLine(at index: Index) -> Bool {
-        return self[index].isWhitespace || self[index].isNewline
+        self[index].isWhitespace || self[index].isNewline
     }
     
     private func isSlash(at index: Index) -> Bool {
-        return self[index] == "/"
+        self[index] == "/"
     }
 }
 
@@ -125,6 +125,6 @@ extension String {
 extension Optional where Wrapped == String {
     /// Checks if the optional String is empty or blank.
     public var isBlank: Bool {
-        return self?.isBlank ?? true
+        self?.isBlank ?? true
     }
 }

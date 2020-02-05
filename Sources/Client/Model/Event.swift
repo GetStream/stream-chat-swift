@@ -289,31 +289,31 @@ public enum Event: Decodable {
         }
         
         func user() throws -> User {
-            return try container.decode(User.self, forKey: .user)
+            try container.decode(User.self, forKey: .user)
         }
         
         func optionalUser() throws -> User? {
-            return try container.decodeIfPresent(User.self, forKey: .user)
+            try container.decodeIfPresent(User.self, forKey: .user)
         }
         
         func member() throws -> Member {
-            return try container.decode(Member.self, forKey: .member)
+            try container.decode(Member.self, forKey: .member)
         }
         
         func channel() throws -> Channel {
-            return try container.decode(Channel.self, forKey: .channel)
+            try container.decode(Channel.self, forKey: .channel)
         }
         
         func message() throws -> Message {
-            return try container.decode(Message.self, forKey: .message)
+            try container.decode(Message.self, forKey: .message)
         }
         
         func reaction() throws -> Reaction {
-            return try container.decode(Reaction.self, forKey: .reaction)
+            try container.decode(Reaction.self, forKey: .reaction)
         }
         
         func cid() throws -> ChannelId? {
-            return try container.decodeIfPresent(ChannelId.self, forKey: .cid)
+            try container.decodeIfPresent(ChannelId.self, forKey: .cid)
         }
         
         let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0

@@ -219,52 +219,52 @@ public extension Filter.Key {
     
     /// A filter with a key of the string equal to a given value.
     func equal(to value: Encodable) -> Filter {
-        return .key(self, .equal(to: value))
+        .key(self, .equal(to: value))
     }
     
     /// A filter with a key of the string not equal to a given value.
     func notEqual(to value: Encodable) -> Filter {
-        return .key(self, .notEqual(to: value))
+        .key(self, .notEqual(to: value))
     }
     
     /// A filter with a key of the string is greater than a given value.
     func greater(than value: Encodable) -> Filter {
-        return .key(self, .greater(than: value))
+        .key(self, .greater(than: value))
     }
     
     /// A filter with a key of the string is greater or equal than a given value.
     func greaterOrEqual(than value: Encodable) -> Filter {
-        return .key(self, .greaterOrEqual(than: value))
+        .key(self, .greaterOrEqual(than: value))
     }
     
     /// A filter with a key of the string is less than a given value.
     func less(than value: Encodable) -> Filter {
-        return .key(self, .less(than: value))
+        .key(self, .less(than: value))
     }
     
     /// A filter with a key of the string is less or equal than a given value.
     func lessOrEqual(than value: Encodable) -> Filter {
-        return .key(self, .lessOrEqual(than: value))
+        .key(self, .lessOrEqual(than: value))
     }
     
     /// A filter with a key of the string is in a given list of values.
     func `in`(_ values: [Encodable]) -> Filter {
-        return .key(self, .in(values))
+        .key(self, .in(values))
     }
     
     /// A filter with a key of the string is not in a given list of values.
     func notIn(_ values: [Encodable]) -> Filter {
-        return .key(self, .notIn(values))
+        .key(self, .notIn(values))
     }
     
     /// A filter with a key of the string with a query of a given value.
     func query(_ value: String) -> Filter {
-        return .key(self, .query(value))
+        .key(self, .query(value))
     }
     
     /// A filter with a key of the string with autocomplete of a given value.
     func autocomplete(_ value: String) -> Filter {
-        return .key(self, .autocomplete(value))
+        .key(self, .autocomplete(value))
     }
 }
 
@@ -272,6 +272,6 @@ public extension Filter.Key {
 
 extension Filter {
     public static func currentUserInMembers() -> Filter {
-        return "members".in([Client.shared.user.id])
+        "members".in([Client.shared.user.id])
     }
 }

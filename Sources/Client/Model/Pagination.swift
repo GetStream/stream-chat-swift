@@ -191,7 +191,7 @@ public enum Pagination: Codable, Equatable {
         case let .lessThanOrEqual(id):
             params["id_lte"] = id
         case let .and(pagination1, pagination2):
-            params = pagination1.parameters.merged(with: pagination2.parameters)
+            params = pagination1.parameters.merging(pagination2.parameters) { _, new in new }
         }
         
         return params
