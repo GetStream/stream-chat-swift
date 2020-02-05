@@ -90,11 +90,6 @@ extension WebSocket {
     /// - Skip if it's already connected.
     /// - Skip if it's reconnecting.
     func connect() {
-        guard InternetConnection.shared.isAvailable else {
-            disconnectedNoInternet()
-            return
-        }
-        
         guard webSocketInitiated else {
             return
         }
@@ -200,7 +195,7 @@ extension WebSocket {
             logger?.log(error, message: errorMessage)
             ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
             
-            if !reconnectIfPossible(with: error) {
+            if isStopError(error) {
                 consecutiveFailures = 0
                 
                 if let lastJSONError = lastJSONError, isStopError(error) {
@@ -212,19 +207,6 @@ extension WebSocket {
         }
         
         return .notConnected
-    }
-    
-    private func reconnectIfPossible(with error: Swift.Error) -> Bool {
-        if isStopError(error) {
-            return false
-        }
-        
-        if InternetConnection.shared.isAvailable {
-            reconnect()
-            return true
-        }
-        
-        return false
     }
     
     private func isStopError(_ error: Swift.Error) -> Bool {
