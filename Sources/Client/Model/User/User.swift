@@ -25,13 +25,17 @@ public struct User: Codable {
         case mutedUsers = "mutes"
         case messagesUnreadCount = "unread_count"
         case channelsUnreadCount = "unread_channels"
+        case isAnonymous = "anon"
     }
     
     /// An unkown user.
     public static let unknown: User = {
-        let salt = Int.random(in: 10000...99999)
-        return User(id: "unknown_\(salt)", name: "Unknown \(salt)")
+        let id = UUID().uuidString
+        return User(id: "unknown_\(id)", name: "Unknown \(id.prefix(4))")
     }()
+    
+    /// An anonymous user.
+    public static let anonymous = User(id: UUID().uuidString, name: "", role: .anonymous)
     
     static var flaggedUsers = Set<User>()
     
@@ -39,6 +43,7 @@ public struct User: Codable {
         case user
         case admin
         case guest
+        case anonymous
     }
     
     /// A user id.
@@ -107,6 +112,14 @@ public struct User: Codable {
     /// Checks if the user is flagged (locally).
     var isFlagged: Bool {
         return User.flaggedUsers.contains(self)
+    }
+    
+    public var isAnonymous: Bool {
+        if case .anonymous = role {
+            return true
+        }
+        
+        return false
     }
     
     /// Init a user.
@@ -186,6 +199,10 @@ public struct User: Codable {
         
         if isInvisible {
             try container.encode(isInvisible, forKey: .isInvisible)
+        }
+        
+        if isAnonymous {
+            try container.encode(true, forKey: .isAnonymous)
         }
     }
 }
