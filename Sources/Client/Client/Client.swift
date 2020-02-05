@@ -175,11 +175,5 @@ public final class Client {
             self.waitingRequests.forEach { $0.cancel() }
             self.waitingRequests = []
         }
-        
-        DispatchQueue.main.async {
-            if UIApplication.shared.applicationState == .background {
-                InternetConnection.shared.stopObserving()
-            }
-        }
     }
 }
