@@ -22,10 +22,14 @@ extension Client {
         urlComponents.scheme = baseURL.wsURL.scheme
         urlComponents.host = baseURL.wsURL.host
         urlComponents.path = baseURL.wsURL.path.appending("connect")
+        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
         
-        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: apiKey),
-                                    URLQueryItem(name: "authorization", value: token),
-                                    URLQueryItem(name: "stream-auth-type", value: "jwt")]
+        if user.isAnonymous {
+            urlComponents.queryItems?.append(URLQueryItem(name: "stream-auth-type", value: "anonymous"))
+        } else {
+            urlComponents.queryItems?.append(URLQueryItem(name: "authorization", value: token))
+            urlComponents.queryItems?.append(URLQueryItem(name: "stream-auth-type", value: "jwt"))
+        }
         
         do {
             let jsonData = try JSONEncoder.default.encode(jsonParameter)

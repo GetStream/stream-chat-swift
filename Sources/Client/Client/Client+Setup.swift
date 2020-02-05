@@ -29,6 +29,12 @@ extension Client {
         setup(token: token)
     }
     
+    public func setAnonymousUser() {
+        user = .anonymous
+        tokenProvider = nil
+        setup(token: "")
+    }
+    
     /// Setup the current user with a token provider (see `TokenProvider`).
     ///
     /// A token provider is a function in which you send a request to your own backend to get a Stream Chat API token.
@@ -94,11 +100,6 @@ extension Client {
         
         self.token = nil
         
-        if token.isEmpty {
-            logger?.log("❌ Token is empty.", level: .error)
-            return
-        }
-        
         if token == .guest {
             requestGuestToken()
             return
@@ -115,8 +116,11 @@ extension Client {
         }
         
         if logOptions.isEnabled {
-            ClientLogger.logger("👤", "", "\(user.name): \(user.id)")
-            ClientLogger.logger("🀄️", "", "Token: \(token)")
+            ClientLogger.logger(user.isAnonymous ? "👺" : "👤", "", user.isAnonymous ? "Anonymous" : "\(user.name): \(user.id)")
+            
+            if !user.isAnonymous {
+                ClientLogger.logger("🀄️", "", "Token: \(token)")
+            }
         }
         
         if let error = checkUserAndToken(token) {
@@ -159,6 +163,10 @@ extension Client {
     }
     
     private func checkUserAndToken(_ token: Token) -> ClientError? {
+        if user.isAnonymous, token.isEmpty {
+            return nil
+        }
+        
         guard token.isValidToken(userId: user.id), let payload = token.payload else {
             return ClientError.tokenInvalid(description: "Token is invalid or Token payload is invalid")
         }

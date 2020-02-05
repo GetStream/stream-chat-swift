@@ -29,7 +29,42 @@ final class ClientTests00: TestCase {
         }
     }
     
-    func test02WebSocketPong() {
+    func test02AnonymousUser() {
+        expect("WebSocket connected") { expectation in
+            Client.shared.setAnonymousUser()
+            
+            Client.shared.onConnect = { connection in
+                if case .connected = connection {
+                    XCTAssertTrue(Client.shared.isConnected)
+                    Client.shared.onConnect = { _ in }
+                    expectation.fulfill()
+                }
+            }
+            
+            Client.shared.connect()
+        }
+        
+        expect("create a channel for anonymous") { expectation in
+            Client.shared.create(channel: Channel(type: .messaging, id: "anon")) {
+                if let clientError = $0.error,
+                    case .responseError(let responseError) = clientError,
+                    responseError.code == 17 {
+                    expectation.fulfill()
+                }
+            }
+        }
+        
+        expect("channels for anonymous") { expectation in
+            Client.shared.queryChannels {
+                if $0.isSuccess {
+                    Client.shared.disconnect()
+                    expectation.fulfill()
+                }
+            }
+        }
+    }
+    
+    func test03WebSocketPong() {
         expect("WebSocket recieved a pong") { expectation in
             WebSocket.pingTimeInterval = 2
             TestCase.setupClientUser()
