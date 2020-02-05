@@ -112,7 +112,6 @@
 		8A5069B123CE0D1E009F127A /* Client+WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3B22E9BA39005CFAC9 /* Client+WebSocket.swift */; };
 		8A5069B223CE0D3D009F127A /* Client+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3922E9BA39005CFAC9 /* Client+Request.swift */; };
 		8A5069B323CE0D56009F127A /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED0F22E9BA39005CFAC9 /* Result+Extensions.swift */; };
-		8A5069B523CE1221009F127A /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */; };
 		8A5069B623CE125D009F127A /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A99123141D2400B8EB97 /* Tests.swift */; };
 		8A5069B723CE131B009F127A /* Gzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC622E9BAC5005CFAC9 /* Gzip.framework */; };
 		8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; };
@@ -126,6 +125,7 @@
 		8A669E0C23C36E9500E86BC2 /* AvatarViewStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A669E0B23C36E9500E86BC2 /* AvatarViewStyle.swift */; };
 		8A669E0E23C37D0200E86BC2 /* Spacing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A669E0D23C37D0200E86BC2 /* Spacing.swift */; };
 		8A669E1023C3893F00E86BC2 /* SeparatorStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A669E0F23C3893F00E86BC2 /* SeparatorStyle.swift */; };
+		8A6768B423EAD272004C3B15 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */; };
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		8A6F69D4230ECD7300B8CC1F /* TestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D3230ECD7300B8CC1F /* TestCase.swift */; };
 		8A83394A2317D6FD001CBD9A /* ExtraDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8339492317D6FD001CBD9A /* ExtraDataTests.swift */; };
@@ -739,7 +739,6 @@
 			children = (
 				8AD5ED3322E9BA39005CFAC9 /* BaseURL.swift */,
 				8AD5ED3C22E9BA39005CFAC9 /* Token.swift */,
-				8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */,
 				8A150E9E232A8D8400330562 /* Database.swift */,
 				8A5F50D323D0BC9200854B77 /* Client */,
 				8AD5ED2E22E9BA39005CFAC9 /* WebSocket */,
@@ -1185,6 +1184,7 @@
 		8AD5ED0B22E9BA39005CFAC9 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */,
 				8AD5ED2D22E9BA39005CFAC9 /* Client */,
 				8AD5ED1C22E9BA39005CFAC9 /* Model */,
 				8A04964322E9F51C00E94795 /* Presenter */,
@@ -1580,7 +1580,6 @@
 				8A50698F23CE0969009F127A /* MultipartFormData.swift in Sources */,
 				8A5069B223CE0D3D009F127A /* Client+Request.swift in Sources */,
 				8A1715D423D1FD1700CF8E01 /* Channel+Requests.swift in Sources */,
-				8A5069B523CE1221009F127A /* InternetConnection.swift in Sources */,
 				8A50698E23CE0966009F127A /* ClientURLSessionTaskDelegate.swift in Sources */,
 				8AC0D95523D5E3FF0080B8BC /* Dictionary+Extensions.swift in Sources */,
 				8A1715CB23D1C17300CF8E01 /* Client+User.swift in Sources */,
@@ -1774,6 +1773,7 @@
 				8AD5ED6922E9BA5A005CFAC9 /* Client+RxRequest.swift in Sources */,
 				8A04964422E9F52D00E94795 /* Presenter.swift in Sources */,
 				8A04964522E9F53200E94795 /* ChannelsPresenter.swift in Sources */,
+				8A6768B423EAD272004C3B15 /* InternetConnection.swift in Sources */,
 				8A04964622E9F53900E94795 /* ChannelPresenter.swift in Sources */,
 				8A04965322F0910200E94795 /* Message+RxRequests.swift in Sources */,
 				8A92BAED23C78D8E0085184F /* Client+Events.swift in Sources */,
