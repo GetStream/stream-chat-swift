@@ -144,14 +144,8 @@ public extension Client {
     @discardableResult
     func send(message: Message, to channel: Channel, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         let completion = doAfter(completion) { [unowned self] response in
-            if response.message.isBan {
-                if !self.user.isBanned {
-                    self.userAtomic.update { user in
-                        var user = user
-                        user.isBanned = true
-                        return user
-                    }
-                }
+            if response.message.isBan, !self.user.isBanned {
+                self.userAtomic.isBanned = true
             }
         }
         
