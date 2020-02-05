@@ -51,7 +51,7 @@ public final class Atomic<T> {
     /// - Parameter default: a default value.
     /// - Returns: a stored value or default.
     public func get(default: T) -> T {
-        return get() ?? `default`
+        get() ?? `default`
     }
     
     /// Update the value safely.
