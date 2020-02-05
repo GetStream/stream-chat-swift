@@ -31,7 +31,7 @@ public struct ChannelResponse: Decodable {
         channel.members = Set(members)
         messages = try container.decodeIfPresent([Message].self, forKey: .messages) ?? []
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
-            updateUnreadMessageRead()
+        updateUnreadMessageRead()
         calculateChannelUnreadCount()
         Client.shared.channels.append(WeakRef(channel))
     }
