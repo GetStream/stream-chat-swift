@@ -332,7 +332,7 @@ final class ClientTests01_Channels: TestCase {
     
     func searchText(_ client: Client) {
         expect("a message with text") { expectation in
-            client.search(filter: .currentUserInMembers(), query: Self.messageText) {
+            client.search(filter: .currentUserInMembers, query: Self.messageText) {
                 if let messages = try? $0.get() {
                     XCTAssertFalse(messages.isEmpty)
                     expectation.fulfill()
