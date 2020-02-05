@@ -271,7 +271,7 @@ public extension Filter.Key {
 /// MARK: - Current User
 
 extension Filter {
-    public static func currentUserInMembers() -> Filter {
+    public static var currentUserInMembers: Filter {
         "members".in([Client.shared.user.id])
     }
 }
