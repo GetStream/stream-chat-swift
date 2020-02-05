@@ -300,7 +300,7 @@ extension WebSocket {
                     var userId = ""
                     
                     if let user = event.user {
-                        userId = " 👤 \(user.id)"
+                        userId = user.isAnonymous ? " 👺" : " 👤 \(user.id)"
                     }
                     
                     if let cid = event.cid {

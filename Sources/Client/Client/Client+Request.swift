@@ -28,7 +28,7 @@ extension Client {
             "X-Stream-Device": deviceModelName,
             "X-Stream-OS": "\(UIDevice.current.systemName)\(UIDevice.current.systemVersion)"]
         
-        if token.isBlank {
+        if token.isBlank || user.isAnonymous {
             headers["Stream-Auth-Type"] = "anonymous"
         } else {
             headers["Stream-Auth-Type"] = "jwt"
