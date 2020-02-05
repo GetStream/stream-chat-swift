@@ -8,7 +8,6 @@
 
 import UIKit
 import Starscream
-import Reachability
 
 /// A web socket client.
 public final class WebSocket {

@@ -115,7 +115,6 @@
 		8A5069B623CE125D009F127A /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A99123141D2400B8EB97 /* Tests.swift */; };
 		8A5069B723CE131B009F127A /* Gzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC622E9BAC5005CFAC9 /* Gzip.framework */; };
 		8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; };
-		8A5069BB23CE131B009F127A /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC322E9BAC5005CFAC9 /* Reachability.framework */; };
 		8A5211D5238EE7DC004BED65 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5211D4238EE7DC004BED65 /* Attachment.swift */; };
 		8A559D24230D937C00E66096 /* ClientRequestsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A559D23230D937C00E66096 /* ClientRequestsTests.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
@@ -553,7 +552,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A5069B723CE131B009F127A /* Gzip.framework in Frameworks */,
-				8A5069BB23CE131B009F127A /* Reachability.framework in Frameworks */,
 				8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
