@@ -9,6 +9,7 @@
 import Foundation
 
 /// A mutable thread safe variable.
+@dynamicMemberLookup
 public final class Atomic<T> {
     /// A didSet callback type.
     public typealias DidSetCallback = (_ value: T?, _ oldValue: T?) -> Void
@@ -72,6 +73,38 @@ public final class Atomic<T> {
             callbackQueue.async { [weak self] in self?.didSet?(newValue, oldValue) }
         } else {
             didSet?(newValue, oldValue)
+        }
+    }
+}
+
+// MARK: - Helper Updates
+
+public extension Atomic {
+    
+    func update<Value>(_ keyPath: WritableKeyPath<T, Value>, to value: Value) {
+        update { instance in
+            var instance = instance
+            instance[keyPath: keyPath] = value
+            return instance
+        }
+    }
+    
+    func append<Value>(to keyPath: WritableKeyPath<T, [Value]>, _ value: Value) {
+        update { instance in
+            var instance = instance
+            instance[keyPath: keyPath].append(value)
+            return instance
+        }
+    }
+    
+    subscript<Value>(dynamicMember keyPath: WritableKeyPath<T, Value>) -> Value? {
+        get {
+            return get()?[keyPath: keyPath]
+        }
+        set {
+            if let newValue = newValue {
+                update(keyPath, to: newValue)
+            }
         }
     }
 }
