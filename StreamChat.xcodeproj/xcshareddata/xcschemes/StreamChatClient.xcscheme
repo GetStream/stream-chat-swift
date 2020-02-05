@@ -43,9 +43,6 @@
                   Identifier = "ChannelTests01_Upload">
                </Test>
                <Test
-                  Identifier = "ClientTests00">
-               </Test>
-               <Test
                   Identifier = "ClientTests00/test00WebSocketConnection()">
                </Test>
                <Test
@@ -59,9 +56,6 @@
                </Test>
                <Test
                   Identifier = "ClientTests02_Message/test01Message()">
-               </Test>
-               <Test
-                  Identifier = "ClientTests02_Users">
                </Test>
                <Test
                   Identifier = "TestCase">
