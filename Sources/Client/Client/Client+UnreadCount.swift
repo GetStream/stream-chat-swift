@@ -13,24 +13,27 @@ import Foundation
 extension Client {
     
     func updateUserUnreadCount(with event: Event) {
-        var updatedChannelsUnreadCount = -1
-        var updatedMssagesUnreadCount = -1
+        var unreadCountsUpdated = false
+        var updatedChannelsUnreadCount = 0
+        var updatedMssagesUnreadCount = 0
         
         switch event {
         case let .notificationAddedToChannel(_, channelsUnreadCount, messagesUnreadCount, _),
              let .notificationMarkRead(_, channelsUnreadCount, messagesUnreadCount, _, _):
             updatedChannelsUnreadCount = channelsUnreadCount
             updatedMssagesUnreadCount = messagesUnreadCount
+            unreadCountsUpdated = true
         case let .messageNew(_, channelsUnreadCount, messagesUnreadCount, _, _, eventType):
             if case .notificationMessageNew = eventType {
                 updatedChannelsUnreadCount = channelsUnreadCount
                 updatedMssagesUnreadCount = messagesUnreadCount
+                unreadCountsUpdated = true
             }
         default:
             break
         }
         
-        if updatedChannelsUnreadCount != -1 {
+        if unreadCountsUpdated {
             user.channelsUnreadCountAtomic.set(updatedChannelsUnreadCount)
             user.messagesUnreadCountAtomic.set(updatedMssagesUnreadCount)
             onUserUpdate?(user)

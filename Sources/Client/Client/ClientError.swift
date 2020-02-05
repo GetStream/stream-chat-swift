@@ -179,7 +179,7 @@ public struct AnyError: Error, Equatable, CustomDebugStringConvertible {
     }
     
     public static func == (lhs: AnyError, rhs: AnyError) -> Bool {
-        return lhs.error.localizedDescription == rhs.error.localizedDescription
+        lhs.error.localizedDescription == rhs.error.localizedDescription
     }
 }
 

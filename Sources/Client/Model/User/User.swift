@@ -210,7 +210,7 @@ public struct User: Codable {
 extension User: Hashable {
     
     public static func == (lhs: User, rhs: User) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
     }
     
     public func hash(into hasher: inout Hasher) {

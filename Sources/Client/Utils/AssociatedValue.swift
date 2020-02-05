@@ -48,5 +48,5 @@ private final class Lifted<T> {
 }
 
 private func lift<T>(_ x: T) -> Lifted<T> {
-    return Lifted(x)
+    Lifted(x)
 }

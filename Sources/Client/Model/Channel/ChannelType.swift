@@ -62,7 +62,7 @@ public enum ChannelType: Codable, Hashable {
     }
     
     public static func == (lhs: ChannelType, rhs: ChannelType) -> Bool {
-        return lhs.rawValue == rhs.rawValue
+        lhs.rawValue == rhs.rawValue
     }
     
     public func hash(into hasher: inout Hasher) {
