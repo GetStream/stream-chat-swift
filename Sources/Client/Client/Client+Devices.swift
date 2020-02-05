@@ -30,13 +30,8 @@ public extension Client {
         let device = Device(deviceId)
         
         let completion = doBefore(completion) { [unowned self] _ in
-            self.userAtomic.update { oldUser in
-                var currentUser = oldUser
-                currentUser.devices.append(device)
-                currentUser.currentDevice = device
-                return currentUser
-            }
-            
+            self.userAtomic.append(to: \.devices, device)
+            self.userAtomic.currentDevice = device
             self.logger?.log("📱 Device added with id: \(deviceId)")
         }
         
@@ -48,12 +43,7 @@ public extension Client {
     @discardableResult
     func devices(_ completion: @escaping Client.Completion<[Device]>) -> URLSessionTask {
         let completion = doBefore(completion) { [unowned self] devices in
-            self.userAtomic.update { oldUser in
-                var currentUser = oldUser
-                currentUser.devices = devices
-                return currentUser
-            }
-            
+            self.userAtomic.devices = devices
             self.logger?.log("📱 Devices updated")
         }
         
@@ -72,7 +62,12 @@ public extension Client {
             self.userAtomic.update { oldUser in
                 if let index = self.user.devices.firstIndex(where: { $0.id == deviceId }) {
                     var currentUser = oldUser
-                    currentUser.devices.remove(at: index)
+                    let removedDevice = currentUser.devices.remove(at: index)
+                    
+                    if let currentDevice = currentUser.currentDevice, currentDevice == removedDevice {
+                        currentUser.currentDevice = nil
+                    }
+                    
                     return currentUser
                 }
                 
