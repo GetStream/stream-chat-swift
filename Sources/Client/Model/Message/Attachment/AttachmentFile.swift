@@ -69,7 +69,7 @@ public struct AttachmentFile: Codable {
 extension AttachmentFile: Hashable {
     
     public static func == (lhs: AttachmentFile, rhs: AttachmentFile) -> Bool {
-        return lhs.type == rhs.type
+        lhs.type == rhs.type
             && lhs.size == rhs.size
             && lhs.mimeType == rhs.mimeType
     }

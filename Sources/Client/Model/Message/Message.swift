@@ -230,7 +230,7 @@ extension Message {
 extension Message: Hashable {
     
     public static func == (lhs: Message, rhs: Message) -> Bool {
-        return lhs.id == rhs.id
+        lhs.id == rhs.id
             && lhs.type == rhs.type
             && lhs.parentId == rhs.parentId
             && lhs.user == rhs.user
@@ -266,7 +266,7 @@ public extension Message {
     /// - Parameter type: a reaction type.
     /// - Returns: true if the message has a reaction type.
     func hasOwnReaction(type: ReactionType) -> Bool {
-        return !ownReactions.isEmpty && ownReactions.firstIndex(where: { $0.type == type }) != nil
+        !ownReactions.isEmpty && ownReactions.firstIndex(where: { $0.type == type }) != nil
     }
     
     /// Add a given reaction to the current user own reactions.
