@@ -542,7 +542,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A5069B723CE131B009F127A /* Gzip.framework in Frameworks */,
-				8A5069BB23CE131B009F127A /* Reachability.framework in Frameworks */,
 				8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
