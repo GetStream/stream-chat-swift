@@ -59,7 +59,7 @@ final class AttachmentFilePreview: UIImageView, AttachmentPreviewProtocol {
         return label
     }()
     
-    func update(maskImage: UIImage?, _ completion: @escaping Competion) {
+    func update(maskImage: UIImage?, _ completion: @escaping Completion) {
         guard let attachment = attachment, let file = attachment.file else {
             return
         }

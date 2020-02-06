@@ -11,7 +11,7 @@ import StreamChatCore
 import RxSwift
 
 protocol AttachmentPreviewProtocol where Self: UIView {
-    typealias Competion = (Self, Error?) -> Void
+    typealias Completion = (Self, Error?) -> Void
     
     var disposeBag: DisposeBag { get }
     
@@ -19,5 +19,5 @@ protocol AttachmentPreviewProtocol where Self: UIView {
     var attachment: Attachment? { get set }
     
     /// Update attachment preview with a given attachment and image mask.
-    func update(maskImage: UIImage?, _ completion: @escaping Competion)
+    func update(maskImage: UIImage?, _ completion: @escaping Completion)
 }

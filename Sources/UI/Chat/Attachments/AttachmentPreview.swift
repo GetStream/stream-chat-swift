@@ -187,7 +187,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
         }
     }
     
-    func update(maskImage: UIImage?, _ completion: @escaping Competion) {
+    func update(maskImage: UIImage?, _ completion: @escaping Completion) {
         guard let attachment = attachment else {
             return
         }
@@ -258,7 +258,7 @@ final class AttachmentPreview: UIView, AttachmentPreviewProtocol {
     private func parse(imageResult: Result<ImageResponse, ImagePipeline.Error>,
                        maskImage: UIImage?,
                        cached: Bool,
-                       _ completion: @escaping Competion) {
+                       _ completion: @escaping Completion) {
         guard let attachment = attachment, let image = try? imageResult.get().image else {
             if isLink {
                 imageView.isHidden = true
