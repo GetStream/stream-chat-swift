@@ -10,6 +10,7 @@ import Foundation
 import Reachability
 import RxSwift
 import RxAppState
+import UIKit
 
 /// The Internect connection manager.
 public final class InternetConnection {
