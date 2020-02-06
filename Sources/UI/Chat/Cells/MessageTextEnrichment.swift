@@ -9,6 +9,7 @@
 import Foundation
 import StreamChatCore
 import RxSwift
+import UIKit
 
 final class MessageTextEnrichment {
     
