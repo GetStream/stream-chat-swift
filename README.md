@@ -2,16 +2,19 @@
 [![Stream Chat](https://i.imgur.com/B7przBT.png)](https://getstream.io/tutorials/ios-chat/)
 
 [![Language: Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://github.com/GetStream/stream-chat-swift/workflows/CI/badge.svg)](https://github.com/GetStream/stream-chat-swift/actions)
 [![Code Coverage](https://codecov.io/gh/GetStream/stream-chat-swift/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-chat-swift)
 
 ![StreamChatCore](https://img.shields.io/badge/Framework-StreamChatCore-blue)
 ![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatCore.svg)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 [![Core Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/core/badge.svg)](https://getstream.github.io/stream-chat-swift/core)
 
 ![StreamChat](https://img.shields.io/badge/Framework-StreamChat-blue)
 ![Cocoapods](https://img.shields.io/cocoapods/v/StreamChat.svg)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 [![UI Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/ui/badge.svg)](https://getstream.github.io/stream-chat-swift/ui)
 
 [stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications.
@@ -110,6 +113,13 @@ Then run: `carthage update --platform iOS --new-resolver`. This will build frame
   - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChat.framework` (if you need UI components)
   
 Now you can build your app and use `StreamChat`.
+
+### Swift Package Manager
+
+You can directly add dependency in Xcode 11+ using repo url, or in your `Package.swift` file, add to `dependencies`:
+```swift
+.package(url: "https://github.com/GetStream/stream-chat-swift.git", from: "1.5.5"),
+```
 
 ## Supported features
 
