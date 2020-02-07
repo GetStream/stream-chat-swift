@@ -4,6 +4,7 @@
 - Failed uploads now retry up to 3 times [#85](https://github.com/GetStream/stream-chat-swift/issues/85)
 
 ### ✅ Added
+- Swift Package Manager (SPM) support [#38](https://github.com/GetStream/stream-chat-swift/issues/38)
 - `ViewController.showAlert(title:message:actions:)` now you can override this function to decide when/how alerts should be handled [#85](https://github.com/GetStream/stream-chat-swift/issues/85)
 - Allow user to go directly to iOS settings if they've disabled photo library access and trying to upload image/video [#85](https://github.com/GetStream/stream-chat-swift/issues/85)
 
