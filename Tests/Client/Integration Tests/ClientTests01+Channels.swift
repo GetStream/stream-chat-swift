@@ -137,8 +137,7 @@ final class ClientTests01_Channels: TestCase {
             client.queryChannel(Channel(type: cid.type, id: cid.id), options: .all) {
                 if let response = $0.value {
                     XCTAssertEqual(response.messages.count, 3)
-                    XCTAssertEqual(response.channel.currentUnreadCount, 2)
-                    XCTAssertEqual(response.channel.currentMentionedUnreadCount, 1)
+                    XCTAssertEqual(response.channel.unreadCount, ChannelUnreadCount(messages: 2, mentionedMessages: 1))
                     channel = response.channel
                     expectation.fulfill()
                 }
