@@ -98,4 +98,11 @@ public extension Result where Success: Collection, Failure == ClientError {
         
         return .failure(error ?? .unexpectedError(nil, error))
     }
+    
+    /// Calls the given closure on each element in the sequence in the same order as a for-in loop.
+    func forEach(_ body: (Success.Element) throws -> Void) rethrows {
+        if let values = self.value {
+            try values.forEach(body)
+        }
+    }
 }
