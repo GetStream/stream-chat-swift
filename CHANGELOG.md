@@ -12,6 +12,7 @@
 - Fixed allowing file uploads exceeding API file limit (20MB) and crashing [#81](https://github.com/GetStream/stream-chat-swift/issues/81)
 - Fixed internet connection losses during image uploads cause crashing [#82](https://github.com/GetStream/stream-chat-swift/issues/82)
 - Fixed previewing uploaded videos crashing on iOS12 [#83](https://github.com/GetStream/stream-chat-swift/issues/83)
+- Fixed pan gestures on ComposerView affect chat table view [#95](https://github.com/GetStream/stream-chat-swift/issues/95)
 
 # 1.5.5
 _January 24, 2020_

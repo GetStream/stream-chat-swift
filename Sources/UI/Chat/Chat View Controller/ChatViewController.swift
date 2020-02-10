@@ -104,6 +104,10 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     public var channelPresenter: ChannelPresenter?
     private var changesEnabled: Bool = false
     
+    lazy var keyboard: Keyboard = {
+       return Keyboard(observingPanGesturesIn: tableView)
+    }()
+    
     // MARK: - View Life Cycle
     
     override open func viewDidLoad() {
@@ -149,7 +153,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         changesEnabled = true
         setupFooterUpdates()
         
-        Keyboard.shared.notification.bind(to: rx.keyboard).disposed(by: self.disposeBag)
+        keyboard.notification.bind(to: rx.keyboard).disposed(by: self.disposeBag)
     }
     
     override open func viewDidAppear(_ animated: Bool) {
