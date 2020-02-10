@@ -8,9 +8,9 @@
 
 import Foundation
 
+// MARK: Channel Requests
+
 public extension Channel {
-    
-    // MARK: Channel Requests
     
     /// Create a channel.
     /// - Parameter completion: a completion block with `ChannelResponse`.
