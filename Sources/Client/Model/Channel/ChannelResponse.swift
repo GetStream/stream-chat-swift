@@ -33,6 +33,7 @@ public struct ChannelResponse: Decodable {
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         updateUnreadMessageRead()
         calculateChannelUnreadCount()
+        updateChannelOnlineUsers()
         Client.shared.channels.append(WeakRef(channel))
     }
     
@@ -58,7 +59,7 @@ public struct ChannelResponse: Decodable {
         }
     }
     
-    func calculateChannelUnreadCount() {
+    private func calculateChannelUnreadCount() {
         channel.unreadCountAtomic.set(0)
         channel.mentionedUnreadCountAtomic.set(0)
         
@@ -89,6 +90,11 @@ public struct ChannelResponse: Decodable {
         
         channel.unreadCountAtomic.set(count)
         channel.mentionedUnreadCountAtomic.set(mentionedCount)
+    }
+    
+    private func updateChannelOnlineUsers() {
+        let onlineUsers = Set<User>(channel.members.filter({ $0.user.isOnline && !$0.user.isCurrent }).map({ $0.user }))
+        channel.onlineUsersAtomic.set(onlineUsers)
     }
 }
 

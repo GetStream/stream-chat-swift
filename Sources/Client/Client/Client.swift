@@ -36,7 +36,7 @@ public final class Client {
         }
     }
     
-    let baseURL: BaseURL
+    public let baseURL: BaseURL
     let stayConnectedInBackground: Bool
     
     /// A list of reaction types.
@@ -45,26 +45,28 @@ public final class Client {
     /// A database for an offline mode.
     public internal(set) var database: Database?
     
-    var token: Token? {
-        didSet { onToken?(token) }
+    public internal(set) var token: Token? {
+        didSet { onTokenChange?(token) }
     }
     
     /// A token callback.
-    public var onToken: OnTokenChange?
+    public var onTokenChange: OnTokenChange?
     var tokenProvider: TokenProvider?
-    var isExpiredTokenInProgress = false
+    public internal(set) var isExpiredTokenInProgress = false
     var waitingRequests = [WaitingRequest]()
     
     /// A web socket client.
-    public internal(set) lazy var webSocket = WebSocket()
+    lazy var webSocket = WebSocket()
+    
+    public internal(set) var lastConnection = Connection.notConnected
     
     /// A WebSocket connection callback.
-    var onConnect: Client.OnConnect = { _ in } {
+    public var onConnect: Client.OnConnect = { _ in } {
         didSet { webSocket.onConnect = setupWebSocketOnConnect }
     }
     
     /// A WebSocket events callback.
-    var onEvent: Client.OnEvent = { _ in } {
+    public var onEvent: Client.OnEvent = { _ in } {
         didSet { webSocket.onEvent = setupWebSocketOnEvent }
     }
     
@@ -75,7 +77,7 @@ public final class Client {
     
     /// A log manager.
     public let logger: ClientLogger?
-    let logOptions: ClientLogger.Options
+    public let logOptions: ClientLogger.Options
     
     /// An observable user.
     public var onUserUpdate: OnUpdate<User>?
@@ -174,6 +176,22 @@ public final class Client {
         performInCallbackQueue { [unowned self] in
             self.waitingRequests.forEach { $0.cancel() }
             self.waitingRequests = []
+        }
+    }
+    
+    public func handleConnection(with appState: UIApplication.State) {
+        if appState == .active {
+            webSocket.cancelBackgroundWork()
+            
+            if !isConnected {
+                connect()
+            }
+        } else if appState == .background {
+            if webSocket.isConnected {
+                webSocket.disconnectInBackground()
+            } else {
+                webSocket.disconnect()
+            }
         }
     }
 }

@@ -42,16 +42,6 @@ extension Client {
     
     // MARK: Channel Unread Count
     
-    func updateChannelsUnreadCount(with event: Event) {
-        channels.flush()
-        
-        channels.forEach {
-            if let channel = $0.value {
-                updateChannelUnreadCount(channel: channel, event: event)
-            }
-        }
-    }
-    
     /// Update the unread count if needed.
     /// - Parameter response: a web socket event.
     func updateChannelUnreadCount(channel: Channel, event: Event) {

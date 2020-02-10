@@ -79,12 +79,18 @@ public final class Channel: Codable {
     
     let unreadCountAtomic = Atomic(0)
     let mentionedUnreadCountAtomic = Atomic(0)
-    let onlineUsersAtomic = Atomic<[User]>([])
     
     /// Returns the current unread count.
-    public var currentUnreadCount: Int { unreadCountAtomic.get(default: 0) }
-    /// Returns the current user mentioned unread count.
-    public var currentMentionedUnreadCount: Int { mentionedUnreadCountAtomic.get(default: 0) }
+    public var unreadCount: ChannelUnreadCount {
+        ChannelUnreadCount(messages: unreadCountAtomic.get(default: 0),
+                           mentionedMessages: mentionedUnreadCountAtomic.get(default: 0))
+    }
+    
+    let onlineUsersAtomic = Atomic<Set<User>>([])
+    
+    /// Online users in the channel.
+    public var onlineUsers: Set<User> { onlineUsersAtomic.get(default: []) }
+    
     /// Unread message state for the current user.
     public internal(set) var unreadMessageRead: MessageRead?
     
