@@ -32,8 +32,7 @@ public extension Client {
                       pagination: Pagination = .none,
                       options: QueryOptions = [],
                       _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        let channelQuery = ChannelQuery(channel: channel, pagination: pagination, options: options)
-        return request(endpoint: .channel(channelQuery), completion)
+        request(endpoint: .channel(.init(channel: channel, pagination: pagination, options: options)), completion)
     }
     
     /// Loads the initial channel state and watches for changes.
@@ -45,7 +44,7 @@ public extension Client {
     func watch(channel: Channel,
                options: QueryOptions = [],
                _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        return queryChannel(channel, options: options.union(.watch), completion)
+        queryChannel(channel, options: options.union(.watch), completion)
     }
     
     /// Stop watching the channel for a state changes.
