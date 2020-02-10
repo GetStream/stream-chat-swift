@@ -104,7 +104,7 @@ extension WebSocket {
         performInCallbackQueue { [weak self] in self?.onConnect(.connecting) }
     }
     
-    private func reconnect() {
+    func reconnect() {
         guard !isReconnecting else {
             return
         }
@@ -119,7 +119,7 @@ extension WebSocket {
         }
     }
     
-    private func disconnectInBackground() {
+    func disconnectInBackground() {
         guard stayConnectedInBackground else {
             disconnect()
             return
@@ -146,7 +146,7 @@ extension WebSocket {
         }
     }
     
-    private func cancelBackgroundWork() {
+    func cancelBackgroundWork() {
         goingToDisconnect?.cancel()
         goingToDisconnect = nil
         
@@ -171,13 +171,9 @@ extension WebSocket {
             logger?.log("Skip disconnecting: WebSocket was not connected")
         }
         
-        clearStateAfterDisconnect()
-    }
-    
-    private func disconnectedNoInternet() {
-        logger?.log("💔🕸 Disconnected: No Internet")
-        clearStateAfterDisconnect()
         consecutiveFailures = 0
+        clearStateAfterDisconnect()
+        onConnect(.disconnected(nil))
     }
     
     private func disconnected(_ error: Error? = nil) -> Connection {
