@@ -7,70 +7,53 @@
 //
 
 import UIKit
+import StreamChatClient
 import RxSwift
 
-// MARK: Connection
+// MARK: RxConnection
+
+extension Client {
+    private static var rxConnectionKey: UInt8 = 0
+    
+    fileprivate var rxConnection: Observable<Connection> {
+        associated(to: self, key: &Client.rxConnectionKey) { [unowned self] in
+            let isInternetAvailable: Observable<Bool> = InternetConnection.shared.isAvailableObservable.startWith(false)
+            let app = UIApplication.shared
+            
+            let appState = app.rx.applicationState.filter({ $0 != .inactive })
+                .distinctUntilChanged()
+                .do(onNext: { self.logger?.log("📱 App state \($0)") })
+                .startWith(app.applicationState)
+            
+            let onTokenChange = rx.onTokenChange.startWith(token)
+                .filter { [unowned self] _ in !self.isExpiredTokenInProgress }
+            
+            return Observable.combineLatest(isInternetAvailable, appState, onTokenChange)
+                .observeOn(MainScheduler.instance)
+                .do(onNext: { isInternetAvailable, appState, _ in
+                    guard isInternetAvailable else {
+                        self.logger?.log("💔🕸 Disconnected: No Internet")
+                        self.disconnect()
+                        return
+                    }
+                    
+                    self.handleConnection(with: appState)
+                })
+                .flatMapLatest({ _ in self.rx.onConnect.startWith(self.lastConnection) })
+                .distinctUntilChanged()
+                .do(onDispose: { self.disconnect() })
+                .share(replay: 1)
+        }
+    }
+}
+
+// MARK: - Connection
 
 extension Reactive where Base == Client {
     
     /// An observable connection.
-    public var connection: Observable<WebSocket.Connection> {
-        return base.rxConnection
-    }
+    public var connection: Observable<Connection> { base.rxConnection }
     
-    func createConnection() -> Observable<WebSocket.Connection> {
-        if let token = base.token, let error = base.checkUserAndToken(token) {
-            return .error(error)
-        }
-        
-        let app = UIApplication.shared
-        
-        let appState = isTestsEnvironment()
-            ? .just(.active)
-            : app.rx.appState
-                .filter { $0 != .inactive }
-                .distinctUntilChanged()
-                .startWith(app.appState)
-                .do(onNext: { state in
-                    if Client.shared.logOptions.isEnabled {
-                        ClientLogger.log("📱", "App state \(state)")
-                    }
-                })
-        
-        let internetIsAvailable: Observable<Bool> = isTestsEnvironment()
-            ? .just(true)
-            : InternetConnection.shared.isAvailableObservable
-        
-        let webSocketResponse = internetIsAvailable
-            .filter({ $0 })
-            .flatMapLatest { [unowned base]  _ in base.tokenSubject.asObserver() }
-            .distinctUntilChanged()
-            .map { $0?.isValidToken() ?? false }
-            .observeOn(MainScheduler.instance)
-            .flatMapLatest({ [unowned base] isTokenValid -> Observable<WebSocketEvent> in
-                if isTokenValid {
-                    base.webSocket.connect()
-                    return base.webSocket.webSocket.rx.response
-                }
-                
-                return .just(.disconnected(nil))
-            })
-            .do(onDispose: { [unowned base] in base.webSocket.disconnect() })
-        
-        return Observable.combineLatest(appState, internetIsAvailable, webSocketResponse)
-            .compactMap { [unowned base] in base.webSocket.parseConnection(appState: $0, isInternetAvailable: $1, event: $2) }
-            .distinctUntilChanged()
-            .share(replay: 1)
-    }
-    
-    func connectedRequest<T: Decodable>(_ endpoint: Endpoint) -> Observable<T> {
-        let request: Observable<T> = self.request(endpoint: endpoint)
-        return connectedRequest(request)
-    }
-    
-    func connectedRequest<T>(_ request: Observable<T>) -> Observable<T> {
-        return base.webSocket.isConnected
-            ? request
-            : connection.connected().take(1).flatMapLatest { request }
-    }
+    /// An observable connected event.
+    public var connected: Observable<Void> { connection.filter({ $0 == .connected }).void().share(replay: 1) }
 }
