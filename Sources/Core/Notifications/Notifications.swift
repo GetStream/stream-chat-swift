@@ -8,8 +8,8 @@
 
 import UIKit
 import UserNotifications
+import StreamChatClient
 import RxSwift
-import RxAppState
 
 /// A notifications manager.
 public final class Notifications: NSObject {
@@ -111,7 +111,7 @@ extension Notifications {
     ///   - channel: a channel.
     public func showIfNeeded(newMessage message: Message, in channel: Channel) {
         DispatchQueue.main.async {
-            if UIApplication.shared.appState == .background {
+            if UIApplication.shared.applicationState == .background {
                 self.logger?.log("Show channel: \(channel.cid) message id: \(message.id) text: \(message.textOrArgs)")
                 self.show(newMessage: message, in: channel)
             }
@@ -229,7 +229,7 @@ extension Notifications {
         DispatchQueue.main.async {
             self.clear()
             
-            UIApplication.shared.rx.appState
+            UIApplication.shared.rx.applicationState
                 .filter { $0 == .active }
                 .skip(1)
                 .subscribe(onNext: { [unowned self] _ in self.clear() })
