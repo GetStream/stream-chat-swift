@@ -13,32 +13,23 @@ import RxGesture
 
 struct Keyboard {
     
-    static let shared = Self()
     let notification: Observable<KeyboardNotification>
     
-    init() {
+    init(observingPanGesturesIn view: UIView) {
         let keyboardNotifications: Observable<KeyboardNotification> =
             Observable.merge(NotificationCenter.default.rx.notification(UIResponder.keyboardWillChangeFrameNotification),
                              NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification),
                              NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification))
                 .map { KeyboardNotification($0) }
         
-        let windowPan: Observable<KeyboardNotification> =
-            NotificationCenter.default.rx.notification(UIApplication.didFinishLaunchingNotification)
-            .void()
-            .startWith(Void())
-            .flatMapLatest({ _ -> Observable<UIPanGestureRecognizer> in
-                guard let window = UIApplication.shared.windows.first else {
-                    return .empty()
-                }
-                
-                return window.rx.panGesture().when(.began, .changed, .ended)
-            })
+        let viewPan: Observable<KeyboardNotification> = view.rx
+            .panGesture()
+            .when(.began, .changed, .ended)
             .withLatestFrom(keyboardNotifications) { ($0, $1) }
             .filter { $1.height > 0 }
             .compactMap { KeyboardNotification(panGesture: $0, with: $1) }
         
-        notification = Observable.merge(windowPan, keyboardNotifications)
+        notification = Observable.merge(viewPan, keyboardNotifications)
             .distinctUntilChanged()
             .observeOn(MainScheduler.instance)
             .share()
