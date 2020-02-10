@@ -136,6 +136,10 @@ public struct AnyError: Error, Equatable {
     /// Some error.
     public let error: Error
     
+    public init(_ error: Error) {
+        self.error = error
+    }
+    
     public var localizedDescription: String {
         return error.localizedDescription
     }

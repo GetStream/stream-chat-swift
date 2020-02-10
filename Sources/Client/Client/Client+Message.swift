@@ -46,7 +46,7 @@ public extension Client {
     func replies(for message: Message,
                  pagination: Pagination,
                  _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
-        return request(endpoint: .replies(message, pagination)) { (result: Result<MessagesResponse, ClientError>) in
+        request(endpoint: .replies(message, pagination)) { (result: Result<MessagesResponse, ClientError>) in
             completion(result.map(to: \.messages))
         }
     }

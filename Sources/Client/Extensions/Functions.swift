@@ -9,10 +9,18 @@
 /// A did update block type.
 public typealias OnUpdate<T> = (T) -> Void
 
-/// A tuple for unread counts of channels and messages.
-public struct UnreadCount: Hashable {
+/// An unread counts of the current user.
+public struct UnreadCount: Decodable, Hashable {
+    public static let empty = UnreadCount(channels: 0, messages: 0)
     public let channels: Int
     public let messages: Int
+}
+
+/// An unread counts for a channel.
+public struct ChannelUnreadCount: Decodable, Hashable {
+    public static let empty = ChannelUnreadCount(messages: 0, mentionedMessages: 0)
+    public let messages: Int
+    public let mentionedMessages: Int
 }
 
 /// A completion block type with a `Result`.

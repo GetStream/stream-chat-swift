@@ -12,8 +12,8 @@ import Foundation
 public struct BaseURL: CustomStringConvertible {
     static let placeholderURL = URL(string: "https://getstream.io")!
     
-    let baseURL: URL
-    let wsURL: URL
+    public let baseURL: URL
+    public let wsURL: URL
     
     public var description: String { return baseURL.absoluteString }
     

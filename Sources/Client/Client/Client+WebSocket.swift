@@ -10,6 +10,7 @@ import Foundation
 import Starscream
 
 extension Client {
+    
     func setupWebSocket(user: User, token: Token) -> WebSocket? {
         if apiKey.isEmpty {
             return nil
@@ -65,6 +66,8 @@ extension Client {
     }
     
     func setupWebSocketOnConnect(_ connection: Connection) {
+        lastConnection = connection
+        
         guard isExpiredTokenInProgress, case .connected = connection else {
             onConnect(connection)
             return
@@ -81,7 +84,15 @@ extension Client {
         }
         
         updateUserUnreadCount(with: event)
-        updateChannelsUnreadCount(with: event)
+        
+        channels.forEach {
+            if let channel = $0.value {
+                updateChannelUnreadCount(channel: channel, event: event)
+                updateChannelOnlineUsers(channel: channel, event: event)
+            }
+        }
+        
+        channels.flush()
         onEvent(event)
     }
 }
