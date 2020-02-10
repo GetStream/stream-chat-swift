@@ -9,7 +9,6 @@
 import UIKit
 import StreamChatCore
 import RxSwift
-import RxAppState
 
 /// A banners manager.
 public final class Banners {
