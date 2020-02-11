@@ -27,7 +27,7 @@ public extension Reactive where Base == User {
     }
     
     /// Unmute the user.
-    func unmute() -> Observable<Void> {
+    func unmute() -> Observable<EmptyData> {
         Client.shared.rx.unmute(user: base)
     }
     
