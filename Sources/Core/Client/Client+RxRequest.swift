@@ -20,7 +20,7 @@ extension Client: ReactiveCompatible {}
 
 public extension Reactive where Base == Client {
     
-    func request<T: Decodable>(_ request: (@escaping Client.Completion<T>) -> URLSessionTask) -> Observable<T> {
+    func request<T: Decodable>(_ request: @escaping (@escaping Client.Completion<T>) -> URLSessionTask) -> Observable<T> {
         .create { observer in
             let urlSessionTask = request { result in
                 if let value = result.value {
@@ -35,7 +35,7 @@ public extension Reactive where Base == Client {
         }
     }
     
-    func progressRequest<T: Decodable>(_ request: ProgressRequest<T>) -> Observable<ProgressResponse<T>> {
+    func progressRequest<T: Decodable>(_ request: @escaping ProgressRequest<T>) -> Observable<ProgressResponse<T>> {
         .create { observer in
             let urlSessionTask = request({ progress in
                 observer.onNext((progress, nil))
@@ -53,6 +53,6 @@ public extension Reactive where Base == Client {
     }
     
     func connectedRequest<T: Decodable>(_ rxRequest: Observable<T>) -> Observable<T> {
-        base.isConnected ? rxRequest : connection.filter({ $0 == .connected }).take(1).flatMapLatest { _ in rxRequest }
+        base.isConnected ? rxRequest : connection.filter({ $0.isConnected }).take(1).flatMapLatest { _ in rxRequest }
     }
 }
