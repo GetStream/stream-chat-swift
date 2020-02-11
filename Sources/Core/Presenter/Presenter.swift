@@ -7,12 +7,12 @@
 //
 
 import Foundation
+import StreamChatClient
 import RxSwift
 import RxCocoa
 
 /// A general presenter for making requests with pagination.
 public class Presenter {
-    
     /// A list of presenter items.
     public internal(set) var items = [PresenterItem]()
     /// A pagination of an initial page size, e.g. `.limit(25)`
@@ -23,6 +23,8 @@ public class Presenter {
     public var hasNextPage: Bool { return next != pageSize }
     /// Checks if presenter items are empty.
     public var isEmpty: Bool { return items.isEmpty }
+    /// Observe connection errors as `ViewChanges`.
+    private(set) lazy var rxConnectionErrors: Driver<ViewChanges> = rx.setupConnectionErrors()
     
     let loadPagination = PublishSubject<Pagination>()
     
@@ -30,16 +32,21 @@ public class Presenter {
         self.pageSize = pageSize
         self.next = pageSize
     }
+}
+
+// MARK: - Extensions
+
+public extension Presenter {
     
     /// Reload items.
-    public func reload() {
+    func reload() {
         next = pageSize
         items = []
         load(pagination: pageSize)
     }
     
     /// Load the next page of items.
-    public func loadNext() {
+    func loadNext() {
         if hasNextPage {
             load(pagination: next)
         }
@@ -52,7 +59,7 @@ public class Presenter {
     /// Observe connection errors as `ViewChanges`.
     /// - Parameter onNext: a completion block with `ViewChanges`.
     /// - Returns: a subscription.
-    public func connectionErrors(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
-        rx.connectionErrors.asObservable().bind(to: onNext)
+    func connectionErrors(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
+        rxConnectionErrors.asObservable().bind(to: onNext)
     }
 }
