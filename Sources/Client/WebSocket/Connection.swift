@@ -20,6 +20,8 @@ public enum Connection: Equatable {
     /// The websocket was disconnected with an error.
     case disconnected(Swift.Error?)
     
+    public var isConnected: Bool { self == .connected }
+    
     public static func == (lhs: Connection, rhs: Connection) -> Bool {
         switch (lhs, rhs) {
         case (.notConnected, .notConnected),
