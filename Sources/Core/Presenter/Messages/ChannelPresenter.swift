@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChatClient
 import RxSwift
 import RxCocoa
 
@@ -36,7 +37,7 @@ public final class ChannelPresenter: Presenter {
     }
     
     /// A channel (see `Channel`).
-    public var channel: Channel { return channelAtomic.get(defaultValue: .unused) }
+    public var channel: Channel { return channelAtomic.get(default: .unused) }
     
     /// A parent message for replies.
     public let parentMessage: Message?
@@ -56,9 +57,10 @@ public final class ChannelPresenter: Presenter {
     }
     
     var lastAddedOwnMessage: Message?
-    var lastParsedEvent: Event?
+    var lastParsedEvent: StreamChatClient.Event?
     var lastWebSocketEventViewChanges: ViewChanges?
     
+    #warning("Remove unreadMessageReadAtomic from ChannelPresenter")
     lazy var unreadMessageReadAtomic = Atomic<MessageRead>()
     
     /// A list of typing users (see `TypingUser`).
@@ -87,7 +89,7 @@ public final class ChannelPresenter: Presenter {
     }
     
     /// A filter to discard channel events.
-    public var eventsFilter: Event.Filter?
+    public var eventsFilter: StreamChatClient.Event.Filter?
     
     /// An observable view changes (see `ViewChanges`).
     lazy var rxChanges: Driver<ViewChanges> = rx.setupChanges()
@@ -124,7 +126,7 @@ public final class ChannelPresenter: Presenter {
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
         super.init(pageSize: .messagesPageSize)
-        parseResponse(response)
+        parse(response: response)
     }
 }
 
@@ -203,13 +205,13 @@ extension ChannelPresenter {
     /// - Parameters:
     ///   - isTyping: a user typing action.
     ///   - completion: a completion block with `Event`.
-    public func sendEvent(isTyping: Bool, _ completion: @escaping Client.Completion<Event>) {
+    public func sendEvent(isTyping: Bool, _ completion: @escaping Client.Completion<StreamChatClient.Event>) {
         rx.sendEvent(isTyping: isTyping).bindOnce(to: completion)
     }
     
     /// Send Read event if the app is active.
     /// - Returns: an observable completion.
-    public func markReadIfPossible(_ completion: @escaping Client.Completion<Void> = { _ in }) {
+    public func markReadIfPossible(_ completion: @escaping Client.Completion<StreamChatClient.Event> = { _ in }) {
         return rx.markReadIfPossible().bindOnce(to: completion)
     }
 }

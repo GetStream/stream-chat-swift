@@ -56,30 +56,30 @@ public extension Reactive where Base == Client {
     /// Stop watching the channel for a state changes.
     /// - Parameters:
     ///   - channel: a channel.
-    func stopWatching(channel: Channel) -> Observable<Void> {
+    func stopWatching(channel: Channel) -> Observable<EmptyData> {
         connectedRequest(request({ [unowned base] completion in
             base.stopWatching(channel: channel, completion)
-        })).void()
+        }))
     }
     
     /// Hide the channel from queryChannels for the user until a message is added.
     /// - Parameters:
     ///   - channel: a channel.
     ///   - clearHistory: checks if needs to remove a message history of the channel.
-    func hide(channel: Channel, clearHistory: Bool = false) -> Observable<Void> {
+    func hide(channel: Channel, clearHistory: Bool = false) -> Observable<EmptyData> {
         connectedRequest(request({ [unowned base] completion in
             base.hide(channel: channel, clearHistory: clearHistory, completion)
-        })).void()
+        }))
     }
     
     /// Removes the hidden status for a channel.
     /// - Parameters:
     ///   - channel: a channel.
     ///   - user: the current user.
-    func show(channel: Channel) -> Observable<Void> {
+    func show(channel: Channel) -> Observable<EmptyData> {
         connectedRequest(request({ [unowned base] completion in
             base.show(channel: channel, completion)
-        })).void()
+        }))
     }
     
     /// Update channel data.
@@ -200,10 +200,10 @@ public extension Reactive where Base == Client {
     func ban(user: User,
              in channel: Channel,
              timeoutInMinutes: Int? = nil,
-             reason: String? = nil) -> Observable<Void> {
+             reason: String? = nil) -> Observable<EmptyData> {
         connectedRequest(request({ [unowned base] completion in
             base.ban(user: user, in: channel, timeoutInMinutes: timeoutInMinutes, reason: reason, completion)
-        })).void()
+        }))
     }
     
     // MARK: - Invite Requests
@@ -281,19 +281,19 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - url: an image URL.
     ///   - channel: a channel.
-    func deleteImage(url: URL, from channel: Channel) -> Observable<Void> {
+    func deleteImage(url: URL, from channel: Channel) -> Observable<EmptyData> {
         connectedRequest(request({ [unowned base] completion in
             base.deleteImage(url: url, from: channel, completion)
-        })).void()
+        }))
     }
     
     /// Delete a file with a given URL.
     /// - Parameters:
     ///   - url: a file URL.
     ///   - channel: a channel.
-    func deleteFile(url: URL, from channel: Channel) -> Observable<Void> {
+    func deleteFile(url: URL, from channel: Channel) -> Observable<EmptyData> {
         connectedRequest(request({ [unowned base] completion in
             base.deleteFile(url: url, from: channel, completion)
-        })).void()
+        }))
     }
 }

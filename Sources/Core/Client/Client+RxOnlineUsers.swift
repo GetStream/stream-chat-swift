@@ -14,13 +14,12 @@ public extension Reactive where Base == Client {
     
     /// Observe an online users from a given channel.
     func onlineUsers(channel: Channel) -> Observable<Set<User>> {
-        connected
-            .flatMapLatest { self.queryChannel(channel, options: [.presence]) }
+        connectedRequest(queryChannel(channel, options: [.presence])
             .map { $0.channel }
             .flatMapLatest({ channel -> Observable<Set<User>> in
                 self.onEvent(eventType: .userPresenceChanged, channel: channel)
                     .map { _ in channel.onlineUsers }
                     .startWith(channel.onlineUsers)
-            })
+            }))
     }
 }

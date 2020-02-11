@@ -14,7 +14,10 @@ public typealias ProgressRequest<T: Decodable> = (@escaping Client.Progress, @es
 
 /// A response type with a progress of a sending data.
 /// The progress property can have float values from 0.0 to 1.0.
-public typealias ProgressResponse<T: Decodable> = (progress: Float, result: T?)
+public struct ProgressResponse<T: Decodable>: Decodable {
+    let progress: Float
+    let value: T?
+}
 
 extension Client: ReactiveCompatible {}
 
@@ -38,10 +41,10 @@ public extension Reactive where Base == Client {
     func progressRequest<T: Decodable>(_ request: @escaping ProgressRequest<T>) -> Observable<ProgressResponse<T>> {
         .create { observer in
             let urlSessionTask = request({ progress in
-                observer.onNext((progress, nil))
+                observer.onNext(.init(progress: progress, value: nil))
             }, { result in
                 if let value = result.value {
-                    observer.onNext((1, value))
+                    observer.onNext(.init(progress: 1, value: value))
                     observer.onCompleted()
                 } else if let error = result.error {
                     observer.onError(error)

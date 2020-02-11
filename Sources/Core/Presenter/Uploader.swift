@@ -188,7 +188,7 @@ public final class UploaderItem: Equatable {
             .do(onNext: { [weak self] progressResponse in
                 self?.lastProgress = progressResponse.progress
                 
-                guard let self = self, let fileURL = progressResponse.result else {
+                guard let self = self, let fileURL = progressResponse.value else {
                     return
                 }
                 
