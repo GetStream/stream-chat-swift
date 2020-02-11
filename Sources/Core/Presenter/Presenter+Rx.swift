@@ -7,18 +7,24 @@
 //
 
 import Foundation
+import StreamChatClient
 import RxSwift
 import RxCocoa
 
 extension Presenter: ReactiveCompatible {}
 
 extension Reactive  where Base: Presenter {
+    
+    public var connectionErrors: Driver<ViewChanges> {
+        return base.rxConnectionErrors
+    }
+    
     /// Observe connection errors as `ViewChanges`.
-    var connectionErrors: Driver<ViewChanges> {
-        return Client.shared.rx.connection
+    func setupConnectionErrors() -> Driver<ViewChanges> {
+        Client.shared.rx.connection
             .map({ connection -> ViewChanges? in
-                if case .disconnected(let error) = connection, let webSocketError = error as? ClientErrorResponse {
-                    return .error(AnyError(error: webSocketError))
+                if case .disconnected(let error) = connection, let errorResponse = error as? ClientErrorResponse {
+                    return .error(AnyError(errorResponse))
                 }
                 
                 if case .notConnected = connection {
@@ -51,7 +57,7 @@ public extension Reactive  where Base: Presenter {
                     base.next = base.pageSize
                 }
             })
-            .filter { $0.isConnected } // Client.shared.database != nil ||
+            .filter { $0.isConnected }
             .void()
         
         return Observable.combineLatest(base.loadPagination.asObserver().startWith(pagination), connectionObservable)
