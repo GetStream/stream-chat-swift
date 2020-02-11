@@ -68,7 +68,7 @@ extension Client {
     func setupWebSocketOnConnect(_ connection: Connection) {
         lastConnection = connection
         
-        guard isExpiredTokenInProgress, case .connected = connection else {
+        guard isExpiredTokenInProgress, connection.isConnected else {
             onConnect(connection)
             return
         }
