@@ -85,34 +85,17 @@ public struct User: Codable {
     }
     
     /// Check if the user is the current user.
-    public var isCurrent: Bool {
-        return self == Client.shared.user
-    }
-    
+    public var isCurrent: Bool { self == Client.shared.user }
     /// The current user.
-    public static var current: User {
-        return Client.shared.user
-    }
-    
+    public static var current: User { Client.shared.user }
     /// Checks if the user can be muted.
-    public var canBeMuted: Bool {
-        return !isCurrent
-    }
-    
+    public var canBeMuted: Bool { !isCurrent }
     /// Checks if the user is muted.
-    public var isMuted: Bool {
-        return isCurrent ? false : Client.shared.user.mutedUsers.first(where: { $0.user == self }) != nil
-    }
-    
+    public var isMuted: Bool { isCurrent ? false : Client.shared.user.mutedUsers.first(where: { $0.user == self }) != nil }
     /// Returns the user as a member.
-    public var asMember: Member {
-        return Member(self)
-    }
-    
+    public var asMember: Member { Member(self) }
     /// Checks if the user is flagged (locally).
-    var isFlagged: Bool {
-        return User.flaggedUsers.contains(self)
-    }
+    public var isFlagged: Bool { User.flaggedUsers.contains(self) }
     
     public var isAnonymous: Bool {
         if case .anonymous = role {
