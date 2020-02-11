@@ -25,9 +25,7 @@ public struct AttachmentFile: Codable {
     public static let sizeFormatter = ByteCountFormatter()
     
     /// A formatted file size.
-    public var sizeString: String {
-        return AttachmentFile.sizeFormatter.string(fromByteCount: size)
-    }
+    public var sizeString: String { AttachmentFile.sizeFormatter.string(fromByteCount: size) }
     
     /// Init an attachment file.
     /// - Parameters:

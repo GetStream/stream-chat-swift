@@ -15,8 +15,10 @@ public typealias ProgressRequest<T: Decodable> = (@escaping Client.Progress, @es
 /// A response type with a progress of a sending data.
 /// The progress property can have float values from 0.0 to 1.0.
 public struct ProgressResponse<T: Decodable>: Decodable {
-    let progress: Float
-    let value: T?
+    /// A request uploading progress from 0.0 to 1.0.
+    public let progress: Float
+    /// A response value.
+    public let value: T?
 }
 
 extension Client: ReactiveCompatible {}

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChatClient
 import StreamChatCore
 
 // MARK: - Table Footer View
@@ -26,7 +27,7 @@ extension ChatViewController {
             return
         }
         
-        guard Client.shared.webSocket.isConnected else {
+        guard Client.shared.isConnected else {
             footerView.isHidden = false
             footerView.textLabel.text = "Connecting..."
             footerView.activityIndicatorView.startAnimating()

@@ -47,9 +47,7 @@ public struct Attachment: Codable {
     public let extraData: ExtraData?
     
     /// Check if the attachment is an image.
-    public var isImage: Bool {
-        return type.isImage && text == nil
-    }
+    public var isImage: Bool { type.isImage && text == nil }
     
     /// Init an attachment.
     ///
@@ -213,14 +211,9 @@ public extension Attachment {
         public let text: String
         
         /// Check if the action is cancel button.
-        public var isCancelled: Bool {
-            return value == "cancel"
-        }
-        
+        public var isCancelled: Bool { value == "cancel" }
         /// Check if the action is send button.
-        public var isSend: Bool {
-            return value == "send"
-        }
+        public var isSend: Bool { value == "send" }
         
         /// Init an attachment action.
         /// - Parameters:

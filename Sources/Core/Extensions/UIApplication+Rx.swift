@@ -1,5 +1,5 @@
 //
-//  RxApplication.swift
+//  UIApplication+Rx.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 06/02/2020.
@@ -31,7 +31,7 @@ extension UIApplication {
 }
 
 extension Reactive where Base == UIApplication {
-    var applicationState: Observable<UIApplication.State> {
+    public var applicationState: Observable<UIApplication.State> {
         base.rxApplicationState
     }
 }
