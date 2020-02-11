@@ -32,9 +32,7 @@ public struct Reaction: Codable, Equatable {
     public let extraData: ExtraData?
     
     /// Check if the reaction if by the current user.
-    public var isOwn: Bool {
-        return user?.isCurrent ?? false
-    }
+    public var isOwn: Bool { user?.isCurrent ?? false }
     
     /// Init a reaction.
     /// - Parameters:
