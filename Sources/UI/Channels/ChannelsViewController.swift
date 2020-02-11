@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChatClient
 import StreamChatCore
 import RxSwift
 import RxCocoa
@@ -230,10 +231,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
             }
             
         case .disconnected:
-            if User.current == nil {
-                reset()
-                return
-            }
+            reset()
             
         case .error:
             break

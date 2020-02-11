@@ -15,9 +15,7 @@ public enum ChannelType: Codable, Hashable {
     case custom(String)
     
     /// A channel type title.
-    public var title: String {
-        return rawValue.capitalized
-    }
+    public var title: String { rawValue.capitalized }
     
     /// A raw value of the channel type.
     public var rawValue: String {

@@ -157,7 +157,7 @@
 		8ACB0E9F23EB13CE0066343A /* StreamChatClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8ACB0EA323EB15730066343A /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A99123141D2400B8EB97 /* Tests.swift */; };
 		8ACB0EA423EB18A00066343A /* AssociatedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A50697A23CE064C009F127A /* AssociatedValue.swift */; };
-		8ACB0EA823EC5F510066343A /* RxApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACB0EA723EC5F510066343A /* RxApplication.swift */; };
+		8ACB0EA823EC5F510066343A /* UIApplication+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACB0EA723EC5F510066343A /* UIApplication+Rx.swift */; };
 		8ACF4A7723F1959D00961356 /* User+RxRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACF4A7523F18C2A00961356 /* User+RxRequests.swift */; };
 		8AD0A9942314252700B8EB97 /* ClientSetupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A9932314252700B8EB97 /* ClientSetupTests.swift */; };
 		8AD0A9962314394200B8EB97 /* ChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD0A9952314394200B8EB97 /* ChannelTests.swift */; };
@@ -429,7 +429,7 @@
 		8AC643C122F9AAD7007373FF /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		8AC8C8B322F2E14F003BD1D5 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8AC8C8B722F43D16003BD1D5 /* Client+RxUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxUser.swift"; sourceTree = "<group>"; };
-		8ACB0EA723EC5F510066343A /* RxApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxApplication.swift; sourceTree = "<group>"; };
+		8ACB0EA723EC5F510066343A /* UIApplication+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Rx.swift"; sourceTree = "<group>"; };
 		8ACF4A7523F18C2A00961356 /* User+RxRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+RxRequests.swift"; sourceTree = "<group>"; };
 		8AD0A99123141D2400B8EB97 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		8AD0A9932314252700B8EB97 /* ClientSetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSetupTests.swift; sourceTree = "<group>"; };
@@ -726,6 +726,7 @@
 				8A92BAFD23C8CB930085184F /* Message+Requests.swift */,
 				8AD5ED2822E9BA39005CFAC9 /* MessageAction.swift */,
 				8AD5ED2422E9BA39005CFAC9 /* MessageRead.swift */,
+				8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */,
 				8A4601EA23D856900025EFF0 /* Attachment */,
 			);
 			path = Message;
@@ -791,7 +792,6 @@
 				8A4601ED23D856E10025EFF0 /* User */,
 				8A4601EB23D856A20025EFF0 /* Channel */,
 				8A4601EC23D856C60025EFF0 /* Message */,
-				8AD5ED2922E9BA39005CFAC9 /* Reaction.swift */,
 				8AF4DCB923757AF300F534F5 /* SearchQuery.swift */,
 				8A04964E22EF1A8900E94795 /* QueryOptions.swift */,
 				8A7EE0192385B33900BDB18D /* BanEnabling.swift */,
@@ -1238,7 +1238,7 @@
 				8AD5ED1022E9BA39005CFAC9 /* URL+Media.swift */,
 				8A50697A23CE064C009F127A /* AssociatedValue.swift */,
 				8AD0A99123141D2400B8EB97 /* Tests.swift */,
-				8ACB0EA723EC5F510066343A /* RxApplication.swift */,
+				8ACB0EA723EC5F510066343A /* UIApplication+Rx.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1832,7 +1832,7 @@
 				8A410CA023EC81EB0049649E /* Client+RxMessage.swift in Sources */,
 				8AD5ED4E22E9BA5A005CFAC9 /* RxFunctions.swift in Sources */,
 				8ACB0EA323EB15730066343A /* Tests.swift in Sources */,
-				8ACB0EA823EC5F510066343A /* RxApplication.swift in Sources */,
+				8ACB0EA823EC5F510066343A /* UIApplication+Rx.swift in Sources */,
 				8AD5ED7122E9BA5A005CFAC9 /* Notifications.swift in Sources */,
 				8AD5ED5622E9BA5A005CFAC9 /* Channel.swift in Sources */,
 				8A0C293A241688EF008BAB60 /* Bundle+Extensions.swift in Sources */,

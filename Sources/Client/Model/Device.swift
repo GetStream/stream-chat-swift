@@ -30,7 +30,5 @@ public struct Device: Codable, Equatable {
 
 extension Data {
     /// Generates a device token string from the device token data.
-    var deviceToken: String {
-        return map { String(format: "%02x", $0) }.joined()
-    }
+    var deviceToken: String { map { String(format: "%02x", $0) }.joined() }
 }
