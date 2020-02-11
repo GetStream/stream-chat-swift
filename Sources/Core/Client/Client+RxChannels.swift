@@ -14,18 +14,25 @@ import RxSwift
 
 public extension Reactive where Base == Client {
     
-    /// A message search.
+    /// A message search. Creates a `SearchQuery` with given parameters and call `search` with it.
     /// - Parameters:
     ///   - filter: a filter for channels, e.g. `"members".in(["john"])`
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     func search(filter: Filter = .none, query: String, pagination: Pagination = .channelsPageSize) -> Observable<[Message]> {
+        search(query: .init(filter: filter, query: query, pagination: pagination))
+    }
+    
+    /// A message search with a given query (see `SearchQuery`).
+    /// - Parameter query: a search query.
+    ///   - filter: a filter for channels, e.g. `"members".in(["john"])`
+    func search(query: SearchQuery) -> Observable<[Message]> {
         connectedRequest(request({ [unowned base] completion in
-            base.search(filter: filter, query: query, pagination: pagination, completion)
+            base.search(query: query, completion)
         }))
     }
     
-    /// Requests channels with a given query.
+    /// Requests channels with given parameters. Creates a `ChannelsQuery` and call the `queryChannels` with it.
     /// - Parameters:
     ///   - filter: a channels filter, e.g. "members".in([User.current])
     ///   - sort: a sorting list for channels.
@@ -44,6 +51,14 @@ public extension Reactive where Base == Client {
                                messagesLimit: messagesLimit,
                                options: options,
                                completion)
+        }))
+    }
+    
+    /// Requests channels with a given query (see `ChannelsQuery`).
+    /// - Parameter query: a channels query.
+    func queryChannels(query: ChannelsQuery) -> Observable<[ChannelResponse]> {
+        connectedRequest(request({ [unowned base] completion in
+            base.queryChannels(query: query, completion)
         }))
     }
 }
