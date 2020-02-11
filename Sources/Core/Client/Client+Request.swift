@@ -56,6 +56,35 @@ extension Client {
         }
     }
     
+    func checkLatestVersion() {
+        // Check latest pod version and log warning if there's a new version
+        guard let podUrl = URL(string: "https://trunk.cocoapods.org/api/v1/pods/StreamChat") else { return }
+        
+        // swiftlint:disable nesting
+        struct PodTrunk: Codable {
+            struct Version: Codable {
+                let name: String
+            }
+            
+            let versions: [Version]
+        }
+        // swiftlint:enable nesting
+        
+        let versionTask = URLSession(configuration: .default).dataTask(with: podUrl) { data, _, error in
+            guard let data = data, error == nil else {
+                return
+            }
+            do {
+                let podTrunk = try JSONDecoder().decode(PodTrunk.self, from: data)
+                if let latestVersion = podTrunk.versions.last?.name, latestVersion > Client.version {
+                    ClientLogger.logger("📢", "", "StreamChat \(latestVersion) is released (you are on \(Client.version))."
+                        + "It's recommended to update to the latest version")
+                }
+            } catch {}
+        }
+        versionTask.resume()
+    }
+    
     /// Send a request.
     ///
     /// - Parameters:
