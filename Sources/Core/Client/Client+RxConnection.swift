@@ -55,5 +55,5 @@ extension Reactive where Base == Client {
     public var connection: Observable<Connection> { base.rxConnection }
     
     /// An observable connected event.
-    public var connected: Observable<Void> { connection.filter({ $0 == .connected }).void().share(replay: 1) }
+    public var connected: Observable<Void> { connection.filter({ $0.isConnected }).void().share(replay: 1) }
 }
