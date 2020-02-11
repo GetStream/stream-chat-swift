@@ -23,7 +23,8 @@ public extension Reactive where Base == Client {
         }))
     }
     
-    /// Request for a channel data, e.g. messages, members, read states, etc
+    /// Request for a channel data, e.g. messages, members, read states, etc.
+    /// Creates a `ChannelQuery` with given parameters and call `queryChannel` with it.
     /// - Parameters:
     ///   - channel: a channel.
     ///   - pagination: a pagination for messages (see `Pagination`).
@@ -31,8 +32,14 @@ public extension Reactive where Base == Client {
     func queryChannel(_ channel: Channel,
                       pagination: Pagination = .none,
                       options: QueryOptions = []) -> Observable<ChannelResponse> {
+        queryChannel(query: .init(channel: channel, pagination: pagination, options: options))
+    }
+    
+    /// Request for a channel data, e.g. messages, members, read states, etc.
+    /// - Parameter query: a channel query.
+    func queryChannel(query: ChannelQuery) -> Observable<ChannelResponse> {
         connectedRequest(request({ [unowned base] completion in
-            base.queryChannel(channel, pagination: pagination, options: options, completion)
+            base.queryChannel(query: query, completion)
         }))
     }
     
