@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChatClient
 import RxSwift
 
 /// An uploader manager.

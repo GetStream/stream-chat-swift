@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import StreamChatClient
 
 /// A view changes.
 ///
 /// ViewChanges describes how a view should be updated depends on a data response.
-public enum ViewChanges: Equatable {
+public enum ViewChanges: Equatable, Decodable {
+    
     /// No changes.
     case none
     /// Reload all views.
@@ -30,6 +32,10 @@ public enum ViewChanges: Equatable {
     case disconnected
     /// Error message.
     case error(AnyError)
+    
+    public init(from decoder: Decoder) throws {
+        self = .none
+    }
 }
 
 extension ViewChanges: CustomStringConvertible {
