@@ -39,7 +39,7 @@ public extension Reactive where Base == Channel {
     }
     
     /// Stop watching the channel for a state changes.
-    func stopWatching() -> Observable<Void> {
+    func stopWatching() -> Observable<EmptyData> {
         Client.shared.rx.stopWatching(channel: base)
     }
     
@@ -47,14 +47,14 @@ public extension Reactive where Base == Channel {
     /// - Parameters:
     ///   - user: the current user.
     ///   - clearHistory: checks if needs to remove a message history of the channel.
-    func hide(clearHistory: Bool = false) -> Observable<Void> {
+    func hide(clearHistory: Bool = false) -> Observable<EmptyData> {
         Client.shared.rx.hide(channel: base, clearHistory: clearHistory)
     }
     
     /// Removes the hidden status for a channel.
     /// - Parameters:
     ///   - user: the current user.
-    func show(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Observable<Void> {
+    func show(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Observable<EmptyData> {
         Client.shared.rx.show(channel: base)
     }
     
@@ -131,7 +131,7 @@ public extension Reactive where Base == Channel {
     /// - Parameters:
     ///   - user: a user.
     ///   - timeoutInMinutes: for a timeout in minutes.
-    func ban(user: User, timeoutInMinutes: Int? = nil, reason: String? = nil) -> Observable<Void> {
+    func ban(user: User, timeoutInMinutes: Int? = nil, reason: String? = nil) -> Observable<EmptyData> {
         Client.shared.rx.ban(user: user, in: base, timeoutInMinutes: timeoutInMinutes, reason: reason)
     }
     
@@ -181,13 +181,13 @@ public extension Reactive where Base == Channel {
     
     /// Delete an image with a given URL.
     /// - Parameter url: an image URL.
-    func deleteImage(url: URL) -> Observable<Void> {
+    func deleteImage(url: URL) -> Observable<EmptyData> {
         Client.shared.rx.deleteImage(url: url, from: base)
     }
     
     /// Delete a file with a given URL.
     /// - Parameter url: a file URL.
-    func deleteFile(url: URL) -> Observable<Void> {
+    func deleteFile(url: URL) -> Observable<EmptyData> {
         Client.shared.rx.deleteFile(url: url, from: base)
     }
 }

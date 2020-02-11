@@ -47,7 +47,7 @@ public extension Reactive  where Base: Presenter {
     /// - Parameter pagination: an initial page size (see `Pagination`).
     /// - Returns: an observable pagination for a request.
     func prepareRequest(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
-        let connectionObservable: Observable<Void> = Client.shared.rx.connection
+        let connectionObservable = Client.shared.rx.connection
             .do(onNext: { [weak base] connection in
                 if !connection.isConnected,
                     let base = base,
@@ -58,7 +58,6 @@ public extension Reactive  where Base: Presenter {
                 }
             })
             .filter { $0.isConnected }
-            .void()
         
         return Observable.combineLatest(base.loadPagination.asObserver().startWith(pagination), connectionObservable)
             .map { pagination, _ in pagination }

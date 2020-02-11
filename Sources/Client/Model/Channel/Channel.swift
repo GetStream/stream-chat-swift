@@ -396,7 +396,7 @@ private extension Array where Element == Member {
 }
 
 extension Channel {
-    static let unused = Channel(type: .messaging, id: "5h0u1d-n3v3r-b3-u5'd")
+    public static let unused = Channel(type: .messaging, id: "5h0u1d-n3v3r-b3-u5'd")
 }
 
 // MARK: - Supporting Structs

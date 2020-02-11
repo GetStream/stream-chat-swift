@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import StreamChatClient
 import RxSwift
 import RxCocoa
 
@@ -15,7 +16,7 @@ import RxCocoa
 extension ChannelPresenter {
     
     @discardableResult
-    func parseResponse(_ response: ChannelResponse) -> ViewChanges {
+    func parse(response: ChannelResponse) -> ViewChanges {
         channelAtomic.set(response.channel)
         let isNextPage = next != pageSize
         var items = isNextPage ? self.items : []
@@ -27,7 +28,7 @@ extension ChannelPresenter {
         }
         
         if InternetConnection.shared.isAvailable && channel.config.readEventsEnabled {
-            unreadMessageReadAtomic.set(response.unreadMessageRead)
+            unreadMessageReadAtomic.set(response.channel.unreadMessageRead)
             
             if !isNextPage {
                 messageReadsToMessageId = [:]
@@ -38,7 +39,6 @@ extension ChannelPresenter {
         let messageReads = InternetConnection.shared.isAvailable && channel.config.readEventsEnabled ? response.messageReads : []
         parse(response.messages, messageReads: messageReads, to: &items, isNextPage: isNextPage)
         self.items = items
-        response.channel.calculateUnreadCount(response)
         
         if response.messages.isEmpty {
             return isLoadingIndex == -1 ? .none : .itemRemoved(isLoadingIndex, items)
@@ -55,7 +55,7 @@ extension ChannelPresenter {
         return .reloaded((items.count - 1), items)
     }
     
-    func parseReplies(_ messages: [Message]) -> ViewChanges {
+    func parse(replies messages: [Message]) -> ViewChanges {
         guard let parentMessage = parentMessage else {
             return .none
         }
@@ -84,10 +84,6 @@ extension ChannelPresenter {
                        to items: inout [PresenterItem],
                        startIndex: Int = 0,
                        isNextPage: Bool) {
-        guard let currentUser = User.current else {
-            return
-        }
-        
         var yesterdayStatusAdded = false
         var todayStatusAdded = false
         var index = startIndex
@@ -139,7 +135,7 @@ extension ChannelPresenter {
                     var readUsers: [User] = []
                     
                     messageReads.forEach { messageRead in
-                        if messageRead.user != currentUser {
+                        if messageRead.user != User.current {
                             if messageRead.lastReadDate > ownMessage.created {
                                 readUsers.append(messageRead.user)
                                 messageReadsToMessageId[messageRead] = ownMessage.id
