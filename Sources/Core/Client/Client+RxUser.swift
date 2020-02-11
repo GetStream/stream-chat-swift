@@ -14,14 +14,22 @@ import RxSwift
 
 public extension Reactive where Base == Client {
     
-    /// Requests users with a given query.
+    /// Requests users with given parameters. Creates a `UsersQuery` and call the `queryUsers` with it.
     /// - Parameters:
-    ///   - query: a users query (see `UsersQuery`).
+    ///   - filter: a user filter.
+    ///   - sort: a sorting.
+    ///   - options: a query options.
     func queryUsers(filter: Filter,
                     sort: Sorting? = nil,
                     options: QueryOptions = []) -> Observable<[User]> {
+        queryUsers(query: .init(filter: filter, sort: sort, options: options))
+    }
+    
+    /// Requests users with a given query (see `UsersQuery`).
+    /// - Parameter query: a users query (see `UsersQuery`).
+    func queryUsers(query: UsersQuery) -> Observable<[User]> {
         connectedRequest(request({ [unowned base] completion in
-            base.queryUsers(filter: filter, sort: sort, options: options, completion)
+            base.queryUsers(query: query, completion)
         }))
     }
     
