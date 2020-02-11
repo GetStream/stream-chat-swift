@@ -14,7 +14,7 @@
     <a title="Client Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (89% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (85% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -59,6 +59,9 @@
                 <a href="../Classes/Client/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/Client/Method.html">– Method</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
@@ -90,6 +93,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/WebSocket.html">WebSocket</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebSocket.html#/s:14StreamChatCore9WebSocketC14ErrorContainerV">– ErrorContainer</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/WebSocket/Connection.html">– Connection</a>
@@ -180,6 +186,12 @@
                 <a href="../Extensions/DateFormatter/Stream.html">– Stream</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Extensions/Dictionary.html">Dictionary</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Encodable.html">Encodable</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Extensions/Int.html">Int</a>
               </li>
               <li class="nav-group-task">
@@ -189,13 +201,13 @@
                 <a href="../Extensions/JSONEncoder.html">JSONEncoder</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/ObservableType.html">ObservableType</a>
+                <a href="../Extensions/JSONEncoder/DataEncodingStrategy.html">– DataEncodingStrategy</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions.html#/s:12ReachabilityAAC">Reachability</a>
+                <a href="../Extensions/JSONEncoder/DateEncodingStrategy.html">– DateEncodingStrategy</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/Reactive.html">Reactive</a>
+                <a href="../Extensions/Optional.html">Optional</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Result.html">Result</a>
@@ -556,7 +568,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">database</span><span class="p">:</span> <span class="kt"><a href="../Protocols/Database.html">Database</a></span><span class="p">?</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">database</span><span class="p">:</span> <span class="kt"><a href="../Protocols/Database.html">Database</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1187,6 +1199,33 @@ You can do requests directly.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore6ClientC17updateUnreadCountySbAA9WebSocketC8ResponseVF"></a>
+                    <a name="//apple_ref/swift/Method/updateUnreadCount(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC17updateUnreadCountySbAA9WebSocketC8ResponseVF">updateUnreadCount(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">updateUnreadCount</span><span class="p">(</span><span class="n">_</span> <span class="nv">response</span><span class="p">:</span> <span class="kt"><a href="../Classes/WebSocket.html">WebSocket</a></span><span class="o">.</span><span class="kt">Response</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore6ClientC7versionSSvpZ"></a>
                     <a name="//apple_ref/swift/Variable/version" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore6ClientC7versionSSvpZ">version</a>
@@ -1205,6 +1244,60 @@ You can do requests directly.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">version</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC15setupURLSession5tokenSo12NSURLSessionCSS_tF"></a>
+                    <a name="//apple_ref/swift/Method/setupURLSession(token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC15setupURLSession5tokenSo12NSURLSessionCSS_tF">setupURLSession(token:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">setupURLSession</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:14StreamChatCore5Tokena">Token</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">URLSession</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC11authHeaders5tokenSDyS2SGSS_tF"></a>
+                    <a name="//apple_ref/swift/Method/authHeaders(token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC11authHeaders5tokenSDyS2SGSS_tF">authHeaders(token:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">authHeaders</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:14StreamChatCore5Tokena">Token</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">String</span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
@@ -2280,6 +2373,155 @@ Then you send it to the client to complete the setup with a callback function fr
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore6ClientC18touchTokenProviderSbyF"></a>
+                    <a name="//apple_ref/swift/Method/touchTokenProvider()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC18touchTokenProviderSbyF">touchTokenProvider()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">touchTokenProvider</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Connection"></a>
+                <a name="//apple_ref/swift/Section/Connection" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Connection"></a>
+                  <h3 class="section-name"><p>Connection</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC26createObservableConnection7RxSwift0F0CyAA9WebSocketC0G0OGyF"></a>
+                    <a name="//apple_ref/swift/Method/createObservableConnection()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC26createObservableConnection7RxSwift0F0CyAA9WebSocketC0G0OGyF">createObservableConnection()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">createObservableConnection</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Classes/WebSocket.html">WebSocket</a></span><span class="o">.</span><span class="kt">Connection</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC16connectedRequesty7RxSwift10ObservableCyxGAA8EndpointOSeRzlF"></a>
+                    <a name="//apple_ref/swift/Method/connectedRequest(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC16connectedRequesty7RxSwift10ObservableCyxGAA8EndpointOSeRzlF">connectedRequest(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">connectedRequest</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">endpoint</span><span class="p">:</span> <span class="kt"><a href="../Enums/Endpoint.html">Endpoint</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC16connectedRequesty7RxSwift10ObservableCyxGAHlF"></a>
+                    <a name="//apple_ref/swift/Method/connectedRequest(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC16connectedRequesty7RxSwift10ObservableCyxGAHlF">connectedRequest(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">connectedRequest</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC14setupWebSocket4user5tokenAA0fG0CSgAA4UserV_SStF"></a>
+                    <a name="//apple_ref/swift/Method/setupWebSocket(user:token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC14setupWebSocket4user5tokenAA0fG0CSgAA4UserV_SStF">setupWebSocket(user:token:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">setupWebSocket</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">,</span> <span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:14StreamChatCore5Tokena">Token</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/WebSocket.html">WebSocket</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore6ClientC6ConfigV"></a>
                     <a name="//apple_ref/swift/Struct/Config" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore6ClientC6ConfigV">Config</a>
@@ -2305,12 +2547,40 @@ Then you send it to the client to complete the setup with a callback function fr
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore6ClientC6MethodO"></a>
+                    <a name="//apple_ref/swift/Enum/Method" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC6MethodO">Method</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="../Classes/Client/Method.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">enum</span> <span class="kt">Method</span> <span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-02-11)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

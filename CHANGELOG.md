@@ -1,4 +1,19 @@
+# CHANGELOG
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+---
+
 # Upcoming
+
+### 🔄 Changed
+
+### ✅ Added
+
+### 🐞 Fixed
+
+# [1.5.6](https://github.com/GetStream/stream-chat-swift/releases/tag/1.5.6)
+_February 11, 2020_
 
 ### 🔄 Changed
 - Failed uploads now retry up to 3 times [#85](https://github.com/GetStream/stream-chat-swift/issues/85)
@@ -14,7 +29,7 @@
 - Fixed previewing uploaded videos crashing on iOS12 [#83](https://github.com/GetStream/stream-chat-swift/issues/83)
 - Fixed pan gestures on ComposerView affect chat table view [#95](https://github.com/GetStream/stream-chat-swift/issues/95)
 
-# 1.5.5
+# [1.5.5](https://github.com/GetStream/stream-chat-swift/releases/tag/1.5.5)
 _January 24, 2020_
 
 ### 🔄 Changed
@@ -55,7 +70,7 @@ _January 24, 2020_
 - Fixed WebView crashing when file picker is presented in a website in iPhones. [#69](https://github.com/GetStream/stream-chat-swift/issues/69)
 - Fixed messages not being grouped correctly after one day. [#72](https://github.com/GetStream/stream-chat-swift/issues/72)
 
-# 1.5.4
+# [1.5.4](https://github.com/GetStream/stream-chat-swift/releases/tag/1.5.4)
 _December 16th, 2019_
 
 ### ⚠️ Breaking Changes

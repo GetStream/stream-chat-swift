@@ -14,7 +14,7 @@
     <a title="UIColor Extension Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChat Docs</a> (87% documented)</p>
+        <p><a href="../index.html">StreamChat Docs</a> (73% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -99,7 +99,19 @@
             <a href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Extensions/Bundle.html">Bundle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Bundle/InfoKey.html">– InfoKey</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Extensions/CGFloat.html">CGFloat</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/CGRect.html">CGRect</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/CharacterSet.html">CharacterSet</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/IndexPath.html">IndexPath</a>
@@ -108,13 +120,25 @@
                 <a href="../Extensions.html#/s:Si">Int</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions.html#/s:SS">String</a>
+                <a href="../Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/StringProtocol.html">StringProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UICollectionView.html">UICollectionView</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UICollectionViewCell.html">UICollectionViewCell</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIColor.html">UIColor</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIDevice.html">UIDevice</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIDevice/ScreenSize.html">– ScreenSize</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIDocumentPickerViewController.html">UIDocumentPickerViewController</a>
@@ -138,10 +162,28 @@
                 <a href="../Extensions/UIImage/Logo.html">– Logo</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Extensions/UIImagePickerController.html">UIImagePickerController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UILabel.html">UILabel</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIStackView.html">UIStackView</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Extensions/UITableView.html">UITableView</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UITableViewCell.html">UITableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UITapGestureRecognizer.html">UITapGestureRecognizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIView.html">UIView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIView.html#/s:So6UIViewC10StreamChatE5ChainC">– Chain</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/UIViewController.html">UIViewController</a>
@@ -529,6 +571,97 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:So7UIColorC10StreamChatE6isDarkSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isDark" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7UIColorC10StreamChatE6isDarkSbvp">isDark</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check the color is it&rsquo;s dark. This is useful when you need to choose
+the black or white text color for some background color.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    <p><code>let textColor: UIColor = backgroundColor.isDark ? .white : .black</code></p>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isDark</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>true if the color is dark.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So7UIColorC10StreamChatE7isClearSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isClear" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7UIColorC10StreamChatE7isClearSbvp">isClear</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isClear</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So7UIColorC10StreamChatE21oppositeBlackAndWhiteABvp"></a>
+                    <a name="//apple_ref/swift/Property/oppositeBlackAndWhite" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7UIColorC10StreamChatE21oppositeBlackAndWhiteABvp">oppositeBlackAndWhite</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">oppositeBlackAndWhite</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:So7UIColorC10StreamChatE10blendAlpha10coverColorA2B_tF"></a>
                     <a name="//apple_ref/swift/Method/blendAlpha(coverColor:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:So7UIColorC10StreamChatE10blendAlpha10coverColorA2B_tF">blendAlpha(coverColor:)</a>
@@ -576,12 +709,120 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So7UIColorC10StreamChatE9rgbaTuple12CoreGraphics7CGFloatV1r_AG1gAG1bAG1atyF"></a>
+                    <a name="//apple_ref/swift/Method/rgbaTuple()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7UIColorC10StreamChatE9rgbaTuple12CoreGraphics7CGFloatV1r_AG1gAG1bAG1atyF">rgbaTuple()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">rgbaTuple</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="nv">r</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">,</span> <span class="nv">g</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">,</span> <span class="nv">b</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">,</span> <span class="nv">a</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So7UIColorC10StreamChatE6randomABvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/random" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7UIColorC10StreamChatE6randomABvpZ">random</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="k">var</span> <span class="nv">random</span><span class="p">:</span> <span class="kt">UIColor</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So7UIColorC10StreamChatE11transparent3hue10brightnessAB12CoreGraphics7CGFloatV_AItFZ"></a>
+                    <a name="//apple_ref/swift/Method/transparent(hue:brightness:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7UIColorC10StreamChatE11transparent3hue10brightnessAB12CoreGraphics7CGFloatV_AItFZ">transparent(hue:brightness:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Create a transparent color with a given hue.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">transparent</span><span class="p">(</span><span class="nv">hue</span><span class="p">:</span> <span class="kt">CGFloat</span><span class="p">,</span> <span class="nv">brightness</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UIColor</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:So7UIColorC10StreamChatE5color2by6isDarkABSS_SbtFZ"></a>
+                    <a name="//apple_ref/swift/Method/color(by:isDark:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:So7UIColorC10StreamChatE5color2by6isDarkABSS_SbtFZ">color(by:isDark:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="kd">func</span> <span class="nf">color</span><span class="p">(</span><span class="n">by</span> <span class="nv">string</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">isDark</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UIColor</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-02-11)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

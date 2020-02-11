@@ -14,7 +14,7 @@
     <a title="WebSocket Class Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="../index.html">StreamChatCore Docs</a> (89% documented)</p>
+        <p><a href="../index.html">StreamChatCore Docs</a> (85% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -59,6 +59,9 @@
                 <a href="../Classes/Client/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/Client/Method.html">– Method</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
@@ -90,6 +93,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/WebSocket.html">WebSocket</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebSocket.html#/s:14StreamChatCore9WebSocketC14ErrorContainerV">– ErrorContainer</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Classes/WebSocket/Connection.html">– Connection</a>
@@ -180,6 +186,12 @@
                 <a href="../Extensions/DateFormatter/Stream.html">– Stream</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Extensions/Dictionary.html">Dictionary</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Encodable.html">Encodable</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Extensions/Int.html">Int</a>
               </li>
               <li class="nav-group-task">
@@ -189,13 +201,13 @@
                 <a href="../Extensions/JSONEncoder.html">JSONEncoder</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/ObservableType.html">ObservableType</a>
+                <a href="../Extensions/JSONEncoder/DataEncodingStrategy.html">– DataEncodingStrategy</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions.html#/s:12ReachabilityAAC">Reachability</a>
+                <a href="../Extensions/JSONEncoder/DateEncodingStrategy.html">– DateEncodingStrategy</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Extensions/Reactive.html">Reactive</a>
+                <a href="../Extensions/Optional.html">Optional</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Result.html">Result</a>
@@ -475,6 +487,127 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/WebSocket%20Error"></a>
+                <a name="//apple_ref/swift/Section/WebSocket Error" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/WebSocket%20Error"></a>
+                  <h3 class="section-name"><p>WebSocket Error</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9WebSocketC14ErrorContainerV"></a>
+                    <a name="//apple_ref/swift/Struct/ErrorContainer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9WebSocketC14ErrorContainerV">ErrorContainer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">struct</span> <span class="kt">ErrorContainer</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9WebSocketC23willReconnectAfterErrorySbs0I0_pF"></a>
+                    <a name="//apple_ref/swift/Method/willReconnectAfterError(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9WebSocketC23willReconnectAfterErrorySbs0I0_pF">willReconnectAfterError(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">willReconnectAfterError</span><span class="p">(</span><span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9WebSocketC11isStopErrorySbs0H0_pF"></a>
+                    <a name="//apple_ref/swift/Method/isStopError(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9WebSocketC11isStopErrorySbs0H0_pF">isStopError(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">isStopError</span><span class="p">(</span><span class="n">_</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Error</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9WebSocketC9reconnectyyF"></a>
+                    <a name="//apple_ref/swift/Method/reconnect()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9WebSocketC9reconnectyyF">reconnect()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">reconnect</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -533,10 +666,50 @@
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Parsing"></a>
+                <a name="//apple_ref/swift/Section/Parsing" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Parsing"></a>
+                  <h3 class="section-name"><p>Parsing</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore9WebSocketC15parseConnection8appState19isInternetAvailable5eventAC0G0OSg05RxAppI00oI0O_SbAA0dE5EventOtF"></a>
+                    <a name="//apple_ref/swift/Method/parseConnection(appState:isInternetAvailable:event:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore9WebSocketC15parseConnection8appState19isInternetAvailable5eventAC0G0OSg05RxAppI00oI0O_SbAA0dE5EventOtF">parseConnection(appState:isInternetAvailable:event:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">parseConnection</span><span class="p">(</span><span class="nv">appState</span><span class="p">:</span> <span class="kt">AppState</span><span class="p">,</span> <span class="nv">isInternetAvailable</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="nv">event</span><span class="p">:</span> <span class="kt"><a href="../Enums/WebSocketEvent.html">WebSocketEvent</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/WebSocket/Connection.html">Connection</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-02-11)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

@@ -14,7 +14,7 @@
     <a title="Extensions  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">StreamChatCore Docs</a> (89% documented)</p>
+        <p><a href="index.html">StreamChatCore Docs</a> (85% documented)</p>
         <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -59,6 +59,9 @@
                 <a href="Classes/Client/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
+                <a href="Classes/Client/Method.html">– Method</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
@@ -90,6 +93,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="Classes/WebSocket.html">WebSocket</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/WebSocket.html#/s:14StreamChatCore9WebSocketC14ErrorContainerV">– ErrorContainer</a>
               </li>
               <li class="nav-group-task">
                 <a href="Classes/WebSocket/Connection.html">– Connection</a>
@@ -180,6 +186,12 @@
                 <a href="Extensions/DateFormatter/Stream.html">– Stream</a>
               </li>
               <li class="nav-group-task">
+                <a href="Extensions/Dictionary.html">Dictionary</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/Encodable.html">Encodable</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Extensions/Int.html">Int</a>
               </li>
               <li class="nav-group-task">
@@ -189,13 +201,13 @@
                 <a href="Extensions/JSONEncoder.html">JSONEncoder</a>
               </li>
               <li class="nav-group-task">
-                <a href="Extensions/ObservableType.html">ObservableType</a>
+                <a href="Extensions/JSONEncoder/DataEncodingStrategy.html">– DataEncodingStrategy</a>
               </li>
               <li class="nav-group-task">
-                <a href="Extensions.html#/s:12ReachabilityAAC">Reachability</a>
+                <a href="Extensions/JSONEncoder/DateEncodingStrategy.html">– DateEncodingStrategy</a>
               </li>
               <li class="nav-group-task">
-                <a href="Extensions/Reactive.html">Reactive</a>
+                <a href="Extensions/Optional.html">Optional</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/Result.html">Result</a>
@@ -418,34 +430,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV"></a>
-                    <a name="//apple_ref/swift/Extension/Reactive" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV">Reactive</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                        <a href="Extensions/Reactive.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">Reactive</span> <span class="k">where</span> <span class="kt">Base</span> <span class="o">==</span> <span class="kt"><a href="Classes/Client.html">Client</a></span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Reactive</span> <span class="k">where</span> <span class="kt">Base</span><span class="p">:</span> <span class="kt">WebSocketClient</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:10Foundation4DateV"></a>
                     <a name="//apple_ref/swift/Extension/Date" class="dashAnchor"></a>
                     <a class="token" href="#/s:10Foundation4DateV">Date</a>
@@ -518,34 +502,6 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="Typealiases.html#/s:14StreamChatCore5Tokena">Token</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7RxSwift14ObservableTypeP"></a>
-                    <a name="//apple_ref/swift/Extension/ObservableType" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift14ObservableTypeP">ObservableType</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                        <a href="Extensions/ObservableType.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">extension</span> <span class="kt">ObservableType</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ObservableType</span> <span class="k">where</span> <span class="kt">Element</span> <span class="o">==</span> <span class="kt"><a href="Classes/WebSocket.html">WebSocket</a></span><span class="o">.</span><span class="kt">Connection</span></code></pre>
 
                         </div>
                       </div>
@@ -633,6 +589,46 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Safe%20Helpers"></a>
+                <a name="//apple_ref/swift/Section/Safe Helpers" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Safe%20Helpers"></a>
+                  <h3 class="section-name"><p>Safe Helpers</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SE"></a>
+                    <a name="//apple_ref/swift/Extension/Encodable" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SE">Encodable</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="Extensions/Encodable.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Encodable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -654,6 +650,35 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Data</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SD"></a>
+                    <a name="//apple_ref/swift/Extension/Dictionary" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SD">Dictionary</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a dictionary by merging the given dictionary into this
+dictionary, replacing values with values of the other dictionary.</p>
+
+                        <a href="Extensions/Dictionary.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Dictionary</span></code></pre>
 
                         </div>
                       </div>
@@ -714,32 +739,6 @@
                     </section>
                   </div>
                 </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:12ReachabilityAAC"></a>
-                    <a name="//apple_ref/swift/Extension/Reachability" class="dashAnchor"></a>
-                    <a class="token" href="#/s:12ReachabilityAAC">Reachability</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Reachability</span><span class="p">:</span> <span class="kt">ReactiveCompatible</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -774,6 +773,46 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Optional%20String"></a>
+                <a name="//apple_ref/swift/Section/Optional String" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Optional%20String"></a>
+                  <h3 class="section-name"><p>Optional String</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:Sq"></a>
+                    <a name="//apple_ref/swift/Extension/Optional" class="dashAnchor"></a>
+                    <a class="token" href="#/s:Sq">Optional</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="Extensions/Optional.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Optional</span> <span class="k">where</span> <span class="kt">Wrapped</span> <span class="o">==</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -879,7 +918,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-01-24)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-02-11)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
