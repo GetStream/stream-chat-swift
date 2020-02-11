@@ -66,10 +66,10 @@ public extension Reactive where Base == Client {
     /// Unmute a user.
     /// - Parameters:
     ///   - user: a user.
-    func unmute(user: User) -> Observable<Void> {
+    func unmute(user: User) -> Observable<EmptyData> {
         connectedRequest(request({ [unowned base] completion in
             base.unmute(user: user, completion)
-        })).void()
+        }))
     }
     
     // MARK: Flag User

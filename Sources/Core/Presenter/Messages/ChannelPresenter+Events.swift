@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import StreamChatClient
 import RxSwift
 import RxCocoa
 
@@ -15,7 +16,7 @@ import RxCocoa
 extension ChannelPresenter {
     
     @discardableResult
-    func parseEvents(event: Event) -> ViewChanges {
+    func parse(event: StreamChatClient.Event) -> ViewChanges {
         if let lastWebSocketEvent = lastParsedEvent,
             event == lastWebSocketEvent,
             let lastViewChanges = lastWebSocketEventViewChanges {
@@ -26,7 +27,7 @@ extension ChannelPresenter {
         lastWebSocketEventViewChanges = nil
         
         switch event {
-        case .typingStart(let user, _):
+        case .typingStart(let user, _, _):
             guard parentMessage == nil else {
                 return .none
             }
@@ -44,7 +45,7 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .typingStop(let user, _):
+        case .typingStop(let user, _, _):
             guard parentMessage == nil else {
                 return .none
             }
@@ -60,7 +61,7 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, let unreadCount, _, let messageNewChannel, let type):
+        case .messageNew(let message, let unreadCount, _, let messageNewChannel, _, let type):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
@@ -68,8 +69,6 @@ extension ChannelPresenter {
             // A new message event.
             if case .messageNew = type {
                 if channel.config.readEventsEnabled, !message.user.isCurrent {
-                    channel.unreadCountAtomic += 1
-                    
                     if let lastMessage = lastMessageAtomic.get() {
                         unreadMessageReadAtomic.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
                     } else {
@@ -84,8 +83,6 @@ extension ChannelPresenter {
                     channelAtomic.set(messageNewChannel)
                 }
                 
-                channel.unreadCountAtomic.set(unreadCount)
-                
                 if unreadCount > 0, unreadMessageReadAtomic.get() == nil {
                     unreadMessageReadAtomic.set(MessageRead(user: message.user, lastReadDate: message.updated))
                 }
@@ -96,13 +93,13 @@ extension ChannelPresenter {
             appendOrUpdateMessageItem(message)
             let viewChanges = ViewChanges.itemsAdded([nextRow], reloadRow, message.user.isCurrent, items)
             lastWebSocketEventViewChanges = viewChanges
-            channel.add(messagesToDatabase: [message])
+//            channel.add(messagesToDatabase: [message])
             Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             
             return viewChanges
             
-        case .messageUpdated(let message, _),
-             .messageDeleted(let message, _):
+        case .messageUpdated(let message, _, _),
+             .messageDeleted(let message, _, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
@@ -114,8 +111,8 @@ extension ChannelPresenter {
                 return viewChanges
             }
             
-        case .reactionNew(let reaction, let message, _, _),
-             .reactionDeleted(let reaction, let message, _, _):
+        case .reactionNew(let reaction, let message, _, _, _),
+             .reactionDeleted(let reaction, let message, _, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
@@ -137,14 +134,10 @@ extension ChannelPresenter {
                 return viewChanges
             }
             
-        case .messageRead(let messageRead, _):
-            guard channel.config.readEventsEnabled, let currentUser = User.current, messageRead.user != currentUser else {
-                return .none
-            }
-            
-            channel.unreadCountAtomic.set(0)
-            
-            guard  let lastAddedOwnMessage = lastAddedOwnMessage,
+        case .messageRead(let messageRead, _, _):
+            guard channel.config.readEventsEnabled,
+                messageRead.user != User.current,
+                let lastAddedOwnMessage = lastAddedOwnMessage,
                 lastAddedOwnMessage.created <= messageRead.lastReadDate,
                 let lastOwnMessageIndex = items.lastIndex(whereMessageId: lastAddedOwnMessage.id) else {
                     return .none
@@ -180,7 +173,7 @@ extension ChannelPresenter {
             
             return .itemsUpdated(rows, messages, items)
             
-        case .channelUpdated(let response, _):
+        case .channelUpdated(let response, _, _):
             channelAtomic.set(response.channel)
             
         default:

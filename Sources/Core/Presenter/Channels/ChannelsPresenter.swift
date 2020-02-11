@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import StreamChatClient
 import RxSwift
 import RxCocoa
 
@@ -39,12 +40,12 @@ public final class ChannelsPresenter: Presenter {
     public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
     
     /// A filter for channels events.
-    public var eventsFilter: Event.Filter?
+    public var eventsFilter: StreamChatClient.Event.Filter?
     
     /// A filter for a selected channel events.
     /// When a user select a channel, then `ChannelsViewController` create a `ChatViewController`
     /// with a selected channel presenter and this channel events filter.
-    public var channelEventsFilter: Event.Filter?
+    public var channelEventsFilter: StreamChatClient.Event.Filter?
     
     /// An observable view changes (see `ViewChanges`).
     private(set) lazy var rxChanges = rx.setupChanges()
@@ -88,7 +89,7 @@ public extension ChannelsPresenter {
     ///   - completion: an empty completion block.
     func hide(_ channelPresenter: ChannelPresenter,
               clearHistory: Bool = false,
-              _ completion: @escaping Client.Completion<Void> = { _ in }) {
+              _ completion: @escaping Client.Completion<EmptyData> = { _ in }) {
         rx.hide(channelPresenter, clearHistory: clearHistory).asObservable().bindOnce(to: completion)
     }
 }
@@ -132,16 +133,16 @@ extension ChannelsPresenter {
 // MARK: - WebSocket Events Parsing
 
 extension ChannelsPresenter {
-    func parseEvents(response: WebSocket.Response) -> ViewChanges {
-        guard let cid = response.cid else {
-            return parseNotifications(response: response)
+    func parse(event: StreamChatClient.Event) -> ViewChanges {
+        guard let cid = event.cid else {
+            return parseNotifications(event: event)
         }
         
-        switch response.event {
-        case .channelUpdated(let channelResponse, _):
+        switch event {
+        case .channelUpdated(let channelResponse, _, _):
             if let index = items.firstIndex(where: channelResponse.channel.cid),
                 let channelPresenter = items[index].channelPresenter {
-                channelPresenter.parseEvents(event: response.event)
+                channelPresenter.parse(event: event)
                 return .itemsUpdated([index], [], items)
             }
             
@@ -157,13 +158,13 @@ extension ChannelsPresenter {
                 return .itemRemoved(index, items)
             }
             
-        case .messageNew(_, _, _, let channel, _):
-            return parseNewMessage(response: response, from: channel)
+        case .messageNew(_, _, _, let channel, _, _):
+            return parseNewMessage(event: event, from: channel)
             
-        case .messageDeleted(let message, _):
+        case .messageDeleted(let message, _, _, _):
             if let index = items.firstIndex(where: cid),
                 let channelPresenter = items[index].channelPresenter {
-                channelPresenter.parseEvents(event: response.event)
+                channelPresenter.parse(event: event)
                 return .itemsUpdated([index], [message], items)
             }
             
@@ -179,11 +180,11 @@ extension ChannelsPresenter {
         return .none
     }
     
-    private func parseNotifications(response: WebSocket.Response) -> ViewChanges {
-        switch response.event {
-        case .notificationAddedToChannel(let channel, _):
+    private func parseNotifications(event: StreamChatClient.Event) -> ViewChanges {
+        switch event {
+        case .notificationAddedToChannel(let channel, _, _, _):
             return parseNewChannel(channel: channel)
-        case .notificationMarkRead(let channel, let unreadCount, _, _):
+        case .notificationMarkRead(let channel, let unreadCount, _, _, _):
             if unreadCount == 0,
                 let channel = channel,
                 let index = items.firstIndex(whereChannelId: channel.id, channelType: channel.type),
@@ -198,11 +199,11 @@ extension ChannelsPresenter {
         return .none
     }
     
-    private func parseNewMessage(response: WebSocket.Response, from channel: Channel?) -> ViewChanges {
-        if let cid = response.cid,
+    private func parseNewMessage(event: StreamChatClient.Event, from channel: Channel?) -> ViewChanges {
+        if let cid = event.cid,
             let index = items.firstIndex(where: cid),
             let channelPresenter = items.remove(at: index).channelPresenter {
-            channelPresenter.parseEvents(event: response.event)
+            channelPresenter.parse(event: event)
             items.insert(.channelPresenter(channelPresenter), at: 0)
             
             if index == 0 {
