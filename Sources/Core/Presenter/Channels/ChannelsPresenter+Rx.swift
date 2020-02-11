@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import StreamChatClient
 import RxSwift
 import RxCocoa
 
@@ -16,15 +17,15 @@ public extension Reactive where Base == ChannelsPresenter {
     
     /// An observable view changes (see `ViewChanges`).
     var changes: Driver<ViewChanges> {
-        return base.rxChanges
+        base.rxChanges
     }
     
     internal func setupChanges() -> Driver<ViewChanges> {
-        return Driver.merge(parsedChannelResponses(channelsRequest),
-                            parsedChannelResponses(channelsDatabaseFetch),
-                            webSocketEvents,
-                            connectionErrors,
-                            base.actions.asDriver(onErrorJustReturn: .none))
+        Driver.merge(parsedChannelResponses(channelsRequest),
+                     // parsedChannelResponses(channelsDatabaseFetch),
+            events,
+            connectionErrors,
+            base.actions.asDriver(onErrorJustReturn: .none))
             .do(onDispose: { [weak base] in base?.disposeBagForInternalRequests = DisposeBag() })
     }
     
@@ -35,62 +36,60 @@ public extension Reactive where Base == ChannelsPresenter {
     /// - Parameters:
     ///   - channelPresenter: a channel presenter.
     ///   - clearHistory: checks if needs to remove a message history of the channel.
-    func hide(_ channelPresenter: ChannelPresenter, clearHistory: Bool = false) -> Driver<Void> {
-        return channelPresenter.channel.rx
-            .hide(for: User.current, clearHistory: clearHistory)
-            .void()
-            .do(onNext: { self.removeFromItems(channelPresenter) })
-            .asDriver(onErrorJustReturn: ())
+    func hide(_ channelPresenter: ChannelPresenter, clearHistory: Bool = false) -> Driver<EmptyData> {
+        channelPresenter.channel.rx
+            .hide(clearHistory: clearHistory)
+            .do(onNext: { _ in self.removeFromItems(channelPresenter) })
+            .asDriver(onErrorJustReturn: .empty)
     }
 }
 
 private extension Reactive where Base == ChannelsPresenter {
     
     func parsedChannelResponses(_ channelResponses: Observable<[ChannelResponse]>) -> Driver<ViewChanges> {
-        return channelResponses
+        channelResponses
             .map { [weak base] in base?.parseChannels($0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
     }
     
     var channelsRequest: Observable<[ChannelResponse]> {
-        return prepareRequest(startPaginationWith: base.pageSize)
+        prepareRequest(startPaginationWith: base.pageSize)
             .compactMap { self.channelsQuery(pagination: $0) }
-            .flatMapLatest { Client.shared.rx.channels(query: $0).retry(3) }
+            .flatMapLatest { Client.shared.rx.queryChannels(query: $0).retry(3) }
     }
     
-    var channelsDatabaseFetch: Observable<[ChannelResponse]> {
-        return prepareDatabaseFetch(startPaginationWith: base.pageSize)
-            .compactMap { self.channelsQuery(pagination: $0) }
-            .observeOn(SerialDispatchQueueScheduler.init(qos: .userInitiated))
-            .flatMapLatest { Client.shared.fetchChannels($0) }
-    }
+    //    var channelsDatabaseFetch: Observable<[ChannelResponse]> {
+    //        return prepareDatabaseFetch(startPaginationWith: base.pageSize)
+    //            .compactMap { self.channelsQuery(pagination: $0) }
+    //            .observeOn(SerialDispatchQueueScheduler.init(qos: .userInitiated))
+    //            .flatMapLatest { Client.shared.fetchChannels($0) }
+    //    }
     
-    var webSocketEvents: Driver<ViewChanges> {
-        return Client.shared.webSocket.rx.response
-            .filter({ [weak base] response in
+    var events: Driver<ViewChanges> {
+        Client.shared.rx.onEvent()
+            .filter({ [weak base] event in
                 if let eventsFilter = base?.eventsFilter {
-                    return eventsFilter(response.event, nil)
+                    return eventsFilter(event, nil)
                 }
                 
                 return true
             })
-            .map { [weak base] in base?.parseEvents(response: $0) ?? .none }
+            .map { [weak base] in base?.parse(event: $0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
     }
     
     func channelsQuery(pagination: Pagination) -> ChannelsQuery {
-        return ChannelsQuery(filter: base.filter,
-                             sort: base.sorting,
-                             pagination: pagination,
-                             options: base.queryOptions)
+        ChannelsQuery(filter: base.filter,
+                      sort: base.sorting,
+                      pagination: pagination,
+                      options: base.queryOptions)
     }
     
     func removeFromItems(_ channelPresenter: ChannelPresenter) {
-        guard let index = base.items.firstIndex(whereChannelId: channelPresenter.channel.id,
-                                                channelType: channelPresenter.channel.type) else {
-                                                    return
+        guard let index = base.items.firstIndex(where: channelPresenter.channel.cid) else {
+            return
         }
         
         // Update pagination offset.

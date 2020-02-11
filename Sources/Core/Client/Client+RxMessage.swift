@@ -24,10 +24,10 @@ public extension Reactive where Base == Client {
     }
     
     /// Mark all messages as read.
-    func markAllRead() -> Observable<Void> {
+    func markAllRead() -> Observable<EmptyData> {
         connectedRequest(request({ [unowned base] completion in
             base.markAllRead(completion)
-        })).void()
+        }))
     }
     
     /// Delete the message.
