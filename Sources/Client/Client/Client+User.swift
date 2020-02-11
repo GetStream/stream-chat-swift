@@ -12,17 +12,27 @@ import Foundation
 
 public extension Client {
     
-    /// Requests users with a given query.
+    /// Requests users with given parameters. Creates a `UsersQuery` and call the `queryUsers` with it.
     /// - Parameters:
-    ///   - query: a users query (see `UsersQuery`).
+    ///   - filter: a users filter.
+    ///   - sort: a sorting.
+    ///   - options: a query options.
     ///   - completion: a completion block with `[User]`.
     @discardableResult
     func queryUsers(filter: Filter,
                     sort: Sorting? = nil,
                     options: QueryOptions = [],
                     _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
-        let query = UsersQuery(filter: filter, sort: sort, options: options)
-        return request(endpoint: .users(query)) { (result: Result<UsersResponse, ClientError>) in
+        queryUsers(query: .init(filter: filter, sort: sort, options: options), completion)
+    }
+    
+    /// Requests users with a given query (see `UsersQuery`).
+    /// - Parameters:
+    ///   - query: a users query (see `UsersQuery`).
+    ///   - completion: a completion block with `[User]`.
+    @discardableResult
+    func queryUsers(query: UsersQuery, _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
+        request(endpoint: .users(query)) { (result: Result<UsersResponse, ClientError>) in
             completion(result.map(to: \.users))
         }
     }

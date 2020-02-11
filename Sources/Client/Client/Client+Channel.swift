@@ -21,7 +21,8 @@ public extension Client {
         queryChannel(channel, completion)
     }
     
-    /// Request for a channel data, e.g. messages, members, read states, etc
+    /// Request for a channel data, e.g. messages, members, read states, etc.
+    /// Creates a `ChannelQuery` with given parameters and call `queryChannel` with it.
     /// - Parameters:
     ///   - channel: a channel.
     ///   - pagination: a pagination for messages (see `Pagination`).
@@ -32,7 +33,16 @@ public extension Client {
                       pagination: Pagination = .none,
                       options: QueryOptions = [],
                       _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        request(endpoint: .channel(.init(channel: channel, pagination: pagination, options: options)), completion)
+        queryChannel(query: .init(channel: channel, pagination: pagination, options: options), completion)
+    }
+    
+    /// Requests for a channel data, e.g. messages, members, read states, etc.
+    /// - Parameters:
+    ///   - query: a channel query.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func queryChannel(query: ChannelQuery, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        request(endpoint: .channel(query), completion)
     }
     
     /// Loads the initial channel state and watches for changes.

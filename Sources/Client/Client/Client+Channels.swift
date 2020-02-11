@@ -12,7 +12,7 @@ import Foundation
 
 public extension Client {
     
-    /// A message search.
+    /// A message search. Creates a `SearchQuery` with given parameters and call `search` with it.
     /// - Parameters:
     ///   - filter: a filter for channels, e.g. `"members".in(["john"])`
     ///   - query: a search query.
@@ -23,13 +23,21 @@ public extension Client {
                 query: String,
                 pagination: Pagination = .channelsPageSize,
                 _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
-        let query = SearchQuery(filter: filter, query: query, pagination: pagination)
-        return request(endpoint: .search(query)) { (result: Result<SearchResponse, ClientError>) in
+        search(query: SearchQuery(filter: filter, query: query, pagination: pagination), completion)
+    }
+    
+    /// A message search with a given query (see `SearchQuery`).
+    /// - Parameters:
+    ///   - query: a search query.
+    ///   - completion: a completion block with `[Message]`.
+    @discardableResult
+    func search(query: SearchQuery, _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
+        request(endpoint: .search(query)) { (result: Result<SearchResponse, ClientError>) in
             completion(result.map(to: \.messages).compactMap({ $0["message"] }))
         }
     }
     
-    /// Requests channels with a given query.
+    /// Requests channels with given parameters. Creates a `ChannelsQuery` and call the `queryChannels` with it.
     /// - Parameters:
     ///   - filter: a channels filter, e.g. "members".in([User.current])
     ///   - sort: a sorting list for channels.
@@ -44,13 +52,21 @@ public extension Client {
                        messagesLimit: Pagination = .messagesPageSize,
                        options: QueryOptions = [],
                        _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
-        let query = ChannelsQuery(filter: filter,
-                                  sort: sort,
-                                  pagination: pagination,
-                                  messagesLimit: messagesLimit,
-                                  options: options)
-        
-        return request(endpoint: .channels(query)) { (result: Result<ChannelsResponse, ClientError>) in
+        queryChannels(query: .init(filter: filter,
+                                   sort: sort,
+                                   pagination: pagination,
+                                   messagesLimit: messagesLimit,
+                                   options: options),
+                      completion)
+    }
+    
+    /// Requests channels with a given query (see `ChannelsQuery`).
+    /// - Parameters:
+    ///   - query: a channels query.
+    ///   - completion: a completion block with `Client.Completion<[ChannelResponse]`.
+    @discardableResult
+    func queryChannels(query: ChannelsQuery, _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
+        request(endpoint: .channels(query)) { (result: Result<ChannelsResponse, ClientError>) in
             completion(result.map(to: \.channels))
         }
     }
