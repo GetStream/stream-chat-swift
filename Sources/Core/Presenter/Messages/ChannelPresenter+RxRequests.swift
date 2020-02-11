@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChatClient
 import RxSwift
 import RxCocoa
 
@@ -33,7 +34,7 @@ public extension Reactive where Base == ChannelPresenter {
     
     /// Send a typing event.
     /// - Parameter isTyping: a user typing action.
-    func sendEvent(isTyping: Bool) -> Observable<Event> {
+    func sendEvent(isTyping: Bool) -> Observable<StreamChatClient.Event> {
         guard base.parentMessage == nil else {
             return .empty()
         }
@@ -53,7 +54,7 @@ public extension Reactive where Base == ChannelPresenter {
     
     /// Send Read event if the app is active.
     /// - Returns: an observable completion.
-    func markReadIfPossible() -> Observable<Void> {
+    func markReadIfPossible() -> Observable<StreamChatClient.Event> {
         guard InternetConnection.shared.isAvailable, base.channel.config.readEventsEnabled else {
             return .empty()
         }
@@ -67,20 +68,11 @@ public extension Reactive where Base == ChannelPresenter {
         
         return Observable.just(())
             .subscribeOn(MainScheduler.instance)
-            .filter { UIApplication.shared.appState == .active }
+            .filter { UIApplication.shared.applicationState == .active }
             .do(onNext: { Client.shared.logger?.log("🎫 Send Message Read. Unread from \(unreadMessageRead.lastReadDate)") })
             .flatMapLatest { [weak base] in base?.channel.rx.markRead() ?? .empty() }
-            .do(
-                onNext: { [weak base] _ in
-                    base?.unreadMessageReadAtomic.set(nil)
-                    base?.channel.unreadCountAtomic.set(0)
-                    Client.shared.logger?.log("🎫 Message Read done.")
-                },
-                onError: { [weak base] error in
-                    base?.unreadMessageReadAtomic.set(unreadMessageRead)
-                    Client.shared.logger?.log(error, message: "🎫 Send Message Read error.")
-            })
-            .void()
+            .do(onNext: { [weak base] _ in base?.unreadMessageReadAtomic.set(nil) },
+                onError: { [weak base] error in base?.unreadMessageReadAtomic.set(unreadMessageRead) })
     }
     
     /// Dispatch an ephemeral message action, e.g. shuffle, send.
@@ -127,9 +119,9 @@ extension Reactive where Base == ChannelPresenter {
                         ? base.rxParsedMessagesRequest
                         : self.parsedRepliesResponse(self.repliesRequest),
                     // Messages from database.
-                    base.parentMessage == nil
-                        ? self.parsedChannelResponse(self.messagesDatabaseFetch)
-                        : self.parsedRepliesResponse(self.repliesDatabaseFetch),
+                    // base.parentMessage == nil
+                        // ? self.parsedChannelResponse(self.messagesDatabaseFetch)
+                        // : self.parsedRepliesResponse(self.repliesDatabaseFetch),
                     // Events from a websocket.
                     self.webSocketEvents,
                     self.ephemeralMessageEvents,
@@ -152,23 +144,23 @@ extension Reactive where Base == ChannelPresenter {
     
     func parsedChannelResponse(_ channelResponse: Observable<ChannelResponse>) -> Driver<ViewChanges> {
         return channelResponse
-            .map { [weak base] in base?.parseResponse($0) ?? .none }
+            .map { [weak base] in base?.parse(response: $0) ?? .none }
             .filter { $0 != .none }
             .map { [weak base] in base?.mapWithEphemeralMessage($0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
     }
 }
 
 private extension Reactive where Base == ChannelPresenter {
     
-    var messagesDatabaseFetch: Observable<ChannelResponse> {
-        return prepareDatabaseFetch()
-            .filter { [weak base] in $0 != .none && base?.parentMessage == nil }
-            .flatMapLatest({ [weak base] pagination -> Observable<ChannelResponse> in
-                base?.channel.fetch(pagination: pagination) ?? .empty()
-            })
-    }
+//    var messagesDatabaseFetch: Observable<ChannelResponse> {
+//        return prepareDatabaseFetch()
+//            .filter { [weak base] in $0 != .none && base?.parentMessage == nil }
+//            .flatMapLatest({ [weak base] pagination -> Observable<ChannelResponse> in
+//                base?.channel.fetch(pagination: pagination) ?? .empty()
+//            })
+//    }
     
     var repliesRequest: Observable<[Message]> {
         return prepareRequest()
@@ -176,11 +168,11 @@ private extension Reactive where Base == ChannelPresenter {
             .flatMapLatest { [weak base] in (base?.parentMessage?.rx.replies(pagination: $0) ?? .empty()).retry(3) }
     }
     
-    var repliesDatabaseFetch: Observable<[Message]> {
-        return prepareDatabaseFetch()
-            .filter { [weak base] in $0 != .none && base?.parentMessage != nil }
-            .flatMapLatest { [weak base] in base?.parentMessage?.fetchReplies(pagination: $0) ?? .empty() }
-    }
+//    var repliesDatabaseFetch: Observable<[Message]> {
+//        return prepareDatabaseFetch()
+//            .filter { [weak base] in $0 != .none && base?.parentMessage != nil }
+//            .flatMapLatest { [weak base] in base?.parentMessage?.fetchReplies(pagination: $0) ?? .empty() }
+//    }
     
     var webSocketEvents: Driver<ViewChanges> {
         return Client.shared.rx.onEvent(channel: base.channel)
@@ -191,11 +183,11 @@ private extension Reactive where Base == ChannelPresenter {
                 
                 return true
             })
-            .map { [weak base] in base?.parseEvents(event: $0) ?? .none }
+            .map { [weak base] in base?.parse(event: $0) ?? .none }
             .filter { $0 != .none }
             .map { [weak base] in base?.mapWithEphemeralMessage($0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
     }
     
     var ephemeralMessageEvents: Driver<ViewChanges> {
@@ -203,13 +195,13 @@ private extension Reactive where Base == ChannelPresenter {
             .skip(1)
             .map { [weak base] in base?.parseEphemeralMessageEvents($0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
     }
     
     func parsedRepliesResponse(_ repliesResponse: Observable<[Message]>) -> Driver<ViewChanges> {
         return repliesResponse
-            .map { [weak base] in base?.parseReplies($0) ?? .none }
+            .map { [weak base] in base?.parse(replies: $0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError(error: $0))) }
+            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
     }
 }

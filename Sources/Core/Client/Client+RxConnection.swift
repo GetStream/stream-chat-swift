@@ -50,10 +50,6 @@ extension Client {
 // MARK: - Connection
 
 extension Reactive where Base == Client {
-    
     /// An observable connection.
     public var connection: Observable<Connection> { base.rxConnection }
-    
-    /// An observable connected event.
-    public var connected: Observable<Void> { connection.filter({ $0.isConnected }).void().share(replay: 1) }
 }
