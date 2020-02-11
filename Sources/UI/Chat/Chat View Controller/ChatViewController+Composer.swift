@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChatClient
 import StreamChatCore
 import Photos.PHPhotoLibrary
 import SnapKit

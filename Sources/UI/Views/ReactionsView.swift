@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChatClient
 import StreamChatCore
 import SnapKit
 import RxSwift
@@ -93,8 +94,8 @@ final class ReactionsView: UIView {
         
         if increment > 0 {
             if let avatarView = avatarsStackView.subviews[index].subviews.first as? AvatarView {
-                avatarView.update(with: User.current?.avatarURL,
-                                  name: User.current?.name,
+                avatarView.update(with: User.current.avatarURL,
+                                  name: User.current.name,
                                   baseColor: backgroundColor?.withAlphaComponent(1))
             }
         } else {

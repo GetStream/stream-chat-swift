@@ -69,7 +69,9 @@ public final class UploaderItem: Equatable {
     public private(set) var error: Error? = nil
     /// The last uploading progress.
     public private(set) var lastProgress: Float = 0
-    
+    /// An observable uploading progress.
+    public private(set) lazy var uploading: Observable<ProgressResponse<URL>> = createUploading()
+
     /// Init an uploading item.
     ///
     /// - Parameters:

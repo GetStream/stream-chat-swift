@@ -36,14 +36,9 @@ public struct Member: Codable {
     public let inviteRejected: Date?
     
     /// Checks if the member is the current user.
-    public var isCurrent: Bool {
-        return user == User.current
-    }
-    
+    public var isCurrent: Bool { user == User.current }
     /// The current user as a Member.
-    public static var current: Member {
-        return User.current.asMember
-    }
+    public static var current: Member { User.current.asMember }
     
     /// Init a member.
     ///

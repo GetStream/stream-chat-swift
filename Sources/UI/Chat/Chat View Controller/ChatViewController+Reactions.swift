@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChatClient
 import StreamChatCore
 import SnapKit
 
@@ -43,7 +44,9 @@ extension ChatViewController {
             self.reactionsView = nil
             let reactionExists = message.hasOwnReaction(type: reactionType)
             
-            (reactionExists ? message.rx.deleteReaction(reactionType) : message.rx.addReaction(reactionType))
+            (reactionExists
+                ? message.rx.deleteReaction(reactionType: reactionType)
+                : message.rx.addReaction(reactionType: reactionType))
                 .subscribe(onError: { [weak self] in self?.show(error: $0) })
                 .disposed(by: self.disposeBag)
             

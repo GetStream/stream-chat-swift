@@ -70,34 +70,19 @@ public struct Message: Codable {
     public private(set) var reactionCounts: ReactionCounts?
     
     /// Check if the message is ephemeral, e.g. Giphy preview.
-    public var isEphemeral: Bool {
-        return type == .ephemeral
-    }
-    
+    public var isEphemeral: Bool { type == .ephemeral }
     /// Check if the message was deleted.
-    public var isDeleted: Bool {
-        return type == .deleted || deleted != nil
-    }
-    
+    public var isDeleted: Bool { type == .deleted || deleted != nil }
     /// Check if the message is own message of the current user.
-    public var isOwn: Bool {
-        return user.isCurrent
-    }
-    
+    public var isOwn: Bool { user.isCurrent }
     /// Check if the message could be edited.
-    public var canEdit: Bool {
-        return isOwn && (!text.isBlank || !attachments.isEmpty)
-    }
-    
+    public var canEdit: Bool { isOwn && (!text.isBlank || !attachments.isEmpty) }
     /// Check if the message could be deleted.
-    public var canDelete: Bool {
-        return isOwn
-    }
-    
+    public var canDelete: Bool { isOwn }
     /// Check if the message has reactions.
-    public var hasReactions: Bool {
-        return reactionCounts != nil && !(reactionCounts?.counts.isEmpty ?? true)
-    }
+    public var hasReactions: Bool { reactionCounts != nil && !(reactionCounts?.counts.isEmpty ?? true) }
+    /// Checks if the message is flagged (locally).
+    public var isFlagged: Bool { Message.flaggedIds.contains(id) }
     
     /// A combination of message text and command args.
     /// 1. if the text is not empty and it's not equal to the single attachment URL, then it will return empty string.
@@ -111,14 +96,9 @@ public struct Message: Codable {
     }
     
     /// Returns true if the message is type of error with a text for the banned user.
-    public var isBan: Bool {
-        return id.isEmpty && type == .error && text == "You are not allowed to post messages on this channel"
-    }
-    
+    public var isBan: Bool { id.isEmpty && type == .error && text == "You are not allowed to post messages on this channel" }
     /// Checks if the message is empty.
-    public var isEmpty: Bool {
-        return text.isBlank && attachments.isEmpty && command.isBlank && extraData == nil
-    }
+    public var isEmpty: Bool { text.isBlank && attachments.isEmpty && command.isBlank && extraData == nil }
     
     /// Init a message.
     ///
@@ -217,13 +197,6 @@ public struct Message: Codable {
     private func checkIfTextAsAttachmentURL(_ text: String) -> Bool {
         let text = text.lowercased()
         return !text.isEmpty && text.hasPrefix("http") && !text.contains(" ") && attachments.count == 1
-    }
-}
-
-extension Message {
-    /// Checks if the message is flagged (locally).
-    public var isFlagged: Bool {
-        return Message.flaggedIds.contains(id)
     }
 }
 

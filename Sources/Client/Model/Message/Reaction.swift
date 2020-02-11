@@ -49,9 +49,7 @@ public enum ReactionType: String, Codable, Hashable, CaseIterable {
     }
     
     /// A list of reactions as emoji's.
-    public static var emojies: [String] {
-        return ReactionType.allCases.map { $0.emoji }
-    }
+    public static var emojies: [String] { ReactionType.allCases.map { $0.emoji } }
 }
 
 /// A reaction for a message.
@@ -73,9 +71,7 @@ public struct Reaction: Codable, Equatable {
     public let created: Date
     
     /// Check if the reaction if by the current user.
-    public var isOwn: Bool {
-        return user?.isCurrent ?? false
-    }
+    public var isOwn: Bool { user?.isCurrent ?? false }
     
     /// Init a reaction.
     /// - Parameters:

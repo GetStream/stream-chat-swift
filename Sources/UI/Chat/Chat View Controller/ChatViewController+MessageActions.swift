@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import StreamChatClient
 import StreamChatCore
 import RxSwift
 
@@ -220,7 +221,7 @@ extension ChatViewController {
     }
     
     private func mute(user: User) {
-        user.mute()
+        user.rx.mute()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
@@ -231,7 +232,7 @@ extension ChatViewController {
     }
     
     private func unmute(user: User) {
-        user.unmute()
+        user.rx.unmute()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
@@ -264,7 +265,7 @@ extension ChatViewController {
     }
     
     private func flag(user: User) {
-        user.flag()
+        user.rx.flag()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
@@ -275,7 +276,7 @@ extension ChatViewController {
     }
     
     private func unflag(user: User) {
-        user.unflag()
+        user.rx.unflag()
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
@@ -288,7 +289,7 @@ extension ChatViewController {
     private func ban(user: User, channel: Channel) {
         channel.rx.ban(user: user)
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] in
+            .subscribe(onNext: { [weak self] _ in
                 if let backgroundColor = self?.view.backgroundColor {
                     self?.showBanner("🙅‍♀️ Ban: \(user.name)", backgroundColor: backgroundColor)
                 }

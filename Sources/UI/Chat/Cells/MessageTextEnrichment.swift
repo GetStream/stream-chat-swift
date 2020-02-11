@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import StreamChatClient
 import StreamChatCore
 import RxSwift
 

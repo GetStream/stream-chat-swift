@@ -21,9 +21,7 @@ public struct Sorting: Encodable, CustomStringConvertible {
     /// A sorting direction.
     public let direction: Int
     
-    public var description: String {
-        return "\(field):\(direction)"
-    }
+    public var description: String { "\(field):\(direction)" }
     
     /// Init sorting options.
     ///

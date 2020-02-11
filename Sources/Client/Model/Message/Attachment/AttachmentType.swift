@@ -47,9 +47,7 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable {
         }
     }
     
-    var isImage: Bool {
-        return self == .image || self == .imgur || self == .giphy
-    }
+    var isImage: Bool { self == .image || self == .imgur || self == .giphy }
     
     public init(rawValue: String?) {
         switch rawValue {
