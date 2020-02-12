@@ -144,12 +144,11 @@ extension Client {
             return .failure(.emptyAPIKey)
         }
         
-        guard let connectionId = webSocket.lastConnectionId  else {
-            return .failure(.emptyConnectionId)
-        }
+        var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
         
-        var queryItems = [URLQueryItem(name: "api_key", value: apiKey),
-                          URLQueryItem(name: "client_id", value: connectionId)]
+        if let connectionId = webSocket.lastConnectionId {
+            queryItems.append(URLQueryItem(name: "client_id", value: connectionId))
+        }
         
         if let endpointQueryItems = endpoint.jsonQueryItems {
             endpointQueryItems.forEach { (key: String, value: Encodable) in
