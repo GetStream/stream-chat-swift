@@ -8,7 +8,7 @@
 
 import UIKit
 import StreamChat
-import StreamChatCore
+import StreamChatClient
 import RxSwift
 import RxCocoa
 
@@ -16,7 +16,6 @@ import RxCocoa
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
-    let disposeBag = DisposeBag()
     
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -27,9 +26,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("🗞📱", "App did register for remote notifications with DeviceToken")
         
-        Client.shared.rx.addDevice(deviceToken: deviceToken)
-            .subscribe()
-            .disposed(by: disposeBag)
+        Client.shared.addDevice(deviceToken: deviceToken)
     }
     
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
