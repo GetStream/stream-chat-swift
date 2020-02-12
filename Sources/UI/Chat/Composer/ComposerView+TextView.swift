@@ -23,11 +23,11 @@ extension ComposerView {
     }
     
     var textViewPadding: CGFloat {
-        return baseTextHeight == .greatestFiniteMagnitude ? 0 : ((style?.height ?? .composerHeight) - baseTextHeight) / 2
+        baseTextHeight == .greatestFiniteMagnitude ? 0 : ((style?.height ?? .composerHeight) - baseTextHeight) / 2
     }
     
     private var textViewContentSize: CGSize {
-        return textView.sizeThatFits(CGSize(width: textView.frame.width, height: .greatestFiniteMagnitude))
+        textView.sizeThatFits(CGSize(width: textView.frame.width, height: .greatestFiniteMagnitude))
     }
     
     /// Update the height of the text view for a big text length.

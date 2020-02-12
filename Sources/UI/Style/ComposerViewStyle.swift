@@ -83,15 +83,10 @@ public struct ComposerViewStyle {
     }
     
     /// A composer style for a state.
-    ///
     /// - Parameter state: a composer state.
     /// - Returns: a composer state style.
     public func style(with state: State) -> Style {
-        if let style = states[state] {
-            return style
-        }
-        
-        return Style()
+        states[state, default: Style()]
     }
 }
 
@@ -110,7 +105,6 @@ extension ComposerViewStyle {
         public let borderWidth: CGFloat
         
         /// Init a cosposerty state style.
-        ///
         /// - Parameters:
         ///   - tintColor: a tint color.
         ///   - borderWidth: a border width.
@@ -120,8 +114,7 @@ extension ComposerViewStyle {
         }
         
         public static func == (lhs: Style, rhs: Style) -> Bool {
-            return lhs.tintColor == rhs.tintColor
-                && lhs.borderWidth == rhs.borderWidth
+            lhs.tintColor == rhs.tintColor && lhs.borderWidth == rhs.borderWidth
         }
         
         public func hash(into hasher: inout Hasher) {
@@ -134,7 +127,7 @@ extension ComposerViewStyle {
 extension ComposerViewStyle: Hashable {
     
     public static func == (lhs: ComposerViewStyle, rhs: ComposerViewStyle) -> Bool {
-        return lhs.font == rhs.font
+        lhs.font == rhs.font
             && lhs.textColor == rhs.textColor
             && lhs.placeholderTextColor == rhs.placeholderTextColor
             && lhs.backgroundColor == rhs.backgroundColor
