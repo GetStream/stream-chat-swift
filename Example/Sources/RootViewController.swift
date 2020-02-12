@@ -9,6 +9,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import StreamChatClient
 import StreamChatCore
 import StreamChat
 
@@ -39,17 +40,17 @@ final class RootViewController: UIViewController {
         setupNotifications()
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        if let user = User.current {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: user.name.capitalized,
-                                                                style: .plain,
-                                                                target: nil,
-                                                                action: nil)
-        } else {
+        if User.current.isUnknown {
             navigationController?.popViewController(animated: true)
             return
         }
         
-        versionLabel.text = "Demo Project\nStream Swift SDK v.\(Environment.version)"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: User.current.name.capitalized,
+                                                            style: .plain,
+                                                            target: nil,
+                                                            action: nil)
+
+        versionLabel.text = "Demo Project\nStream Swift SDK v.\(Client.version)"
         
         totalUnreadCountSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in
@@ -90,22 +91,24 @@ final class RootViewController: UIViewController {
     }
     
     @IBAction func checkForBan(_ sender: Any) {
-        Client.shared.rx.connection.connected()
-        .take(1)
-        .subscribe(onNext: { _ in
-            if let currentUser = User.current, currentUser.isBanned {
-                Banners.shared.show("🙅‍♂️ You are banned")
-            } else {
-                Banners.shared.show("👍 You are not banned")
-            }
-        })
-        .disposed(by: disposeBag)
+        Client.shared.rx.connection
+            .filter({ $0.isConnected })
+            .take(1)
+            .subscribe(onNext: { _ in
+                if User.current.isBanned {
+                    Banners.shared.show("🙅‍♂️ You are banned")
+                } else {
+                    Banners.shared.show("👍 You are not banned")
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     func subscribeForTotalUnreadCount() {
         Client.shared.rx.unreadCount
-            .drive(onNext: { [weak self] unreadCount in
-                self?.totalUnreadCountLabel.text = "Unread channels \(unreadCount.0), messages: \(unreadCount.1)"
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] unreadCount in
+                self?.totalUnreadCountLabel.text = "Unread channels \(unreadCount.channels), messages: \(unreadCount.messages)"
                 UIApplication.shared.applicationIconBadgeNumber = unreadCount.messages
             })
             .disposed(by: totalUnreadCountDisposeBag)
@@ -113,16 +116,19 @@ final class RootViewController: UIViewController {
     
     func subscribeForUnreadCount() {
         channel.rx.unreadCount
-            .drive(onNext: { [weak self] unreadCount in
-                self?.badgeLabel.text = "\(unreadCount == 100 ? "99+" : String(unreadCount))  "
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] unreadCount in
+                self?.badgeLabel.text = "\(unreadCount.messages >= 100 ? "99+" : String(unreadCount.messages))  "
             })
             .disposed(by: badgeDisposeBag)
     }
     
     func subscribeForOnlineUsers() {
         channel.rx.onlineUsers
+            .observeOn(MainScheduler.instance)
             .startWith([User(id: "", name: "")])
-            .drive(onNext: { [weak self] users in
+            .subscribe(onNext: { [weak self] users in
+                let users = Array(users)
                 if users.count == 1, users[0].id.isEmpty {
                     self?.onlinelabel.text = "Online members: <Loading...>"
                     return
@@ -153,8 +159,8 @@ final class RootViewController: UIViewController {
                     return .empty()
                 }
                 
-                if let device = User.current?.currentDevice {
-                    return Client.shared.rx.removeDevice(deviceId: device.id)
+                if let device = User.current.currentDevice {
+                    return Client.shared.rx.removeDevice(deviceId: device.id).void()
                 }
                 
                 return .empty()

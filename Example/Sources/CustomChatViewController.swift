@@ -9,6 +9,7 @@
 import UIKit
 import RxSwift
 import StreamChatCore
+import StreamChatClient
 import StreamChat
 
 class CustomChatViewController: ChatViewController {
@@ -93,7 +94,7 @@ class CustomChatViewController: ChatViewController {
                 break
             }
             
-            if let currentUser = User.current, member.user.id == currentUser.id {
+            if member.user.id == User.current.id {
                 continue
             }
             
@@ -110,7 +111,7 @@ class CustomChatViewController: ChatViewController {
     func removeMember() {
         selectMember { [unowned self] member in
             self.channelPresenter?.channel.rx
-                .remove(member)
+                .remove(member: member)
                 .subscribe(onNext: { _ in
                     Banners.shared.show("\(member.user.name) removed from the channel")
                 })
@@ -124,7 +125,7 @@ class CustomChatViewController: ChatViewController {
         }
         
         let onlyYou = channelPresenter.channel.members.count == 1
-            && channelPresenter.channel.members.first!.user.id == User.current!.id
+            && channelPresenter.channel.members.first!.user.id == User.current.id
         
         let members = channelPresenter.channel.members.isEmpty
             ? "No members"
@@ -139,7 +140,7 @@ class CustomChatViewController: ChatViewController {
         alert.addAction(.init(title: "Add a member", style: .default, handler: { [unowned self] _ in
             self.createMember("Add a member") { member in
                 channelPresenter.channel.rx
-                    .add(member)
+                    .add(member: member)
                     .subscribe(onNext: { _ in
                         Banners.shared.show("\(member.user.name) added to the channel")
                     })
@@ -150,7 +151,7 @@ class CustomChatViewController: ChatViewController {
         alert.addAction(.init(title: "Invite a member", style: .default, handler: { [unowned self] _ in
             self.createMember("Invite a member") { member in
                 channelPresenter.channel.rx
-                    .invite(member)
+                    .invite(member: member)
                     .subscribe(onNext: { _ in
                         Banners.shared.show("Invite for \(member.user.name) was send")
                     })
