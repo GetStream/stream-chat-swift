@@ -76,9 +76,7 @@ public struct MessageViewStyle {
     private(set) var transparentBackgroundImages: [RoundedImageType: UIImage] = [:]
     
     /// Check if the message has a generated background bubble image.
-    public var hasBackgroundImage: Bool {
-        return cornerRadius > 1 && (chatBackgroundColor != backgroundColor || borderWidth > 0)
-    }
+    public var hasBackgroundImage: Bool { cornerRadius > 1 && (chatBackgroundColor != backgroundColor || borderWidth > 0) }
     
     /// A margin left or right offset with avatar size.
     public var marginWithAvatarOffset: CGFloat {
@@ -234,7 +232,7 @@ public extension MessageViewStyle {
 extension MessageViewStyle: Hashable {
     
     public static func == (lhs: MessageViewStyle, rhs: MessageViewStyle) -> Bool {
-        return lhs.alignment == rhs.alignment
+        lhs.alignment == rhs.alignment
             && lhs.avatarViewStyle == rhs.avatarViewStyle
             && lhs.chatBackgroundColor == rhs.chatBackgroundColor
             && lhs.font == rhs.font

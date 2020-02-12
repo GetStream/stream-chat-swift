@@ -18,7 +18,11 @@ import RxCocoa
 
 extension Reactive where Base: ChatViewController {
     var keyboard: Binder<KeyboardNotification> {
-        return Binder<KeyboardNotification>(base) { chatViewController, keyboardNotification in
+        Binder<KeyboardNotification>(base) { chatViewController, keyboardNotification in
+            guard chatViewController.isVisible else {
+                return
+            }
+            
             var bottom: CGFloat = 0
             
             if keyboardNotification.isVisible {

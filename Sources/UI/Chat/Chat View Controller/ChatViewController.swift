@@ -18,16 +18,12 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     
     /// A chat style.
     public lazy var style = defaultStyle
-    
     /// A default chat style. This is useful for subclasses.
-    open var defaultStyle: ChatViewStyle {
-        return .default
-    }
-    
+    open var defaultStyle: ChatViewStyle { .default }
     /// Message actions (see `MessageAction`).
     public lazy var messageActions = defaultMessageActions
-    
     /// A default message actions. This is useful for subclasses.
+    open var defaultMessageActions: MessageAction { .all }
     open var defaultMessageActions: MessageAction {
         return .all
     }
@@ -49,11 +45,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     private var needsToReload = true
     /// A reaction view.
     weak var reactionsView: ReactionsView?
-    
-    var scrollEnabled: Bool {
-        return reactionsView == nil
-    }
-    
+    var scrollEnabled: Bool { reactionsView == nil }
     /// A composer view.
     public private(set) lazy var composerView = createComposerView()
     var keyboardIsVisible = false
@@ -73,9 +65,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     public lazy var composerAddFileTypes = defaultComposerAddFileTypes
     
     /// Default attachments file types for thw composer view. This is useful for subclasses.
-    public var defaultComposerAddFileTypes: [ComposerAddFileType] {
-        return [.photo, .camera, .file]
-    }
+    public var defaultComposerAddFileTypes: [ComposerAddFileType] = [.photo, .camera, .file]
     
     private(set) lazy var composerEditingContainerView = createComposerEditingContainerView()
     private(set) lazy var composerCommandsContainerView = createComposerCommandsContainerView()
@@ -183,8 +173,8 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         stopGifsAnimations()
     }
     
-    override open var preferredStatusBarStyle: UIStatusBarStyle {
-        return style.incomingMessage.textColor.isDark ? .default : .lightContent
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
+        style.incomingMessage.textColor.isDark ? .default : .lightContent
     }
     
     override open func willTransition(to newCollection: UITraitCollection,
@@ -228,7 +218,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     ///   - readUsers: a list of users who read the message.
     /// - Returns: a message table view cell.
     open func messageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
-        return extensionMessageCell(at: indexPath, message: message, readUsers: readUsers)
+        extensionMessageCell(at: indexPath, message: message, readUsers: readUsers)
     }
     
     /// A custom loading cell to insert in a particular location of the table view.
@@ -236,9 +226,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     /// - Parameters:
     ///   - indexPath: an index path.
     /// - Returns: a loading table view cell.
-    open func loadingCell(at indexPath: IndexPath) -> UITableViewCell? {
-        return nil
-    }
+    open func loadingCell(at indexPath: IndexPath) -> UITableViewCell? { nil }
     
     /// A custom status cell to insert in a particular location of the table view.
     ///
@@ -248,11 +236,8 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     ///   - subtitle: a subtitle.
     ///   - highlighted: change the status cell style to highlighted.
     /// - Returns: a status table view cell.
-    open func statusCell(at indexPath: IndexPath,
-                         title: String,
-                         subtitle: String? = nil,
-                         textColor: UIColor) -> UITableViewCell? {
-        return nil
+    open func statusCell(at indexPath: IndexPath, title: String, subtitle: String? = nil, textColor: UIColor) -> UITableViewCell? {
+        nil
     }
     
     /// Setup Footer updates for environement updates.

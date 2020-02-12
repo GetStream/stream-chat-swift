@@ -62,7 +62,7 @@ public struct ReactionViewStyle {
 extension ReactionViewStyle: Hashable {
     
     public static func == (lhs: ReactionViewStyle, rhs: ReactionViewStyle) -> Bool {
-        return lhs.alignment == rhs.alignment
+        lhs.alignment == rhs.alignment
             && lhs.font == rhs.font
             && lhs.textColor == rhs.textColor
             && lhs.backgroundColor == rhs.backgroundColor
