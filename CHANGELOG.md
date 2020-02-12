@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ✅ Added
 
 ### 🐞 Fixed
+- Fixed strikethrough markdown with ~~ correctly applied [#97](https://github.com/GetStream/stream-chat-swift/issues/97)
 
 # [1.5.6](https://github.com/GetStream/stream-chat-swift/releases/tag/1.5.6)
 _February 11, 2020_
