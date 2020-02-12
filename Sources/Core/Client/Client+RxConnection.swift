@@ -22,10 +22,10 @@ extension Client {
             
             let appState = app.rx.applicationState.filter({ $0 != .inactive })
                 .distinctUntilChanged()
-                .do(onNext: { self.logger?.log("📱 App state \($0)") })
                 .startWith(app.applicationState)
-            
-            let onTokenChange = rx.onTokenChange.startWith(token)
+                .do(onNext: { self.logger?.log("📱 App state \($0)") })
+
+            let onTokenChange = rx.onTokenChange
                 .filter { [unowned self] _ in !self.isExpiredTokenInProgress }
             
             return Observable.combineLatest(isInternetAvailable, appState, onTokenChange)
@@ -39,10 +39,11 @@ extension Client {
                     
                     self.handleConnection(with: appState)
                 })
-                .flatMapLatest({ _ in self.rx.onConnect.startWith(self.lastConnection) })
+                .flatMapLatest({ _ in self.rx.onConnect })
                 .distinctUntilChanged()
                 .do(onDispose: { self.disconnect() })
                 .share(replay: 1)
+                .debug()
         }
     }
 }

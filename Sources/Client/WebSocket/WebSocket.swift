@@ -10,7 +10,7 @@ import UIKit
 import Starscream
 
 /// A web socket client.
-public final class WebSocket {
+final class WebSocket {
     private static let maxBackgroundTime: TimeInterval = 300
     static var pingTimeInterval = 30
     
@@ -24,12 +24,20 @@ public final class WebSocket {
     private let stayConnectedInBackground: Bool
     private let logger: ClientLogger?
     private var consecutiveFailures: TimeInterval = 0
+    private var shouldReconnect = false
     private var isReconnecting = false
     private var goingToDisconnect: DispatchWorkItem?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private let webSocketInitiated: Bool
     private(set) var lastConnectionId: String?
     private(set) var lastJSONError: ClientErrorResponse?
+    
+    private(set) var connection = Connection.notConnected {
+        didSet {
+            let lastConnection = connection
+            performInCallbackQueue { [weak self] in self?.onConnect(lastConnection) }
+        }
+    }
     
     private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval),
                                                      queue: webSocket.callbackQueue) { [weak self] in
@@ -93,15 +101,24 @@ extension WebSocket {
             return
         }
         
-        if webSocket.isConnected || isReconnecting {
-            logger?.log("Skip connecting: isConnected = \(webSocket.isConnected), isReconnecting = \(isReconnecting)")
+        if connection == .connecting || isReconnecting || isConnected {
+            logger?.log("Skip connecting: "
+                + "isConnected = \(webSocket.isConnected), "
+                + "isReconnecting = \(isReconnecting), "
+                + "isConnecting = \(connection == .connecting)")
             return
         }
         
         logger?.log("Connecting...")
         logger?.log(webSocket.request)
-        DispatchQueue.main.async(execute: webSocket.connect)
-        performInCallbackQueue { [weak self] in self?.onConnect(.connecting) }
+        connection = .connecting
+        shouldReconnect = true
+        
+        if Thread.isMainThread {
+            webSocket.connect()
+        } else {
+            DispatchQueue.main.async(execute: webSocket.connect)
+        }
     }
     
     func reconnect() {
@@ -109,9 +126,12 @@ extension WebSocket {
             return
         }
         
-        let delay = delayForReconnect
-        logger?.log("⏳ Reconnect in \(delay) sec")
         isReconnecting = true
+        let maxDelay: TimeInterval = min(500 + consecutiveFailures * 2000, 25000) / 1000
+        let minDelay: TimeInterval = min(max(250, (consecutiveFailures - 1) * 2000), 25000) / 1000
+        consecutiveFailures += 1
+        let delay = minDelay + TimeInterval.random(in: 0...(maxDelay - minDelay))
+        logger?.log("⏳ Reconnect in \(delay) sec")
         
         webSocket.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
             self?.isReconnecting = false
@@ -162,6 +182,8 @@ extension WebSocket {
             return
         }
         
+        shouldReconnect = false
+        
         if webSocket.isConnected {
             // Server won't send Close control frame, we must force close the connection.
             webSocket.disconnect(forceTimeout: 0)
@@ -173,35 +195,87 @@ extension WebSocket {
         
         consecutiveFailures = 0
         clearStateAfterDisconnect()
-        onConnect(.disconnected(nil))
+        connection = .disconnected(nil)
     }
     
-    private func disconnected(_ error: Error? = nil) -> Connection {
-        logger?.log("💔🤔 Disconnected")
-        clearStateAfterDisconnect()
-        
-        if let error = error {
-            var errorMessage = "💔😡 Disconnected by error"
-            
-            if let lastJSONError = lastJSONError {
-                errorMessage += ": \(lastJSONError)"
-            }
-            
-            logger?.log(error, message: errorMessage)
-            ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
-            
-            if isStopError(error) {
-                consecutiveFailures = 0
-                
-                if let lastJSONError = lastJSONError, isStopError(error) {
-                    return .disconnected(lastJSONError)
-                }
-            }
-        } else {
-            consecutiveFailures = 0
+    private func clearStateAfterDisconnect() {
+        handshakeTimer.suspend()
+        lastConnectionId = nil
+        cancelBackgroundWork()
+        logger?.log("🔑 connectionId cleaned")
+    }
+}
+
+// MARK: - Web Socket Delegate
+
+extension WebSocket: WebSocketDelegate {
+    
+    func websocketDidConnect(socket: Starscream.WebSocketClient) {
+        logger?.log("❤️ Connected. Waiting for the current user data and connectionId...")
+        connection = .connecting
+    }
+    
+    func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
+        parseDisconnect(error)
+    }
+    
+    func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
+        guard let event = parseEvent(with: text) else {
+            return
         }
         
-        return .notConnected
+        if case let .healthCheck(connectionId, _) = event {
+            lastConnectionId = connectionId
+            handshakeTimer.resume()
+            logger?.log("🥰 Connected")
+            
+            performInCallbackQueue { [weak self] in
+                self?.onEvent(event)
+                self?.connection = .connected
+            }
+            
+            return
+        }
+        
+        if isConnected {
+            performInCallbackQueue { [weak self] in self?.onEvent(event) }
+        }
+    }
+    
+    func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
+}
+
+// MARK: - Parsing
+
+extension WebSocket {
+    
+    private func parseDisconnect(_ error: Error? = nil) {
+        if let lastJSONError = lastJSONError, lastJSONError.code == ClientErrorResponse.tokenExpiredErrorCode {
+            logger?.log("Disconnected. 🀄️ Token is expired")
+            clearStateAfterDisconnect()
+            connection = .disconnected(ClientError.expiredToken)
+            return
+        }
+        
+        clearStateAfterDisconnect()
+        
+        guard let error = error else {
+            logger?.log("💔 Disconnected")
+            consecutiveFailures = 0
+            connection = .disconnected(nil)
+            return
+        }
+        
+        logger?.log(error, message: "💔😡 Disconnected by error")
+        logger?.log(lastJSONError)
+        ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
+        connection = .disconnected(error)
+        
+        if isStopError(error) {
+            consecutiveFailures = 0
+        } else if shouldReconnect {
+            reconnect()
+        }
     }
     
     private func isStopError(_ error: Swift.Error) -> Bool {
@@ -215,72 +289,6 @@ extension WebSocket {
         
         return false
     }
-    
-    private func clearStateAfterDisconnect() {
-        handshakeTimer.suspend()
-        lastConnectionId = nil
-        cancelBackgroundWork()
-        logger?.log("🔑 connectionId cleaned")
-    }
-    
-    private var delayForReconnect: TimeInterval {
-        let maxDelay: TimeInterval = min(500 + consecutiveFailures * 2000, 25000) / 1000
-        let minDelay: TimeInterval = min(max(250, (consecutiveFailures - 1) * 2000), 25000) / 1000
-        consecutiveFailures += 1
-        
-        return minDelay + TimeInterval.random(in: 0...(maxDelay - minDelay))
-    }
-}
-
-// MARK: - Web Socket Delegate
-
-extension WebSocket: WebSocketDelegate {
-    
-    public func websocketDidConnect(socket: Starscream.WebSocketClient) {
-        logger?.log("❤️ Connected. Waiting for the current user data and connectionId...")
-        performInCallbackQueue { [weak self] in self?.onConnect(.connecting) }
-    }
-    
-    public func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
-        guard let lastJSONError = lastJSONError, lastJSONError.code == ClientErrorResponse.tokenExpiredErrorCode else {
-            logger?.log("💔 Disconnected")
-            performInCallbackQueue { [weak self] in self?.onConnect(.disconnected(error)) }
-            return
-        }
-        
-        logger?.log("Disconnected. 🀄️ Token is expired")
-        performInCallbackQueue { [weak self] in self?.onConnect(.disconnected(ClientError.expiredToken)) }
-    }
-    
-    public func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
-        guard let event = parseEvent(with: text) else {
-            return
-        }
-        
-        if case let .healthCheck(connectionId, _) = event {
-            lastConnectionId = connectionId
-            handshakeTimer.resume()
-            logger?.log("🥰 Connected")
-            
-            performInCallbackQueue { [weak self] in
-                self?.onEvent(event)
-                self?.onConnect(.connected)
-            }
-            
-            return
-        }
-        
-        if isConnected {
-            performInCallbackQueue { [weak self] in self?.onEvent(event) }
-        }
-    }
-    
-    public func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
-}
-
-// MARK: - Parsing
-
-extension WebSocket {
     
     private func parseEvent(with message: String) -> Event? {
         guard let data = message.data(using: .utf8) else {
@@ -329,7 +337,7 @@ extension WebSocket {
 }
 
 /// WebSocket Error
-struct ErrorContainer: Decodable {
+private struct ErrorContainer: Decodable {
     /// A server error was recieved.
-    public let error: ClientErrorResponse
+    let error: ClientErrorResponse
 }

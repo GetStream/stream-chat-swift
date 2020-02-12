@@ -98,8 +98,6 @@ extension Client {
             webSocket.disconnect()
         }
         
-        self.token = nil
-        
         if token == .guest {
             requestGuestToken()
             return
