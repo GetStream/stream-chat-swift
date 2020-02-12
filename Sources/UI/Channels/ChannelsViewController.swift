@@ -17,15 +17,10 @@ open class ChannelsViewController: ViewController {
     
     /// A dispose bag for rx subscriptions.
     public var disposeBag = DisposeBag()
-    
     /// A chat style.
     public lazy var style = defaultStyle
-    
     /// A default chat style. This is useful for subclasses.
-    open var defaultStyle: ChatViewStyle {
-        return .default
-    }
-    
+    open var defaultStyle: ChatViewStyle { .default }
     /// A list of table view items, e.g. channel presenters.
     public private(set) var items = [PresenterItem]()
     
@@ -165,7 +160,7 @@ open class ChannelsViewController: ViewController {
     ///   - chatItem: a loading chat item.
     /// - Returns: a loading table view cell.
     open func loadingCell(at indexPath: IndexPath, chatItem: PresenterItem) -> UITableViewCell {
-        return chatItem.isLoading ? tableView.loadingCell(at: indexPath, textColor: style.channel.messageColor) : .unused
+        chatItem.isLoading ? tableView.loadingCell(at: indexPath, textColor: style.channel.messageColor) : .unused
     }
     
     // MARK: - Show Chat
@@ -274,7 +269,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        items.count
     }
     
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -308,7 +303,9 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         return channelPresenter.channel.createdBy?.isCurrent ?? false
     }
     
-    open func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    open func tableView(_ tableView: UITableView,
+                        commit editingStyle: UITableViewCell.EditingStyle,
+                        forRowAt indexPath: IndexPath) {
         guard editingStyle == .delete, let channelPresenter = channelPresenter(at: indexPath) else {
             return
         }

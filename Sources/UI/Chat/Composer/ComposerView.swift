@@ -37,9 +37,7 @@ public final class ComposerView: UIView {
         }
     }
     
-    private var styleStateStyle: ComposerViewStyle.Style? {
-        return style?.style(with: styleState)
-    }
+    private var styleStateStyle: ComposerViewStyle.Style? { style?.style(with: styleState) }
     
     /// An `UITextView`.
     /// You have to use the `text` property to change the value of the text view.
@@ -120,7 +118,7 @@ public final class ComposerView: UIView {
     /// The text of the text view.
     public var text: String {
         get {
-            return textView.attributedText.string.trimmingCharacters(in: .whitespacesAndNewlines)
+            textView.attributedText.string.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         set {
             textView.attributedText = attributedText(text: newValue)
@@ -130,7 +128,7 @@ public final class ComposerView: UIView {
     
     /// The placeholder text.
     public var placeholderText: String {
-        get { return placeholderLabel.attributedText?.string ?? "" }
+        get { placeholderLabel.attributedText?.string ?? "" }
         set { placeholderLabel.attributedText = attributedText(text: newValue, textColor: styleStateStyle?.tintColor) }
     }
     

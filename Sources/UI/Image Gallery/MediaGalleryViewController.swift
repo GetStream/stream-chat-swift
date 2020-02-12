@@ -66,9 +66,7 @@ public class MediaGalleryViewController: UIViewController {
         }
     }
     
-    override public var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    override public var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
     
     private func addCloseButton() {
         let closeButton = UIButton(frame: .zero)
@@ -158,7 +156,7 @@ extension MediaGalleryViewController: UICollectionViewDataSource, UICollectionVi
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return items.count
+        items.count
     }
     
     public func collectionView(_ collectionView: UICollectionView,
@@ -350,9 +348,7 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         completion(nil)
     }
     
-    fileprivate func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        return imageView
-    }
+    fileprivate func viewForZooming(in scrollView: UIScrollView) -> UIView? { imageView }
     
     @objc func zoomByTap() {
         if scrollView.maximumZoomScale > 1 {

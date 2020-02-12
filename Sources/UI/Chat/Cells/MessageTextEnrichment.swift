@@ -57,14 +57,14 @@ final class MessageTextEnrichment {
     }
     
     var defaultAttributedString: NSMutableAttributedString {
-        return NSMutableAttributedString(string: text,
-                                         attributes: [.font: style.font,
-                                                      .foregroundColor: style.textColor,
-                                                      .backgroundColor: style.backgroundColor])
+        NSMutableAttributedString(string: text,
+                                  attributes: [.font: style.font,
+                                               .foregroundColor: style.textColor,
+                                               .backgroundColor: style.backgroundColor])
     }
     
     func enrich() -> Observable<NSAttributedString> {
-        return Observable.create({ [weak self] observer -> Disposable in
+        Observable.create({ [weak self] observer -> Disposable in
             if let self = self {
                 self.parseLinks()
                 self.parse()
