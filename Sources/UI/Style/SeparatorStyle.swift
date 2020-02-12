@@ -32,7 +32,7 @@ public struct SeparatorStyle: Hashable {
     }
     
     public static func == (lhs: SeparatorStyle, rhs: SeparatorStyle) -> Bool {
-        return lhs.color == rhs.color
+        lhs.color == rhs.color
             && lhs.inset == rhs.inset
             && lhs.tableStyle == rhs.tableStyle
     }

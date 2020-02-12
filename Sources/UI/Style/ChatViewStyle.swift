@@ -72,7 +72,7 @@ public struct ChatViewStyle {
 extension ChatViewStyle: Hashable {
     
     public static func == (lhs: ChatViewStyle, rhs: ChatViewStyle) -> Bool {
-        return lhs.channel == rhs.channel
+        lhs.channel == rhs.channel
             && lhs.composer == rhs.composer
             && lhs.incomingMessage == rhs.incomingMessage
             && lhs.outgoingMessage == rhs.outgoingMessage

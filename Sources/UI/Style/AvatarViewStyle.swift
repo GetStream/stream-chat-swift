@@ -16,9 +16,7 @@ public struct AvatarViewStyle: Hashable {
     public let placeholderFont: UIFont?
     
     /// A double value of `radius`.
-    public var size: CGFloat {
-        return 2 * radius
-    }
+    public var size: CGFloat { radius * 2 }
     
     /// An avatar style.
     /// - Parameters:
