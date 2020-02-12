@@ -32,9 +32,9 @@
         "package": "RxAppState",
         "repositoryURL": "https://github.com/GetStream/RxAppState.git",
         "state": {
-          "branch": "master",
+          "branch": null,
           "revision": "102e44f7ff11289e3b39840b275e6a9551130edc",
-          "version": null
+          "version": "1.6.0"
         }
       },
       {

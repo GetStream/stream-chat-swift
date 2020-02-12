@@ -24,7 +24,7 @@ let package = Package(
         .package(url: "https://github.com/RxSwiftCommunity/RxGesture.git", from: "3.0.0"),
         // Core
         .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "5.0.0"),
-        .package(url: "https://github.com/GetStream/RxAppState.git", .branch("master")),
+        .package(url: "https://github.com/GetStream/RxAppState.git", from: "1.6.0"),
         .package(url: "https://github.com/daltoniam/Starscream.git", from: "3.1.0"),
         .package(url: "https://github.com/ashleymills/Reachability.swift.git", from: "4.3.0"),
         .package(url: "https://github.com/1024jp/GzipSwift.git", from: "5.0.0"),
