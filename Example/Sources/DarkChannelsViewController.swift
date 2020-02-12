@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import RxGesture
 import StreamChatCore
+import StreamChatClient
 import StreamChat
 
 final class DarkChannelsViewController: ChannelsViewController {
@@ -38,22 +39,22 @@ final class DarkChannelsViewController: ChannelsViewController {
     }
     
     func setupPresenter() {
-        if let currentUser = User.current {
-            channelsPresenter = ChannelsPresenter(filter: .key("members", .in([currentUser.id])))
+        if !User.current.isUnknown {
+            channelsPresenter = ChannelsPresenter(filter: .currentUserInMembers)
         }
     }
     
     func observeInvites() {
-        Client.shared.rx.onEvent([.notificationInvited,
-                                  .notificationInviteAccepted,
-                                  .notificationInviteRejected,
-                                  .memberUpdated])
+        Client.shared.rx.onEvent(eventTypes: [.notificationInvited,
+                                              .notificationInviteAccepted,
+                                              .notificationInviteRejected,
+                                              .memberUpdated])
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] event in self?.handleInviteEvent(event) })
             .disposed(by: disposeBag)
     }
     
-    func handleInviteEvent(_ event: StreamChatCore.Event) {
+    func handleInviteEvent(_ event: StreamChatClient.Event) {
         if case .notificationInvited(let channel, _) = event {
             let alert = UIAlertController(title: "Invite",
                                           message: "You are invited to the \(channel.name) channel",
@@ -80,7 +81,7 @@ final class DarkChannelsViewController: ChannelsViewController {
             Banners.shared.show("🙅🏻‍♀️ Invite rejected")
         }
         
-        if case .memberUpdated(let member, _) = event {
+        if case .memberUpdated(let member, _, _) = event {
             if member.inviteAccepted != nil {
                 Banners.shared.show("🙋🏻‍♀️ \(member.user.name) accepted invite")
             } else if member.inviteRejected != nil {
@@ -102,8 +103,8 @@ final class DarkChannelsViewController: ChannelsViewController {
             var extraChannelName = "🙋🏻‍♀️\(channelPresenter.channel.members.count)"
             
             // Add an unread count.
-            if channelPresenter.channel.currentUnreadCount > 0 {
-                extraChannelName += " 📬\(channelPresenter.channel.currentUnreadCount)"
+            if channelPresenter.channel.unreadCount.messages > 0 {
+                extraChannelName += " 📬\(channelPresenter.channel.unreadCount.messages)"
             }
             
             // Add a number of members.
@@ -139,10 +140,10 @@ final class DarkChannelsViewController: ChannelsViewController {
         if let channel = chatViewController.channelPresenter?.channel {
             channel.banEnabling = .enabled(timeoutInMinutes: 1, reason: "I don't like you 🤮")
             
-            channel.rx.onEvent(.userBanned)
+            channel.rx.onEvent(eventType: .userBanned)
                 .observeOn(MainScheduler.instance)
                 .subscribe(onNext: { event in
-                    if case .userBanned(_, let reason, _, _, _) = event {
+                    if case .userBanned(let reason, _, _, _, _) = event {
                         Banners.shared.show("🙅‍♂️ You are banned: \(reason ?? "No reason")")
                     }
                 })
@@ -201,7 +202,7 @@ final class DarkChannelsViewController: ChannelsViewController {
         
         channel.rx.show()
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] in
+            .subscribe(onNext: { [weak self] _ in
                 sender.isEnabled = true
                 self?.channelsPresenter.reload()
             })
