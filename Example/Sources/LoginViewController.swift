@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import StreamChat
 import StreamChatCore
+import StreamChatClient
 import RxGesture
 
 final class LoginViewController: UIViewController {
@@ -21,8 +22,8 @@ final class LoginViewController: UIViewController {
     @IBOutlet weak var versionLabel: UILabel!
     let userDefaults = UserDefaults()
     var loggedInToken: Token?
-    var loggedInUser: StreamChatCore.User?
-    var secondUser: StreamChatCore.User?
+    var loggedInUser: StreamChatClient.User?
+    var secondUser: StreamChatClient.User?
     let disposeBag = DisposeBag()
     var clientSetupped = false
     
@@ -116,7 +117,7 @@ final class LoginViewController: UIViewController {
             Client.config = .init(apiKey: apiKey,
                                   baseURL: .init(serverLocation: .proxyEast),
                                   database: Database.instance,
-                                  logOptions: .info)
+                                  logOptions: [.requests, .webSocketInfo])
             
             Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
             store(key: .apiKey, value: apiKey)
