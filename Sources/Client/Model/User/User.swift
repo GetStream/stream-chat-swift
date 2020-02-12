@@ -34,6 +34,9 @@ public struct User: Codable {
         return User(id: "unknown_\(id)", name: "Unknown \(id.prefix(4))")
     }()
     
+    /// Checks if the user is unknown.
+    public var isUnknown: Bool { self == User.unknown }
+    
     /// An anonymous user.
     public static let anonymous = User(id: UUID().uuidString, name: "", role: .anonymous)
     
