@@ -58,7 +58,7 @@ public final class Client {
     /// A web socket client.
     lazy var webSocket = WebSocket()
     
-    public internal(set) var lastConnection = Connection.notConnected
+    public var connection: Connection { webSocket.connection }
     
     /// A WebSocket connection callback.
     public var onConnect: Client.OnConnect = { _ in } {
@@ -70,7 +70,7 @@ public final class Client {
         didSet { webSocket.onEvent = setupWebSocketOnEvent }
     }
     
-    lazy var urlSession = setupURLSession(token: "")
+    lazy var urlSession = URLSession(configuration: .default)
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
@@ -157,20 +157,12 @@ public final class Client {
         webSocket.connect()
     }
     
-    /// Disconnect from Stream and reset the current user.
-    ///
-    /// Resets and removes the user/token pair as well as relevant network connections.
-    ///
-    /// - Note: To restore the connection, use `Client.set(user:, token:)` to set a valid user/token pair.
+    /// Disconnect from the web socket.
     public func disconnect() {
-        logger?.log("🧹 Reset Client User, Token, URLSession and WebSocket.")
-        urlSession = setupURLSession(token: "")
+        logger?.log("Disconnecting...")
         webSocket.disconnect()
-        webSocket = WebSocket()
         Message.flaggedIds.removeAll()
         User.flaggedUsers.removeAll()
-        token = nil
-        user = .unknown
         isExpiredTokenInProgress = false
         
         performInCallbackQueue { [unowned self] in
@@ -179,19 +171,21 @@ public final class Client {
         }
     }
     
+    /// Handle a connection with an application state.
+    ///
+    /// Application State:
+    /// - `.active`
+    ///   - `cancelBackgroundWork()`
+    ///   - `connect()`
+    /// - `.background` and `isConnected`
+    ///   - `disconnectInBackground()`
+    /// - Parameter appState: an application state.
     public func handleConnection(with appState: UIApplication.State) {
         if appState == .active {
             webSocket.cancelBackgroundWork()
-            
-            if !isConnected {
-                connect()
-            }
-        } else if appState == .background {
-            if webSocket.isConnected {
-                webSocket.disconnectInBackground()
-            } else {
-                webSocket.disconnect()
-            }
+            connect()
+        } else if appState == .background, webSocket.isConnected {
+            webSocket.disconnectInBackground()
         }
     }
 }

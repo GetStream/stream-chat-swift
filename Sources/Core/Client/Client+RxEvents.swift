@@ -72,8 +72,8 @@ extension Client {
                 self.onConnect = { observer.onNext($0) }
                 return Disposables.create()
             })
-                .startWith(lastConnection)
-                .share(replay: 1)
+                .startWith(connection)
+                .share()
         }
     }
     
