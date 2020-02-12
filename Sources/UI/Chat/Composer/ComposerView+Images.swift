@@ -75,7 +75,7 @@ extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return imageUploaderItems.isEmpty ? 0 : imageUploaderItems.count + (imagesAddAction == nil ? 0 : 1)
+        imageUploaderItems.isEmpty ? 0 : imageUploaderItems.count + (imagesAddAction == nil ? 0 : 1)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

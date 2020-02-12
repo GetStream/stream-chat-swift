@@ -146,7 +146,7 @@ public extension ChannelViewStyle {
 extension ChannelViewStyle: Hashable {
     
     public static func == (lhs: ChannelViewStyle, rhs: ChannelViewStyle) -> Bool {
-        return lhs.backgroundColor == rhs.backgroundColor
+        lhs.backgroundColor == rhs.backgroundColor
             && lhs.separatorStyle == rhs.separatorStyle
             && lhs.avatarViewStyle == rhs.avatarViewStyle
             && lhs.nameNumberOfLines == rhs.nameNumberOfLines

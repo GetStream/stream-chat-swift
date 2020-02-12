@@ -32,10 +32,8 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     public private(set) var needsToSetup = true
     
     /// An avatar.
-    public private(set) lazy var avatarView: AvatarView = {
-        return AvatarView(cornerRadius: style.avatarViewStyle?.radius ?? 0,
-                          font: style.avatarViewStyle?.placeholderFont)
-    }()
+    public private(set) lazy var avatarView = AvatarView(cornerRadius: style.avatarViewStyle?.radius ?? 0,
+                                                         font: style.avatarViewStyle?.placeholderFont)
     
     let reactionsContainer: UIImageView = UIImageView(frame: .zero)
     let reactionsOverlayView = UIView(frame: .zero)

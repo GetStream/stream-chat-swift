@@ -12,9 +12,7 @@ import UIKit
 open class ViewController: UIViewController {
     
     /// Checks if the view controller’s view is visible for updates or not.
-    open var isVisible: Bool {
-        return viewIfLoaded?.window != nil
-    }
+    open var isVisible: Bool { viewIfLoaded?.window != nil }
     
     // MARK: - Banners
     

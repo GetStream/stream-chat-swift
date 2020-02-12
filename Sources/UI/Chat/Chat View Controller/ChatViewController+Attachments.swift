@@ -27,7 +27,7 @@ extension ChatViewController {
     }
     
     private func visibleAttachmentPreviews(action: (_ attachmentPreview: AttachmentPreview) -> Void) {
-        return tableView.visibleCells.forEach { cell in
+        tableView.visibleCells.forEach { cell in
             guard let messageCell = cell as? MessageTableViewCell else {
                 return
             }
