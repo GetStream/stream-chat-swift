@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import StreamChatCore
+import StreamChatClient
 
 #if canImport(StreamChatRealm)
 import StreamChatRealm
@@ -18,14 +18,14 @@ final class RealmDatabase {
         let logOptions: ClientLogger.Options
     }
     
-    static func setup(_ config: Config) -> StreamChatCore.Database? {
+    static func setup(_ config: Config) -> StreamChatClient.Database? {
         return nil
     }
 }
 #endif
 
 struct Database {
-    static let instance: StreamChatCore.Database? = NSClassFromString("StreamChatRealm.RealmDatabase") != nil
+    static let instance: StreamChatClient.Database? = NSClassFromString("StreamChatRealm.RealmDatabase") != nil
         ? RealmDatabase.setup(.init(encrypted: false, logOptions: .info))
         : nil
 }
