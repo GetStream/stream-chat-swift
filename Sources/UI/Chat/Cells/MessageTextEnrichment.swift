@@ -38,7 +38,8 @@ final class MessageTextEnrichment {
             return nil
         }
         
-        let addMarkdown = style.markdownEnabled && message.text.rangeOfCharacter(from: .markdown) != nil
+        let addMarkdown = style.markdownEnabled
+            && message.text.replacingOccurrences(of: "~~", with: "-").rangeOfCharacter(from: .markdown) != nil
         let mentionedUserNames = message.mentionedUsers.map({ $0.name })
         
         let enrichURLs = enrichURLs && message.text.probablyHasURL
