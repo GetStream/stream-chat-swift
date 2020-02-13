@@ -299,7 +299,7 @@ extension Client {
                 
                 if errorResponse.code == ClientErrorResponse.tokenExpiredErrorCode {
                     logger?.log("🀄️ Token is expired")
-                    touchTokenProvider()
+                    touchTokenProvider(isExpiredTokenInProgress: true)
                     return
                 }
                 

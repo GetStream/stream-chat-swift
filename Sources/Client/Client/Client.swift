@@ -170,7 +170,12 @@ public final class Client {
     /// - `.background` and `isConnected`
     ///   - `disconnectInBackground()`
     /// - Parameter appState: an application state.
-    public func handleConnection(with appState: UIApplication.State) {
+    public func handleConnection(appState: UIApplication.State, isInternetAvailable: Bool) {
+        guard isInternetAvailable else {
+            disconnect()
+            return
+        }
+        
         if appState == .active {
             webSocket.cancelBackgroundWork()
             connect()
