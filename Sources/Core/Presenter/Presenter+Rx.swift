@@ -83,7 +83,7 @@ public extension Reactive  where Base: Presenter {
         }
         
         return Observable.combineLatest(base.loadPagination.asObserver().startWith(pagination),
-                                        InternetConnection.shared.isAvailableObservable.filter({ !$0 }))
+                                        InternetConnection.shared.rx.isAvailable.filter({ !$0 }))
             .map { pagination, _ in pagination }
             .filter { $0 != .none && self.shouldMakeDatabaseFetch(with: $0) }
             .share()
