@@ -20,6 +20,7 @@
 		8A04964722E9F57000E94795 /* ViewChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD622E9BA39005CFAC9 /* ViewChanges.swift */; };
 		8A04964822E9F57000E94795 /* PresenterItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5ECD522E9BA39005CFAC9 /* PresenterItem.swift */; };
 		8A04965322F0910200E94795 /* Message+RxRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A04965222F0910200E94795 /* Message+RxRequests.swift */; };
+		8A09893F23F582AE0098F4C1 /* InternetConnection+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A09893E23F582AE0098F4C1 /* InternetConnection+Rx.swift */; };
 		8A0EB78C22FC608A009481E4 /* Client+RxEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78B22FC608A009481E4 /* Client+RxEvents.swift */; };
 		8A0EB78E22FC6974009481E4 /* Channel+RxEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0EB78D22FC6974009481E4 /* Channel+RxEvents.swift */; };
 		8A0C2938241678C5008BAB60 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0C2937241678C5008BAB60 /* Environment.swift */; };
@@ -334,6 +335,7 @@
 		8A04964E22EF1A8900E94795 /* QueryOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryOptions.swift; sourceTree = "<group>"; };
 		8A04965022EF4B2400E94795 /* UsersQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersQuery.swift; sourceTree = "<group>"; };
 		8A04965222F0910200E94795 /* Message+RxRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Message+RxRequests.swift"; sourceTree = "<group>"; };
+		8A09893E23F582AE0098F4C1 /* InternetConnection+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "InternetConnection+Rx.swift"; sourceTree = "<group>"; };
 		8A0EB78B22FC608A009481E4 /* Client+RxEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxEvents.swift"; sourceTree = "<group>"; };
 		8A0EB78D22FC6974009481E4 /* Channel+RxEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+RxEvents.swift"; sourceTree = "<group>"; };
 		8A0C2937241678C5008BAB60 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
@@ -1221,6 +1223,7 @@
 			isa = PBXGroup;
 			children = (
 				8AD5ED3222E9BA39005CFAC9 /* InternetConnection.swift */,
+				8A09893E23F582AE0098F4C1 /* InternetConnection+Rx.swift */,
 				8AD5ED2D22E9BA39005CFAC9 /* Client */,
 				8A04964322E9F51C00E94795 /* Presenter */,
 				8AD5ED4122E9BA39005CFAC9 /* Notifications */,
@@ -1882,6 +1885,7 @@
 				8A13853023C781A60088DBC7 /* Client+RxChannels.swift in Sources */,
 				8A04964722E9F57000E94795 /* ViewChanges.swift in Sources */,
 				8AC8C8B822F43D16003BD1D5 /* Client+RxUser.swift in Sources */,
+				8A09893F23F582AE0098F4C1 /* InternetConnection+Rx.swift in Sources */,
 				8A410C9E23EC77DB0049649E /* Client+RxChannel.swift in Sources */,
 				8AC0D95623D5E40D0080B8BC /* URL+Media.swift in Sources */,
 				8A2187DE23CC9C83006550A6 /* ChannelPresenter+RxRequests.swift in Sources */,
