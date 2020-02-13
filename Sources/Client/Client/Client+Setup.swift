@@ -73,20 +73,21 @@ extension Client {
         
         self.user = user
         self.tokenProvider = tokenProvider
-        touchTokenProvider()
+        touchTokenProvider(isExpiredTokenInProgress: false)
     }
     
     @discardableResult
-    func touchTokenProvider() -> Bool {
+    func touchTokenProvider(isExpiredTokenInProgress: Bool) -> Bool {
         guard let tokenProvider = tokenProvider else {
             return false
         }
+        
+        self.isExpiredTokenInProgress = isExpiredTokenInProgress
         
         if webSocket.isConnected {
             webSocket.disconnect()
         }
         
-        isExpiredTokenInProgress = true
         logger?.log("🀄️ Request for a new token from a token provider.")
         tokenProvider(setup)
         
