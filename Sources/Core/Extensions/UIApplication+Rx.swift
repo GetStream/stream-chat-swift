@@ -35,3 +35,22 @@ extension Reactive where Base == UIApplication {
         base.rxApplicationState
     }
 }
+
+extension UIApplication.State: Equatable, CustomStringConvertible {
+    
+    public var description: String {
+        switch self {
+        case .active: return "active"
+        case .inactive: return "inactive"
+        case .background: return "background"
+        @unknown default: return "unknown"
+        }
+    }
+    
+    public static func == (lhs: UIApplication.State, rhs: UIApplication.State) -> Bool {
+        switch (lhs, rhs) {
+        case (.active, .active), (.inactive, .inactive), (.background, .background): return true
+        default: return false
+        }
+    }
+}

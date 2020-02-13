@@ -17,33 +17,23 @@ extension Client {
     
     fileprivate var rxConnection: Observable<Connection> {
         associated(to: self, key: &Client.rxConnectionKey) { [unowned self] in
-            let isInternetAvailable: Observable<Bool> = InternetConnection.shared.isAvailableObservable.startWith(false)
-            let app = UIApplication.shared
+            let connection = rx.onConnect.filter { _ in !self.isExpiredTokenInProgress }
+            let appState = UIApplication.shared.rx.applicationState.filter({ $0 != .inactive })
+            let isInternetAvailable: Observable<Bool> = InternetConnection.shared.rx.isAvailable
             
-            let appState = app.rx.applicationState.filter({ $0 != .inactive })
-                .distinctUntilChanged()
-                .startWith(app.applicationState)
-                .do(onNext: { self.logger?.log("📱 App state \($0)") })
-
-            let onTokenChange = rx.onTokenChange
-                .filter { [unowned self] _ in !self.isExpiredTokenInProgress }
-            
-            return Observable.combineLatest(isInternetAvailable, appState, onTokenChange)
+            let environment = Observable.combineLatest(appState, isInternetAvailable)
+                .distinctUntilChanged({ $0.0 == $1.0 && $0.1 == $1.1 })
                 .observeOn(MainScheduler.instance)
-                .do(onNext: { isInternetAvailable, appState, _ in
-                    guard isInternetAvailable else {
-                        self.logger?.log("💔🕸 Disconnected: No Internet")
-                        self.disconnect()
-                        return
-                    }
-                    
-                    self.handleConnection(with: appState)
+                .do(onNext: { appState, isInternetAvailable in
+                    self.logger?.log("Environment: appState: \(appState), Internet: \(isInternetAvailable ? "yes" : "no")")
+                    self.handleConnection(appState: appState, isInternetAvailable: isInternetAvailable)
                 })
-                .flatMapLatest({ _ in self.rx.onConnect })
+            
+            return Observable.combineLatest(connection, environment)
+                .map { connection, _ in connection }
                 .distinctUntilChanged()
                 .do(onDispose: { self.disconnect() })
                 .share(replay: 1)
-                .debug()
         }
     }
 }
