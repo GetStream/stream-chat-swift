@@ -60,13 +60,7 @@ public final class InternetConnection {
             
             return .empty()
         })
-        .map({
-            if case .none = $0 {
-                return false
-            }
-            
-            return true
-        })
+        .map({ $0 != .none })
         .distinctUntilChanged()
         .do(onNext: {
             if Client.shared.logOptions.isEnabled {
