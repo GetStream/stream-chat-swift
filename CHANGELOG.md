@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐞 Fixed
 - Fixed nested frameworks when using Carthage [#100](https://github.com/GetStream/stream-chat-swift/issues/100)
 - Fixed strikethrough markdown with ~~ correctly applied [#97](https://github.com/GetStream/stream-chat-swift/issues/97)
+- Fixed connection issue [#70](https://github.com/GetStream/stream-chat-swift/issues/70)
 
 # [1.5.6](https://github.com/GetStream/stream-chat-swift/releases/tag/1.5.6)
 _February 11, 2020_
