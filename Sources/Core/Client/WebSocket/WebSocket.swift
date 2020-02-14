@@ -148,12 +148,11 @@ public final class WebSocket {
         if webSocket.isConnected {
             // Server won't send Close control frame, we must force close the connection.
             webSocket.disconnect(forceTimeout: 0)
+            clearStateAfterDisconnect()
             logger?.log("💔 Disconnected deliberately")
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
         }
-        
-        clearStateAfterDisconnect()
         
         DispatchQueue.main.async {
             if UIApplication.shared.appState == .background {
