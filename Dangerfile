@@ -23,7 +23,7 @@ has_changelog_escape = github.pr_body.include? "#no_changelog"
 
 # Add a CHANGELOG entry for app changes
 if !has_changelog_escape && !git.modified_files.include?("CHANGELOG.md") && has_app_changes
-    fail("Please include a CHANGELOG entry. \nYou can find it at [CHANGELOG.md](https://github.com/realm/jazzy/blob/master/CHANGELOG.md).")
+    fail("Please include a CHANGELOG entry. \nYou can find it at [CHANGELOG.md](https://github.com/GetStream/stream-chat-swift/blob/master/CHANGELOG.md).")
 end
 
 ## Finally, let's combine them and put extra condition 
