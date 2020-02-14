@@ -146,6 +146,7 @@ public final class WebSocket {
         }
         
         if webSocket.isConnected {
+            // Server won't send Close control frame, we must force close the connection.
             webSocket.disconnect(forceTimeout: 0)
             logger?.log("💔 Disconnected deliberately")
         } else {
