@@ -43,7 +43,7 @@ public final class WebSocket {
     /// An observable event response.
     public private(set) lazy var response: Observable<WebSocket.Response> = Observable.just(())
         .observeOn(MainScheduler.instance)
-        .flatMapLatest { Client.shared.webSocket.webSocket.rx.response }
+        .flatMapLatest { [weak self] in self?.webSocket.rx.response ?? .empty() }
         .compactMap { [weak self] in self?.parseMessage($0) }
         .do(onNext: {
             if case .notificationMutesUpdated(let user, _) = $0.event {
@@ -146,7 +146,7 @@ public final class WebSocket {
         }
         
         if webSocket.isConnected {
-            webSocket.disconnect()
+            webSocket.disconnect(forceTimeout: 0)
             logger?.log("💔 Disconnected deliberately")
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
@@ -165,6 +165,7 @@ public final class WebSocket {
         handshakeTimer.suspend()
         lastConnectionId = nil
         cancelBackgroundWork()
+        logger?.log("🔑 connectionId cleaned")
     }
 }
 
@@ -246,7 +247,6 @@ extension WebSocket {
     
     private func disconnected(_ error: Error? = nil) -> Connection {
         logger?.log("💔🤔 Disconnected")
-        clearStateAfterDisconnect()
         
         if let error = error {
             var errorMessage = "🦄💔😡 Disconnected by error"
