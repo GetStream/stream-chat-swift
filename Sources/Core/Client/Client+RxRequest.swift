@@ -57,7 +57,7 @@ public extension Reactive where Base == Client {
         }
     }
     
-    func connectedRequest<T: Decodable>(_ rxRequest: Observable<T>) -> Observable<T> {
+    func connected<T: Decodable>(_ rxRequest: Observable<T>) -> Observable<T> {
         base.isConnected ? rxRequest : connection.filter({ $0.isConnected }).take(1).flatMapLatest { _ in rxRequest }
     }
 }

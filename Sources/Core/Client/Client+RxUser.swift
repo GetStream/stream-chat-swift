@@ -28,7 +28,7 @@ public extension Reactive where Base == Client {
     /// Requests users with a given query (see `UsersQuery`).
     /// - Parameter query: a users query (see `UsersQuery`).
     func queryUsers(query: UsersQuery) -> Observable<[User]> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.queryUsers(query: query, completion)
         }))
     }
@@ -38,7 +38,7 @@ public extension Reactive where Base == Client {
     /// Update or create a user.
     @discardableResult
     func update(users: [User]) -> Observable<[User]> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.update(users: users, completion)
         }))
     }
@@ -47,7 +47,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - user: a user.
     func update(user: User) -> Observable<User> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.update(user: user, completion)
         }))
     }
@@ -58,7 +58,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - user: a user.
     func mute(user: User) -> Observable<MutedUsersResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.mute(user: user, completion)
         }))
     }
@@ -67,7 +67,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - user: a user.
     func unmute(user: User) -> Observable<EmptyData> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.unmute(user: user, completion)
         }))
     }
@@ -78,7 +78,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - user: a user.
     func flag(user: User) -> Observable<FlagUserResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.flag(user: user, completion)
         }))
     }
@@ -87,7 +87,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - user: a user.
     func unflag(user: User) -> Observable<FlagUserResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.unflag(user: user, completion)
         }))
     }
