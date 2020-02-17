@@ -27,7 +27,7 @@ public extension Reactive where Base == Client {
     /// - Parameter query: a search query.
     ///   - filter: a filter for channels, e.g. `"members".in(["john"])`
     func search(query: SearchQuery) -> Observable<[Message]> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.search(query: query, completion)
         }))
     }
@@ -44,7 +44,7 @@ public extension Reactive where Base == Client {
                        pagination: Pagination = .channelsPageSize,
                        messagesLimit: Pagination = .messagesPageSize,
                        options: QueryOptions = []) -> Observable<[ChannelResponse]> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.queryChannels(filter: filter,
                                sort: sort,
                                pagination: pagination,
@@ -57,7 +57,7 @@ public extension Reactive where Base == Client {
     /// Requests channels with a given query (see `ChannelsQuery`).
     /// - Parameter query: a channels query.
     func queryChannels(query: ChannelsQuery) -> Observable<[ChannelResponse]> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.queryChannels(query: query, completion)
         }))
     }
