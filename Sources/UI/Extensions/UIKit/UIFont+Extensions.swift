@@ -41,12 +41,10 @@ extension UIFont {
     public static let reactionsEmoji = UIFont.systemFont(ofSize: 22)
     
     /// An avatar font.
-    ///
     /// - Parameter size: a font size.
     /// - Returns: a font.
-    public static func avatarFont(size: CGFloat) -> UIFont? {
-        guard size > 5 else { return nil }
-        return UIFont(name: "GillSans-UltraBold", size: size)
+    public static func avatarFont(size: CGFloat) -> UIFont {
+        .systemFont(ofSize: max(6, size), weight: .black)
     }
     
     /// A monospaced font.
@@ -54,6 +52,10 @@ extension UIFont {
     /// - Parameter size: a font size.
     /// - Returns: a monospaced font.
     public static func monospaced(size: CGFloat) -> UIFont? {
+        if #available(iOS 12, *) {
+            return UIFont.monospacedSystemFont(ofSize: size, weight: .regular)
+        }
+        
         return UIFont(name: "Menlo-Regular", size: size)
     }
 }
