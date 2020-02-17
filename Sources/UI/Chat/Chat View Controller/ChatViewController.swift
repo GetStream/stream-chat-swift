@@ -208,7 +208,9 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     /// - Parameters:
     ///   - indexPath: an index path.
     /// - Returns: a loading table view cell.
-    open func loadingCell(at indexPath: IndexPath) -> UITableViewCell? { nil }
+    open func loadingCell(at indexPath: IndexPath) -> UITableViewCell? {
+        nil
+    }
     
     /// A custom status cell to insert in a particular location of the table view.
     ///
@@ -372,7 +374,7 @@ extension ChatViewController {
     }
     
     open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return items.count
+        items.count
     }
     
     open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -429,6 +431,6 @@ extension ChatViewController {
     }
     
     open func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return false
+        false
     }
 }

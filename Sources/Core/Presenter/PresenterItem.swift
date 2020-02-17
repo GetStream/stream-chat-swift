@@ -90,7 +90,7 @@ public extension Array where Element == PresenterItem {
     /// - Parameter cid: a ChannelId of a searching `PresenterItem` of a channel presenter.
     /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func firstIndex(where cid: ChannelId) -> Int? {
-        return firstIndex(whereChannelId: cid.id, channelType: cid.type)
+        firstIndex(whereChannelId: cid.id, channelType: cid.type)
     }
     
     /// Find the first index of an `PresenterItem` of a channel presenter with a given channel id.
@@ -98,7 +98,7 @@ public extension Array where Element == PresenterItem {
     /// - Parameter channelId: a channelId of a searching `PresenterItem` of a channel presenter.
     /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func firstIndex(whereChannelId channelId: String, channelType: ChannelType) -> Int? {
-        return firstIndex(where: { item -> Bool in
+        firstIndex(where: { item -> Bool in
             if case .channelPresenter(let channelPresenter) = item {
                 return channelPresenter.channel.id == channelId && channelPresenter.channel.type == channelType
             }
@@ -112,7 +112,7 @@ public extension Array where Element == PresenterItem {
     /// - Parameter cid: a ChannelId of a searching `PresenterItem` of a channel presenter.
     /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func lastIndex(where cid: ChannelId) -> Int? {
-        return lastIndex(whereChannelId: cid.id, channelType: cid.type)
+        lastIndex(whereChannelId: cid.id, channelType: cid.type)
     }
     
     /// Find the last index of an `PresenterItem` of a channel presenter with a given channel id.
@@ -120,7 +120,7 @@ public extension Array where Element == PresenterItem {
     /// - Parameter channelId: a channelId of a searching `PresenterItem` of a channel presenter.
     /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func lastIndex(whereChannelId channelId: String, channelType: ChannelType) -> Int? {
-        return lastIndex(where: { item -> Bool in
+        lastIndex(where: { item -> Bool in
             if case .channelPresenter(let channelPresenter) = item {
                 return channelPresenter.channel.id == channelId && channelPresenter.channel.type == channelType
             }
@@ -134,7 +134,7 @@ public extension Array where Element == PresenterItem {
     /// - Parameter messageId: a messageId of a searching `PresenterItem` of a message.
     /// - Returns: an index of an `PresenterItem` with a message.
     func lastIndex(whereMessageId messageId: String) -> Int? {
-        return lastIndex(where: { item -> Bool in
+        lastIndex(where: { item -> Bool in
             if case .message(let message, _) = item, !message.id.isEmpty {
                 return message.id == messageId
             }
@@ -165,7 +165,7 @@ public extension Array where Element == PresenterItem {
     ///
     /// - Returns: an index of a `PresenterItem` status loading.
     func firstIndexWhereStatusLoading() -> Int? {
-        return firstIndex(where: { item -> Bool in
+        firstIndex(where: { item -> Bool in
             if case .loading = item {
                 return true
             }
@@ -179,7 +179,7 @@ public extension Array where Element == PresenterItem {
     /// - Parameter title: a searching status title.
     /// - Returns: an index of a `PresenterItem` status.
     func firstIndex(whereStatusTitle title: String) -> Int? {
-        return firstIndex(where: { item -> Bool in
+        firstIndex(where: { item -> Bool in
             if case .status(let itemTitle, _, _) = item {
                 return itemTitle == title
             }
@@ -193,7 +193,7 @@ public extension Array where Element == PresenterItem {
     /// - Parameter title: a searching status title.
     /// - Returns: an index of a `PresenterItem` status.
     func lastIndex(whereStatusTitle title: String) -> Int? {
-        return lastIndex(where: { item -> Bool in
+        lastIndex(where: { item -> Bool in
             if case .status(let itemTitle, _, _) = item {
                 return itemTitle == title
             }

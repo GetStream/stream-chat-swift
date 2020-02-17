@@ -20,9 +20,9 @@ public class Presenter {
     /// A pagination for the next request.
     public internal(set) var next: Pagination
     /// Checks if the presenter can load more items.
-    public var hasNextPage: Bool { return next != pageSize }
+    public var hasNextPage: Bool { next != pageSize }
     /// Checks if presenter items are empty.
-    public var isEmpty: Bool { return items.isEmpty }
+    public var isEmpty: Bool { items.isEmpty }
     /// Observe connection errors as `ViewChanges`.
     private(set) lazy var rxConnectionErrors: Driver<ViewChanges> = rx.setupConnectionErrors()
     
