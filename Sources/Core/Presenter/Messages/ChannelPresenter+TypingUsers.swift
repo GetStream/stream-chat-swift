@@ -42,7 +42,7 @@ public struct TypingUser: Hashable {
     public let started = Date()
     
     public static func == (lhs: TypingUser, rhs: TypingUser) -> Bool {
-        return lhs.user == rhs.user
+        lhs.user == rhs.user
     }
     
     public func hash(into hasher: inout Hasher) {

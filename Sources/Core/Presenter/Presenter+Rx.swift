@@ -16,7 +16,7 @@ extension Presenter: ReactiveCompatible {}
 extension Reactive  where Base: Presenter {
     
     public var connectionErrors: Driver<ViewChanges> {
-        return base.rxConnectionErrors
+        base.rxConnectionErrors
     }
     
     /// Observe connection errors as `ViewChanges`.
