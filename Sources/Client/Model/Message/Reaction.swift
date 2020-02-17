@@ -8,7 +8,7 @@
 
 import Foundation
 
-// MARK: - Reaction
+// MARK: Reaction
 
 /// A reaction type.
 public enum ReactionType: String, Codable, Hashable, CaseIterable {
@@ -70,7 +70,7 @@ public struct Reaction: Codable, Equatable {
     /// A created date.
     public let created: Date
     
-    /// Check if the reaction if by the current user.
+    /// Check if the reaction is from the current user.
     public var isOwn: Bool { user?.isCurrent ?? false }
     
     /// Init a reaction.
