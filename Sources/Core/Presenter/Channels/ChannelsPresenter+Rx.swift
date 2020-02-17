@@ -22,7 +22,7 @@ public extension Reactive where Base == ChannelsPresenter {
     
     internal func setupChanges() -> Driver<ViewChanges> {
         Driver.merge(parsedChannelResponses(channelsRequest),
-                     // parsedChannelResponses(channelsDatabaseFetch),
+            // parsedChannelResponses(channelsDatabaseFetch),
             events,
             connectionErrors,
             base.actions.asDriver(onErrorJustReturn: .none))
