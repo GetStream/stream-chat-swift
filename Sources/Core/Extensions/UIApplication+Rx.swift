@@ -10,10 +10,14 @@ import UIKit
 import RxSwift
 
 extension UIApplication {
-    private static var rxApplicationStateKey: UInt8 = 0
+    fileprivate static var rxApplicationStateKey: UInt8 = 0
+}
+
+extension Reactive where Base == UIApplication {
     
-    fileprivate var rxApplicationState: Observable<UIApplication.State> {
-        associated(to: self, key: &UIApplication.rxApplicationStateKey) {
+    /// An application state.
+    public var applicationState: Observable<UIApplication.State> {
+        associated(to: base, key: &UIApplication.rxApplicationStateKey) {
             let center = NotificationCenter.default
             
             let notifications: [Observable<UIApplication.State>] =
@@ -27,12 +31,6 @@ extension UIApplication {
                 .startWith(UIApplication.shared.applicationState)
                 .share(replay: 1, scope: .forever)
         }
-    }
-}
-
-extension Reactive where Base == UIApplication {
-    public var applicationState: Observable<UIApplication.State> {
-        base.rxApplicationState
     }
 }
 
