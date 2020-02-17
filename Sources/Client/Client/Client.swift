@@ -46,7 +46,7 @@ public final class Client {
         didSet { onTokenChange?(token) }
     }
     
-    /// A token callback.
+    /// A token callback. This should only be used when you only use the Low-Level Client.
     public var onTokenChange: OnTokenChange?
     var tokenProvider: TokenProvider?
     public internal(set) var isExpiredTokenInProgress = false
@@ -57,12 +57,12 @@ public final class Client {
     
     public var connection: Connection { webSocket.connection }
     
-    /// A WebSocket connection callback.
+    /// A WebSocket connection callback. This should only be used when you only use the Low-Level Client.
     public var onConnect: Client.OnConnect = { _ in } {
         didSet { webSocket.onConnect = setupWebSocketOnConnect }
     }
     
-    /// A WebSocket events callback.
+    /// A WebSocket events callback. This should only be used when you only use the Low-Level Client.
     public var onEvent: Client.OnEvent = { _ in } {
         didSet { webSocket.onEvent = setupWebSocketOnEvent }
     }
@@ -76,7 +76,7 @@ public final class Client {
     public let logger: ClientLogger?
     public let logOptions: ClientLogger.Options
     
-    /// An observable user.
+    /// An observable user. This should only be used when you only use the Low-Level Client.
     public var onUserUpdate: OnUpdate<User>?
     
     private(set) lazy var userAtomic = Atomic<User> { [unowned self] newValue, _ in
