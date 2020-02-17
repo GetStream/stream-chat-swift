@@ -71,7 +71,7 @@ public final class UploaderItem: Equatable {
     public private(set) var lastProgress: Float = 0
     /// An observable uploading progress.
     public private(set) lazy var uploading: Observable<ProgressResponse<URL>> = createUploading()
-
+    
     /// Init an uploading item.
     ///
     /// - Parameters:
@@ -209,7 +209,7 @@ public final class UploaderItem: Equatable {
     }
     
     public static func == (lhs: UploaderItem, rhs: UploaderItem) -> Bool {
-        return lhs.url == rhs.url
+        lhs.url == rhs.url
             && lhs.image == rhs.image
             && lhs.fileName == rhs.fileName
             && lhs.fileType == rhs.fileType
