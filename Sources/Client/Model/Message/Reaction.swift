@@ -31,7 +31,7 @@ public struct Reaction: Codable, Equatable {
     /// An extra data for the reaction.
     public let extraData: ExtraData?
     
-    /// Check if the reaction if by the current user.
+    /// Check if the reaction is from the current user.
     public var isOwn: Bool { user?.isCurrent ?? false }
     
     /// Init a reaction.
