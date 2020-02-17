@@ -53,7 +53,7 @@ extension UIFont {
     /// - Returns: a monospaced font.
     public static func monospaced(size: CGFloat) -> UIFont? {
         if #available(iOS 12, *) {
-            return UIFont.monospacedSystemFont(ofSize: size, weight: .regular)
+            return .monospacedSystemFont(ofSize: size, weight: .regular)
         }
         
         return UIFont(name: "Menlo-Regular", size: size)
