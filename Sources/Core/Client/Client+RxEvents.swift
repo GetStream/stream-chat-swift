@@ -110,7 +110,15 @@ extension Reactive where Base == Client {
             .filter({ $0.isConnected })
             .flatMapLatest { _ in self.onEvent }
             .filter({ [weak channel] in
-                eventTypes.isEmpty || (eventTypes.contains($0.type) && (channel == nil || $0.cid == channel?.cid))
+                if !eventTypes.isEmpty, !eventTypes.contains($0.type) {
+                    return false
+                }
+                
+                if let cid = channel?.cid {
+                    return cid == $0.cid
+                }
+                
+                return true
             })
             .share()
     }
