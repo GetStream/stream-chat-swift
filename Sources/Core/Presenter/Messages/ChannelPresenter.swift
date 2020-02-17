@@ -37,8 +37,7 @@ public final class ChannelPresenter: Presenter {
     }
     
     /// A channel (see `Channel`).
-    public var channel: Channel { return channelAtomic.get(default: .unused) }
-    
+    public var channel: Channel { channelAtomic.get(default: .unused) }
     /// A parent message for replies.
     public let parentMessage: Message?
     /// Query options.
@@ -47,15 +46,9 @@ public final class ChannelPresenter: Presenter {
     public var editMessage: Message?
     /// Show statuses separators, e.g. Today
     public private(set) var showStatuses = true
-    
-    var startedTyping = false
     let lastMessageAtomic = Atomic<Message>()
-    
     /// The last parsed message from WebSocket events.
-    public var lastMessage: Message? {
-        return lastMessageAtomic.get()
-    }
-    
+    public var lastMessage: Message? { lastMessageAtomic.get() }
     var lastAddedOwnMessage: Message?
     var lastParsedEvent: StreamChatClient.Event?
     var lastWebSocketEventViewChanges: ViewChanges?
@@ -65,28 +58,22 @@ public final class ChannelPresenter: Presenter {
     
     /// A list of typing users (see `TypingUser`).
     public internal(set) var typingUsers: [TypingUser] = []
+    var startedTyping = false
+    
     var messageReadsToMessageId: [MessageRead: String] = [:]
-    let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
-    
     /// Check if the channel has unread messages.
-    public var isUnread: Bool {
-        return channel.config.readEventsEnabled && unreadMessageReadAtomic.get() != nil
-    }
-    
+    public var isUnread: Bool { channel.config.readEventsEnabled && unreadMessageReadAtomic.get() != nil }
     /// The current user message read state.
-    public var messageRead: MessageRead? {
-        return unreadMessageReadAtomic.get()
-    }
+    public var messageRead: MessageRead? { unreadMessageReadAtomic.get() }
     
+    let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     /// Check if the channel has ephemeral message, e.g. Giphy preview.
-    public var hasEphemeralMessage: Bool { return ephemeralMessage != nil }
+    public var hasEphemeralMessage: Bool { ephemeralMessage != nil }
     /// An ephemeral message, e.g. Giphy preview.
-    public var ephemeralMessage: Message? { return (try? ephemeralSubject.value())?.message }
+    public var ephemeralMessage: Message? { (try? ephemeralSubject.value())?.message }
     
     /// Check if the user can reply (create a thread) to a message.
-    public var canReply: Bool {
-        return parentMessage == nil && channel.config.repliesEnabled
-    }
+    public var canReply: Bool { parentMessage == nil && channel.config.repliesEnabled }
     
     /// A filter to discard channel events.
     public var eventsFilter: StreamChatClient.Event.Filter?
@@ -138,12 +125,12 @@ public extension ChannelPresenter {
     /// - Parameter onNext: a co    mpletion block with `ViewChanges`.
     /// - Returns: a subscription.
     func changes(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
-        return rx.changes.asObservable().bind(to: onNext)
+        rx.changes.asObservable().bind(to: onNext)
     }
     
     /// An observable channel (see `Channel`).
     func channelDidUpdate(_ onNext: @escaping Client.Completion<Channel>) -> Subscription {
-        return rx.channelDidUpdate.asObservable().bind(to: onNext)
+        rx.channelDidUpdate.asObservable().bind(to: onNext)
     }
 }
 
@@ -156,7 +143,7 @@ extension ChannelPresenter {
     ///     - text: a message text
     ///     - completion: a completion block with `MessageResponse`.
     public func send(text: String, _ completion: @escaping Client.Completion<MessageResponse>) {
-        return rx.send(text: text).bindOnce(to: completion)
+        rx.send(text: text).bindOnce(to: completion)
     }
     
     func createMessage(with text: String) -> Message {
@@ -212,6 +199,6 @@ extension ChannelPresenter {
     /// Send Read event if the app is active.
     /// - Returns: an observable completion.
     public func markReadIfPossible(_ completion: @escaping Client.Completion<StreamChatClient.Event> = { _ in }) {
-        return rx.markReadIfPossible().bindOnce(to: completion)
+        rx.markReadIfPossible().bindOnce(to: completion)
     }
 }
