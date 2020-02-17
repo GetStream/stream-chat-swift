@@ -43,14 +43,14 @@ open class WebViewController: UIViewController, WKNavigationDelegate {
     }
     
     func setDocumentMenuViewControllerSoureViewsIfNeeded(_ viewControllerToPresent: UIViewController) {
+        // Prevent the app from crashing if the WKWebView decides to present a UIDocumentMenuViewController
+        // while it self is presented modally.
         if #available(iOS 13, *),
-           viewControllerToPresent is UIDocumentMenuViewController && UIDevice.current.userInterfaceIdiom == .phone {
-            // Prevent the app from crashing if the WKWebView decides to present a UIDocumentMenuViewController while it self is presented modally.
+            viewControllerToPresent is UIDocumentMenuViewController,
+            UIDevice.current.userInterfaceIdiom == .phone {
             viewControllerToPresent.popoverPresentationController?.sourceView = webView
-            viewControllerToPresent.popoverPresentationController?.sourceRect = CGRect(x: webView.center.x,
-                                                                                       y: webView.center.y,
-                                                                                       width: 1,
-                                                                                       height: 1)
+            viewControllerToPresent.popoverPresentationController?.sourceRect =
+                CGRect(x: webView.center.x, y: webView.center.y, width: 1, height: 1)
         }
     }
     
