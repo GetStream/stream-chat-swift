@@ -18,7 +18,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - channel: a channel.
     func create(channel: Channel) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.create(channel: channel, completion)
         }))
     }
@@ -38,7 +38,7 @@ public extension Reactive where Base == Client {
     /// Request for a channel data, e.g. messages, members, read states, etc.
     /// - Parameter query: a channel query.
     func queryChannel(query: ChannelQuery) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.queryChannel(query: query, completion)
         }))
     }
@@ -48,7 +48,7 @@ public extension Reactive where Base == Client {
     ///   - channel: a channel.
     ///   - options: an additional channel options, e.g. `.presence`
     func watch(channel: Channel, options: QueryOptions = []) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.watch(channel: channel, options: options, completion)
         }))
     }
@@ -57,7 +57,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - channel: a channel.
     func stopWatching(channel: Channel) -> Observable<EmptyData> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.stopWatching(channel: channel, completion)
         }))
     }
@@ -67,7 +67,7 @@ public extension Reactive where Base == Client {
     ///   - channel: a channel.
     ///   - clearHistory: checks if needs to remove a message history of the channel.
     func hide(channel: Channel, clearHistory: Bool = false) -> Observable<EmptyData> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.hide(channel: channel, clearHistory: clearHistory, completion)
         }))
     }
@@ -77,7 +77,7 @@ public extension Reactive where Base == Client {
     ///   - channel: a channel.
     ///   - user: the current user.
     func show(channel: Channel) -> Observable<EmptyData> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.show(channel: channel, completion)
         }))
     }
@@ -92,7 +92,7 @@ public extension Reactive where Base == Client {
                 name: String? = nil,
                 imageURL: URL? = nil,
                 extraData: Codable? = nil) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.update(channel: channel, name: name, imageURL: imageURL, extraData: extraData, completion)
         }))
     }
@@ -101,7 +101,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - channel: a channel.
     func delete(channel: Channel) -> Observable<Channel> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.delete(channel: channel, completion)
         }))
     }
@@ -113,7 +113,7 @@ public extension Reactive where Base == Client {
     ///   - message: a message.
     ///   - channel: a channel.
     func send(message: Message, to channel: Channel) -> Observable<MessageResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.send(message: message, to: channel, completion)
         }))
     }
@@ -124,7 +124,7 @@ public extension Reactive where Base == Client {
     ///   - ephemeralMessage: an ephemeral message.
     ///   - channel: a channel.
     func send(action: Attachment.Action, for ephemeralMessage: Message, to channel: Channel) -> Observable<MessageResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.send(action: action, for: ephemeralMessage, to: channel, completion)
         }))
     }
@@ -133,7 +133,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - channel: a channel.
     func markRead(channel: Channel) -> Observable<StreamChatClient.Event> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.markRead(channel: channel, completion)
         }))
     }
@@ -143,7 +143,7 @@ public extension Reactive where Base == Client {
     ///   - eventType: an event type.
     ///   - channel: a channel.
     func send(eventType: EventType, to channel: Channel) -> Observable<StreamChatClient.Event> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.send(eventType: eventType, to: channel, completion)
         }))
     }
@@ -155,7 +155,7 @@ public extension Reactive where Base == Client {
     ///   - member: a member.
     ///   - channel: a channel.
     func add(member: Member, to channel: Channel) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.add(member: member, to: channel, completion)
         }))
     }
@@ -165,7 +165,7 @@ public extension Reactive where Base == Client {
     ///   - members: members.
     ///   - channel: a channel.
     func add(members: Set<Member>, to channel: Channel) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.add(members: members, to: channel, completion)
         }))
     }
@@ -175,7 +175,7 @@ public extension Reactive where Base == Client {
     ///   - member: a member.
     ///   - channel: a channel.
     func remove(member: Member, from channel: Channel) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.remove(member: member, from: channel, completion)
         }))
     }
@@ -185,7 +185,7 @@ public extension Reactive where Base == Client {
     ///   - members: members.
     ///   - channel: a channel.
     func remove(members: Set<Member>, from channel: Channel) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.remove(members: members, from: channel, completion)
         }))
     }
@@ -201,7 +201,7 @@ public extension Reactive where Base == Client {
              in channel: Channel,
              timeoutInMinutes: Int? = nil,
              reason: String? = nil) -> Observable<EmptyData> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.ban(user: user, in: channel, timeoutInMinutes: timeoutInMinutes, reason: reason, completion)
         }))
     }
@@ -213,7 +213,7 @@ public extension Reactive where Base == Client {
     ///   - member: a member.
     ///   - channel: a channel.
     func invite(member: Member, to channel: Channel) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.invite(member: member, to: channel, completion)
         }))
     }
@@ -223,7 +223,7 @@ public extension Reactive where Base == Client {
     ///   - members: a list of members.
     ///   - channel: a channel.
     func invite(members: Set<Member>, to channel: Channel) -> Observable<ChannelResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.invite(members: members, to: channel, completion)
         }))
     }
@@ -234,7 +234,7 @@ public extension Reactive where Base == Client {
     ///   - channel: a channel.
     ///   - message: an additional message.
     func acceptInvite(for channel: Channel, with message: Message? = nil) -> Observable<ChannelInviteResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.acceptInvite(for: channel, with: message, completion)
         }))
     }
@@ -244,7 +244,7 @@ public extension Reactive where Base == Client {
     ///   - channel: a channel.
     ///   - message: an additional message.
     func rejectInvite(for channel: Channel, with message: Message? = nil) -> Observable<ChannelInviteResponse> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.rejectInvite(for: channel, with: message, completion)
         }))
     }
@@ -259,7 +259,7 @@ public extension Reactive where Base == Client {
     ///   - channel: a channel.
     ///   - progress: a progress block with `Client.Progress`.
     func sendImage(fileName: String, mimeType: String, imageData: Data, to channel: Channel) -> Observable<ProgressResponse<URL>> {
-        connectedRequest(progressRequest({ [unowned base] progress, completion in
+        connected(progressRequest({ [unowned base] progress, completion in
             base.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData, to: channel, progress, completion)
         }))
     }
@@ -272,7 +272,7 @@ public extension Reactive where Base == Client {
     ///   - channel: a channel.
     ///   - progress: a progress block with `Client.Progress`.
     func sendFile(fileName: String, mimeType: String, fileData: Data, to channel: Channel) -> Observable<ProgressResponse<URL>> {
-        connectedRequest(progressRequest({ [unowned base] progress, completion in
+        connected(progressRequest({ [unowned base] progress, completion in
             base.sendFile(fileName: fileName, mimeType: mimeType, fileData: fileData, to: channel, progress, completion)
         }))
     }
@@ -282,7 +282,7 @@ public extension Reactive where Base == Client {
     ///   - url: an image URL.
     ///   - channel: a channel.
     func deleteImage(url: URL, from channel: Channel) -> Observable<EmptyData> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.deleteImage(url: url, from: channel, completion)
         }))
     }
@@ -292,7 +292,7 @@ public extension Reactive where Base == Client {
     ///   - url: a file URL.
     ///   - channel: a channel.
     func deleteFile(url: URL, from channel: Channel) -> Observable<EmptyData> {
-        connectedRequest(request({ [unowned base] completion in
+        connected(request({ [unowned base] completion in
             base.deleteFile(url: url, from: channel, completion)
         }))
     }
