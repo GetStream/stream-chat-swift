@@ -78,7 +78,7 @@ public extension ChannelsPresenter {
     
     /// View changes (see `ViewChanges`).
     func changes(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
-        return rxChanges.asObservable().bind(to: onNext)
+        rxChanges.asObservable().bind(to: onNext)
     }
     
     /// Hide a channel and remove a channel presenter from items.

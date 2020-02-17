@@ -348,7 +348,9 @@ fileprivate final class MediaGalleryCollectionViewCell: UICollectionViewCell, UI
         completion(nil)
     }
     
-    fileprivate func viewForZooming(in scrollView: UIScrollView) -> UIView? { imageView }
+    fileprivate func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        imageView
+    }
     
     @objc func zoomByTap() {
         if scrollView.maximumZoomScale > 1 {

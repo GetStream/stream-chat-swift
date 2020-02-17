@@ -221,7 +221,10 @@ final class ClientTests01_Channels: TestCase {
         
         // Checks if the channel will be updated when member added.
         var channelUpdatedExpectation: XCTestExpectation?
-        func updateChannelUpdatedExpectation() { channelUpdatedExpectation?.fulfill() }
+        
+        func updateChannelUpdatedExpectation() {
+            channelUpdatedExpectation?.fulfill()
+        }
         
         client.onEvent = { event in
             if case .channelUpdated(let updatedResponse, _, _) = event {
