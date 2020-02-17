@@ -13,11 +13,16 @@ import RxSwift
 // MARK: RxConnection
 
 extension Client {
-    private static var rxConnectionKey: UInt8 = 0
-    
-    fileprivate var rxConnection: Observable<Connection> {
-        associated(to: self, key: &Client.rxConnectionKey) { [unowned self] in
-            let connection = rx.onConnect.filter { _ in !self.isExpiredTokenInProgress }
+    fileprivate static var rxConnectionKey: UInt8 = 0
+}
+
+// MARK: - Connection
+
+extension Reactive where Base == Client {
+    /// An observable connection.
+    public var connection: Observable<Connection> {
+        associated(to: base, key: &Client.rxConnectionKey) { [unowned base] in
+            let connection = self.onConnect.filter { _ in !base.isExpiredTokenInProgress }
             let appState = UIApplication.shared.rx.applicationState.filter({ $0 != .inactive })
             let isInternetAvailable: Observable<Bool> = InternetConnection.shared.rx.isAvailable
             
@@ -25,22 +30,15 @@ extension Client {
                 .distinctUntilChanged({ $0.0 == $1.0 && $0.1 == $1.1 })
                 .observeOn(MainScheduler.instance)
                 .do(onNext: { appState, isInternetAvailable in
-                    self.logger?.log("Environment: appState: \(appState), Internet: \(isInternetAvailable ? "yes" : "no")")
-                    self.handleConnection(appState: appState, isInternetAvailable: isInternetAvailable)
+                    base.logger?.log("Environment: appState: \(appState), Internet: \(isInternetAvailable ? "yes" : "no")")
+                    base.handleConnection(appState: appState, isInternetAvailable: isInternetAvailable)
                 })
             
             return Observable.combineLatest(connection, environment)
                 .map { connection, _ in connection }
                 .distinctUntilChanged()
-                .do(onDispose: { self.disconnect() })
+                .do(onDispose: { base.disconnect() })
                 .share(replay: 1)
         }
     }
-}
-
-// MARK: - Connection
-
-extension Reactive where Base == Client {
-    /// An observable connection.
-    public var connection: Observable<Connection> { base.rxConnection }
 }

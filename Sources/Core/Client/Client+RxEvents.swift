@@ -50,60 +50,55 @@ public extension Reactive where Base == Client {
 // MARK: Private Client Rx Events
 
 extension Client {
-    private static var rxOnTokenChange: UInt8 = 0
-    private static var rxOnConnect: UInt8 = 0
-    private static var rxOnEvent: UInt8 = 0
-    private static var rxOnUserUpdate: UInt8 = 0
+    fileprivate static var rxOnTokenChange: UInt8 = 0
+    fileprivate static var rxOnConnect: UInt8 = 0
+    fileprivate static var rxOnEvent: UInt8 = 0
+    fileprivate static var rxOnUserUpdate: UInt8 = 0
+}
+
+extension Reactive where Base == Client {
     
-    fileprivate var rxOnTokenChange: Observable<Token?> {
-        associated(to: self, key: &Client.rxOnTokenChange) { [unowned self] in
-            Observable<Token?>.create({ [unowned self] observer in
-                self.onTokenChange = { observer.onNext($0) }
+    var onTokenChange: Observable<Token?> {
+        associated(to: base, key: &Client.rxOnTokenChange) { [unowned base] in
+            Observable<Token?>.create({ observer in
+                base.onTokenChange = { observer.onNext($0) }
                 return Disposables.create()
             })
-                .startWith(token)
+                .startWith(base.token)
                 .share(replay: 1)
         }
     }
     
-    fileprivate var rxOnConnect: Observable<Connection> {
-        associated(to: self, key: &Client.rxOnConnect) { [unowned self] in
-            Observable<Connection>.create({ [unowned self] observer in
-                self.onConnect = { observer.onNext($0) }
+    var onConnect: Observable<Connection> {
+        associated(to: base, key: &Client.rxOnConnect) { [unowned base] in
+            Observable<Connection>.create({ observer in
+                base.onConnect = { observer.onNext($0) }
                 return Disposables.create()
             })
-                .startWith(connection)
+                .startWith(base.connection)
                 .share()
         }
     }
     
-    fileprivate var rxOnEvent: Observable<StreamChatClient.Event> {
-        associated(to: self, key: &Client.rxOnEvent) { [unowned self] in
+    var onEvent: Observable<StreamChatClient.Event> {
+        associated(to: base, key: &Client.rxOnEvent) { [unowned base] in
             Observable<StreamChatClient.Event>.create({ observer in
-                self.onEvent = { observer.onNext($0) }
+                base.onEvent = { observer.onNext($0) }
                 return Disposables.create()
             }).share()
         }
     }
     
-    fileprivate var rxOnUserUpdate: Observable<User> {
-        associated(to: self, key: &Client.rxOnUserUpdate) { [unowned self] in
+    var onUserUpdate: Observable<User> {
+        associated(to: base, key: &Client.rxOnUserUpdate) { [unowned base] in
             Observable<StreamChatClient.User>.create({ observer in
-                self.onUserUpdate = { observer.onNext($0) }
+                base.onUserUpdate = { observer.onNext($0) }
                 return Disposables.create()
             })
-                .startWith(user)
+                .startWith(base.user)
                 .share(replay: 1)
         }
     }
-}
-
-extension Reactive where Base == Client {
-    
-    var onTokenChange: Observable<Token?> { base.rxOnTokenChange }
-    var onConnect: Observable<Connection> { base.rxOnConnect }
-    var onEvent: Observable<StreamChatClient.Event> { base.rxOnEvent }
-    var onUserUpdate: Observable<User> { base.rxOnUserUpdate }
     
     func onEventConnected(eventTypes: [EventType], channel: Channel? = nil) -> Observable<StreamChatClient.Event> {
         connection
