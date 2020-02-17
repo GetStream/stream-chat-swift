@@ -91,15 +91,10 @@ extension Client {
             let task: URLSessionDataTask
             let queryItems = try self.queryItems(for: endpoint).get()
             let url = try requestURL(for: endpoint, queryItems: queryItems).get()
-            let urlRequest: URLRequest
             
-            if endpoint.isUploading {
-                urlRequest = try encodeRequestForUpload(for: endpoint, url: url).get()
-                logger?.timing("Uploading...", reset: true)
-            } else {
-                urlRequest = try encodeRequest(for: endpoint, url: url).get()
-                logger?.timing("Sending request...", reset: true)
-            }
+            let urlRequest = try endpoint.isUploading
+                ? encodeRequestForUpload(for: endpoint, url: url).get()
+                : encodeRequest(for: endpoint, url: url).get()
             
             task = urlSession.dataTask(with: urlRequest) { [unowned self] in
                 self.parse(data: $0, response: $1, error: $2, completion: completion)
@@ -274,8 +269,6 @@ extension Client {
 extension Client {
     
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
-        logger?.timing("Response received")
-        
         if let error = error {
             if (error as NSError).code == NSURLErrorCancelled {
                 logger?.log("🙅‍♂️ A request was cancelled. NSError \(NSURLErrorCancelled)")
@@ -327,7 +320,6 @@ extension Client {
         
         do {
             let response = try JSONDecoder.default.decode(T.self, from: data)
-            logger?.timing("Response decoded")
             performInCallbackQueue { completion(.success(response)) }
         } catch {
             logger?.log(error)
