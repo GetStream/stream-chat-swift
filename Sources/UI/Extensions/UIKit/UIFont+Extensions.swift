@@ -52,7 +52,7 @@ extension UIFont {
     /// - Parameter size: a font size.
     /// - Returns: a monospaced font.
     public static func monospaced(size: CGFloat) -> UIFont? {
-        if #available(iOS 12, *) {
+        if #available(iOS 13, *) {
             return .monospacedSystemFont(ofSize: size, weight: .regular)
         }
         
