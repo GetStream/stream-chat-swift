@@ -14,9 +14,47 @@ final class WeakRef<T: AnyObject> {
     }
 }
 
-extension Array {
+// MARK: WeakRef Atomic Array
+
+extension Atomic where T: Collection {
+
+    /// Append weak reference to the item.
+    /// - Parameter newElement: a new weak reference element.
+    func add<Key: Hashable, C: Collection, E: AnyObject>(_ element: E, key: Key)
+        where T == Dictionary<Key, C>, C.Element == WeakRef<E> {
+        update {
+            var newValue = $0
+            let weakRef = WeakRef(element)
+            
+            if let collection = $0[key] as? [WeakRef<E>] {
+                var collection = collection
+                collection.append(weakRef)
+                
+                if let collection = collection as? C {
+                    newValue[key] = collection
+                }
+            } else if let collection = [weakRef] as? C {
+                newValue[key] = collection
+            }
+            
+            return newValue
+        }
+    }
+
     /// Remove all nil values.
-    mutating func flush<T: AnyObject>() where Element == WeakRef<T> {
-        self = filter { $0.value != nil }
+    func flush<Key: Hashable, C: Collection, E: AnyObject>() where T == Dictionary<Key, C>, C.Element == WeakRef<E> {
+        update {
+            var newValue: [Key: C] = [:]
+            
+            $0.forEach { (key, collection) in
+                let newCollection = collection.filter { $0.value != nil }
+                
+                if !newCollection.isEmpty, let collection = newCollection as? C {
+                    newValue[key] = collection
+                }
+            }
+            
+            return newValue
+        }
     }
 }

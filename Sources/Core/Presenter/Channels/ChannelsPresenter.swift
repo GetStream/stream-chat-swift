@@ -187,9 +187,7 @@ extension ChannelsPresenter {
         case .notificationMarkRead(let channel, let unreadCount, _, _, _):
             if unreadCount == 0,
                 let channel = channel,
-                let index = items.firstIndex(whereChannelId: channel.id, channelType: channel.type),
-                let channelPresenter = items[index].channelPresenter {
-                channelPresenter.unreadMessageReadAtomic.set(nil)
+                let index = items.firstIndex(whereChannelId: channel.id, channelType: channel.type) {
                 return .itemsUpdated([index], [], items)
             }
         default:

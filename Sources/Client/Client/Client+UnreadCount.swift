@@ -43,41 +43,53 @@ extension Client {
     // MARK: Channel Unread Count
     
     /// Update the unread count if needed.
-    /// - Parameter response: a web socket event.
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - event: an event.
     func updateChannelUnreadCount(channel: Channel, event: Event) {
         let oldUnreadCount = channel.unreadCountAtomic.get(default: 0)
         
-        guard let cid = event.cid, cid == channel.cid else {
-            if case .notificationMarkRead(let notificationChannel, let unreadCount, _, _, _) = event,
-                notificationChannel?.cid == channel.cid {
-                channel.unreadCountAtomic.set(unreadCount)
-                channel.onUpdate?(channel)
-            }
-            
-            return
-        }
-        
-        if case let .messageNew(message, unreadCount, _, _, _, eventType) = event, case .messageNew = eventType {
+        switch event {
+        case .notificationMarkRead(_, let unreadCount, _, _, _):
             channel.unreadCountAtomic.set(unreadCount)
-            updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: oldUnreadCount == 0 ? 1 : 0,
-                                                  messagesUnreadCountDiff: unreadCount - oldUnreadCount)
+            channel.unreadMessageReadAtomic.set(.init(user: .current, lastReadDate: Date()))
             
-            if message.user != user, message.mentionedUsers.contains(user) {
-                channel.mentionedUnreadCountAtomic += 1
+        case let .messageNew(message, unreadCount, _, _, _, eventType):
+            channel.unreadCountAtomic.set(unreadCount)
+            
+            // A regular new message.
+            if case .messageNew = eventType {
+                updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: oldUnreadCount == 0 ? 1 : 0,
+                                                      messagesUnreadCountDiff: unreadCount - oldUnreadCount)
+                
+                if unreadCount > 0, !message.user.isCurrent, message.mentionedUsers.contains(user) {
+                    channel.mentionedUnreadCountAtomic += 1
+                }
+                
+                if message.user.isCurrent {
+                    channel.unreadMessageReadAtomic.set(nil)
+                } else {
+                    channel.unreadMessageReadAtomic.set(.init(user: message.user, lastReadDate: message.created))
+                }
+            } else { // A notification new message.
+                if unreadCount > 0, channel.unreadMessageReadAtomic.get() == nil {
+                    channel.unreadMessageReadAtomic.set(.init(user: message.user, lastReadDate: message.created))
+                }
             }
             
-            channel.onUpdate?(channel)
-            return
+        case .messageRead(let messageRead, _, _):
+            if messageRead.user.isCurrent {
+                channel.unreadCountAtomic.set(0)
+                channel.mentionedUnreadCountAtomic.set(0)
+                channel.unreadMessageReadAtomic.set(nil)
+                updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: oldUnreadCount > 0 ? -1 : 0,
+                                                      messagesUnreadCountDiff: -oldUnreadCount)
+            }
+            
+        default: return
         }
         
-        if case .messageRead(let messageRead, _, _) = event, messageRead.user.isCurrent {
-            channel.unreadCountAtomic.set(0)
-            channel.mentionedUnreadCountAtomic.set(0)
-            channel.onUpdate?(channel)
-            updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: oldUnreadCount > 0 ? -1 : 0,
-                                                  messagesUnreadCountDiff: -oldUnreadCount)
-            return
-        }
+        channel.onUpdate?(channel)
     }
     
     private func updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: Int, messagesUnreadCountDiff: Int) {

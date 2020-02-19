@@ -39,7 +39,7 @@ public extension Reactive where Base == ChannelsPresenter {
     func hide(_ channelPresenter: ChannelPresenter, clearHistory: Bool = false) -> Driver<EmptyData> {
         channelPresenter.channel.rx
             .hide(clearHistory: clearHistory)
-            .do(onNext: { _ in self.removeFromItems(channelPresenter) })
+            .do(onNext: { [weak base] _ in base?.rx.removeFromItems(channelPresenter) })
             .asDriver(onErrorJustReturn: .empty)
     }
 }
@@ -55,7 +55,7 @@ private extension Reactive where Base == ChannelsPresenter {
     
     var channelsRequest: Observable<[ChannelResponse]> {
         prepareRequest(startPaginationWith: base.pageSize)
-            .compactMap { self.channelsQuery(pagination: $0) }
+            .compactMap { [weak base] in base?.rx.channelsQuery(pagination: $0) }
             .flatMapLatest { Client.shared.rx.queryChannels(query: $0).retry(3) }
     }
     

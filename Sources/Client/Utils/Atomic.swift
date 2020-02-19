@@ -33,13 +33,11 @@ public final class Atomic<T> {
     /// Set a value.
     public func set(_ newValue: T?) {
         queue.async(flags: .barrier) { [weak self] in
-            let oldValue = self?.value
-            self?.value = newValue
-            self?.valueChanged(newValue, oldValue)
+            self?.updateValue(from: self?.value, to: newValue)
         }
     }
     
-    /// Get the value.
+    /// Get a value.
     public func get() -> T? {
         var currentValue: T?
         queue.sync { [weak self] in currentValue = self?.value }
@@ -56,19 +54,17 @@ public final class Atomic<T> {
     
     /// Update the value safely.
     /// - Parameter changes: a block with changes. It should return a new value.
-    public func update(_ changes: @escaping (T) -> T) {
-        queue.async(flags: .barrier) {
-            guard let oldValue = self.value else {
-                return
+    public func update(_ changes: @escaping (T) -> T?) {
+        queue.async(flags: .barrier) { [weak self] in
+            if let self = self, let oldValue = self.value {
+                self.updateValue(from: oldValue, to: changes(oldValue))
             }
-            
-            let newValue = changes(oldValue)
-            self.value = newValue
-            self.valueChanged(newValue, oldValue)
         }
     }
     
-    private func valueChanged(_ newValue: T?, _ oldValue: T?) {
+    private func updateValue(from oldValue: T?, to newValue: T?) {
+        value = newValue
+        
         if let callbackQueue = callbackQueue {
             callbackQueue.async { [weak self] in self?.didSet?(newValue, oldValue) }
         } else {
@@ -81,7 +77,7 @@ public final class Atomic<T> {
 
 public extension Atomic {
     
-    func update<Value>(_ keyPath: WritableKeyPath<T, Value>, to value: Value) {
+    func update<Element>(_ keyPath: WritableKeyPath<T, Element>, to value: Element) {
         update { instance in
             var instance = instance
             instance[keyPath: keyPath] = value
@@ -89,7 +85,7 @@ public extension Atomic {
         }
     }
     
-    func append<Value>(to keyPath: WritableKeyPath<T, [Value]>, _ value: Value) {
+    func append<Element>(to keyPath: WritableKeyPath<T, [Element]>, _ value: Element) {
         update { instance in
             var instance = instance
             instance[keyPath: keyPath].append(value)
@@ -97,7 +93,7 @@ public extension Atomic {
         }
     }
     
-    subscript<Value>(dynamicMember keyPath: WritableKeyPath<T, Value>) -> Value? {
+    subscript<Element>(dynamicMember keyPath: WritableKeyPath<T, Element>) -> Element? {
         get {
             return get()?[keyPath: keyPath]
         }
@@ -106,6 +102,17 @@ public extension Atomic {
                 update(keyPath, to: newValue)
             }
         }
+    }
+}
+
+// MARK: - Helper for Collection
+
+public extension Atomic where T: Collection {
+    /// Get a value by key.
+    subscript<Key: Hashable, Value>(key: Key) -> Value? where T == Dictionary<Key, Value> {
+        var currentValue: Value?
+        queue.sync { [weak self] in currentValue = self?.value?[key] }
+        return currentValue
     }
 }
 
