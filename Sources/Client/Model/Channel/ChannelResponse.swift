@@ -34,7 +34,7 @@ public struct ChannelResponse: Decodable {
         updateUnreadMessageRead()
         calculateChannelUnreadCount()
         updateChannelOnlineUsers()
-        Client.shared.channels.append(WeakRef(channel))
+        Client.shared.channelsAtomic.add(channel, key: channel.cid)
     }
     
     /// Init a channel response.
@@ -55,7 +55,7 @@ public struct ChannelResponse: Decodable {
         if let lastMessage = messages.last,
             let messageRead = messageReads.first(where: { $0.user.isCurrent }),
             lastMessage.updated > messageRead.lastReadDate {
-            channel.unreadMessageRead = messageRead
+            channel.unreadMessageReadAtomic.set(messageRead)
         }
     }
     
