@@ -185,7 +185,7 @@ extension WebSocket {
         shouldReconnect = false
         
         if webSocket.isConnected {
-            webSocket.disconnect(forceTimeout: 0)
+            webSocket.disconnect(forceTimeout: 1)
             logger?.log("💔 Disconnected deliberately")
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
@@ -193,7 +193,6 @@ extension WebSocket {
         
         consecutiveFailures = 0
         clearStateAfterDisconnect()
-        connection = .disconnected(nil)
     }
     
     private func clearStateAfterDisconnect() {
