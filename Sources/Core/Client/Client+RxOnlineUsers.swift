@@ -16,8 +16,8 @@ public extension Reactive where Base == Client {
     func onlineUsers(channel: Channel) -> Observable<Set<User>> {
         queryChannel(channel, options: [.presence])
             .map { $0.channel }
-            .flatMapLatest({ channel -> Observable<Set<User>> in
-                self.onEvent(eventType: .userPresenceChanged, channel: channel)
+            .flatMapLatest({ [unowned base] channel -> Observable<Set<User>> in
+                base.rx.onEvent(eventType: .userPresenceChanged, channel: channel)
                     .map { _ in channel.onlineUsers }
                     .startWith(channel.onlineUsers)
             })

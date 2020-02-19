@@ -61,7 +61,7 @@ private extension Reactive where Base == ChannelsPresenter {
     
     //    var channelsDatabaseFetch: Observable<[ChannelResponse]> {
     //        return prepareDatabaseFetch(startPaginationWith: base.pageSize)
-    //            .compactMap { self.channelsQuery(pagination: $0) }
+    //            .compactMap { [weak base] in base?.rx.channelsQuery(pagination: $0) }
     //            .observeOn(SerialDispatchQueueScheduler.init(qos: .userInitiated))
     //            .flatMapLatest { Client.shared.fetchChannels($0) }
     //    }
