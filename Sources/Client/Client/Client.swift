@@ -85,7 +85,8 @@ public final class Client {
         }
     }
     
-    var channels = [WeakRef<Channel>]()
+    /// Weak references to channels by cid.
+    let channelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
     
     /// The current user.
     public internal(set) var user: User {

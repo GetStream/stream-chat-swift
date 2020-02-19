@@ -27,12 +27,8 @@ extension ChannelPresenter {
             isLoadingIndex = 0
         }
         
-        if InternetConnection.shared.isAvailable && channel.config.readEventsEnabled {
-            unreadMessageReadAtomic.set(response.channel.unreadMessageRead)
-            
-            if !isNextPage {
-                messageReadsToMessageId = [:]
-            }
+        if InternetConnection.shared.isAvailable, channel.config.readEventsEnabled, !isNextPage {
+            messageReadsToMessageId = [:]
         }
         
         let currentCount = items.count

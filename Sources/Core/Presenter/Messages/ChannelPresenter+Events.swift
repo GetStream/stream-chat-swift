@@ -61,31 +61,14 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, let unreadCount, _, let messageNewChannel, _, let type):
+        case .messageNew(let message, _, _, let messageNewChannel, _, let type):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
             
-            // A new message event.
-            if case .messageNew = type {
-                if channel.config.readEventsEnabled, !message.user.isCurrent {
-                    if let lastMessage = lastMessageAtomic.get() {
-                        unreadMessageReadAtomic.set(MessageRead(user: lastMessage.user, lastReadDate: lastMessage.updated))
-                    } else {
-                        unreadMessageReadAtomic.set(MessageRead(user: message.user, lastReadDate: message.updated))
-                    }
-                } else {
-                    unreadMessageReadAtomic.set(nil)
-                }
-            } else {
-                // A notification new message event.
-                if let messageNewChannel = messageNewChannel {
-                    channelAtomic.set(messageNewChannel)
-                }
-                
-                if unreadCount > 0, unreadMessageReadAtomic.get() == nil {
-                    unreadMessageReadAtomic.set(MessageRead(user: message.user, lastReadDate: message.updated))
-                }
+            // A notification new message event.
+            if case .notificationMessageNew = type, let messageNewChannel = messageNewChannel {
+                channelAtomic.set(messageNewChannel)
             }
             
             let nextRow = items.count
