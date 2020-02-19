@@ -394,7 +394,9 @@ public enum Event: Decodable {
         case .notificationMutesUpdated:
             self = try .notificationMutesUpdated(container.decode(User.self, forKey: .me), cid(), type)
         case .notificationMarkRead:
-            self = .notificationMarkRead(try? channel(), channelsUnreadCount, messagesUnreadCount, try cid(), type)
+            let notificationChannel = try? channel()
+            let notificationCid = try cid() ?? notificationChannel?.cid
+            self = .notificationMarkRead(notificationChannel, channelsUnreadCount, messagesUnreadCount, notificationCid, type)
             
         // Channel
         case .notificationAddedToChannel:

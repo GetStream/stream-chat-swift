@@ -91,8 +91,11 @@ public final class Channel: Codable {
     /// Online users in the channel.
     public var onlineUsers: Set<User> { onlineUsersAtomic.get(default: []) }
     
+    let unreadMessageReadAtomic = Atomic<MessageRead>()
     /// Unread message state for the current user.
-    public internal(set) var unreadMessageRead: MessageRead?
+    public var unreadMessageRead: MessageRead? { unreadMessageReadAtomic.get() }
+    /// Checks if the current status of the channel is unread.
+    public var isUnread: Bool { unreadCount.messages > 0 }
     
     /// An option to enable ban users.
     public var banEnabling = BanEnabling.disabled
@@ -397,7 +400,7 @@ private extension Array where Element == Member {
 }
 
 extension Channel {
-    public static let unused = Channel(type: .messaging, id: "5h0u1d-n3v3r-b3-u5'd")
+    public static var unused: Channel { Channel(type: .messaging, id: "5h0u1d-n3v3r-b3-u5'd") }
 }
 
 // MARK: - Supporting Structs
