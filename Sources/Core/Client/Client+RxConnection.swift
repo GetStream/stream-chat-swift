@@ -22,7 +22,7 @@ extension Reactive where Base == Client {
     /// An observable connection.
     public var connection: Observable<Connection> {
         associated(to: base, key: &Client.rxConnectionKey) { [unowned base] in
-            let connection = self.onConnect.filter { _ in !base.isExpiredTokenInProgress }
+            let connection = base.rx.onConnect.filter { _ in !base.isExpiredTokenInProgress }
             let appState = UIApplication.shared.rx.applicationState.filter({ $0 != .inactive })
             let isInternetAvailable: Observable<Bool> = InternetConnection.shared.rx.isAvailable
             
