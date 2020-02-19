@@ -103,7 +103,7 @@ extension Reactive where Base == Client {
     func onEventConnected(eventTypes: [EventType], channel: Channel? = nil) -> Observable<StreamChatClient.Event> {
         connection
             .filter({ $0.isConnected })
-            .flatMapLatest { _ in self.onEvent }
+            .flatMapLatest { [unowned base] _ in base.rx.onEvent }
             .filter({ [weak channel] in
                 if !eventTypes.isEmpty, !eventTypes.contains($0.type) {
                     return false

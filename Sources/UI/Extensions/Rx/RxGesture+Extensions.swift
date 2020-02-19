@@ -37,8 +37,8 @@ extension Reactive where Base: View {
     /// - parameter factories: a `(Factory + state)` collection you want to use to create the `GestureRecognizers` to add and observe
     /// - returns: a `ControlEvent<G>` that re-emit the gesture recognizer itself
     func anyGesture(_ factories: [GestureFactory]) -> ControlEvent<GestureRecognizer> {
-        let observables = factories.map { gesture, state in
-            self.gesture(gesture).when(state).asObservable() as Observable<GestureRecognizer>
+        let observables = factories.map { [weak base] gesture, state -> Observable<GestureRecognizer> in
+            base?.rx.gesture(gesture).when(state).asObservable() ?? .empty()
         }
         
         return ControlEvent(events: Observable.from(observables).merge())

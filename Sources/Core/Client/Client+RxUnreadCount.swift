@@ -26,8 +26,8 @@ public extension Reactive where Base == Client {
     func channelUnreadCount(_ channel: Channel) -> Observable<ChannelUnreadCount> {
         queryChannel(channel, pagination: .limit(100), options: [.state, .watch])
             .map { $0.channel }
-            .flatMapLatest({ channel -> Observable<ChannelUnreadCount> in
-                self.onEvent(channel: channel)
+            .flatMapLatest({ [unowned base] channel -> Observable<ChannelUnreadCount> in
+                base.rx.onEvent(channel: channel)
                     .map({ _ in channel.unreadCount })
                     .startWith(channel.unreadCount)
             })
