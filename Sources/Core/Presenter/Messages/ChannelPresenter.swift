@@ -53,18 +53,13 @@ public final class ChannelPresenter: Presenter {
     var lastParsedEvent: StreamChatClient.Event?
     var lastWebSocketEventViewChanges: ViewChanges?
     
-    #warning("Remove unreadMessageReadAtomic from ChannelPresenter")
-    lazy var unreadMessageReadAtomic = Atomic<MessageRead>()
-    
     /// A list of typing users (see `TypingUser`).
     public internal(set) var typingUsers: [TypingUser] = []
     var startedTyping = false
     
     var messageReadsToMessageId: [MessageRead: String] = [:]
     /// Check if the channel has unread messages.
-    public var isUnread: Bool { channel.config.readEventsEnabled && unreadMessageReadAtomic.get() != nil }
-    /// The current user message read state.
-    public var messageRead: MessageRead? { unreadMessageReadAtomic.get() }
+    public var isUnread: Bool { channel.config.readEventsEnabled && channel.unreadMessageRead != nil }
     
     let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     /// Check if the channel has ephemeral message, e.g. Giphy preview.
@@ -79,7 +74,7 @@ public final class ChannelPresenter: Presenter {
     public var eventsFilter: StreamChatClient.Event.Filter?
     
     /// An observable view changes (see `ViewChanges`).
-    lazy var rxChanges: Driver<ViewChanges> = rx.setupChanges()
+    lazy var rxChanges = rx.setupChanges()
     lazy var rxParsedMessagesRequest = rx.parsedChannelResponse(rx.messagesRequest)
     
     /// Uploader for images and files.

@@ -66,7 +66,9 @@ public extension Client {
     ///   - completion: a completion block with `Client.Completion<[ChannelResponse]`.
     @discardableResult
     func queryChannels(query: ChannelsQuery, _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
-        request(endpoint: .channels(query)) { (result: Result<ChannelsResponse, ClientError>) in
+        channelsAtomic.flush()
+        
+        return request(endpoint: .channels(query)) { (result: Result<ChannelsResponse, ClientError>) in
             completion(result.map(to: \.channels))
         }
     }
