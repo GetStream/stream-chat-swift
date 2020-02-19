@@ -42,7 +42,8 @@ public extension Client {
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
     func queryChannel(query: ChannelQuery, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        request(endpoint: .channel(query), completion)
+        channelsAtomic.flush()
+        return request(endpoint: .channel(query), completion)
     }
     
     /// Loads the initial channel state and watches for changes.

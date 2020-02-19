@@ -20,14 +20,14 @@ public extension Reactive where Base == ChannelPresenter {
     
     /// An observable `Channel`.
     var channelDidUpdate: Driver<Channel> {
-        return base.channelPublishSubject.asDriver(onErrorJustReturn: Channel(type: base.channelType, id: base.channelId))
+        base.channelPublishSubject.asDriver(onErrorJustReturn: Channel.unused)
     }
     
     /// Create a message by sending a text.
     /// - Parameter text: a message text.
     /// - Returns: an observable `MessageResponse`.
     func send(text: String) -> Observable<MessageResponse> {
-        return base.channel.rx.send(message: base.createMessage(with: text))
+        base.channel.rx.send(message: base.createMessage(with: text))
             .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
     }
@@ -59,20 +59,19 @@ public extension Reactive where Base == ChannelPresenter {
             return .empty()
         }
         
-        guard let unreadMessageRead = base.unreadMessageReadAtomic.get() else {
+        guard base.channel.isUnread else {
             Client.shared.logger?.log("🎫 Skip read. No unreadMessageRead.")
             return .empty()
         }
         
-        base.unreadMessageReadAtomic.set(nil)
-        
         return Observable.just(())
             .subscribeOn(MainScheduler.instance)
             .filter { UIApplication.shared.applicationState == .active }
-            .do(onNext: { Client.shared.logger?.log("🎫 Send Message Read. Unread from \(unreadMessageRead.lastReadDate)") })
+            .do(onNext: { [weak base] _ in
+                Client.shared.logger?.log("🎫 Send Message Read. Unread from "
+                    + (base?.channel.unreadMessageRead?.lastReadDate.description ?? "<Unknown>"))
+            })
             .flatMapLatest { [weak base] in base?.channel.rx.markRead() ?? .empty() }
-            .do(onNext: { [weak base] _ in base?.unreadMessageReadAtomic.set(nil) },
-                onError: { [weak base] error in base?.unreadMessageReadAtomic.set(unreadMessageRead) })
     }
     
     /// Dispatch an ephemeral message action, e.g. shuffle, send.
@@ -117,15 +116,15 @@ extension Reactive where Base == ChannelPresenter {
                     // Messages from requests.
                     base.parentMessage == nil
                         ? base.rxParsedMessagesRequest
-                        : self.parsedRepliesResponse(self.repliesRequest),
+                        : base.rx.parsedRepliesResponse(base.rx.repliesRequest),
                     // Messages from database.
                     // base.parentMessage == nil
-                    // ? self.parsedChannelResponse(self.messagesDatabaseFetch)
-                    // : self.parsedRepliesResponse(self.repliesDatabaseFetch),
+                    // ? base.rx.parsedChannelResponse(base.rx.messagesDatabaseFetch)
+                    // : base.rx.parsedRepliesResponse(base.rx.repliesDatabaseFetch),
                     // Events from a websocket.
-                    self.webSocketEvents,
-                    self.ephemeralMessageEvents,
-                    self.connectionErrors
+                    base.rx.webSocketEvents,
+                    base.rx.ephemeralMessageEvents,
+                    base.rx.connectionErrors
                 )
             })
     }

@@ -83,14 +83,18 @@ extension Client {
         
         updateUserUnreadCount(with: event)
         
-        channels.forEach {
-            if let channel = $0.value {
-                updateChannelUnreadCount(channel: channel, event: event)
-                updateChannelOnlineUsers(channel: channel, event: event)
+        if let eventChannelId = event.cid, let channels = channelsAtomic[eventChannelId] {
+            channels.forEach {
+                if let channel = $0.value {
+                    updateChannelOnlineUsers(channel: channel, event: event)
+                    
+                    if channel.config.readEventsEnabled {
+                        updateChannelUnreadCount(channel: channel, event: event)
+                    }
+                }
             }
         }
         
-        channels.flush()
         onEvent(event)
     }
 }
