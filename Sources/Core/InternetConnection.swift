@@ -18,9 +18,7 @@ public final class InternetConnection {
     public static let shared = InternetConnection()
     
     private(set) lazy var reachability = Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
-    private let disposeBag = DisposeBag()
     let offlineModeSubject = BehaviorSubject(value: false)
-    private(set) lazy var rxIsAvailable: Observable<Bool> = rx.setupIsAvailable()
     
     /// Forces to offline mode.
     public var offlineMode = false {

@@ -21,8 +21,6 @@ public struct ProgressResponse<T: Decodable>: Decodable {
     public let value: T?
 }
 
-extension Client: ReactiveCompatible {}
-
 public extension Reactive where Base == Client {
     
     func request<T: Decodable>(_ request: @escaping (@escaping Client.Completion<T>) -> URLSessionTask) -> Observable<T> {

@@ -12,7 +12,7 @@ import RxSwift
 
 // MARK: RxConnection
 
-extension Client {
+extension Client: ReactiveCompatible {
     fileprivate static var rxConnectionKey: UInt8 = 0
 }
 
