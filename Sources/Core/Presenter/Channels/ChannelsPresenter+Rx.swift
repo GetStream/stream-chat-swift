@@ -11,22 +11,23 @@ import StreamChatClient
 import RxSwift
 import RxCocoa
 
+extension ChannelsPresenter {
+    fileprivate static var rxChangesKey: UInt8 = 0
+}
+
 public extension Reactive where Base == ChannelsPresenter {
     
     // MARK: Changes
     
     /// An observable view changes (see `ViewChanges`).
     var changes: Driver<ViewChanges> {
-        base.rxChanges
-    }
-    
-    internal func setupChanges() -> Driver<ViewChanges> {
-        Driver.merge(parsedChannelResponses(channelsRequest),
-            // parsedChannelResponses(channelsDatabaseFetch),
-            events,
-            connectionErrors,
-            base.actions.asDriver(onErrorJustReturn: .none))
-            .do(onDispose: { [weak base] in base?.disposeBagForInternalRequests = DisposeBag() })
+        associated(to: base, key: &ChannelsPresenter.rxChangesKey) { [weak base] in
+            Driver.merge(parsedChannelResponses(channelsRequest),
+                         events,
+                         connectionErrors,
+                         (base?.actions ?? .empty()).asDriver(onErrorJustReturn: .none))
+                .do(onDispose: { base?.disposeBagForInternalRequests = DisposeBag() })
+        }
     }
     
     // MARK: Actions
