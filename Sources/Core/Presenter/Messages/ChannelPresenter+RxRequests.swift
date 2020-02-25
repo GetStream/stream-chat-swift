@@ -11,12 +11,87 @@ import StreamChatClient
 import RxSwift
 import RxCocoa
 
-public extension Reactive where Base == ChannelPresenter {
+extension ChannelPresenter {
+    fileprivate static var rxChangesKey: UInt8 = 0
+    fileprivate static var rxParsedMessagesRequestKey: UInt8 = 0
+}
+
+extension Reactive where Base == ChannelPresenter {
     
     /// An observable `ViewChanges`.
-    var changes: Driver<ViewChanges> {
-        return base.rxChanges
+    public var changes: Driver<ViewChanges> {
+        associated(to: base, key: &ChannelPresenter.rxChangesKey) { [weak base] in
+            guard let base = base else {
+                return .empty()
+            }
+            
+            return (base.channel.id.isEmpty
+                // Get a channel with a generated channel id.
+                ? base.channel.rx.query()
+                    .map({ [weak base] channelResponse -> Void in
+                        // Update the current channel.
+                        base?.channelAtomic.set(channelResponse.channel)
+                        return Void()
+                    })
+                    .asDriver(onErrorJustReturn: ())
+                : Driver.just(()))
+                // Merge all view changes from all sources.
+                .flatMapLatest({ [weak base] _ -> Driver<ViewChanges> in
+                    guard let base = base else {
+                        return .empty()
+                    }
+                    
+                    return Driver.merge(
+                        // Messages from requests.
+                        base.parentMessage == nil
+                            ? base.rx.parsedMessagesRequest
+                            : base.rx.parsedRepliesResponse(base.rx.repliesRequest),
+                        // Messages from database.
+                        // base.parentMessage == nil
+                        // ? base.rx.parsedChannelResponse(base.rx.messagesDatabaseFetch)
+                        // : base.rx.parsedRepliesResponse(base.rx.repliesDatabaseFetch),
+                        // Events from a websocket.
+                        base.rx.webSocketEvents,
+                        base.rx.ephemeralMessageEvents,
+                        base.rx.connectionErrors
+                    )
+                })
+        }
     }
+    
+    var messagesRequest: Observable<ChannelResponse> {
+        prepareRequest()
+            .filter { [weak base] in $0 != .none && base?.parentMessage == nil }
+            .flatMapLatest({ [weak base] pagination -> Observable<ChannelResponse> in
+                if let base = base {
+                    return base.channel.rx.query(pagination: pagination, options: base.queryOptions).retry(3)
+                }
+                
+                return .empty()
+            })
+    }
+    
+    var parsedMessagesRequest: Driver<ViewChanges> {
+        associated(to: base, key: &ChannelPresenter.rxParsedMessagesRequestKey) { [weak base] in
+            guard let base = base else {
+                return .empty()
+            }
+            
+            return base.rx.parsedChannelResponse(base.rx.messagesRequest)
+        }
+    }
+    
+    func parsedChannelResponse(_ channelResponse: Observable<ChannelResponse>) -> Driver<ViewChanges> {
+        channelResponse
+            .map { [weak base] in base?.parse(response: $0) ?? .none }
+            .filter { $0 != .none }
+            .map { [weak base] in base?.mapWithEphemeralMessage($0) ?? .none }
+            .filter { $0 != .none }
+            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
+    }
+}
+
+public extension Reactive where Base == ChannelPresenter {
     
     /// An observable `Channel`.
     var channelDidUpdate: Driver<Channel> {
@@ -90,64 +165,6 @@ public extension Reactive where Base == ChannelPresenter {
         return base.channel.rx.send(action: action, for: message)
             .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
-    }
-}
-
-extension Reactive where Base == ChannelPresenter {
-    
-    func setupChanges() -> Driver<ViewChanges> {
-        (base.channel.id.isEmpty
-            // Get a channel with a generated channel id.
-            ? base.channel.rx.query()
-                .map({ [weak base] channelResponse -> Void in
-                    // Update the current channel.
-                    base?.channelAtomic.set(channelResponse.channel)
-                    return Void()
-                })
-                .asDriver(onErrorJustReturn: ())
-            : Driver.just(()))
-            // Merge all view changes from all sources.
-            .flatMapLatest({ [weak base] _ -> Driver<ViewChanges> in
-                guard let base = base else {
-                    return .empty()
-                }
-                
-                return Driver.merge(
-                    // Messages from requests.
-                    base.parentMessage == nil
-                        ? base.rxParsedMessagesRequest
-                        : base.rx.parsedRepliesResponse(base.rx.repliesRequest),
-                    // Messages from database.
-                    // base.parentMessage == nil
-                    // ? base.rx.parsedChannelResponse(base.rx.messagesDatabaseFetch)
-                    // : base.rx.parsedRepliesResponse(base.rx.repliesDatabaseFetch),
-                    // Events from a websocket.
-                    base.rx.webSocketEvents,
-                    base.rx.ephemeralMessageEvents,
-                    base.rx.connectionErrors
-                )
-            })
-    }
-    
-    var messagesRequest: Observable<ChannelResponse> {
-        prepareRequest()
-            .filter { [weak base] in $0 != .none && base?.parentMessage == nil }
-            .flatMapLatest({ [weak base] pagination -> Observable<ChannelResponse> in
-                if let base = base {
-                    return base.channel.rx.query(pagination: pagination, options: base.queryOptions).retry(3)
-                }
-                
-                return .empty()
-            })
-    }
-    
-    func parsedChannelResponse(_ channelResponse: Observable<ChannelResponse>) -> Driver<ViewChanges> {
-        channelResponse
-            .map { [weak base] in base?.parse(response: $0) ?? .none }
-            .filter { $0 != .none }
-            .map { [weak base] in base?.mapWithEphemeralMessage($0) ?? .none }
-            .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
     }
 }
 

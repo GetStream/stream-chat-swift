@@ -47,9 +47,6 @@ public final class ChannelsPresenter: Presenter {
     /// with a selected channel presenter and this channel events filter.
     public var channelEventsFilter: StreamChatClient.Event.Filter?
     
-    /// An observable view changes (see `ViewChanges`).
-    private(set) lazy var rxChanges = rx.setupChanges()
-    
     let actions = PublishSubject<ViewChanges>()
     var disposeBagForInternalRequests = DisposeBag()
     
@@ -78,7 +75,7 @@ public extension ChannelsPresenter {
     
     /// View changes (see `ViewChanges`).
     func changes(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
-        rxChanges.asObservable().bind(to: onNext)
+        rx.changes.asObservable().bind(to: onNext)
     }
     
     /// Hide a channel and remove a channel presenter from items.
@@ -237,7 +234,7 @@ extension ChannelsPresenter {
     }
     
     private func loadChannelMessages(_ channelPresenter: ChannelPresenter) {
-        channelPresenter.rxParsedMessagesRequest.asObservable()
+        channelPresenter.rx.parsedMessagesRequest.asObservable()
             .take(1)
             .subscribe(onNext: { [weak self, weak channelPresenter] _ in
                 guard let self = self,

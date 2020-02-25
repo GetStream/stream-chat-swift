@@ -8,6 +8,7 @@
 
 import Foundation
 import StreamChatClient
+import RxSwift
 
 public extension Channel {
     
