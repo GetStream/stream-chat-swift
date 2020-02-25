@@ -43,7 +43,19 @@ public extension Client {
     @discardableResult
     func queryChannel(query: ChannelQuery, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         channelsAtomic.flush()
-        return request(endpoint: .channel(query), completion)
+        var modifiedCompletion = completion
+        
+        if query.options.contains(.watch) || query.options.contains(.presence) {
+            modifiedCompletion = { [unowned self] result in
+                if let channel = result.value?.channel {
+                    self.channelsAtomic.add(channel, key: channel.cid)
+                }
+                
+                completion(result)
+            }
+        }
+        
+        return request(endpoint: .channel(query), modifiedCompletion)
     }
     
     /// Loads the initial channel state and watches for changes.
