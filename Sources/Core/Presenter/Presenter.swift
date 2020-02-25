@@ -23,8 +23,6 @@ public class Presenter {
     public var hasNextPage: Bool { next != pageSize }
     /// Checks if presenter items are empty.
     public var isEmpty: Bool { items.isEmpty }
-    /// Observe connection errors as `ViewChanges`.
-    private(set) lazy var rxConnectionErrors: Driver<ViewChanges> = rx.setupConnectionErrors()
     
     let loadPagination = PublishSubject<Pagination>()
     
@@ -34,7 +32,18 @@ public class Presenter {
     }
 }
 
-// MARK: - Extensions
+// MARK: Errors
+
+public extension Presenter {
+    /// Observe connection errors as `ViewChanges`.
+    /// - Parameter onNext: a completion block with `ViewChanges`.
+    /// - Returns: a subscription.
+    func connectionErrors(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
+        rx.connectionErrors.asObservable().bind(to: onNext)
+    }
+}
+
+// MARK: Extensions
 
 public extension Presenter {
     
@@ -54,12 +63,5 @@ public extension Presenter {
     
     private func load(pagination: Pagination) {
         loadPagination.onNext(pagination)
-    }
-    
-    /// Observe connection errors as `ViewChanges`.
-    /// - Parameter onNext: a completion block with `ViewChanges`.
-    /// - Returns: a subscription.
-    func connectionErrors(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
-        rxConnectionErrors.asObservable().bind(to: onNext)
     }
 }
