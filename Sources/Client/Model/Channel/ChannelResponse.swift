@@ -34,7 +34,6 @@ public struct ChannelResponse: Decodable {
         updateUnreadMessageRead()
         calculateChannelUnreadCount()
         updateChannelOnlineUsers()
-        Client.shared.channelsAtomic.add(channel, key: channel.cid)
     }
     
     /// Init a channel response.
@@ -60,36 +59,33 @@ public struct ChannelResponse: Decodable {
     }
     
     private func calculateChannelUnreadCount() {
-        channel.unreadCountAtomic.set(0)
-        channel.mentionedUnreadCountAtomic.set(0)
-        
         if messages.isEmpty {
             return
         }
         
-        var count = 0
-        var mentionedCount = 0
+        var unreadCount = ChannelUnreadCount.noUnread
         let currentUser = Client.shared.user
         
         if let unreadMessageRead = channel.unreadMessageRead {
             for message in messages.reversed() {
                 if message.created > unreadMessageRead.lastReadDate {
-                    count += 1
+                    unreadCount.messages += 1
                     
                     if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
-                        mentionedCount += 1
+                        unreadCount.mentionedMessages += 1
                     }
                 } else {
                     break
                 }
             }
         } else {
-            count = messages.count
-            mentionedCount = messages.filter({ $0.user != currentUser && $0.mentionedUsers.contains(currentUser) }).count
+            unreadCount.messages = messages.count
+            unreadCount.mentionedMessages = messages
+                .filter({ $0.user != currentUser && $0.mentionedUsers.contains(currentUser) })
+                .count
         }
         
-        channel.unreadCountAtomic.set(count)
-        channel.mentionedUnreadCountAtomic.set(mentionedCount)
+        channel.unreadCountAtomic.set(unreadCount)
     }
     
     private func updateChannelOnlineUsers() {
