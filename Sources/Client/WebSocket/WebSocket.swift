@@ -193,6 +193,7 @@ extension WebSocket {
         
         consecutiveFailures = 0
         clearStateAfterDisconnect()
+        connection = .disconnected(nil)
     }
     
     private func clearStateAfterDisconnect() {

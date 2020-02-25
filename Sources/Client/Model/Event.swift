@@ -10,72 +10,55 @@ import Foundation
 
 /// A web socket event type.
 public enum EventType: String, Codable {
-    /// Every 30 second to confirm that the client connection is still active (🗼).
+    /// Every 30 second to confirm that the client connection is still active.
     case healthCheck = "health.check"
     /// A pong event.
     case pong
-    /// ⚠️ When the state of the connection changed (🗼).
+    /// ⚠️ When the state of the connection changed.
     case connectionChanged = "connection.changed"
-    /// ⚠️ When the connection to chat servers is back online (🗼).
+    /// ⚠️ When the connection to chat servers is back online.
     case connectionRecovered = "connection.recovered"
     
-    /// When a channel was updated (when watching the channel 📺).
-    case channelUpdated = "channel.updated"
-    /// When a channel was deleted (when watching the channel 📺).
-    case channelDeleted = "channel.deleted"
-    /// When a channel was hidden (when watching the channel 📺).
-    case channelHidden = "channel.hidden"
-    
-    /// When a user status changes, e.g. online, offline, away (when subscribed to the user status 🙋‍♀️).
+    /// When a user presence changed, e.g. online, offline, away (when subscribed to the user presence).
     case userPresenceChanged = "user.presence.changed"
-    /// When a user starts watching a channel (when watching the channel 📺).
-    case userStartWatching = "user.watching.start"
-    /// When a user stops watching a channel (when watching the channel 📺).
-    case userStopWatching = "user.watching.stop"
-    /// When a user was updated (when subscribed to the user status 🙋‍♀️).
+    /// When a user was updated (when subscribed to the user presence).
     case userUpdated = "user.updated"
-    /// When a user was banned (when subscribed to the user status 🙋‍♀️).
+    /// When a user was banned (when subscribed to the user presence).
     case userBanned = "user.banned"
-    /// Sent when a user starts typing (when watching the channel 📺).
+    /// When a user starts watching a channel (when watching the channel).
+    case userStartWatching = "user.watching.start"
+    /// When a user stops watching a channel (when watching the channel).
+    case userStopWatching = "user.watching.stop"
+    
+    /// Sent when a user starts typing (when watching the channel).
     case typingStart = "typing.start"
-    /// Sent when a user stops typing (when watching the channel 📺).
+    /// Sent when a user stops typing (when watching the channel).
     case typingStop = "typing.stop"
-    /// When a new message was added on a channel (when watching the channel 📺).
+    
+    /// When a channel was updated (when watching the channel).
+    case channelUpdated = "channel.updated"
+    /// When a channel was deleted (when watching the channel).
+    case channelDeleted = "channel.deleted"
+    /// When a channel was hidden (when watching the channel).
+    case channelHidden = "channel.hidden"
+
+    /// When a new message was added on a channel (when watching the channel).
     case messageNew = "message.new"
-    /// When a message was updated (when watching the channel 📺).
+    /// When a message was updated (when watching the channel).
     case messageUpdated = "message.updated"
-    /// When a message was deleted (when watching the channel 📺).
+    /// When a message was deleted (when watching the channel).
     case messageDeleted = "message.deleted"
-    /// When a channel was marked as read (when watching the channel 📺).
+    /// When a channel was marked as read (when watching the channel).
     case messageRead = "message.read"
-    /// ⚠️ When a message reaction was added or deleted (when watching the channel 📺).
+    /// ⚠️ When a message reaction was added or deleted (when watching the channel).
     case messageReaction = "message.reaction"
-    /// When a member was added to a channel (when watching the channel 📺).
+    
+    /// When a member was added to a channel (when watching the channel).
     case memberAdded = "member.added"
-    /// When a member was updated (when watching the channel 📺).
+    /// When a member was updated (when watching the channel).
     case memberUpdated = "member.updated"
-    /// When a member was removed from a channel (when watching the channel 📺).
+    /// When a member was removed from a channel (when watching the channel).
     case memberRemoved = "member.removed"
-    
-    /// When a message was added to a channel (when clients that are not currently watching the channel ⚡️).
-    case notificationMessageNew = "notification.message_new"
-    /// When the user mutes someone (🙋‍♀️).
-    case notificationMutesUpdated = "notification.mutes_updated"
-    /// When the total count of unread messages (across all channels the user is a member) changes
-    /// (when clients from the user affected by the change 📺📺).
-    case notificationMarkRead = "notification.mark_read"
-    
-    /// When the user was invited to join a channel (when the user invited 💌).
-    case notificationInvited = "notification.invited"
-    /// When the user accepts an invite (when the user invited 💌).
-    case notificationInviteAccepted = "notification.invite_accepted"
-    /// When the user reject an invite (when the user invited 💌).
-    case notificationInviteRejected = "notification.invite_rejected"
-    
-    /// When the user accepts an invite (when the user invited 📺).
-    case notificationAddedToChannel = "notification.added_to_channel"
-    /// When a user was removed from a channel (when the user invited 📺).
-    case notificationRemovedFromChannel = "notification.removed_from_channel"
     
     /// When a message reaction was added.
     case reactionNew = "reaction.new"
@@ -83,6 +66,26 @@ public enum EventType: String, Codable {
     case reactionUpdated = "reaction.updated"
     /// When a message reaction deleted.
     case reactionDeleted = "reaction.deleted"
+
+    /// When a message was added to a channel (when clients that are not currently watching the channel).
+    case notificationMessageNew = "notification.message_new"
+    /// When the user mutes someone.
+    case notificationMutesUpdated = "notification.mutes_updated"
+    /// When the total count of unread messages (across all channels the user is a member) changes
+    /// (when clients from the user affected by the change).
+    case notificationMarkRead = "notification.mark_read"
+    
+    /// When the user accepts an invite (when the user invited).
+    case notificationAddedToChannel = "notification.added_to_channel"
+    /// When a user was removed from a channel (when the user invited).
+    case notificationRemovedFromChannel = "notification.removed_from_channel"
+
+    /// When the user was invited to join a channel (when the user invited).
+    case notificationInvited = "notification.invited"
+    /// When the user accepts an invite (when the user invited).
+    case notificationInviteAccepted = "notification.invite_accepted"
+    /// When the user reject an invite (when the user invited).
+    case notificationInviteRejected = "notification.invite_rejected"
 }
 
 /// A web socket event.
@@ -114,43 +117,75 @@ public enum Event: Decodable {
     /// A filter type for events.
     public typealias Filter = (Event, Channel?) -> Bool
     
+    /// Every 30 second to confirm that the client connection is still active.
     case healthCheck(_ connectionId: String, User)
+    /// A pong event.
     case pong
     
+    /// When a user presence changed, e.g. online, offline, away (when subscribed to the user presence).
+    case userPresenceChanged(User, ChannelId?, EventType)
+    /// When a user was updated (when subscribed to the user presence).
+    case userUpdated(User, ChannelId?, EventType)
+    /// When a user was banned (when subscribed to the user presence).
+    case userBanned(reason: String?, expiration: Date?, created: Date, ChannelId?, EventType)
+    /// When a user starts watching a channel (when watching the channel).
+    case userStartWatching(User, _ watcherCount: Int, ChannelId?, EventType)
+    /// When a user stops watching a channel (when watching the channel).
+    case userStopWatching(User, _ watcherCount: Int, ChannelId?, EventType)
+    
+    /// Sent when a user starts typing (when watching the channel).
+    case typingStart(User, ChannelId?, EventType)
+    /// Sent when a user stops typing (when watching the channel).
+    case typingStop(User, ChannelId?, EventType)
+
+    /// When a channel was updated (when watching the channel).
     case channelUpdated(ChannelUpdatedResponse, ChannelId?, EventType)
+    /// When a channel was deleted (when watching the channel).
     case channelDeleted(Channel, EventType)
+    /// When a channel was hidden (when watching the channel).
     case channelHidden(HiddenChannelResponse, ChannelId?, EventType)
     
-    case messageRead(MessageRead, ChannelId?, EventType)
-    case messageNew(Message, _ channelsUnreadCount: Int, _ messagesUnreadCount: Int, Channel?, ChannelId?, EventType)
-    case messageDeleted(Message, User?, ChannelId?, EventType)
+    /// When a new message was added on a channel (when watching the channel).
+    case messageNew(Message, Channel?, UnreadCount, ChannelId?, EventType)
+    /// When a message was updated (when watching the channel).
     case messageUpdated(Message, ChannelId?, EventType)
+    /// When a message was deleted (when watching the channel).
+    case messageDeleted(Message, User?, ChannelId?, EventType)
+    /// When a channel was marked as read (when watching the channel).
+    case messageRead(MessageRead, ChannelId?, EventType)
     
-    case userUpdated(User, ChannelId?, EventType)
-    case userPresenceChanged(User, ChannelId?, EventType)
-    case userStartWatching(User, _ watcherCount: Int, ChannelId?, EventType)
-    case userStopWatching(User, _ watcherCount: Int, ChannelId?, EventType)
-    case userBanned(reason: String?, expiration: Date?, created: Date, ChannelId?, EventType)
-    
+    /// When a member was added to a channel (when watching the channel).
     case memberAdded(Member, ChannelId?, EventType)
+    /// When a member was updated (when watching the channel).
     case memberUpdated(Member, ChannelId?, EventType)
+    /// When a member was removed from a channel (when watching the channel).
     case memberRemoved(User, ChannelId?, EventType)
     
+    /// When a message reaction was added.
     case reactionNew(Reaction, Message, User, ChannelId?, EventType)
+    /// When a message reaction updated.
     case reactionUpdated(Reaction, Message, User, ChannelId?, EventType)
+    /// When a message reaction deleted.
     case reactionDeleted(Reaction, Message, User, ChannelId?, EventType)
     
-    case typingStart(User, ChannelId?, EventType)
-    case typingStop(User, ChannelId?, EventType)
-    
+    /// When the user mutes someone.
     case notificationMutesUpdated(User, ChannelId?, EventType)
-    case notificationMarkRead(Channel?, _ channelsUnreadCount: Int, _ messagesUnreadCount: Int, ChannelId?, EventType)
+    /// When the count of unread messages changed for the channel where the user is a member.
+    case notificationMarkRead(MessageRead, Channel, UnreadCount, EventType)
+    /// When the total count of unread messages (across all channels the user is a member) changed
+    /// (when clients from the user affected by the change).
+    case notificationMarkAllRead(MessageRead, EventType)
     
-    case notificationAddedToChannel(Channel, _ channelsUnreadCount: Int, _ messagesUnreadCount: Int, EventType)
+    /// When the user accepts an invite (when the user invited).
+    case notificationAddedToChannel(Channel, UnreadCount, EventType)
+    /// When a user was removed from a channel (when the user invited).
     case notificationRemovedFromChannel(Channel, EventType)
     
+    /// When the user was invited to join a channel (when the user invited).
     case notificationInvited(Channel, EventType)
+    /// When the user accepts an invite (when the user invited).
     case notificationInviteAccepted(Channel, EventType)
+    /// When the user reject an invite (when the user invited).
     case notificationInviteRejected(Channel, EventType)
     
     /// An event type.
@@ -167,7 +202,7 @@ public enum Event: Decodable {
              .channelHidden(_, _, let type),
              
              .messageRead(_, _, let type),
-             .messageNew(_, _, _, _, _, let type),
+             .messageNew(_, _, _, _, let type),
              .messageDeleted(_, _, _, let type),
              .messageUpdated(_, _, let type),
              
@@ -189,9 +224,10 @@ public enum Event: Decodable {
              .typingStop(_, _, let type),
              
              .notificationMutesUpdated(_, _, let type),
-             .notificationMarkRead(_, _, _, _, let type),
+             .notificationMarkRead(_, _, _, let type),
+             .notificationMarkAllRead(_, let type),
              
-             .notificationAddedToChannel(_, _, _, let type),
+             .notificationAddedToChannel(_, _, let type),
              .notificationRemovedFromChannel(_, let type),
              
              .notificationInvited(_, let type),
@@ -204,14 +240,14 @@ public enum Event: Decodable {
     /// A cid from the event.
     public var cid: ChannelId? {
         switch self {
-        case .healthCheck, .pong:
+        case .healthCheck, .pong, .notificationMarkAllRead:
             return nil
             
         case .channelUpdated(_, let cid, _),
              .channelHidden(_, let cid, _),
              
              .messageRead(_, let cid, _),
-             .messageNew(_, _, _, _, let cid, _),
+             .messageNew(_, _, _, let cid, _),
              .messageDeleted(_, _, let cid, _),
              .messageUpdated(_, let cid, _),
              
@@ -232,12 +268,12 @@ public enum Event: Decodable {
              .typingStart(_, let cid, _),
              .typingStop(_, let cid, _),
              
-             .notificationMutesUpdated(_, let cid, _),
-             .notificationMarkRead(_, _, _, let cid, _):
+             .notificationMutesUpdated(_, let cid, _):
              return cid
             
         case .channelDeleted(let channel, _),
-             .notificationAddedToChannel(let channel, _, _, _),
+             .notificationMarkRead(_, let channel, _, _),
+             .notificationAddedToChannel(let channel, _, _),
              .notificationRemovedFromChannel(let channel, _),
              .notificationInvited(let channel, _),
              .notificationInviteAccepted(let channel, _),
@@ -268,6 +304,11 @@ public enum Event: Decodable {
         default:
             return nil
         }
+    }
+    
+    /// Checks uif the event typoe was a notification.
+    public var isNotification: Bool {
+        type.rawValue.hasPrefix("notification")
     }
     
     // MARK: Decoder
@@ -304,6 +345,10 @@ public enum Event: Decodable {
             try container.decode(Channel.self, forKey: .channel)
         }
         
+        func optionalChannel() throws -> Channel? {
+            try container.decodeIfPresent(Channel.self, forKey: .channel)
+        }
+        
         func message() throws -> Message {
             try container.decode(Message.self, forKey: .message)
         }
@@ -316,8 +361,13 @@ public enum Event: Decodable {
             try container.decodeIfPresent(ChannelId.self, forKey: .cid)
         }
         
+        func created() throws -> Date {
+            try container.decode(Date.self, forKey: .created)
+        }
+        
         let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
         let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
+        let unreadCount = UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount)
         
         switch type {
         // Channel
@@ -331,12 +381,10 @@ public enum Event: Decodable {
             
         // Message
         case .messageNew, .notificationMessageNew:
-            let newMessage = try message()
-            let channel = try container.decodeIfPresent(Channel.self, forKey: .channel)
-            self = try .messageNew(newMessage, channelsUnreadCount, messagesUnreadCount, channel, cid(), type)
+            self = try .messageNew(message(), optionalChannel(), unreadCount, cid(), type)
         case .messageRead:
-            let created = try container.decode(Date.self, forKey: .created)
-            self = try .messageRead(MessageRead(user: user(), lastReadDate: created), cid(), type)
+            let messageRead = try MessageRead(user: user(), lastReadDate: created())
+            self = try .messageRead(messageRead, cid(), type)
         case .messageDeleted:
             self = try .messageDeleted(message(), optionalUser(), cid(), type)
         case .messageUpdated:
@@ -363,8 +411,7 @@ public enum Event: Decodable {
             
             let reason = try container.decodeIfPresent(String.self, forKey: .reason)
             let expiration = try container.decodeIfPresent(Date.self, forKey: .expiration)
-            let created = try container.decode(Date.self, forKey: .created)
-            self = .userBanned(reason: reason, expiration: expiration, created: created, channelId, type)
+            self = try .userBanned(reason: reason, expiration: expiration, created: created(), channelId, type)
             
         // Member
         case .memberAdded:
@@ -394,16 +441,17 @@ public enum Event: Decodable {
         case .notificationMutesUpdated:
             self = try .notificationMutesUpdated(container.decode(User.self, forKey: .me), cid(), type)
         case .notificationMarkRead:
-            let notificationChannel = try? channel()
-            let notificationCid = try cid() ?? notificationChannel?.cid
-            self = .notificationMarkRead(notificationChannel, channelsUnreadCount, messagesUnreadCount, notificationCid, type)
+            let messageRead = try MessageRead(user: .current, lastReadDate: created())
             
-        // Channel
+            if let channel = try optionalChannel() {
+                self = .notificationMarkRead(messageRead, channel, unreadCount, type)
+            } else {
+                self = .notificationMarkAllRead(messageRead, type)
+            }
         case .notificationAddedToChannel:
-            self = try .notificationAddedToChannel(channel(), channelsUnreadCount, messagesUnreadCount, type)
+            self = try .notificationAddedToChannel(channel(), unreadCount, type)
         case .notificationRemovedFromChannel:
             self = try .notificationRemovedFromChannel(channel(), type)
-            
         // Invites
         case .notificationInvited:
             self = try .notificationInvited(channel(), type)
@@ -433,13 +481,9 @@ extension Event: Equatable {
             return hiddenChannelResponse1 == hiddenChannelResponse2 && cid1 == cid2
         case (let .messageRead(messageRead1, cid1, _), let .messageRead(messageRead2, cid2, _)):
             return messageRead1 == messageRead2 && cid1 == cid2
-        case (let .messageNew(message1, channelsUnreadCount1, messagesUnreadCount1, channel1, cid1, _),
-              let .messageNew(message2, channelsUnreadCount2, messagesUnreadCount2, channel2, cid2, _)):
-            return message1 == message2
-                && channelsUnreadCount1 == channelsUnreadCount2
-                && messagesUnreadCount1 == messagesUnreadCount2
-                && channel1 == channel2
-                && cid1 == cid2
+        case (let .messageNew(message1, channel1, unreadCount1, cid1, _),
+              let .messageNew(message2, channel2, unreadCount2, cid2, _)):
+            return message1 == message2 && channel1 == channel2 && unreadCount1 == unreadCount2 && cid1 == cid2
         case (let .messageDeleted(message1, user1, cid1, _), let .messageDeleted(message2, user2, cid2, _)):
             return message1 == message2 && user1 == user2 && cid1 == cid2
         case (let .messageUpdated(message1, cid1, _), let .messageUpdated(message2, cid2, _)):
@@ -472,17 +516,14 @@ extension Event: Equatable {
             return user1 == user2 && cid1 == cid2
         case (let .notificationMutesUpdated(user1, cid1, _), let .notificationMutesUpdated(user2, cid2, _)):
             return user1 == user2 && cid1 == cid2
-        case (let .notificationMarkRead(channel1, channelsUnreadCount1, messagesUnreadCount1, cid1, _),
-              let .notificationMarkRead(channel2, channelsUnreadCount2, messagesUnreadCount2, cid2, _)):
-            return channel1 == channel2
-                && channelsUnreadCount1 == channelsUnreadCount2
-                && messagesUnreadCount1 == messagesUnreadCount2
-                && cid1 == cid2
-        case (let .notificationAddedToChannel(channel1, channelsUnreadCount1, messagesUnreadCount1, _),
-              let .notificationAddedToChannel(channel2, channelsUnreadCount2, messagesUnreadCount2, _)):
-            return channel1 == channel2
-                && channelsUnreadCount1 == channelsUnreadCount2
-                && messagesUnreadCount1 == messagesUnreadCount2
+        case (let .notificationMarkAllRead(created1, _), let .notificationMarkAllRead(created2, _)):
+            return created1 == created2
+        case (let .notificationMarkRead(messageRead1, channel1, unreadCount1, _),
+              let .notificationMarkRead(messageRead2, channel2, unreadCount2, _)):
+            return messageRead1 == messageRead2 && channel1 == channel2 && unreadCount1 == unreadCount2
+        case (let .notificationAddedToChannel(channel1, unreadCount1, _),
+              let .notificationAddedToChannel(channel2, unreadCount2, _)):
+            return channel1 == channel2 && unreadCount1 == unreadCount2
         case (.notificationRemovedFromChannel(let channel1, _), .notificationRemovedFromChannel(let channel2, _)),
              (.notificationInvited(let channel1, _), .notificationInvited(let channel2, _)),
              (.notificationInviteAccepted(let channel1, _), .notificationInviteAccepted(let channel2, _)),
