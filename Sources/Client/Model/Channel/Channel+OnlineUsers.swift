@@ -10,16 +10,16 @@ import Foundation
 
 // MARK: Online Users
 
-extension Client {
+extension Channel {
     
     /// Update the unread count if needed.
     /// - Parameter response: a web socket event.
-    func updateChannelOnlineUsers(channel: Channel, event: Event) {
+    func updateChannelOnlineUsers(event: Event) {
         guard case .userPresenceChanged(let user, _, _) = event, !user.isCurrent else {
             return
         }
         
-        var onlineUsers = channel.onlineUsersAtomic.get(default: [])
+        var onlineUsers = onlineUsersAtomic.get(default: [])
         
         if user.isOnline {
             if !onlineUsers.contains(user) {
@@ -29,6 +29,6 @@ extension Client {
             onlineUsers.remove(user)
         }
         
-        channel.onlineUsersAtomic.set(onlineUsers)
+        onlineUsersAtomic.set(onlineUsers)
     }
 }
