@@ -68,8 +68,17 @@ public extension Client {
     func queryChannels(query: ChannelsQuery, _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
         channelsAtomic.flush()
         
-        return request(endpoint: .channels(query)) { (result: Result<ChannelsResponse, ClientError>) in
-            completion(result.map(to: \.channels))
+        return request(endpoint: .channels(query)) { [unowned self] (result: Result<ChannelsResponse, ClientError>) in
+            let result = result.map(to: \.channels)
+            
+            if (query.options.contains(.watch) || query.options.contains(.presence)),
+                let channels = result.value?.map({ $0.channel }) {
+                channels.forEach {
+                    self.channelsAtomic.add($0, key: $0.cid)
+                }
+            }
+            
+            completion(result)
         }
     }
 }

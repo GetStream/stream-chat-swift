@@ -8,98 +8,72 @@
 
 import Foundation
 
+/// `The current user Unread Count`
+///
+/// To get global user unread count:
+///   1. Get the latest values from me on connect.
+///   2. Listing notifications for new values:
+///     - messageNew and notificationMessageNew
+///     - notificationMarkRead
+///     - notificationAddedToChannel
+///     - notificationMarkAllRead: 0 values
+///
+/// `A channel Unread Count`
+///
+/// The channel should be watched.
+///   1. Make a query with watch for messages and read state.
+///     - calculate the current values
+///   2. +1 for messageNew event
+///   3. set to 0 for notificationMarkRead or notificationMarkAllRead
+
 // MARK: User Unread Count
 
 extension Client {
-    
-    func updateUserUnreadCount(with event: Event) {
-        var unreadCountsUpdated = false
-        var updatedChannelsUnreadCount = 0
-        var updatedMssagesUnreadCount = 0
+    func updateUserUnreadCount(event: Event) {
+        var updatedUnreadCount = UnreadCount.noUnread
         
         switch event {
-        case let .notificationAddedToChannel(_, channelsUnreadCount, messagesUnreadCount, _),
-             let .notificationMarkRead(_, channelsUnreadCount, messagesUnreadCount, _, _):
-            updatedChannelsUnreadCount = channelsUnreadCount
-            updatedMssagesUnreadCount = messagesUnreadCount
-            unreadCountsUpdated = true
-        case let .messageNew(_, channelsUnreadCount, messagesUnreadCount, _, _, eventType):
-            if case .notificationMessageNew = eventType {
-                updatedChannelsUnreadCount = channelsUnreadCount
-                updatedMssagesUnreadCount = messagesUnreadCount
-                unreadCountsUpdated = true
-            }
-        default:
+        case .notificationMarkAllRead:
             break
+        case let .notificationAddedToChannel(_, unreadCount, _),
+             let .notificationMarkRead(_, _, unreadCount, _),
+             let .messageNew(_, _, unreadCount, _, _):
+            updatedUnreadCount = unreadCount
+        default:
+            return
         }
         
-        if unreadCountsUpdated {
-            user.channelsUnreadCountAtomic.set(updatedChannelsUnreadCount)
-            user.messagesUnreadCountAtomic.set(updatedMssagesUnreadCount)
-            onUserUpdate?(user)
-        }
+        user.unreadCountAtomic.set(updatedUnreadCount)
     }
-    
-    // MARK: Channel Unread Count
-    
-    /// Update the unread count if needed.
-    /// - Parameters:
-    ///   - channel: a channel.
-    ///   - event: an event.
-    func updateChannelUnreadCount(channel: Channel, event: Event) {
-        let oldUnreadCount = channel.unreadCountAtomic.get(default: 0)
-        
-        switch event {
-        case .notificationMarkRead(_, let unreadCount, _, _, _):
-            channel.unreadCountAtomic.set(unreadCount)
-            channel.unreadMessageReadAtomic.set(.init(user: .current, lastReadDate: Date()))
-            
-        case let .messageNew(message, unreadCount, _, _, _, eventType):
-            channel.unreadCountAtomic.set(unreadCount)
-            
-            // A regular new message.
-            if case .messageNew = eventType {
-                updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: oldUnreadCount == 0 ? 1 : 0,
-                                                      messagesUnreadCountDiff: unreadCount - oldUnreadCount)
-                
-                if unreadCount > 0, !message.user.isCurrent, message.mentionedUsers.contains(user) {
-                    channel.mentionedUnreadCountAtomic += 1
-                }
-                
-                if message.user.isCurrent {
-                    channel.unreadMessageReadAtomic.set(nil)
-                } else {
-                    channel.unreadMessageReadAtomic.set(.init(user: message.user, lastReadDate: message.created))
-                }
-            } else { // A notification new message.
-                if unreadCount > 0, channel.unreadMessageReadAtomic.get() == nil {
-                    channel.unreadMessageReadAtomic.set(.init(user: message.user, lastReadDate: message.created))
+}
+
+// MARK: Channel Unread Count
+
+extension Client {
+    func updateChannelsUnreadCount(event: Event) {
+        if case .notificationMarkAllRead(let messageRead, _) = event {
+            channelsAtomic.get(default: [:]).forEach {
+                $0.value.forEach {
+                    if let channel = $0.value {
+                        channel.resetUnreadCount(messageRead: messageRead)
+                    }
                 }
             }
             
-        case .messageRead(let messageRead, _, _):
-            if messageRead.user.isCurrent {
-                channel.unreadCountAtomic.set(0)
-                channel.mentionedUnreadCountAtomic.set(0)
-                channel.unreadMessageReadAtomic.set(nil)
-                updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: oldUnreadCount > 0 ? -1 : 0,
-                                                      messagesUnreadCountDiff: -oldUnreadCount)
+            return
+        }
+        
+        if let eventChannelId = event.cid, let channels = channelsAtomic[eventChannelId] {
+            channels.forEach {
+                if let channel = $0.value {
+                    channel.updateChannelOnlineUsers(event: event)
+                    
+                    if channel.config.readEventsEnabled {
+                        channel.updateChannelUnreadCount(event: event)
+                    }
+                }
             }
-            
-        default: return
         }
-        
-        channel.onUpdate?(channel)
-    }
-    
-    private func updateUserUnreadCountForChannelUpdate(channelsUnreadCountDiff: Int, messagesUnreadCountDiff: Int) {
-        // Update user unread counts.
-        if channelsUnreadCountDiff != 0  {
-            user.channelsUnreadCountAtomic += channelsUnreadCountDiff
-        }
-        
-        user.messagesUnreadCountAtomic += messagesUnreadCountDiff
-        onUserUpdate?(user)
     }
 }
 
