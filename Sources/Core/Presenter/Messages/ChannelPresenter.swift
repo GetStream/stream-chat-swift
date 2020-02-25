@@ -73,10 +73,6 @@ public final class ChannelPresenter: Presenter {
     /// A filter to discard channel events.
     public var eventsFilter: StreamChatClient.Event.Filter?
     
-    /// An observable view changes (see `ViewChanges`).
-    lazy var rxChanges = rx.setupChanges()
-    lazy var rxParsedMessagesRequest = rx.parsedChannelResponse(rx.messagesRequest)
-    
     /// Uploader for images and files.
     public private(set) lazy var uploader = Uploader()
     

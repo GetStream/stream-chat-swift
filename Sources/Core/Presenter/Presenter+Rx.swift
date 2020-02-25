@@ -11,30 +11,30 @@ import StreamChatClient
 import RxSwift
 import RxCocoa
 
-extension Presenter: ReactiveCompatible {}
+extension Presenter: ReactiveCompatible {
+    fileprivate static var rxConnectionErrorsKey: UInt8 = 0
+}
 
 extension Reactive  where Base: Presenter {
     
-    public var connectionErrors: Driver<ViewChanges> {
-        base.rxConnectionErrors
-    }
-    
     /// Observe connection errors as `ViewChanges`.
-    func setupConnectionErrors() -> Driver<ViewChanges> {
-        Client.shared.rx.connection
-            .map({ connection -> ViewChanges? in
-                if case .disconnected(let error) = connection, let errorResponse = error as? ClientErrorResponse {
-                    return .error(AnyError(errorResponse))
-                }
-                
-                if case .notConnected = connection {
-                    return .disconnected
-                }
-                
-                return nil
-            })
-            .unwrap()
-            .asDriver(onErrorJustReturn: .none)
+    public var connectionErrors: Driver<ViewChanges> {
+        associated(to: base, key: &Presenter.rxConnectionErrorsKey) {
+            Client.shared.rx.connection
+                .map({ connection -> ViewChanges? in
+                    if case .disconnected(let error) = connection, let errorResponse = error as? ClientErrorResponse {
+                        return .error(AnyError(errorResponse))
+                    }
+                    
+                    if case .notConnected = connection {
+                        return .disconnected
+                    }
+                    
+                    return nil
+                })
+                .unwrap()
+                .asDriver(onErrorJustReturn: .none)
+        }
     }
 }
 
