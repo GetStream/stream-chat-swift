@@ -77,19 +77,23 @@ public final class Channel: Codable {
     /// Check if the channel was deleted.
     public var isDeleted: Bool { deleted != nil }
     
-    let unreadCountAtomic = Atomic(0)
-    let mentionedUnreadCountAtomic = Atomic(0)
-    
     /// Returns the current unread count.
-    public var unreadCount: ChannelUnreadCount {
-        ChannelUnreadCount(messages: unreadCountAtomic.get(default: 0),
-                           mentionedMessages: mentionedUnreadCountAtomic.get(default: 0))
-    }
+    public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get(default: .noUnread) }
     
-    let onlineUsersAtomic = Atomic<Set<User>>([])
+    private(set) lazy var unreadCountAtomic = Atomic<ChannelUnreadCount>(.noUnread) { [weak self] _, _ in
+        if let self = self {
+            self.onUpdate?(self)
+        }
+    }
     
     /// Online users in the channel.
     public var onlineUsers: Set<User> { onlineUsersAtomic.get(default: []) }
+    
+    private(set) lazy var onlineUsersAtomic = Atomic<Set<User>>([]) { [weak self] _, _ in
+        if let self = self {
+            self.onUpdate?(self)
+        }
+    }
     
     let unreadMessageReadAtomic = Atomic<MessageRead>()
     /// Unread message state for the current user.
@@ -207,6 +211,12 @@ public final class Channel: Codable {
         if !allMembers.isEmpty {
             try container.encode(allMembers, forKey: .members)
         }
+    }
+    
+    /// Resets unread counts.
+    public func resetUnreadCount(messageRead: MessageRead) {
+        unreadMessageReadAtomic.set(messageRead)
+        unreadCountAtomic.set(.noUnread)
     }
 }
 

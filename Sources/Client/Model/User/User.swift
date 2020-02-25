@@ -78,14 +78,9 @@ public struct User: Codable {
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
     
-    let channelsUnreadCountAtomic = Atomic<Int>(0)
-    let messagesUnreadCountAtomic = Atomic<Int>(0)
-    
     /// Channels and messages unread counts.
-    public var unreadCount: UnreadCount {
-        UnreadCount(channels: channelsUnreadCountAtomic.get(default: 0),
-                    messages: messagesUnreadCountAtomic.get(default: 0))
-    }
+    public var unreadCount: UnreadCount { unreadCountAtomic.get(default: .noUnread) }
+    let unreadCountAtomic = Atomic<UnreadCount>(.noUnread) { _, _ in Client.shared.onUserUpdate?(User.current) }
     
     /// Check if the user is the current user.
     public var isCurrent: Bool { self == Client.shared.user }
@@ -154,11 +149,6 @@ public struct User: Codable {
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
         extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isUser })?.decode(from: decoder))
         
-        let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
-        let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
-        messagesUnreadCountAtomic.set(messagesUnreadCount)
-        channelsUnreadCountAtomic.set(channelsUnreadCount)
-        
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
             self.name = name
         } else {
@@ -171,6 +161,10 @@ public struct User: Codable {
         } else {
             avatarURL = nil
         }
+        
+        let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
+        let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
+        unreadCountAtomic.set(UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount))
     }
     
     public func encode(to encoder: Encoder) throws {

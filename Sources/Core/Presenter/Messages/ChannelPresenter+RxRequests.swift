@@ -69,7 +69,7 @@ public extension Reactive where Base == ChannelPresenter {
             .filter { UIApplication.shared.applicationState == .active }
             .do(onNext: { [weak base] _ in
                 Client.shared.logger?.log("🎫 Send Message Read. Unread from "
-                    + (base?.channel.unreadMessageRead?.lastReadDate.description ?? "<Unknown>"))
+                    + (base?.channel.unreadMessageRead?.lastReadDate.description ?? "❓"))
             })
             .flatMapLatest { [weak base] in base?.channel.rx.markRead() ?? .empty() }
     }

@@ -30,7 +30,7 @@ public final class ChannelsPresenter: Presenter {
     /// }
     /// ```
     public let filter: Filter
-        
+    
     /// Sort channels.
     ///
     /// By default channels will be sorted by the last message date.
@@ -158,7 +158,7 @@ extension ChannelsPresenter {
                 return .itemRemoved(index, items)
             }
             
-        case .messageNew(_, _, _, let channel, _, _):
+        case .messageNew(_, let channel, _, _, _):
             return parseNewMessage(event: event, from: channel)
             
         case .messageDeleted(let message, _, _, _):
@@ -182,12 +182,12 @@ extension ChannelsPresenter {
     
     private func parseNotifications(event: StreamChatClient.Event) -> ViewChanges {
         switch event {
-        case .notificationAddedToChannel(let channel, _, _, _):
+        case .notificationAddedToChannel(let channel, _, _):
             return parseNewChannel(channel: channel)
-        case .notificationMarkRead(let channel, let unreadCount, _, _, _):
-            if unreadCount == 0,
-                let channel = channel,
-                let index = items.firstIndex(whereChannelId: channel.id, channelType: channel.type) {
+        case .notificationMarkAllRead:
+            return .reloaded(0, items)
+        case .notificationMarkRead(_, let channel, _, _):
+            if let index = items.firstIndex(where: channel.cid) {
                 return .itemsUpdated([index], [], items)
             }
         default:
@@ -244,7 +244,7 @@ extension ChannelsPresenter {
                     let channelPresenter = channelPresenter,
                     let index = self.items.firstIndex(whereChannelId: channelPresenter.channel.id,
                                                       channelType: channelPresenter.channel.type) else {
-                    return
+                                                        return
                 }
                 
                 self.actions.onNext(.itemsUpdated([index], [], self.items))
