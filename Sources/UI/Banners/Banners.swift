@@ -135,25 +135,6 @@ public extension Banners {
     ///
     /// - Parameter error: an error.
     func show(error: Error) {
-        var error = error
-        var message = "\(error)"
-        
-        if let anyError = (error as? AnyError)?.error {
-            error = anyError
-        }
-        
-        if let clientError = error as? ClientError {
-            message = clientError.errorDescription ?? message
-            
-            if let internalError = clientError.error {
-                error = internalError
-            }
-        }
-        
-        if let clientErrorResponse = error as? ClientErrorResponse {
-            message = "Error #\(clientErrorResponse.code): \(clientErrorResponse.message)"
-        }
-        
-        show(errorMessage: message)
+        show(errorMessage: error.localizedDescription)
     }
 }
