@@ -19,7 +19,6 @@
 		8A0A7EB12301AE4E0033E6D9 /* Gzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9B2301AD330033E6D9 /* Gzip.framework */; };
 		8A0A7EB22301AE4E0033E6D9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9A2301AD330033E6D9 /* Nuke.framework */; };
 		8A0A7EB32301AE4E0033E6D9 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9E2301AD330033E6D9 /* Reachability.framework */; };
-		8A0A7EB42301AE4E0033E6D9 /* RxAppState.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA22301AD330033E6D9 /* RxAppState.framework */; };
 		8A0A7EB52301AE4E0033E6D9 /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9C2301AD330033E6D9 /* RxBlocking.framework */; };
 		8A0A7EB62301AE4E0033E6D9 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9D2301AD330033E6D9 /* RxCocoa.framework */; };
 		8A0A7EB72301AE4E0033E6D9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9F2301AD330033E6D9 /* RxGesture.framework */; };
@@ -35,6 +34,8 @@
 		8A7EE011238580BD00BDB18D /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8A7EE013238580BF00BDB18D /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */; };
 		8A7EE014238580BF00BDB18D /* StreamChatCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8AD8503D2406B63600C3449D /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A161EDE23F3189C0084234B /* StreamChatClient.framework */; };
+		8AD8503E2406B63600C3449D /* StreamChatClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A161EDE23F3189C0084234B /* StreamChatClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -103,6 +104,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				8AD8503E2406B63600C3449D /* StreamChatClient.framework in Embed Frameworks */,
 				8A7EE011238580BD00BDB18D /* StreamChat.framework in Embed Frameworks */,
 				8A7EE014238580BF00BDB18D /* StreamChatCore.framework in Embed Frameworks */,
 			);
@@ -157,13 +159,13 @@
 				8A0A7EB12301AE4E0033E6D9 /* Gzip.framework in Frameworks */,
 				8A0A7EB22301AE4E0033E6D9 /* Nuke.framework in Frameworks */,
 				8A0A7EB32301AE4E0033E6D9 /* Reachability.framework in Frameworks */,
-				8A0A7EB42301AE4E0033E6D9 /* RxAppState.framework in Frameworks */,
 				8A0A7EB52301AE4E0033E6D9 /* RxBlocking.framework in Frameworks */,
 				8A0A7EB62301AE4E0033E6D9 /* RxCocoa.framework in Frameworks */,
 				8A0A7EB72301AE4E0033E6D9 /* RxGesture.framework in Frameworks */,
 				8A0A7EB82301AE4E0033E6D9 /* RxRelay.framework in Frameworks */,
 				8A0A7EB92301AE4E0033E6D9 /* RxSwift.framework in Frameworks */,
 				8A0A7EBA2301AE4E0033E6D9 /* SnapKit.framework in Frameworks */,
+				8AD8503D2406B63600C3449D /* StreamChatClient.framework in Frameworks */,
 				8A0A7EBB2301AE4E0033E6D9 /* Starscream.framework in Frameworks */,
 				8A0A7EBC2301AE4E0033E6D9 /* SwiftyGif.framework in Frameworks */,
 			);
@@ -390,7 +392,6 @@
 				"$(SRCROOT)/../../Carthage/Build/iOS/Reachability.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/RxRelay.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/Starscream.framework",
-				"$(SRCROOT)/../../Carthage/Build/iOS/RxAppState.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/RxSwift.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/Nuke.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/SnapKit.framework",
@@ -410,7 +411,6 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Reachability.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Starscream.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxAppState.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Nuke.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework",
