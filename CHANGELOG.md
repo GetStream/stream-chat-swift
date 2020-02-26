@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ✅ Added
 
 ### 🐞 Fixed
+- Error description of failed request is now human-readable [#104](https://github.com/GetStream/stream-chat-swift/issues/104)
 
 # [1.5.7](https://github.com/GetStream/stream-chat-swift/releases/tag/1.5.7)
 _♥️ February 14, 2020 ♥️_

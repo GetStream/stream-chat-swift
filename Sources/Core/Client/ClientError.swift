@@ -9,7 +9,7 @@
 import Foundation
 
 /// A client error.
-public enum ClientError: LocalizedError {
+public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     /// An unexpected error.
     case unexpectedError(description: String)
     /// The API Key is empty.
@@ -74,25 +74,56 @@ public enum ClientError: LocalizedError {
             
         case .requestFailed(let error):
             if let error = error {
-                return "A request failed: \(error)"
+                return "A request failed: \(error.localizedDescription)"
             }
             
             return "A request failed with unknown error"
             
         case .responseError(let error):
-            return "A response failed: \(error)"
-        case .encodingFailure(let error, let object):
-            return "A encoding failed: \(error) for object: \(object)"
+            return error.localizedDescription
+        case .encodingFailure(let error, _):
+            return "An encoding failed: \(error.localizedDescription)"
         case .decodingFailure(let error):
-            return "A decoding failed: \(error)"
+            return "A decoding failed: \(error.localizedDescription)"
         case .errorMessage(let message):
             return message.text
+        }
+    }
+
+    public var debugDescription: String {
+        switch self {
+        case .unexpectedError(let description):
+            return "ClientError.unexpectedError(\(description))"
+        case .emptyAPIKey:
+            return "ClientError.emptyAPIKey"
+        case .emptyToken:
+            return "ClientError.emptyToken"
+        case .tokenInvalid(let description):
+            return "ClientError.tokenInvalid(\(description))"
+        case .emptyUser:
+            return "ClientError.emptyUser"
+        case .emptyConnectionId:
+            return "ClientError.emptyConnectionId"
+        case .emptyBody(let description):
+            return "ClientError.emptyBody(\(description))"
+        case .invalidURL(let url):
+            return "ClientError.invalidURL(\(url ?? "<unknown>"))"
+        case .requestFailed(let error):
+            return "ClientError.requestFailed(\(String(describing: error)))"
+        case .responseError(let error):
+            return "ClientError.responseError(\(error))"
+        case .encodingFailure(let error, let object):
+            return "ClientError.encodingFailure(\(error), \(object))"
+        case .decodingFailure(let error):
+            return "ClientError.decodingFailure(\(error))"
+        case .errorMessage(let message):
+            return "ClientError.errorMessage(\(message.text))"
         }
     }
 }
 
 /// A parsed server response error.
-public struct ClientErrorResponse: LocalizedError, Decodable {
+public struct ClientErrorResponse: LocalizedError, Decodable, CustomDebugStringConvertible {
     static let tokenExpiredErrorCode = 40
     
     private enum CodingKeys: String, CodingKey {
@@ -109,12 +140,16 @@ public struct ClientErrorResponse: LocalizedError, Decodable {
     public let statusCode: Int
     
     public var errorDescription: String? {
-        return "Client JSON Error \(code): \(message) (Status code: \(statusCode))."
+        return "Error #\(code): \(message)"
+    }
+
+    public var debugDescription: String {
+        return "ClientErrorResponse(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
     }
 }
 
 /// A wrapper for any Error.
-public struct AnyError: Error, Equatable {
+public struct AnyError: Error, Equatable, CustomDebugStringConvertible {
     /// Some error.
     public let error: Error
     
@@ -122,13 +157,31 @@ public struct AnyError: Error, Equatable {
         return error.localizedDescription
     }
     
+    public var debugDescription: String {
+        return "AnyError(error: \(error))"
+    }
+
     public static func == (lhs: AnyError, rhs: AnyError) -> Bool {
         return lhs.error.localizedDescription == rhs.error.localizedDescription
     }
 }
 
 /// An encoding error
-public enum EncodingError: Error {
-    /// Field with this value can't be encoded
-    case valueUnsupported
+public enum EncodingError: Error, LocalizedError, CustomDebugStringConvertible {
+    /// Attachment's type not supported
+    case attachmentUnsupported
+
+    public var errorDescription: String? {
+        switch self {
+        case .attachmentUnsupported:
+            return "This attachment type is not supported"
+        }
+    }
+
+    public var debugDescription: String {
+        switch self {
+        case .attachmentUnsupported:
+            return "EncodingError.attachmentUnsupported"
+        }
+    }
 }
