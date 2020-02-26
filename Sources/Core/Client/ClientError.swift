@@ -82,9 +82,9 @@ public enum ClientError: LocalizedError {
         case .responseError(let error):
             return "A response failed: \(error.localizedDescription)"
         case .encodingFailure(let error, let object):
-            return "A encoding failed: \(error) for object: \(object)"
+            return "A encoding failed: \(error.localizedDescription) for object: \(object)"
         case .decodingFailure(let error):
-            return "A decoding failed: \(error)"
+            return "A decoding failed: \(error.localizedDescription)"
         case .errorMessage(let message):
             return message.text
         }
