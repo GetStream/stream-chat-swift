@@ -31,7 +31,9 @@ extension Channel {
             unreadCountAtomic.set(unreadCount)
             
         case .messageRead(let messageRead, _, _):
-            resetUnreadCount(messageRead: messageRead)
+            if messageRead.user.isCurrent {
+                resetUnreadCount(messageRead: messageRead)
+            }
             
         default:
             break
