@@ -74,13 +74,13 @@ public enum ClientError: LocalizedError {
             
         case .requestFailed(let error):
             if let error = error {
-                return "A request failed: \(error)"
+                return "A request failed: \(error.localizedDescription)"
             }
             
             return "A request failed with unknown error"
             
         case .responseError(let error):
-            return "A response failed: \(error)"
+            return "A response failed: \(error.localizedDescription)"
         case .encodingFailure(let error, let object):
             return "A encoding failed: \(error) for object: \(object)"
         case .decodingFailure(let error):
