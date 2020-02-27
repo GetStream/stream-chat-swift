@@ -258,8 +258,14 @@ extension WebSocket {
         
         guard let error = error else {
             logger?.log("💔 Disconnected")
-            consecutiveFailures = 0
             connection = .disconnected(nil)
+            
+            if shouldReconnect {
+                reconnect()
+            } else {
+                consecutiveFailures = 0
+            }
+            
             return
         }
         
