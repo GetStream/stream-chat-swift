@@ -130,22 +130,19 @@ public extension Reactive where Base == ChannelPresenter {
     /// Send Read event if the app is active.
     /// - Returns: an observable completion.
     func markReadIfPossible() -> Observable<StreamChatClient.Event> {
-        guard InternetConnection.shared.isAvailable, base.channel.config.readEventsEnabled else {
+        guard InternetConnection.shared.isAvailable, base.channel.readEventsEnabled else {
             return .empty()
         }
         
         guard base.channel.isUnread else {
-            Client.shared.logger?.log("🎫 Skip read. No unreadMessageRead.")
+            Client.shared.logger?.log("🎫↩️ Skip mark read. \(base.channel.unreadCount) at "
+                + (base.channel.unreadMessageRead?.lastReadDate.description ?? "<NoLastReadDate>"))
             return .empty()
         }
         
         return Observable.just(())
             .subscribeOn(MainScheduler.instance)
             .filter { UIApplication.shared.applicationState == .active }
-            .do(onNext: { [weak base] _ in
-                Client.shared.logger?.log("🎫 Send Message Read. Unread from "
-                    + (base?.channel.unreadMessageRead?.lastReadDate.description ?? "❓"))
-            })
             .flatMapLatest { [weak base] in base?.channel.rx.markRead() ?? .empty() }
     }
     

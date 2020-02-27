@@ -59,7 +59,7 @@ public final class ChannelPresenter: Presenter {
     
     var messageReadsToMessageId: [MessageRead: String] = [:]
     /// Check if the channel has unread messages.
-    public var isUnread: Bool { channel.config.readEventsEnabled && channel.unreadCount.messages > 0 }
+    public var isUnread: Bool { channel.readEventsEnabled && channel.unreadCount.messages > 0 }
     
     let ephemeralSubject = BehaviorSubject<EphemeralType>(value: (nil, false))
     /// Check if the channel has ephemeral message, e.g. Giphy preview.

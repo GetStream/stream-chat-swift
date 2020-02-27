@@ -77,6 +77,11 @@ public final class Channel: Codable {
     /// Check if the channel was deleted.
     public var isDeleted: Bool { deleted != nil }
     
+    /// Checks if read events evalable for the current user.
+    public var readEventsEnabled: Bool {
+        config.readEventsEnabled && members.contains(Member.current)
+    }
+    
     /// Returns the current unread count.
     public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get(default: .noUnread) }
     

@@ -68,7 +68,7 @@ extension Client {
                 if let channel = $0.value {
                     channel.updateChannelOnlineUsers(event: event)
                     
-                    if channel.config.readEventsEnabled {
+                    if channel.readEventsEnabled {
                         channel.updateChannelUnreadCount(event: event)
                     }
                 }
