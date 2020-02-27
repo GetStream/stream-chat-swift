@@ -31,7 +31,6 @@ public struct ChannelResponse: Decodable {
         channel.members = Set(members)
         messages = try container.decodeIfPresent([Message].self, forKey: .messages) ?? []
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
-        updateUnreadMessageRead()
         calculateChannelUnreadCount()
         updateChannelOnlineUsers()
     }
@@ -47,27 +46,29 @@ public struct ChannelResponse: Decodable {
         self.channel = channel
         self.messages = messages
         self.messageReads = messageReads
-        updateUnreadMessageRead()
+        channel.unreadMessageReadAtomic.set(userUnreadMessageRead())
     }
     
-    private mutating func updateUnreadMessageRead() {
-        if let lastMessage = messages.last,
-            let messageRead = messageReads.first(where: { $0.user.isCurrent }),
-            lastMessage.updated > messageRead.lastReadDate {
-            channel.unreadMessageReadAtomic.set(messageRead)
-        }
+    private func userUnreadMessageRead() -> MessageRead? {
+        messageReads.first(where: { $0.user.isCurrent })
     }
     
     private func calculateChannelUnreadCount() {
-        if messages.isEmpty {
+        if messages.isEmpty || !channel.members.contains(Member.current) {
             return
         }
         
+        let unreadMessageRead = userUnreadMessageRead()
+        channel.unreadMessageReadAtomic.set(unreadMessageRead)
         var unreadCount = ChannelUnreadCount.noUnread
         let currentUser = Client.shared.user
         
-        if let unreadMessageRead = channel.unreadMessageRead {
+        if let unreadMessageRead = unreadMessageRead {
             for message in messages.reversed() {
+                if message.user.isCurrent {
+                    continue
+                }
+                
                 if message.created > unreadMessageRead.lastReadDate {
                     unreadCount.messages += 1
                     
