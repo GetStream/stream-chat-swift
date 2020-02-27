@@ -11,7 +11,7 @@ import Foundation
 /// A client error.
 public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     /// An unexpected error.
-    case unexpectedError(description: String)
+    case unexpectedError(description: String, error: Error?)
     /// The API Key is empty.
     case emptyAPIKey
     /// A token is empty.
@@ -55,7 +55,7 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     
     public var errorDescription: String? {
         switch self {
-        case .unexpectedError(let description):
+        case .unexpectedError(let description, _):
             return "Unexpected error: \(description)"
         case .emptyAPIKey:
             return "The Client API Key is empty"
@@ -92,8 +92,8 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
 
     public var debugDescription: String {
         switch self {
-        case .unexpectedError(let description):
-            return "ClientError.unexpectedError(\(description))"
+        case .unexpectedError(let description, let error):
+            return "ClientError.unexpectedError(description: \(description), error: \(String(describing: error)))"
         case .emptyAPIKey:
             return "ClientError.emptyAPIKey"
         case .emptyToken:
