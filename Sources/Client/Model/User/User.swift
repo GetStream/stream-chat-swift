@@ -110,7 +110,7 @@ public struct User: Codable {
     ///     - name: a user name.
     ///     - an avatar URL.
     public init(id: String,
-                name: String,
+                name: String = "",
                 role: Role = .user,
                 avatarURL: URL? = nil,
                 created: Date = .init(),
