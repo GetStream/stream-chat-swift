@@ -160,7 +160,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         startGifsAnimations()
-        channelPresenter?.markReadIfPossible()
+        markReadIfPossible()
         
         if let presenter = channelPresenter, (needsToReload || presenter.items != items) {
             let scrollToBottom = items.isEmpty || (scrollEnabled && tableView.bottomContentOffset < bottomThreshold)
@@ -282,6 +282,12 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     open func createActionsContextMenu(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) -> UIMenu? {
         defaultActionsContextMenu(from: cell, for: message, locationInView: locationInView)
     }
+    
+    private func markReadIfPossible() {
+        if isVisible {
+            channelPresenter?.rx.markReadIfPossible().subscribe().disposed(by: disposeBag)
+        }
+    }
 }
 
 // MARK: - Title
@@ -329,8 +335,6 @@ extension ChatViewController {
 extension ChatViewController {
     
     private func updateTableView(with changes: ViewChanges) {
-        channelPresenter?.markReadIfPossible()
-        
         switch changes {
         case .none, .itemMoved:
             return
@@ -354,6 +358,8 @@ extension ChatViewController {
                 self.items[0] = .loading(false)
             }
             
+            markReadIfPossible()
+            
         case let .itemsAdded(rows, reloadRow, forceToScroll, items):
             self.items = items
             let needsToScroll = tableView.bottomContentOffset < bottomThreshold
@@ -376,6 +382,9 @@ extension ChatViewController {
                     tableView.scrollToRowIfPossible(at: maxRow, animated: false)
                 }
             }
+            
+            markReadIfPossible()
+            
         case let .itemsUpdated(rows, messages, items):
             self.items = items
             
