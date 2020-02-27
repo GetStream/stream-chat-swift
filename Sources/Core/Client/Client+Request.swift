@@ -145,7 +145,7 @@ extension Client {
         } catch let error as ClientError {
             completion(.failure(error))
         } catch {
-            completion(.failure(.unexpectedError(description: "\(error)")))
+            completion(.failure(.unexpectedError(description: error.localizedDescription, error: error)))
         }
         
         return URLSessionDataTask()
@@ -260,7 +260,8 @@ extension Client {
              .sendFile(let fileName, let mimeType, let data, _):
             multipartFormData = MultipartFormData(data, fileName: fileName, mimeType: mimeType)
         default:
-            return .failure(.unexpectedError(description: "Encoding unexpected endpoint \(endpoint) for a file uploading."))
+            let errorDescription = "Encoding unexpected endpoint \(endpoint) for a file uploading."
+            return .failure(.unexpectedError(description: errorDescription, error: nil))
         }
         
         let data = multipartFormData.multipartFormData
@@ -296,7 +297,7 @@ extension Client {
         guard let httpResponse = response as? HTTPURLResponse else {
             logger?.log(response, data: data, forceToShowData: true)
             let errorDescription = "Expecting HTTPURLResponse, but got \(response?.description ?? "nil")"
-            performInCallbackQueue { completion(.failure(.unexpectedError(description: errorDescription))) }
+            performInCallbackQueue { completion(.failure(.unexpectedError(description: errorDescription, error: nil))) }
             return
         }
 
