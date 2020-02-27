@@ -214,11 +214,11 @@ public extension Client {
     ///   - completion: a completion block with `Event`.
     @discardableResult
     func markRead(channel: Channel, _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
-        guard channel.config.readEventsEnabled else {
+        guard channel.readEventsEnabled else {
             return .empty
         }
         
-        logger?.log("🎫 Send Message Read. For a new message of the current user.")
+        logger?.log("🎫 Mark Read")
         
         return request(endpoint: .markRead(channel)) { (result: Result<EventResponse, ClientError>) in
             completion(result.map(to: \.event))
