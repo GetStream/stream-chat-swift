@@ -14,7 +14,7 @@ extension Channel {
     ///   - event: an event.
     func updateChannelUnreadCount(event: Event) {
         switch event {
-        case let .messageNew(message, _, _, _, _):
+        case let .messageNew(message, _, _, _):
             if message.user.isCurrent {
                 resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created))
                 return

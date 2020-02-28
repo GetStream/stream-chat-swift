@@ -63,7 +63,7 @@ extension Client {
     ///   - completion: a completion block.
     /// - Returns: an URLSessionTask that can be canncelled.
     @discardableResult
-    public func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask {
+    func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask {
         if let logger = logger {
             logger.log("Request: \(String(describing: endpoint).prefix(100))...", level: .debug)
         }
@@ -112,9 +112,9 @@ extension Client {
     ///   - completion: a completion block.
     /// - Returns: an URLSessionTask that can be canncelled.
     @discardableResult
-    public func request<T: Decodable>(endpoint: Endpoint,
-                                      _ progress: @escaping Progress,
-                                      _ completion: @escaping Completion<T>) -> URLSessionTask {
+    func request<T: Decodable>(endpoint: Endpoint,
+                               _ progress: @escaping Progress,
+                               _ completion: @escaping Completion<T>) -> URLSessionTask {
         let task = request(endpoint: endpoint, completion)
         urlSessionTaskDelegate.addProgessHandler(id: task.taskIdentifier, progress)
         return task
@@ -274,7 +274,7 @@ extension Client {
             performInCallbackQueue { completion(.failure(.unexpectedError(errorDescription, nil))) }
             return
         }
-
+        
         logger?.log(response, data: data, forceToShowData: httpResponse.statusCode >= 400)
         
         guard let data = data, !data.isEmpty else {

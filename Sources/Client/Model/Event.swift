@@ -146,7 +146,7 @@ public enum Event: Decodable {
     case channelHidden(HiddenChannelResponse, ChannelId?, EventType)
     
     /// When a new message was added on a channel (when watching the channel).
-    case messageNew(Message, Channel?, UnreadCount, ChannelId?, EventType)
+    case messageNew(Message, Channel?, ChannelId?, EventType)
     /// When a message was updated (when watching the channel).
     case messageUpdated(Message, ChannelId?, EventType)
     /// When a message was deleted (when watching the channel).
@@ -202,7 +202,7 @@ public enum Event: Decodable {
              .channelHidden(_, _, let type),
              
              .messageRead(_, _, let type),
-             .messageNew(_, _, _, _, let type),
+             .messageNew(_, _, _, let type),
              .messageDeleted(_, _, _, let type),
              .messageUpdated(_, _, let type),
              
@@ -247,7 +247,7 @@ public enum Event: Decodable {
              .channelHidden(_, let cid, _),
              
              .messageRead(_, let cid, _),
-             .messageNew(_, _, _, let cid, _),
+             .messageNew(_, _, let cid, _),
              .messageDeleted(_, _, let cid, _),
              .messageUpdated(_, let cid, _),
              
@@ -381,7 +381,7 @@ public enum Event: Decodable {
             
         // Message
         case .messageNew, .notificationMessageNew:
-            self = try .messageNew(message(), optionalChannel(), unreadCount, cid(), type)
+            self = try .messageNew(message(), optionalChannel(), cid(), type)
         case .messageRead:
             let messageRead = try MessageRead(user: user(), lastReadDate: created())
             self = try .messageRead(messageRead, cid(), type)
@@ -479,9 +479,9 @@ extension Event: Equatable {
             return hiddenChannelResponse1 == hiddenChannelResponse2 && cid1 == cid2
         case (let .messageRead(messageRead1, cid1, _), let .messageRead(messageRead2, cid2, _)):
             return messageRead1 == messageRead2 && cid1 == cid2
-        case (let .messageNew(message1, channel1, unreadCount1, cid1, _),
-              let .messageNew(message2, channel2, unreadCount2, cid2, _)):
-            return message1 == message2 && channel1 == channel2 && unreadCount1 == unreadCount2 && cid1 == cid2
+        case (let .messageNew(message1, channel1, cid1, _),
+              let .messageNew(message2, channel2, cid2, _)):
+            return message1 == message2 && channel1 == channel2 && cid1 == cid2
         case (let .messageDeleted(message1, user1, cid1, _), let .messageDeleted(message2, user2, cid2, _)):
             return message1 == message2 && user1 == user2 && cid1 == cid2
         case (let .messageUpdated(message1, cid1, _), let .messageUpdated(message2, cid2, _)):
