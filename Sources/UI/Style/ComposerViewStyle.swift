@@ -24,6 +24,8 @@ public struct ComposerViewStyle {
     public var font: UIFont
     /// A text color.
     public var textColor: UIColor
+    /// Placeholder text
+    public var placeholderText: String
     /// A placeholder text color.
     public var placeholderTextColor: UIColor
     /// A background color.
@@ -60,6 +62,7 @@ public struct ComposerViewStyle {
     ///   - states: composer states (see `States`).
     public init(font: UIFont = .chatRegular,
                 textColor: UIColor = .black,
+                placeholderText: String = "Write a message",
                 placeholderTextColor: UIColor = .chatGray,
                 backgroundColor: UIColor = .clear,
                 helperContainerBackgroundColor: UIColor = .white,
@@ -72,6 +75,7 @@ public struct ComposerViewStyle {
                                   .disabled: .init(tintColor: .chatGray, borderWidth: 2)]) {
         self.font = font
         self.textColor = textColor
+        self.placeholderText = placeholderText
         self.placeholderTextColor = placeholderTextColor
         self.backgroundColor = backgroundColor
         self.helperContainerBackgroundColor = helperContainerBackgroundColor
@@ -99,10 +103,10 @@ extension ComposerViewStyle {
     
     /// A composer style.
     public struct Style: Hashable {
-        /// A tint color.
-        public let tintColor: UIColor
+        /// A tint color. Also used as border color.
+        public var tintColor: UIColor
         /// A border width.
-        public let borderWidth: CGFloat
+        public var borderWidth: CGFloat
         
         /// Init a cosposerty state style.
         /// - Parameters:

@@ -40,8 +40,8 @@ public struct ChannelViewStyle {
     public var messageDeletedFont: UIFont
     /// A deleted message text color.
     public var messageDeletedColor: UIColor
-    /// A name and messagin vertical alignment.
-    public var verticalTextAlignment: VerticalTextAlignment
+    /// A name and message vertical alignment.
+    public var verticalTextAlignment: VerticalAlignment
     /// A date font.
     public var dateFont: UIFont
     /// A date text color.
@@ -80,7 +80,7 @@ public struct ChannelViewStyle {
     ///   - edgeInsets: edge insets.
     public init(backgroundColor: UIColor = .white,
                 separatorStyle: SeparatorStyle = .none,
-                avatarViewStyle: AvatarViewStyle? = .init(radius: .channelAvatarRadius, placeholderFont: nil),
+                avatarViewStyle: AvatarViewStyle? = .default,
                 nameNumberOfLines: Int = 1,
                 nameFont: UIFont = .chatXRegularMedium,
                 nameColor: UIColor = .chatGray,
@@ -93,7 +93,7 @@ public struct ChannelViewStyle {
                 messageUnreadColor: UIColor = .black,
                 messageDeletedFont: UIFont = .chatMediumItalic,
                 messageDeletedColor: UIColor = .chatGray,
-                verticalTextAlignment: VerticalTextAlignment = .center,
+                verticalTextAlignment: VerticalAlignment = .center,
                 dateFont: UIFont = .chatSmall,
                 dateColor: UIColor = .chatGray,
                 height: CGFloat = UITableView.automaticDimension,
@@ -128,18 +128,6 @@ public struct ChannelViewStyle {
                 + edgeInsets.top
                 + edgeInsets.bottom
             : height
-    }
-}
-
-public extension ChannelViewStyle {
-    /// The name and message vertical alignment.
-    enum VerticalTextAlignment {
-        /// The name aligned from the top with `edgeInsets.top` top offset.
-        /// The message aligned after the name with `spacing.vertical` top offset.
-        case top
-        /// The name aligned from the center of the avatar with `spacing.vertical / 2` bottom offset.
-        /// The message aligned from the center of the avatar with `spacing.vertical / 2` top offset.
-        case center
     }
 }
 

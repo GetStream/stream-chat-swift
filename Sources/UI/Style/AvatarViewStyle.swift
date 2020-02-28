@@ -10,10 +10,15 @@ import UIKit
 
 /// Avatars style.
 public struct AvatarViewStyle: Hashable {
+    /// Default avatar style
+    public static let `default` = AvatarViewStyle(radius: .channelAvatarRadius, placeholderFont: nil, verticalAlignment: .center)
+    
     /// An avatar radius.
-    public let radius: CGFloat
+    public var radius: CGFloat
     /// A placeholder font.
-    public let placeholderFont: UIFont?
+    public var placeholderFont: UIFont?
+    /// Vertical alignment inside the cell
+    public var verticalAlignment: VerticalAlignment
     
     /// A double value of `radius`.
     public var size: CGFloat { radius * 2 }
@@ -22,8 +27,9 @@ public struct AvatarViewStyle: Hashable {
     /// - Parameters:
     ///   - radius: a radius.
     ///   - placeholderFont: a placeholder font.
-    public init(radius: CGFloat = .messageAvatarRadius, placeholderFont: UIFont? = nil) {
+    public init(radius: CGFloat = .messageAvatarRadius, placeholderFont: UIFont? = nil, verticalAlignment: VerticalAlignment = .center) {
         self.radius = radius
         self.placeholderFont = placeholderFont
+        self.verticalAlignment = verticalAlignment
     }
 }
