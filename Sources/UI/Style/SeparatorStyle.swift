@@ -14,11 +14,11 @@ public struct SeparatorStyle: Hashable {
     public static let none = SeparatorStyle(tableStyle: .none)
     
     /// The color of separator rows in the table view.
-    public let color: UIColor?
+    public var color: UIColor?
     /// The default inset of cell separators.
-    public let inset: UIEdgeInsets
+    public var inset: UIEdgeInsets
     /// The style for table cells used as separators (see `TableView.separatorStyle`).
-    public let tableStyle: UITableViewCell.SeparatorStyle
+    public var tableStyle: UITableViewCell.SeparatorStyle
     
     /// Init a separator style.
     /// - Parameters:

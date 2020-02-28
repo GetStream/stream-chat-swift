@@ -11,9 +11,9 @@ import UIKit
 /// Spacings between elements.
 public struct Spacing: Hashable {
     /// A horizontal spacing between elements.
-    public let horizontal: CGFloat
+    public var horizontal: CGFloat
     /// A vertical spacing between elements.
-    public let vertical: CGFloat
+    public var vertical: CGFloat
     
     /// Init spacings.
     /// - Parameters:

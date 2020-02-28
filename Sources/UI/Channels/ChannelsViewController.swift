@@ -123,8 +123,12 @@ open class ChannelsViewController: ViewController {
     
     // MARK: - Channel Cell
     
+    open func dequeueChannelCell(at indexPath: IndexPath) -> ChannelTableViewCell {
+        tableView.dequeueReusableCell(for: indexPath) as ChannelTableViewCell
+    }
+    
     open func channelCell(at indexPath: IndexPath, channelPresenter: ChannelPresenter) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(for: indexPath) as ChannelTableViewCell
+        let cell = dequeueChannelCell(at: indexPath)
         cell.setupIfNeeded(style: style.channel)
         cell.nameLabel.text = channelPresenter.channel.name
         
@@ -142,7 +146,7 @@ open class ChannelsViewController: ViewController {
             }
             
             cell.update(message: text, isMeta: lastMessage.isDeleted, isUnread: channelPresenter.isUnread)
-            cell.dateLabel.text = lastMessage.updated.relative
+            cell.update(date: lastMessage.updated)
             
         } else {
             cell.update(message: "No messages", isMeta: true, isUnread: false)
@@ -171,6 +175,7 @@ open class ChannelsViewController: ViewController {
         }
         
         let chatViewController = createChatViewController(with: channelPresenter, indexPath: indexPath)
+        configureChatViewController(chatViewController: chatViewController, channelPresenter: channelPresenter)
         
         if let splitViewController = splitViewController {
             let navigationController = UINavigationController(rootViewController: chatViewController)
@@ -188,18 +193,25 @@ open class ChannelsViewController: ViewController {
     ///     - indexPath: a selected index path.
     /// - Returns: a chat view controller.
     open func createChatViewController(with channelPresenter: ChannelPresenter, indexPath: IndexPath) -> ChatViewController {
-        let chatViewController = ChatViewController(nibName: nil, bundle: nil)
+        ChatViewController(nibName: nil, bundle: nil)
+    }
+    
+    /// Configures the chat view controller for display.
+    ///
+    /// - Parameters:
+    ///     - chatViewController: ChatViewController to be configured
+    ///     - channelPresenter: Channel Presenter for the corresponding ChatViewController
+    open func configureChatViewController(chatViewController: ChatViewController, channelPresenter: ChannelPresenter) {
         chatViewController.style = style
         channelPresenter.eventsFilter = channelsPresenter.channelEventsFilter
         chatViewController.channelPresenter = channelPresenter
-        return chatViewController
+        chatViewController.hidesBottomBarWhenPushed = true
     }
     
     /// Presents a chat view controller of a selected channel cell.
     ///
     /// - Parameter chatViewController: a chat view controller with a selected channel.
     open func show(chatViewController: ChatViewController) {
-        chatViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(chatViewController, animated: true)
     }
 }
