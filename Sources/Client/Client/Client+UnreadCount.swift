@@ -36,9 +36,16 @@ extension Client {
         case .notificationMarkAllRead:
             break
         case let .notificationAddedToChannel(_, unreadCount, _),
-             let .notificationMarkRead(_, _, unreadCount, _),
-             let .messageNew(_, _, unreadCount, _, _):
+             let .notificationMarkRead(_, _, unreadCount, _):
             updatedUnreadCount = unreadCount
+        case .messageNew(_, _, let cid, _):
+            updatedUnreadCount = User.current.unreadCount
+            updatedUnreadCount.messages += 1
+            
+            // Checks if the number of channels should be increased.
+            if let cid = cid, channelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
+                updatedUnreadCount.channels += 1
+            }
         default:
             return
         }
