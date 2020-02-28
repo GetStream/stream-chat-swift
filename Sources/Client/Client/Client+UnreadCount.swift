@@ -38,13 +38,17 @@ extension Client {
         case let .notificationAddedToChannel(_, unreadCount, _),
              let .notificationMarkRead(_, _, unreadCount, _):
             updatedUnreadCount = unreadCount
-        case .messageNew(_, _, let cid, _):
-            updatedUnreadCount = User.current.unreadCount
-            updatedUnreadCount.messages += 1
-            
-            // Checks if the number of channels should be increased.
-            if let cid = cid, channelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
-                updatedUnreadCount.channels += 1
+        case let .messageNew(_, _, unreadCount, cid, _):
+            if event.isNotification {
+                updatedUnreadCount = unreadCount
+            } else {
+                updatedUnreadCount = User.current.unreadCount
+                updatedUnreadCount.messages += 1
+                
+                // Checks if the number of channels should be increased.
+                if let cid = cid, channelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
+                    updatedUnreadCount.channels += 1
+                }
             }
         default:
             return
