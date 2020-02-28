@@ -61,13 +61,13 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, let messageNewChannel, _, _, let type):
+        case .messageNew(let message, let messageNewChannel, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
             
             // A notification new message event.
-            if case .notificationMessageNew = type, let messageNewChannel = messageNewChannel {
+            if event.isNotification, let messageNewChannel = messageNewChannel {
                 channelAtomic.set(messageNewChannel)
             }
             

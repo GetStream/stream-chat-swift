@@ -155,7 +155,7 @@ extension ChannelsPresenter {
                 return .itemRemoved(index, items)
             }
             
-        case .messageNew(_, let channel, _, _, _):
+        case .messageNew(_, let channel, _, _):
             return parseNewMessage(event: event, from: channel)
             
         case .messageDeleted(let message, _, _, _):
