@@ -81,7 +81,7 @@ extension Client {
             return
         }
         
-        updateUserUnreadCount(event: event)
+        updateUserUnreadCount(event: event) // User unread counts should be updated before channels unread counts.
         updateChannelsUnreadCount(event: event)
         onEvent(event)
     }
