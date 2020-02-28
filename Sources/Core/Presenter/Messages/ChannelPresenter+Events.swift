@@ -61,7 +61,7 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, let messageNewChannel, _, _):
+        case .messageNew(let message, let messageNewChannel, _, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
