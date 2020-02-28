@@ -21,18 +21,7 @@ public final class ComposerView: UIView {
     private var styleState: ComposerViewStyle.State = .disabled {
         didSet {
             if styleState != oldValue, let style = style {
-                let styleState = style.style(with: self.styleState)
-                layer.borderWidth = styleState.borderWidth
-                layer.borderColor = styleState.tintColor.cgColor
-                textView.tintColor = styleState.tintColor
-                sendButton.tintColor = styleState.tintColor
-                attachmentButton.tintColor = styleState.tintColor
-                
-                if self.styleState == .edit {
-                    sendButton.setTitleColor(styleState.tintColor, for: .normal)
-                } else if self.styleState == .active {
-                    sendButton.setTitleColor(styleState.tintColor, for: .normal)
-                }
+                update(for: styleState, with: style)
             }
         }
     }
@@ -72,7 +61,6 @@ public final class ComposerView: UIView {
     /// You have to use the `placeholderText` property to change the value of the placeholder label.
     public private(set) lazy var placeholderLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.textColor = style?.placeholderTextColor
         textView.addSubview(label)
         
         label.snp.makeConstraints { make in
@@ -166,7 +154,7 @@ public extension ComposerView {
     /// - Parameters:
     ///   - view: a superview.
     ///   - placeholderText: a placeholder text.
-    func addToSuperview(_ view: UIView, placeholderText: String = "Write a message") {
+    func addToSuperview(_ view: UIView) {
         guard let style = style else {
             return
         }
@@ -267,10 +255,11 @@ public extension ComposerView {
         }
         
         // Add placeholder.
-        self.placeholderText = placeholderText
+        self.placeholderText = style.placeholderText
+        placeholderLabel.textColor = style.placeholderTextColor
         
         updateToolbarIfNeeded()
-        updateStyleState()
+        update(for: .disabled, with: style)
     }
     
     /// Reset states of all child views and clear all added/generated data.
@@ -319,6 +308,21 @@ public extension ComposerView {
             && imageUploaderItems.isEmpty
             && isUploaderFilesEmpty
             && text.isEmpty ? .normal : (isEditing ? .edit : .active)
+    }
+    
+    private func update(for styleState: ComposerViewStyle.State, with style: ComposerViewStyle) {
+        let styleForCurrentState = style.style(with: styleState)
+        layer.borderWidth = styleForCurrentState.borderWidth
+        layer.borderColor = styleForCurrentState.tintColor.cgColor
+        textView.tintColor = styleForCurrentState.tintColor
+        sendButton.tintColor = styleForCurrentState.tintColor
+        attachmentButton.tintColor = styleForCurrentState.tintColor
+        
+        if styleState == .edit {
+            sendButton.setTitleColor(styleForCurrentState.tintColor, for: .normal)
+        } else if styleState == .active {
+            sendButton.setTitleColor(styleForCurrentState.tintColor, for: .normal)
+        }
     }
 }
 
