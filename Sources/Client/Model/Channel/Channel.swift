@@ -91,10 +91,10 @@ public final class Channel: Codable {
         }
     }
     
-    /// Online users in the channel.
-    public var onlineUsers: Set<User> { onlineUsersAtomic.get(default: []) }
+    /// Online watchers in the channel.
+    public var watcherCount: Int { watcherCountAtomic.get(default: 0) }
     
-    private(set) lazy var onlineUsersAtomic = Atomic<Set<User>>([]) { [weak self] _, _ in
+    private(set) lazy var watcherCountAtomic = Atomic(0) { [weak self] _, _ in
         if let self = self {
             self.onUpdate?(self)
         }

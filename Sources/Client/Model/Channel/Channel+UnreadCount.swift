@@ -12,10 +12,10 @@ extension Channel {
     /// - Parameters:
     ///   - channel: a channel.
     ///   - event: an event.
-    func updateChannelUnreadCount(event: Event) {
+    func updateUnreadCount(event: Event) {
         switch event {
-        case .messageNew(let message, _, _):
-            updateChannelUnreadCount(newMessage: message)
+        case .messageNew(let message, _, _, _):
+            updateUnreadCount(newMessage: message)
         case .messageRead(let messageRead, _, _):
             if messageRead.user.isCurrent {
                 resetUnreadCount(messageRead: messageRead)
@@ -26,7 +26,7 @@ extension Channel {
         }
     }
     
-    func updateChannelUnreadCount(newMessage message: Message) {
+    func updateUnreadCount(newMessage message: Message) {
         if message.user.isCurrent {
             resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created))
             return

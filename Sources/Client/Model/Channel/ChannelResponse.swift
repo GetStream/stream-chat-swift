@@ -15,6 +15,7 @@ public struct ChannelResponse: Decodable {
         case members
         case messages
         case messageReads = "read"
+        case watcherCount = "watcher_count"
     }
     
     /// A channel.
@@ -32,7 +33,10 @@ public struct ChannelResponse: Decodable {
         messages = try container.decodeIfPresent([Message].self, forKey: .messages) ?? []
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         calculateChannelUnreadCount()
-        updateChannelOnlineUsers()
+        
+        if let watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount) {
+            channel.watcherCountAtomic.set(watcherCount)
+        }
     }
     
     /// Init a channel response.
@@ -87,11 +91,6 @@ public struct ChannelResponse: Decodable {
         }
         
         channel.unreadCountAtomic.set(unreadCount)
-    }
-    
-    private func updateChannelOnlineUsers() {
-        let onlineUsers = Set<User>(channel.members.filter({ $0.user.isOnline && !$0.user.isCurrent }).map({ $0.user }))
-        channel.onlineUsersAtomic.set(onlineUsers)
     }
 }
 
