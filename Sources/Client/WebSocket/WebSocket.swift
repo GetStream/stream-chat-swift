@@ -46,9 +46,7 @@ final class WebSocket {
     }
     
     /// Checks if the web socket is connected and `connectionId` is not nil.
-    var isConnected: Bool {
-        return lastConnectionId != nil && webSocket.isConnected
-    }
+    var isConnected: Bool { lastConnectionId != nil && webSocket.isConnected }
     
     init(_ urlRequest: URLRequest,
          callbackQueue: DispatchQueue? = nil,
@@ -183,17 +181,17 @@ extension WebSocket {
         }
         
         shouldReconnect = false
-        
-        if webSocket.isConnected {
-            webSocket.disconnect(forceTimeout: 1)
-            logger?.log("💔 Disconnected deliberately")
-        } else {
-            logger?.log("Skip disconnecting: WebSocket was not connected")
-        }
-        
         consecutiveFailures = 0
         clearStateAfterDisconnect()
-        connection = .disconnected(nil)
+
+        if webSocket.isConnected {
+            connection = .disconnecting
+            webSocket.disconnect(forceTimeout: 1)
+            logger?.log("Disconnecting deliberately...")
+        } else {
+            logger?.log("Skip disconnecting: WebSocket was not connected")
+            connection = .disconnected(nil)
+        }
     }
     
     private func clearStateAfterDisconnect() {
@@ -268,14 +266,18 @@ extension WebSocket {
             return
         }
         
+        if isStopError(error) {
+            logger?.log("💔 Disconnected with Stop code")
+            consecutiveFailures = 0
+            return
+        }
+        
         logger?.log(error, message: "💔😡 Disconnected by error")
         logger?.log(lastJSONError)
         ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
         connection = .disconnected(error)
         
-        if isStopError(error) {
-            consecutiveFailures = 0
-        } else if shouldReconnect {
+        if shouldReconnect {
             reconnect()
         }
     }
