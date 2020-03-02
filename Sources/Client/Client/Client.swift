@@ -203,7 +203,7 @@ extension Client {
         /// Enable logs (see `ClientLogger.Options`), e.g. `.all`.
         public let logOptions: ClientLogger.Options
         
-        /// Init a config for a shread `Client`.
+        /// Init a config for the shared `Client`.
         ///
         /// - Parameters:
         ///     - apiKey: a Stream Chat API key.
@@ -213,7 +213,7 @@ extension Client {
         ///                                  start a background task to stay connected for 5 min
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init(apiKey: String,
-                    baseURL: BaseURL = BaseURL(),
+                    baseURL: BaseURL = .usEast,
                     callbackQueue: DispatchQueue? = nil,
                     stayConnectedInBackground: Bool = true,
                     database: Database? = nil,
@@ -224,6 +224,53 @@ extension Client {
             self.stayConnectedInBackground = stayConnectedInBackground
             self.database = database
             self.logOptions = logOptions
+        }
+        
+        /// Init a config for the shared `Client`.
+        ///
+        /// - Parameters:
+        ///     - apiKey: a Stream Chat API key.
+        ///     - baseURL: a base URL.
+        ///     - callbackQueue: a request callback queue, default nil (some background thread).
+        ///     - stayConnectedInBackground: when the app will go to the background,
+        ///                                  start a background task to stay connected for 5 min
+        ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+        public init(apiKey: String,
+                    baseURL: URL,
+                    callbackQueue: DispatchQueue? = nil,
+                    stayConnectedInBackground: Bool = true,
+                    database: Database? = nil,
+                    logOptions: ClientLogger.Options = []) {
+            self.init(apiKey: apiKey,
+                      baseURL: .init(url: baseURL),
+                      callbackQueue: callbackQueue,
+                      stayConnectedInBackground: stayConnectedInBackground,
+                      database: database,
+                      logOptions: logOptions)
+        }
+        
+        /// Init a config for the shared `Client`.
+        ///
+        /// - Parameters:
+        ///     - apiKey: a Stream Chat API key.
+        ///     - baseURL: a base URL string.
+        ///     - callbackQueue: a request callback queue, default nil (some background thread).
+        ///     - stayConnectedInBackground: when the app will go to the background,
+        ///                                  start a background task to stay connected for 5 min
+        ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+        public init?(apiKey: String,
+                    baseURL: String,
+                    callbackQueue: DispatchQueue? = nil,
+                    stayConnectedInBackground: Bool = true,
+                    database: Database? = nil,
+                    logOptions: ClientLogger.Options = []) {
+            guard let url = URL(string: baseURL) else { return nil }
+            self.init(apiKey: apiKey,
+                      baseURL: .init(url: url),
+                      callbackQueue: callbackQueue,
+                      stayConnectedInBackground: stayConnectedInBackground,
+                      database: database,
+                      logOptions: logOptions)
         }
     }
     
