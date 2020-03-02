@@ -37,9 +37,9 @@ extension Client {
             break
         case .notificationAddedToChannel(_, let unreadCount, _),
              .notificationMarkRead(_, _, let unreadCount, _),
-             .notificationMessageNew(_, _, let unreadCount, _):
+             .notificationMessageNew(_, _, let unreadCount, _, _):
             updatedUnreadCount = unreadCount
-        case .messageNew(_, let cid, _):
+        case .messageNew(_, _, let cid, _):
             updatedUnreadCount = User.current.unreadCount
             updatedUnreadCount.messages += 1
             
@@ -71,11 +71,11 @@ extension Client {
             return
         }
         
-        if case .notificationMessageNew(let message, let channel, _, _) = event {
+        if case .notificationMessageNew(let message, let channel, _, _, _) = event {
             if let channels = channelsAtomic[channel.cid] {
                 channels.forEach {
                     if let watchingChannel = $0.value, watchingChannel.cid == channel.cid {
-                        watchingChannel.updateChannelUnreadCount(newMessage: message)
+                        watchingChannel.updateUnreadCount(newMessage: message)
                     }
                 }
             }
@@ -86,14 +86,13 @@ extension Client {
         if let eventChannelId = event.cid, let channels = channelsAtomic[eventChannelId] {
             channels.forEach {
                 if let channel = $0.value {
-                    channel.updateChannelOnlineUsers(event: event)
+                    channel.updateWatcherCount(event: event)
                     
                     if channel.readEventsEnabled {
-                        channel.updateChannelUnreadCount(event: event)
+                        channel.updateUnreadCount(event: event)
                     }
                 }
             }
         }
     }
 }
-

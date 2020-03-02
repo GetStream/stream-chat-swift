@@ -79,8 +79,8 @@ public final class Client {
     /// An observable user. This should only be used when you only use the Low-Level Client.
     public var onUserUpdate: OnUpdate<User>?
     
-    private(set) lazy var userAtomic = Atomic<User> { [unowned self] newValue, _ in
-        if let user = newValue {
+    private(set) lazy var userAtomic = Atomic<User> { [unowned self] newUser, _ in
+        if let user = newUser {
             self.onUserUpdate?(user)
         }
     }

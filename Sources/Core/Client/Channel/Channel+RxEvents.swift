@@ -43,9 +43,8 @@ public extension Reactive where Base == Channel {
     
     // MARK: - Users Presence
     
-    /// Online users in the channel.
-    /// - Note: Be sure users are members of the channel.
-    var onlineUsers: Observable<Set<User>> {
-        Client.shared.rx.onlineUsers(channel: base)
+    /// Observe a watcher count of users for the channel.
+    var watcherCount: Observable<Int> {
+        Client.shared.rx.watcherCount(channel: base)
     }
 }
