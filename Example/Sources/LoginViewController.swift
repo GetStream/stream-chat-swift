@@ -115,8 +115,9 @@ final class LoginViewController: UIViewController {
         
         if !clientSetupped {
             Client.config = .init(apiKey: apiKey,
-                                  baseURL: .init(serverLocation: .proxyEast),
-                                  logOptions: .info)
+                                  baseURL: .usEast,
+                                  database: Database.instance,
+                                  logOptions: [.requests, .webSocketInfo])
             
             Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
             store(key: .apiKey, value: apiKey)
