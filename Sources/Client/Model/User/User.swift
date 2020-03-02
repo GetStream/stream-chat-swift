@@ -43,9 +43,13 @@ public struct User: Codable {
     static var flaggedUsers = Set<User>()
     
     public enum Role: String, Codable {
+        /// A regular user.
         case user
+        /// An administrator.
         case admin
+        /// A guest.
         case guest
+        /// An anonymous.
         case anonymous
     }
     
@@ -104,11 +108,18 @@ public struct User: Codable {
     }
     
     /// Init a user.
-    ///
     /// - Parameters:
-    ///     - id: a user id.
-    ///     - name: a user name.
-    ///     - an avatar URL.
+    ///   - id: a user id.
+    ///   - name: a user name. Name comes from server when argument is empty string.
+    ///   - role: a user role (see `User.Role`).
+    ///   - avatarURL: a user avatar.
+    ///   - created: a created date. It will be updated form server.
+    ///   - updated: a updated date. It will be updated form server.
+    ///   - lastActiveDate: a last active date. It will be updated form server.
+    ///   - isInvisible: makes user invisible.
+    ///   - isBanned: it will be updated form server.
+    ///   - mutedUsers: it will be updated form server.
+    ///   - extraData: an extra data for the user.
     public init(id: String,
                 name: String = "",
                 role: Role = .user,

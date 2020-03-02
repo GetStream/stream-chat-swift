@@ -73,9 +73,7 @@ public extension Client {
             
             if (query.options.contains(.watch) || query.options.contains(.presence)),
                 let channels = result.value?.map({ $0.channel }) {
-                channels.forEach {
-                    self.channelsAtomic.add($0, key: $0.cid)
-                }
+                channels.forEach { self.channelsAtomic.add($0, key: $0.cid) }
             }
             
             completion(result)
