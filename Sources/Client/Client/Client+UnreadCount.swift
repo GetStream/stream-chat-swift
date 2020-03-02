@@ -35,20 +35,17 @@ extension Client {
         switch event {
         case .notificationMarkAllRead:
             break
-        case let .notificationAddedToChannel(_, unreadCount, _),
-             let .notificationMarkRead(_, _, unreadCount, _):
+        case .notificationAddedToChannel(_, let unreadCount, _),
+             .notificationMarkRead(_, _, let unreadCount, _),
+             .notificationMessageNew(_, _, let unreadCount, _):
             updatedUnreadCount = unreadCount
-        case let .messageNew(_, _, unreadCount, cid, _):
-            if event.isNotification {
-                updatedUnreadCount = unreadCount
-            } else {
-                updatedUnreadCount = User.current.unreadCount
-                updatedUnreadCount.messages += 1
-                
-                // Checks if the number of channels should be increased.
-                if let cid = cid, channelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
-                    updatedUnreadCount.channels += 1
-                }
+        case .messageNew(_, let cid, _):
+            updatedUnreadCount = User.current.unreadCount
+            updatedUnreadCount.messages += 1
+            
+            // Checks if the number of channels should be increased.
+            if let cid = cid, channelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
+                updatedUnreadCount.channels += 1
             }
         default:
             return
@@ -67,6 +64,18 @@ extension Client {
                 $0.value.forEach {
                     if let channel = $0.value {
                         channel.resetUnreadCount(messageRead: messageRead)
+                    }
+                }
+            }
+            
+            return
+        }
+        
+        if case .notificationMessageNew(let message, let channel, _, _) = event {
+            if let channels = channelsAtomic[channel.cid] {
+                channels.forEach {
+                    if let watchingChannel = $0.value, watchingChannel.cid == channel.cid {
+                        watchingChannel.updateChannelUnreadCount(newMessage: message)
                     }
                 }
             }

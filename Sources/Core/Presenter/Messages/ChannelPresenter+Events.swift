@@ -61,14 +61,9 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, let messageNewChannel, _, _, _):
+        case .messageNew(let message, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
-            }
-            
-            // A notification new message event.
-            if event.isNotification, let messageNewChannel = messageNewChannel {
-                channelAtomic.set(messageNewChannel)
             }
             
             let nextRow = items.count
@@ -76,7 +71,6 @@ extension ChannelPresenter {
             appendOrUpdateMessageItem(message)
             let viewChanges = ViewChanges.itemsAdded([nextRow], reloadRow, message.user.isCurrent, items)
             lastWebSocketEventViewChanges = viewChanges
-//            channel.add(messagesToDatabase: [message])
             Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             
             return viewChanges

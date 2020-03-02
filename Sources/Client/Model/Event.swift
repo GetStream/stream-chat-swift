@@ -66,14 +66,14 @@ public enum EventType: String, Codable {
     case reactionUpdated = "reaction.updated"
     /// When a message reaction deleted.
     case reactionDeleted = "reaction.deleted"
-
+    
     /// When a message was added to a channel (when clients that are not currently watching the channel).
     case notificationMessageNew = "notification.message_new"
-    /// When the user mutes someone.
-    case notificationMutesUpdated = "notification.mutes_updated"
     /// When the total count of unread messages (across all channels the user is a member) changes
     /// (when clients from the user affected by the change).
     case notificationMarkRead = "notification.mark_read"
+    /// When the user mutes someone.
+    case notificationMutesUpdated = "notification.mutes_updated"
     
     /// When the user accepts an invite (when the user invited).
     case notificationAddedToChannel = "notification.added_to_channel"
@@ -146,7 +146,7 @@ public enum Event: Decodable {
     case channelHidden(HiddenChannelResponse, ChannelId?, EventType)
     
     /// When a new message was added on a channel (when watching the channel).
-    case messageNew(Message, Channel?, UnreadCount, ChannelId?, EventType)
+    case messageNew(Message, ChannelId?, EventType)
     /// When a message was updated (when watching the channel).
     case messageUpdated(Message, ChannelId?, EventType)
     /// When a message was deleted (when watching the channel).
@@ -168,13 +168,15 @@ public enum Event: Decodable {
     /// When a message reaction deleted.
     case reactionDeleted(Reaction, Message, User, ChannelId?, EventType)
     
-    /// When the user mutes someone.
-    case notificationMutesUpdated(User, ChannelId?, EventType)
+    /// When a new message was added on a channel (when clients that are not currently watching the channel).
+    case notificationMessageNew(Message, Channel, UnreadCount, EventType)
     /// When the count of unread messages changed for the channel where the user is a member.
     case notificationMarkRead(MessageRead, Channel, UnreadCount, EventType)
     /// When the total count of unread messages (across all channels the user is a member) changed
     /// (when clients from the user affected by the change).
     case notificationMarkAllRead(MessageRead, EventType)
+    /// When the user mutes someone.
+    case notificationMutesUpdated(User, ChannelId?, EventType)
     
     /// When the user accepts an invite (when the user invited).
     case notificationAddedToChannel(Channel, UnreadCount, EventType)
@@ -202,7 +204,7 @@ public enum Event: Decodable {
              .channelHidden(_, _, let type),
              
              .messageRead(_, _, let type),
-             .messageNew(_, _, _, _, let type),
+             .messageNew(_, _, let type),
              .messageDeleted(_, _, _, let type),
              .messageUpdated(_, _, let type),
              
@@ -223,10 +225,11 @@ public enum Event: Decodable {
              .typingStart(_, _, let type),
              .typingStop(_, _, let type),
              
-             .notificationMutesUpdated(_, _, let type),
+             .notificationMessageNew(_, _, _, let type),
              .notificationMarkRead(_, _, _, let type),
              .notificationMarkAllRead(_, let type),
-             
+             .notificationMutesUpdated(_, _, let type),
+
              .notificationAddedToChannel(_, _, let type),
              .notificationRemovedFromChannel(_, let type),
              
@@ -247,7 +250,7 @@ public enum Event: Decodable {
              .channelHidden(_, let cid, _),
              
              .messageRead(_, let cid, _),
-             .messageNew(_, _, _, let cid, _),
+             .messageNew(_, let cid, _),
              .messageDeleted(_, _, let cid, _),
              .messageUpdated(_, let cid, _),
              
@@ -272,6 +275,7 @@ public enum Event: Decodable {
              return cid
             
         case .channelDeleted(let channel, _),
+             .notificationMessageNew(_, let channel, _, _),
              .notificationMarkRead(_, let channel, _, _),
              .notificationAddedToChannel(let channel, _, _),
              .notificationRemovedFromChannel(let channel, _),
@@ -301,6 +305,9 @@ public enum Event: Decodable {
         case .memberAdded(let member, _, _),
              .memberUpdated(let member, _, _):
             return member.user
+        case .messageNew(let message, _, _),
+             .notificationMessageNew(let message, _, _, _):
+            return message.user
         default:
             return nil
         }
@@ -380,8 +387,8 @@ public enum Event: Decodable {
             self = try .channelHidden(hiddenChannelResponse, cid(), type)
             
         // Message
-        case .messageNew, .notificationMessageNew:
-            self = try .messageNew(message(), optionalChannel(), unreadCount, cid(), type)
+        case .messageNew:
+            self = try .messageNew(message(), cid(), type)
         case .messageRead:
             let messageRead = try MessageRead(user: user(), lastReadDate: created())
             self = try .messageRead(messageRead, cid(), type)
@@ -450,6 +457,9 @@ public enum Event: Decodable {
             self = try .notificationAddedToChannel(channel(), unreadCount, type)
         case .notificationRemovedFromChannel:
             self = try .notificationRemovedFromChannel(channel(), type)
+        case .notificationMessageNew:
+            self = try .notificationMessageNew(message(), channel(), unreadCount, type)
+            
         // Invites
         case .notificationInvited:
             self = try .notificationInvited(channel(), type)
@@ -479,9 +489,8 @@ extension Event: Equatable {
             return hiddenChannelResponse1 == hiddenChannelResponse2 && cid1 == cid2
         case (let .messageRead(messageRead1, cid1, _), let .messageRead(messageRead2, cid2, _)):
             return messageRead1 == messageRead2 && cid1 == cid2
-        case (let .messageNew(message1, channel1, unreadCount1, cid1, _),
-              let .messageNew(message2, channel2, unreadCount2, cid2, _)):
-            return message1 == message2 && channel1 == channel2 && unreadCount1 == unreadCount2 && cid1 == cid2
+        case (let .messageNew(message1, cid1, _), let .messageNew(message2, cid2, _)):
+            return message1 == message2 && cid1 == cid2
         case (let .messageDeleted(message1, user1, cid1, _), let .messageDeleted(message2, user2, cid2, _)):
             return message1 == message2 && user1 == user2 && cid1 == cid2
         case (let .messageUpdated(message1, cid1, _), let .messageUpdated(message2, cid2, _)):
@@ -512,6 +521,9 @@ extension Event: Equatable {
             return user1 == user2 && cid1 == cid2
         case (let .typingStop(user1, cid1, _), let .typingStop(user2, cid2, _)):
             return user1 == user2 && cid1 == cid2
+        case (let .notificationMessageNew(message1, channel1, unreadCount1, _),
+              let .notificationMessageNew(message2, channel2, unreadCount2, _)):
+            return message1 == message2 && channel1 == channel2 && unreadCount1 == unreadCount2
         case (let .notificationMutesUpdated(user1, cid1, _), let .notificationMutesUpdated(user2, cid2, _)):
             return user1 == user2 && cid1 == cid2
         case (let .notificationMarkAllRead(created1, _), let .notificationMarkAllRead(created2, _)):
