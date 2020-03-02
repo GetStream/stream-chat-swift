@@ -153,7 +153,22 @@ public final class Client {
     ///   - Skip if the Internet is not available.
     ///   - Skip if it's already connected.
     ///   - Skip if it's reconnecting.
-    public func connect() {
+    /// - Parameter completion: Completion closure called once connection is established. Only called once.
+    public func connect(completion: Client.OnConnect? = nil) {
+        if let completion = completion {
+            let oldOnConnectClosure = onConnect
+            
+            onConnect = { [weak self] connection in
+                if connection.isConnected {
+                    oldOnConnectClosure(connection)
+                    completion(connection)
+                    self?.onConnect = oldOnConnectClosure
+                } else {
+                    oldOnConnectClosure(connection)
+                }
+            }
+        }
+        
         webSocket.connect()
     }
     
