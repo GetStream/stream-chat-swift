@@ -60,13 +60,6 @@ private extension Reactive where Base == ChannelsPresenter {
             .flatMapLatest { Client.shared.rx.queryChannels(query: $0).retry(3) }
     }
     
-    //    var channelsDatabaseFetch: Observable<[ChannelResponse]> {
-    //        return prepareDatabaseFetch(startPaginationWith: base.pageSize)
-    //            .compactMap { [weak base] in base?.rx.channelsQuery(pagination: $0) }
-    //            .observeOn(SerialDispatchQueueScheduler.init(qos: .userInitiated))
-    //            .flatMapLatest { Client.shared.fetchChannels($0) }
-    //    }
-    
     var events: Driver<ViewChanges> {
         Client.shared.rx.onEvent()
             .filter({ [weak base] event in
