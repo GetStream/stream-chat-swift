@@ -155,8 +155,8 @@ extension ChannelsPresenter {
                 return .itemRemoved(index, items)
             }
             
-        case .messageNew(_, let channel, _, _, _):
-            return parseNewMessage(event: event, from: channel)
+        case .messageNew:
+            return parseNewMessage(event: event)
             
         case .messageDeleted(let message, _, _, _):
             if let index = items.firstIndex(where: cid),
@@ -194,25 +194,21 @@ extension ChannelsPresenter {
         return .none
     }
     
-    private func parseNewMessage(event: StreamChatClient.Event, from channel: Channel?) -> ViewChanges {
-        if let cid = event.cid,
+    private func parseNewMessage(event: StreamChatClient.Event) -> ViewChanges {
+        guard let cid = event.cid,
             let index = items.firstIndex(where: cid),
-            let channelPresenter = items.remove(at: index).channelPresenter {
-            channelPresenter.parse(event: event)
-            items.insert(.channelPresenter(channelPresenter), at: 0)
-            
-            if index == 0 {
-                return .itemsUpdated([0], [], items)
-            }
-            
-            return .itemMoved(fromRow: index, toRow: 0, items)
+            let channelPresenter = items.remove(at: index).channelPresenter else {
+                return .none
         }
         
-        if let channel = channel {
-            return parseNewChannel(channel: channel)
+        channelPresenter.parse(event: event)
+        items.insert(.channelPresenter(channelPresenter), at: 0)
+        
+        if index == 0 {
+            return .itemsUpdated([0], [], items)
         }
         
-        return .none
+        return .itemMoved(fromRow: index, toRow: 0, items)
     }
     
     private func parseNewChannel(channel: Channel) -> ViewChanges {
