@@ -16,7 +16,13 @@ public extension Reactive where Base == Client {
     
     /// Observe an unread count of messages and channels.
     var unreadCount: Observable<UnreadCount> {
-        onUserUpdate.map({ $0.unreadCount }).startWith(base.user.unreadCount)
+        connection
+            .filter({ $0.isConnected })
+            .flatMapLatest({ [unowned base] _ -> Observable<UnreadCount> in
+                base.rx.onUserUpdate
+                    .map({ $0.unreadCount })
+                    .startWith(base.user.unreadCount)
+            })
     }
     
     /// Observe an unread count of messages and mentioned messages for a given channel.
