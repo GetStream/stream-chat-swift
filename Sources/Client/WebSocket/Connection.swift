@@ -17,6 +17,8 @@ public enum Connection: Equatable {
     case connecting
     /// The websocket was connected.
     case connected
+    /// The websocket is disconnecting.
+    case disconnecting
     /// The websocket was disconnected with an error.
     case disconnected(Swift.Error?)
     
