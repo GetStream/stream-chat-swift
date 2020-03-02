@@ -40,9 +40,8 @@ public extension Channel {
     
     // MARK: - Users Presence
     
-    /// Online users in the channel.
-    /// - Note: Be sure users are members of the channel.
-    func onlineUsers(_ onNext: @escaping Client.Completion<Set<User>>) -> Subscription {
-        rx.onlineUsers.bind(to: onNext)
+    /// Observe a watcher count of users for the channel.
+    func watcherCount(_ onNext: @escaping Client.Completion<Int>) -> Subscription {
+        rx.watcherCount.bind(to: onNext)
     }
 }

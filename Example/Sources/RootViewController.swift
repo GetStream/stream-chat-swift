@@ -58,7 +58,7 @@ final class RootViewController: UIViewController {
                     self?.subscribeForTotalUnreadCount()
                 } else {
                     self?.totalUnreadCountDisposeBag = DisposeBag()
-                    self?.totalUnreadCountLabel.text = "Total unread count: <Disabled>"
+                    self?.totalUnreadCountLabel.text = "Total Unread Count: <Disabled>"
                 }
             })
             .disposed(by: disposeBag)
@@ -80,7 +80,7 @@ final class RootViewController: UIViewController {
                     self?.subscribeForOnlineUsers()
                 } else {
                     self?.onlineDisposeBag = DisposeBag()
-                    self?.onlinelabel.text = "Online members: <Disabled>"
+                    self?.onlinelabel.text = "Watcher Count: <Disabled>"
                 }
             })
             .disposed(by: disposeBag)
@@ -117,37 +117,15 @@ final class RootViewController: UIViewController {
     func subscribeForUnreadCount() {
         channel.rx.unreadCount
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] unreadCount in
-                self?.badgeLabel.text = "\(unreadCount.messages >= 100 ? "99+" : String(unreadCount.messages))  "
-            })
+            .subscribe(onNext: { [weak self] unreadCount in self?.badgeLabel.text = "\(unreadCount.messages)  " })
             .disposed(by: badgeDisposeBag)
     }
     
     func subscribeForOnlineUsers() {
-        channel.rx.onlineUsers
+        channel.rx.watcherCount
             .observeOn(MainScheduler.instance)
-            .startWith([User(id: "", name: "")])
-            .subscribe(onNext: { [weak self] users in
-                let users = Array(users)
-                if users.count == 1, users[0].id.isEmpty {
-                    self?.onlinelabel.text = "Online members: <Loading...>"
-                    return
-                }
-                
-                var userNames = "<Nobody>"
-                
-                if users.count == 1 {
-                    userNames = users[0].name
-                } else if users.count == 2 {
-                    userNames = "\(users[0].name) and \(users[1].name)"
-                } else if users.count == 3 {
-                    userNames = "\(users[0].name), \(users[1].name) and \(users[2].name)"
-                } else if users.count > 3 {
-                    userNames = "\(users[0].name), \(users[1].name), \(users[2].name) and \(users.count - 3) others"
-                }
-                
-                self?.onlinelabel.text = "Online: \(userNames)"
-            })
+            .startWith(0)
+            .subscribe(onNext: { [weak self] in self?.onlinelabel.text = "Watcher Count: \($0)" })
             .disposed(by: onlineDisposeBag)
     }
     
