@@ -46,10 +46,6 @@ extension Reactive where Base == ChannelPresenter {
                         base.parentMessage == nil
                             ? base.rx.parsedMessagesRequest
                             : base.rx.parsedRepliesResponse(base.rx.repliesRequest),
-                        // Messages from database.
-                        // base.parentMessage == nil
-                        // ? base.rx.parsedChannelResponse(base.rx.messagesDatabaseFetch)
-                        // : base.rx.parsedRepliesResponse(base.rx.repliesDatabaseFetch),
                         // Events from a websocket.
                         base.rx.webSocketEvents,
                         base.rx.ephemeralMessageEvents,
@@ -167,25 +163,11 @@ public extension Reactive where Base == ChannelPresenter {
 
 private extension Reactive where Base == ChannelPresenter {
     
-//    var messagesDatabaseFetch: Observable<ChannelResponse> {
-//        prepareDatabaseFetch()
-//            .filter { [weak base] in $0 != .none && base?.parentMessage == nil }
-//            .flatMapLatest({ [weak base] pagination -> Observable<ChannelResponse> in
-//                base?.channel.fetch(pagination: pagination) ?? .empty()
-//            })
-//    }
-    
     var repliesRequest: Observable<[Message]> {
         prepareRequest()
             .filter { [weak base] in $0 != .none && base?.parentMessage != nil }
             .flatMapLatest { [weak base] in (base?.parentMessage?.rx.replies(pagination: $0) ?? .empty()).retry(3) }
     }
-    
-//    var repliesDatabaseFetch: Observable<[Message]> {
-//        prepareDatabaseFetch()
-//            .filter { [weak base] in $0 != .none && base?.parentMessage != nil }
-//            .flatMapLatest { [weak base] in base?.parentMessage?.fetchReplies(pagination: $0) ?? .empty() }
-//    }
     
     var webSocketEvents: Driver<ViewChanges> {
         Client.shared.rx.onEvent(channel: base.channel)
