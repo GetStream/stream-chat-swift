@@ -27,12 +27,12 @@ extension Channel {
     }
     
     func updateUnreadCount(newMessage message: Message) {
-        if message.user.isCurrent {
-            resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created))
+        guard message.parentId == nil else {
             return
         }
         
-        guard message.parentId == nil else {
+        if message.user.isCurrent {
+            resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created))
             return
         }
         
