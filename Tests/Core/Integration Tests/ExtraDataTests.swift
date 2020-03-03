@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import RxBlocking
+@testable import StreamChatClient
 @testable import StreamChatCore
 
 final class ExtraDataTests: TestCase {

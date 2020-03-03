@@ -8,7 +8,7 @@
 
 import XCTest
 
-final class StringExtensionsTests: TestCase {
+final class StringExtensionsTests: XCTestCase {
 
     func testExample() {
         [("ab.cd", true),

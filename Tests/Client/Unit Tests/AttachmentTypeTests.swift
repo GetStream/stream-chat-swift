@@ -1,7 +1,7 @@
 import XCTest
-@testable import StreamChatCore
+@testable import StreamChatClient
 
-class AttachmentTypeTests: XCTestCase {
+final class AttachmentTypeTests: XCTestCase {
     struct MetaType: Codable {
         let type: AttachmentType
     }

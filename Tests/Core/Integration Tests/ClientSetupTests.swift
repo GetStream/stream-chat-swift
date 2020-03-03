@@ -8,6 +8,7 @@
 
 import XCTest
 import RxSwift
+@testable import StreamChatClient
 @testable import StreamChatCore
 
 final class ClientSetupTests: XCTestCase {
@@ -16,7 +17,7 @@ final class ClientSetupTests: XCTestCase {
     
     override static func setUp() {
         DateFormatter.log = nil
-        Client.config = .init(apiKey: TestCase.apiKey, baseURL: .init(serverLocation: .staging), logOptions: [.webSocketInfo, .requests])
+        Client.config = .init(apiKey: TestCase.apiKey, baseURL: TestCase.baseURL, logOptions: [.webSocketInfo, .requests])
     }
     
     func testUserSetup() {
@@ -28,7 +29,7 @@ final class ClientSetupTests: XCTestCase {
     
     func testGuestSetup() {
         setupUser(user: User.user1, token: .guest) {
-            XCTAssertEqual(Client.shared.user?.role, .guest)
+            XCTAssertEqual(Client.shared.user.role, .guest)
             XCTAssertNotNil(Client.shared.token)
         }
     }
@@ -46,7 +47,7 @@ final class ClientSetupTests: XCTestCase {
         Client.shared.set(user: user, token: token)
         
         expectRequest("Connected with guest token") { test in
-            Client.shared.rx.connection.connected()
+            Client.shared.rx.connected
                 .take(1)
                 .subscribe(onNext: { [unowned self] in
                     test.fulfill()
