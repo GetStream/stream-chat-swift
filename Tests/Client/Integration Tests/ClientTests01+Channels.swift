@@ -62,7 +62,7 @@ final class ClientTests01_Channels: TestCase {
                 StorageHelper.shared.append(Client.shared.user.unreadCount, key: .user2UnreadCounts)
             }
             
-            if case .messageNew = event {
+            if case .notificationMessageNew = event {
                 StorageHelper.shared.increment(key: .notificationMessageNew)
                 StorageHelper.shared.append(Client.shared.user.unreadCount, key: .user2UnreadCounts)
             }
