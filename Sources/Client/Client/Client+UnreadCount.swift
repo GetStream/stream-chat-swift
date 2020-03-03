@@ -39,7 +39,7 @@ extension Client {
              .notificationMarkRead(_, _, let unreadCount, _),
              .notificationMessageNew(_, _, let unreadCount, _, _):
             updatedUnreadCount = unreadCount
-        case .messageNew(_, _, let cid, _):
+        case .messageNew(let message, _, let cid, _) where message.parentId == nil:
             updatedUnreadCount = User.current.unreadCount
             updatedUnreadCount.messages += 1
             
