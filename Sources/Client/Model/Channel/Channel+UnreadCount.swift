@@ -32,6 +32,10 @@ extension Channel {
             return
         }
         
+        guard message.parentId == nil else {
+            return
+        }
+        
         var unreadCount = self.unreadCount
         unreadCount.messages += 1
         
