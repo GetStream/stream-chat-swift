@@ -147,15 +147,15 @@ public final class Client {
     /// - Parameter completion: Completion closure called once connection is established. Only called once.
     public func connect(completion: Client.OnConnect? = nil) {
         if let completion = completion {
-            let oldOnConnectClosure = onConnect
+            let oldOnConnect = onConnect
             
             onConnect = { [weak self] connection in
                 if connection.isConnected {
-                    oldOnConnectClosure(connection)
+                    oldOnConnect(connection)
                     completion(connection)
-                    self?.onConnect = oldOnConnectClosure
+                    self?.onConnect = oldOnConnect
                 } else {
-                    oldOnConnectClosure(connection)
+                    oldOnConnect(connection)
                 }
             }
         }

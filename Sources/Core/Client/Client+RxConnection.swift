@@ -19,6 +19,7 @@ extension Client: ReactiveCompatible {
 // MARK: - Connection
 
 extension Reactive where Base == Client {
+    
     /// An observable connection.
     public var connection: Observable<Connection> {
         associated(to: base, key: &Client.rxConnectionKey) { [unowned base] in
@@ -40,5 +41,10 @@ extension Reactive where Base == Client {
                 .do(onDispose: { base.disconnect() })
                 .share(replay: 1)
         }
+    }
+    
+    /// Observe the connection events and emit an event when the connection will be connected.
+    public var connected: Observable<Void> {
+        connection.filter({ $0.isConnected }).map({ _ in Void() })
     }
 }
