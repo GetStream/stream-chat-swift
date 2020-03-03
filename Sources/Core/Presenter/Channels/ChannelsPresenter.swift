@@ -212,7 +212,7 @@ extension ChannelsPresenter {
     }
     
     private func parseNewChannel(channel: Channel) -> ViewChanges {
-        guard items.firstIndex(whereChannelId: channel.id, channelType: channel.type) == nil else {
+        guard items.firstIndex(where: channel.cid) == nil else {
             return .none
         }
         
@@ -235,9 +235,8 @@ extension ChannelsPresenter {
             .subscribe(onNext: { [weak self, weak channelPresenter] _ in
                 guard let self = self,
                     let channelPresenter = channelPresenter,
-                    let index = self.items.firstIndex(whereChannelId: channelPresenter.channel.id,
-                                                      channelType: channelPresenter.channel.type) else {
-                                                        return
+                    let index = self.items.firstIndex(where: channelPresenter.channel.cid) else {
+                        return
                 }
                 
                 self.actions.onNext(.itemsUpdated([index], [], self.items))
