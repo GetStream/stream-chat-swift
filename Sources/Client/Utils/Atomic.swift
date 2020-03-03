@@ -33,7 +33,7 @@ public final class Atomic<T> {
     /// Set a value.
     public func set(_ newValue: T?) {
         queue.async(flags: .barrier) { [weak self] in
-            self?.updateValue(oldValue: self?.value, newValue: newValue)
+            self?.updateValue(newValue)
         }
     }
     
@@ -57,12 +57,13 @@ public final class Atomic<T> {
     public func update(_ changes: @escaping (T) -> T?) {
         queue.async(flags: .barrier) { [weak self] in
             if let self = self, let oldValue = self.value {
-                self.updateValue(oldValue: oldValue, newValue: changes(oldValue))
+                self.updateValue(changes(oldValue))
             }
         }
     }
     
-    private func updateValue(oldValue: T?, newValue: T?) {
+    private func updateValue(_ newValue: T?) {
+        let oldValue = value
         value = newValue
         
         if let callbackQueue = callbackQueue {
