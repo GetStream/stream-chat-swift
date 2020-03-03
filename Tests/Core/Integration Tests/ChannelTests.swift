@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import RxBlocking
+@testable import StreamChatClient
 @testable import StreamChatCore
 
 final class ChannelTests: TestCase {
@@ -56,9 +57,9 @@ final class ChannelTests: TestCase {
         let messageText = "test \(Date())"
         
         expectRequest("Connected with guest token") { [unowned self] test in
-            self.channel.rx.onEvent(.messageNew)
+            self.channel.rx.onEvent(eventType: .messageNew)
                 .map({ event -> Message? in
-                    if case .messageNew(let message, _, _, _, _) = event {
+                    if case .messageNew(let message, _, _, _) = event {
                         XCTAssertEqual(message.text, messageText)
                         
                         return message
@@ -67,7 +68,7 @@ final class ChannelTests: TestCase {
                     return nil
                 })
                 .unwrap()
-                .flatMapLatest { $0.rx.addReaction(.like) }
+                .flatMapLatest { $0.rx.addReaction(reactionType: .like) }
                 .map({ response -> Message? in
                     if let reactionCounts = response.message.reactionCounts {
                         XCTAssertEqual(reactionCounts.counts, [ReactionType.like: 1])
@@ -80,7 +81,7 @@ final class ChannelTests: TestCase {
                     return nil
                 })
                 .unwrap()
-                .flatMapLatest { $0.rx.addReaction(.love) }
+                .flatMapLatest { $0.rx.addReaction(reactionType: .love) }
                 .map({ response -> Message? in
                     if let reactionCounts = response.message.reactionCounts {
                         XCTAssertEqual(reactionCounts.counts, [ReactionType.like: 1, ReactionType.love: 1])
@@ -93,7 +94,7 @@ final class ChannelTests: TestCase {
                     return nil
                 })
                 .unwrap()
-                .flatMapLatest { $0.rx.addReaction(.love) }
+                .flatMapLatest { $0.rx.addReaction(reactionType: .love) }
                 .map({ response -> Message? in
                     if let reactionCounts = response.message.reactionCounts {
                         XCTAssertEqual(reactionCounts.counts, [ReactionType.like: 1, ReactionType.love: 1])
@@ -106,7 +107,7 @@ final class ChannelTests: TestCase {
                     return nil
                 })
                 .unwrap()
-                .flatMapLatest { $0.rx.deleteReaction(.like) }
+                .flatMapLatest { $0.rx.deleteReaction(reactionType: .like) }
                 .map({ response -> Message? in
                     if let reactionCounts = response.message.reactionCounts {
                         XCTAssertEqual(reactionCounts.counts, [ReactionType.love: 1])
@@ -119,7 +120,7 @@ final class ChannelTests: TestCase {
                     return nil
                 })
                 .unwrap()
-                .flatMapLatest { $0.rx.deleteReaction(.love) }
+                .flatMapLatest { $0.rx.deleteReaction(reactionType: .love) }
                 .map({ response -> Message? in
                     XCTAssertNil(response.message.reactionCounts)
                     return response.message

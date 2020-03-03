@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import RxBlocking
+@testable import StreamChatClient
 @testable import StreamChatCore
 
 final class ClientRequestsTests: TestCase {
@@ -17,7 +18,7 @@ final class ClientRequestsTests: TestCase {
         do {
             let query = ChannelsQuery(filter: "type".equal(to: "messaging"))
             
-            let channels = try Client.shared.rx.channels(query: query)
+            let channels = try Client.shared.rx.queryChannels(query: query)
                 .toBlocking()
                 .toArray()
                 .compactMap { $0 }
@@ -32,7 +33,7 @@ final class ClientRequestsTests: TestCase {
         do {
             let query = UsersQuery(filter: "id".equal(to: User.user1.id))
             
-            let users = try Client.shared.rx.users(query: query)
+            let users = try Client.shared.rx.queryUsers(query: query)
                 .toBlocking()
                 .toArray()
                 .compactMap { $0 }
