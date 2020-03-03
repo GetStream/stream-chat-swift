@@ -86,25 +86,10 @@ public enum PresenterItem: Equatable {
 public extension Array where Element == PresenterItem {
     
     /// Find the first index of an `PresenterItem` of a channel presenter with a given channel id.
-    ///
     /// - Parameter cid: a ChannelId of a searching `PresenterItem` of a channel presenter.
     /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func firstIndex(where cid: ChannelId) -> Int? {
-        firstIndex(whereChannelId: cid.id, channelType: cid.type)
-    }
-    
-    /// Find the first index of an `PresenterItem` of a channel presenter with a given channel id.
-    ///
-    /// - Parameter channelId: a channelId of a searching `PresenterItem` of a channel presenter.
-    /// - Returns: an index of an `PresenterItem` with a channel presenter.
-    func firstIndex(whereChannelId channelId: String, channelType: ChannelType) -> Int? {
-        firstIndex(where: { item -> Bool in
-            if case .channelPresenter(let channelPresenter) = item {
-                return channelPresenter.channel.id == channelId && channelPresenter.channel.type == channelType
-            }
-            
-            return false
-        })
+        firstIndex(where: { $0.channelPresenter?.channel.cid == cid })
     }
     
     /// Find the last index of an `PresenterItem` of a channel presenter with a given channel id.
@@ -112,21 +97,7 @@ public extension Array where Element == PresenterItem {
     /// - Parameter cid: a ChannelId of a searching `PresenterItem` of a channel presenter.
     /// - Returns: an index of an `PresenterItem` with a channel presenter.
     func lastIndex(where cid: ChannelId) -> Int? {
-        lastIndex(whereChannelId: cid.id, channelType: cid.type)
-    }
-    
-    /// Find the last index of an `PresenterItem` of a channel presenter with a given channel id.
-    ///
-    /// - Parameter channelId: a channelId of a searching `PresenterItem` of a channel presenter.
-    /// - Returns: an index of an `PresenterItem` with a channel presenter.
-    func lastIndex(whereChannelId channelId: String, channelType: ChannelType) -> Int? {
-        lastIndex(where: { item -> Bool in
-            if case .channelPresenter(let channelPresenter) = item {
-                return channelPresenter.channel.id == channelId && channelPresenter.channel.type == channelType
-            }
-            
-            return false
-        })
+        lastIndex(where: { $0.channelPresenter?.channel.cid == cid })
     }
     
     /// Find the last index of an `PresenterItem` of a message with a given message id.
