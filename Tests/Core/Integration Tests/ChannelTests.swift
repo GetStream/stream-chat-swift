@@ -9,6 +9,7 @@
 import XCTest
 import RxSwift
 import RxBlocking
+@testable import StreamChatClient
 @testable import StreamChatCore
 
 final class ChannelTests: TestCase {
@@ -58,9 +59,9 @@ final class ChannelTests: TestCase {
         let love = ReactionType.regular("love", emoji: "❤️")
 
         expectRequest("Connected with guest token") { [unowned self] test in
-            self.channel.rx.onEvent(.messageNew)
+            self.channel.rx.onEvent(eventType: .messageNew)
                 .map({ event -> Message? in
-                    if case .messageNew(let message, _, _, _, _) = event {
+                    if case .messageNew(let message, _, _, _) = event {
                         XCTAssertEqual(message.text, messageText)
                         
                         return message

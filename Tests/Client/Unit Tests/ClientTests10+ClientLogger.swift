@@ -7,17 +7,15 @@
 //
 
 import XCTest
-@testable import StreamChatCore
+@testable import StreamChatClient
 
-class ClientLoggerTests: XCTestCase {
-    private let testUser = User(id: "test", name: "Test")
+final class ClientTests10_ClientLogger: XCTestCase {
+    private let teJstUser = User(id: "test", name: "Test")
     private let testChannel = Channel(type: .messaging, id: "test")
     private let testUrl = "getstream.io".url!
     private let testFilter = "members".in(["test-member"])
     private let testData = "{\"testKey\":\"testValue\"}".data(using: .utf8)!
-    
     private var allEndpoints = [Endpoint]()
-    
     private var logOutput = [String]()
     
     private lazy var infoLogger: ClientLogger = {
@@ -55,12 +53,12 @@ class ClientLoggerTests: XCTestCase {
                         .message("test"),
                         .markAllRead,
                         .search(.init(filter: testFilter, query: "search", pagination: .none)),
-                        .channel(.init(channel: testChannel, members: testMembers, pagination: .none, options: .all)),
+                        .channel(.init(channel: testChannel, pagination: .none, options: .all)),
                         .stopWatching(testChannel),
                         .updateChannel(.init(data: .init(testChannel))),
                         .deleteChannel(testChannel),
-                        .hideChannel(testChannel, testUser, true),
-                        .showChannel(testChannel, testUser),
+                        .hideChannel(testChannel, User.user1, true),
+                        .showChannel(testChannel, User.user1),
                         .sendMessage(testMessage, testChannel),
                         .sendImage("test", "image", testData, testChannel),
                         .sendFile("test", "image", testData, testChannel),
@@ -80,12 +78,12 @@ class ClientLoggerTests: XCTestCase {
                         .flagMessage(testMessage),
                         .unflagMessage(testMessage),
                         .users(.init(filter: testFilter)),
-                        .updateUsers([testUser]),
-                        .muteUser(testUser),
-                        .unmuteUser(testUser),
-                        .flagUser(testUser),
-                        .unflagUser(testUser),
-                        .ban(.init(user: testUser, channel: testChannel, timeoutInMinutes: 0, reason: nil))]
+                        .updateUsers([User.user1]),
+                        .muteUser(User.user1),
+                        .unmuteUser(User.user1),
+                        .flagUser(User.user1),
+                        .unflagUser(User.user1),
+                        .ban(.init(user: User.user1, channel: testChannel, timeoutInMinutes: 0, reason: nil))]
     }
     
     override func tearDown() {
