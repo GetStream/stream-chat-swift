@@ -8,11 +8,13 @@
 
 import XCTest
 import RxSwift
+@testable import StreamChatClient
 @testable import StreamChatCore
 
 class TestCase: XCTestCase {
     
     static let apiKey = "qk4nn7rpcn75"
+    static let baseURL = BaseURL(urlString: "https://chat-us-east-staging.stream-io-api.com/")
     private static var isClientReady = false
     
     var disposeBag = DisposeBag()
@@ -24,13 +26,13 @@ class TestCase: XCTestCase {
         
         isClientReady = true
         ClientLogger.logger = { print($0, $1.isEmpty ? "" : "[\($1)]", $2) }
-        Client.config = .init(apiKey: TestCase.apiKey, logOptions: .info)
+        Client.config = .init(apiKey: Self.apiKey, baseURL: TestCase.baseURL)
         Client.shared.set(user: .user1, token: .token1)
     }
     
     override func setUp() {
         if !Client.shared.webSocket.isConnected {
-            Client.shared.rx.connection.connected().subscribe().disposed(by: disposeBag)
+            Client.shared.rx.connection.subscribe().disposed(by: disposeBag)
         }
     }
 }
