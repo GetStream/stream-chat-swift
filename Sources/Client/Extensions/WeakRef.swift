@@ -42,7 +42,8 @@ extension Atomic where T: Collection {
     }
 
     /// Remove all nil values.
-    func flush<Key: Hashable, C: Collection, E: AnyObject>() where T == Dictionary<Key, C>, C.Element == WeakRef<E> {
+    func flush<Key: Hashable, C: Collection, E: AnyObject>()
+        where T == Dictionary<Key, C>, C.Element == WeakRef<E> {
         update {
             var newValue: [Key: C] = [:]
             
