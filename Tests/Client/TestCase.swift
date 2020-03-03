@@ -12,7 +12,7 @@ import XCTest
 class TestCase: XCTestCase {
     
     static let apiKey = "qk4nn7rpcn75"
-    static let baseURL = BaseURL(serverLocation: .staging)
+    static let baseURL = BaseURL(url: URL(string: "https://chat-us-east-staging.stream-io-api.com/")!)
     private static var isClientReady = false
     private(set) lazy var defaultChannel = Channel(type: .messaging, id: "general")
     
