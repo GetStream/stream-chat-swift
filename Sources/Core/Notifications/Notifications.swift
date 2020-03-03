@@ -24,7 +24,7 @@ public final class Notifications: NSObject {
     /// A custom local notification content.
     public typealias LocalNotificationContent = (Message, Channel) -> UNNotificationContent
     /// A callback type to open a chat view controller with a given message reference.
-    public typealias ShowNewMessageCallback = (MessageReference) -> Void
+    public typealias OnNewMessage = (MessageReference) -> Void
     
     /// A callback to create a custom local notification for a new message when the app in the background.
     public var localNotificationContent: LocalNotificationContent?
@@ -32,39 +32,37 @@ public final class Notifications: NSObject {
     /// A shared instance of notifications manager.
     public static let shared = Notifications()
     
-    var disposeBag = DisposeBag()
-    var authorizationStatus: UNAuthorizationStatus = .notDetermined
-    
     /// A callback to open a chat view controller with a given message id and channel id.
-    public var showNewMessage: ShowNewMessageCallback?
+    public var onNewMessage: OnNewMessage?
     
-    /// Enablde clearing application icon badge number when app become active.
+    /// Enable clearing application icon badge number when app become active.
     public var clearApplicationIconBadgeNumberOnAppActive = false {
         didSet {
             if clearApplicationIconBadgeNumberOnAppActive {
                 observeActiveAppStateForClearing()
             } else {
-                disposeBag = DisposeBag()
+                badgeClearingDisposeBag = DisposeBag()
             }
         }
     }
     
     var logger: ClientLogger?
     
+    private var badgeClearingDisposeBag = DisposeBag()
+    private lazy var notificationCenter = UNUserNotificationCenter.current()
+    
     override init() {
         super.init()
         logger = Client.shared.logOptions.logger(icon: "🗞", for: [.notificationsError, .notifications])
         
-        if UNUserNotificationCenter.current().delegate == nil {
-            UNUserNotificationCenter.current().delegate = self
+        if notificationCenter.delegate == nil {
+            notificationCenter.delegate = self
         }
     }
     
     /// Ask for permissions for notifications.
     public func askForPermissionsIfNeeded() {
-        UNUserNotificationCenter.current().getNotificationSettings { settings in
-            self.authorizationStatus = settings.authorizationStatus
-            
+        notificationCenter.getNotificationSettings { settings in
             if settings.authorizationStatus == .notDetermined {
                 self.askForPermissions()
             } else if settings.authorizationStatus == .denied {
@@ -77,10 +75,9 @@ public final class Notifications: NSObject {
     }
     
     /// Ask permissions to make notifications work.
-    public func askForPermissions() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { didAllow, error in
+    private func askForPermissions() {
+        notificationCenter.requestAuthorization(options: [.alert, .sound, .badge]) { didAllow, error in
             if didAllow {
-                self.authorizationStatus = .authorized
                 self.registerForPushNotifications()
                 self.logger?.log("👍 User has accepted notifications")
             } else if let error = error {
@@ -124,17 +121,18 @@ extension Notifications {
     ///   - message: a message.
     ///   - channel: a channel.
     public func show(newMessage message: Message, in channel: Channel) {
-        guard authorizationStatus == .authorized else {
-            return
-        }
-        
-        let content = createLocalNotificationContent(newMessage: message, in: channel)
-        let request = UNNotificationRequest(identifier: message.id, content: content, trigger: nil)
-        logger?.log("Added a local notification for channel: \(channel.cid) message id: \(message.id) text: \(message.textOrArgs)")
-        
-        UNUserNotificationCenter.current().add(request) { [unowned self] error in
-            if let error = error {
-                self.logger?.log(error, message: "When adding a local notification")
+        notificationCenter.getNotificationSettings { [unowned self] settings in
+            guard settings.authorizationStatus == .authorized else { return }
+            let content = self.createLocalNotificationContent(newMessage: message, in: channel)
+            let request = UNNotificationRequest(identifier: message.id, content: content, trigger: nil)
+            
+            self.notificationCenter.add(request) { error in
+                if let error = error {
+                    self.logger?.log(error, message: "When adding a local notification")
+                } else {
+                    self.logger?.log("Added a local notification for " +
+                        "channel: \(channel.cid) message id: \(message.id) text: \(message.textOrArgs)")
+                }
             }
         }
     }
@@ -193,7 +191,7 @@ extension Notifications: UNUserNotificationCenterDelegate {
                                        didReceive response: UNNotificationResponse,
                                        withCompletionHandler completionHandler: @escaping () -> Void) {
         if let messageReference = Notifications.parseMessageReference(notificationResponse: response) {
-            showNewMessage?(messageReference)
+            onNewMessage?(messageReference)
         }
         
         completionHandler()
@@ -233,14 +231,14 @@ extension Notifications {
                 .filter { $0 == .active }
                 .skip(1)
                 .subscribe(onNext: { [unowned self] _ in self.clear() })
-                .disposed(by: self.disposeBag)
+                .disposed(by: self.badgeClearingDisposeBag)
         }
     }
     
     func clear() {
         UIApplication.shared.applicationIconBadgeNumber = 0
-        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        notificationCenter.removeAllDeliveredNotifications()
+        notificationCenter.removeAllPendingNotificationRequests()
         logger?.log("🧹 Notifications and the badge cleared")
     }
 }
