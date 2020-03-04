@@ -118,7 +118,7 @@ public final class Channel: Codable {
     /// An event when the channel was updated.
     public var onUpdate: OnUpdate<Channel>?
     
-    let needsToCreate: Bool
+    let needsCreation: Bool
     
     /// Init a channel 1-by-1 (direct message) with another member.
     /// - Parameters:
@@ -180,7 +180,7 @@ public final class Channel: Codable {
         self.config = config
         self.invitedMembers = Set(invitedMembers)
         self.extraData = ExtraData(extraData)
-        needsToCreate = true
+        needsCreation = true
     }
     
     required public init(from decoder: Decoder) throws {
@@ -203,7 +203,7 @@ public final class Channel: Codable {
         let name = try? container.decodeIfPresent(String.self, forKey: .name)
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         invitedMembers = Set<Member>()
-        needsToCreate = false
+        needsCreation = false
     }
     
     public func encode(to encoder: Encoder) throws {
