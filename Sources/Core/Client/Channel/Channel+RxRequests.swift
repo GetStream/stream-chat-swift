@@ -26,9 +26,18 @@ public extension Reactive where Base == Channel {
     /// Request for a channel data, e.g. messages, members, read states, etc
     /// - Parameters:
     ///   - pagination: a pagination for messages (see `Pagination`).
+    ///   - membersPagination: a pagination for members. You can use `.limit` and `.offset`.
+    ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
     ///   - options: a query options. All by default (see `QueryOptions`), e.g. `.watch`.
-    func query(pagination: Pagination = .none, options: QueryOptions = []) -> Observable<ChannelResponse> {
-        Client.shared.rx.queryChannel(base, pagination: pagination, options: options)
+    func query(pagination: Pagination = .none,
+               membersPagination: Pagination = .none,
+               watchersPagination: Pagination = .none,
+               options: QueryOptions = []) -> Observable<ChannelResponse> {
+        Client.shared.rx.queryChannel(base,
+                                      pagination: pagination,
+                                      membersPagination: membersPagination,
+                                      watchersPagination: watchersPagination,
+                                      options: options)
     }
     
     /// Loads the initial channel state and watches for changes.
