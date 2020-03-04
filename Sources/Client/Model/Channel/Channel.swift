@@ -68,8 +68,10 @@ public final class Channel: Codable {
     public let config: Config
     /// Checks if the channel is frozen.
     public let frozen: Bool
-    /// A list of user ids of the channel members.
+    /// A list of channel members.
     public internal(set) var members = Set<Member>()
+    /// A list of channel watchers.
+    public internal(set) var watchers = Set<User>()
     /// A list of users to invite in the channel.
     let invitedMembers: Set<Member>
     /// An extra data for the channel.
@@ -115,6 +117,8 @@ public final class Channel: Codable {
     
     /// An event when the channel was updated.
     public var onUpdate: OnUpdate<Channel>?
+    
+    let needsToCreate: Bool
     
     /// Init a channel 1-by-1 (direct message) with another member.
     /// - Parameters:
@@ -176,6 +180,7 @@ public final class Channel: Codable {
         self.config = config
         self.invitedMembers = Set(invitedMembers)
         self.extraData = ExtraData(extraData)
+        needsToCreate = true
     }
     
     required public init(from decoder: Decoder) throws {
@@ -198,6 +203,7 @@ public final class Channel: Codable {
         let name = try? container.decodeIfPresent(String.self, forKey: .name)
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         invitedMembers = Set<Member>()
+        needsToCreate = false
     }
     
     public func encode(to encoder: Encoder) throws {
