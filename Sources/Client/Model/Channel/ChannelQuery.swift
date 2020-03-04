@@ -13,34 +13,60 @@ public struct ChannelQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case data
         case messages
+        case members
+        case watchers
     }
     
     /// A channel.
     public let channel: Channel
+    /// A pagination for messages (see `Pagination`).
+    public let pagination: Pagination
+    /// A pagination for members (see `Pagination`). You can use `.limit` and `.offset`.
+    public let membersPagination: Pagination
+    /// A pagination for watchers (see `Pagination`). You can use `.limit` and `.offset`.
+    public let watchersPagination: Pagination
     /// A query options.
     public let options: QueryOptions
-    /// A pagination (see `Pagination`).
-    public let pagination: Pagination
     
     /// Init a channel query.
-    ///
     /// - Parameters:
-    ///     - channel: a channel.
-    ///     - memebers: members of the channel.
-    ///     - pagination: a pagination (see `Pagination`).
-    public init(channel: Channel, pagination: Pagination = .none, options: QueryOptions = []) {
+    ///   - channel: a channel.
+    ///   - memebers: members of the channel.
+    ///   - pagination: a pagination for messages.
+    ///   - membersPagination: a pagination for members. You can use `.limit` and `.offset`.
+    ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
+    ///   - options: a query options (see `QueryOptions`).
+    public init(channel: Channel,
+                pagination: Pagination = .none,
+                membersPagination: Pagination = .none,
+                watchersPagination: Pagination = .none,
+                options: QueryOptions = []) {
         self.channel = channel
         self.pagination = pagination
+        self.membersPagination = membersPagination
+        self.watchersPagination = watchersPagination
         self.options = options
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try options.encode(to: encoder)
-        try container.encode(channel, forKey: .data)
         
-        if case .none = pagination {} else {
+        // The channel data only needs for creating it.
+        if channel.needsToCreate {
+            try container.encode(channel, forKey: .data)
+        }
+        
+        if pagination != .none {
             try container.encode(pagination, forKey: .messages)
+        }
+        
+        if membersPagination != .none {
+            try container.encode(membersPagination, forKey: .members)
+        }
+        
+        if watchersPagination != .none {
+            try container.encode(watchersPagination, forKey: .watchers)
         }
     }
 }

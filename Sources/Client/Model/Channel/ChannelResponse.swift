@@ -12,9 +12,10 @@ import Foundation
 public struct ChannelResponse: Decodable {
     private enum CodingKeys: String, CodingKey {
         case channel
-        case members
         case messages
         case messageReads = "read"
+        case members
+        case watchers
         case watcherCount = "watcher_count"
     }
     
@@ -27,16 +28,27 @@ public struct ChannelResponse: Decodable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let members = try container.decode([Member].self, forKey: .members)
         channel = try container.decode(Channel.self, forKey: .channel)
-        channel.members = Set(members)
         messages = try container.decodeIfPresent([Message].self, forKey: .messages) ?? []
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
-        calculateChannelUnreadCount()
+        
+        let members = try container.decodeIfPresent([Member].self, forKey: .members)
+        
+        if let members = members {
+            channel.members = Set(members)
+        }
+        
+        let watchers = try container.decodeIfPresent([User].self, forKey: .watchers)
+        
+        if let watchers = watchers {
+            channel.watchers = Set(watchers)
+        }
         
         if let watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount) {
             channel.watcherCountAtomic.set(watcherCount)
         }
+        
+        calculateChannelUnreadCount()
     }
     
     /// Init a channel response.
