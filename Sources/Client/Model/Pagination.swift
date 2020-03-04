@@ -93,6 +93,15 @@ public enum Pagination: Codable, Equatable {
         return 0
     }
     
+    /// Checks if the pagination is a limit only.
+    public var isLimit: Bool {
+        if case .limit = self {
+            return true
+        }
+        
+        return false
+    }
+    
     /// An offset value, if the pagination has it or 0.
     public var offset: Int {
         if case .offset(let offset) = self {
