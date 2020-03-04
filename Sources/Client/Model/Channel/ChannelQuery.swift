@@ -53,7 +53,7 @@ public struct ChannelQuery: Encodable {
         try options.encode(to: encoder)
         
         // The channel data only needs for creating it.
-        if channel.needsToCreate {
+        if channel.needsCreation {
             try container.encode(channel, forKey: .data)
         }
         
