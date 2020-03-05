@@ -83,7 +83,7 @@ public enum Endpoint {
     /// Delete a message.
     case deleteMessage(Message)
     /// Add a reaction to the message.
-    case addReaction(ReactionType, Message)
+    case addReaction(Reaction)
     /// Delete a reaction from the message.
     case deleteReaction(ReactionType, Message)
     /// Flag a message.
@@ -110,7 +110,7 @@ public enum Endpoint {
 }
 
 extension Endpoint {
-    var method: Client.Method {
+    var method: Method {
         switch self {
         case .search, .channels, .message, .replies, .users, .devices:
             return .get
@@ -153,25 +153,25 @@ extension Endpoint {
         case .hideChannel(let channel, _, _):
             return path(to: channel, "hide")
         case .replies(let message, _):
-            return path(to: message, "replies")
+            return path(to: message.id, "replies")
             
         case let .sendMessage(message, channel):
             if message.id.isEmpty {
                 return path(to: channel, "message")
             }
             
-            return path(to: message)
+            return path(to: message.id)
             
         case .sendMessageAction(let messageAction):
-            return path(to: messageAction.message, "action")
+            return path(to: messageAction.message.id, "action")
         case .deleteMessage(let message):
-            return path(to: message)
+            return path(to: message.id)
         case .markRead(let channel):
             return path(to: channel, "read")
-        case .addReaction(_, let message):
-            return path(to: message, "reaction")
+        case .addReaction(let reaction):
+            return path(to: reaction.messageId, "reaction")
         case .deleteReaction(let reactionType, let message):
-            return path(to: message, "reaction/\(reactionType.rawValue)")
+            return path(to: message.id, "reaction/\(reactionType.value)")
         case .sendEvent(_, let channel):
             return path(to: channel, "event")
         case .sendImage(_, _, _, let channel):
@@ -288,8 +288,8 @@ extension Endpoint {
         case .sendMessageAction(let messageAction):
             return messageAction
             
-        case .addReaction(let reactionType, _):
-            return ["reaction": ["type": reactionType.rawValue]]
+        case .addReaction(let reaction):
+            return ["reaction": reaction]
             
         case .sendEvent(let event, _):
             return ["event": ["type": event]]
@@ -343,7 +343,17 @@ extension Endpoint {
         "channels/\(channel.type.rawValue)\(channel.id.isEmpty ? "" : "/\(channel.id)")\(subPath == nil ? "" : "/\(subPath ?? "")")"
     }
     
-    private func path(to message: Message, _ subPath: String? = nil) -> String {
-        return "messages/\(message.id)\(subPath == nil ? "" : "/\(subPath ?? "")")"
+    private func path(to messageId: String, _ subPath: String? = nil) -> String {
+        return "messages/\(messageId)\(subPath == nil ? "" : "/\(subPath ?? "")")"
+    }
+}
+
+// MARK: - Method
+
+extension Endpoint {
+    enum Method: String {
+        case get = "GET"
+        case post = "POST"
+        case delete = "DELETE"
     }
 }

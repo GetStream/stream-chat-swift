@@ -119,6 +119,7 @@ extension ChannelPresenter {
             }
             
         case .reactionNew(let reaction, let message, _, _),
+             .reactionUpdated(let reaction, let message, _, _),
              .reactionDeleted(let reaction, let message, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
@@ -129,9 +130,9 @@ extension ChannelPresenter {
                 
                 if reaction.isOwn, let currentMessage = items[index].message {
                     if case .reactionDeleted = event {
-                        message.deleteFromOwnReactions(reaction, reactions: currentMessage.ownReactions)
+                        message.delete(reaction: reaction, fromOwnReactions: currentMessage.ownReactions)
                     } else {
-                        message.addToOwnReactions(reaction, reactions: currentMessage.ownReactions)
+                        message.addOrUpdate(reaction: reaction, toOwnReactions: currentMessage.ownReactions)
                     }
                 }
                 

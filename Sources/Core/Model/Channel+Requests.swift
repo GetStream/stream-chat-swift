@@ -371,26 +371,6 @@ public extension Channel {
         return message.delete()
     }
     
-    /// Add a reaction to a message.
-    ///
-    /// - Parameters:
-    ///   - reactionType: a reaction type, e.g. like.
-    ///   - message: a message.
-    /// - Returns: an observable message response.
-    func addReaction(_ reactionType: ReactionType, to message: Message) -> Observable<MessageResponse> {
-        return message.addReaction(reactionType)
-    }
-    
-    /// Delete a reaction to the message.
-    ///
-    /// - Parameters:
-    ///     - reactionType: a reaction type, e.g. like.
-    ///     - message: a message.
-    /// - Returns: an observable message response.
-    func deleteReaction(_ reactionType: ReactionType, from message: Message) -> Observable<MessageResponse> {
-        return message.deleteReaction(reactionType)
-    }
-    
     /// Send a request for reply messages.
     ///
     /// - Parameters:

@@ -30,10 +30,10 @@ extension ChatViewController {
         reactionsView.makeEdgesEqualToSuperview(superview: view)
         self.reactionsView = reactionsView
         
-        let x = locationInView.x - .attachmentPreviewMaxWidth / 2
-        let y = tableView.convert(cell.frame, to: view).origin.y + locationInView.y
+        let convertedOrigin = tableView.convert(cell.frame, to: view).origin
+        let position = CGPoint(x: convertedOrigin.x + locationInView.x, y: convertedOrigin.y + locationInView.y)
         
-        reactionsView.show(at: CGPoint(x: x, y: y), for: message) { [weak self] reactionType in
+        reactionsView.show(at: position, for: message) { [weak self] reactionType, score in
             guard let self = self,
                 let messageIndex = self.channelPresenter?.items.lastIndex(whereMessageId: messageId),
                 let message = self.channelPresenter?.items[messageIndex].message else {
@@ -41,13 +41,19 @@ extension ChatViewController {
             }
             
             self.reactionsView = nil
-            let reactionExists = message.hasOwnReaction(type: reactionType)
+            var actionReaction = message.addReaction(Reaction(type: reactionType, score: score, messageId: message.id))
+            var hasOwnReaction = false
             
-            (reactionExists ? message.deleteReaction(reactionType) : message.addReaction(reactionType))
+            if reactionType.isRegular, message.hasOwnReaction(type: reactionType) {
+                hasOwnReaction = true
+                actionReaction = message.deleteReaction(reactionType)
+            }
+            
+            actionReaction
                 .subscribe(onError: { [weak self] in self?.show(error: $0) })
                 .disposed(by: self.disposeBag)
             
-            return !reactionExists
+            return reactionType.isRegular || !hasOwnReaction
         }
     }
 }
