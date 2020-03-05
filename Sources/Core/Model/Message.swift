@@ -27,7 +27,7 @@ public struct Message: Codable {
         case replyCount = "reply_count"
         case latestReactions = "latest_reactions"
         case ownReactions = "own_reactions"
-        case reactionCounts = "reaction_counts"
+        case reactionCounts = "reaction_scores"
     }
     
     /// A message id.
@@ -201,11 +201,11 @@ public struct Message: Codable {
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
         mentionedUsers = try container.decode([User].self, forKey: .mentionedUsers)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
-        latestReactions = try container.decode([Reaction].self, forKey: .latestReactions)
-        ownReactions = try container.decode([Reaction].self, forKey: .ownReactions)
+        latestReactions = (try? container.decode([Reaction].self, forKey: .latestReactions)) ?? []
+        ownReactions = (try? container.decode([Reaction].self, forKey: .ownReactions)) ?? []
         extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isMessage })?.decode(from: decoder))
         
-        if let reactionCounts = try container.decodeIfPresent(ReactionCounts.self, forKey: .reactionCounts),
+        if let reactionCounts = try? container.decodeIfPresent(ReactionCounts.self, forKey: .reactionCounts),
             !reactionCounts.counts.isEmpty {
             self.reactionCounts = reactionCounts
         } else {
@@ -248,7 +248,6 @@ extension Message: Hashable {
 public extension Message {
     
     /// Check if the message has a reaction with the given type from the current user.
-    ///
     /// - Parameter type: a reaction type.
     /// - Returns: true if the message has a reaction type.
     func hasOwnReaction(type: ReactionType) -> Bool {
@@ -256,11 +255,10 @@ public extension Message {
     }
     
     /// Add a given reaction to the current user own reactions.
-    ///
     /// - Parameters:
     ///   - reaction: a reaction for adding.
     ///   - reactions: the current list of user own reactions.
-    mutating func addToOwnReactions(_ reaction: Reaction, reactions: [Reaction]) {
+    mutating func addOrUpdate(reaction: Reaction, toOwnReactions reactions: [Reaction]) {
         var reactions = reactions
         
         if let index = reactions.firstIndex(where: { $0.type == reaction.type }) {
@@ -273,11 +271,10 @@ public extension Message {
     }
     
     /// Delete a given reaction from the current user own reaction.
-    ///
     /// - Parameters:
     ///   - reaction: a reaction for deleting.
     ///   - reactions: the current list of user own reactions.
-    mutating func deleteFromOwnReactions(_ reaction: Reaction, reactions: [Reaction]) {
+    mutating func delete(reaction: Reaction, fromOwnReactions reactions: [Reaction]) {
         var reactions = reactions
         
         if let index = reactions.firstIndex(where: { $0.type == reaction.type }) {

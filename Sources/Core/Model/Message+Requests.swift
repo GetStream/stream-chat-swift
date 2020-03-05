@@ -26,8 +26,8 @@ public extension Message {
     ///
     /// - Parameter reactionType: a reaction type, e.g. like.
     /// - Returns: an observable message response.
-    func addReaction(_ reactionType: ReactionType) -> Observable<MessageResponse> {
-        return Client.shared.rx.connectedRequest(endpoint: .addReaction(reactionType, self))
+    func addReaction(_ reaction: Reaction) -> Observable<MessageResponse> {
+        return Client.shared.rx.connectedRequest(endpoint: .addReaction(reaction))
     }
     
     /// Delete a reaction to the message.

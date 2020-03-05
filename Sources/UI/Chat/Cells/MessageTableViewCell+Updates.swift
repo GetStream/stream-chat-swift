@@ -115,7 +115,7 @@ extension MessageTableViewCell {
             .when(.recognized)
             .subscribe(onNext: { [weak self] gesture in
                 if let self = self {
-                    action(self, gesture.location(in: self.reactionsOverlayView))
+                    action(self, gesture.location(in: self))
                 }
             })
             .disposed(by: disposeBag)

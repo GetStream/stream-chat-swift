@@ -26,6 +26,8 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     case emptyBody(description: String)
     /// An invalid URL.
     case invalidURL(_ string: String?)
+    /// An invalid URL.
+    case invalidReactionType(String)
     /// A request failed with an error.
     case requestFailed(_ error: Error?)
     /// A response client error.
@@ -71,6 +73,8 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             return "A request or response body data is empty: \(description)"
         case .invalidURL(let url):
             return "An invalid URL: \(url ?? "<unknown>")"
+        case .invalidReactionType(let type):
+            return "An invalid ReactionType: \(type)"
             
         case .requestFailed(let error):
             if let error = error {
@@ -108,6 +112,8 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             return "ClientError.emptyBody(\(description))"
         case .invalidURL(let url):
             return "ClientError.invalidURL(\(url ?? "<unknown>"))"
+        case .invalidReactionType(let type):
+            return "ClientError.invalidReactionType(\(type))"
         case .requestFailed(let error):
             return "ClientError.requestFailed(\(String(describing: error)))"
         case .responseError(let error):

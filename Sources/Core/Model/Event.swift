@@ -291,8 +291,8 @@ public enum Event: Decodable {
         // Reaction
         case .reactionNew:
             self = .reactionNew(try reaction(), try message(), try user(), type)
-//        case .reactionUpdated:
-//            self = .reactionUpdated(try reaction(), try message(), try user(), type)
+        case .reactionUpdated:
+            self = .reactionUpdated(try reaction(), try message(), try user(), type)
         case .reactionDeleted:
             self = .reactionDeleted(try reaction(), try message(), try user(), type)
             
