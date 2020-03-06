@@ -23,11 +23,11 @@ public enum ReactionType: Codable {
     case cumulative(String, maxCount: Int, emoji: String)
     
     /// An reaction type as emoji.
-    public var value: String {
+    public var name: String {
         switch self {
-        case .regular(let type, emoji: _),
-             .cumulative(let type, maxCount: _, emoji: _):
-            return type
+        case .regular(let name, emoji: _),
+             .cumulative(let name, maxCount: _, emoji: _):
+            return name
         }
     }
     
@@ -61,14 +61,16 @@ public enum ReactionType: Codable {
     /// A list of reactions as emoji's.
     public static var emojies: [String] { Client.shared.reactionTypes.map { $0.emoji } }
     
-    init?(_ type: String) {
+    /// Create a reaction type based on string type value.
+    /// - Parameter name: reaction type.
+    public init?(named name: String) {
         for registeredType in Client.shared.reactionTypes {
-            if case .regular(let regularType, emoji: _) = registeredType, regularType == type {
+            if case .regular(let regularName, emoji: _) = registeredType, regularName == name {
                 self = registeredType
                 return
             }
             
-            if case .cumulative(let cumulativeType, maxCount: _, emoji: _) = registeredType, cumulativeType == type {
+            if case .cumulative(let cumulativeName, maxCount: _, emoji: _) = registeredType, cumulativeName == name {
                 self = registeredType
                 return
             }
@@ -79,18 +81,18 @@ public enum ReactionType: Codable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let type = (try? container.decode(String.self)) ?? ""
+        let name = (try? container.decode(String.self)) ?? ""
         
-        if let type = ReactionType(type) {
+        if let type = ReactionType(named: name) {
             self = type
         } else {
-            throw ClientError.invalidReactionType(type)
+            throw ClientError.invalidReactionType(name)
         }
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode(value)
+        try container.encode(name)
     }
 }
 

@@ -115,7 +115,6 @@ final class LoginViewController: UIViewController {
         if !clientSetupped {
             Client.config = .init(apiKey: apiKey,
                                   baseURL: .init(serverLocation: .proxyEast),
-                                  database: Database.instance,
                                   logOptions: .info)
             
             Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true

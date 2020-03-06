@@ -48,7 +48,7 @@ public final class Message: Object {
         var messageReactionCounts = [StreamChatCore.ReactionType: Int]()
         
         reactionCounts.forEach { realmObject in
-            if let type = StreamChatCore.ReactionType(rawValue: realmObject.type) {
+            if let type = StreamChatCore.ReactionType(named: realmObject.type) {
                 messageReactionCounts[type] = realmObject.count
             }
         }
@@ -98,8 +98,7 @@ public final class Message: Object {
         ownReactions.append(objectsIn: message.ownReactions.map({ Reaction($0) }))
         
         if let reactionCounts = message.reactionCounts?.counts {
-            let reactionCountReamObjects = reactionCounts.compactMap({ ReactionCounts(type: $0.key.rawValue,
-                                                                                      count: $0.value) })
+            let reactionCountReamObjects = reactionCounts.compactMap({ ReactionCounts(type: $0.key.name, count: $0.value) })
             self.reactionCounts.append(objectsIn: reactionCountReamObjects)
         }
     }

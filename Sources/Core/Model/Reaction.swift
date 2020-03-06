@@ -40,17 +40,17 @@ public struct Reaction: Codable, Equatable {
     ///   - messageId: a message id.
     ///   - user: a user owner of the reaction.
     ///   - created: a created date.
-    public init(type: ReactionType, score: Int = 1, messageId: String) {
+    public init(type: ReactionType, score: Int = 1, messageId: String, user: User? = .current, created: Date = Date()) {
         self.type = type
         self.score = score
         self.messageId = messageId
-        user = User.current
-        created = Date()
+        self.user = user
+        self.created = created
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(type.value, forKey: .type)
+        try container.encode(type, forKey: .type)
         try container.encode(score, forKey: .score)
     }
 }

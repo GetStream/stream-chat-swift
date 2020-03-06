@@ -171,7 +171,7 @@ extension Endpoint {
         case .addReaction(let reaction):
             return path(to: reaction.messageId, "reaction")
         case .deleteReaction(let reactionType, let message):
-            return path(to: message.id, "reaction/\(reactionType.value)")
+            return path(to: message.id, "reaction/\(reactionType.name)")
         case .sendEvent(_, let channel):
             return path(to: channel, "event")
         case .sendImage(_, _, _, let channel):

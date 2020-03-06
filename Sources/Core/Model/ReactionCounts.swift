@@ -23,7 +23,7 @@ public struct ReactionCounts: Decodable {
         var counts = [ReactionType: Int]()
         
         rawCounts.forEach { key, count in
-            if let reactionType = ReactionType(key) {
+            if let reactionType = ReactionType(named: key) {
                 counts[reactionType] = count
             }
         }
