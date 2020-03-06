@@ -16,6 +16,13 @@ public final class TableView: UITableView {
     private(set) var oldContentInset: UIEdgeInsets = .zero
     private(set) var oldAdjustedContentInset: UIEdgeInsets = .zero
     
+    /// Tracking classes consist of: (Identifier: Class)
+    /// You should fill this array with the classes you want to track *before* registering your classes.
+    var trackingClasses = [(identifier: String, class: AnyClass)]()
+    /// Registered classes consist of: (TrackingReuseIdentifier: (RegisteredReuseIdentifier: RegisteredSubclass))
+    /// You can use the info from this dictionary to dequeue cells.
+    private(set) var registeredClasses = [String: (identifier: String, subclass: AnyClass)]()
+    
     var stayOnScrollOnce = false {
         didSet {
             if stayOnScrollOnce {
@@ -32,6 +39,24 @@ public final class TableView: UITableView {
             restoreScrollState()
         }
     }
+    
+    public override func register(_ cellClass: AnyClass?, forCellReuseIdentifier identifier: String) {
+        if let cellClass = cellClass {
+            for trackingClass in trackingClasses {
+                if cellClass.isSubclass(of: trackingClass.class) {
+                    registeredClasses[trackingClass.identifier] = (identifier, cellClass)
+                    break
+                }
+            }
+        }
+        
+        super.register(cellClass, forCellReuseIdentifier: identifier)
+    }
+}
+
+// MARK: Scroll state restoring
+
+extension TableView {
     
     func saveScrollState() {
         setContentOffset(contentOffset, animated: false)

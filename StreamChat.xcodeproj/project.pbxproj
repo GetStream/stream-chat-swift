@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-        79D2DA98240949C800E28485 /* VerticalAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D2DA97240949C800E28485 /* VerticalAlignment.swift */; };
+		79D2DA98240949C800E28485 /* VerticalAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D2DA97240949C800E28485 /* VerticalAlignment.swift */; };
 		8A048E4C2332247900FDB3C0 /* ChannelPresenter+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E4B2332247900FDB3C0 /* ChannelPresenter+Request.swift */; };
 		8A048E4E2332259400FDB3C0 /* ChannelPresenter+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E4D2332259400FDB3C0 /* ChannelPresenter+Events.swift */; };
 		8A048E5123326D5F00FDB3C0 /* ChannelPresenter+EphemeralMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E5023326D5F00FDB3C0 /* ChannelPresenter+EphemeralMessages.swift */; };
@@ -324,7 +324,7 @@
 /* Begin PBXFileReference section */
 		465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentTypeTests.swift; sourceTree = "<group>"; };
 		798D413B23ACC89400F39EF8 /* ClientTests10+ClientLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClientTests10+ClientLogger.swift"; sourceTree = "<group>"; };
-        79D2DA97240949C800E28485 /* VerticalAlignment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerticalAlignment.swift; sourceTree = "<group>"; };
+		79D2DA97240949C800E28485 /* VerticalAlignment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerticalAlignment.swift; sourceTree = "<group>"; };
 		8A048E4B2332247900FDB3C0 /* ChannelPresenter+Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelPresenter+Request.swift"; sourceTree = "<group>"; };
 		8A048E4D2332259400FDB3C0 /* ChannelPresenter+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelPresenter+Events.swift"; sourceTree = "<group>"; };
 		8A048E5023326D5F00FDB3C0 /* ChannelPresenter+EphemeralMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelPresenter+EphemeralMessages.swift"; sourceTree = "<group>"; };
