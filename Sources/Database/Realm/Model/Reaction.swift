@@ -13,16 +13,17 @@ import StreamChatCore
 public final class Reaction: Object {
     
     @objc dynamic var type = ""
+    @objc dynamic var score = 1
     @objc dynamic var user: User?
     @objc dynamic var created = Date.default
     @objc dynamic var messageId = ""
     
     var asReaction: StreamChatCore.Reaction? {
-        guard let type = ReactionType(rawValue: type) else {
+        guard let type = ReactionType(named: type) else {
             return nil
         }
         
-        return StreamChatCore.Reaction(type: type, messageId: messageId, user: user?.asUser, created: created)
+        return StreamChatCore.Reaction(type: type, score: score, messageId: messageId, user: user?.asUser, created: created)
     }
     
     required init() {
@@ -30,7 +31,8 @@ public final class Reaction: Object {
     }
     
     init(_ reaction: StreamChatCore.Reaction) {
-        type = reaction.type.rawValue
+        type = reaction.type.name
+        score = reaction.score
         created = reaction.created
         messageId = reaction.messageId
         
