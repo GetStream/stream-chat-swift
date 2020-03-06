@@ -35,25 +35,25 @@ extension ChatViewController {
         
         reactionsView.show(at: position, for: message) { [weak self] reactionType, score in
             guard let self = self,
+                let presenter = self.channelPresenter,
                 let messageIndex = self.channelPresenter?.items.lastIndex(whereMessageId: messageId),
                 let message = self.channelPresenter?.items[messageIndex].message else {
                     return nil
             }
             
             self.reactionsView = nil
-            var actionReaction = message.addReaction(Reaction(type: reactionType, score: score, messageId: message.id))
-            var hasOwnReaction = false
+            let needsToDelete = reactionType.isRegular && message.hasOwnReaction(type: reactionType)
+            let extraData = needsToDelete ? nil : presenter.reactionExtraDataCallback?(reactionType, score, message.id)
             
-            if reactionType.isRegular, message.hasOwnReaction(type: reactionType) {
-                hasOwnReaction = true
-                actionReaction = message.deleteReaction(reactionType)
-            }
+            let actionReaction = needsToDelete
+                ? message.deleteReaction(reactionType)
+                : message.addReaction(Reaction(type: reactionType, score: score, messageId: message.id, extraData: extraData))
             
             actionReaction
                 .subscribe(onError: { [weak self] in self?.show(error: $0) })
                 .disposed(by: self.disposeBag)
             
-            return reactionType.isRegular || !hasOwnReaction
+            return reactionType.isRegular || !needsToDelete
         }
     }
 }

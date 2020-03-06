@@ -9,7 +9,7 @@
 import Foundation
 
 /// A reaction for a message.
-public struct Reaction: Codable, Equatable {
+public struct Reaction: Codable {
     private enum CodingKeys: String, CodingKey {
         case type
         case score
@@ -28,6 +28,8 @@ public struct Reaction: Codable, Equatable {
     public let user: User?
     /// A created date.
     public let created: Date
+    /// An extra data for the reaction.
+    public let extraData: ExtraData?
     
     /// Check if the reaction if by the current user.
     public var isOwn: Bool {
@@ -40,17 +42,44 @@ public struct Reaction: Codable, Equatable {
     ///   - messageId: a message id.
     ///   - user: a user owner of the reaction.
     ///   - created: a created date.
-    public init(type: ReactionType, score: Int = 1, messageId: String, user: User? = .current, created: Date = Date()) {
+    public init(type: ReactionType,
+                score: Int = 1,
+                messageId: String,
+                user: User? = .current,
+                created: Date = Date(),
+                extraData: Codable? = nil) {
         self.type = type
         self.score = score
         self.messageId = messageId
         self.user = user
         self.created = created
+        self.extraData = ExtraData(extraData)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(ReactionType.self, forKey: .type)
+        score = try container.decode(Int.self, forKey: .score)
+        messageId = try container.decode(String.self, forKey: .messageId)
+        user = try container.decodeIfPresent(User.self, forKey: .user)
+        created = try container.decode(Date.self, forKey: .created)
+        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isReaction })?.decode(from: decoder))
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type, forKey: .type)
         try container.encode(score, forKey: .score)
+        extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a reaction extra data")
+    }
+}
+
+extension Reaction: Equatable {
+    public static func == (lhs: Reaction, rhs: Reaction) -> Bool {
+        return lhs.type == rhs.type
+            && lhs.score == rhs.score
+            && lhs.messageId == rhs.messageId
+            && lhs.user == rhs.user
+            && lhs.created == rhs.created
     }
 }

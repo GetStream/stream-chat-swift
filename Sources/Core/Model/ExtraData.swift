@@ -20,7 +20,9 @@ public struct ExtraData: Codable {
         case message(Codable.Type)
         /// An attachment.
         case attachment(Codable.Type)
-        
+        /// A reaction.
+        case reaction(Codable.Type)
+
         /// Checks if the decodable type is a custom user extra data type.
         public var isUser: Bool {
             if case .user = self {
@@ -57,12 +59,22 @@ public struct ExtraData: Codable {
             return false
         }
         
+        /// Checks if the decodable type is a custom attachment extra data type.
+        public var isReaction: Bool {
+            if case .reaction = self {
+                return true
+            }
+            
+            return false
+        }
+        
         public func codableType() -> Codable.Type {
             switch self {
             case .user(let codableType),
                  .channel(let codableType),
                  .message(let codableType),
-                 .attachment(let codableType):
+                 .attachment(let codableType),
+                 .reaction(let codableType):
                 return codableType
             }
         }
@@ -159,6 +171,14 @@ public extension ExtraData {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
             object = ExtraData.decodableTypes.first(where: { $0.isAttachment })?.decode(from: decoder)
+        }
+    }
+    
+    /// A custom reaction data wrapper.
+    final class ReactionWrapper: Wrapper {
+        required init(from decoder: Decoder) throws {
+            try super.init(from: decoder)
+            object = ExtraData.decodableTypes.first(where: { $0.isReaction })?.decode(from: decoder)
         }
     }
 }
