@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-        79D2DA98240949C800E28485 /* VerticalAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D2DA97240949C800E28485 /* VerticalAlignment.swift */; };
+		79D2DA98240949C800E28485 /* VerticalAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D2DA97240949C800E28485 /* VerticalAlignment.swift */; };
 		8A048E4C2332247900FDB3C0 /* ChannelPresenter+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E4B2332247900FDB3C0 /* ChannelPresenter+Request.swift */; };
 		8A048E4E2332259400FDB3C0 /* ChannelPresenter+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E4D2332259400FDB3C0 /* ChannelPresenter+Events.swift */; };
 		8A048E5123326D5F00FDB3C0 /* ChannelPresenter+EphemeralMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A048E5023326D5F00FDB3C0 /* ChannelPresenter+EphemeralMessages.swift */; };
