@@ -10,8 +10,6 @@ import UIKit
 
 /// Avatars style.
 public struct AvatarViewStyle: Hashable {
-    /// Default avatar style
-    public static let `default` = AvatarViewStyle(radius: .channelAvatarRadius, placeholderFont: nil, verticalAlignment: .center)
     
     /// An avatar radius.
     public var radius: CGFloat

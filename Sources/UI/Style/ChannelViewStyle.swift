@@ -80,7 +80,7 @@ public struct ChannelViewStyle {
     ///   - edgeInsets: edge insets.
     public init(backgroundColor: UIColor = .white,
                 separatorStyle: SeparatorStyle = .none,
-                avatarViewStyle: AvatarViewStyle? = .default,
+                avatarViewStyle: AvatarViewStyle? = .init(),
                 nameNumberOfLines: Int = 1,
                 nameFont: UIFont = .chatXRegularMedium,
                 nameColor: UIColor = .chatGray,
