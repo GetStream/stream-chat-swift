@@ -20,7 +20,7 @@ open class ChannelsViewController: ViewController {
     /// A chat style.
     public lazy var style = defaultStyle
     /// A default chat style. This is useful for subclasses.
-    open var defaultStyle: ChatViewStyle { .default }
+    open var defaultStyle: ChatViewStyle { .init() }
     /// A list of table view items, e.g. channel presenters.
     public private(set) var items = [PresenterItem]()
     
@@ -40,7 +40,7 @@ open class ChannelsViewController: ViewController {
     
     /// A table view of channels.
     public private(set) lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .plain)
+        let tableView = TableView(frame: .zero, style: .plain)
         tableView.backgroundColor = style.channel.backgroundColor
         tableView.separatorColor = style.channel.separatorStyle.color
         tableView.separatorStyle = style.channel.separatorStyle.tableStyle
@@ -52,12 +52,13 @@ open class ChannelsViewController: ViewController {
         tableView.rowHeight = style.channel.height
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.trackingClasses = [(ChannelTableViewCell.reuseIdentifier, ChannelTableViewCell.self)]
         tableView.register(cellType: ChannelTableViewCell.self)
         tableView.register(cellType: StatusTableViewCell.self)
         view.insertSubview(tableView, at: 0)
         tableView.makeEdgesEqualToSuperview()
         tableView.tableFooterView = UIView(frame: .zero)
-        
+                
         return tableView
     }()
     
@@ -123,12 +124,42 @@ open class ChannelsViewController: ViewController {
     
     // MARK: - Channel Cell
     
-    open func dequeueChannelCell(at indexPath: IndexPath) -> ChannelTableViewCell {
-        tableView.dequeueReusableCell(for: indexPath) as ChannelTableViewCell
+    /// Dequeues and returns the channel cell at a given indexPath.
+    ///
+    /// If the dequeued cell is `ChannelTableViewCell` or is a subclass of it, `updateChannelCell` function is called with it.
+    ///
+    /// This function should be overridden if one wants to customize their own cell class.
+    /// If your own cell class inherits from `ChannelTableViewCell`, simply register it in `tableView` as usual - you don't need to dequeue it manually.
+    /// You should override `updateChannelCell` function to configure your own `ChannelTableViewCell` subclass.
+    ///
+    /// - Parameter indexPath: indexPath to be dequeued
+    /// - Parameter channelPresenter: ChannelPresenter for the indexPath (see `ChannelPresenter`)
+    /// - Returns: Dequeued UITableViewCell for the given indexPath
+    open func channelCell(at indexPath: IndexPath, channelPresenter: ChannelPresenter) -> UITableViewCell {
+        guard let channelTableView = tableView as? TableView,
+            let channelCellIdentifier = channelTableView.registeredClasses[ChannelTableViewCell.reuseIdentifier]?.identifier else {
+                return .unused
+        }
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: channelCellIdentifier, for: indexPath)
+        
+        guard let channelCell = cell as? ChannelTableViewCell else {
+            return .unused
+        }
+        
+        updateChannelCell(channelCell, channelPresenter: channelPresenter)
+        
+        return channelCell
     }
     
-    open func channelCell(at indexPath: IndexPath, channelPresenter: ChannelPresenter) -> UITableViewCell {
-        let cell = dequeueChannelCell(at: indexPath)
+    /// Configures a given `ChannelTableViewCell` (or any subclass or it)
+    ///
+    /// You can override this function to add your own functionality to any `ChannelTableViewCell` subclass you've created.
+    /// Calling `super` implementation when this function is overridden is suggested.
+    /// - Parameters:
+    ///   - cell: a `ChannelTableViewCell` (or a subclass) instance
+    ///   - channelPresenter: `ChannelPresenter` for the given cell
+    open func updateChannelCell(_ cell: ChannelTableViewCell, channelPresenter: ChannelPresenter) {
         cell.setupIfNeeded(style: style.channel)
         cell.nameLabel.text = channelPresenter.channel.name
         
@@ -151,8 +182,6 @@ open class ChannelsViewController: ViewController {
         } else {
             cell.update(message: "No messages", isMeta: true, isUnread: false)
         }
-        
-        return cell
     }
     
     // MARK: - Loading Cell
@@ -174,8 +203,8 @@ open class ChannelsViewController: ViewController {
             return
         }
         
-        let chatViewController = createChatViewController(with: channelPresenter, indexPath: indexPath)
-        configureChatViewController(chatViewController: chatViewController, channelPresenter: channelPresenter)
+        let chatViewController = createChatViewController(with: channelPresenter)
+        setupChatViewController(chatViewController, with: channelPresenter)
         
         if let splitViewController = splitViewController {
             let navigationController = UINavigationController(rootViewController: chatViewController)
@@ -192,16 +221,16 @@ open class ChannelsViewController: ViewController {
     ///     - channelPresenter: a channel presenter of a selected row.
     ///     - indexPath: a selected index path.
     /// - Returns: a chat view controller.
-    open func createChatViewController(with channelPresenter: ChannelPresenter, indexPath: IndexPath) -> ChatViewController {
+    open func createChatViewController(with channelPresenter: ChannelPresenter) -> ChatViewController {
         ChatViewController(nibName: nil, bundle: nil)
     }
     
-    /// Configures the chat view controller for display.
+    /// Setups the chat view controller for display.
     ///
     /// - Parameters:
     ///     - chatViewController: ChatViewController to be configured
     ///     - channelPresenter: Channel Presenter for the corresponding ChatViewController
-    open func configureChatViewController(chatViewController: ChatViewController, channelPresenter: ChannelPresenter) {
+    open func setupChatViewController(_ chatViewController: ChatViewController, with channelPresenter: ChannelPresenter) {
         chatViewController.style = style
         channelPresenter.eventsFilter = channelsPresenter.channelEventsFilter
         chatViewController.channelPresenter = channelPresenter
