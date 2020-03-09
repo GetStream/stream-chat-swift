@@ -6,9 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### ⚠️ Breaking Changes
+- Removed hard-coded reactions.
+- Reaction API changed: addReaction required a reaction object instance of reaction type.
 
 ### ✅ Added
+- Custom reactions.
+- A new cumulative reaction type (like claps in Medium).
+- Custom fields for reactions.
 
 ### 🐞 Fixed
 - Error description of failed request is now human-readable [#104](https://github.com/GetStream/stream-chat-swift/issues/104)
