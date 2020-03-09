@@ -10,8 +10,6 @@ import Foundation
 import UIKit
 
 extension Client {
-    /// A Stream Chat version.
-    public static let version: String = Bundle(for: Client.self).infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
     
     func setupURLSession(token: Token) -> URLSession {
         let headers = authHeaders(token: token)
@@ -24,9 +22,10 @@ extension Client {
     
     func authHeaders(token: Token) -> [String: String] {
         var headers = [
-            "X-Stream-Client": "stream-chat-swift-client-\(Client.version)",
-            "X-Stream-Device": deviceModelName,
-            "X-Stream-OS": "\(UIDevice.current.systemName)\(UIDevice.current.systemVersion)"]
+            "X-Stream-Client": "stream-chat-swift-client-\(Environment.version)",
+            "X-Stream-Device": Environment.deviceModelName,
+            "X-Stream-OS": Environment.systemName,
+            "X-Stream-App-Environment": Environment.name]
         
         if token.isBlank {
             headers["Stream-Auth-Type"] = "anonymous"
@@ -35,25 +34,11 @@ extension Client {
             headers["Authorization"] = token
         }
         
-        if let bundleId = Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String {
+        if let bundleId = Bundle.main.id {
             headers["X-Stream-BundleId"] = bundleId
         }
         
         return headers
-    }
-    
-    private var deviceModelName: String {
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machineMirror = Mirror(reflecting: systemInfo.machine)
-        
-        return machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8, value != 0 else {
-                return identifier
-            }
-            
-            return identifier + String(UnicodeScalar(UInt8(value)))
-        }
     }
     
     func checkLatestVersion() {
@@ -76,8 +61,8 @@ extension Client {
             }
             do {
                 let podTrunk = try JSONDecoder().decode(PodTrunk.self, from: data)
-                if let latestVersion = podTrunk.versions.last?.name, latestVersion > Client.version {
-                    ClientLogger.logger("📢", "", "StreamChat \(latestVersion) is released (you are on \(Client.version))."
+                if let latestVersion = podTrunk.versions.last?.name, latestVersion > Environment.version {
+                    ClientLogger.logger("📢", "", "StreamChat \(latestVersion) is released (you are on \(Environment.version))."
                         + "It's recommended to update to the latest version")
                 }
             } catch {}

@@ -76,7 +76,7 @@ open class ChannelsViewController: ViewController {
         setupChannelsPresenter()
         
         if title == nil {
-            title = Bundle.main.object(forInfoDictionaryKey: kCFBundleNameKey as String) as? String
+            title = Bundle.main.name
         }
     }
     
