@@ -9,9 +9,9 @@
 import Foundation
 
 /// A reaction counts.
-public struct ReactionCounts: Decodable {
+public struct ReactionScores: Decodable {
     /// Reaction counts by reaction types.
-    public private(set) var counts: [ReactionType: Int]
+    public private(set) var scores: [ReactionType: Int]
     
     /// A joined reaction types and counts.
     public private(set) var string: String
@@ -20,58 +20,58 @@ public struct ReactionCounts: Decodable {
         let container = try decoder.singleValueContainer()
         string = ""
         let rawCounts = try container.decode([String: Int].self)
-        var counts = [ReactionType: Int]()
+        var scores = [ReactionType: Int]()
         
         rawCounts.forEach { key, count in
             if let reactionType = ReactionType(named: key) {
-                counts[reactionType] = count
+                scores[reactionType] = count
             }
         }
         
-        self.counts = counts
+        self.scores = scores
         string = joinToString()
     }
     
     /// Init a reaction counts with 1 for a given reaction type.
     init(reactionType: ReactionType) {
-        counts = [reactionType: 1]
+        scores = [reactionType: 1]
         string = ""
         string = joinToString()
     }
     
     /// Init a reaction counts with dictionary counts.
-    /// - Parameter counts: a rection counts by reaction types.
-    public init(counts: [ReactionType: Int]) {
-        self.counts = counts
+    /// - Parameter scores: a rection sccores by reaction types.
+    public init(scores: [ReactionType: Int]) {
+        self.scores = scores
         string = ""
         string = joinToString()
     }
     
     private func joinToString() -> String {
-        guard !counts.isEmpty else {
+        guard !scores.isEmpty else {
             return ""
         }
         
-        let count = counts.values.reduce(0, { $0 + $1 })
-        let countKeys = counts.keys
+        let score = scores.values.reduce(0, { $0 + $1 })
+        let scoreKeys = scores.keys
         var emoji = ""
         
         Client.shared.reactionTypes.forEach { type in
-            if countKeys.contains(type) {
+            if scoreKeys.contains(type) {
                 emoji += type.emoji
             }
         }
         
-        return emoji.appending(count.shortString())
+        return emoji.appending(score.shortString())
     }
     
     mutating func update(type: ReactionType, increment: Int) {
-        let count = increment + (counts[type] ?? 0)
+        let count = increment + (scores[type] ?? 0)
         
         if count <= 0 { // swiftlint:disable:this empty_count
-            counts.removeValue(forKey: type)
+            scores.removeValue(forKey: type)
         } else {
-            counts[type] = count
+            scores[type] = count
         }
         
         string = joinToString()

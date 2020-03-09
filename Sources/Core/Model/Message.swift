@@ -27,7 +27,7 @@ public struct Message: Codable {
         case replyCount = "reply_count"
         case latestReactions = "latest_reactions"
         case ownReactions = "own_reactions"
-        case reactionCounts = "reaction_scores"
+        case reactionScores = "reaction_scores"
     }
     
     /// A message id.
@@ -65,7 +65,7 @@ public struct Message: Codable {
     /// The current user own reactions (see `Reaction`).
     public private(set) var ownReactions: [Reaction]
     /// A reactions count (see `ReactionCounts`).
-    public private(set) var reactionCounts: ReactionCounts?
+    public private(set) var reactionScores: ReactionScores?
     
     /// Check if the message is ephemeral, e.g. Giphy preview.
     public var isEphemeral: Bool {
@@ -94,7 +94,7 @@ public struct Message: Codable {
     
     /// Check if the message has reactions.
     public var hasReactions: Bool {
-        return reactionCounts != nil && !(reactionCounts?.counts.isEmpty ?? true)
+        return reactionScores != nil && !(reactionScores?.scores.isEmpty ?? true)
     }
     
     /// A combination of message text and command args.
@@ -143,7 +143,7 @@ public struct Message: Codable {
                 extraData: Codable? = nil,
                 latestReactions: [Reaction] = [],
                 ownReactions: [Reaction] = [],
-                reactionCounts: ReactionCounts? = nil,
+                reactionScores: ReactionScores? = nil,
                 replyCount: Int = 0,
                 showReplyInChannel: Bool = false) {
         self.id = id
@@ -161,7 +161,7 @@ public struct Message: Codable {
         self.extraData = ExtraData(extraData)
         self.latestReactions = latestReactions
         self.ownReactions = ownReactions
-        self.reactionCounts = reactionCounts
+        self.reactionScores = reactionScores
         self.replyCount = replyCount
         self.showReplyInChannel = showReplyInChannel
     }
@@ -205,11 +205,11 @@ public struct Message: Codable {
         ownReactions = (try? container.decode([Reaction].self, forKey: .ownReactions)) ?? []
         extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isMessage })?.decode(from: decoder))
         
-        if let reactionCounts = try? container.decodeIfPresent(ReactionCounts.self, forKey: .reactionCounts),
-            !reactionCounts.counts.isEmpty {
-            self.reactionCounts = reactionCounts
+        if let reactionScores = try? container.decodeIfPresent(ReactionScores.self, forKey: .reactionScores),
+            !reactionScores.scores.isEmpty {
+            self.reactionScores = reactionScores
         } else {
-            reactionCounts = nil
+            reactionScores = nil
         }
     }
     

@@ -13,7 +13,7 @@ import SnapKit
 extension ChatViewController {
     
     func update(cell: MessageTableViewCell, forReactionsIn message: Message) {
-        cell.update(reactionCounts: message.reactionCounts) { [weak self] cell, locationInView in
+        cell.update(reactionScores: message.reactionScores) { [weak self] cell, locationInView in
             self?.showReactions(from: cell, in: message, locationInView: locationInView)
         }
     }

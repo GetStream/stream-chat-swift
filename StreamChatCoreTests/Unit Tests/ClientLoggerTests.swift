@@ -44,7 +44,7 @@ class ClientLoggerTests: XCTestCase {
         logOutput = [String]()
         
         let testMembers = Set([testUser.asMember])
-        let testMessage = Message(id: "test", type: .reply, parentId: nil, created: Date(), updated: Date(), deleted: nil, text: "test", command: nil, args: nil, user: testUser, attachments: [], mentionedUsers: [], extraData: nil, latestReactions: [], ownReactions: [], reactionCounts: nil, replyCount: 0, showReplyInChannel: false)
+        let testMessage = Message(id: "test", type: .reply, parentId: nil, created: Date(), updated: Date(), deleted: nil, text: "test", command: nil, args: nil, user: testUser, attachments: [], mentionedUsers: [], extraData: nil, latestReactions: [], ownReactions: [], reactionScores: nil, replyCount: 0, showReplyInChannel: false)
         let testReaction = Reaction(type: .regular("angry", emoji: "😠"), messageId: testMessage.id)
 
         allEndpoints = [.guestToken(testUser),

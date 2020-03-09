@@ -71,11 +71,11 @@ final class ChannelTests: TestCase {
                     return nil
                 })
                 .unwrap()
-                .flatMapLatest { $0.addReaction(reactionType: like) }
+                .flatMapLatest { $0.addReaction(type: like) }
                 .map { response -> Message? in
-                    if let reactionCounts = response.message.reactionCounts {
-                        XCTAssertEqual(reactionCounts.counts, [like: 1])
-                        XCTAssertEqual(reactionCounts.string, "\(like.emoji)1")
+                    if let reactionScores = response.message.reactionScores {
+                        XCTAssertEqual(reactionScores.scores, [like: 1])
+                        XCTAssertEqual(reactionScores.string, "\(like.emoji)1")
                         return response.message
                     }
                     
@@ -84,11 +84,11 @@ final class ChannelTests: TestCase {
                     return nil
                 }
                 .unwrap()
-                .flatMapLatest { $0.addReaction(reactionType: love) }
+                .flatMapLatest { $0.addReaction(type: love) }
                 .map { response -> Message? in
-                    if let reactionCounts = response.message.reactionCounts {
-                        XCTAssertEqual(reactionCounts.counts, [like: 1, love: 1])
-                        XCTAssertEqual(reactionCounts.string, "\(like.emoji)\(love.emoji)2")
+                    if let reactionScores = response.message.reactionScores {
+                        XCTAssertEqual(reactionScores.scores, [like: 1, love: 1])
+                        XCTAssertEqual(reactionScores.string, "\(like.emoji)\(love.emoji)2")
                         return response.message
                     }
                     
@@ -97,11 +97,11 @@ final class ChannelTests: TestCase {
                     return nil
                 }
                 .unwrap()
-                .flatMapLatest { $0.addReaction(reactionType: love) }
+                .flatMapLatest { $0.addReaction(type: love) }
                 .map { response -> Message? in
-                    if let reactionCounts = response.message.reactionCounts {
-                        XCTAssertEqual(reactionCounts.counts, [like: 1, love: 1])
-                        XCTAssertEqual(reactionCounts.string, "\(like.emoji)\(love.emoji)2")
+                    if let reactionScores = response.message.reactionScores {
+                        XCTAssertEqual(reactionScores.scores, [like: 1, love: 1])
+                        XCTAssertEqual(reactionScores.string, "\(like.emoji)\(love.emoji)2")
                         return response.message
                     }
                     
@@ -110,11 +110,11 @@ final class ChannelTests: TestCase {
                     return nil
                 }
                 .unwrap()
-                .flatMapLatest { $0.deleteReaction(reactionType: like) }
+                .flatMapLatest { $0.deleteReaction(type: like) }
                 .map { response -> Message? in
-                    if let reactionCounts = response.message.reactionCounts {
-                        XCTAssertEqual(reactionCounts.counts, [love: 1])
-                        XCTAssertEqual(reactionCounts.string, "\(love.emoji)1")
+                    if let reactionScores = response.message.reactionScores {
+                        XCTAssertEqual(reactionScores.scores, [love: 1])
+                        XCTAssertEqual(reactionScores.string, "\(love.emoji)1")
                         return response.message
                     }
                     
@@ -123,9 +123,9 @@ final class ChannelTests: TestCase {
                     return nil
                 }
                 .unwrap()
-                .flatMapLatest { $0.deleteReaction(reactionType: love) }
+                .flatMapLatest { $0.deleteReaction(type: love) }
                 .map { response -> Message? in
-                    XCTAssertNil(response.message.reactionCounts)
+                    XCTAssertNil(response.message.reactionScores)
                     return response.message
                 }
                 .unwrap()
