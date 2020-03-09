@@ -47,7 +47,7 @@ extension ChatViewController {
             
             let actionReaction = needsToDelete
                 ? message.deleteReaction(reactionType)
-                : message.addReaction(Reaction(type: reactionType, score: score, messageId: message.id, extraData: extraData))
+                : message.addReaction(reactionType: reactionType, score: score, extraData: extraData)
             
             actionReaction
                 .subscribe(onError: { [weak self] in self?.show(error: $0) })
