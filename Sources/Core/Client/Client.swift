@@ -130,7 +130,7 @@ public final class Client {
          database: Database? = Client.config.database,
          logOptions: ClientLogger.Options = Client.config.logOptions) {
         if !apiKey.isEmpty, logOptions.isEnabled {
-            ClientLogger.logger("💬", "", "StreamChat v\(Client.version)")
+            ClientLogger.logger("💬", "", "StreamChat v\(Environment.version)")
             ClientLogger.logger("🔑", "", apiKey)
             ClientLogger.logger("🔗", "", baseURL.description)
             
