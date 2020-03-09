@@ -28,7 +28,7 @@ final class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        versionLabel.text = "Demo Project\nStream Swift SDK v.\(Client.version)"
+        versionLabel.text = "Demo Project\nStream Swift SDK v.\(Environment.version)"
         
         let autoLogin = storedValue(key: .apiKey) != nil
         apiKeyLabel.text = storedValue(key: .apiKey, default: "qk4nn7rpcn75")
