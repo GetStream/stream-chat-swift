@@ -35,7 +35,7 @@ public enum Environment {
     }
     
     static var isAppStore: Bool {
-        !isSimulator && isAppStoreReceipt && !hasEmbeddedMobileProvision
+        !isSimulator && hasAppStoreReceipt && !hasEmbeddedMobileProvision
     }
     
     static var isSimulator: Bool {
@@ -46,7 +46,7 @@ public enum Environment {
         #endif
     }
     
-    private static var isAppStoreReceipt: Bool {
+    private static var hasAppStoreReceipt: Bool {
         if let appStoreReceipt = Bundle.main.appStoreReceiptURL {
             return appStoreReceipt.lastPathComponent != "sandboxReceipt"
         }
