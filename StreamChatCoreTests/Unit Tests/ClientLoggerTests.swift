@@ -45,7 +45,8 @@ class ClientLoggerTests: XCTestCase {
         
         let testMembers = Set([testUser.asMember])
         let testMessage = Message(id: "test", type: .reply, parentId: nil, created: Date(), updated: Date(), deleted: nil, text: "test", command: nil, args: nil, user: testUser, attachments: [], mentionedUsers: [], extraData: nil, latestReactions: [], ownReactions: [], reactionCounts: nil, replyCount: 0, showReplyInChannel: false)
-        
+        let testReaction = Reaction(type: .regular("angry", emoji: "😠"), messageId: testMessage.id)
+
         allEndpoints = [.guestToken(testUser),
                         .addDevice(deviceId: "test", testUser),
                         .devices(testUser),
@@ -74,8 +75,8 @@ class ClientLoggerTests: XCTestCase {
                         .inviteAnswer(.init(channel: testChannel, accept: nil, reject: nil, message: testMessage)),
                         .replies(testMessage, .none),
                         .deleteMessage(testMessage),
-                        .addReaction(.angry, testMessage),
-                        .deleteReaction(.angry, testMessage),
+                        .addReaction(testReaction),
+                        .deleteReaction(testReaction.type, testMessage),
                         .flagMessage(testMessage),
                         .unflagMessage(testMessage),
                         .users(.init(filter: testFilter)),

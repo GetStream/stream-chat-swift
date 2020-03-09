@@ -374,11 +374,15 @@ public extension Channel {
     /// Add a reaction to a message.
     ///
     /// - Parameters:
-    ///   - reaction: a reaction.
-    ///   - message: a message.
-    /// - Returns: an observable message response.
-    func addReaction(_ reaction: Reaction, to message: Message) -> Observable<MessageResponse> {
-        return message.addReaction(reaction)
+    ///   - reactionType: a reaction type.
+    ///   - score: a reaction score, e.g. `.cumulative` it could be more then 1.
+    ///   - extraData: a reaction extra data.
+    ///   - message: a message for the reacction.
+    func addReaction(reactionType: ReactionType,
+                     score: Int = 1,
+                     extraData: Codable? = nil,
+                     to message: Message) -> Observable<MessageResponse> {
+        return message.addReaction(reactionType: reactionType, score: score, extraData: extraData)
     }
     
     /// Delete a reaction to the message.
@@ -387,8 +391,8 @@ public extension Channel {
     ///     - reactionType: a reaction type, e.g. like.
     ///     - message: a message.
     /// - Returns: an observable message response.
-    func deleteReaction(_ reactionType: ReactionType, from message: Message) -> Observable<MessageResponse> {
-        return message.deleteReaction(reactionType)
+    func deleteReaction(reactionType: ReactionType, from message: Message) -> Observable<MessageResponse> {
+        return message.deleteReaction(reactionType: reactionType)
     }
     
     /// Send a request for reply messages.

@@ -39,15 +39,17 @@ public struct Reaction: Codable {
     /// Init a reaction.
     /// - Parameters:
     ///   - type: a reaction type.
+    ///   - score: a reaction score, e.g. `.cumulative` it could be more then 1.
     ///   - messageId: a message id.
-    ///   - user: a user owner of the reaction.
+    ///   - extraData: an extra data.
+    ///   - user: a user of the reaction.
     ///   - created: a created date.
     public init(type: ReactionType,
                 score: Int = 1,
                 messageId: String,
+                extraData: Codable? = nil,
                 user: User? = .current,
-                created: Date = Date(),
-                extraData: Codable? = nil) {
+                created: Date = Date()) {
         self.type = type
         self.score = score
         self.messageId = messageId
