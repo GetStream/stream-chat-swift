@@ -11,6 +11,7 @@ import StreamChatCore
 import RxSwift
 
 extension ChatViewController {
+    typealias CopyAction = () -> Void
     
     /// Show message actions when long press on a message cell.
     public struct MessageAction: OptionSet {
@@ -56,8 +57,6 @@ extension ChatViewController {
             return
         }
         
-        view.endEditing(true)
-        
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         if messageActions.contains(.reactions), presenter.channel.config.reactionsEnabled {
@@ -76,6 +75,10 @@ extension ChatViewController {
             alert.addAction(.init(title: "Edit", style: .default, handler: { [weak self] _ in
                 self?.edit(message: message)
             }))
+        }
+        
+        if messageActions.contains(.copy), let copyAction = copyAction(for: message) {
+            alert.addAction(.init(title: "Copy", style: .default, handler: { _ in copyAction() }))
         }
         
         if !message.user.isCurrent {
@@ -100,7 +103,7 @@ extension ChatViewController {
                             self?.unflag(message: message)
                         }))
                     } else {
-                        alert.addAction(.init(title: "Flag the message", style: .default, handler: { [weak self] _ in
+                        alert.addAction(.init(title: "Flag the message", style: .destructive, handler: { [weak self] _ in
                             self?.flag(message: message)
                         }))
                     }
@@ -113,7 +116,7 @@ extension ChatViewController {
                             self?.unflag(user: message.user)
                         }))
                     } else {
-                        alert.addAction(.init(title: "Flag the user", style: .default, handler: { [weak self] _ in
+                        alert.addAction(.init(title: "Flag the user", style: .destructive, handler: { [weak self] _ in
                             self?.flag(user: message.user)
                         }))
                     }
@@ -124,16 +127,12 @@ extension ChatViewController {
                 let channelPresenter = channelPresenter,
                 channelPresenter.channel.banEnabling.isEnabled(for: channelPresenter.channel),
                 !channelPresenter.channel.isBanned(message.user) {
-                alert.addAction(.init(title: "Ban", style: .default, handler: { [weak self] _ in
+                alert.addAction(.init(title: "Ban", style: .destructive, handler: { [weak self] _ in
                     if let channelPresenter = self?.channelPresenter {
                         self?.ban(user: message.user, channel: channelPresenter.channel)
                     }
                 }))
             }
-        }
-        
-        if messageActions.contains(.copy) {
-            addCopyAction(to: alert, message: message)
         }
         
         if messageActions.contains(.delete), message.canDelete {
@@ -159,6 +158,7 @@ extension ChatViewController {
                                                               height: 0)
         }
         
+        view.endEditing(true)
         present(alert, animated: true)
     }
     
@@ -177,7 +177,7 @@ extension ChatViewController {
         composerEditingContainerView.animate(show: true)
     }
     
-    private func addCopyAction(to alert: UIAlertController, message: Message) {
+    private func copyAction(for message: Message) -> CopyAction? {
         let copyText: String = message.text.trimmingCharacters(in: .whitespacesAndNewlines)
         var copyURL: URL?
         
@@ -186,14 +186,16 @@ extension ChatViewController {
         }
         
         if !copyText.isEmpty || copyURL != nil {
-            alert.addAction(.init(title: "Copy", style: .default, handler: { _ in
+            return {
                 if !copyText.isEmpty {
                     UIPasteboard.general.string = copyText
                 } else if let url = copyURL {
                     UIPasteboard.general.url = url
                 }
-            }))
+            }
         }
+        
+        return nil
     }
     
     private func conformDeleting(message: Message) {
@@ -295,5 +297,130 @@ extension ChatViewController {
                 }
             })
             .disposed(by: disposeBag)
+    }
+}
+
+// MARK: - Context Menu
+
+@available(iOS 13, *)
+extension ChatViewController {
+    public func tableView(_ tableView: UITableView,
+                          contextMenuConfigurationForRowAt indexPath: IndexPath,
+                          point: CGPoint) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            self?.createContextMenu(indexPath: indexPath, locationInView: point)
+        }
+    }
+    
+    private func createContextMenu(indexPath: IndexPath, locationInView: CGPoint) -> UIMenu? {
+        guard let cell = tableView.cellForRow(at: indexPath),
+            let presenter = channelPresenter,
+            let message = presenter.items[indexPath.row].message else {
+            return nil
+        }
+        
+        var actions = [UIAction]()
+        
+        if messageActions.contains(.reactions), presenter.channel.config.reactionsEnabled {
+            let cellLocation = tableView.convert(locationInView, to: cell)
+            
+            actions.append(UIAction(title: "Reactions", image: UIImage(systemName: "smiley")) { [weak self] _ in
+                self?.showReactions(from: cell, in: message, locationInView: cellLocation)
+            })
+        }
+        
+        if messageActions.contains(.reply), presenter.canReply {
+            actions.append(UIAction(title: "Reply", image: UIImage(systemName: "arrowshape.turn.up.left")) { [weak self] _ in
+                self?.showReplies(parentMessage: message)
+            })
+        }
+        
+        if messageActions.contains(.edit), message.canEdit {
+            actions.append(UIAction(title: "Edit", image: UIImage(systemName: "pencil")) { [weak self] _ in
+                self?.edit(message: message)
+            })
+        }
+        
+        if messageActions.contains(.copy), let copyAction = copyAction(for: message) {
+            actions.append(UIAction(title: "Copy", image: UIImage(systemName: "doc.on.doc")) { _ in copyAction() })
+        }
+        
+        if !message.user.isCurrent {
+            // Mute.
+            if messageActions.contains(.muteUser), presenter.channel.config.mutesEnabled {
+                if message.user.isMuted {
+                    actions.append(UIAction(title: "Unmute", image: UIImage(systemName: "speaker")) { [weak self] _ in
+                        self?.unmute(user: message.user)
+                    })
+                } else {
+                    actions.append(UIAction(title: "Mute", image: UIImage(systemName: "speaker.slash")) { [weak self] _ in
+                        self?.mute(user: message.user)
+                    })
+                }
+            }
+            
+            if presenter.channel.config.flagsEnabled {
+                // Flag a message.
+                if messageActions.contains(.flagMessage) {
+                    if message.isFlagged {
+                        actions.append(UIAction(title: "Unflag the message",
+                                                image: UIImage(systemName: "flag.slash")) { [weak self] _ in
+                            self?.unflag(message: message)
+                        })
+                    } else {
+                        actions.append(UIAction(title: "Flag the message",
+                                                image: UIImage(systemName: "flag"),
+                                                attributes: [.destructive]) { [weak self] _ in
+                            self?.flag(message: message)
+                        })
+                    }
+                }
+                
+                // Flag a user.
+                if messageActions.contains(.flagUser) {
+                    if message.user.isFlagged {
+                        actions.append(UIAction(title: "Unflag the user",
+                                                image: UIImage(systemName: "hand.raised.slash")) { [weak self] _ in
+                            self?.unflag(user: message.user)
+                        })
+                    } else {
+                        actions.append(UIAction(title: "Flag the user",
+                                                image: UIImage(systemName: "hand.raised"),
+                                                attributes: [.destructive]) { [weak self] _ in
+                            self?.flag(user: message.user)
+                        })
+                    }
+                }
+            }
+            
+            if messageActions.contains(.banUser),
+                let channelPresenter = channelPresenter,
+                channelPresenter.channel.banEnabling.isEnabled(for: channelPresenter.channel),
+                !channelPresenter.channel.isBanned(message.user) {
+                actions.append(UIAction(title: "Ban",
+                                        image: UIImage(systemName: "exclamationmark.octagon"),
+                                        attributes: [.destructive]) { [weak self] _ in
+                    if let channelPresenter = self?.channelPresenter {
+                        self?.ban(user: message.user, channel: channelPresenter.channel)
+                    }
+                })
+            }
+        }
+        
+        if messageActions.contains(.delete), message.canDelete {
+            actions.append(UIAction(title: "Delete",
+                                    image: UIImage(systemName: "trash"),
+                                    attributes: [.destructive]) { [weak self] _ in
+                self?.conformDeleting(message: message)
+            })
+        }
+        
+        if actions.isEmpty {
+            return nil
+        }
+        
+        view.endEditing(true)
+        
+        return UIMenu(title: "", children: actions)
     }
 }

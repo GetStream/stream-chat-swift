@@ -150,7 +150,7 @@ extension ChatViewController {
                 if let self = self, let cell = cell {
                     if let tapGesture = gesture as? UITapGestureRecognizer {
                         self.handleMessageCellTap(from: cell, in: message, tapGesture: tapGesture)
-                    } else {
+                    } else if #available(iOS 13, *) {} else {
                         self.showActions(from: cell, for: message, locationInView: gesture.location(in: cell))
                     }
                 }
