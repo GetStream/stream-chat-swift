@@ -24,27 +24,21 @@ public extension Message {
     
     /// Add a reaction to the message.
     ///
-    /// - Parameter reactionType: a reaction type, e.g. like.
-    /// - Returns: an observable message response.
-    
-    
-    /// Add a reaction to the message.
-    ///
     /// - Parameters:
-    ///   - reactionType: a reaction type.
+    ///   - type: a reaction type.
     ///   - score: a reaction score, e.g. `.cumulative` it could be more then 1.
     ///   - extraData: a reaction extra data.
-    func addReaction(reactionType: ReactionType, score: Int = 1, extraData: Codable? = nil) -> Observable<MessageResponse> {
-        let reaction = Reaction(type: reactionType, score: score, messageId: id, extraData: extraData)
+    func addReaction(type: ReactionType, score: Int = 1, extraData: Codable? = nil) -> Observable<MessageResponse> {
+        let reaction = Reaction(type: type, score: score, messageId: id, extraData: extraData)
         return Client.shared.rx.connectedRequest(endpoint: .addReaction(reaction))
     }
     
     /// Delete a reaction to the message.
     ///
-    /// - Parameter reactionType: a reaction type, e.g. like.
+    /// - Parameter type: a reaction type, e.g. like.
     /// - Returns: an observable message response.
-    func deleteReaction(reactionType: ReactionType) -> Observable<MessageResponse> {
-        return Client.shared.rx.connectedRequest(endpoint: .deleteReaction(reactionType, self))
+    func deleteReaction(type: ReactionType) -> Observable<MessageResponse> {
+        return Client.shared.rx.connectedRequest(endpoint: .deleteReaction(type, self))
     }
     
     /// Send a request for reply messages.

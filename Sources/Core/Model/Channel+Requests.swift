@@ -374,25 +374,25 @@ public extension Channel {
     /// Add a reaction to a message.
     ///
     /// - Parameters:
-    ///   - reactionType: a reaction type.
+    ///   - type: a reaction type.
     ///   - score: a reaction score, e.g. `.cumulative` it could be more then 1.
     ///   - extraData: a reaction extra data.
     ///   - message: a message for the reacction.
-    func addReaction(reactionType: ReactionType,
+    func addReaction(type: ReactionType,
                      score: Int = 1,
                      extraData: Codable? = nil,
                      to message: Message) -> Observable<MessageResponse> {
-        return message.addReaction(reactionType: reactionType, score: score, extraData: extraData)
+        return message.addReaction(type: type, score: score, extraData: extraData)
     }
     
     /// Delete a reaction to the message.
     ///
     /// - Parameters:
-    ///     - reactionType: a reaction type, e.g. like.
+    ///     - type: a reaction type, e.g. like.
     ///     - message: a message.
     /// - Returns: an observable message response.
-    func deleteReaction(reactionType: ReactionType, from message: Message) -> Observable<MessageResponse> {
-        return message.deleteReaction(reactionType: reactionType)
+    func deleteReaction(type: ReactionType, from message: Message) -> Observable<MessageResponse> {
+        return message.deleteReaction(type: type)
     }
     
     /// Send a request for reply messages.
