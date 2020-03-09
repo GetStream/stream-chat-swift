@@ -55,7 +55,7 @@ final class ReactionsView: UIView {
             let users = message.latestReactions.filter({ $0.type == reactionType }).compactMap({ $0.user })
             let reaction: Reaction
             
-            if let ownReaction = message.ownReactions.filter({ $0.type == reactionType }).first {
+            if let ownReaction = message.ownReactions.first(where: { $0.type == reactionType }) {
                 reaction = ownReaction
             } else {
                 reaction = Reaction(type: reactionType, score: 0, messageId: message.id)
@@ -153,12 +153,7 @@ final class ReactionsView: UIView {
         var reactionScore = reaction.score
         var wasSend = false
         
-        var tap = label.rx.tapGesture(configuration: { tap, delegate in
-            tap.numberOfTapsRequired = 1
-            tap.numberOfTouchesRequired = 1
-            tap.delaysTouchesBegan = false
-            tap.delaysTouchesEnded = false
-        })
+        var tap = label.rx.tapGesture()
             .when(.recognized)
             .do(onNext: { [weak label] _ in
                 reactionScore += 1
