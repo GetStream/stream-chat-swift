@@ -49,7 +49,7 @@ final class RootViewController: UIViewController {
             return
         }
         
-        versionLabel.text = "Demo Project\nStream Swift SDK v.\(Client.version)"
+        versionLabel.text = "Demo Project\nStream Swift SDK v.\(Environment.version)"
         
         totalUnreadCountSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in
