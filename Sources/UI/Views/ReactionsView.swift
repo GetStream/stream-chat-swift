@@ -21,7 +21,7 @@ final class ReactionsView: UIView {
     private lazy var avatarsStackView = createAvatarsStackView()
     private lazy var emojiesStackView = cerateEmojiesStackView()
     private lazy var labelsStackView = createLabelsStackView()
-    private var reactionCounts: [ReactionType: Int]?
+    private var reactionScores: [ReactionType: Int]?
     
     private(set) lazy var reactionsView: UIView = {
         let view = UIView(frame: .zero)
@@ -48,7 +48,7 @@ final class ReactionsView: UIView {
         let y = max(safeAreaTopOffset + .reactionsPickerAvatarRadius + .messageEdgePadding, point.y - .reactionsPickerCornerRadius)
         reactionsView.frame = CGRect(x: x, y: y, width: width, height: .reactionsPickerCornerHeight)
         reactionsView.transform = .init(scaleX: 0.5, y: 0.5)
-        reactionCounts = message.reactionCounts?.counts
+        reactionScores = message.reactionScores?.scores
         alpha = 0
         
         Client.shared.reactionTypes.forEach { reactionType in
@@ -63,7 +63,7 @@ final class ReactionsView: UIView {
             
             avatarsStackView.addArrangedSubview(createAvatarView(users))
             emojiesStackView.addArrangedSubview(createEmojiView(reaction: reaction, completion: completion))
-            labelsStackView.addArrangedSubview(createLabel(message.reactionCounts?.counts[reactionType] ?? 0))
+            labelsStackView.addArrangedSubview(createLabel(message.reactionScores?.scores[reactionType] ?? 0))
         }
         
         UIView.animateSmoothly(withDuration: 0.3, usingSpringWithDamping: 0.65) {
@@ -88,7 +88,7 @@ final class ReactionsView: UIView {
         Client.shared.reactionTypes.forEach { reactionType in
             let users = message.latestReactions.filter({ $0.type == reactionType }).compactMap({ $0.user })
             avatarsStackView.addArrangedSubview(createAvatarView(users))
-            labelsStackView.addArrangedSubview(createLabel(message.reactionCounts?.counts[reactionType] ?? 0))
+            labelsStackView.addArrangedSubview(createLabel(message.reactionScores?.scores[reactionType] ?? 0))
         }
     }
     
@@ -98,7 +98,7 @@ final class ReactionsView: UIView {
                 return
         }
         
-        let count = (reactionCounts?[reactionType] ?? 0) + increment
+        let count = (reactionScores?[reactionType] ?? 0) + increment
         label.text = count > 0 ? count.shortString() : nil // swiftlint:disable:this empty_count
         
         if increment > 0 {

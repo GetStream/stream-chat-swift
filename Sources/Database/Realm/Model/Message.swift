@@ -30,7 +30,7 @@ public final class Message: Object {
     let mentionedUsers = List<User>()
     let latestReactions = List<Reaction>()
     let ownReactions = List<Reaction>()
-    let reactionCounts = List<ReactionCounts>()
+    let reactionScores = List<ReactionCounts>()
     
     override public static func primaryKey() -> String? {
         return "id"
@@ -45,15 +45,17 @@ public final class Message: Object {
             return nil
         }
         
-        var messageReactionCounts = [StreamChatCore.ReactionType: Int]()
+        var messageReactionScores = [StreamChatCore.ReactionType: Int]()
         
-        reactionCounts.forEach { realmObject in
+        reactionScores.forEach { realmObject in
             if let type = StreamChatCore.ReactionType(named: realmObject.type) {
-                messageReactionCounts[type] = realmObject.count
+                messageReactionScores[type] = realmObject.count
             }
         }
         
-        let reactionCounts = messageReactionCounts.isEmpty ? nil : StreamChatCore.ReactionCounts(counts: messageReactionCounts)
+        let reactionScores = messageReactionScores.isEmpty
+            ? nil
+            : StreamChatCore.ReactionScores(scores: messageReactionScores)
         
         return StreamChatCore.Message(id: id,
                                       type: type,
@@ -70,7 +72,7 @@ public final class Message: Object {
                                       extraData: ExtraData.UserWrapper.decode(extraData),
                                       latestReactions: latestReactions.compactMap({ $0.asReaction }),
                                       ownReactions: ownReactions.compactMap({ $0.asReaction }),
-                                      reactionCounts: reactionCounts,
+                                      reactionScores: reactionScores,
                                       replyCount: replyCount,
                                       showReplyInChannel: showReplyInChannel)
     }
@@ -97,9 +99,9 @@ public final class Message: Object {
         latestReactions.append(objectsIn: message.latestReactions.map({ Reaction($0) }))
         ownReactions.append(objectsIn: message.ownReactions.map({ Reaction($0) }))
         
-        if let reactionCounts = message.reactionCounts?.counts {
-            let reactionCountReamObjects = reactionCounts.compactMap({ ReactionCounts(type: $0.key.name, count: $0.value) })
-            self.reactionCounts.append(objectsIn: reactionCountReamObjects)
+        if let reactionScores = message.reactionScores?.scores {
+            let reactionCountReamObjects = reactionScores.compactMap({ ReactionCounts(type: $0.key.name, count: $0.value) })
+            self.reactionScores.append(objectsIn: reactionCountReamObjects)
         }
     }
 }
