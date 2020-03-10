@@ -59,9 +59,6 @@
                 <a href="../../Classes/Client/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
-                <a href="../../Classes/Client/Method.html">– Method</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../../Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
@@ -133,6 +130,12 @@
                 <a href="../../Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../Enums/Endpoint/Method.html">– Method</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../Enums/Event.html">Event</a>
               </li>
               <li class="nav-group-task">
@@ -172,6 +175,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="../../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Extensions/Bundle.html">Bundle</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../Extensions/Data.html">Data</a>
@@ -325,6 +331,9 @@
                 <a href="../../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV17AttachmentWrapperC">– AttachmentWrapper</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV15ReactionWrapperC">– ReactionWrapper</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../Structs/FileUploadResponse.html">FileUploadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -370,7 +379,7 @@
                 <a href="../../Structs/Reaction.html">Reaction</a>
               </li>
               <li class="nav-group-task">
-                <a href="../../Structs/ReactionCounts.html">ReactionCounts</a>
+                <a href="../../Structs/ReactionScores.html">ReactionScores</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../Structs/SearchQuery.html">SearchQuery</a>
@@ -517,6 +526,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore6ClientC6ConfigV13reactionTypesSayAA12ReactionTypeOGvp"></a>
+                    <a name="//apple_ref/swift/Property/reactionTypes" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC6ConfigV13reactionTypesSayAA12ReactionTypeOGvp">reactionTypes</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A list of reaction types.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">reactionTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../../Enums/ReactionType.html">ReactionType</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore6ClientC6ConfigV25stayConnectedInBackgroundSbvp"></a>
                     <a name="//apple_ref/swift/Property/stayConnectedInBackground" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore6ClientC6ConfigV25stayConnectedInBackgroundSbvp">stayConnectedInBackground</a>
@@ -598,9 +634,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore6ClientC6ConfigV6apiKey7baseURL13callbackQueue25stayConnectedInBackground8database10logOptionsAESS_AA04BaseI0VSo17OS_dispatch_queueCSgSbAA8Database_pSgAA0D6LoggerC0R0Vtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:callbackQueue:stayConnectedInBackground:database:logOptions:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore6ClientC6ConfigV6apiKey7baseURL13callbackQueue25stayConnectedInBackground8database10logOptionsAESS_AA04BaseI0VSo17OS_dispatch_queueCSgSbAA8Database_pSgAA0D6LoggerC0R0Vtcfc">init(apiKey:baseURL:callbackQueue:stayConnectedInBackground:database:logOptions:)</a>
+                    <a name="/s:14StreamChatCore6ClientC6ConfigV6apiKey7baseURL13callbackQueue13reactionTypes25stayConnectedInBackground8database10logOptionsAESS_AA04BaseI0VSo17OS_dispatch_queueCSgSayAA12ReactionTypeOGSbAA8Database_pSgAA0D6LoggerC0T0Vtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:callbackQueue:reactionTypes:stayConnectedInBackground:database:logOptions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore6ClientC6ConfigV6apiKey7baseURL13callbackQueue13reactionTypes25stayConnectedInBackground8database10logOptionsAESS_AA04BaseI0VSo17OS_dispatch_queueCSgSayAA12ReactionTypeOGSbAA8Database_pSgAA0D6LoggerC0T0Vtcfc">init(apiKey:baseURL:callbackQueue:reactionTypes:stayConnectedInBackground:database:logOptions:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -618,6 +654,7 @@
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">apiKey</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">baseURL</span><span class="p">:</span> <span class="kt"><a href="../../Structs/BaseURL.html">BaseURL</a></span> <span class="o">=</span> <span class="kt"><a href="../../Structs/BaseURL.html">BaseURL</a></span><span class="p">(),</span>
             <span class="nv">callbackQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">reactionTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../../Enums/ReactionType.html">ReactionType</a></span><span class="p">]</span> <span class="o">=</span> <span class="kt"><a href="../../Enums/ReactionType.html">ReactionType</a></span><span class="o">.</span><span class="n">defaultTypes</span><span class="p">,</span>
             <span class="nv">stayConnectedInBackground</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nv">database</span><span class="p">:</span> <span class="kt"><a href="../../Protocols/Database.html">Database</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">logOptions</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
@@ -700,7 +737,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-02-14)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-03-10)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

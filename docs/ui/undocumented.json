@@ -129,7 +129,7 @@
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Cells/MessageTableViewCell+Updates.swift",
       "line": 91,
-      "symbol": "MessageTableViewCell.update(reactionCounts:action:)",
+      "symbol": "MessageTableViewCell.update(reactionScores:action:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
@@ -170,14 +170,14 @@
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController+Cells.swift",
-      "line": 161,
+      "line": 169,
       "symbol": "ChatViewController.handleMessageCellTap(from:in:tapGesture:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController+Cells.swift",
-      "line": 199,
+      "line": 207,
       "symbol": "ChatViewController.showReplies(parentMessage:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -282,8 +282,29 @@
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController+MessageActions.swift",
-      "line": 54,
-      "symbol": "ChatViewController.extensionShowActions(from:for:locationInView:)",
+      "line": 14,
+      "symbol": "ChatViewController.CopyAction",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController+MessageActions.swift",
+      "line": 55,
+      "symbol": "ChatViewController.defaultActionSheet(from:for:locationInView:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController+MessageActions.swift",
+      "line": 307,
+      "symbol": "ChatViewController.tableView(_:contextMenuConfigurationForRowAt:point:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController+MessageActions.swift",
+      "line": 326,
+      "symbol": "ChatViewController.defaultActionsContextMenu(from:for:locationInView:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
@@ -310,70 +331,70 @@
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 113,
+      "line": 123,
       "symbol": "ChatViewController.viewDidLoad()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 159,
+      "line": 169,
       "symbol": "ChatViewController.viewDidAppear(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 170,
+      "line": 180,
       "symbol": "ChatViewController.viewWillDisappear(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 175,
+      "line": 185,
       "symbol": "ChatViewController.preferredStatusBarStyle",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 179,
+      "line": 189,
       "symbol": "ChatViewController.willTransition(to:with:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 400,
+      "line": 426,
       "symbol": "ChatViewController.tableView(_:numberOfRowsInSection:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 404,
+      "line": 430,
       "symbol": "ChatViewController.tableView(_:cellForRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 434,
+      "line": 460,
       "symbol": "ChatViewController.tableView(_:willDisplay:forRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 451,
+      "line": 477,
       "symbol": "ChatViewController.tableView(_:didEndDisplaying:forRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/UI/Chat/Chat View Controller/ChatViewController.swift",
-      "line": 457,
+      "line": 483,
       "symbol": "ChatViewController.tableView(_:shouldHighlightRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

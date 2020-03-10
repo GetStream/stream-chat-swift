@@ -16,21 +16,21 @@
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client+Request.swift",
-      "line": 16,
+      "line": 14,
       "symbol": "Client.setupURLSession(token:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client+Request.swift",
-      "line": 25,
+      "line": 23,
       "symbol": "Client.authHeaders(token:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client+Request.swift",
-      "line": 59,
+      "line": 44,
       "symbol": "Client.checkLatestVersion()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -78,36 +78,8 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client.swift",
-      "line": 225,
-      "symbol": "Client.Method",
-      "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client.swift",
-      "line": 226,
-      "symbol": "Client.Method.get",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client.swift",
-      "line": 227,
-      "symbol": "Client.Method.post",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client.swift",
-      "line": 228,
-      "symbol": "Client.Method.delete",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/ClientError.swift",
-      "line": 121,
+      "line": 162,
       "symbol": "AnyError.localizedDescription",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
@@ -187,6 +159,34 @@
       "line": 332,
       "symbol": "Endpoint.isUploading",
       "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Endpoint.swift",
+      "line": 354,
+      "symbol": "Endpoint.Method",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Endpoint.swift",
+      "line": 355,
+      "symbol": "Endpoint.Method.get",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Endpoint.swift",
+      "line": 356,
+      "symbol": "Endpoint.Method.post",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Endpoint.swift",
+      "line": 357,
+      "symbol": "Endpoint.Method.delete",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
@@ -582,6 +582,13 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Extensions/Utils/Environment.swift",
+      "line": 12,
+      "symbol": "Environment",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Model/Attachment.swift",
       "line": 221,
       "symbol": "Attachment.ActionType.button",
@@ -968,7 +975,7 @@
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Model/ExtraData.swift",
-      "line": 60,
+      "line": 71,
       "symbol": "ExtraData.DecodableType.codableType()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -1026,6 +1033,20 @@
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Model/Member.swift",
       "line": 93,
       "symbol": "Member.Role.owner",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Model/ReactionType.swift",
+      "line": 22,
+      "symbol": "ReactionType.regular(_:emoji:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Model/ReactionType.swift",
+      "line": 23,
+      "symbol": "ReactionType.cumulative(_:maxCount:emoji:)",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },

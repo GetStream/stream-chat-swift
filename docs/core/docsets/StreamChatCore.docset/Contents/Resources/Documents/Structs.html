@@ -59,9 +59,6 @@
                 <a href="Classes/Client/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
-                <a href="Classes/Client/Method.html">– Method</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
@@ -133,6 +130,12 @@
                 <a href="Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
+                <a href="Enums/Endpoint/Method.html">– Method</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Enums/Event.html">Event</a>
               </li>
               <li class="nav-group-task">
@@ -172,6 +175,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/Bundle.html">Bundle</a>
               </li>
               <li class="nav-group-task">
                 <a href="Extensions/Data.html">Data</a>
@@ -325,6 +331,9 @@
                 <a href="Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV17AttachmentWrapperC">– AttachmentWrapper</a>
               </li>
               <li class="nav-group-task">
+                <a href="Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV15ReactionWrapperC">– ReactionWrapper</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="Structs/FileUploadResponse.html">FileUploadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -370,7 +379,7 @@
                 <a href="Structs/Reaction.html">Reaction</a>
               </li>
               <li class="nav-group-task">
-                <a href="Structs/ReactionCounts.html">ReactionCounts</a>
+                <a href="Structs/ReactionScores.html">ReactionScores</a>
               </li>
               <li class="nav-group-task">
                 <a href="Structs/SearchQuery.html">SearchQuery</a>
@@ -476,7 +485,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ClientErrorResponse</span> <span class="p">:</span> <span class="kt">LocalizedError</span><span class="p">,</span> <span class="kt">Decodable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ClientErrorResponse</span> <span class="p">:</span> <span class="kt">LocalizedError</span><span class="p">,</span> <span class="kt">Decodable</span><span class="p">,</span> <span class="kt">CustomDebugStringConvertible</span></code></pre>
 
                         </div>
                       </div>
@@ -504,7 +513,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">AnyError</span> <span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">Equatable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">AnyError</span> <span class="p">:</span> <span class="kt">Error</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">CustomDebugStringConvertible</span></code></pre>
 
                         </div>
                       </div>
@@ -1346,19 +1355,6 @@
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Reaction"></a>
-                <a name="//apple_ref/swift/Section/Reaction" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Reaction"></a>
-                  <h3 class="section-name"><p>Reaction</p>
-</h3>
-                </div>
-              </div>
-              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -1380,32 +1376,20 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Reaction</span> <span class="p">:</span> <span class="kt">Codable</span><span class="p">,</span> <span class="kt">Equatable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Reaction</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Reaction</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Reaction%20Counts"></a>
-                <a name="//apple_ref/swift/Section/Reaction Counts" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Reaction%20Counts"></a>
-                  <h3 class="section-name"><p>Reaction Counts</p>
-</h3>
-                </div>
-              </div>
-              <ul>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore14ReactionCountsV"></a>
-                    <a name="//apple_ref/swift/Struct/ReactionCounts" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore14ReactionCountsV">ReactionCounts</a>
+                    <a name="/s:14StreamChatCore14ReactionScoresV"></a>
+                    <a name="//apple_ref/swift/Struct/ReactionScores" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore14ReactionScoresV">ReactionScores</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1415,13 +1399,13 @@
                       <div class="abstract">
                         <p>A reaction counts.</p>
 
-                        <a href="Structs/ReactionCounts.html" class="slightly-smaller">See more</a>
+                        <a href="Structs/ReactionScores.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ReactionCounts</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ReactionScores</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
 
                         </div>
                       </div>
@@ -1708,7 +1692,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-02-14)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-03-10)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

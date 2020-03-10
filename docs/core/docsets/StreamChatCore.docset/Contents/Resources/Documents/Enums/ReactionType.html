@@ -59,9 +59,6 @@
                 <a href="../Classes/Client/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/Client/Method.html">– Method</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
@@ -133,6 +130,12 @@
                 <a href="../Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/Endpoint/Method.html">– Method</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/Event.html">Event</a>
               </li>
               <li class="nav-group-task">
@@ -172,6 +175,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Bundle.html">Bundle</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Data.html">Data</a>
@@ -325,6 +331,9 @@
                 <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV17AttachmentWrapperC">– AttachmentWrapper</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV15ReactionWrapperC">– ReactionWrapper</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/FileUploadResponse.html">FileUploadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -370,7 +379,7 @@
                 <a href="../Structs/Reaction.html">Reaction</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ReactionCounts.html">ReactionCounts</a>
+                <a href="../Structs/ReactionScores.html">ReactionScores</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SearchQuery.html">SearchQuery</a>
@@ -423,7 +432,8 @@
             <h1>ReactionType</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ReactionType</span> <span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="kt">Codable</span><span class="p">,</span> <span class="kt">Hashable</span><span class="p">,</span> <span class="kt">CaseIterable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ReactionType</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ReactionType</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 
                 </div>
               </div>
@@ -436,9 +446,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ReactionTypeO4likeyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/like" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO4likeyA2CmF">like</a>
+                    <a name="/s:14StreamChatCore12ReactionTypeO12defaultTypesSayACGvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/defaultTypes" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO12defaultTypesSayACGvpZ">defaultTypes</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -446,14 +456,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A like reaction 👍.</p>
+                        <p>A list of default reactions.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">like</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">defaultTypes</span><span class="p">:</span> <span class="p">[</span><span class="kt">ReactionType</span><span class="p">]</span></code></pre>
 
                         </div>
                       </div>
@@ -463,9 +473,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ReactionTypeO4loveyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/love" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO4loveyA2CmF">love</a>
+                    <a name="/s:14StreamChatCore12ReactionTypeO7regularyACSS_SStcACmF"></a>
+                    <a name="//apple_ref/swift/Element/regular(_:emoji:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO7regularyACSS_SStcACmF">regular(_:emoji:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -473,14 +483,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A love reaction ❤️.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">love</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">regular</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="nv">emoji</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -490,9 +500,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ReactionTypeO4hahayA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/haha" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO4hahayA2CmF">haha</a>
+                    <a name="/s:14StreamChatCore12ReactionTypeO10cumulativeyACSS_SiSStcACmF"></a>
+                    <a name="//apple_ref/swift/Element/cumulative(_:maxCount:emoji:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO10cumulativeyACSS_SiSStcACmF">cumulative(_:maxCount:emoji:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -500,14 +510,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A haha reaction 😂.</p>
+                        <p>Undocumented</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">haha</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">cumulative</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="nv">maxCount</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">emoji</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -517,9 +527,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore12ReactionTypeO3wowyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/wow" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO3wowyA2CmF">wow</a>
+                    <a name="/s:14StreamChatCore12ReactionTypeO4nameSSvp"></a>
+                    <a name="//apple_ref/swift/Property/name" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO4nameSSvp">name</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -527,94 +537,14 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A wow reaction 😲.</p>
+                        <p>An reaction type as emoji.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">wow</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore12ReactionTypeO3sadyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/sad" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO3sadyA2CmF">sad</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A sad reaction 😔.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">sad</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore12ReactionTypeO5angryyA2CmF"></a>
-                    <a name="//apple_ref/swift/Element/angry" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO5angryyA2CmF">angry</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A angry reaction 😠.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">angry</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:Se4fromxs7Decoder_p_tKcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(from:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:Se4fromxs7Decoder_p_tKcfc">init(from:)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">from</span> <span class="nv">decoder</span><span class="p">:</span> <span class="kt">Decoder</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -651,6 +581,60 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore12ReactionTypeO9isRegularSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isRegular" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO9isRegularSbvp">isRegular</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if the reaction type is regular.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isRegular</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ReactionTypeO8maxCountSivp"></a>
+                    <a name="//apple_ref/swift/Property/maxCount" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO8maxCountSivp">maxCount</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if the reaction type is regular.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">maxCount</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore12ReactionTypeO7emojiesSaySSGvpZ"></a>
                     <a name="//apple_ref/swift/Variable/emojies" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore12ReactionTypeO7emojiesSaySSGvpZ">emojies</a>
@@ -675,12 +659,175 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore12ReactionTypeO5namedACSgSS_tcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(named:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore12ReactionTypeO5namedACSgSS_tcfc">init(named:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Create a reaction type based on string type value.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">?(</span><span class="n">named</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>name</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>reaction type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:Se4fromxs7Decoder_p_tKcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:Se4fromxs7Decoder_p_tKcfc">init(from:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">from</span> <span class="nv">decoder</span><span class="p">:</span> <span class="kt">Decoder</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SE6encode2toys7Encoder_p_tKF"></a>
+                    <a name="//apple_ref/swift/Method/encode(to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SE6encode2toys7Encoder_p_tKF">encode(to:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">encode</span><span class="p">(</span><span class="n">to</span> <span class="nv">encoder</span><span class="p">:</span> <span class="kt">Encoder</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Hashable"></a>
+                <a name="//apple_ref/swift/Section/Hashable" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Hashable"></a>
+                  <h3 class="section-name"><p>Hashable</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SQ2eeoiySbx_xtFZ"></a>
+                    <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SQ2eeoiySbx_xtFZ">==(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">ReactionType</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">ReactionType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SH4hash4intoys6HasherVz_tF"></a>
+                    <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SH4hash4intoys6HasherVz_tF">hash(into:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-02-14)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-03-10)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

@@ -59,9 +59,6 @@
                 <a href="../Classes/Client/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/Client/Method.html">– Method</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
@@ -133,6 +130,12 @@
                 <a href="../Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/Endpoint/Method.html">– Method</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/Event.html">Event</a>
               </li>
               <li class="nav-group-task">
@@ -172,6 +175,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Bundle.html">Bundle</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Data.html">Data</a>
@@ -325,6 +331,9 @@
                 <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV17AttachmentWrapperC">– AttachmentWrapper</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV15ReactionWrapperC">– ReactionWrapper</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/FileUploadResponse.html">FileUploadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -370,7 +379,7 @@
                 <a href="../Structs/Reaction.html">Reaction</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ReactionCounts.html">ReactionCounts</a>
+                <a href="../Structs/ReactionScores.html">ReactionScores</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SearchQuery.html">SearchQuery</a>
@@ -463,6 +472,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore16ChannelPresenterC25ReactionExtraDataCallbacka"></a>
+                    <a name="//apple_ref/swift/Alias/ReactionExtraDataCallback" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC25ReactionExtraDataCallbacka">ReactionExtraDataCallback</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A callback type for the adding an extra data for a new reaction.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">ReactionExtraDataCallback</span> <span class="o">=</span> <span class="p">(</span><span class="n">_</span> <span class="nv">reactionType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">score</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="n">_</span> <span class="nv">messageId</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Codable</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore16ChannelPresenterC24messageExtraDataCallbackSe_SEpSgSS_SSSayAA10AttachmentVGSSSgtcSgvp"></a>
                     <a name="//apple_ref/swift/Property/messageExtraDataCallback" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC24messageExtraDataCallbackSe_SEpSgSS_SSSayAA10AttachmentVGSSSgtcSgvp">messageExtraDataCallback</a>
@@ -481,6 +517,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">messageExtraDataCallback</span><span class="p">:</span> <span class="kt"><a href="../Classes/ChannelPresenter.html#/s:14StreamChatCore16ChannelPresenterC24MessageExtraDataCallbacka">MessageExtraDataCallback</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore16ChannelPresenterC25reactionExtraDataCallbackSe_SEpSgAA12ReactionTypeO_SiSStcSgvp"></a>
+                    <a name="//apple_ref/swift/Property/reactionExtraDataCallback" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC25reactionExtraDataCallbackSe_SEpSgAA12ReactionTypeO_SiSStcSgvp">reactionExtraDataCallback</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A callback for the adding an extra data for a new message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">reactionExtraDataCallback</span><span class="p">:</span> <span class="kt"><a href="../Classes/ChannelPresenter.html#/s:14StreamChatCore16ChannelPresenterC25ReactionExtraDataCallbacka">ReactionExtraDataCallback</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -1522,7 +1585,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-02-14)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-03-10)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

@@ -59,9 +59,6 @@
                 <a href="../Classes/Client/Config.html">– Config</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Classes/Client/Method.html">– Method</a>
-              </li>
-              <li class="nav-group-task">
                 <a href="../Classes/ClientLogger.html">ClientLogger</a>
               </li>
               <li class="nav-group-task">
@@ -133,6 +130,12 @@
                 <a href="../Enums/Endpoint.html">Endpoint</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/Endpoint/Method.html">– Method</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/Event.html">Event</a>
               </li>
               <li class="nav-group-task">
@@ -172,6 +175,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a href="../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Bundle.html">Bundle</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/Data.html">Data</a>
@@ -325,6 +331,9 @@
                 <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV17AttachmentWrapperC">– AttachmentWrapper</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV15ReactionWrapperC">– ReactionWrapper</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/FileUploadResponse.html">FileUploadResponse</a>
               </li>
               <li class="nav-group-task">
@@ -370,7 +379,7 @@
                 <a href="../Structs/Reaction.html">Reaction</a>
               </li>
               <li class="nav-group-task">
-                <a href="../Structs/ReactionCounts.html">ReactionCounts</a>
+                <a href="../Structs/ReactionScores.html">ReactionScores</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/SearchQuery.html">SearchQuery</a>
@@ -3217,9 +3226,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore7ChannelC11addReaction_2to7RxSwift10ObservableCyAA15MessageResponseVGAA0F4TypeO_AA0K0VtF"></a>
-                    <a name="//apple_ref/swift/Method/addReaction(_:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore7ChannelC11addReaction_2to7RxSwift10ObservableCyAA15MessageResponseVGAA0F4TypeO_AA0K0VtF">addReaction(_:to:)</a>
+                    <a name="/s:14StreamChatCore7ChannelC11addReaction4type5score9extraData2to7RxSwift10ObservableCyAA15MessageResponseVGAA0F4TypeO_SiSe_SEpSgAA0O0VtF"></a>
+                    <a name="//apple_ref/swift/Method/addReaction(type:score:extraData:to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC11addReaction4type5score9extraData2to7RxSwift10ObservableCyAA15MessageResponseVGAA0F4TypeO_SiSe_SEpSgAA0O0VtF">addReaction(type:score:extraData:to:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3234,7 +3243,10 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addReaction</span><span class="p">(</span><span class="n">_</span> <span class="nv">reactionType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">,</span> <span class="n">to</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addReaction</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">,</span>
+                 <span class="nv">score</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                 <span class="nv">extraData</span><span class="p">:</span> <span class="kt">Codable</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                 <span class="n">to</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -3245,12 +3257,36 @@
                             <tr>
                               <td>
                                 <code>
-                                <em>reactionType</em>
+                                <em>type</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>a reaction type, e.g. like.</p>
+                                  <p>a reaction type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>score</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction score, e.g. <code>.cumulative</code> it could be more then 1.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>extraData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction extra data.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3262,16 +3298,12 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a message.</p>
+                                  <p>a message for the reacction.</p>
                                 </div>
                               </td>
                             </tr>
                           </tbody>
                         </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>an observable message response.</p>
                       </div>
                     </section>
                   </div>
@@ -3279,9 +3311,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore7ChannelC14deleteReaction_4from7RxSwift10ObservableCyAA15MessageResponseVGAA0F4TypeO_AA0K0VtF"></a>
-                    <a name="//apple_ref/swift/Method/deleteReaction(_:from:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore7ChannelC14deleteReaction_4from7RxSwift10ObservableCyAA15MessageResponseVGAA0F4TypeO_AA0K0VtF">deleteReaction(_:from:)</a>
+                    <a name="/s:14StreamChatCore7ChannelC14deleteReaction4type4from7RxSwift10ObservableCyAA15MessageResponseVGAA0F4TypeO_AA0L0VtF"></a>
+                    <a name="//apple_ref/swift/Method/deleteReaction(type:from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7ChannelC14deleteReaction4type4from7RxSwift10ObservableCyAA15MessageResponseVGAA0F4TypeO_AA0L0VtF">deleteReaction(type:from:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3296,7 +3328,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">deleteReaction</span><span class="p">(</span><span class="n">_</span> <span class="nv">reactionType</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">,</span> <span class="n">from</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">deleteReaction</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">,</span> <span class="n">from</span> <span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -3307,7 +3339,7 @@
                             <tr>
                               <td>
                                 <code>
-                                <em>reactionType</em>
+                                <em>type</em>
                                 </code>
                               </td>
                               <td>
@@ -3666,7 +3698,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-02-14)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-03-10)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

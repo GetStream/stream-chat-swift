@@ -29,6 +29,13 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client+Request.swift",
+      "line": 59,
+      "symbol": "Client.checkLatestVersion()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client+Requests.swift",
       "line": 136,
       "symbol": "Client.flagUnflag(endpoint:aleradyFlagged:)",
@@ -72,28 +79,28 @@
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client.swift",
-      "line": 221,
+      "line": 225,
       "symbol": "Client.Method",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client.swift",
-      "line": 222,
+      "line": 226,
       "symbol": "Client.Method.get",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client.swift",
-      "line": 223,
+      "line": 227,
       "symbol": "Client.Method.post",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/Client.swift",
-      "line": 224,
+      "line": 228,
       "symbol": "Client.Method.delete",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
@@ -275,7 +282,7 @@
     },
     {
       "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Core/Client/WebSocket/WebSocket.swift",
-      "line": 175,
+      "line": 176,
       "symbol": "WebSocket.parseConnection(appState:isInternetAvailable:event:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

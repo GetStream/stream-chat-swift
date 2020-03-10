@@ -6,9 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+
+### ✅ Added
+
+
+### 🐞 Fixed
+
+
+# [1.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/1.6.0)
+_March 10, 2020_
+
 ### ⚠️ Breaking Changes
 - Removed hard-coded reactions. [#113](https://github.com/GetStream/stream-chat-swift/issues/113)
-- Reaction API changed: addReaction required a reaction object instance of reaction type. [#113](https://github.com/GetStream/stream-chat-swift/issues/113)
+- Reaction API changed: addReaction requires a reaction object instance of reaction type. [#113](https://github.com/GetStream/stream-chat-swift/issues/113)
 
 ### ✅ Added
 - Custom reactions. [#113](https://github.com/GetStream/stream-chat-swift/issues/113)
