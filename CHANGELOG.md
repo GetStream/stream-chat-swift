@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom reactions. [#113](https://github.com//issues/113)
 - A new [cumulative reaction type](https://getstream.io/chat/docs/send_reaction/?language=js#cumulative-clap-reactions) (like claps in Medium). [#113](https://github.com//issues/113)
 - Custom fields for reactions. [#113](https://github.com//issues/113)
+- Message actions with a context menu from iOS 13.
 
 ### 🐞 Fixed
 - Error description of failed request is now human-readable [#104](https://github.com/GetStream/stream-chat-swift/issues/104)
