@@ -145,12 +145,20 @@ extension ChatViewController {
             cell.updateAdditionalLabelViewConstraints(relatedTo: lastVisibleView)
         }
         
-        cell.messageStackView.rx.anyGesture([TapControlEvent.default, LongPressControlEvent.default])
+        let cellGestures: [GestureFactory]
+        
+        if #available(iOS 13, *), useContextMenuForActions {
+            cellGestures = [TapControlEvent.default]
+        } else {
+            cellGestures = [TapControlEvent.default, LongPressControlEvent.default]
+        }
+        
+        cell.messageStackView.rx.anyGesture(cellGestures)
             .subscribe(onNext: { [weak self, weak cell] gesture in
                 if let self = self, let cell = cell {
                     if let tapGesture = gesture as? UITapGestureRecognizer {
                         self.handleMessageCellTap(from: cell, in: message, tapGesture: tapGesture)
-                    } else if #available(iOS 13, *) {} else {
+                    } else {
                         self.showActions(from: cell, for: message, locationInView: gesture.location(in: cell))
                     }
                 }

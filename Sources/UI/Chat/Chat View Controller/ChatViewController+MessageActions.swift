@@ -52,9 +52,9 @@ extension ChatViewController {
         }
     }
     
-    func extensionShowActions(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) {
+    public func defaultActionSheet(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) -> UIAlertController? {
         guard let presenter = channelPresenter else {
-            return
+            return nil
         }
         
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -142,7 +142,7 @@ extension ChatViewController {
         }
         
         if alert.actions.isEmpty {
-            return
+            return nil
         }
         
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
@@ -158,8 +158,7 @@ extension ChatViewController {
                                                               height: 0)
         }
         
-        view.endEditing(true)
-        present(alert, animated: true)
+        return alert
     }
     
     private func edit(message: Message) {
@@ -304,28 +303,36 @@ extension ChatViewController {
 
 @available(iOS 13, *)
 extension ChatViewController {
+    
     public func tableView(_ tableView: UITableView,
                           contextMenuConfigurationForRowAt indexPath: IndexPath,
                           point: CGPoint) -> UIContextMenuConfiguration? {
-        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-            self?.createContextMenu(indexPath: indexPath, locationInView: point)
+        guard useContextMenuForActions else {
+            return nil
+        }
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            guard let self = self,
+                let cell = tableView.cellForRow(at: indexPath),
+                let message = self.channelPresenter?.items[indexPath.row].message else {
+                return nil
+            }
+            
+            let locationInView = tableView.convert(point, to: cell)
+            return self.createActionsContextMenu(from: cell, for: message, locationInView: locationInView)
         }
     }
     
-    private func createContextMenu(indexPath: IndexPath, locationInView: CGPoint) -> UIMenu? {
-        guard let cell = tableView.cellForRow(at: indexPath),
-            let presenter = channelPresenter,
-            let message = presenter.items[indexPath.row].message else {
+    public func defaultActionsContextMenu(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) -> UIMenu? {
+        guard let presenter = channelPresenter else {
             return nil
         }
         
         var actions = [UIAction]()
         
         if messageActions.contains(.reactions), presenter.channel.config.reactionsEnabled {
-            let cellLocation = tableView.convert(locationInView, to: cell)
-            
             actions.append(UIAction(title: "Reactions", image: UIImage(systemName: "smiley")) { [weak self] _ in
-                self?.showReactions(from: cell, in: message, locationInView: cellLocation)
+                self?.showReactions(from: cell, in: message, locationInView: locationInView)
             })
         }
         
