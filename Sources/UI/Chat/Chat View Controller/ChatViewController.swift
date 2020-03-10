@@ -31,6 +31,16 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         return .all
     }
     
+    /// Message actions (see `MessageAction`).
+    @available(iOS 13, *)
+    public lazy var useContextMenuForActions = defaultUseContextMenuForActions
+    
+    /// A default message actions. This is useful for subclasses.
+    @available(iOS 13, *)
+    open var defaultUseContextMenuForActions: Bool {
+        return true
+    }
+    
     /// A dispose bag for rx subscriptions.
     public let disposeBag = DisposeBag()
     /// A list of table view items, e.g. messages.
@@ -266,7 +276,23 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     ///   - message: a message.
     ///   - locationInView: a tap location in the cell.
     open func showActions(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) {
-        extensionShowActions(from: cell, for: message, locationInView: locationInView)
+        guard let alert = defaultActionSheet(from: cell, for: message, locationInView: locationInView) else {
+            return
+        }
+        
+        view.endEditing(true)
+        present(alert, animated: true)
+    }
+    
+    /// Creates message actions context menu when long press on a message cell.
+    /// - Note: You can disable context menu with `useContextMenuForActions` or override `defaultUseContextMenuForActions`.
+    /// - Parameters:
+    ///   - cell: a message cell.
+    ///   - message: a message.
+    ///   - locationInView: a tap location in the cell.
+    @available(iOS 13, *)
+    open func createActionsContextMenu(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) -> UIMenu? {
+        defaultActionsContextMenu(from: cell, for: message, locationInView: locationInView)
     }
     
     private func markReadIfPossible() {
