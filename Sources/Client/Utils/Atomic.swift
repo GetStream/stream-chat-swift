@@ -110,6 +110,7 @@ public extension Atomic {
 
 public extension Atomic where T: Collection {
     /// Get a value by key.
+    // swiftlint:disable:next syntactic_sugar
     subscript<Key: Hashable, Value>(key: Key) -> Value? where T == Dictionary<Key, Value> {
         var currentValue: Value?
         queue.sync { [weak self] in currentValue = self?.value?[key] }

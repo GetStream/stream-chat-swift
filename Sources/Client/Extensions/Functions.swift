@@ -40,7 +40,7 @@ public func doAfter<T, E: Error>(_ completion: @escaping ResultCompletion<T, E>,
 public func `do`<T, E: Error>(for completion: @escaping ResultCompletion<T, E>,
                               doBefore: @escaping (T) -> Void = { _ in },
                               doAfter: @escaping (T) -> Void = { _ in }) -> ResultCompletion<T, E> {
-    { result in
+    return { result in
         guard let value = try? result.get() else {
             completion(result)
             return

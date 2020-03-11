@@ -18,9 +18,14 @@ public final class ChannelPresenter: Presenter {
     /// A callback type for the adding an extra data for a new message.
     public typealias MessageExtraDataCallback =
         (_ id: String, _ text: String, _ attachments: [Attachment], _ parentId: String?) -> Codable?
+    /// A callback type for the adding an extra data for a new reaction.
+    public typealias ReactionExtraDataCallback =
+        (_ reactionType: ReactionType, _ score: Int, _ messageId: String) -> Codable?
     
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
+    /// A callback for the adding an extra data for a new message.
+    public var reactionExtraDataCallback: ReactionExtraDataCallback?
     
     let channelType: ChannelType
     let channelId: String
@@ -141,7 +146,7 @@ extension ChannelPresenter {
         let messageId = editMessage?.id ?? ""
         var attachments = uploader.items.compactMap({ $0.attachment })
         let parentId = parentMessage?.id
-        var extraData: Codable? = nil
+        var extraData: Codable?
         
         if attachments.isEmpty, let editMessage = editMessage, !editMessage.attachments.isEmpty {
             attachments = editMessage.attachments

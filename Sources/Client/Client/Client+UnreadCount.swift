@@ -8,23 +8,23 @@
 
 import Foundation
 
-/// `The current user Unread Count`
-///
-/// To get global user unread count:
-///   1. Get the latest values from me on connect.
-///   2. Listing notifications for new values:
-///     - messageNew and notificationMessageNew
-///     - notificationMarkRead
-///     - notificationAddedToChannel
-///     - notificationMarkAllRead: 0 values
-///
-/// `A channel Unread Count`
-///
-/// The channel should be watched.
-///   1. Make a query with watch for messages and read state.
-///     - calculate the current values
-///   2. +1 for messageNew event
-///   3. set to 0 for notificationMarkRead or notificationMarkAllRead
+// `The current user Unread Count`
+//
+// To get global user unread count:
+//   1. Get the latest values from me on connect.
+//   2. Listing notifications for new values:
+//     - messageNew and notificationMessageNew
+//     - notificationMarkRead
+//     - notificationAddedToChannel
+//     - notificationMarkAllRead: 0 values
+//
+// `A channel Unread Count`
+//
+// The channel should be watched.
+//   1. Make a query with watch for messages and read state.
+//     - calculate the current values
+//   2. +1 for messageNew event
+//   3. set to 0 for notificationMarkRead or notificationMarkAllRead
 
 // MARK: User Unread Count
 

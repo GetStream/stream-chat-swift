@@ -123,9 +123,9 @@ extension ChatViewController {
             .unwrap()
             .do(onNext: { [weak self] in self?.dispatchCommands(in: $0) })
             .filter { [weak self] in !$0.isBlank && (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
-            .flatMapLatest { [weak self] text in self?.channelPresenter?.rx.sendEvent(isTyping: true) ?? .empty() }
+            .flatMapLatest { [weak self] _ in self?.channelPresenter?.rx.sendEvent(isTyping: true) ?? .empty() }
             .debounce(.seconds(3), scheduler: MainScheduler.instance)
-            .flatMapLatest { [weak self] text in self?.channelPresenter?.rx.sendEvent(isTyping: false) ?? .empty() }
+            .flatMapLatest { [weak self] _ in self?.channelPresenter?.rx.sendEvent(isTyping: false) ?? .empty() }
             .subscribe()
             .disposed(by: disposeBag)
         
@@ -510,4 +510,4 @@ extension ChatViewController {
             .subscribe()
             .disposed(by: disposeBag)
     }
-}
+} // swiftlint:disable:this file_length

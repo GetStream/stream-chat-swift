@@ -41,7 +41,7 @@ public final class Client {
     
     /// A list of reaction types.
     public let reactionTypes: [ReactionType]
-
+    
     /// A database for an offline mode.
     public internal(set) var database: Database?
     
@@ -71,7 +71,7 @@ public final class Client {
     }
     
     lazy var urlSession = URLSession(configuration: .default)
-    lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate()
+    lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
     private let uuid = UUID()
     
@@ -116,7 +116,7 @@ public final class Client {
          database: Database? = Client.config.database,
          logOptions: ClientLogger.Options = Client.config.logOptions) {
         if !apiKey.isEmpty, logOptions.isEnabled {
-            ClientLogger.logger("💬", "", "StreamChat v\(Environment.version)")
+            ClientLogger.logger("💬", "", "Stream Chat v.\(Environment.version)")
             ClientLogger.logger("🔑", "", apiKey)
             ClientLogger.logger("🔗", "", baseURL.description)
             
@@ -128,7 +128,6 @@ public final class Client {
         self.apiKey = apiKey
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue ?? .global(qos: .userInitiated)
-        self.callbackQueue = callbackQueue
         self.reactionTypes = reactionTypes
         self.stayConnectedInBackground = stayConnectedInBackground
         self.database = database
@@ -207,6 +206,31 @@ public final class Client {
             connect()
         } else if appState == .background, webSocket.isConnected {
             webSocket.disconnectInBackground()
+        }
+    }
+}
+
+// MARK: - Waiting Request
+
+extension Client {
+    final class WaitingRequest {
+        typealias Request = () -> URLSessionTask // swiftlint:disable:this nesting
+        
+        var urlSessionTask: URLSessionTask?
+        let request: Request
+        
+        init(request: @escaping Request) {
+            self.request = request
+        }
+        
+        func perform() {
+            if urlSessionTask == nil {
+                urlSessionTask = request()
+            }
+        }
+        
+        func cancel() {
+            urlSessionTask?.cancel()
         }
     }
 }

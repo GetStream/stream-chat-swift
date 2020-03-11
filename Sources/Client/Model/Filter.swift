@@ -268,7 +268,7 @@ public extension Filter.Key {
     }
 }
 
-/// MARK: - Current User
+// MARK: - Current User
 
 extension Filter {
     public static var currentUserInMembers: Filter {
