@@ -122,12 +122,12 @@ final class DarkChannelsViewController: ChannelsViewController {
         return cell
     }
     
-    override func createChatViewController(with channelPresenter: ChannelPresenter, indexPath: IndexPath) -> ChatViewController {
+    override func createChatViewController(with channelPresenter: ChannelPresenter) -> ChatViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
         guard let chatViewController = storyboard.instantiateViewController(withIdentifier: "CustomChatViewController") as? CustomChatViewController else {
             print("❌ Can't find CustomChatViewController in Main.storyboard")
-            return super.createChatViewController(with: channelPresenter, indexPath: indexPath)
+            return super.createChatViewController(with: channelPresenter)
         }
         
         chatViewController.style = style

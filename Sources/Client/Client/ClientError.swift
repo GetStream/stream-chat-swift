@@ -46,7 +46,6 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     case errorMessage(Message)
     /// A device token is empty.
     case emptyDeviceToken
-    
     case channelsSearchQueryEmpty
     case channelsSearchFilterEmpty
     
@@ -76,10 +75,16 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             return "A Client Token is empty"
         case .tokenInvalid(let description):
             return "Token is invalid: \(description)"
+        case .expiredToken:
+            return "The token was expired"
         case .emptyUser:
             return "The current Client user is empty"
         case .emptyConnectionId:
             return "A Web Socket connection id is empty. Authorization missed"
+        case .emptyChannelId:
+            return "A channel id is empty"
+        case .emptyMessageId:
+            return "A message id is empty"
         case .emptyBody(let description):
             return "A request or response body data is empty: \(description)"
         case .invalidURL(let url):

@@ -30,21 +30,23 @@ public extension Message {
     
     /// Add a reaction to the message.
     /// - Parameters:
-    ///   - reactionType: a reaction type, e.g. like.
+    ///   - type: a reaction type, e.g. like.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func addReaction(_ reactionType: ReactionType, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        Client.shared.addReaction(to: self, reactionType: reactionType, completion)
+    func addReaction(type: ReactionType,
+                     score: Int,
+                     extraData: Codable?,
+                     _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+        Client.shared.addReaction(type: type, score: score, extraData: extraData, to: self, completion)
     }
     
     /// Delete a reaction to the message.
     /// - Parameters:
-    ///   - reactionType: a reaction type, e.g. like.
+    ///   - type: a reaction type, e.g. like.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func deleteReaction(_ reactionType: ReactionType,
-                        _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        Client.shared.deleteReaction(from: self, reactionType: reactionType, completion)
+    func deleteReaction(type: ReactionType, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+        Client.shared.deleteReaction(type: type, from: self, completion)
     }
     
     // MARK: Flag Message

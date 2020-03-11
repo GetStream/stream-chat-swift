@@ -85,7 +85,8 @@ extension Reactive where Base == Client {
             Observable<StreamChatClient.Event>.create({ observer in
                 base.onEvent = { observer.onNext($0) }
                 return Disposables.create()
-            }).share()
+            })
+                .share()
         }
     }
     

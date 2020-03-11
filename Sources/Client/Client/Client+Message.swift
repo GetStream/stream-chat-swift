@@ -55,26 +55,31 @@ public extension Client {
     
     /// Add a reaction to the message.
     /// - Parameters:
+    ///   - type: a reaction type, e.g. like.
+    ///   - score: a score.
+    ///   - extraData: an extra data for the reaction.
     ///   - message: a message.
-    ///   - reactionType: a reaction type, e.g. like.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func addReaction(to message: Message,
-                     reactionType: ReactionType,
+    func addReaction(type: ReactionType,
+                     score: Int = 1,
+                     extraData: Codable? = nil,
+                     to message: Message,
                      _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        request(endpoint: .addReaction(reactionType, message), completion)
+        let reaction = Reaction(type: type, score: score, messageId: message.id, extraData: extraData)
+        return request(endpoint: .addReaction(reaction), completion)
     }
     
     /// Delete a reaction to the message.
     /// - Parameters:
+    ///   - type: a reaction type, e.g. like.
     ///   - message: a message.
-    ///   - reactionType: a reaction type, e.g. like.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func deleteReaction(from message: Message,
-                        reactionType: ReactionType,
+    func deleteReaction(type: ReactionType,
+                        from message: Message,
                         _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
-        request(endpoint: .deleteReaction(reactionType, message), completion)
+        request(endpoint: .deleteReaction(type, message), completion)
     }
     
     // MARK: Flag Message
@@ -128,8 +133,8 @@ public extension Client {
     }
     
     private func toggleFlagMessage(_ message: Message,
-                                    endpoint: Endpoint,
-                                    _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+                                   endpoint: Endpoint,
+                                   _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
         request(endpoint: endpoint) { (result: Result<FlagMessageResponse, ClientError>) in
             let result = result.catchError { error in
                 if case .responseError(let clientResponseError) = error,

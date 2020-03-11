@@ -24,9 +24,6 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     public lazy var messageActions = defaultMessageActions
     /// A default message actions. This is useful for subclasses.
     open var defaultMessageActions: MessageAction { .all }
-    open var defaultMessageActions: MessageAction {
-        return .all
-    }
     
     /// Message actions (see `MessageAction`).
     @available(iOS 13, *)
@@ -173,7 +170,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         stopGifsAnimations()
     }
     
-    open override var preferredStatusBarStyle: UIStatusBarStyle {
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
         style.incomingMessage.textColor.isDark ? .default : .lightContent
     }
     

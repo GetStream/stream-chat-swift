@@ -80,12 +80,9 @@ public struct Message: Codable {
     /// Check if the message could be deleted.
     public var canDelete: Bool { isOwn }
     /// Check if the message has reactions.
-    public var hasReactions: Bool { reactionCounts != nil && !(reactionCounts?.counts.isEmpty ?? true) }
+    public var hasReactions: Bool { reactionScores != nil && !(reactionScores?.scores.isEmpty ?? true) }
     /// Checks if the message is flagged (locally).
     public var isFlagged: Bool { Message.flaggedIds.contains(id) }
-    public var hasReactions: Bool {
-        return reactionScores != nil && !(reactionScores?.scores.isEmpty ?? true)
-    }
     
     /// A combination of message text and command args.
     /// 1. if the text is not empty and it's not equal to the single attachment URL, then it will return empty string.

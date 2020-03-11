@@ -514,4 +514,4 @@ extension ChatViewController {
             .subscribe()
             .disposed(by: disposeBag)
     }
-}
+} // swiftlint:disable:this file_length

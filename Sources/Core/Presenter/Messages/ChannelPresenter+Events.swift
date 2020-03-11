@@ -99,9 +99,9 @@ extension ChannelPresenter {
                 
                 if reaction.isOwn, let currentMessage = items[index].message {
                     if case .reactionDeleted = event {
-                        message.deleteFromOwnReactions(reaction, reactions: currentMessage.ownReactions)
+                        message.delete(reaction: reaction, fromOwnReactions: currentMessage.ownReactions)
                     } else {
-                        message.addToOwnReactions(reaction, reactions: currentMessage.ownReactions)
+                        message.addOrUpdate(reaction: reaction, toOwnReactions: currentMessage.ownReactions)
                     }
                 }
                 
