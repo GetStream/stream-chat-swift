@@ -53,7 +53,8 @@ public extension Result where Success: Decodable, Failure == ClientError {
             return .success(map(value))
         }
         
-        return .failure(error ?? .unexpectedError(nil, error))
+        return .failure(error ?? .unexpectedError(description: error?.localizedDescription ?? #function,
+                                                  error: error))
     }
     
     /// Catches an error in the result and send it to the error handler to map it to a success result.
@@ -80,7 +81,8 @@ public extension Result where Success: Collection, Failure == ClientError {
             return .failure(notFoundError)
         }
         
-        return .failure(error ?? .unexpectedError(nil, error))
+        return .failure(error
+            ?? .unexpectedError(description: error?.localizedDescription ?? #function, error: error))
     }
     
     /// Returns an array containing the non-nil results of calling the given transformation with each element of this sequence.
@@ -96,7 +98,8 @@ public extension Result where Success: Collection, Failure == ClientError {
             return .success((try? values.compactMap(transform)) ?? [])
         }
         
-        return .failure(error ?? .unexpectedError(nil, error))
+        return .failure(error ?? .unexpectedError(description: error?.localizedDescription ?? #function,
+                                                  error: error))
     }
     
     /// Calls the given closure on each element in the sequence in the same order as a for-in loop.

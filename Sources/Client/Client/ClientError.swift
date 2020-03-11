@@ -113,12 +113,18 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             return "ClientError.emptyAPIKey"
         case .emptyToken:
             return "ClientError.emptyToken"
+        case .expiredToken:
+            return "ClientError.expiredToken"
         case .tokenInvalid(let description):
             return "ClientError.tokenInvalid(\(description))"
         case .emptyUser:
             return "ClientError.emptyUser"
         case .emptyConnectionId:
             return "ClientError.emptyConnectionId"
+        case .emptyChannelId:
+            return "ClientError.emptyChannelId"
+        case .emptyMessageId:
+            return "ClientError.emptyMessageId"
         case .emptyBody(let description):
             return "ClientError.emptyBody(\(description))"
         case .invalidURL(let url):
@@ -135,6 +141,12 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             return "ClientError.decodingFailure(\(error))"
         case .errorMessage(let message):
             return "ClientError.errorMessage(\(message.text))"
+        case .emptyDeviceToken:
+            return "ClientError.emptyDeviceToken"
+        case .channelsSearchQueryEmpty:
+            return "ClientError.channelsSearchQueryEmpty"
+        case .channelsSearchFilterEmpty:
+            return "ClientError.channelsSearchFilterEmpty"
         }
     }
 }
