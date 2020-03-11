@@ -69,5 +69,6 @@ final class AttachmentFilePreview: UIImageView, AttachmentPreviewProtocol {
         titleLabel.text = attachment.title
         sizeLabel.text = file.sizeString
         image = maskImage
+        completion(self, nil)
     }
 }
