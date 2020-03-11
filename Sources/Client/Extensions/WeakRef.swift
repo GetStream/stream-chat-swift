@@ -21,7 +21,7 @@ extension Atomic where T: Collection {
     /// Append weak reference to the item.
     /// - Parameter newElement: a new weak reference element.
     func add<Key: Hashable, C: Collection, E: AnyObject>(_ element: E, key: Key)
-        where T == Dictionary<Key, C>, C.Element == WeakRef<E> {
+        where T == Dictionary<Key, C>, C.Element == WeakRef<E> { // swiftlint:disable:this syntactic_sugar
         update {
             var newValue = $0
             let weakRef = WeakRef(element)
@@ -43,7 +43,7 @@ extension Atomic where T: Collection {
 
     /// Remove all nil values.
     func flush<Key: Hashable, C: Collection, E: AnyObject>()
-        where T == Dictionary<Key, C>, C.Element == WeakRef<E> {
+        where T == Dictionary<Key, C>, C.Element == WeakRef<E> { // swiftlint:disable:this syntactic_sugar
         update {
             var newValue: [Key: C] = [:]
             

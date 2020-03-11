@@ -30,15 +30,18 @@ public extension Reactive where Base == Message {
     // MARK: - Reactions
     
     /// Add a reaction to the message.
-    /// - Parameter reactionType: a reaction type, e.g. like.
-    func addReaction(reactionType: ReactionType) -> Observable<MessageResponse> {
-        Client.shared.rx.addReaction(to: base, reactionType: reactionType)
+    /// - Parameters:
+    ///   - type: a reaction type, e.g. like.
+    ///   - score: a score.
+    ///   - extraData: an extra data for the reaction.
+    func addReaction(type: ReactionType, score: Int = 1, extraData: Codable? = nil) -> Observable<MessageResponse> {
+        Client.shared.rx.addReaction(type: type, score: score, extraData: extraData, to: base)
     }
     
     /// Delete a reaction to the message.
-    /// - Parameter reactionType: a reaction type, e.g. like.
-    func deleteReaction(reactionType: ReactionType) -> Observable<MessageResponse> {
-        Client.shared.rx.deleteReaction(from: base, reactionType: reactionType)
+    /// - Parameter type: a reaction type, e.g. like.
+    func deleteReaction(type: ReactionType) -> Observable<MessageResponse> {
+        Client.shared.rx.deleteReaction(type: type, from: base)
     }
     
     // MARK: Flag Message

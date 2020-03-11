@@ -431,12 +431,10 @@ public enum Event: Decodable {
             self = try .typingStop(user(), cid(), type)
             
         // Reaction
-        // case .reactionUpdated:
-        // self = .reactionUpdated(try reaction(), try message(), try user(), type)
         case .reactionNew:
-            self = .reactionNew(try reaction(), try message(), try user(), type)
+            self = try .reactionNew(reaction(), message(), user(), cid(), type)
         case .reactionUpdated:
-            self = .reactionUpdated(try reaction(), try message(), try user(), type)
+            self = try .reactionUpdated(reaction(), message(), user(), cid(), type)
         case .reactionDeleted:
             self = try .reactionDeleted(reaction(), message(), user(), cid(), type)
         
@@ -542,4 +540,4 @@ extension Event: Equatable {
             return false
         }
     }
-}
+} // swiftlint:disable:this file_length

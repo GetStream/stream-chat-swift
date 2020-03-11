@@ -47,8 +47,8 @@ extension ChatViewController {
             let extraData = needsToDelete ? nil : presenter.reactionExtraDataCallback?(reactionType, score, message.id)
             
             let actionReaction = needsToDelete
-                ? message.deleteReaction(type: reactionType)
-                : message.addReaction(type: reactionType, score: score, extraData: extraData)
+                ? message.rx.deleteReaction(type: reactionType)
+                : message.rx.addReaction(type: reactionType, score: score, extraData: extraData)
             
             actionReaction
                 .subscribe(onError: { [weak self] in self?.show(error: $0) })

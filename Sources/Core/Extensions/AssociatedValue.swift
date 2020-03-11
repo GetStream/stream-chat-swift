@@ -11,9 +11,9 @@ import Foundation
 // MARK: Vars for Extensions
 
 func associated<T>(to base: AnyObject,
-                          key: UnsafePointer<UInt8>,
-                          policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN,
-                          initialiser: () -> T) -> T {
+                   key: UnsafePointer<UInt8>,
+                   policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN,
+                   initialiser: () -> T) -> T {
     if let value = objc_getAssociatedObject(base, key) as? T {
         return value
     }
@@ -29,9 +29,9 @@ func associated<T>(to base: AnyObject,
 }
 
 func associate<T>(to base: AnyObject,
-                         key: UnsafePointer<UInt8>,
-                         value: T,
-                         policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN) {
+                  key: UnsafePointer<UInt8>,
+                  value: T,
+                  policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN) {
     if let unwrappedValue: AnyObject = value as AnyObject? {
         objc_setAssociatedObject(base, key, unwrappedValue, policy)
     } else {

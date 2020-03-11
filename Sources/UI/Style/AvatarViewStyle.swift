@@ -25,7 +25,9 @@ public struct AvatarViewStyle: Hashable {
     /// - Parameters:
     ///   - radius: a radius.
     ///   - placeholderFont: a placeholder font.
-    public init(radius: CGFloat = .messageAvatarRadius, placeholderFont: UIFont? = nil, verticalAlignment: VerticalAlignment = .center) {
+    public init(radius: CGFloat = .messageAvatarRadius,
+                placeholderFont: UIFont? = nil,
+                verticalAlignment: VerticalAlignment = .center) {
         self.radius = radius
         self.placeholderFont = placeholderFont
         self.verticalAlignment = verticalAlignment

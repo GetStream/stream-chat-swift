@@ -40,7 +40,7 @@ public final class TableView: UITableView {
         }
     }
     
-    public override func register(_ cellClass: AnyClass?, forCellReuseIdentifier identifier: String) {
+    override public func register(_ cellClass: AnyClass?, forCellReuseIdentifier identifier: String) {
         if let cellClass = cellClass {
             for trackingClass in trackingClasses {
                 if cellClass.isSubclass(of: trackingClass.class) {
