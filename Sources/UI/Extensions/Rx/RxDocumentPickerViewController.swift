@@ -10,7 +10,6 @@ import UIKit
 import StreamChatCore
 import RxSwift
 import RxCocoa
-import UIKit
 
 extension UIDocumentPickerViewController: HasDelegate {
     public typealias Delegate = UIDocumentPickerDelegate

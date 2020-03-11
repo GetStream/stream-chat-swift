@@ -38,6 +38,7 @@ final class ClientTests01_Channels: TestCase {
     static let messageText = "Text \(UUID().uuidString)"
     
     let member2 = User.user2.asMember
+    let loveReactionType = ReactionType.regular("love", emoji: "❤️")
     
     let unreadCounts: [UnreadCount] = [.init(channels: 0, messages: 0),
                                        .init(channels: 1, messages: 1),
@@ -347,13 +348,13 @@ final class ClientTests01_Channels: TestCase {
         var likedMessage: Message?
         
         expect("a message with reaction like") { expectation in
-            client.addReaction(to: message, reactionType: .like) { result in
+            client.addReaction(type: loveReactionType, to: message) { result in
                 if let response = try? result.get() {
                     XCTAssertEqual(response.message.id, message.id)
                     XCTAssertNotEqual(response.message, message)
                     XCTAssertTrue(response.message.hasReactions)
                     XCTAssertNotNil(response.reaction)
-                    XCTAssertEqual(response.reaction?.type, ReactionType.like)
+                    XCTAssertEqual(response.reaction?.type, self.loveReactionType)
                     likedMessage = response.message
                     expectation.fulfill()
                 }
@@ -366,13 +367,13 @@ final class ClientTests01_Channels: TestCase {
     
     func deleteReaction(_ message: Message, _ client: Client) {
         expect("a message without deleted reaction like") { expectation in
-            client.deleteReaction(from: message, reactionType: .like) { result in
+            client.deleteReaction(type: loveReactionType, from: message) { result in
                 if let response = try? result.get() {
                     XCTAssertEqual(response.message.id, message.id)
                     XCTAssertNotEqual(response.message, message)
                     XCTAssertFalse(response.message.hasReactions)
                     XCTAssertNotNil(response.reaction)
-                    XCTAssertEqual(response.reaction?.type, ReactionType.like)
+                    XCTAssertEqual(response.reaction?.type, self.loveReactionType)
                     expectation.fulfill()
                 }
             }

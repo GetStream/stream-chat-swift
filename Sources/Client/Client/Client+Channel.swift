@@ -363,10 +363,10 @@ public extension Client {
     }
     
     private func sendInviteAnswer(accept: Bool?,
-                                   reject: Bool?,
-                                   message: Message?,
-                                   channel: Channel,
-                                   _ completion: @escaping Client.Completion<ChannelInviteResponse>) -> URLSessionTask {
+                                  reject: Bool?,
+                                  message: Message?,
+                                  channel: Channel,
+                                  _ completion: @escaping Client.Completion<ChannelInviteResponse>) -> URLSessionTask {
         let answer = ChannelInviteAnswer(channel: channel, accept: accept, reject: reject, message: message)
         return request(endpoint: .inviteAnswer(answer), completion)
     }
@@ -410,8 +410,8 @@ public extension Client {
     }
     
     private func sendFile(endpoint: Endpoint,
-                           _ progress: @escaping Client.Progress,
-                           _ completion: @escaping Client.Completion<URL>) -> URLSessionTask {
+                          _ progress: @escaping Client.Progress,
+                          _ completion: @escaping Client.Completion<URL>) -> URLSessionTask {
         request(endpoint: endpoint, progress) { (result: Result<FileUploadResponse, ClientError>) in
             completion(result.map(to: \.file))
         }

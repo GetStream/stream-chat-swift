@@ -86,7 +86,7 @@ extension ChannelPresenter {
         var ownMessagesIndexes: [Int] = []
         
         // Add chat items for messages.
-        messages.enumerated().forEach { messageIndex, message in
+        messages.forEach { message in
             if message.isEmpty {
                 return
             }
