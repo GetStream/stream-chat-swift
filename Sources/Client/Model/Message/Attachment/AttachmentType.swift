@@ -81,7 +81,7 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable {
     
     public func encode(to encoder: Encoder) throws {
         guard self != .unknown else {
-            throw ClientError.encodingFailure(EncodingError.valueUnsupported, object: self)
+            throw ClientError.encodingFailure(EncodingError.attachmentUnsupported, object: self)
         }
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)

@@ -68,7 +68,7 @@ extension ObservableType {
                 if let clientError = error as? ClientError {
                     onNext(.failure(clientError))
                 } else {
-                    onNext(.failure(.unexpectedError(nil, error)))
+                    onNext(.failure(.unexpectedError(description: error.localizedDescription, error: error)))
                 }
             }
         })
