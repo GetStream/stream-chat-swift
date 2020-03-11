@@ -10,7 +10,7 @@
 public typealias OnUpdate<T> = (T) -> Void
 
 /// A completion block type with a `Result`.
-public typealias Completion<T, E: Error> = (Result<T, E>) -> Void
+public typealias ResultCompletion<T, E: Error> = (Result<T, E>) -> Void
 
 // MARK: Side Effects
 
@@ -18,7 +18,8 @@ public typealias Completion<T, E: Error> = (Result<T, E>) -> Void
 /// - Parameters:
 ///   - completion: an original completion block.
 ///   - doBefore: a side effect will be executed before the original completion block.
-public func doBefore<T, E: Error>(_ completion: @escaping Completion<T, E>, _ doBefore: @escaping (T) -> Void) -> Completion<T, E> {
+public func doBefore<T, E: Error>(_ completion: @escaping ResultCompletion<T, E>,
+                                  _ doBefore: @escaping (T) -> Void) -> ResultCompletion<T, E> {
     `do`(for: completion, doBefore: doBefore)
 }
 
@@ -26,7 +27,8 @@ public func doBefore<T, E: Error>(_ completion: @escaping Completion<T, E>, _ do
 /// - Parameters:
 ///   - completion: an original completion block.
 ///   - doAfter: a side effect will be executed after the original completion block.
-public func doAfter<T, E: Error>(_ completion: @escaping Completion<T, E>, _ doAfter: @escaping (T) -> Void) -> Completion<T, E> {
+public func doAfter<T, E: Error>(_ completion: @escaping ResultCompletion<T, E>,
+                                 _ doAfter: @escaping (T) -> Void) -> ResultCompletion<T, E> {
     `do`(for: completion, doAfter: doAfter)
 }
 
@@ -35,9 +37,9 @@ public func doAfter<T, E: Error>(_ completion: @escaping Completion<T, E>, _ doA
 ///   - completion: an original completion block.
 ///   - doBefore: a side effect will be executed before the original completion block.
 ///   - doAfter: a side effect will be executed after the original completion block.
-public func `do`<T, E: Error>(for completion: @escaping Completion<T, E>,
+public func `do`<T, E: Error>(for completion: @escaping ResultCompletion<T, E>,
                               doBefore: @escaping (T) -> Void = { _ in },
-                              doAfter: @escaping (T) -> Void = { _ in }) -> Completion<T, E> {
+                              doAfter: @escaping (T) -> Void = { _ in }) -> ResultCompletion<T, E> {
     { result in
         guard let value = try? result.get() else {
             completion(result)
