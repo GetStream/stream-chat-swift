@@ -13,13 +13,11 @@ import RxCocoa
 
 /// A channels presenter.
 public final class ChannelsPresenter: Presenter {
-    /// A callback type to provide an extra data for a channel.
-    public typealias ChannelMessageExtraDataCallback = (_ channel: Channel) -> ChannelPresenter.MessageExtraDataCallback?
+    /// A callback type to provide an extra setup for a channel presenter.
+    public typealias OnChannelPresenterSetup = (ChannelPresenter) -> Void
     
     /// Query options.
     public let queryOptions: QueryOptions
-    /// Show channel statuses in a selected chat view controller.
-    public let showChannelStatuses: Bool
     
     /// Filter channels.
     ///
@@ -36,8 +34,8 @@ public final class ChannelsPresenter: Presenter {
     /// By default channels will be sorted by the last message date.
     public let sorting: [Sorting]
     
-    /// A callback to provide an extra data for a channel.
-    public var channelMessageExtraDataCallback: ChannelMessageExtraDataCallback?
+    /// A callback to provide an extra setup for a channel presenter.
+    public var onChannelPresenterSetup: OnChannelPresenterSetup?
     
     /// A filter for channels events.
     public var eventsFilter: StreamChatClient.Event.Filter?
@@ -56,13 +54,10 @@ public final class ChannelsPresenter: Presenter {
     ///   - filter: a channel filter.
     ///   - sorting: a channel sorting. By default channels will be sorted by the last message date.
     ///   - queryOptions: query options (see `QueryOptions`).
-    ///   - showChannelStatuses: show channel statuses on a chat view controller of a selected channel.
     public init(filter: Filter = .none,
                 sorting: [Sorting] = [],
-                queryOptions: QueryOptions = .all,
-                showChannelStatuses: Bool = true) {
+                queryOptions: QueryOptions = .all) {
         self.queryOptions = queryOptions
-        self.showChannelStatuses = showChannelStatuses
         self.filter = filter
         self.sorting = sorting
         super.init(pageSize: .channelsPageSize)
@@ -105,12 +100,8 @@ extension ChannelsPresenter {
         let row = items.count
         
         items.append(contentsOf: channels.map {
-            let channelPresenter = ChannelPresenter(response: $0, queryOptions: queryOptions, showStatuses: showChannelStatuses)
-            
-            if let channelMessageExtraDataCallback = self.channelMessageExtraDataCallback {
-                channelPresenter.messageExtraDataCallback = channelMessageExtraDataCallback($0.channel)
-            }
-            
+            let channelPresenter = ChannelPresenter(response: $0, queryOptions: queryOptions)
+            onChannelPresenterSetup?(channelPresenter)
             return .channelPresenter(channelPresenter)
         })
         
@@ -216,7 +207,8 @@ extension ChannelsPresenter {
             return .none
         }
         
-        let channelPresenter = ChannelPresenter(channel: channel, queryOptions: queryOptions, showStatuses: showChannelStatuses)
+        let channelPresenter = ChannelPresenter(channel: channel, queryOptions: queryOptions)
+        onChannelPresenterSetup?(channelPresenter)
         // We need to load messages for new channel.
         loadChannelMessages(channelPresenter)
         items.insert(.channelPresenter(channelPresenter), at: 0)
