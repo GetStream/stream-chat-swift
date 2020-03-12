@@ -457,25 +457,35 @@ extension ChatViewController {
         }
         
         showImagePicker(sourceType: pickerSourceType) { [weak self] pickedImage, status in
+            guard let self = self else {
+                return
+            }
+            
             guard status == .authorized else {
-                self?.showImagePickerAuthorizationStatusAlert(status)
+                self.showImagePickerAuthorizationStatusAlert(status)
                 return
             }
             
             if let resources = try? pickedImage?.fileURL?.resourceValues(forKeys: [.fileSizeKey]),
                let fileSize = resources.fileSize,
                fileSize >= 20 * 1_048_576 { // 20 MB Upload limit
-                self?.show(errorMessage: "File size exceeds limit of 20MB")
+                self.show(errorMessage: "File size exceeds limit of 20MB")
                 return
             }
             
-            guard let channel = self?.channelPresenter?.channel else {
+            guard let presenter = self.channelPresenter,
+                let pickedImage = pickedImage,
+                (pickedImage.fileURL != nil || pickedImage.image != nil) else {
                 return
             }
             
-            if let pickedImage = pickedImage, let uploaderItem = UploaderItem(channel: channel, pickedImage: pickedImage) {
-                self?.composerView.addImageUploaderItem(uploaderItem)
-            }
+            let extraData = presenter.imageAttachmentExtraDataCallback?(pickedImage.fileURL,
+                                                                        pickedImage.image,
+                                                                        pickedImage.isVideo,
+                                                                        presenter.channel)
+            
+            let uploaderItem = UploaderItem(channel: presenter.channel, pickedImage: pickedImage, extraData: extraData)
+            self.composerView.addImageUploaderItem(uploaderItem)
         }
         
         hideAddFileView()
@@ -488,8 +498,12 @@ extension ChatViewController {
         documentPickerViewController.rx.didPickDocumentsAt
             .takeUntil(documentPickerViewController.rx.deallocated)
             .subscribe(onNext: { [weak self] in
-                if let self = self, let channel = self.channelPresenter?.channel {
-                    $0.forEach { url in self.composerView.addFileUploaderItem(UploaderItem(channel: channel, url: url)) }
+                if let self = self, let presenter = self.channelPresenter {
+                    $0.forEach { url in
+                        let extraData = presenter.fileAttachmentExtraDataCallback?(url, presenter.channel)
+                        let uploaderItem = UploaderItem(channel: presenter.channel, url: url, extraData: extraData)
+                        self.composerView.addFileUploaderItem(uploaderItem)
+                    }
                 }
             })
             .disposed(by: disposeBag)

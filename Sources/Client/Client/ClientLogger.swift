@@ -159,7 +159,7 @@ public final class ClientLogger {
     /// Log a request.
     ///
     /// - Parameter request: an URL request.
-    public func log(_ request: URLRequest) {
+    public func log(_ request: URLRequest, isUploading: Bool = false) {
         log("➡️ \(request.httpMethod ?? "Request") \(request.description)")
         
         if level.isEnabled(with: .debug),
@@ -175,7 +175,11 @@ public final class ClientLogger {
         }
         
         if level.isEnabled(with: .info), let body = request.httpBody {
-            log(body, message: "Request Body")
+            if isUploading {
+                log("📦 Uploading \(body.count / 1024) KB data...")
+            } else {
+                log(body, message: "Request Body")
+            }
         }
     }
     
