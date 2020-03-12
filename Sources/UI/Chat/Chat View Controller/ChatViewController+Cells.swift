@@ -210,9 +210,12 @@ extension ChatViewController {
             return
         }
         
-        let messagePresenter = ChannelPresenter(channel: presenter.channel,
-                                                parentMessage: parentMessage,
-                                                showStatuses: presenter.showStatuses)
+        let messagePresenter = ChannelPresenter(channel: presenter.channel, parentMessage: parentMessage)
+        messagePresenter.showStatuses = presenter.showStatuses
+        messagePresenter.messageExtraDataCallback = presenter.messageExtraDataCallback
+        messagePresenter.reactionExtraDataCallback = presenter.reactionExtraDataCallback
+        messagePresenter.fileAttachmentExtraDataCallback = presenter.fileAttachmentExtraDataCallback
+        messagePresenter.imageAttachmentExtraDataCallback = presenter.imageAttachmentExtraDataCallback
         
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style
