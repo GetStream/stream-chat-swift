@@ -70,9 +70,9 @@ extension Reactive where Base == ChannelPresenter {
                 
                 // We need only the next page of messages.
                 // Skip members and default query options.
-                return base.channel.rx.query(messagesPagination: pagination,
-                                             membersPagination: .limit(0),
-                                             options: .state).retry(3)
+                return base.channel.rx
+                    .query(messagesPagination: pagination, membersPagination: .limit(0), options: .state)
+                    .retry(3)
             })
     }
     
