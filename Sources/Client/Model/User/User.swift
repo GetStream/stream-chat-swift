@@ -124,26 +124,26 @@ public struct User: Codable {
                 name: String = "",
                 role: Role = .user,
                 avatarURL: URL? = nil,
+                extraData: Codable? = nil,
                 created: Date = .init(),
                 updated: Date = .init(),
                 lastActiveDate: Date? = nil,
                 isInvisible: Bool = false,
                 isBanned: Bool = false,
-                mutedUsers: [MutedUser] = [],
-                extraData: Codable? = nil) {
+                mutedUsers: [MutedUser] = []) {
         self.id = id
         self.name = name
-        self.avatarURL = avatarURL
         self.role = role
+        self.avatarURL = avatarURL
+        self.extraData = ExtraData(extraData)
         self.created = created
         self.updated = updated
         self.lastActiveDate = lastActiveDate
-        isOnline = false
         self.isInvisible = isInvisible
         self.isBanned = isBanned
         self.mutedUsers = mutedUsers
+        isOnline = false
         devices = []
-        self.extraData = ExtraData(extraData)
     }
     
     public init(from decoder: Decoder) throws {

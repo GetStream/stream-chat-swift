@@ -146,63 +146,63 @@ public final class Channel: Codable {
     
     /// Init a channel.
     /// - Parameters:
-    ///     - type: a channel type (`ChannelType`).
-    ///     - id: a channel id.
-    ///     - name: a channel name.
-    ///     - imageURL: an image url of the channel.
-    ///     - members: a list of members.
-    ///     - invitedMembers: invitation list of members.
-    ///     - extraData: an `Codable` object with extra data of the channel.
+    ///   - type: a channel type (`ChannelType`).
+    ///   - id: a channel id. By default Stream will generate a channel id.
+    ///   - name: a channel name.
+    ///   - imageURL: an image url of the channel.
+    ///   - members: a list of members.
+    ///   - invitedMembers: a list of invited members.
+    ///   - extraData: an extra data for the channel.
     public init(type: ChannelType,
-                id: String,
+                id: String = "",
                 name: String? = nil,
                 imageURL: URL? = nil,
-                lastMessageDate: Date? = nil,
+                members: [Member] = [],
+                invitedMembers: [Member] = [],
+                extraData: Codable? = nil,
                 created: Date = Date(),
                 deleted: Date? = nil,
                 createdBy: User? = nil,
+                lastMessageDate: Date? = nil,
                 frozen: Bool = false,
-                members: [Member] = [],
-                config: Config = Config(isEmpty: true),
-                invitedMembers: [Member] = [],
-                extraData: Codable? = nil) {
+                config: Config = Config(isEmpty: true)) {
+        self.type = type
         self.id = id
         self.cid = ChannelId(type: type, id: id)
-        self.type = type
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         self.imageURL = imageURL
-        self.lastMessageDate = lastMessageDate
+        self.members = Set(members)
+        self.invitedMembers = Set(invitedMembers)
+        self.extraData = ExtraData(extraData)
         self.created = created
         self.deleted = deleted
         self.createdBy = createdBy
+        self.lastMessageDate = lastMessageDate
         self.frozen = frozen
-        self.members = Set(members)
         self.config = config
-        self.invitedMembers = Set(invitedMembers)
-        self.extraData = ExtraData(extraData)
         needsCreation = true
     }
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: DecodingKeys.self)
+        type = try container.decode(ChannelType.self, forKey: .type)
         let id = try container.decode(String.self, forKey: .id)
         self.id = id
         cid = try container.decode(ChannelId.self, forKey: .cid)
-        type = try container.decode(ChannelType.self, forKey: .type)
-        let config = try container.decode(Config.self, forKey: .config)
-        self.config = config
-        lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
-        created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created
-        deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
-        createdBy = try container.decodeIfPresent(User.self, forKey: .createdBy)
-        frozen = try container.decode(Bool.self, forKey: .frozen)
-        imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
-        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isChannel })?.decode(from: decoder))
         let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         self.members = Set<Member>(members)
         let name = try? container.decodeIfPresent(String.self, forKey: .name)
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
+        imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
         invitedMembers = Set<Member>()
+        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isChannel })?.decode(from: decoder))
+        let config = try container.decode(Config.self, forKey: .config)
+        self.config = config
+        created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created
+        deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
+        createdBy = try container.decodeIfPresent(User.self, forKey: .createdBy)
+        lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
+        frozen = try container.decode(Bool.self, forKey: .frozen)
         needsCreation = false
     }
     
