@@ -34,7 +34,8 @@ public extension Channel {
                                    messagesPagination: messagesPagination,
                                    membersPagination: membersPagination,
                                    watchersPagination: watchersPagination,
-                                   options: options, completion)
+                                   options: options,
+                                   completion)
     }
     
     /// Loads the initial channel state and watches for changes.
