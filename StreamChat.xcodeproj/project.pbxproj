@@ -25,6 +25,10 @@
 		8A2DD9532385565B007775E9 /* MutedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD9522385565B007775E9 /* MutedUser.swift */; };
 		8A2DD95423855690007775E9 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2B02384580700C2F9DE /* Channel.swift */; };
 		8A2DD956238556A7007775E9 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD955238556A7007775E9 /* Member.swift */; };
+		8A466E61241A3A4D003C21BA /* Client+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A466E60241A3A4D003C21BA /* Client+Request.swift */; };
+		8A466E63241A3A7D003C21BA /* Client+WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A466E62241A3A7D003C21BA /* Client+WebSocket.swift */; };
+		8A466E65241A3AAA003C21BA /* Client+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A466E64241A3AAA003C21BA /* Client+Setup.swift */; };
+		8A466E67241A3AB6003C21BA /* BaseURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A466E66241A3AB6003C21BA /* BaseURL.swift */; };
 		8A50695823CDEA31009F127A /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; };
 		8A50696B23CDEDA6009F127A /* StreamChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A50696723CDEDA3009F127A /* StreamChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A50696C23CDEDAC009F127A /* StreamChatClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A50696823CDEDA3009F127A /* StreamChatClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -44,7 +48,6 @@
 		8ACB0E9E23EB13CE0066343A /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; };
 		8ACC7BFB241924AD000750E4 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB2241924AD000750E4 /* Connection.swift */; };
 		8ACC7BFC241924AD000750E4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB3241924AD000750E4 /* WebSocket.swift */; };
-		8ACC7BFD241924AD000750E4 /* BaseURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB4241924AD000750E4 /* BaseURL.swift */; };
 		8ACC7BFE241924AD000750E4 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB6241924AD000750E4 /* Environment.swift */; };
 		8ACC7BFF241924AD000750E4 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB7241924AD000750E4 /* Atomic.swift */; };
 		8ACC7C00241924AD000750E4 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB8241924AD000750E4 /* Bundle+Extensions.swift */; };
@@ -92,14 +95,11 @@
 		8ACC7C2A241924AD000750E4 /* BanEnabling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BE8241924AD000750E4 /* BanEnabling.swift */; };
 		8ACC7C2B241924AD000750E4 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BE9241924AD000750E4 /* Token.swift */; };
 		8ACC7C2C241924AD000750E4 /* Client+UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BEB241924AD000750E4 /* Client+UnreadCount.swift */; };
-		8ACC7C2D241924AD000750E4 /* Client+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BEC241924AD000750E4 /* Client+Setup.swift */; };
 		8ACC7C2E241924AD000750E4 /* Client+Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BED241924AD000750E4 /* Client+Channel.swift */; };
 		8ACC7C2F241924AD000750E4 /* Client+Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BEE241924AD000750E4 /* Client+Message.swift */; };
 		8ACC7C30241924AD000750E4 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BEF241924AD000750E4 /* Client.swift */; };
 		8ACC7C31241924AD000750E4 /* Client+Devices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BF0241924AD000750E4 /* Client+Devices.swift */; };
-		8ACC7C32241924AD000750E4 /* Client+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BF1241924AD000750E4 /* Client+Request.swift */; };
 		8ACC7C33241924AD000750E4 /* ClientError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BF2241924AD000750E4 /* ClientError.swift */; };
-		8ACC7C34241924AD000750E4 /* Client+WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BF3241924AD000750E4 /* Client+WebSocket.swift */; };
 		8ACC7C35241924AD000750E4 /* Client+User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BF4241924AD000750E4 /* Client+User.swift */; };
 		8ACC7C36241924AD000750E4 /* ClientLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BF5241924AD000750E4 /* ClientLogger.swift */; };
 		8ACC7C37241924AD000750E4 /* Client+Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BF6241924AD000750E4 /* Client+Channels.swift */; };
@@ -300,6 +300,10 @@
 		8A2DD9522385565B007775E9 /* MutedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUser.swift; sourceTree = "<group>"; };
 		8A2DD955238556A7007775E9 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
 		8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
+		8A466E60241A3A4D003C21BA /* Client+Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Request.swift"; sourceTree = "<group>"; };
+		8A466E62241A3A7D003C21BA /* Client+WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+WebSocket.swift"; sourceTree = "<group>"; };
+		8A466E64241A3AAA003C21BA /* Client+Setup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Setup.swift"; sourceTree = "<group>"; };
+		8A466E66241A3AB6003C21BA /* BaseURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
 		8A4AB32324102196000A23DD /* ReactionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionType.swift; sourceTree = "<group>"; };
 		8A4AB325241021C4000A23DD /* ReactionScores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionScores.swift; sourceTree = "<group>"; };
 		8A50694F23CDEA31009F127A /* StreamChatClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -322,7 +326,6 @@
 		8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTests.swift; sourceTree = "<group>"; };
 		8ACC7BB2241924AD000750E4 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		8ACC7BB3241924AD000750E4 /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
-		8ACC7BB4241924AD000750E4 /* BaseURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
 		8ACC7BB6241924AD000750E4 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		8ACC7BB7241924AD000750E4 /* Atomic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		8ACC7BB8241924AD000750E4 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
@@ -370,14 +373,11 @@
 		8ACC7BE8241924AD000750E4 /* BanEnabling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BanEnabling.swift; sourceTree = "<group>"; };
 		8ACC7BE9241924AD000750E4 /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		8ACC7BEB241924AD000750E4 /* Client+UnreadCount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+UnreadCount.swift"; sourceTree = "<group>"; };
-		8ACC7BEC241924AD000750E4 /* Client+Setup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Setup.swift"; sourceTree = "<group>"; };
 		8ACC7BED241924AD000750E4 /* Client+Channel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Channel.swift"; sourceTree = "<group>"; };
 		8ACC7BEE241924AD000750E4 /* Client+Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Message.swift"; sourceTree = "<group>"; };
 		8ACC7BEF241924AD000750E4 /* Client.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		8ACC7BF0241924AD000750E4 /* Client+Devices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Devices.swift"; sourceTree = "<group>"; };
-		8ACC7BF1241924AD000750E4 /* Client+Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Request.swift"; sourceTree = "<group>"; };
 		8ACC7BF2241924AD000750E4 /* ClientError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientError.swift; sourceTree = "<group>"; };
-		8ACC7BF3241924AD000750E4 /* Client+WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+WebSocket.swift"; sourceTree = "<group>"; };
 		8ACC7BF4241924AD000750E4 /* Client+User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+User.swift"; sourceTree = "<group>"; };
 		8ACC7BF5241924AD000750E4 /* ClientLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientLogger.swift; sourceTree = "<group>"; };
 		8ACC7BF6241924AD000750E4 /* Client+Channels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Channels.swift"; sourceTree = "<group>"; };
@@ -682,7 +682,7 @@
 		8ACC7BB0241924AD000750E4 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7BB4241924AD000750E4 /* BaseURL.swift */,
+				8A466E66241A3AB6003C21BA /* BaseURL.swift */,
 				8ACC7BE9241924AD000750E4 /* Token.swift */,
 				8ACC7BC2241924AD000750E4 /* Database.swift */,
 				8ACC7BEA241924AD000750E4 /* Client */,
@@ -806,9 +806,9 @@
 			children = (
 				8ACC7BEF241924AD000750E4 /* Client.swift */,
 				8ACC7C64241924B5000750E4 /* Client+Config.swift */,
-				8ACC7BEC241924AD000750E4 /* Client+Setup.swift */,
-				8ACC7BF3241924AD000750E4 /* Client+WebSocket.swift */,
-				8ACC7BF1241924AD000750E4 /* Client+Request.swift */,
+				8A466E64241A3AAA003C21BA /* Client+Setup.swift */,
+				8A466E62241A3A7D003C21BA /* Client+WebSocket.swift */,
+				8A466E60241A3A4D003C21BA /* Client+Request.swift */,
 				8ACC7BF4241924AD000750E4 /* Client+User.swift */,
 				8ACC7BF6241924AD000750E4 /* Client+Channels.swift */,
 				8ACC7BED241924AD000750E4 /* Client+Channel.swift */,
@@ -847,28 +847,28 @@
 		8ACC7C3D241924B5000750E4 /* Presenter */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7C3E241924B5000750E4 /* Messages */,
-				8ACC7C45241924B5000750E4 /* PresenterItem.swift */,
-				8ACC7C46241924B5000750E4 /* Uploader.swift */,
-				8ACC7C47241924B5000750E4 /* Presenter+Rx.swift */,
 				8ACC7C48241924B5000750E4 /* Presenter.swift */,
+				8ACC7C47241924B5000750E4 /* Presenter+Rx.swift */,
+				8ACC7C45241924B5000750E4 /* PresenterItem.swift */,
 				8ACC7C49241924B5000750E4 /* ViewChanges.swift */,
+				8ACC7C46241924B5000750E4 /* Uploader.swift */,
 				8ACC7C4A241924B5000750E4 /* Channels */,
+				8ACC7C3E241924B5000750E4 /* Channel */,
 			);
 			path = Presenter;
 			sourceTree = "<group>";
 		};
-		8ACC7C3E241924B5000750E4 /* Messages */ = {
+		8ACC7C3E241924B5000750E4 /* Channel */ = {
 			isa = PBXGroup;
 			children = (
+				8ACC7C43241924B5000750E4 /* ChannelPresenter.swift */,
 				8ACC7C3F241924B5000750E4 /* ChannelPresenter+Events.swift */,
 				8ACC7C40241924B5000750E4 /* ChannelPresenter+EphemeralMessages.swift */,
 				8ACC7C41241924B5000750E4 /* ChannelPresenter+RxRequests.swift */,
 				8ACC7C42241924B5000750E4 /* ChannelPresenter+Request.swift */,
-				8ACC7C43241924B5000750E4 /* ChannelPresenter.swift */,
 				8ACC7C44241924B5000750E4 /* ChannelPresenter+TypingUsers.swift */,
 			);
-			path = Messages;
+			path = Channel;
 			sourceTree = "<group>";
 		};
 		8ACC7C4A241924B5000750E4 /* Channels */ = {
@@ -1545,13 +1545,14 @@
 				8ACC7C08241924AD000750E4 /* Data+Extensions.swift in Sources */,
 				8ACC7C19241924AD000750E4 /* User.swift in Sources */,
 				8ACC7C06241924AD000750E4 /* Codable+Extensions.swift in Sources */,
+				8A466E65241A3AAA003C21BA /* Client+Setup.swift in Sources */,
 				8ACC7C1C241924AD000750E4 /* QueryOptions.swift in Sources */,
 				8ACC7C12241924AD000750E4 /* MessageRead.swift in Sources */,
-				8ACC7C2D241924AD000750E4 /* Client+Setup.swift in Sources */,
 				8ACC7D57241924EA000750E4 /* ReactionScores.swift in Sources */,
 				8ACC7C0E241924AD000750E4 /* Attachment.swift in Sources */,
 				8ACC7D5924192529000750E4 /* Client+Config.swift in Sources */,
 				8ACC7C17241924AD000750E4 /* UsersQuery.swift in Sources */,
+				8A466E61241A3A4D003C21BA /* Client+Request.swift in Sources */,
 				8ACC7C2A241924AD000750E4 /* BanEnabling.swift in Sources */,
 				8ACC7C31241924AD000750E4 /* Client+Devices.swift in Sources */,
 				8ACC7C09241924AD000750E4 /* Database.swift in Sources */,
@@ -1576,25 +1577,24 @@
 				8ACC7C3A241924AD000750E4 /* ClientURLSessionTaskDelegate.swift in Sources */,
 				8ACC7C00241924AD000750E4 /* Bundle+Extensions.swift in Sources */,
 				8ACC7C38241924AD000750E4 /* Endpoint.swift in Sources */,
-				8ACC7C34241924AD000750E4 /* Client+WebSocket.swift in Sources */,
 				8ACC7C16241924AD000750E4 /* Sorting.swift in Sources */,
 				8ACC7C23241924AD000750E4 /* ChannelType.swift in Sources */,
+				8A466E67241A3AB6003C21BA /* BaseURL.swift in Sources */,
 				8ACC7C26241924AD000750E4 /* Pagination.swift in Sources */,
 				8ACC7C03241924AD000750E4 /* String+Extensions.swift in Sources */,
 				8ACC7C05241924AD000750E4 /* Result+Extensions.swift in Sources */,
 				8ACC7C11241924AD000750E4 /* Message.swift in Sources */,
 				8ACC7C28241924AD000750E4 /* SearchQuery.swift in Sources */,
-				8ACC7BFD241924AD000750E4 /* BaseURL.swift in Sources */,
 				8ACC7C1F241924AD000750E4 /* ChannelsQuery.swift in Sources */,
 				8ACC7C35241924AD000750E4 /* Client+User.swift in Sources */,
 				8ACC7C22241924AD000750E4 /* Channel+UnreadCount.swift in Sources */,
 				8ACC7C39241924AD000750E4 /* MultipartFormData.swift in Sources */,
 				8ACC7C30241924AD000750E4 /* Client.swift in Sources */,
+				8A466E63241A3A7D003C21BA /* Client+WebSocket.swift in Sources */,
 				8ACC7C0D241924AD000750E4 /* AttachmentType.swift in Sources */,
 				8ACC7C13241924AD000750E4 /* MessageAction.swift in Sources */,
 				8ACC7C24241924AD000750E4 /* ChannelResponse.swift in Sources */,
 				8ACC7C02241924AD000750E4 /* Int+Extensions.swift in Sources */,
-				8ACC7C32241924AD000750E4 /* Client+Request.swift in Sources */,
 				8ACC7C1E241924AD000750E4 /* ChannelQuery.swift in Sources */,
 				8ACC7C2F241924AD000750E4 /* Client+Message.swift in Sources */,
 				8ACC7C01241924AD000750E4 /* RepeatingTimer.swift in Sources */,
