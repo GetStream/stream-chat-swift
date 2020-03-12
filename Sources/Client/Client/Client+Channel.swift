@@ -30,10 +30,16 @@ public extension Client {
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
     func queryChannel(_ channel: Channel,
-                      pagination: Pagination = .none,
+                      messagesPagination: Pagination = .none,
+                      membersPagination: Pagination = .none,
+                      watchersPagination: Pagination = .none,
                       options: QueryOptions = [],
                       _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        queryChannel(query: .init(channel: channel, pagination: pagination, options: options), completion)
+        queryChannel(query: .init(channel: channel,
+                                  messagesPagination: messagesPagination,
+                                  membersPagination: membersPagination,
+                                  watchersPagination: watchersPagination,
+                                  options: options), completion)
     }
     
     /// Requests for a channel data, e.g. messages, members, read states, etc.

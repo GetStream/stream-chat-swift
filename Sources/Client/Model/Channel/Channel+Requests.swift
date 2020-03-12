@@ -25,10 +25,16 @@ public extension Channel {
     ///   - options: a query options. All by default (see `QueryOptions`), e.g. `.watch`.
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
-    func query(pagination: Pagination = .none,
+    func query(messagesPagination: Pagination = .none,
+               membersPagination: Pagination = .none,
+               watchersPagination: Pagination = .none,
                options: QueryOptions = [],
                _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
-        Client.shared.queryChannel(self, pagination: pagination, options: options, completion)
+        Client.shared.queryChannel(self,
+                                   messagesPagination: messagesPagination,
+                                   membersPagination: membersPagination,
+                                   watchersPagination: watchersPagination,
+                                   options: options, completion)
     }
     
     /// Loads the initial channel state and watches for changes.
