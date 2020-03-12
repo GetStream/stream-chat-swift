@@ -63,6 +63,8 @@ public final class UploaderItem: Equatable {
     public let fileSize: Int64
     /// An uploading type.
     public let type: UploadingType
+    /// An extra data for the attachment.
+    public let extraData: Codable?
     /// An uploaded attachment.
     public private(set) var attachment: Attachment?
     /// An error with uploading.
@@ -90,13 +92,15 @@ public final class UploaderItem: Equatable {
                 gifData: Data? = nil,
                 fileName: String? = nil,
                 fileType: AttachmentFileType? = nil,
-                fileSize: Int64 = 0) {
+                fileSize: Int64 = 0,
+                extraData: Codable? = nil) {
         self.channel = channel
         self.url = url
         self.type = type
         self.image = image
         self.gifData = gifData
         self.fileSize = fileSize > 0 ? fileSize : (url?.fileSize ?? 0)
+        self.extraData = extraData
         
         if let fileName = fileName {
             self.fileName = fileName
@@ -131,6 +135,7 @@ public final class UploaderItem: Equatable {
         fileType = gifData == nil ? .generic : .gif
         fileSize = 0
         self.attachment = attachment
+        extraData = nil
     }
     
     /// Init an uploader item with a given uploaded file.
@@ -148,6 +153,7 @@ public final class UploaderItem: Equatable {
         fileType = attachment.file?.type ?? .generic
         fileSize = attachment.file?.size ?? 0
         self.attachment = attachment
+        extraData = nil
     }
     
     private func createUploading() -> Observable<ProgressResponse<URL>> {
@@ -195,14 +201,20 @@ public final class UploaderItem: Equatable {
                 }
                 
                 if self.type == .image {
-                    self.attachment = Attachment(type: .image, title: self.fileName, imageURL: fileURL)
+                    self.attachment = Attachment(type: .image,
+                                                 title: self.fileName,
+                                                 imageURL: fileURL,
+                                                 extraData: self.extraData)
                 } else {
-                    let fileAttachment = AttachmentFile(type: self.fileType, size: self.fileSize, mimeType: self.fileType.mimeType)
+                    let fileAttachment = AttachmentFile(type: self.fileType,
+                                                        size: self.fileSize,
+                                                        mimeType: self.fileType.mimeType)
                     
                     self.attachment = Attachment(type: self.type == .video ? .video : .file,
                                                  title: self.fileName,
                                                  url: fileURL,
-                                                 file: fileAttachment)
+                                                 file: fileAttachment,
+                                                 extraData: self.extraData)
                 }
             })
             .share()

@@ -114,11 +114,7 @@ final class LoginViewController: UIViewController {
         loggedInToken = token
         
         if !clientSetupped {
-            Client.config = .init(apiKey: apiKey,
-                                  baseURL: .usEast,
-                                  database: Database.instance,
-                                  logOptions: [.requests, .webSocketInfo])
-            
+            Client.config = .init(apiKey: apiKey, baseURL: .usEast, logOptions: .info)
             Notifications.shared.clearApplicationIconBadgeNumberOnAppActive = true
             store(key: .apiKey, value: apiKey)
             clientSetupped = true
