@@ -30,7 +30,7 @@ public extension Reactive where Base == Client {
     /// - Note: 100 is the maximum unread count of messages.
     /// - Parameter channel: a channel.
     func channelUnreadCount(_ channel: Channel) -> Observable<ChannelUnreadCount> {
-        queryChannel(channel, pagination: .limit(100), options: [.state, .watch])
+        queryChannel(channel, messagesPagination: .limit(100), options: [.state, .watch])
             .map { $0.channel }
             .flatMapLatest({ [unowned base] channel -> Observable<ChannelUnreadCount> in
                 base.rx.onEvent(channel: channel)

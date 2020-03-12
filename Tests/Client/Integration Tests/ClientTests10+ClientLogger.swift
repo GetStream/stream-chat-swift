@@ -53,7 +53,7 @@ final class ClientTests10_ClientLogger: XCTestCase {
                         .message("test"),
                         .markAllRead,
                         .search(.init(filter: testFilter, query: "search", pagination: .none)),
-                        .channel(.init(channel: testChannel, pagination: .none, options: .all)),
+                        .channel(.init(channel: testChannel, options: .all)),
                         .stopWatching(testChannel),
                         .updateChannel(.init(data: .init(testChannel))),
                         .deleteChannel(testChannel),

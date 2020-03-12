@@ -13,7 +13,7 @@ import RxSwift
 public extension Reactive where Base == Client {
     /// Observe a watcher count of users for a given channel.
     func watcherCount(channel: Channel) -> Observable<Int> {
-        queryChannel(channel, pagination: .limit(1), options: [.watch, .state])
+        queryChannel(channel, messagesPagination: .limit(1), options: [.watch, .state])
             .map { $0.channel }
             .flatMapLatest({ [unowned base] channel -> Observable<Int> in
                 base.rx.onEvent(eventTypes: [.userStartWatching,
