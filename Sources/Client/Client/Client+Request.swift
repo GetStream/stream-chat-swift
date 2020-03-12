@@ -105,7 +105,7 @@ extension Client {
                 }
             }
             
-            logger?.log(task.currentRequest ?? urlRequest)
+            logger?.log(task.currentRequest ?? urlRequest, isUploading: endpoint.isUploading)
             task.resume()
             
             return task

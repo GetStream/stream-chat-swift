@@ -16,16 +16,22 @@ public final class ChannelPresenter: Presenter {
     typealias EphemeralType = (message: Message?, updated: Bool)
     
     /// A callback type for the adding an extra data for a new message.
-    public typealias MessageExtraDataCallback =
-        (_ id: String, _ text: String, _ attachments: [Attachment], _ parentId: String?) -> Codable?
+    public typealias MessageExtraDataCallback = (_ id: String, _ text: String, [Attachment], _ parentId: String?) -> Codable?
     /// A callback type for the adding an extra data for a new reaction.
-    public typealias ReactionExtraDataCallback =
-        (_ reactionType: ReactionType, _ score: Int, _ messageId: String) -> Codable?
+    public typealias ReactionExtraDataCallback = (ReactionType, _ score: Int, _ messageId: String) -> Codable?
+    /// A callback type for the adding an extra data for a file attachment.
+    public typealias FileAttachmentExtraDataCallback = (URL, Channel) -> Codable?
+    /// A callback type for the adding an extra data for an image attachment.
+    public typealias ImageAttachmentExtraDataCallback = (URL?, UIImage?, _ isVideo: Bool, Channel) -> Codable?
     
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
     /// A callback for the adding an extra data for a new message.
     public var reactionExtraDataCallback: ReactionExtraDataCallback?
+    /// A callback for the adding an extra data for a file attachment.
+    public var fileAttachmentExtraDataCallback: FileAttachmentExtraDataCallback?
+    /// A callback for the adding an extra data for a file attachment.
+    public var imageAttachmentExtraDataCallback: ImageAttachmentExtraDataCallback?
     
     let channelType: ChannelType
     let channelId: String
