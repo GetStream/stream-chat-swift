@@ -56,7 +56,7 @@ public final class ChannelPresenter: Presenter {
     /// An edited message.
     public var editMessage: Message?
     /// Show statuses separators, e.g. Today
-    public private(set) var showStatuses = true
+    public var showStatuses = true
     let lastMessageAtomic = Atomic<Message>()
     /// The last parsed message from WebSocket events.
     public var lastMessage: Message? { lastMessageAtomic.get() }
@@ -93,12 +93,11 @@ public final class ChannelPresenter: Presenter {
     ///     - channel: a channel
     ///     - parentMessage: a parent message for replies
     ///     - showStatuses: shows statuses separators, e.g. Today
-    public init(channel: Channel, parentMessage: Message? = nil, queryOptions: QueryOptions = .all, showStatuses: Bool = true) {
+    public init(channel: Channel, parentMessage: Message? = nil, queryOptions: QueryOptions = .all) {
         channelType = channel.type
         channelId = channel.id
         self.parentMessage = parentMessage
         self.queryOptions = queryOptions
-        self.showStatuses = showStatuses
         super.init(pageSize: .messagesPageSize)
         channelAtomic.set(channel)
     }
