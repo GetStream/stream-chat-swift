@@ -186,7 +186,7 @@ extension WebSocket {
 
         if webSocket.isConnected {
             connection = .disconnecting
-            webSocket.disconnect(forceTimeout: 1)
+            webSocket.disconnect(forceTimeout: 0)
             logger?.log("Disconnecting deliberately...")
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
