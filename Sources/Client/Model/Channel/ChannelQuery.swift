@@ -20,7 +20,7 @@ public struct ChannelQuery: Encodable {
     /// A channel.
     public let channel: Channel
     /// A pagination for messages (see `Pagination`).
-    public let pagination: Pagination
+    public let messagesPagination: Pagination
     /// A pagination for members (see `Pagination`). You can use `.limit` and `.offset`.
     public let membersPagination: Pagination
     /// A pagination for watchers (see `Pagination`). You can use `.limit` and `.offset`.
@@ -32,17 +32,17 @@ public struct ChannelQuery: Encodable {
     /// - Parameters:
     ///   - channel: a channel.
     ///   - memebers: members of the channel.
-    ///   - pagination: a pagination for messages.
+    ///   - messagesPagination: a pagination for messages.
     ///   - membersPagination: a pagination for members. You can use `.limit` and `.offset`.
     ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
     ///   - options: a query options (see `QueryOptions`).
     public init(channel: Channel,
-                pagination: Pagination = .none,
+                messagesPagination: Pagination = .none,
                 membersPagination: Pagination = .none,
                 watchersPagination: Pagination = .none,
                 options: QueryOptions = []) {
         self.channel = channel
-        self.pagination = pagination
+        self.messagesPagination = messagesPagination
         self.membersPagination = membersPagination
         self.watchersPagination = watchersPagination
         self.options = options
@@ -57,8 +57,8 @@ public struct ChannelQuery: Encodable {
             try container.encode(channel, forKey: .data)
         }
         
-        if pagination != .none {
-            try container.encode(pagination, forKey: .messages)
+        if messagesPagination != .none {
+            try container.encode(messagesPagination, forKey: .messages)
         }
         
         if membersPagination != .none {

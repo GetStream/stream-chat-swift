@@ -65,12 +65,14 @@ extension Reactive where Base == ChannelPresenter {
                 
                 // Request for the fist page.
                 if pagination.isLimit {
-                    return base.channel.rx.query(pagination: pagination, options: base.queryOptions).retry(3)
+                    return base.channel.rx.query(messagesPagination: pagination, options: base.queryOptions).retry(3)
                 }
                 
                 // We need only the next page of messages.
                 // Skip members and default query options.
-                return base.channel.rx.query(pagination: pagination, membersPagination: .limit(0), options: .state).retry(3)
+                return base.channel.rx.query(messagesPagination: pagination,
+                                             membersPagination: .limit(0),
+                                             options: .state).retry(3)
             })
     }
     
