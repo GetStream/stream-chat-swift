@@ -1,9 +1,17 @@
+skip_danger_check = github.pr_body.include? "#skip_danger"
+
+if skip_danger_check
+    message("Skipping Danger due to skip_danger tag")
+    return
+end
+
 # Make it more obvious that a PR is a work in progress and shouldn't be merged yet.
 has_wip_label = github.pr_labels.any? { |label| label.include? "WIP" }
 has_wip_title = github.pr_title.include? "[WIP]"
 
 if has_wip_label || has_wip_title
-    warn("PR is classed as Work in Progress")
+    message("Skipping Danger since PR is classed as Work in Progress")
+    return
 end
 
 # Warn when there is a big PR.
