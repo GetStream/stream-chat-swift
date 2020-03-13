@@ -15,7 +15,7 @@ final class ClientTests02_Users: TestCase {
         expectConnection()
         
         expect("users list") { expectation in
-            let filter = "id".equal(to: User.current.id) + "name".equal(to: User.current.name)
+            let filter = Filter.equal("id", to: User.current.id) & .equal("name", to: User.current.name)
             Client.shared.queryUsers(filter: filter) {
                 if let users = $0.value {
                     XCTAssertEqual(users.first!, User.current)
