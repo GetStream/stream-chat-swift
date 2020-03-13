@@ -68,7 +68,7 @@ final class LoginViewController: UIViewController {
     }
     
     @IBAction func guestToken(_ sender: Any) {
-        tokenLabel.text = Token.guest
+        tokenLabel.text = "guest"
     }
     
     @IBAction func developmentToken(_ sender: Any) {
@@ -101,7 +101,7 @@ final class LoginViewController: UIViewController {
             return
         }
         
-        guard let token = tokenLabel.text, token.isValidToken(userId: userId) else {
+        guard let token = tokenLabel.text, (token == "guest" || token.isValidToken(userId: userId)) else {
             tokenLabel.textColor = .systemRed
             return
         }
@@ -129,7 +129,11 @@ final class LoginViewController: UIViewController {
     
     func login(showNextViewController: Bool = false, animated: Bool) {
         if let user = loggedInUser, let token = loggedInToken {
-            Client.shared.set(user: user, token: token)
+            if token == "guest" {
+                Client.shared.setGuestUser(user)
+            } else {
+                Client.shared.set(user: user, token: token)
+            }
             
             if showNextViewController {
                 showRootViewController(animated: animated)
