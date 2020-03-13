@@ -26,8 +26,32 @@ public enum Filter: Encodable, CustomStringConvertible {
     
     /// No filter.
     case none
-    /// Filter by a given key with a given operator (see Operator).
-    case key(Key, Operator)
+    
+    // MARK: Operators
+    
+    /// An equal operator.
+    case equal(Key, to: Encodable)
+    /// A not equal operator.
+    case notEqual(Key, to: Encodable)
+    /// A greater then operator.
+    case greater(Key, than: Encodable)
+    /// A greater or equal than operator.
+    case greaterOrEqual(Key, than: Encodable)
+    /// A less then operator.
+    case less(Key, than: Encodable)
+    /// A less or equal than operator.
+    case lessOrEqual(Key, than: Encodable)
+    /// An in list operator.
+    case `in`(Key, [Encodable])
+    /// A not in list operator.
+    case notIn(Key, [Encodable])
+    /// A query operator.
+    case query(Key, with: String)
+    /// An autocomplete operator.
+    case autocomplete(Key, with: String)
+    
+    // MARK: Combine operators
+    
     /// Filter with all filters (like `and`).
     indirect case and([Filter])
     /// Filter with any of filters (like `or`).
@@ -39,8 +63,26 @@ public enum Filter: Encodable, CustomStringConvertible {
         switch self {
         case .none:
             return ""
-        case .key(let key, let op):
-            return "\(key) \(op)"
+        case let .equal(key, object):
+            return "\(key) = \(object)"
+        case let .notEqual(key, object):
+            return "\(key) != \(object)"
+        case let .greater(key, object):
+            return "\(key) > \(object)"
+        case let .greaterOrEqual(key, object):
+            return "\(key) >= \(object)"
+        case let .less(key, object):
+            return "\(key) < \(object)"
+        case let .lessOrEqual(key, object):
+            return "\(key) >= \(object)"
+        case let .in(key, objects):
+            return "\(key) IN (\(objects))"
+        case let .notIn(key, objects):
+            return "\(key) NOT IN (\(objects))"
+        case let .query(key, object):
+            return "\(key) QUERY \(object)"
+        case let .autocomplete(key, object):
+            return "\(key) CONTAINS \(object)"
         case .and(let filters):
             return "(" + filters.map({ $0.description }).joined(separator: ") AND (") + ")"
         case .or(let filters):
@@ -51,115 +93,73 @@ public enum Filter: Encodable, CustomStringConvertible {
     }
     
     public func encode(to encoder: Encoder) throws {
+        var keyOperand: Key = ""
+        var operatorName = ""
+        var operand: Encodable?
+        var operands: [Encodable] = []
+        
         switch self {
         case .none:
-            break
-        case .key(let key, let `operator`):
-            try [key: `operator`].encode(to: encoder)
+            return
+        case let .equal(key, object):
+            try [key: AnyEncodable(object)].encode(to: encoder)
+            return
+        case let .notEqual(key, object):
+            keyOperand = key
+            operatorName = "$ne"
+            operand = object
+        case let .greater(key, object):
+            keyOperand = key
+            operatorName = "$gt"
+            operand = object
+        case let .greaterOrEqual(key, object):
+            keyOperand = key
+            operatorName = "$gte"
+            operand = object
+        case let .less(key, object):
+            keyOperand = key
+            operatorName = "$lt"
+            operand = object
+        case let .lessOrEqual(key, object):
+            keyOperand = key
+            operatorName = "$lte"
+            operand = object
+        case let .in(key, objects):
+            keyOperand = key
+            operatorName = "$in"
+            operands = objects
+        case let .notIn(key, objects):
+            keyOperand = key
+            operatorName = "$nin"
+            operands = objects
+        case let .query(key, object):
+            keyOperand = key
+            operatorName = "$q"
+            operand = object
+        case let .autocomplete(key, object):
+            keyOperand = key
+            operatorName = "$autocomplete"
+            operand = object
+            
         case .and(let filters):
             try ["$and": filters].encode(to: encoder)
+            return
         case .or(let filters):
             try ["$or": filters].encode(to: encoder)
+            return
         case .nor(let filters):
             try ["$nor": filters].encode(to: encoder)
-        }
-    }
-}
-
-public extension Filter {
-    /// An operator for the filter.
-    enum Operator: Encodable, CustomStringConvertible {
-        /// An equal operator.
-        case equal(to: Encodable)
-        /// A not equal operator.
-        case notEqual(to: Encodable)
-        /// A greater then operator.
-        case greater(than: Encodable)
-        /// A greater or equal than operator.
-        case greaterOrEqual(than: Encodable)
-        /// A less then operator.
-        case less(than: Encodable)
-        /// A less or equal than operator.
-        case lessOrEqual(than: Encodable)
-        /// An in list operator.
-        case `in`([Encodable])
-        /// A not in list operator.
-        case notIn([Encodable])
-        /// A query operator.
-        case query(String)
-        /// An autocomplete operator.
-        case autocomplete(String)
-        
-        public var description: String {
-            switch self {
-            case .equal(let object):
-                return "= \(object)"
-            case .notEqual(let object):
-                return "!= \(object)"
-            case .greater(let object):
-                return "> \(object)"
-            case .greaterOrEqual(let object):
-                return ">= \(object)"
-            case .less(let object):
-                return "< \(object)"
-            case .lessOrEqual(let object):
-                return ">= \(object)"
-            case .in(let objects):
-                return "IN (\(objects))"
-            case .notIn(let objects):
-                return "NOT IN (\(objects))"
-            case .query(let object):
-                return "QUERY \(object)"
-            case .autocomplete(let object):
-                return "CONTAINS \(object)"
-            }
+            return
         }
         
-        public func encode(to encoder: Encoder) throws {
-            var operatorName = ""
-            var operand: Encodable?
-            var operands: [Encodable] = []
-            
-            switch self {
-            case .equal(let object):
-                try AnyEncodable(object).encode(to: encoder)
-                return
-            case .notEqual(let object):
-                operatorName = "$ne"
-                operand = object
-            case .greater(let object):
-                operatorName = "$gt"
-                operand = object
-            case .greaterOrEqual(let object):
-                operatorName = "$gte"
-                operand = object
-            case .less(let object):
-                operatorName = "$lt"
-                operand = object
-            case .lessOrEqual(let object):
-                operatorName = "$lte"
-                operand = object
-            case .in(let objects):
-                operatorName = "$in"
-                operands = objects
-            case .notIn(let objects):
-                operatorName = "$nin"
-                operands = objects
-            case .query(let object):
-                operatorName = "$q"
-                operand = object
-            case .autocomplete(let object):
-                operatorName = "$autocomplete"
-                operand = object
-            }
-            
-            if !operatorName.isEmpty, let operand = operand {
-                try [operatorName: AnyEncodable(operand)].encode(to: encoder)
-            }
-            
-            if !operatorName.isEmpty, !operands.isEmpty {
-                try [operatorName: operands.map({ AnyEncodable($0) })].encode(to: encoder)
-            }
+        guard !keyOperand.isEmpty, !operatorName.isEmpty else {
+            return
+        }
+        
+        if let operand = operand {
+            try [keyOperand: [operatorName: AnyEncodable(operand)]].encode(to: encoder)
+        } else if !operands.isEmpty {
+            try [keyOperand: [operatorName: operands.map({ AnyEncodable($0) })]].encode(to: encoder)
         }
     }
 }
@@ -168,7 +168,7 @@ public extension Filter {
 
 public extension Filter {
     
-    static func + (lhs: Filter, rhs: Filter) -> Filter {
+    static func & (lhs: Filter, rhs: Filter) -> Filter {
         var newFilter: [Filter] = []
         
         if case .and(let filter) = lhs {
@@ -186,8 +186,8 @@ public extension Filter {
         return .and(newFilter)
     }
     
-    static func += (lhs: inout Filter, rhs: Filter) {
-        lhs = lhs + rhs // swiftlint:disable:this shorthand_operator
+    static func &= (lhs: inout Filter, rhs: Filter) {
+        lhs = lhs & rhs
     }
     
     static func | (lhs: Filter, rhs: Filter) -> Filter {
@@ -213,65 +213,10 @@ public extension Filter {
     }
 }
 
-// MARK: - Key Helper
-
-public extension Filter.Key {
-    
-    /// A filter with a key of the string equal to a given value.
-    func equal(to value: Encodable) -> Filter {
-        .key(self, .equal(to: value))
-    }
-    
-    /// A filter with a key of the string not equal to a given value.
-    func notEqual(to value: Encodable) -> Filter {
-        .key(self, .notEqual(to: value))
-    }
-    
-    /// A filter with a key of the string is greater than a given value.
-    func greater(than value: Encodable) -> Filter {
-        .key(self, .greater(than: value))
-    }
-    
-    /// A filter with a key of the string is greater or equal than a given value.
-    func greaterOrEqual(than value: Encodable) -> Filter {
-        .key(self, .greaterOrEqual(than: value))
-    }
-    
-    /// A filter with a key of the string is less than a given value.
-    func less(than value: Encodable) -> Filter {
-        .key(self, .less(than: value))
-    }
-    
-    /// A filter with a key of the string is less or equal than a given value.
-    func lessOrEqual(than value: Encodable) -> Filter {
-        .key(self, .lessOrEqual(than: value))
-    }
-    
-    /// A filter with a key of the string is in a given list of values.
-    func `in`(_ values: [Encodable]) -> Filter {
-        .key(self, .in(values))
-    }
-    
-    /// A filter with a key of the string is not in a given list of values.
-    func notIn(_ values: [Encodable]) -> Filter {
-        .key(self, .notIn(values))
-    }
-    
-    /// A filter with a key of the string with a query of a given value.
-    func query(_ value: String) -> Filter {
-        .key(self, .query(value))
-    }
-    
-    /// A filter with a key of the string with autocomplete of a given value.
-    func autocomplete(_ value: String) -> Filter {
-        .key(self, .autocomplete(value))
-    }
-}
-
 // MARK: - Current User
 
 extension Filter {
     public static var currentUserInMembers: Filter {
-        "members".in([Client.shared.user.id])
+        .in("members", [Client.shared.user.id])
     }
 }
