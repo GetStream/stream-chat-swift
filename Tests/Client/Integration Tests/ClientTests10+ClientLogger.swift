@@ -13,7 +13,7 @@ final class ClientTests10_ClientLogger: XCTestCase {
     private let teJstUser = User(id: "test", name: "Test")
     private let testChannel = Channel(type: .messaging, id: "test")
     private let testUrl = "getstream.io".url!
-    private let testFilter = "members".in(["test-member"])
+    private let testFilter = Filter.in("members", ["test-member"])
     private let testData = "{\"testKey\":\"testValue\"}".data(using: .utf8)!
     private var allEndpoints = [Endpoint]()
     private var logOutput = [String]()
