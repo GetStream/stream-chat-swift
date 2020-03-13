@@ -29,6 +29,35 @@ extension Client {
         setup(token: token)
     }
     
+    /// Setup the current user as guest.
+    ///
+    /// Guest sessions do not require any server-side authentication.
+    /// Guest users have a limited set of permissions.
+    public func setGuestUser(_ user: User) {
+        if apiKey.isEmpty {
+            logger?.log("❌ API key is empty", level: .error)
+            return
+        }
+        
+        disconnect()
+        self.user = user
+        urlSession = setupURLSession()
+        logger?.log("Sending a request for a Guest Token...")
+        
+        request(endpoint: .guestToken(user)) { [unowned self] (result: Result<TokenResponse, ClientError>) in
+            if let response = try? result.get() {
+                self.set(user: response.user, token: response.token)
+            } else {
+                self.logger?.log(result.error, message: "Guest Token")
+            }
+        }
+    }
+    
+    /// Setup the current user as anonymous.
+    ///
+    /// If a user is not logged in, you can call the setAnonymousUser method.
+    /// While you’re anonymous, you can’t do much, but for the livestream channel type,
+    /// you’re still allowed to read the chat conversation.
     public func setAnonymousUser() {
         user = .anonymous
         tokenProvider = nil
@@ -99,11 +128,6 @@ extension Client {
             webSocket.disconnect()
         }
         
-        if token == .guest {
-            requestGuestToken()
-            return
-        }
-        
         var token = token
         
         if token == .development {
@@ -138,18 +162,6 @@ extension Client {
         
         if isExpiredTokenInProgress {
             connect()
-        }
-    }
-    
-    private func requestGuestToken() {
-        logger?.log("Sending a request for a Guest Token...")
-        
-        request(endpoint: .guestToken(user)) { [unowned self] (result: Result<TokenResponse, ClientError>) in
-            if let response = try? result.get() {
-                self.set(user: response.user, token: response.token)
-            } else {
-                self.logger?.log(result.error, message: "Guest Token")
-            }
         }
     }
     
