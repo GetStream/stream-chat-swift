@@ -11,7 +11,7 @@ import UIKit
 
 extension Client {
     
-    func setupURLSession(token: Token) -> URLSession {
+    func setupURLSession(token: Token = "") -> URLSession {
         let headers = authHeaders(token: token)
         logger?.log(headers: headers)
         let config = URLSessionConfiguration.default
