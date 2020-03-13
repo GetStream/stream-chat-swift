@@ -18,12 +18,10 @@ public typealias TokenProvider = (@escaping (Token) -> Void) -> Void
 extension Token {
     /// A development token.
     public static let development: Token = "development"
-    /// A guest token.
-    public static let guest: Token = "guest"
     
     /// Checks if the token is valid.
     public func isValidToken(userId: String = User.current.id) -> Bool {
-        if self == .guest || self == .development {
+        if self == .development {
             return true
         }
         
