@@ -21,6 +21,8 @@ extension Client {
         public let callbackQueue: DispatchQueue?
         /// A list of reaction types.
         public let reactionTypes: [ReactionType]
+        /// A list of extra data types.
+        public let extraDataTypes: [ExtraData.TypeKey: Codable.Type]
         /// When the app will go to the background, start a background task to stay connected for 5 min.
         public let stayConnectedInBackground: Bool
         /// A local database.
@@ -29,27 +31,31 @@ extension Client {
         public let logOptions: ClientLogger.Options
         
         /// Init a config for a shread `Client`.
-        ///
         /// - Parameters:
         ///     - apiKey: a Stream Chat API key.
         ///     - baseURL: a base URL (see `BaseURL`).
-        ///     - callbackQueue: a request callback queue, default nil (some background thread).
+        ///     - reactionTypes: custom reaction types.
+        ///     - extraDataTypes: custom extra data types for decoding data in your custom types.
         ///     - stayConnectedInBackground: when the app will go to the background,
-        ///                                  start a background task to stay connected for 5 min
+        ///                                  start a background task to stay connected for 5 min.
+        ///     - database: a database manager.
+        ///     - callbackQueue: a request callback queue, default nil (some background thread).
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init(apiKey: String,
                     baseURL: BaseURL = .usEast,
-                    callbackQueue: DispatchQueue? = nil,
-                    reactionTypes: [ReactionType] = ReactionType.defaultTypes,
+                    reactionTypes: [ReactionType] = [],
+                    extraDataTypes: [ExtraData.TypeKey: Codable.Type] = [:],
                     stayConnectedInBackground: Bool = true,
                     database: Database? = nil,
+                    callbackQueue: DispatchQueue? = nil,
                     logOptions: ClientLogger.Options = []) {
             self.apiKey = apiKey
             self.baseURL = baseURL
-            self.callbackQueue = callbackQueue
             self.reactionTypes = reactionTypes
+            self.extraDataTypes = extraDataTypes
             self.stayConnectedInBackground = stayConnectedInBackground
             self.database = database
+            self.callbackQueue = callbackQueue
             self.logOptions = logOptions
         }
         
@@ -64,17 +70,19 @@ extension Client {
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init(apiKey: String,
                     baseURL: URL,
-                    callbackQueue: DispatchQueue? = nil,
-                    reactionTypes: [ReactionType] = ReactionType.defaultTypes,
+                    reactionTypes: [ReactionType] = [],
+                    extraDataTypes: [ExtraData.TypeKey: Codable.Type] = [:],
                     stayConnectedInBackground: Bool = true,
                     database: Database? = nil,
+                    callbackQueue: DispatchQueue? = nil,
                     logOptions: ClientLogger.Options = []) {
             self.init(apiKey: apiKey,
                       baseURL: .init(url: baseURL),
-                      callbackQueue: callbackQueue,
                       reactionTypes: reactionTypes,
+                      extraDataTypes: extraDataTypes,
                       stayConnectedInBackground: stayConnectedInBackground,
                       database: database,
+                      callbackQueue: callbackQueue,
                       logOptions: logOptions)
         }
         
@@ -89,19 +97,21 @@ extension Client {
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init?(apiKey: String,
                      baseURL: String,
-                     callbackQueue: DispatchQueue? = nil,
-                     reactionTypes: [ReactionType] = ReactionType.defaultTypes,
+                     reactionTypes: [ReactionType] = [],
+                     extraDataTypes: [ExtraData.TypeKey: Codable.Type] = [:],
                      stayConnectedInBackground: Bool = true,
                      database: Database? = nil,
+                     callbackQueue: DispatchQueue? = nil,
                      logOptions: ClientLogger.Options = []) {
             guard let url = URL(string: baseURL) else { return nil }
             
             self.init(apiKey: apiKey,
                       baseURL: .init(url: url),
-                      callbackQueue: callbackQueue,
                       reactionTypes: reactionTypes,
+                      extraDataTypes: extraDataTypes,
                       stayConnectedInBackground: stayConnectedInBackground,
                       database: database,
+                      callbackQueue: callbackQueue,
                       logOptions: logOptions)
         }
     }

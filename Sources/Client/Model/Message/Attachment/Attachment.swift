@@ -125,7 +125,7 @@ public struct Attachment: Codable {
         self.text = text
         file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
         actions = try container.decodeIfPresent([Action].self, forKey: .actions) ?? []
-        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isAttachment })?.decode(from: decoder))
+        extraData = try? ExtraData(from: decoder, forKey: .attachment)
     }
     
     /// Image upload:
