@@ -195,7 +195,7 @@ public final class Channel: Codable {
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
         invitedMembers = Set<Member>()
-        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isChannel })?.decode(from: decoder))
+        extraData = try? ExtraData(from: decoder, forKey: .channel)
         let config = try container.decode(Config.self, forKey: .config)
         self.config = config
         created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created

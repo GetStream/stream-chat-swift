@@ -10,87 +10,10 @@ import Foundation
 
 /// An extra data container.
 public struct ExtraData: Codable {
-    /// A custom extra data type.
-    public enum DecodableType {
-        /// A user.
-        case user(Codable.Type)
-        /// A channel.
-        case channel(Codable.Type)
-        /// A message.
-        case message(Codable.Type)
-        /// An attachment.
-        case attachment(Codable.Type)
-        /// A reaction.
-        case reaction(Codable.Type)
-
-        /// Checks if the decodable type is a custom user extra data type.
-        public var isUser: Bool {
-            if case .user = self {
-                return true
-            }
-            
-            return false
-        }
-        
-        /// Checks if the decodable type is a custom channel extra data type.
-        public var isChannel: Bool {
-            if case .channel = self {
-                return true
-            }
-            
-            return false
-        }
-        
-        /// Checks if the decodable type is a custom message extra data type.
-        public var isMessage: Bool {
-            if case .message = self {
-                return true
-            }
-            
-            return false
-        }
-        
-        /// Checks if the decodable type is a custom attachment extra data type.
-        public var isAttachment: Bool {
-            if case .attachment = self {
-                return true
-            }
-            
-            return false
-        }
-        
-        /// Checks if the decodable type is a custom attachment extra data type.
-        public var isReaction: Bool {
-            if case .reaction = self {
-                return true
-            }
-            
-            return false
-        }
-        
-        public func codableType() -> Codable.Type {
-            switch self {
-            case .user(let codableType),
-                 .channel(let codableType),
-                 .message(let codableType),
-                 .attachment(let codableType),
-                 .reaction(let codableType):
-                return codableType
-            }
-        }
-        
-        /// Decode an extra data with a given decoder.
-        /// - Parameters:
-        ///   - decoder: a decoder.
-        ///   - decodableType: a custom decodable type.
-        /// - Returns: an extra data.
-        func decode(from decoder: Decoder) -> Codable? {
-            try? codableType().init(from: decoder)
-        }
+    /// A custom extra data decodable type key.
+    public enum TypeKey: String {
+        case user, channel, message, attachment, reaction
     }
-    
-    /// A list of a custom extra data type.
-    public static var decodableTypes: [DecodableType] = []
     
     /// An extra data.
     public let object: Codable
@@ -117,6 +40,14 @@ public struct ExtraData: Codable {
     
     public init(from decoder: Decoder) throws {
         object = EmptyData()
+    }
+    
+    /// Decode an extra data from decoder with a given decodable type key.
+    /// - Parameters:
+    ///   - decoder: the decoder to read data from.
+    ///   - key: a decodable type key.
+    public init?(from decoder: Decoder, forKey key: TypeKey) throws {
+        self.init(try (Client.shared.extraDataTypes[key])?.init(from: decoder))
     }
 }
 
@@ -146,7 +77,7 @@ public extension ExtraData {
     final class UserWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = ExtraData.decodableTypes.first(where: { $0.isUser })?.decode(from: decoder)
+            object = try? ExtraData(from: decoder, forKey: .user)?.object
         }
     }
     
@@ -154,7 +85,7 @@ public extension ExtraData {
     final class ChannelWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = ExtraData.decodableTypes.first(where: { $0.isChannel })?.decode(from: decoder)
+            object = try? ExtraData(from: decoder, forKey: .channel)?.object
         }
     }
     
@@ -162,7 +93,7 @@ public extension ExtraData {
     final class MessageWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = ExtraData.decodableTypes.first(where: { $0.isMessage })?.decode(from: decoder)
+            object = try? ExtraData(from: decoder, forKey: .message)?.object
         }
     }
     
@@ -170,7 +101,7 @@ public extension ExtraData {
     final class AttachmentWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = ExtraData.decodableTypes.first(where: { $0.isAttachment })?.decode(from: decoder)
+            object = try? ExtraData(from: decoder, forKey: .attachment)?.object
         }
     }
     
@@ -178,7 +109,7 @@ public extension ExtraData {
     final class ReactionWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = ExtraData.decodableTypes.first(where: { $0.isReaction })?.decode(from: decoder)
+            object = try? ExtraData(from: decoder, forKey: .reaction)?.object
         }
     }
 }
