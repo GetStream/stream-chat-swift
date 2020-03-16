@@ -63,7 +63,7 @@ public struct Reaction: Codable {
         messageId = try container.decode(String.self, forKey: .messageId)
         user = try container.decodeIfPresent(User.self, forKey: .user)
         created = try container.decode(Date.self, forKey: .created)
-        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isReaction })?.decode(from: decoder))
+        extraData = try? ExtraData(from: decoder, forKey: .reaction)
     }
     
     public func encode(to encoder: Encoder) throws {

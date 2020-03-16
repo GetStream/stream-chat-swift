@@ -184,7 +184,7 @@ public struct Message: Codable {
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         latestReactions = (try? container.decode([Reaction].self, forKey: .latestReactions)) ?? []
         ownReactions = (try? container.decode([Reaction].self, forKey: .ownReactions)) ?? []
-        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isMessage })?.decode(from: decoder))
+        extraData = try? ExtraData(from: decoder, forKey: .message)
         
         if let reactionScores = try? container.decodeIfPresent(ReactionScores.self, forKey: .reactionScores),
             !reactionScores.scores.isEmpty {
