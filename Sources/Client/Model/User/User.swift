@@ -158,7 +158,7 @@ public struct User: Codable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
-        extraData = ExtraData(ExtraData.decodableTypes.first(where: { $0.isUser })?.decode(from: decoder))
+        extraData = try? ExtraData(from: decoder, forKey: .user)
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
             self.name = name
