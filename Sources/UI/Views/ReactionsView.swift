@@ -15,14 +15,15 @@ import RxCocoa
 import RxGesture
 
 final class ReactionsView: UIView {
-    typealias Completion = (_ selectedEmoji: ReactionType, _ score: Int) -> Bool?
+    typealias Completion = (_ selectedType: String, _ score: Int) -> Bool?
     
     private let disposeBag = DisposeBag()
     
     private lazy var avatarsStackView = createAvatarsStackView()
     private lazy var emojiesStackView = cerateEmojiesStackView()
     private lazy var labelsStackView = createLabelsStackView()
-    private var reactionScores: [ReactionType: Int]?
+    private var emojiReactionTypes: EmojiReactionTypes = [:]
+    private var reactionScores: [String: Int] = [:]
     
     private(set) lazy var reactionsView: UIView = {
         let view = UIView(frame: .zero)
@@ -35,36 +36,48 @@ final class ReactionsView: UIView {
         return view
     }()
     
-    func show(at point: CGPoint, for message: Message, completion: @escaping Completion) {
+    func show(emojiReactionTypes: EmojiReactionTypes, at point: CGPoint, for message: Message, completion: @escaping Completion) {
         addSubview(reactionsView)
+        self.emojiReactionTypes = emojiReactionTypes
+        reactionScores = message.reactionScores
         
-        let itemsCount = CGFloat(Client.shared.reactionTypes.count)
+        let itemsCount = CGFloat(emojiReactionTypes.count)
         
         let calculatedWidth: CGFloat = itemsCount > 1
             ? itemsCount * (.reactionsPickerButtonWidth + .messageInnerPadding) + .reactionsPickerCornerRadius
             : .reactionsPickerCornerHeight
         
         let width = min(calculatedWidth, .attachmentPreviewMaxWidth)
-        let x = min(max(point.x - width / 2, .messageTextPaddingWithAvatar), .minScreenWidth - width - .messageTextPaddingWithAvatar)
-        let y = max(safeAreaTopOffset + .reactionsPickerAvatarRadius + .messageEdgePadding, point.y - .reactionsPickerCornerRadius)
+        
+        let x = min(max(point.x - width / 2, .messageTextPaddingWithAvatar),
+                    .minScreenWidth - width - .messageTextPaddingWithAvatar)
+        
+        let y = max(safeAreaTopOffset + .reactionsPickerAvatarRadius + .messageEdgePadding,
+                    point.y - .reactionsPickerCornerRadius)
+        
         reactionsView.frame = CGRect(x: x, y: y, width: width, height: .reactionsPickerCornerHeight)
         reactionsView.transform = .init(scaleX: 0.5, y: 0.5)
-        reactionScores = message.reactionScores?.scores
         alpha = 0
         
-        Client.shared.reactionTypes.forEach { reactionType in
+        emojiReactionTypes.forEach { (reactionType, emoji) in
             let users = message.latestReactions.filter({ $0.type == reactionType }).compactMap({ $0.user })
             let reaction: Reaction
+            let score = message.reactionScores[reactionType] ?? 0
             
             if let ownReaction = message.ownReactions.first(where: { $0.type == reactionType }) {
                 reaction = ownReaction
             } else {
-                reaction = Reaction(type: reactionType, score: 0, messageId: message.id)
+                reaction = Reaction(type: reactionType, score: score, messageId: message.id)
             }
             
+            let emojiView = createEmojiView(emoji: emoji.emoji,
+                                            maxScore: emoji.maxScore,
+                                            reaction: reaction,
+                                            completion: completion)
+            
             avatarsStackView.addArrangedSubview(createAvatarView(users))
-            emojiesStackView.addArrangedSubview(createEmojiView(reaction: reaction, completion: completion))
-            labelsStackView.addArrangedSubview(createLabel(message.reactionScores?.scores[reactionType] ?? 0))
+            emojiesStackView.addArrangedSubview(emojiView)
+            labelsStackView.addArrangedSubview(createLabel(score))
         }
         
         UIView.animateSmoothly(withDuration: 0.3, usingSpringWithDamping: 0.65) {
@@ -86,30 +99,42 @@ final class ReactionsView: UIView {
         avatarsStackView.removeAllArrangedSubviews()
         labelsStackView.removeAllArrangedSubviews()
         
-        Client.shared.reactionTypes.forEach { reactionType in
+        emojiReactionTypes.forEach { reactionType, _ in
             let users = message.latestReactions.filter({ $0.type == reactionType }).compactMap({ $0.user })
             avatarsStackView.addArrangedSubview(createAvatarView(users))
-            labelsStackView.addArrangedSubview(createLabel(message.reactionScores?.scores[reactionType] ?? 0))
+            labelsStackView.addArrangedSubview(createLabel(message.reactionScores[reactionType] ?? 0))
         }
     }
     
-    private func updateLabel(reactionType: ReactionType, increment: Int) {
-        guard let index = Client.shared.reactionTypes.firstIndex(of: reactionType),
-            let label = labelsStackView.subviews[index].subviews.first as? UILabel else {
-                return
+    private func updateLabel(reactionType: String, increment: Int) {
+        guard let emoji = emojiReactionTypes[reactionType] else {
+            return
         }
         
-        let count = (reactionScores?[reactionType] ?? 0) + increment
+        var reactionIndex = -1
+        
+        for (index, subview) in emojiesStackView.subviews.enumerated() {
+            if let emojiLabel = subview as? UILabel, emojiLabel.text == emoji.emoji {
+                reactionIndex = index
+                break
+            }
+        }
+        
+        guard reactionIndex != -1, let label = labelsStackView.subviews[reactionIndex].subviews.first as? UILabel else {
+            return
+        }
+        
+        let count = (reactionScores[reactionType] ?? 0) + increment
         label.text = count > 0 ? count.shortString() : nil // swiftlint:disable:this empty_count
         
         if increment > 0 {
-            if let avatarView = avatarsStackView.subviews[index].subviews.first as? AvatarView {
+            if let avatarView = avatarsStackView.subviews[reactionIndex].subviews.first as? AvatarView {
                 avatarView.update(with: User.current.avatarURL,
                                   name: User.current.name,
                                   baseColor: backgroundColor?.withAlphaComponent(1))
             }
         } else {
-            avatarsStackView.subviews[index].subviews.first?.removeFromSuperview()
+            avatarsStackView.subviews[reactionIndex].subviews.first?.removeFromSuperview()
         }
     }
     
@@ -144,21 +169,22 @@ final class ReactionsView: UIView {
         return stackView
     }
     
-    private func createEmojiView(reaction: Reaction, completion: @escaping Completion) -> UIView {
+    private func createEmojiView(emoji: String, maxScore: Int, reaction: Reaction, completion: @escaping Completion) -> UIView {
         let label = UILabel()
-        label.text = reaction.type.emoji
+        label.text = emoji
         label.textAlignment = .center
         label.font = .reactionsEmoji
         label.snp.makeConstraints { $0.width.height.equalTo(CGFloat.reactionsPickerButtonWidth).priority(999) }
         
         var reactionScore = reaction.score
         var wasSend = false
+        let isRegular = maxScore < 2
         
         var tap = label.rx.tapGesture()
             .when(.recognized)
             .do(onNext: { [weak label] _ in
                 reactionScore += 1
-                reactionScore = min(reactionScore, reaction.type.maxCount)
+                reactionScore = min(reactionScore, maxScore)
                 label?.removeAllAnimations()
                 label?.transform = .init(scaleX: 0.3, y: 0.3)
                 
@@ -168,25 +194,27 @@ final class ReactionsView: UIView {
                                        animations: { label?.transform = .identity })
             })
         
-        if reaction.type.isRegular {
+        if isRegular {
             tap = tap.take(1).delay(.milliseconds(300), scheduler: MainScheduler.instance)
         } else {
             tap = tap.debounce(.milliseconds(1500), scheduler: MainScheduler.instance)
         }
         
         tap
-            .subscribe(onNext: { [weak self] _ in
-                self?.isUserInteractionEnabled = false
-                wasSend = true
-                
-                if (reaction.type.isRegular || reactionScore > reaction.score),
-                    let add = completion(reaction.type, reactionScore) {
-                    self?.updateLabel(reactionType: reaction.type, increment: add ? reactionScore : -1)
-                }
-                
-                self?.dismiss()
-                
-                }, onDisposed: {
+            .subscribe(
+                onNext: { [weak self] _ in
+                    self?.isUserInteractionEnabled = false
+                    wasSend = true
+                    
+                    if (isRegular || reactionScore > reaction.score),
+                        let add = completion(reaction.type, reactionScore) {
+                        self?.updateLabel(reactionType: reaction.type, increment: add ? reactionScore : -1)
+                    }
+                    
+                    self?.dismiss()
+                    
+                },
+                onDisposed: {
                     if !wasSend, reactionScore > reaction.score {
                         _ = completion(reaction.type, reactionScore)
                     }

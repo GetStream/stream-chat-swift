@@ -89,17 +89,15 @@ extension MessageTableViewCell {
             .disposed(by: disposeBag)
     }
     
-    func update(reactionScores: ReactionScores?, action: @escaping ReactionAction) {
-        guard let reactionScores = reactionScores,
-            !reactionScores.scores.isEmpty,
-            let anchorView = messageStackView.arrangedSubviews.first(where: { !$0.isHidden }) else {
+    func update(reactionsString: String, action: @escaping ReactionAction) {
+        guard !reactionsString.isEmpty, let anchorView = messageStackView.arrangedSubviews.first(where: { !$0.isHidden }) else {
             return
         }
         
         let style = self.style.reactionViewStyle
         reactionsContainer.isHidden = false
         reactionsOverlayView.isHidden = false
-        reactionsLabel.text = reactionScores.string
+        reactionsLabel.text = reactionsString
         messageStackViewTopConstraint?.update(offset: CGFloat.messageSpacing + .reactionsHeight + .reactionsToMessageOffset)
         
         reactionsTailImage.snp.makeConstraints { make in
