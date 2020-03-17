@@ -9,8 +9,8 @@
 import StreamChatClient
 import RxSwift
 
-/// A subscription for an async request.
-/// You have to keep as an instance variable until you need results in a completion block.
+/// A subscription for events.
+/// You have to keep subscription variable until you need events.
 ///
 /// For example:
 /// ```
@@ -20,20 +20,28 @@ import RxSwift
 ///     open override func viewWillAppear() {
 ///         super.viewWillAppear(animated)
 ///
-///         subscription = Client.shared.onEvent() { event
-///             print(event)
+///         // Subscribe for client events.
+///         subscription = Client.shared.onEvent() { result in
+///             print(result)
 ///         }
 ///     }
 ///
 ///     open override func viewWillDisappear() {
 ///         super.viewWillDisappear()
-///         subscription = nil
+///
+///         // Unsubscribe from client events.
+///         subscription?.cancel()
 ///     }
 /// }
 /// ```
 public final class Subscription {
     fileprivate static let shared = Subscription()
-    let disposeBag = DisposeBag()
+    private(set) var disposeBag = DisposeBag()
+    
+    /// Cancel the subscription.
+    public func cancel() {
+        disposeBag = DisposeBag()
+    }
 }
 
 // MARK: Client Completion Binding
