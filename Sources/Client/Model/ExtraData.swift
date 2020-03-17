@@ -10,10 +10,6 @@ import Foundation
 
 /// An extra data container.
 public struct ExtraData: Codable {
-    /// A custom extra data decodable type key.
-    public enum TypeKey: String {
-        case user, channel, message, attachment, reaction
-    }
     
     /// An extra data.
     public let object: Codable
@@ -46,8 +42,12 @@ public struct ExtraData: Codable {
     /// - Parameters:
     ///   - decoder: the decoder to read data from.
     ///   - key: a decodable type key.
-    public init?(from decoder: Decoder, forKey key: TypeKey) throws {
-        self.init(try (Client.shared.extraDataTypes[key])?.init(from: decoder))
+    public init?(from decoder: Decoder, forType type: Codable.Type?) throws {
+        guard let codableType = type else {
+            return nil
+        }
+        
+        self.init(try codableType.init(from: decoder))
     }
 }
 
@@ -77,7 +77,7 @@ public extension ExtraData {
     final class UserWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = try? ExtraData(from: decoder, forKey: .user)?.object
+            object = try? ExtraData(from: decoder, forType: User.extraDataType)?.object
         }
     }
     
@@ -85,7 +85,7 @@ public extension ExtraData {
     final class ChannelWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = try? ExtraData(from: decoder, forKey: .channel)?.object
+            object = try? ExtraData(from: decoder, forType: Channel.extraDataType)?.object
         }
     }
     
@@ -93,7 +93,7 @@ public extension ExtraData {
     final class MessageWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = try? ExtraData(from: decoder, forKey: .message)?.object
+            object = try? ExtraData(from: decoder, forType: Message.extraDataType)?.object
         }
     }
     
@@ -101,7 +101,7 @@ public extension ExtraData {
     final class AttachmentWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = try? ExtraData(from: decoder, forKey: .attachment)?.object
+            object = try? ExtraData(from: decoder, forType: Attachment.extraDataType)?.object
         }
     }
     
@@ -109,7 +109,7 @@ public extension ExtraData {
     final class ReactionWrapper: Wrapper {
         required init(from decoder: Decoder) throws {
             try super.init(from: decoder)
-            object = try? ExtraData(from: decoder, forKey: .reaction)?.object
+            object = try? ExtraData(from: decoder, forType: Reaction.extraDataType)?.object
         }
     }
 }

@@ -36,11 +36,9 @@ public final class Client {
         }
     }
     
+    /// A base URL.
     public let baseURL: BaseURL
     let stayConnectedInBackground: Bool
-    
-    /// A list of extra data types.
-    public let extraDataTypes: [ExtraData.TypeKey: Codable.Type]
     /// A database for an offline mode.
     public internal(set) var database: Database?
     
@@ -109,7 +107,6 @@ public final class Client {
     ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
     init(apiKey: String = Client.config.apiKey,
          baseURL: BaseURL = Client.config.baseURL,
-         extraDataTypes: [ExtraData.TypeKey: Codable.Type] = Client.config.extraDataTypes,
          stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
          database: Database? = Client.config.database,
          callbackQueue: DispatchQueue? = Client.config.callbackQueue,
@@ -127,7 +124,6 @@ public final class Client {
         self.apiKey = apiKey
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue ?? .global(qos: .userInitiated)
-        self.extraDataTypes = extraDataTypes
         self.stayConnectedInBackground = stayConnectedInBackground
         self.database = database
         self.logOptions = logOptions

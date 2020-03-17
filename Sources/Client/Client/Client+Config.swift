@@ -19,8 +19,6 @@ extension Client {
         public let baseURL: BaseURL
         /// A request callback queue, default nil (some background thread).
         public let callbackQueue: DispatchQueue?
-        /// A list of extra data types.
-        public let extraDataTypes: [ExtraData.TypeKey: Codable.Type]
         /// When the app will go to the background, start a background task to stay connected for 5 min.
         public let stayConnectedInBackground: Bool
         /// A local database.
@@ -32,7 +30,6 @@ extension Client {
         /// - Parameters:
         ///     - apiKey: a Stream Chat API key.
         ///     - baseURL: a base URL (see `BaseURL`).
-        ///     - extraDataTypes: custom extra data types for decoding data in your custom types.
         ///     - stayConnectedInBackground: when the app will go to the background,
         ///                                  start a background task to stay connected for 5 min.
         ///     - database: a database manager.
@@ -40,14 +37,12 @@ extension Client {
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init(apiKey: String,
                     baseURL: BaseURL = .usEast,
-                    extraDataTypes: [ExtraData.TypeKey: Codable.Type] = [:],
                     stayConnectedInBackground: Bool = true,
                     database: Database? = nil,
                     callbackQueue: DispatchQueue? = nil,
                     logOptions: ClientLogger.Options = []) {
             self.apiKey = apiKey
             self.baseURL = baseURL
-            self.extraDataTypes = extraDataTypes
             self.stayConnectedInBackground = stayConnectedInBackground
             self.database = database
             self.callbackQueue = callbackQueue
@@ -59,7 +54,6 @@ extension Client {
         /// - Parameters:
         ///     - apiKey: a Stream Chat API key.
         ///     - baseURL: a base URL.
-        ///     - extraDataTypes: custom extra data types for decoding data in your custom types.
         ///     - stayConnectedInBackground: when the app will go to the background,
         ///                                  start a background task to stay connected for 5 min
         ///     - database: a database manager.
@@ -67,14 +61,12 @@ extension Client {
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init(apiKey: String,
                     baseURL: URL,
-                    extraDataTypes: [ExtraData.TypeKey: Codable.Type] = [:],
                     stayConnectedInBackground: Bool = true,
                     database: Database? = nil,
                     callbackQueue: DispatchQueue? = nil,
                     logOptions: ClientLogger.Options = []) {
             self.init(apiKey: apiKey,
                       baseURL: .init(url: baseURL),
-                      extraDataTypes: extraDataTypes,
                       stayConnectedInBackground: stayConnectedInBackground,
                       database: database,
                       callbackQueue: callbackQueue,
@@ -86,7 +78,6 @@ extension Client {
         /// - Parameters:
         ///     - apiKey: a Stream Chat API key.
         ///     - baseURL: a base URL string.
-        ///     - extraDataTypes: custom extra data types for decoding data in your custom types.
         ///     - stayConnectedInBackground: when the app will go to the background,
         ///                                  start a background task to stay connected for 5 min
         ///     - database: a database manager.
@@ -94,7 +85,6 @@ extension Client {
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init?(apiKey: String,
                      baseURL: String,
-                     extraDataTypes: [ExtraData.TypeKey: Codable.Type] = [:],
                      stayConnectedInBackground: Bool = true,
                      database: Database? = nil,
                      callbackQueue: DispatchQueue? = nil,
@@ -103,7 +93,6 @@ extension Client {
             
             self.init(apiKey: apiKey,
                       baseURL: .init(url: url),
-                      extraDataTypes: extraDataTypes,
                       stayConnectedInBackground: stayConnectedInBackground,
                       database: database,
                       callbackQueue: callbackQueue,
