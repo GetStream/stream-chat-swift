@@ -38,7 +38,7 @@ final class ClientTests01_Channels: TestCase {
     static let messageText = "Text \(UUID().uuidString)"
     
     let member2 = User.user2.asMember
-    let loveReactionType = ReactionType.regular("love", emoji: "❤️")
+    let loveReactionType = "love"
     
     let unreadCounts: [UnreadCount] = [.init(channels: 0, messages: 0),
                                        .init(channels: 1, messages: 1),
@@ -51,8 +51,8 @@ final class ClientTests01_Channels: TestCase {
     func test01BigFlow() {
         let client1 = Client(apiKey: TestCase.apiKey,
                              baseURL: TestCase.baseURL,
-                             callbackQueue: .main,
                              stayConnectedInBackground: false,
+                             callbackQueue: .main,
                              logOptions: [])
         
         Client.shared.set(user: .user2, token: .token2)
