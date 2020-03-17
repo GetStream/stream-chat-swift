@@ -43,7 +43,7 @@ final class ClientTests10_ClientLogger: XCTestCase {
         
         let testMembers = Set([User.user1.asMember])
         let testMessage = Message(id: "test", type: .reply, text: "test")
-        let testReaction = Reaction(type: .regular("angry", emoji: "😠"), messageId: testMessage.id)
+        let testReaction = Reaction(type: "angry", messageId: testMessage.id)
         
         allEndpoints = [.guestToken(User.user1),
                         .addDevice(deviceId: "test", User.user1),

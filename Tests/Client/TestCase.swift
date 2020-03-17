@@ -30,8 +30,8 @@ class TestCase: XCTestCase {
         
         Client.config = .init(apiKey: Self.apiKey,
                               baseURL: Self.baseURL,
-                              callbackQueue: .main,
                               stayConnectedInBackground: false,
+                              callbackQueue: .main,
                               logOptions: [])
     }
     
