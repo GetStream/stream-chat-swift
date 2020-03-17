@@ -28,6 +28,10 @@ public struct User: Codable {
         case isAnonymous = "anon"
     }
     
+    /// A custom extra data type for users.
+    /// - Note: Use this variable to setup your own extra data type for decoding users custom fields from JSON data.
+    public static var extraDataType: Codable.Type?
+    
     /// An unkown user.
     public static let unknown: User = {
         let id = UUID().uuidString
@@ -158,7 +162,7 @@ public struct User: Codable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
-        extraData = try? ExtraData(from: decoder, forKey: .user)
+        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
             self.name = name

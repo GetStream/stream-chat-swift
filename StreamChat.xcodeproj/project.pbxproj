@@ -302,8 +302,6 @@
 		8A466E62241A3A7D003C21BA /* Client+WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+WebSocket.swift"; sourceTree = "<group>"; };
 		8A466E64241A3AAA003C21BA /* Client+Setup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Setup.swift"; sourceTree = "<group>"; };
 		8A466E66241A3AB6003C21BA /* BaseURL.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
-		8A4AB32324102196000A23DD /* ReactionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionType.swift; sourceTree = "<group>"; };
-		8A4AB325241021C4000A23DD /* ReactionScores.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionScores.swift; sourceTree = "<group>"; };
 		8A50694F23CDEA31009F127A /* StreamChatClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A50695723CDEA31009F127A /* StreamChatClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A50696723CDEDA3009F127A /* StreamChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChat.h; sourceTree = "<group>"; };
@@ -664,15 +662,6 @@
 				8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */,
 			);
 			path = "Unit Tests";
-			sourceTree = "<group>";
-		};
-		8ACC7BAF24192477000750E4 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				8A4AB32324102196000A23DD /* ReactionType.swift */,
-				8A4AB325241021C4000A23DD /* ReactionScores.swift */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		8ACC7BB0241924AD000750E4 /* Client */ = {
@@ -1193,7 +1182,6 @@
 				8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */,
 				8A8BB2A2238456A200C2F9DE /* StreamChatRealm.podspec */,
 				8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */,
-				8ACC7BAF24192477000750E4 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
