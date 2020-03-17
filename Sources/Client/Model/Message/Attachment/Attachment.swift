@@ -27,6 +27,10 @@ public struct Attachment: Codable {
         case actions
     }
     
+    /// A custom extra data type for attachments.
+    /// - Note: Use this variable to setup your own extra data type for decoding attachments custom fields from JSON data.
+    public static var extraDataType: Codable.Type?
+    
     /// A title.
     public let title: String
     /// An author.
@@ -125,7 +129,7 @@ public struct Attachment: Codable {
         self.text = text
         file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
         actions = try container.decodeIfPresent([Action].self, forKey: .actions) ?? []
-        extraData = try? ExtraData(from: decoder, forKey: .attachment)
+        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
     }
     
     /// Image upload:

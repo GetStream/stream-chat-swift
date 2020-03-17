@@ -46,6 +46,10 @@ public final class Channel: Codable {
         case invites
     }
     
+    /// A custom extra data type for channels.
+    /// - Note: Use this variable to setup your own extra data type for decoding channels custom fields from JSON data.
+    public static var extraDataType: Codable.Type?
+    
     /// A channel id.
     public let id: String
     /// A channel type + id.
@@ -195,7 +199,7 @@ public final class Channel: Codable {
         self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
         imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
         invitedMembers = Set<Member>()
-        extraData = try? ExtraData(from: decoder, forKey: .channel)
+        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
         let config = try container.decode(Config.self, forKey: .config)
         self.config = config
         created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created
