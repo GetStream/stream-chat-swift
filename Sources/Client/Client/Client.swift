@@ -39,8 +39,6 @@ public final class Client {
     public let baseURL: BaseURL
     let stayConnectedInBackground: Bool
     
-    /// A list of reaction types.
-    public let reactionTypes: [ReactionType]
     /// A list of extra data types.
     public let extraDataTypes: [ExtraData.TypeKey: Codable.Type]
     /// A database for an offline mode.
@@ -111,7 +109,6 @@ public final class Client {
     ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
     init(apiKey: String = Client.config.apiKey,
          baseURL: BaseURL = Client.config.baseURL,
-         reactionTypes: [ReactionType] = Client.config.reactionTypes,
          extraDataTypes: [ExtraData.TypeKey: Codable.Type] = Client.config.extraDataTypes,
          stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
          database: Database? = Client.config.database,
@@ -130,7 +127,6 @@ public final class Client {
         self.apiKey = apiKey
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue ?? .global(qos: .userInitiated)
-        self.reactionTypes = reactionTypes
         self.extraDataTypes = extraDataTypes
         self.stayConnectedInBackground = stayConnectedInBackground
         self.database = database

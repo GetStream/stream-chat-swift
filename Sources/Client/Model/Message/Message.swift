@@ -67,7 +67,7 @@ public struct Message: Codable {
     /// The current user own reactions (see `Reaction`).
     public private(set) var ownReactions: [Reaction]
     /// A reactions count (see `ReactionCounts`).
-    public private(set) var reactionScores: ReactionScores?
+    public private(set) var reactionScores: [String: Int]
     
     /// Check if the message is ephemeral, e.g. Giphy preview.
     public var isEphemeral: Bool { type == .ephemeral }
@@ -80,7 +80,7 @@ public struct Message: Codable {
     /// Check if the message could be deleted.
     public var canDelete: Bool { isOwn }
     /// Check if the message has reactions.
-    public var hasReactions: Bool { reactionScores != nil && !(reactionScores?.scores.isEmpty ?? true) }
+    public var hasReactions: Bool { !reactionScores.isEmpty }
     /// Checks if the message is flagged (locally).
     public var isFlagged: Bool { Message.flaggedIds.contains(id) }
     
@@ -124,7 +124,7 @@ public struct Message: Codable {
                 extraData: Codable? = nil,
                 latestReactions: [Reaction] = [],
                 ownReactions: [Reaction] = [],
-                reactionScores: ReactionScores? = nil,
+                reactionScores: [String: Int] = [:],
                 replyCount: Int = 0,
                 showReplyInChannel: Bool = false) {
         user = User.current
@@ -185,13 +185,7 @@ public struct Message: Codable {
         latestReactions = (try? container.decode([Reaction].self, forKey: .latestReactions)) ?? []
         ownReactions = (try? container.decode([Reaction].self, forKey: .ownReactions)) ?? []
         extraData = try? ExtraData(from: decoder, forKey: .message)
-        
-        if let reactionScores = try? container.decodeIfPresent(ReactionScores.self, forKey: .reactionScores),
-            !reactionScores.scores.isEmpty {
-            self.reactionScores = reactionScores
-        } else {
-            reactionScores = nil
-        }
+        reactionScores = try container.decodeIfPresent([String: Int].self, forKey: .reactionScores) ?? [:]
     }
     
     private func checkIfTextAsAttachmentURL(_ text: String) -> Bool {
@@ -238,7 +232,7 @@ public extension Message {
     /// Check if the message has a reaction with the given type from the current user.
     /// - Parameter type: a reaction type.
     /// - Returns: true if the message has a reaction type.
-    func hasOwnReaction(type: ReactionType) -> Bool {
+    func hasOwnReaction(type: String) -> Bool {
         !ownReactions.isEmpty && ownReactions.firstIndex(where: { $0.type == type }) != nil
     }
     

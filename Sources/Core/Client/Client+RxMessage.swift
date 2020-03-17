@@ -57,7 +57,7 @@ public extension Reactive where Base == Client {
     ///   - score: a score.
     ///   - extraData: an extra data for the reaction.
     ///   - message: a message.
-    func addReaction(type: ReactionType,
+    func addReaction(type: String,
                      score: Int = 1,
                      extraData: Codable? = nil,
                      to message: Message) -> Observable<MessageResponse> {
@@ -70,7 +70,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - type: a reaction type, e.g. like.
     ///   - message: a message.
-    func deleteReaction(type: ReactionType, from message: Message) -> Observable<MessageResponse> {
+    func deleteReaction(type: String, from message: Message) -> Observable<MessageResponse> {
         connected(request({ [unowned base] completion in
             base.deleteReaction(type: type, from: message, completion)
         }))

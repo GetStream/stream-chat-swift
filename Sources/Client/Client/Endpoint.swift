@@ -85,7 +85,7 @@ public enum Endpoint {
     /// Add a reaction to the message.
     case addReaction(Reaction)
     /// Delete a reaction from the message.
-    case deleteReaction(ReactionType, Message)
+    case deleteReaction(String, Message)
     /// Flag a message.
     case flagMessage(Message)
     /// Unflag a message.
@@ -171,7 +171,7 @@ extension Endpoint {
         case .addReaction(let reaction):
             return path(to: reaction.messageId, "reaction")
         case .deleteReaction(let reactionType, let message):
-            return path(to: message.id, "reaction/\(reactionType.name)")
+            return path(to: message.id, "reaction/\(reactionType)")
         case .sendEvent(_, let channel):
             return path(to: channel, "event")
         case .sendImage(_, _, _, let channel):
