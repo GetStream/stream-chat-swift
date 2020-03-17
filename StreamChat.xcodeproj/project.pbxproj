@@ -42,6 +42,7 @@
 		8A8BB2A52384573400C2F9DE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A32384573400C2F9DE /* Realm.framework */; };
 		8A8BB2A72384573400C2F9DE /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A42384573400C2F9DE /* RealmSwift.framework */; };
 		8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */; };
+		8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD0241924AD000750E4 /* Reaction.swift */; };
 		8AB33A5E240EA19A00777682 /* AttachmentTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */; };
 		8AC0D94C23D4ABC50080B8BC /* ClientTests02+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94B23D4ABC50080B8BC /* ClientTests02+Users.swift */; };
 		8AC0D94F23D4BA7D0080B8BC /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */; };
@@ -70,7 +71,6 @@
 		8ACC7C11241924AD000750E4 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BCD241924AD000750E4 /* Message.swift */; };
 		8ACC7C12241924AD000750E4 /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BCE241924AD000750E4 /* MessageRead.swift */; };
 		8ACC7C13241924AD000750E4 /* MessageAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BCF241924AD000750E4 /* MessageAction.swift */; };
-		8ACC7C14241924AD000750E4 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD0241924AD000750E4 /* Reaction.swift */; };
 		8ACC7C15241924AD000750E4 /* Message+Requests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD1241924AD000750E4 /* Message+Requests.swift */; };
 		8ACC7C16241924AD000750E4 /* Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD2241924AD000750E4 /* Sorting.swift */; };
 		8ACC7C17241924AD000750E4 /* UsersQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD4241924AD000750E4 /* UsersQuery.swift */; };
@@ -226,8 +226,6 @@
 		8ACC7D53241924BE000750E4 /* ReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D01241924BE000750E4 /* ReactionsView.swift */; };
 		8ACC7D54241924BE000750E4 /* ChannelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D03241924BE000750E4 /* ChannelsViewController.swift */; };
 		8ACC7D55241924BE000750E4 /* ChannelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D04241924BE000750E4 /* ChannelTableViewCell.swift */; };
-		8ACC7D56241924D7000750E4 /* ReactionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C57241924B5000750E4 /* ReactionType.swift */; };
-		8ACC7D57241924EA000750E4 /* ReactionScores.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C56241924B5000750E4 /* ReactionScores.swift */; };
 		8ACC7D5924192529000750E4 /* Client+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C64241924B5000750E4 /* Client+Config.swift */; };
 		8ACC7D5B2419366D000750E4 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D5A2419366D000750E4 /* Subscription.swift */; };
 		8AD5907F23957102005903AC /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5907E23957102005903AC /* Filter.swift */; };
@@ -405,8 +403,6 @@
 		8ACC7C52241924B5000750E4 /* Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		8ACC7C53241924B5000750E4 /* Date+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		8ACC7C54241924B5000750E4 /* RxFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxFunctions.swift; sourceTree = "<group>"; };
-		8ACC7C56241924B5000750E4 /* ReactionScores.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactionScores.swift; sourceTree = "<group>"; };
-		8ACC7C57241924B5000750E4 /* ReactionType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactionType.swift; sourceTree = "<group>"; };
 		8ACC7C59241924B5000750E4 /* InternetConnection+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "InternetConnection+Rx.swift"; sourceTree = "<group>"; };
 		8ACC7C5B241924B5000750E4 /* Client+RxChannels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxChannels.swift"; sourceTree = "<group>"; };
 		8ACC7C5C241924B5000750E4 /* Client+RxConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxConnection.swift"; sourceTree = "<group>"; };
@@ -756,8 +752,8 @@
 				8ACC7BCE241924AD000750E4 /* MessageRead.swift */,
 				8ACC7BCF241924AD000750E4 /* MessageAction.swift */,
 				8ACC7BD1241924AD000750E4 /* Message+Requests.swift */,
+				8ACC7BD0241924AD000750E4 /* Reaction.swift */,
 				8ACC7BC8241924AD000750E4 /* Attachment */,
-				8ACC7D58241924F6000750E4 /* Reaction */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -1182,16 +1178,6 @@
 			path = Channels;
 			sourceTree = "<group>";
 		};
-		8ACC7D58241924F6000750E4 /* Reaction */ = {
-			isa = PBXGroup;
-			children = (
-				8ACC7BD0241924AD000750E4 /* Reaction.swift */,
-				8ACC7C56241924B5000750E4 /* ReactionScores.swift */,
-				8ACC7C57241924B5000750E4 /* ReactionType.swift */,
-			);
-			path = Reaction;
-			sourceTree = "<group>";
-		};
 		8AD5EC8522E9A3E8005CFAC9 = {
 			isa = PBXGroup;
 			children = (
@@ -1536,7 +1522,6 @@
 				8ACC7C0C241924AD000750E4 /* ExtraData.swift in Sources */,
 				8ACC7C1B241924AD000750E4 /* MutedUser.swift in Sources */,
 				8ACC7C2E241924AD000750E4 /* Client+Channel.swift in Sources */,
-				8ACC7D56241924D7000750E4 /* ReactionType.swift in Sources */,
 				8ACC7C29241924AD000750E4 /* Device.swift in Sources */,
 				8ACC7C21241924AD000750E4 /* ChannelId.swift in Sources */,
 				8ACC7C07241924AD000750E4 /* WeakRef.swift in Sources */,
@@ -1548,7 +1533,6 @@
 				8A466E65241A3AAA003C21BA /* Client+Setup.swift in Sources */,
 				8ACC7C1C241924AD000750E4 /* QueryOptions.swift in Sources */,
 				8ACC7C12241924AD000750E4 /* MessageRead.swift in Sources */,
-				8ACC7D57241924EA000750E4 /* ReactionScores.swift in Sources */,
 				8ACC7C0E241924AD000750E4 /* Attachment.swift in Sources */,
 				8ACC7D5924192529000750E4 /* Client+Config.swift in Sources */,
 				8ACC7C17241924AD000750E4 /* UsersQuery.swift in Sources */,
@@ -1556,8 +1540,8 @@
 				8ACC7C2A241924AD000750E4 /* BanEnabling.swift in Sources */,
 				8ACC7C31241924AD000750E4 /* Client+Devices.swift in Sources */,
 				8ACC7C09241924AD000750E4 /* Database.swift in Sources */,
+				8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */,
 				8ACC7C1D241924AD000750E4 /* Channel+Requests.swift in Sources */,
-				8ACC7C14241924AD000750E4 /* Reaction.swift in Sources */,
 				8ACC7C18241924AD000750E4 /* User+Requests.swift in Sources */,
 				8ACC7C27241924AD000750E4 /* Filter.swift in Sources */,
 				8ACC7C0A241924AD000750E4 /* UnreadCount.swift in Sources */,
