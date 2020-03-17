@@ -43,6 +43,7 @@
 		8A8BB2A72384573400C2F9DE /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A42384573400C2F9DE /* RealmSwift.framework */; };
 		8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */; };
 		8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD0241924AD000750E4 /* Reaction.swift */; };
+		8AA8F13E2420FFE0008FD89C /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBB241924AD000750E4 /* Int+Extensions.swift */; };
 		8AB33A5E240EA19A00777682 /* AttachmentTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */; };
 		8AC0D94C23D4ABC50080B8BC /* ClientTests02+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94B23D4ABC50080B8BC /* ClientTests02+Users.swift */; };
 		8AC0D94F23D4BA7D0080B8BC /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */; };
@@ -53,7 +54,6 @@
 		8ACC7BFF241924AD000750E4 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB7241924AD000750E4 /* Atomic.swift */; };
 		8ACC7C00241924AD000750E4 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB8241924AD000750E4 /* Bundle+Extensions.swift */; };
 		8ACC7C01241924AD000750E4 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB9241924AD000750E4 /* RepeatingTimer.swift */; };
-		8ACC7C02241924AD000750E4 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBB241924AD000750E4 /* Int+Extensions.swift */; };
 		8ACC7C03241924AD000750E4 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBC241924AD000750E4 /* String+Extensions.swift */; };
 		8ACC7C04241924AD000750E4 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBD241924AD000750E4 /* Functions.swift */; };
 		8ACC7C05241924AD000750E4 /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBE241924AD000750E4 /* Result+Extensions.swift */; };
@@ -714,7 +714,6 @@
 		8ACC7BBA241924AD000750E4 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7BBB241924AD000750E4 /* Int+Extensions.swift */,
 				8ACC7BBC241924AD000750E4 /* String+Extensions.swift */,
 				8ACC7BBD241924AD000750E4 /* Functions.swift */,
 				8ACC7BBE241924AD000750E4 /* Result+Extensions.swift */,
@@ -1079,6 +1078,7 @@
 				8ACC7CF2241924BE000750E4 /* EscapeBridgingUI.swift */,
 				8ACC7CF3241924BE000750E4 /* CharacterSet+Extensions.swift */,
 				8ACC7CF4241924BE000750E4 /* Bundle+Extensions.swift */,
+				8ACC7BBB241924AD000750E4 /* Int+Extensions.swift */,
 				8ACC7CF5241924BE000750E4 /* String */,
 				8ACC7CF8241924BE000750E4 /* Keyboard.swift */,
 				8ACC7CF9241924BE000750E4 /* Rx */,
@@ -1578,7 +1578,6 @@
 				8ACC7C0D241924AD000750E4 /* AttachmentType.swift in Sources */,
 				8ACC7C13241924AD000750E4 /* MessageAction.swift in Sources */,
 				8ACC7C24241924AD000750E4 /* ChannelResponse.swift in Sources */,
-				8ACC7C02241924AD000750E4 /* Int+Extensions.swift in Sources */,
 				8ACC7C1E241924AD000750E4 /* ChannelQuery.swift in Sources */,
 				8ACC7C2F241924AD000750E4 /* Client+Message.swift in Sources */,
 				8ACC7C01241924AD000750E4 /* RepeatingTimer.swift in Sources */,
@@ -1705,6 +1704,7 @@
 				8ACC7D4C241924BE000750E4 /* Keyboard.swift in Sources */,
 				8ACC7D48241924BE000750E4 /* CharacterSet+Extensions.swift in Sources */,
 				8ACC7D17241924BE000750E4 /* ChatViewController+Attachments.swift in Sources */,
+				8AA8F13E2420FFE0008FD89C /* Int+Extensions.swift in Sources */,
 				8ACC7D3E241924BE000750E4 /* UITableView+Extensions.swift in Sources */,
 				8ACC7D2A241924BE000750E4 /* ChatViewStyle.swift in Sources */,
 				8ACC7D1B241924BE000750E4 /* ChatViewController+MessageActions.swift in Sources */,
