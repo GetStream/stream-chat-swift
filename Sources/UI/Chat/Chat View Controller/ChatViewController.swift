@@ -15,7 +15,6 @@ import RxCocoa
 
 /// A chat view controller of a channel.
 open class ChatViewController: ViewController, UITableViewDataSource, UITableViewDelegate {
-    
     /// A chat style.
     public lazy var style = defaultStyle
     /// A default chat style. This is useful for subclasses.
@@ -33,6 +32,14 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     @available(iOS 13, *)
     open var defaultUseContextMenuForActions: Bool {
         return true
+    }
+    
+    /// A emoji-based reaction types.
+    public lazy var emojiReactionTypes = defaultEmojiReactionTypes
+    
+    /// A default emoji-based reaction types.
+    open var defaultEmojiReactionTypes: EmojiReactionTypes {
+        ["like": ("👍", 1), "love": ("❤️", 1), "haha": ("😂", 1), "wow": ("😲", 1), "sad": ("😔", 1), "angry": ("😠", 1)]
     }
     
     /// A dispose bag for rx subscriptions.

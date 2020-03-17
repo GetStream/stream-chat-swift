@@ -11,12 +11,37 @@ import StreamChatClient
 import StreamChatCore
 import SnapKit
 
+/// A type for emoji reactions by reaction types.
+public typealias EmojiReactionTypes = [String: (emoji: String, maxScore: Int)]
+
 extension ChatViewController {
     
     func update(cell: MessageTableViewCell, forReactionsIn message: Message) {
-        cell.update(reactionScores: message.reactionScores) { [weak self] cell, locationInView in
+        cell.update(reactionsString: reactionsString(for: message)) { [weak self] cell, locationInView in
             self?.showReactions(from: cell, in: message, locationInView: locationInView)
         }
+    }
+    
+    func reactionsString(for message: Message) -> String {
+        guard !message.reactionScores.isEmpty else {
+            return ""
+        }
+        
+        let score = message.reactionScores
+            .filter({ type, _ in self.emojiReactionTypes.keys.contains(type) })
+            .values
+            .reduce(0, { $0 + $1 })
+        
+        let reactionTypes = message.reactionScores.keys
+        var emojies = ""
+        
+        emojiReactionTypes.forEach { type, emoji in
+            if reactionTypes.contains(type) {
+                emojies += emoji.emoji
+            }
+        }
+        
+        return emojies.appending(score.shortString())
     }
     
     func showReactions(from cell: UITableViewCell, in message: Message, locationInView: CGPoint) {
@@ -34,27 +59,29 @@ extension ChatViewController {
         let convertedOrigin = tableView.convert(cell.frame, to: view).origin
         let position = CGPoint(x: convertedOrigin.x + locationInView.x, y: convertedOrigin.y + locationInView.y)
         
-        reactionsView.show(at: position, for: message) { [weak self] reactionType, score in
+        reactionsView.show(emojiReactionTypes: emojiReactionTypes, at: position, for: message) { [weak self] type, score in
             guard let self = self,
+                let emojiReactionsType = self.emojiReactionTypes[type],
                 let presenter = self.channelPresenter,
                 let messageIndex = self.channelPresenter?.items.lastIndex(whereMessageId: messageId),
                 let message = self.channelPresenter?.items[messageIndex].message else {
                     return nil
             }
             
+            let isRegular = emojiReactionsType.maxScore < 2
             self.reactionsView = nil
-            let needsToDelete = reactionType.isRegular && message.hasOwnReaction(type: reactionType)
-            let extraData = needsToDelete ? nil : presenter.reactionExtraDataCallback?(reactionType, score, message.id)
+            let needsToDelete = isRegular && message.hasOwnReaction(type: type)
+            let extraData = needsToDelete ? nil : presenter.reactionExtraDataCallback?(type, score, message.id)
             
             let actionReaction = needsToDelete
-                ? message.rx.deleteReaction(type: reactionType)
-                : message.rx.addReaction(type: reactionType, score: score, extraData: extraData)
+                ? message.rx.deleteReaction(type: type)
+                : message.rx.addReaction(type: type, score: score, extraData: extraData)
             
             actionReaction
                 .subscribe(onError: { [weak self] in self?.show(error: $0) })
                 .disposed(by: self.disposeBag)
             
-            return reactionType.isRegular || !needsToDelete
+            return isRegular || !needsToDelete
         }
     }
 }
