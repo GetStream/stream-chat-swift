@@ -30,6 +30,10 @@ public struct Message: Codable {
         case reactionScores = "reaction_scores"
     }
     
+    /// A custom extra data type for messages.
+    /// - Note: Use this variable to setup your own extra data type for decoding messages custom fields from JSON data.
+    public static var extraDataType: Codable.Type?
+    
     static var flaggedIds = Set<String>()
     
     /// A message id.
@@ -184,8 +188,8 @@ public struct Message: Codable {
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         latestReactions = (try? container.decode([Reaction].self, forKey: .latestReactions)) ?? []
         ownReactions = (try? container.decode([Reaction].self, forKey: .ownReactions)) ?? []
-        extraData = try? ExtraData(from: decoder, forKey: .message)
         reactionScores = try container.decodeIfPresent([String: Int].self, forKey: .reactionScores) ?? [:]
+        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
     }
     
     private func checkIfTextAsAttachmentURL(_ text: String) -> Bool {

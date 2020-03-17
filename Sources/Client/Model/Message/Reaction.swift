@@ -18,6 +18,10 @@ public struct Reaction: Codable {
         case created = "created_at"
     }
     
+    /// A custom extra data type for reactions.
+    /// - Note: Use this variable to setup your own extra data type for decoding reactions custom fields from JSON data.
+    public static var extraDataType: Codable.Type?
+    
     /// A reaction type.
     public let type: String
     /// A score.
@@ -63,7 +67,7 @@ public struct Reaction: Codable {
         messageId = try container.decode(String.self, forKey: .messageId)
         user = try container.decodeIfPresent(User.self, forKey: .user)
         created = try container.decode(Date.self, forKey: .created)
-        extraData = try? ExtraData(from: decoder, forKey: .reaction)
+        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
     }
     
     public func encode(to encoder: Encoder) throws {
