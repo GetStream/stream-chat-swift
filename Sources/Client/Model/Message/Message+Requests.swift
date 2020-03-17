@@ -33,7 +33,7 @@ public extension Message {
     ///   - type: a reaction type, e.g. like.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func addReaction(type: ReactionType,
+    func addReaction(type: String,
                      score: Int,
                      extraData: Codable?,
                      _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
@@ -45,7 +45,7 @@ public extension Message {
     ///   - type: a reaction type, e.g. like.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func deleteReaction(type: ReactionType, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+    func deleteReaction(type: String, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         Client.shared.deleteReaction(type: type, from: self, completion)
     }
     

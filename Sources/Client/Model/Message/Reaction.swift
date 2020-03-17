@@ -19,7 +19,7 @@ public struct Reaction: Codable {
     }
     
     /// A reaction type.
-    public let type: ReactionType
+    public let type: String
     /// A score.
     public let score: Int
     /// A message id.
@@ -42,7 +42,7 @@ public struct Reaction: Codable {
     ///   - extraData: an extra data.
     ///   - user: a user of the reaction.
     ///   - created: a created date.
-    public init(type: ReactionType,
+    public init(type: String,
                 score: Int = 1,
                 messageId: String,
                 extraData: Codable? = nil,
@@ -58,7 +58,7 @@ public struct Reaction: Codable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        type = try container.decode(ReactionType.self, forKey: .type)
+        type = try container.decode(String.self, forKey: .type)
         score = try container.decode(Int.self, forKey: .score)
         messageId = try container.decode(String.self, forKey: .messageId)
         user = try container.decodeIfPresent(User.self, forKey: .user)
