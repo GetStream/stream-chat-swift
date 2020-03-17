@@ -18,7 +18,7 @@ public final class ChannelPresenter: Presenter {
     /// A callback type for the adding an extra data for a new message.
     public typealias MessageExtraDataCallback = (_ id: String, _ text: String, [Attachment], _ parentId: String?) -> Codable?
     /// A callback type for the adding an extra data for a new reaction.
-    public typealias ReactionExtraDataCallback = (ReactionType, _ score: Int, _ messageId: String) -> Codable?
+    public typealias ReactionExtraDataCallback = (String, _ score: Int, _ messageId: String) -> Codable?
     /// A callback type for the adding an extra data for a file attachment.
     public typealias FileAttachmentExtraDataCallback = (URL, Channel) -> Codable?
     /// A callback type for the adding an extra data for an image attachment.

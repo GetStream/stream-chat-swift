@@ -61,7 +61,7 @@ public extension Client {
     ///   - message: a message.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func addReaction(type: ReactionType,
+    func addReaction(type: String,
                      score: Int = 1,
                      extraData: Codable? = nil,
                      to message: Message,
@@ -76,7 +76,7 @@ public extension Client {
     ///   - message: a message.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func deleteReaction(type: ReactionType,
+    func deleteReaction(type: String,
                         from message: Message,
                         _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         request(endpoint: .deleteReaction(type, message), completion)
