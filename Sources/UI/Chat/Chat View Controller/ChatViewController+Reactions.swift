@@ -62,9 +62,9 @@ extension ChatViewController {
         reactionsView.show(emojiReactionTypes: emojiReactionTypes, at: position, for: message) { [weak self] type, score in
             guard let self = self,
                 let emojiReactionsType = self.emojiReactionTypes[type],
-                let presenter = self.channelPresenter,
-                let messageIndex = self.channelPresenter?.items.lastIndex(whereMessageId: messageId),
-                let message = self.channelPresenter?.items[messageIndex].message else {
+                let presenter = self.presenter,
+                let messageIndex = self.presenter?.items.lastIndex(whereMessageId: messageId),
+                let message = self.presenter?.items[messageIndex].message else {
                     return nil
             }
             
