@@ -132,12 +132,12 @@ final class DarkChannelsViewController: ChannelsViewController {
         
         chatViewController.style = style
         channelPresenter.eventsFilter = presenter.channelEventsFilter
-        chatViewController.channelPresenter = channelPresenter
+        chatViewController.presenter = channelPresenter
         return chatViewController
     }
     
     override func show(chatViewController: ChatViewController) {
-        if let channel = chatViewController.channelPresenter?.channel {
+        if let channel = chatViewController.presenter?.channel {
             channel.banEnabling = .enabled(timeoutInMinutes: 1, reason: "I don't like you 🤮")
             
             channel.rx.onEvent(eventType: .userBanned)

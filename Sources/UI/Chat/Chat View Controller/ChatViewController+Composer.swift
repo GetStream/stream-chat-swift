@@ -159,7 +159,7 @@ extension ChatViewController {
     /// Send a message.
     public func send() {
         let text = composerView.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let isMessageEditing = channelPresenter?.editMessage != nil
+        let isMessageEditing = presenter?.editMessage != nil
         
         if findCommand(in: text) != nil || isMessageEditing {
             view.endEditing(true)
@@ -171,7 +171,7 @@ extension ChatViewController {
         
         composerView.isEnabled = false
         
-        channelPresenter?.rx.send(text: text)
+        presenter?.rx.send(text: text)
             .subscribe(
                 onNext: { [weak self] messageResponse in
                     if messageResponse.message.type == .error {
@@ -225,7 +225,7 @@ extension ChatViewController {
         container.closeButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
                 if let self = self {
-                    self.channelPresenter?.editMessage = nil
+                    self.presenter?.editMessage = nil
                     self.composerView.reset()
                     self.hideAddFileView()
                     self.composerEditingContainerView.animate(show: false)
@@ -247,9 +247,9 @@ extension ChatViewController {
     
     func createComposerCommandsContainerView() -> ComposerHelperContainerView {
         let container = createComposerHelperContainerView(title: "Commands", closeButtonIsHidden: true)
-        container.isEnabled = !(channelPresenter?.channel.config.commands.isEmpty ?? true)
+        container.isEnabled = !(presenter?.channel.config.commands.isEmpty ?? true)
         
-        if container.isEnabled, let channelConfig = channelPresenter?.channel.config {
+        if container.isEnabled, let channelConfig = presenter?.channel.config {
             channelConfig.commands.forEach { command in
                 let view = ComposerCommandView(frame: .zero)
                 view.backgroundColor = container.backgroundColor
@@ -336,7 +336,7 @@ extension ChatViewController {
     ///
     /// - Returns: a container helper view.
     open func createComposerAddFileContainerView(title: String) -> ComposerHelperContainerView? {
-        guard let presenter = channelPresenter, presenter.channel.config.uploadsEnabled, !composerAddFileTypes.isEmpty else {
+        guard let presenter = presenter, presenter.channel.config.uploadsEnabled, !composerAddFileTypes.isEmpty else {
             return nil
         }
         
@@ -473,7 +473,7 @@ extension ChatViewController {
                 return
             }
             
-            guard let presenter = self.channelPresenter,
+            guard let presenter = self.presenter,
                 let pickedImage = pickedImage,
                 (pickedImage.fileURL != nil || pickedImage.image != nil) else {
                 return
@@ -498,7 +498,7 @@ extension ChatViewController {
         documentPickerViewController.rx.didPickDocumentsAt
             .takeUntil(documentPickerViewController.rx.deallocated)
             .subscribe(onNext: { [weak self] in
-                if let self = self, let presenter = self.channelPresenter {
+                if let self = self, let presenter = self.presenter {
                     $0.forEach { url in
                         let extraData = presenter.fileAttachmentExtraDataCallback?(url, presenter.channel)
                         let uploaderItem = UploaderItem(channel: presenter.channel, url: url, extraData: extraData)
@@ -524,7 +524,7 @@ extension ChatViewController {
                 return
         }
         
-        channelPresenter?.rx.dispatchEphemeralMessageAction(action, message: message)
+        presenter?.rx.dispatchEphemeralMessageAction(action, message: message)
             .subscribe()
             .disposed(by: disposeBag)
     }
