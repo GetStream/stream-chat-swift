@@ -40,7 +40,7 @@ final class DarkChannelsViewController: ChannelsViewController {
     
     func setupPresenter() {
         if !User.current.isUnknown {
-            channelsPresenter = ChannelsPresenter(filter: .currentUserInMembers)
+            presenter = ChannelsPresenter(filter: .currentUserInMembers)
         }
     }
     
@@ -74,7 +74,7 @@ final class DarkChannelsViewController: ChannelsViewController {
         
         if case .notificationInviteAccepted = event {
             Banners.shared.show("🙋🏻‍♀️ Invite accepted")
-            channelsPresenter.reload()
+            presenter.reload()
         }
         
         if case .notificationInviteRejected = event {
@@ -131,7 +131,7 @@ final class DarkChannelsViewController: ChannelsViewController {
         }
         
         chatViewController.style = style
-        channelPresenter.eventsFilter = channelsPresenter.channelEventsFilter
+        channelPresenter.eventsFilter = presenter.channelEventsFilter
         chatViewController.channelPresenter = channelPresenter
         return chatViewController
     }
@@ -172,13 +172,13 @@ final class DarkChannelsViewController: ChannelsViewController {
         
         alertController.addAction(.init(title: "Hide", style: .default, handler: { [weak self] _ in
             if let self = self {
-                self.channelsPresenter.hide(channelPresenter)
+                self.presenter.hide(channelPresenter)
             }
         }))
         
         alertController.addAction(.init(title: "Hide and Clear History", style: .default, handler: { [weak self] _ in
             if let self = self {
-                self.channelsPresenter.hide(channelPresenter, clearHistory: true)
+                self.presenter.hide(channelPresenter, clearHistory: true)
             }
         }))
         
@@ -204,7 +204,7 @@ final class DarkChannelsViewController: ChannelsViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 sender.isEnabled = true
-                self?.channelsPresenter.reload()
+                self?.presenter.reload()
             })
             .disposed(by: disposeBag)
     }
