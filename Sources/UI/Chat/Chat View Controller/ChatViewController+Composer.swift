@@ -118,9 +118,9 @@ extension ChatViewController {
             .unwrap()
             .do(onNext: { [weak self] in self?.dispatchCommands(in: $0) })
             .filter { [weak self] in !$0.isBlank && (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
-            .flatMapLatest { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: true) ?? .empty() }
-            .debounce(.seconds(3), scheduler: MainScheduler.instance)
-            .flatMapLatest { [weak self] _ in self?.channelPresenter?.sendEvent(isTyping: false) ?? .empty() }
+            .buffer(timeSpan: .seconds(3), count: 1, scheduler: MainScheduler.instance)
+            .flatMapLatest { [weak self] (input) -> Observable<StreamChatCore.Event> in
+                self?.channelPresenter?.sendEvent(isTyping: !input.isEmpty) ?? .empty() }
             .subscribe()
             .disposed(by: disposeBag)
         

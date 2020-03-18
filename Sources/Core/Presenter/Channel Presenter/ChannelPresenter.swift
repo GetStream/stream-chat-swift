@@ -265,21 +265,15 @@ extension ChannelPresenter {
 extension ChannelPresenter {
     /// Send a typing event.
     public func sendEvent(isTyping: Bool) -> Observable<Event> {
-        guard parentMessage == nil else {
+        guard parentMessage == nil && isTyping != startedTyping else {
             return .empty()
         }
         
-        if isTyping {
-            if !startedTyping {
-                startedTyping = true
-                return channel.send(eventType: .typingStart).observeOn(MainScheduler.instance)
-            }
-        } else if startedTyping {
-            startedTyping = false
-            return channel.send(eventType: .typingStop).observeOn(MainScheduler.instance)
-        }
+        startedTyping = isTyping
         
-        return .empty()
+        return channel
+            .send(eventType: isTyping ? .typingStart : .typingStop)
+            .observeOn(MainScheduler.instance)
     }
     
     /// Send Read event if the app is active.
