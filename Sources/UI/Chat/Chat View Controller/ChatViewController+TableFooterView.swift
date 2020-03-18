@@ -15,7 +15,7 @@ import StreamChatCore
 extension ChatViewController {
     
     func updateFooterView() {
-        guard let footerView = tableView.tableFooterView as? ChatFooterView, let presenter = channelPresenter else {
+        guard let footerView = tableView.tableFooterView as? ChatFooterView, let presenter = presenter else {
             return
         }
         

@@ -18,7 +18,7 @@ import RxGesture
 extension ChatViewController {
     
     func extensionMessageCell(at indexPath: IndexPath, message: Message, readUsers: [User]) -> UITableViewCell {
-        guard let presenter = channelPresenter else {
+        guard let presenter = presenter else {
             return .unused
         }
         
@@ -179,7 +179,7 @@ extension ChatViewController {
             }
         }
         
-        if let presenter = channelPresenter, presenter.channel.config.reactionsEnabled {
+        if let presenter = presenter, presenter.channel.config.reactionsEnabled {
             showReactions(from: cell, in: message, locationInView: tapGesture.location(in: cell))
         }
     }
@@ -206,7 +206,7 @@ extension ChatViewController {
     }
     
     func showReplies(parentMessage: Message) {
-        guard let presenter = channelPresenter else {
+        guard let presenter = presenter else {
             return
         }
         
@@ -219,7 +219,7 @@ extension ChatViewController {
         
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style
-        chatViewController.channelPresenter = messagePresenter
+        chatViewController.presenter = messagePresenter
         
         if let navigationController = navigationController {
             navigationController.pushViewController(chatViewController, animated: true)

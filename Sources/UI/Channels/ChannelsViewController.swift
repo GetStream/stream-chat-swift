@@ -233,7 +233,7 @@ open class ChannelsViewController: ViewController {
     open func setupChatViewController(_ chatViewController: ChatViewController, with channelPresenter: ChannelPresenter) {
         chatViewController.style = style
         channelPresenter.eventsFilter = presenter.channelEventsFilter
-        chatViewController.channelPresenter = channelPresenter
+        chatViewController.presenter = channelPresenter
         chatViewController.hidesBottomBarWhenPushed = true
     }
     
