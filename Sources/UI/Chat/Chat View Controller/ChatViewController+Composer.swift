@@ -14,7 +14,6 @@ import RxSwift
 import RxCocoa
 
 // MARK: Setup Keyboard Events
-
 extension Reactive where Base: ChatViewController {
     var keyboard: Binder<KeyboardNotification> {
         return Binder<KeyboardNotification>(base) { chatViewController, keyboardNotification in
@@ -90,7 +89,6 @@ public extension ChatViewController {
 // MARK: Setup
 
 extension ChatViewController {
-    
     func createComposerView() -> ComposerView {
         let composerView = ComposerView(frame: .zero)
         composerView.style = style.composer
@@ -98,7 +96,7 @@ extension ChatViewController {
     }
     
     func setupComposerView() {
-        guard composerView.superview == nil else {
+        guard composerView.superview == nil, let presenter = channelPresenter else {
             return
         }
         
@@ -112,17 +110,23 @@ extension ChatViewController {
                 .subscribe(onNext: { [weak self] in self?.showAddFileView() })
                 .disposed(by: disposeBag)
         }
-
-        composerView.textView.rx.text
-            .skip(1)
-            .unwrap()
-            .do(onNext: { [weak self] in self?.dispatchCommands(in: $0) })
-            .filter { [weak self] in !$0.isBlank && (self?.channelPresenter?.channel.config.typingEventsEnabled ?? false) }
-            .buffer(timeSpan: .seconds(3), count: 1, scheduler: MainScheduler.instance)
-            .flatMapLatest { [weak self] (input) -> Observable<StreamChatCore.Event> in
-                self?.channelPresenter?.sendEvent(isTyping: !input.isEmpty) ?? .empty() }
-            .subscribe()
-            .disposed(by: disposeBag)
+        
+        let textViewEvents = composerView.textView.rx.text.skip(1).unwrap().share()
+        
+        // Dispatch commands from text view.
+        textViewEvents.subscribe(onNext: { [weak self] in self?.dispatchCommands(in: $0) }).disposed(by: disposeBag)
+        
+        // Send typing events.
+        if presenter.channel.config.typingEventsEnabled, presenter.parentMessage == nil {
+            Observable.merge([textViewEvents.map { _ in true },
+                              textViewEvents.debounce(.seconds(3), scheduler: MainScheduler.instance).map { _ in false }])
+                .distinctUntilChanged()
+                .flatMapLatest({ [weak self] isTyping in
+                    self?.channelPresenter?.channel.send(eventType: isTyping ? .typingStart : .typingStop) ?? .empty()
+                })
+                .subscribe()
+                .disposed(by: disposeBag)
+        }
         
         composerView.sendButton.rx.tap
             .subscribe(onNext: { [weak self] in self?.send() })

@@ -55,7 +55,6 @@ public final class ChannelPresenter: Presenter<ChatItem> {
     /// Show statuses separators, e.g. Today
     public private(set) var showStatuses = true
     
-    private var startedTyping = false
     let lastMessageAtomic = Atomic<Message>()
     
     /// The last parsed message from WebSocket events.
@@ -263,21 +262,7 @@ extension ChannelPresenter {
 // MARK: - Send Event
 
 extension ChannelPresenter {
-    /// Send a typing event.
-    public func sendEvent(isTyping: Bool) -> Observable<Event> {
-        guard parentMessage == nil && isTyping != startedTyping else {
-            return .empty()
-        }
-        
-        startedTyping = isTyping
-        
-        return channel
-            .send(eventType: isTyping ? .typingStart : .typingStop)
-            .observeOn(MainScheduler.instance)
-    }
-    
     /// Send Read event if the app is active.
-    ///
     /// - Returns: an observable completion.
     public func markReadIfPossible() -> Observable<Void> {
         guard InternetConnection.shared.isAvailable, channel.config.readEventsEnabled else {
