@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### 🐞 Fixed
-
+- (UI Components) Typing events are now reliably sent [#122](https://github.com/GetStream/stream-chat-swift/issues/122)
 
 # [1.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/1.6.0)
 _March 10, 2020_
