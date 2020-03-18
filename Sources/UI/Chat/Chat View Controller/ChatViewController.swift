@@ -106,7 +106,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         + style.composer.edgeInsets.bottom
     
     /// A channel presenter.
-    public var channelPresenter: ChannelPresenter?
+    public var presenter: ChannelPresenter?
     private var changesEnabled: Bool = false
     
     lazy var keyboard: Keyboard = {
@@ -121,7 +121,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         
         updateTitle()
         
-        guard let presenter = channelPresenter else {
+        guard let presenter = presenter else {
             return
         }
         
@@ -149,7 +149,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             .disposed(by: disposeBag)
         
         if presenter.isEmpty {
-            channelPresenter?.reload()
+            presenter.reload()
         } else {
             refreshTableView(scrollToBottom: true, animated: false)
         }
@@ -166,7 +166,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         startGifsAnimations()
         markReadIfPossible()
         
-        if let presenter = channelPresenter, (needsToReload || presenter.items != items) {
+        if let presenter = presenter, (needsToReload || presenter.items != items) {
             let scrollToBottom = items.isEmpty || (scrollEnabled && tableView.bottomContentOffset < bottomThreshold)
             refreshTableView(scrollToBottom: scrollToBottom, animated: false)
         }
@@ -200,7 +200,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     ///   - scrollToBottom: scroll the table view to the bottom cell after refresh, if true
     ///   - animated: scroll to the bottom cell animated, if true
     open func refreshTableView(scrollToBottom: Bool, animated: Bool) {
-        guard let presenter = channelPresenter else {
+        guard let presenter = presenter else {
             return
         }
         
@@ -289,7 +289,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     
     private func markReadIfPossible() {
         if isVisible {
-            channelPresenter?.rx.markReadIfPossible().subscribe().disposed(by: disposeBag)
+            presenter?.rx.markReadIfPossible().subscribe().disposed(by: disposeBag)
         }
     }
 }
@@ -299,7 +299,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
 extension ChatViewController {
     
     private func updateTitle() {
-        guard title == nil, navigationItem.rightBarButtonItem == nil, let presenter = channelPresenter else {
+        guard title == nil, navigationItem.rightBarButtonItem == nil, let presenter = presenter else {
             return
         }
         
@@ -317,7 +317,7 @@ extension ChatViewController {
     }
     
     private func updateTitleReplyCount() {
-        guard title == "Thread", let parentMessage = channelPresenter?.parentMessage else {
+        guard title == "Thread", let parentMessage = presenter?.parentMessage else {
             return
         }
         
@@ -464,7 +464,7 @@ extension ChatViewController {
         if case .loading(let inProgress) = item {
             if !inProgress {
                 items[indexPath.row] = .loading(true)
-                channelPresenter?.loadNext()
+                presenter?.loadNext()
             }
         } else if let message = item.message {
             willDisplay(cell: cell, at: indexPath, message: message)
