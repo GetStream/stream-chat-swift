@@ -25,7 +25,7 @@ open class ChannelsViewController: ViewController {
     public private(set) var items = [PresenterItem]()
     
     /// A channels presenter.
-    open var channelsPresenter = ChannelsPresenter() {
+    open var presenter = ChannelsPresenter() {
         didSet {
             reset()
             
@@ -105,7 +105,7 @@ open class ChannelsViewController: ViewController {
     }
     
     private func setupChannelsPresenter() {
-        channelsPresenter.rx.changes
+        presenter.rx.changes
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
     }
@@ -232,7 +232,7 @@ open class ChannelsViewController: ViewController {
     ///     - channelPresenter: Channel Presenter for the corresponding ChatViewController
     open func setupChatViewController(_ chatViewController: ChatViewController, with channelPresenter: ChannelPresenter) {
         chatViewController.style = style
-        channelPresenter.eventsFilter = channelsPresenter.channelEventsFilter
+        channelPresenter.eventsFilter = presenter.channelEventsFilter
         chatViewController.channelPresenter = channelPresenter
         chatViewController.hidesBottomBarWhenPushed = true
     }
@@ -332,7 +332,7 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
     open func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row < items.count, case .loading(let inProgress) = items[indexPath.row], !inProgress {
             items[indexPath.row] = .loading(true)
-            channelsPresenter.loadNext()
+            presenter.loadNext()
         }
     }
     
