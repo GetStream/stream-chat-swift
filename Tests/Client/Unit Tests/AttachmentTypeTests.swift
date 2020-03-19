@@ -8,7 +8,7 @@ final class AttachmentTypeTests: XCTestCase {
 
     func testRawValue() {
         XCTAssertEqual(AttachmentType.unknown.rawValue, nil)
-        XCTAssertEqual(AttachmentType.custom(type: "type/custom").rawValue, "type/custom")
+        XCTAssertEqual(AttachmentType.custom("type/custom").rawValue, "type/custom")
         XCTAssertEqual(AttachmentType.image.rawValue, "image")
         XCTAssertEqual(AttachmentType.imgur.rawValue, "imgur")
         XCTAssertEqual(AttachmentType.giphy.rawValue, "giphy")
@@ -22,7 +22,7 @@ final class AttachmentTypeTests: XCTestCase {
     func testCreatingFromRawValue() {
         XCTAssertEqual(AttachmentType(rawValue: nil), .unknown)
         XCTAssertEqual(AttachmentType(rawValue: ""), .unknown)
-        XCTAssertEqual(AttachmentType(rawValue: "type/custom"), .custom(type: "type/custom"))
+        XCTAssertEqual(AttachmentType(rawValue: "type/custom"), .custom("type/custom"))
         XCTAssertEqual(AttachmentType(rawValue: "image"), .image)
         XCTAssertEqual(AttachmentType(rawValue: "imgur"), .imgur)
         XCTAssertEqual(AttachmentType(rawValue: "giphy"), .giphy)
@@ -33,6 +33,14 @@ final class AttachmentTypeTests: XCTestCase {
         XCTAssertEqual(AttachmentType(rawValue: "link"), .link)
     }
 
+    func testString() {
+        var type: AttachmentType = "type/custom"
+        XCTAssertEqual(type.rawValue, "type/custom")
+        XCTAssertEqual(type, .custom("type/custom"))
+        type = "image"
+        XCTAssertEqual(type, .image)
+    }
+    
     func testDecoding() {
         let json = "{\"type\":\"image\"}"
         let data = json.data(using: .utf8)!

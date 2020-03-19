@@ -9,10 +9,10 @@
 import Foundation
 
 /// An attachment type.
-public enum AttachmentType: RawRepresentable, Codable, Hashable {
+public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
     /// An attachment type.
     case unknown
-    case custom(type: String)
+    case custom(String)
     case image
     case imgur
     case giphy
@@ -26,7 +26,7 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable {
         switch self {
         case .unknown:
             return nil
-        case .custom(type: let raw):
+        case .custom(let raw):
             return raw
         case .image:
             return "image"
@@ -68,7 +68,7 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable {
         case "link":
             self = .link
         case .some(let raw) where !raw.isEmpty:
-            self = .custom(type: raw)
+            self = .custom(raw)
         default:
             self = .unknown
         }
@@ -77,6 +77,10 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable {
     public init(from decoder: Decoder) throws {
         let rawValue = try decoder.singleValueContainer().decode(String.self)
         self = AttachmentType(rawValue: rawValue)
+    }
+    
+    public init(stringLiteral value: String) {
+        self.init(rawValue: value)
     }
     
     public func encode(to encoder: Encoder) throws {
