@@ -185,10 +185,6 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
                                       with coordinator: UIViewControllerTransitionCoordinator) {
         super.willTransition(to: newCollection, with: coordinator)
         
-        if composerView.textView.isFirstResponder {
-            composerView.textView.resignFirstResponder()
-        }
-        
         DispatchQueue.main.async { self.initialSafeAreaBottom = self.calculatedSafeAreaBottom }
     }
     
