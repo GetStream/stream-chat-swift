@@ -9,7 +9,8 @@
 import Foundation
 
 /// A channel type.
-public enum ChannelType: Codable, Hashable {
+public enum ChannelType: Codable, Hashable, ExpressibleByStringLiteral {
+    
     /// A channel type.
     case unknown, livestream, messaging, team, gaming, commerce
     case custom(String)
@@ -51,6 +52,10 @@ public enum ChannelType: Codable, Hashable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(String.self)
+        self.init(rawValue: value)
+    }
+    
+    public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
     
