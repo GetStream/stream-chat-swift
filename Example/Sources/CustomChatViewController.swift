@@ -20,7 +20,7 @@ class CustomChatViewController: ChatViewController {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         let channel = Client.shared.channel(type: .messaging, id: "general")
-        channelPresenter = ChannelPresenter(channel: channel)
+        presenter = ChannelPresenter(channel: channel)
     }
     
     override func viewDidLoad() {
