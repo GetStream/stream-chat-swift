@@ -131,25 +131,26 @@ final class ClientTests01_Channels: TestCase {
     }
     
     func checkUnreadCountFromQuery(_ client: Client, cid: ChannelId) {
-        var channel: Channel?
+        var createdChannel: Channel?
         
         // Check channel for unread messages.
         expect("get a channel by cid with unread count") { expectation in
-            client.queryChannel(Channel(type: cid.type, id: cid.id), options: .all) {
-                if let response = $0.value {
-                    XCTAssertEqual(response.messages.count, 3)
-                    XCTAssertEqual(response.channel.unreadCount, ChannelUnreadCount(messages: 2, mentionedMessages: 1))
-                    channel = response.channel
-                    expectation.fulfill()
-                }
+            let channel = client.channel(type: cid.type, id: cid.id)
+            client.queryChannel(channel, options: .all) {
+                    if let response = $0.value {
+                        XCTAssertEqual(response.messages.count, 3)
+                        XCTAssertEqual(response.channel.unreadCount, ChannelUnreadCount(messages: 2, mentionedMessages: 1))
+                        createdChannel = response.channel
+                        expectation.fulfill()
+                    }
             }
         }
         
-        XCTAssertNotNil(channel)
+        XCTAssertNotNil(createdChannel)
         
         // Mark channel as read.
         expect("messages read") { expectation in
-            client.markRead(channel: channel!) { result in
+            client.markRead(channel: createdChannel!) { result in
                 if result.value != nil {
                     expectation.fulfill()
                 }
@@ -202,15 +203,13 @@ final class ClientTests01_Channels: TestCase {
         var createdChannel: Channel?
         
         expect("a new channel") { expectation in
-            let channel = Channel(type: cid.type, id: cid.id)
-            channel.members.insert(User.user1.asMember)
-            
+            let channel = client.channel(type: cid.type, id: cid.id, members: [User.user1, User.user2])
             client.queryChannel(channel, options: .all) {
-                if let value = $0.value {
-                    XCTAssertEqual(channel.cid, value.channel.cid)
-                    createdChannel = value.channel
-                    expectation.fulfill()
-                }
+                    if let value = $0.value {
+                        XCTAssertEqual(cid, value.channel.cid)
+                        createdChannel = value.channel
+                        expectation.fulfill()
+                    }
             }
         }
         
@@ -271,7 +270,7 @@ final class ClientTests01_Channels: TestCase {
         var createdChannel: Channel?
         
         expect("a 1 by 1 channel") { expectation in
-            let channel = Channel(type: .messaging, with: User.user2.asMember, currentUser: client.user)
+            let channel = client.channel(members: [client.user, User.user2])
             client.queryChannel(channel, options: .all) {
                 if let value = $0.value {
                     XCTAssertTrue(value.channel.isDirectMessage)

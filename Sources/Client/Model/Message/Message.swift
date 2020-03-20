@@ -65,7 +65,7 @@ public struct Message: Codable {
     /// Reply count.
     public let replyCount: Int
     /// An extra data for the message.
-    public let extraData: ExtraData?
+    public let extraData: Codable?
     /// The latest reactions (see `Reaction`).
     public private(set) var latestReactions: [Reaction]
     /// The current user own reactions (see `Reaction`).
@@ -143,7 +143,7 @@ public struct Message: Codable {
         self.args = args
         self.attachments = attachments
         self.mentionedUsers = mentionedUsers
-        self.extraData = ExtraData(extraData)
+        self.extraData = extraData
         self.latestReactions = latestReactions
         self.ownReactions = ownReactions
         self.reactionScores = reactionScores
@@ -189,7 +189,7 @@ public struct Message: Codable {
         latestReactions = (try? container.decode([Reaction].self, forKey: .latestReactions)) ?? []
         ownReactions = (try? container.decode([Reaction].self, forKey: .ownReactions)) ?? []
         reactionScores = try container.decodeIfPresent([String: Int].self, forKey: .reactionScores) ?? [:]
-        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
+        extraData = try? Self.extraDataType?.init(from: decoder) // swiftlint:disable:this explicit_init
     }
     
     private func checkIfTextAsAttachmentURL(_ text: String) -> Bool {

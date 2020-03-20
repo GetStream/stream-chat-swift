@@ -31,7 +31,7 @@ final class RootViewController: UIViewController {
     var totalUnreadCountDisposeBag = DisposeBag()
     var badgeDisposeBag = DisposeBag()
     var onlineDisposeBag = DisposeBag()
-    let channel = Channel(type: .messaging, id: "general")
+    let channel = Client.shared.channel(type: .messaging, id: "general")
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -72,7 +72,9 @@ public extension Reactive where Base == Channel {
     ///   - name: a channel name.
     ///   - imageURL: an image URL.
     ///   - extraData: a custom extra data.
-    func update(name: String? = nil, imageURL: URL? = nil, extraData: Codable? = nil) -> Observable<ChannelResponse> {
+    func update(name: String? = nil,
+                imageURL: URL? = nil,
+                extraData: ChannelExtraDataCodable? = nil) -> Observable<ChannelResponse> {
         Client.shared.rx.update(channel: base, name: name, imageURL: imageURL, extraData: extraData)
     }
     

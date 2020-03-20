@@ -110,7 +110,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     private var changesEnabled: Bool = false
     
     lazy var keyboard: Keyboard = {
-       return Keyboard(observingPanGesturesIn: tableView)
+        return Keyboard(observingPanGesturesIn: tableView)
     }()
     
     // MARK: - View Life Cycle
@@ -125,9 +125,9 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             return
         }
         
-        if presenter.channel.config.isEmpty {
+        if !presenter.channel.didLoad {
             presenter.rx.channelDidUpdate.asObservable()
-                .takeWhile { $0.config.isEmpty }
+                .takeWhile { !$0.didLoad }
                 .subscribe(onCompleted: { [weak self] in self?.setupComposerView() })
                 .disposed(by: disposeBag)
         } else {
@@ -144,9 +144,9 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
                 }
                 
                 return false
-            }
-            .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
-            .disposed(by: disposeBag)
+        }
+        .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
+        .disposed(by: disposeBag)
         
         if presenter.isEmpty {
             presenter.reload()
@@ -408,7 +408,7 @@ extension ChatViewController {
             
         case .disconnected:
             return
-                
+            
         case .error(let error):
             show(error: error)
         }
