@@ -12,8 +12,6 @@ import Foundation
 public struct User: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
-        case name
-        case avatarURL = "image"
         case role
         case isOnline = "online"
         case isBanned = "banned"
@@ -28,24 +26,6 @@ public struct User: Codable {
         case isAnonymous = "anon"
     }
     
-    /// A custom extra data type for users.
-    /// - Note: Use this variable to setup your own extra data type for decoding users custom fields from JSON data.
-    public static var extraDataType: Codable.Type?
-    
-    /// An unkown user.
-    public static let unknown: User = {
-        let id = UUID().uuidString
-        return User(id: "unknown_\(id)", name: "Unknown \(id.prefix(4))")
-    }()
-    
-    /// Checks if the user is unknown.
-    public var isUnknown: Bool { self == User.unknown }
-    
-    /// An anonymous user.
-    public static let anonymous = User(id: UUID().uuidString, name: "", role: .anonymous)
-    
-    static var flaggedUsers = Set<User>()
-    
     public enum Role: String, Codable {
         /// A regular user.
         case user
@@ -57,12 +37,23 @@ public struct User: Codable {
         case anonymous
     }
     
+    /// A custom extra data type for users.
+    /// - Note: Use this variable to setup your own extra data type for decoding users custom fields from JSON data.
+    public static var extraDataType: UserExtraDataCodable.Type = UserExtraData.self
+    
+    /// An unkown user.
+    public static let unknown = User(id: "unknown_\(UUID().uuidString)")
+    
+    /// Checks if the user is unknown.
+    public var isUnknown: Bool { self == User.unknown }
+    
+    /// An anonymous user.
+    public static let anonymous = User(id: UUID().uuidString, role: .anonymous)
+    
+    static var flaggedUsers = Set<User>()
+    
     /// A user id.
     public let id: String
-    /// A user name.
-    public let name: String
-    /// An avatar URL.
-    public var avatarURL: URL?
     /// A created date.
     public let created: Date
     /// An updated date.
@@ -78,7 +69,7 @@ public struct User: Codable {
     /// A user role.
     public let role: Role
     /// An extra data for the user.
-    public let extraData: Codable?
+    public private(set) var extraData: UserExtraDataCodable?
     /// A list of devices.
     public internal(set) var devices: [Device]
     /// A list of devices.
@@ -114,9 +105,7 @@ public struct User: Codable {
     /// Init a user.
     /// - Parameters:
     ///   - id: a user id.
-    ///   - name: a user name. Name comes from server when argument is empty string.
     ///   - role: a user role (see `User.Role`).
-    ///   - avatarURL: a user avatar.
     ///   - created: a created date. It will be updated form server.
     ///   - updated: a updated date. It will be updated form server.
     ///   - lastActiveDate: a last active date. It will be updated form server.
@@ -125,10 +114,8 @@ public struct User: Codable {
     ///   - mutedUsers: it will be updated form server.
     ///   - extraData: an extra data for the user.
     public init(id: String,
-                name: String = "",
                 role: Role = .user,
-                avatarURL: URL? = nil,
-                extraData: Codable? = nil,
+                extraData: UserExtraDataCodable? = nil,
                 created: Date = .init(),
                 updated: Date = .init(),
                 lastActiveDate: Date? = nil,
@@ -136,9 +123,7 @@ public struct User: Codable {
                 isBanned: Bool = false,
                 mutedUsers: [MutedUser] = []) {
         self.id = id
-        self.name = name
         self.role = role
-        self.avatarURL = avatarURL
         self.extraData = extraData
         self.created = created
         self.updated = updated
@@ -162,19 +147,15 @@ public struct User: Codable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
-        extraData = try? Self.extraDataType?.init(from: decoder) // swiftlint:disable:this explicit_init
         
-        if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
-            self.name = name
-        } else {
-            name = id
-        }
-        
-        if let avatarURL = try? container.decodeIfPresent(URL.self, forKey: .avatarURL),
-           !avatarURL.absoluteString.contains("random_svg") {
-            self.avatarURL = avatarURL
-        } else {
-            avatarURL = nil
+        if let extraData = try? Self.extraDataType.init(from: decoder) {// swiftlint:disable:this explicit_init
+            var extraData = extraData
+            
+            if extraData.avatarURL?.absoluteString.contains("random_svg") ?? false {
+                extraData.avatarURL = nil
+            }
+            
+            self.extraData = extraData
         }
         
         let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
@@ -185,12 +166,7 @@ public struct User: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
-        try container.encodeIfPresent(avatarURL, forKey: .avatarURL)
         extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a user extra data")
-        
-        if !name.isBlank {
-            try container.encode(name, forKey: .name)
-        }
         
         if isInvisible {
             try container.encode(isInvisible, forKey: .isInvisible)
@@ -210,6 +186,35 @@ extension User: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+// MARK: UserExtraDataCodable
+
+extension User {
+    
+    /// A channel name.
+    public var name: String {
+        get {
+            extraData?.name ?? id
+        }
+        set {
+            var object: UserExtraDataCodable = extraData ?? UserExtraData()
+            object.name = newValue
+            extraData = object
+        }
+    }
+    
+    /// An image of the channel.
+    public var avatarURL: URL? {
+        get {
+            extraData?.avatarURL
+        }
+        set {
+            var object: UserExtraDataCodable = extraData ?? UserExtraData()
+            object.avatarURL = newValue
+            extraData = object
+        }
     }
 }
 

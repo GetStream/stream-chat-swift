@@ -110,7 +110,9 @@ final class LoginViewController: UIViewController {
         store(key: .userName, value: userName)
         store(key: .token, value: token)
         
-        loggedInUser = User(id: userId, name: userName)
+        var user = User(id: userId)
+        user.name = userName
+        loggedInUser = user
         loggedInToken = token
         
         if !clientSetupped {
@@ -189,8 +191,8 @@ final class LoginViewController: UIViewController {
 // MARK: Test Users
 
 extension User {
-    static let user1 = User(id: "broken-waterfall-5", name: "Jon Snow", avatarURL: URL(string: "https://bit.ly/2u9Vc0r"))
-    static let user2 = User(id: "steep-moon-9", name: "Steep moon")
+    static let user1 = User(id: "broken-waterfall-5")
+    static let user2 = User(id: "steep-moon-9")
 }
 
 extension Token {
