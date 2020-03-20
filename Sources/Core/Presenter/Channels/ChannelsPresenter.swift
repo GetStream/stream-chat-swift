@@ -122,8 +122,12 @@ extension ChannelsPresenter {
 
 extension ChannelsPresenter {
     func parse(event: StreamChatClient.Event) -> ViewChanges {
-        guard let cid = event.cid else {
+        if event.isNotification {
             return parseNotifications(event: event)
+        }
+        
+        guard let cid = event.cid else {
+            return .none
         }
         
         switch event {
