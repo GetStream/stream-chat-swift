@@ -8,6 +8,58 @@
 
 import Foundation
 
+// MARK: Channel Setup
+
+public extension Client {
+    
+    /// A common way to init a channel with channel type and id.
+    /// - Parameters:
+    ///   - type: a channel type.
+    ///   - id: a channel id.
+    ///   - members: a list of members.
+    ///   - invitedMembers: a list of invited members.
+    ///   - extraData: a channel extra data.
+    func channel(type: ChannelType,
+                 id: String,
+                 members: [User] = [],
+                 invitedMembers: [User] = [],
+                 extraData: ChannelExtraDataCodable? = nil) -> Channel {
+        Channel(type: type,
+                id: id,
+                members: members,
+                invitedMembers: invitedMembers,
+                extraData: extraData,
+                created: .init(),
+                deleted: nil,
+                createdBy: nil,
+                lastMessageDate: nil,
+                frozen: false,
+                config: .init())
+    }
+    
+    /// A channel with members without id. It's great for direct message channels.
+    /// - Note: The number of members should be more then 1.
+    /// - Parameters:
+    ///   - type: a channel type.
+    ///   - members: a list of members.
+    ///   - extraData: a channel extra data.
+    func channel(type: ChannelType = .messaging,
+                 members: [User],
+                 extraData: ChannelExtraDataCodable? = nil) -> Channel {
+        Channel(type: type,
+                id: "",
+                members: members,
+                invitedMembers: [],
+                extraData: extraData,
+                created: .init(),
+                deleted: nil,
+                createdBy: nil,
+                lastMessageDate: nil,
+                frozen: false,
+                config: .init())
+    }
+}
+
 // MARK: Channel Requests
 
 public extension Client {
@@ -124,7 +176,7 @@ public extension Client {
     func update(channel: Channel,
                 name: String? = nil,
                 imageURL: URL? = nil,
-                extraData: Codable? = nil,
+                extraData: ChannelExtraDataCodable? = nil,
                 _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         var changed = false
         
@@ -140,7 +192,7 @@ public extension Client {
         
         if let extraData = extraData {
             changed = true
-            channel.extraData = ExtraData(extraData)
+            channel.extraData = extraData
         }
         
         guard changed else {

@@ -170,7 +170,7 @@ extension Notifications {
         //    }
         
         let content = UNMutableNotificationContent()
-        content.title = "\(message.user.name) @ \(channel.name)"
+        content.title = "\(message.user.name) @ \(channel.name ?? "")"
         content.body = body
         content.sound = UNNotificationSound.default
         content.badge = (UIApplication.shared.applicationIconBadgeNumber + 1) as NSNumber

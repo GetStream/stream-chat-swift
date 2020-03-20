@@ -19,8 +19,8 @@ class CustomChatViewController: ChatViewController {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        let channel = Channel(type: .messaging, id: "general")
-        presenter = ChannelPresenter(channel: channel)
+        let channel = Client.shared.channel(type: .messaging, id: "general")
+        channelPresenter = ChannelPresenter(channel: channel)
     }
     
     override func viewDidLoad() {

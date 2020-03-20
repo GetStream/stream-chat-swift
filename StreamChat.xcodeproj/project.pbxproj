@@ -44,6 +44,7 @@
 		8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */; };
 		8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD0241924AD000750E4 /* Reaction.swift */; };
 		8AA8F13E2420FFE0008FD89C /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBB241924AD000750E4 /* Int+Extensions.swift */; };
+		8AB2A02B2423C1B500CE54F6 /* ChannelExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2A02A2423C1B500CE54F6 /* ChannelExtraData.swift */; };
 		8AB33A5E240EA19A00777682 /* AttachmentTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */; };
 		8AC0D94C23D4ABC50080B8BC /* ClientTests02+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94B23D4ABC50080B8BC /* ClientTests02+Users.swift */; };
 		8AC0D94F23D4BA7D0080B8BC /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */; };
@@ -63,7 +64,6 @@
 		8ACC7C09241924AD000750E4 /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BC2241924AD000750E4 /* Database.swift */; };
 		8ACC7C0A241924AD000750E4 /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BC4241924AD000750E4 /* UnreadCount.swift */; };
 		8ACC7C0B241924AD000750E4 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BC5241924AD000750E4 /* Event.swift */; };
-		8ACC7C0C241924AD000750E4 /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BC6241924AD000750E4 /* ExtraData.swift */; };
 		8ACC7C0D241924AD000750E4 /* AttachmentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BC9241924AD000750E4 /* AttachmentType.swift */; };
 		8ACC7C0E241924AD000750E4 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BCA241924AD000750E4 /* Attachment.swift */; };
 		8ACC7C0F241924AD000750E4 /* AttachmentFileType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BCB241924AD000750E4 /* AttachmentFileType.swift */; };
@@ -318,6 +318,7 @@
 		8A8BB2A42384573400C2F9DE /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDatabase.swift; sourceTree = "<group>"; };
 		8A8BB2B02384580700C2F9DE /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
+		8AB2A02A2423C1B500CE54F6 /* ChannelExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelExtraData.swift; sourceTree = "<group>"; };
 		8AC0D94B23D4ABC50080B8BC /* ClientTests02+Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClientTests02+Users.swift"; sourceTree = "<group>"; };
 		8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTests.swift; sourceTree = "<group>"; };
 		8ACC7BB2241924AD000750E4 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
@@ -336,7 +337,6 @@
 		8ACC7BC2241924AD000750E4 /* Database.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
 		8ACC7BC4241924AD000750E4 /* UnreadCount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnreadCount.swift; sourceTree = "<group>"; };
 		8ACC7BC5241924AD000750E4 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
-		8ACC7BC6241924AD000750E4 /* ExtraData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
 		8ACC7BC9241924AD000750E4 /* AttachmentType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentType.swift; sourceTree = "<group>"; };
 		8ACC7BCA241924AD000750E4 /* Attachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		8ACC7BCB241924AD000750E4 /* AttachmentFileType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentFileType.swift; sourceTree = "<group>"; };
@@ -718,7 +718,6 @@
 			children = (
 				8ACC7BC4241924AD000750E4 /* UnreadCount.swift */,
 				8ACC7BC5241924AD000750E4 /* Event.swift */,
-				8ACC7BC6241924AD000750E4 /* ExtraData.swift */,
 				8ACC7BC7241924AD000750E4 /* Message */,
 				8ACC7BD2241924AD000750E4 /* Sorting.swift */,
 				8ACC7BD3241924AD000750E4 /* User */,
@@ -772,10 +771,11 @@
 		8ACC7BDA241924AD000750E4 /* Channel */ = {
 			isa = PBXGroup;
 			children = (
+				8ACC7BDE241924AD000750E4 /* Channel.swift */,
 				8ACC7BDB241924AD000750E4 /* Channel+Requests.swift */,
+				8AB2A02A2423C1B500CE54F6 /* ChannelExtraData.swift */,
 				8ACC7BDC241924AD000750E4 /* ChannelQuery.swift */,
 				8ACC7BDD241924AD000750E4 /* ChannelsQuery.swift */,
-				8ACC7BDE241924AD000750E4 /* Channel.swift */,
 				8ACC7BDF241924AD000750E4 /* ChannelId.swift */,
 				8ACC7BE0241924AD000750E4 /* Channel+UnreadCount.swift */,
 				8ACC7BE1241924AD000750E4 /* ChannelType.swift */,
@@ -1507,7 +1507,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8ACC7C0C241924AD000750E4 /* ExtraData.swift in Sources */,
 				8ACC7C1B241924AD000750E4 /* MutedUser.swift in Sources */,
 				8ACC7C2E241924AD000750E4 /* Client+Channel.swift in Sources */,
 				8ACC7C29241924AD000750E4 /* Device.swift in Sources */,
@@ -1537,6 +1536,7 @@
 				8ACC7BFB241924AD000750E4 /* Connection.swift in Sources */,
 				8ACC7C2B241924AD000750E4 /* Token.swift in Sources */,
 				8ACC7C25241924AD000750E4 /* Channel+WatcherCount.swift in Sources */,
+				8AB2A02B2423C1B500CE54F6 /* ChannelExtraData.swift in Sources */,
 				8ACC7C37241924AD000750E4 /* Client+Channels.swift in Sources */,
 				8ACC7C15241924AD000750E4 /* Message+Requests.swift in Sources */,
 				8ACC7BFE241924AD000750E4 /* Environment.swift in Sources */,

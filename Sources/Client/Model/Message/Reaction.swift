@@ -33,7 +33,7 @@ public struct Reaction: Codable {
     /// A created date.
     public let created: Date
     /// An extra data for the reaction.
-    public let extraData: ExtraData?
+    public let extraData: Codable?
     
     /// Check if the reaction is from the current user.
     public var isOwn: Bool { user?.isCurrent ?? false }
@@ -57,7 +57,7 @@ public struct Reaction: Codable {
         self.messageId = messageId
         self.user = user
         self.created = created
-        self.extraData = ExtraData(extraData)
+        self.extraData = extraData
     }
     
     public init(from decoder: Decoder) throws {
@@ -67,7 +67,7 @@ public struct Reaction: Codable {
         messageId = try container.decode(String.self, forKey: .messageId)
         user = try container.decodeIfPresent(User.self, forKey: .user)
         created = try container.decode(Date.self, forKey: .created)
-        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
+        extraData = try? Self.extraDataType?.init(from: decoder) // swiftlint:disable:this explicit_init
     }
     
     public func encode(to encoder: Encoder) throws {

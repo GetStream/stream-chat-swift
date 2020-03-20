@@ -41,7 +41,6 @@ public struct ChannelsQuery: Encodable {
     ///   - pagination: a channels pagination.
     ///   - messagesLimit: a messages pagination for the each channel.
     ///   - options: a query options (see `QueryOptions`).
-    ///   - currentUser: should be a `Client.shared.user`.
     public init(filter: Filter = .none,
                 sort: [Sorting] = [],
                 pagination: Pagination = .channelsPageSize,

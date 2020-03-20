@@ -203,3 +203,19 @@ extension ChannelPresenter {
         rx.markReadIfPossible().bindOnce(to: completion)
     }
 }
+
+// MARK: - Unused Channel for Atomic
+
+extension Channel {
+    public static let unused = Channel(type: "",
+                                       id: "",
+                                       members: [],
+                                       invitedMembers: [],
+                                       extraData: nil,
+                                       created: .init(),
+                                       deleted: nil,
+                                       createdBy: nil,
+                                       lastMessageDate: nil,
+                                       frozen: true,
+                                       config: .init())
+}
