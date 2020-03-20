@@ -48,7 +48,7 @@ public struct Attachment: Codable {
     /// A file description (see `AttachmentFile`).
     public let file: AttachmentFile?
     /// An extra data for the attachment.
-    public let extraData: ExtraData?
+    public let extraData: Codable?
     
     /// Check if the attachment is an image.
     public var isImage: Bool { type.isImage && text == nil }
@@ -73,10 +73,10 @@ public struct Attachment: Codable {
         self.imageURL = imageURL
         self.title = title
         self.file = file
+        self.extraData = extraData
         text = nil
         author = nil
         actions = []
-        self.extraData = ExtraData(extraData)
     }
     
     public init(from decoder: Decoder) throws {
@@ -129,7 +129,7 @@ public struct Attachment: Codable {
         self.text = text
         file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
         actions = try container.decodeIfPresent([Action].self, forKey: .actions) ?? []
-        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
+        extraData = try? Self.extraDataType?.init(from: decoder) // swiftlint:disable:this explicit_init
     }
     
     /// Image upload:
