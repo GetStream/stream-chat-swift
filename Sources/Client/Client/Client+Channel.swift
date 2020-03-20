@@ -38,7 +38,7 @@ public extension Client {
     }
     
     /// A channel with members without id. It's great for direct message channels.
-    /// - Note: The number of members should be more then 1.
+    /// - Note: The number of members should be more than 1.
     /// - Parameters:
     ///   - type: a channel type.
     ///   - members: a list of members.
