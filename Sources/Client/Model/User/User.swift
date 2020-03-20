@@ -78,7 +78,7 @@ public struct User: Codable {
     /// A user role.
     public let role: Role
     /// An extra data for the user.
-    public let extraData: ExtraData?
+    public let extraData: Codable?
     /// A list of devices.
     public internal(set) var devices: [Device]
     /// A list of devices.
@@ -139,7 +139,7 @@ public struct User: Codable {
         self.name = name
         self.role = role
         self.avatarURL = avatarURL
-        self.extraData = ExtraData(extraData)
+        self.extraData = extraData
         self.created = created
         self.updated = updated
         self.lastActiveDate = lastActiveDate
@@ -162,7 +162,7 @@ public struct User: Codable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
-        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
+        extraData = try? Self.extraDataType?.init(from: decoder) // swiftlint:disable:this explicit_init
         
         if let name = try? container.decodeIfPresent(String.self, forKey: .name) {
             self.name = name

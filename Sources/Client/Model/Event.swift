@@ -313,6 +313,23 @@ public enum Event: Decodable {
         }
     }
     
+    public var isNotification: Bool {
+        switch self {
+        case .notificationMarkAllRead,
+             .notificationMarkRead,
+             .notificationMessageNew,
+             .notificationMutesUpdated,
+             .notificationAddedToChannel,
+             .notificationRemovedFromChannel,
+             .notificationInvited,
+             .notificationInviteAccepted,
+             .notificationInviteRejected:
+            return true
+        default:
+            return false
+        }
+    }
+    
     // MARK: Decoder
     
     public init(from decoder: Decoder) throws {

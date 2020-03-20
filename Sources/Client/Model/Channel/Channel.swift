@@ -48,18 +48,14 @@ public final class Channel: Codable {
     
     /// A custom extra data type for channels.
     /// - Note: Use this variable to setup your own extra data type for decoding channels custom fields from JSON data.
-    public static var extraDataType: Codable.Type?
+    public static var extraDataType: ChannelExtraDataCodable.Type = ChannelExtraData.self
     
+    /// A channel type.
+    public let type: ChannelType
     /// A channel id.
     public let id: String
     /// A channel type + id.
     public let cid: ChannelId
-    /// A channel type.
-    public let type: ChannelType
-    /// A channel name.
-    public internal(set) var name: String
-    /// An image of the channel.
-    public internal(set) var imageURL: URL?
     /// The last message date.
     public let lastMessageDate: Date?
     /// A channel created date.
@@ -79,7 +75,7 @@ public final class Channel: Codable {
     /// A list of users to invite in the channel.
     let invitedMembers: Set<Member>
     /// An extra data for the channel.
-    public internal(set) var extraData: ExtraData?
+    public var extraData: ChannelExtraDataCodable?
     /// Check if the channel was deleted.
     public var isDeleted: Bool { deleted != nil }
     
@@ -122,69 +118,33 @@ public final class Channel: Codable {
     /// An event when the channel was updated.
     public var onUpdate: OnUpdate<Channel>?
     
-    let needsCreation: Bool
+    /// Checks if the channel was decoded from a channel response.
+    public let didLoad: Bool
     
-    /// Init a channel 1-by-1 (direct message) with another member.
-    /// - Parameters:
-    ///   - type: a channel type.
-    ///   - member: an another member.
-    ///   - extraData: an `Codable` object with extra data of the channel.
-    ///   - currentUser: a current user, should be `Client.shared.user`.
-    public convenience init(type: ChannelType,
-                            with member: Member,
-                            extraData: Codable? = nil,
-                            currentUser: User = Client.shared.user) {
-        var members = [member]
-        
-        if member.user != currentUser {
-            members.append(currentUser.asMember)
-        }
-        
-        self.init(type: type,
-                  id: "",
-                  name: member.user.name,
-                  imageURL: member.user.avatarURL,
-                  members: members,
-                  extraData: extraData)
-    }
-    
-    /// Init a channel.
-    /// - Parameters:
-    ///   - type: a channel type (`ChannelType`).
-    ///   - id: a channel id. By default Stream will generate a channel id.
-    ///   - name: a channel name.
-    ///   - imageURL: an image url of the channel.
-    ///   - members: a list of members.
-    ///   - invitedMembers: a list of invited members.
-    ///   - extraData: an extra data for the channel.
     public init(type: ChannelType,
-                id: String = "",
-                name: String? = nil,
-                imageURL: URL? = nil,
-                members: [Member] = [],
-                invitedMembers: [Member] = [],
-                extraData: Codable? = nil,
-                created: Date = Date(),
-                deleted: Date? = nil,
-                createdBy: User? = nil,
-                lastMessageDate: Date? = nil,
-                frozen: Bool = false,
-                config: Config = Config(isEmpty: true)) {
+                id: String,
+                members: [User],
+                invitedMembers: [User],
+                extraData: ChannelExtraDataCodable?,
+                created: Date,
+                deleted: Date?,
+                createdBy: User?,
+                lastMessageDate: Date?,
+                frozen: Bool,
+                config: Config) {
         self.type = type
         self.id = id
         self.cid = ChannelId(type: type, id: id)
-        self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
-        self.imageURL = imageURL
-        self.members = Set(members)
-        self.invitedMembers = Set(invitedMembers)
-        self.extraData = ExtraData(extraData)
+        self.members = Set(members.map({ $0.asMember }))
+        self.invitedMembers = Set(invitedMembers.map({ $0.asMember }))
+        self.extraData = extraData
         self.created = created
         self.deleted = deleted
         self.createdBy = createdBy
         self.lastMessageDate = lastMessageDate
         self.frozen = frozen
         self.config = config
-        needsCreation = true
+        didLoad = false
     }
     
     public required init(from decoder: Decoder) throws {
@@ -195,11 +155,8 @@ public final class Channel: Codable {
         cid = try container.decode(ChannelId.self, forKey: .cid)
         let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         self.members = Set<Member>(members)
-        let name = try? container.decodeIfPresent(String.self, forKey: .name)
-        self.name = (name ?? "").isEmpty ? members.channelName(default: id) : (name ?? "")
-        imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)
         invitedMembers = Set<Member>()
-        extraData = try? ExtraData(from: decoder, forType: Self.extraDataType)
+        extraData = try? Self.extraDataType.init(from: decoder) // swiftlint:disable:this explicit_init
         let config = try container.decode(Config.self, forKey: .config)
         self.config = config
         created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created
@@ -207,7 +164,7 @@ public final class Channel: Codable {
         createdBy = try container.decodeIfPresent(User.self, forKey: .createdBy)
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
         frozen = try container.decode(Bool.self, forKey: .frozen)
-        needsCreation = false
+        didLoad = true
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -247,7 +204,36 @@ extension Channel: Hashable, CustomStringConvertible {
     
     public var description: String {
         let opaque: UnsafeMutableRawPointer = Unmanaged.passUnretained(self).toOpaque()
-        return "Channel<\(opaque)>:\(cid):\(name)"
+        return "Channel<\(opaque)>:\(cid):\(name ?? "<NoName>")"
+    }
+}
+
+// MARK: ChannelExtraDataCodable
+
+extension Channel {
+    
+    /// A channel name.
+    public var name: String? {
+        get {
+            extraData?.name
+        }
+        set {
+            var object: ChannelExtraDataCodable = extraData ?? ChannelExtraData()
+            object.name = newValue
+            extraData = object
+        }
+    }
+    
+    /// An image of the channel.
+    public var imageURL: URL? {
+        get {
+            extraData?.imageURL
+        }
+        set {
+            var object: ChannelExtraDataCodable = extraData ?? ChannelExtraData()
+            object.imageURL = newValue
+            extraData = object
+        }
     }
 }
 
@@ -315,8 +301,6 @@ public extension Channel {
         public let created: Date
         /// A channel updated date.
         public let updated: Date
-        /// Indicates if the config was created with an empty channel data.
-        public let isEmpty: Bool
         
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -335,7 +319,6 @@ public extension Channel {
             flagsEnabled = commands.first(where: { $0.name.contains("flag") }) != nil
             created = try container.decode(Date.self, forKey: .created)
             updated = try container.decode(Date.self, forKey: .updated)
-            isEmpty = false
         }
         
         public init(reactionsEnabled: Bool = false,
@@ -352,8 +335,7 @@ public extension Channel {
                     maxMessageLength: Int = 0,
                     commands: [Command] = [],
                     created: Date = .init(),
-                    updated: Date = .init(),
-                    isEmpty: Bool = false) {
+                    updated: Date = .init()) {
             self.reactionsEnabled = reactionsEnabled
             self.typingEventsEnabled = typingEventsEnabled
             self.readEventsEnabled = readEventsEnabled
@@ -369,7 +351,6 @@ public extension Channel {
             self.commands = commands
             self.created = created
             self.updated = updated
-            self.isEmpty = isEmpty
         }
     }
     
@@ -422,10 +403,6 @@ private extension Array where Element == Member {
         let notCurrentMembers = filter({ !$0.user.isCurrent })
         return "\(notCurrentMembers[0].user.name) and \(notCurrentMembers.count - 1) others"
     }
-}
-
-extension Channel {
-    public static var unused: Channel { Channel(type: .messaging, id: "5h0u1d-n3v3r-b3-u5'd") }
 }
 
 // MARK: - Supporting Structs

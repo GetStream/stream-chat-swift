@@ -99,7 +99,7 @@ public extension Reactive where Base == Client {
     func update(channel: Channel,
                 name: String? = nil,
                 imageURL: URL? = nil,
-                extraData: Codable? = nil) -> Observable<ChannelResponse> {
+                extraData: ChannelExtraDataCodable? = nil) -> Observable<ChannelResponse> {
         connected(request({ [unowned base] completion in
             base.update(channel: channel, name: name, imageURL: imageURL, extraData: extraData, completion)
         }))

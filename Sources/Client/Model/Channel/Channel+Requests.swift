@@ -82,7 +82,7 @@ public extension Channel {
     @discardableResult
     func update(name: String? = nil,
                 imageURL: URL? = nil,
-                extraData: Codable? = nil,
+                extraData: ChannelExtraDataCodable? = nil,
                 _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         Client.shared.update(channel: self, name: name, imageURL: imageURL, extraData: extraData, completion)
     }

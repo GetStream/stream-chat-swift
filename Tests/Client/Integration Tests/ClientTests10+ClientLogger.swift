@@ -11,7 +11,6 @@ import XCTest
 
 final class ClientTests10_ClientLogger: XCTestCase {
     private let teJstUser = User(id: "test", name: "Test")
-    private let testChannel = Channel(type: .messaging, id: "test")
     private let testUrl = "getstream.io".url!
     private let testFilter = Filter.in("members", ["test-member"])
     private let testData = "{\"testKey\":\"testValue\"}".data(using: .utf8)!
@@ -44,6 +43,7 @@ final class ClientTests10_ClientLogger: XCTestCase {
         let testMembers = Set([User.user1.asMember])
         let testMessage = Message(id: "test", type: .reply, text: "test")
         let testReaction = Reaction(type: "angry", messageId: testMessage.id)
+        let testChannel = Client.shared.channel(type: .messaging, id: "test")
         
         allEndpoints = [.guestToken(User.user1),
                         .addDevice(deviceId: "test", User.user1),

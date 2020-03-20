@@ -45,7 +45,7 @@ final class ClientTests00: TestCase {
         }
         
         expect("create a channel for anonymous") { expectation in
-            Client.shared.create(channel: Channel(type: .messaging, id: "anon")) {
+            Client.shared.channel(type: .messaging, id: "anon").create {
                 if let clientError = $0.error,
                     case .responseError(let responseError) = clientError,
                     responseError.code == 17 {

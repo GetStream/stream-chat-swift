@@ -57,7 +57,7 @@ final class DarkChannelsViewController: ChannelsViewController {
     func handleInviteEvent(_ event: StreamChatClient.Event) {
         if case .notificationInvited(let channel, _) = event {
             let alert = UIAlertController(title: "Invite",
-                                          message: "You are invited to the \(channel.name) channel",
+                                          message: "You are invited to the \(channel.name ?? "<?>") channel",
                 preferredStyle: .alert)
             
             alert.addAction(.init(title: "Accept", style: .default, handler: { [unowned self] _ in
@@ -92,7 +92,8 @@ final class DarkChannelsViewController: ChannelsViewController {
     
     @IBAction func addChannel(_ sender: Any) {
         let number = Int.random(in: 1000...9999)
-        let channel = Channel(type: .messaging, id: "new_channel_\(number)", name: "Channel \(number)")
+        let channel = Client.shared.channel(type: .messaging, id: "new_channel_\(number)", members: [.current])
+        channel.name = "Channel \(number)"
         channel.rx.create().subscribe().disposed(by: disposeBag)
     }
     
@@ -197,7 +198,7 @@ final class DarkChannelsViewController: ChannelsViewController {
     }
     
     @IBAction func showGeneral(_ sender: UIBarButtonItem) {
-        let channel = Channel(type: .messaging, id: "general")
+        let channel = Client.shared.channel(type: .messaging, id: "general")
         sender.isEnabled = false
         
         channel.rx.show()
