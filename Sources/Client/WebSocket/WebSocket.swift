@@ -307,19 +307,21 @@ extension WebSocket {
             let event = try JSONDecoder.default.decode(Event.self, from: data)
             consecutiveFailures = 0
             
+            if case .pong = event {
+                return nil
+            }
+
             if let logger = logger {
-                if case .pong = event.type {} else {
-                    var userId = ""
-                    
-                    if let user = event.user {
-                        userId = user.isAnonymous ? " 👺" : " 👤 \(user.id)"
-                    }
-                    
-                    if let cid = event.cid {
-                        logger.log("\(event.type) 🆔 \(cid)\(userId)")
-                    } else {
-                        logger.log("\(event.type)\(userId)")
-                    }
+                var userId = ""
+                
+                if let user = event.user {
+                    userId = user.isAnonymous ? " 👺" : " 👤 \(user.id)"
+                }
+                
+                if let cid = event.cid {
+                    logger.log("\(event.type) 🆔 \(cid)\(userId)")
+                } else {
+                    logger.log("\(event.type)\(userId)")
                 }
                 
                 logger.log(data)
