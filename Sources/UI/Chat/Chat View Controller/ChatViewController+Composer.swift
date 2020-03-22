@@ -101,7 +101,7 @@ extension ChatViewController {
     }
     
     func setupComposerView() {
-        guard composerView.superview == nil, let presenter = channelPresenter else {
+        guard composerView.superview == nil, let presenter = presenter else {
             return
         }
         
@@ -127,7 +127,7 @@ extension ChatViewController {
                               textViewEvents.debounce(.seconds(3), scheduler: MainScheduler.instance).map { _ in false }])
                 .distinctUntilChanged()
                 .flatMapLatest({ [weak self] isTyping in
-                    self?.channelPresenter?.channel.send(eventType: isTyping ? .typingStart : .typingStop) ?? .empty()
+                    self?.presenter?.channel.rx.send(eventType: isTyping ? .typingStart : .typingStop) ?? .empty()
                 })
                 .subscribe()
                 .disposed(by: disposeBag)
