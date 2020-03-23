@@ -17,9 +17,9 @@ public extension Reactive where Base == Client {
     /// Get a message by id.
     /// - Parameters:
     ///   - messageId: a message id.
-    func message(with messageId: String) -> Observable<MessageResponse> {
+    func message(withId messageId: String) -> Observable<MessageResponse> {
         connected(request({ [unowned base] completion in
-            base.message(with: messageId, completion)
+            base.message(withId: messageId, completion)
         }))
     }
     

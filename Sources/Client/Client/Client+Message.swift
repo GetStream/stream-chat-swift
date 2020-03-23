@@ -17,7 +17,7 @@ public extension Client {
     ///   - messageId: a message id.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func message(with messageId: String, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+    func message(withId messageId: String, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         request(endpoint: .message(messageId), completion)
     }
     
