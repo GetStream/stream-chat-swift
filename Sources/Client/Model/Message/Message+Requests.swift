@@ -35,7 +35,7 @@ public extension Message {
     @discardableResult
     func addReaction(type: String,
                      score: Int,
-                     extraData: Codable?,
+                     extraData: Codable? = nil,
                      _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
         Client.shared.addReaction(type: type, score: score, extraData: extraData, to: self, completion)
     }
