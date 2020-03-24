@@ -53,27 +53,27 @@ public final class Client {
     var waitingRequests = [WaitingRequest]()
     
     /// A web socket client.
-    lazy var webSocket = WebSocket()
+    lazy var webSocket: WebSocket = {
+        let webSocket = WebSocket()
+        webSocket.onConnect = setupWebSocketOnConnect
+        webSocket.onEvent = setupWebSocketOnEvent
+        return webSocket
+    }()
     
     public var connection: Connection { webSocket.connection }
     
     /// A WebSocket connection callback. This should only be used when you only use the Low-Level Client.
-    public var onConnect: Client.OnConnect = { _ in } {
-        didSet { webSocket.onConnect = setupWebSocketOnConnect }
-    }
+    public var onConnect: Client.OnConnect = { _ in }
     
     /// Saved onConnect for a completion block in `connect()`.
     var savedOnConnect: Client.OnConnect?
     
     /// A WebSocket events callback. This should only be used when you only use the Low-Level Client.
-    public var onEvent: Client.OnEvent = { _ in } {
-        didSet { webSocket.onEvent = setupWebSocketOnEvent }
-    }
+    public var onEvent: Client.OnEvent = { _ in }
     
     lazy var urlSession = URLSession(configuration: .default)
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
-    private let uuid = UUID()
     
     /// A log manager.
     public let logger: ClientLogger?
