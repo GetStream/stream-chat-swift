@@ -27,12 +27,12 @@ extension ChannelPresenter {
             isLoadingIndex = 0
         }
         
-        if InternetConnection.shared.isAvailable, channel.readEventsEnabled, !isNextPage {
+        if InternetConnection.shared.state == .available, channel.readEventsEnabled, !isNextPage {
             messageReadsToMessageId = [:]
         }
         
         let currentCount = items.count
-        let messageReads = InternetConnection.shared.isAvailable && channel.readEventsEnabled ? response.messageReads : []
+        let messageReads = InternetConnection.shared.state == .available && channel.readEventsEnabled ? response.messageReads : []
         parse(response.messages, messageReads: messageReads, to: &items, isNextPage: isNextPage)
         self.items = items
         

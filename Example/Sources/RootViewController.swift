@@ -85,9 +85,9 @@ final class RootViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        offlineMode.rx.isOn.changed
-            .subscribe(onNext: { InternetConnection.shared.offlineMode = $0 })
-            .disposed(by: disposeBag)
+//        offlineMode.rx.isOn.changed
+//            .subscribe(onNext: { InternetConnection.shared.offlineMode = $0 })
+//            .disposed(by: disposeBag)
     }
     
     @IBAction func checkForBan(_ sender: Any) {
