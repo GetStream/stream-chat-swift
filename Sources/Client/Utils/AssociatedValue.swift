@@ -10,10 +10,10 @@ import Foundation
 
 // MARK: Vars for Extensions
 
-func associated<T>(to base: AnyObject,
-                   key: UnsafePointer<UInt8>,
-                   policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN,
-                   initialiser: () -> T) -> T {
+public func associated<T>(to base: AnyObject,
+                          key: UnsafePointer<UInt8>,
+                          policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN,
+                          initialiser: () -> T) -> T {
     if let value = objc_getAssociatedObject(base, key) as? T {
         return value
     }
@@ -28,10 +28,10 @@ func associated<T>(to base: AnyObject,
     return lifted.value
 }
 
-func associate<T>(to base: AnyObject,
-                  key: UnsafePointer<UInt8>,
-                  value: T,
-                  policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN) {
+public func associate<T>(to base: AnyObject,
+                         key: UnsafePointer<UInt8>,
+                         value: T,
+                         policy: objc_AssociationPolicy = .OBJC_ASSOCIATION_RETAIN) {
     if let unwrappedValue: AnyObject = value as AnyObject? {
         objc_setAssociatedObject(base, key, unwrappedValue, policy)
     } else {

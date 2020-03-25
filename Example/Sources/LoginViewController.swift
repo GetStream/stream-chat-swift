@@ -132,9 +132,9 @@ final class LoginViewController: UIViewController {
     func login(showNextViewController: Bool = false, animated: Bool) {
         if let user = loggedInUser, let token = loggedInToken {
             if token == "guest" {
-                Client.shared.setGuestUser(user)
+                Client.shared.setGuestUser(user) { _ in }
             } else {
-                Client.shared.set(user: user, token: token)
+                Client.shared.set(user: user, token: token) { _ in }
             }
             
             if showNextViewController {

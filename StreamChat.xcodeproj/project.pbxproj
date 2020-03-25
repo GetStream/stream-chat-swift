@@ -39,9 +39,14 @@
 		8A5211D5238EE7DC004BED65 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5211D4238EE7DC004BED65 /* Attachment.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
+		8A831C8624294083003F0DB4 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C3C241924B5000750E4 /* InternetConnection.swift */; };
+		8A831C8724294356003F0DB4 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC322E9BAC5005CFAC9 /* Reachability.framework */; };
 		8A8BB2A52384573400C2F9DE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A32384573400C2F9DE /* Realm.framework */; };
 		8A8BB2A72384573400C2F9DE /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A42384573400C2F9DE /* RealmSwift.framework */; };
 		8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */; };
+		8A9ECEF6242A573700206E7D /* UIApplication+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4E241924B5000750E4 /* UIApplication+Extensions.swift */; };
+		8A9ECEF7242A57B900206E7D /* AssociatedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */; };
+		8A9ECEF9242A5C3A00206E7D /* UIApplication+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */; };
 		8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD0241924AD000750E4 /* Reaction.swift */; };
 		8AA8F13E2420FFE0008FD89C /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBB241924AD000750E4 /* Int+Extensions.swift */; };
 		8AB2A02B2423C1B500CE54F6 /* ChannelExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB2A02A2423C1B500CE54F6 /* ChannelExtraData.swift */; };
@@ -50,6 +55,7 @@
 		8AC0D94C23D4ABC50080B8BC /* ClientTests02+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94B23D4ABC50080B8BC /* ClientTests02+Users.swift */; };
 		8AC0D94F23D4BA7D0080B8BC /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */; };
 		8ACB0E9E23EB13CE0066343A /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; };
+		8ACC2B62242B8B8600EF509D /* Chat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8ACC2B61242B8B8600EF509D /* Chat.xcassets */; };
 		8ACC7BFB241924AD000750E4 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB2241924AD000750E4 /* Connection.swift */; };
 		8ACC7BFC241924AD000750E4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB3241924AD000750E4 /* WebSocket.swift */; };
 		8ACC7BFE241924AD000750E4 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB6241924AD000750E4 /* Environment.swift */; };
@@ -107,7 +113,6 @@
 		8ACC7C38241924AD000750E4 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BF7241924AD000750E4 /* Endpoint.swift */; };
 		8ACC7C39241924AD000750E4 /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BF9241924AD000750E4 /* MultipartFormData.swift */; };
 		8ACC7C3A241924AD000750E4 /* ClientURLSessionTaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BFA241924AD000750E4 /* ClientURLSessionTaskDelegate.swift */; };
-		8ACC7C74241924B5000750E4 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C3C241924B5000750E4 /* InternetConnection.swift */; };
 		8ACC7C75241924B5000750E4 /* ChannelPresenter+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C3F241924B5000750E4 /* ChannelPresenter+Events.swift */; };
 		8ACC7C76241924B5000750E4 /* ChannelPresenter+EphemeralMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C40241924B5000750E4 /* ChannelPresenter+EphemeralMessages.swift */; };
 		8ACC7C77241924B5000750E4 /* ChannelPresenter+RxRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C41241924B5000750E4 /* ChannelPresenter+RxRequests.swift */; };
@@ -121,8 +126,6 @@
 		8ACC7C7F241924B5000750E4 /* ViewChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C49241924B5000750E4 /* ViewChanges.swift */; };
 		8ACC7C80241924B5000750E4 /* ChannelsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4B241924B5000750E4 /* ChannelsPresenter.swift */; };
 		8ACC7C81241924B5000750E4 /* ChannelsPresenter+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4C241924B5000750E4 /* ChannelsPresenter+Rx.swift */; };
-		8ACC7C82241924B5000750E4 /* UIApplication+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4E241924B5000750E4 /* UIApplication+Rx.swift */; };
-		8ACC7C83241924B5000750E4 /* AssociatedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */; };
 		8ACC7C84241924B5000750E4 /* URL+Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C50241924B5000750E4 /* URL+Media.swift */; };
 		8ACC7C85241924B5000750E4 /* Reachability+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C51241924B5000750E4 /* Reachability+Rx.swift */; };
 		8ACC7C86241924B5000750E4 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C52241924B5000750E4 /* Tests.swift */; };
@@ -220,7 +223,6 @@
 		8ACC7D4C241924BE000750E4 /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CF8241924BE000750E4 /* Keyboard.swift */; };
 		8ACC7D4D241924BE000750E4 /* RxGesture+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CFA241924BE000750E4 /* RxGesture+Extensions.swift */; };
 		8ACC7D4E241924BE000750E4 /* RxDocumentPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CFB241924BE000750E4 /* RxDocumentPickerViewController.swift */; };
-		8ACC7D4F241924BE000750E4 /* Chat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8ACC7CFC241924BE000750E4 /* Chat.xcassets */; };
 		8ACC7D50241924BE000750E4 /* ViewController+ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CFD241924BE000750E4 /* ViewController+ImagePicker.swift */; };
 		8ACC7D51241924BE000750E4 /* ReadUsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CFF241924BE000750E4 /* ReadUsersView.swift */; };
 		8ACC7D52241924BE000750E4 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D00241924BE000750E4 /* AvatarView.swift */; };
@@ -231,12 +233,9 @@
 		8ACC7D5B2419366D000750E4 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D5A2419366D000750E4 /* Subscription.swift */; };
 		8AD5907F23957102005903AC /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5907E23957102005903AC /* Filter.swift */; };
 		8AD5EDC822E9BAC5005CFAC9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC022E9BAC5005CFAC9 /* RxRelay.framework */; };
-		8AD5EDC922E9BAC5005CFAC9 /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; };
 		8AD5EDCA22E9BAC5005CFAC9 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC222E9BAC5005CFAC9 /* RxSwift.framework */; };
-		8AD5EDCB22E9BAC5005CFAC9 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC322E9BAC5005CFAC9 /* Reachability.framework */; };
 		8AD5EDCC22E9BAC5005CFAC9 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC422E9BAC5005CFAC9 /* RxCocoa.framework */; };
 		8AD5EDCD22E9BAC5005CFAC9 /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC522E9BAC5005CFAC9 /* RxBlocking.framework */; };
-		8AD5EDCE22E9BAC5005CFAC9 /* Gzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC622E9BAC5005CFAC9 /* Gzip.framework */; };
 		8AD5EDD322E9BB0C005CFAC9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDCF22E9BB0C005CFAC9 /* SnapKit.framework */; };
 		8AD5EDD422E9BB0C005CFAC9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD022E9BB0C005CFAC9 /* RxGesture.framework */; };
 		8AD5EDD522E9BB0C005CFAC9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */; };
@@ -311,7 +310,6 @@
 		8A50696A23CDEDA4009F127A /* StreamChatCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChatCore.h; sourceTree = "<group>"; };
 		8A5211D4238EE7DC004BED65 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8A559D25230D937C00E66096 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = Info.plist; path = ../Info.plist; sourceTree = "<group>"; };
 		8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Tests.swift"; sourceTree = "<group>"; };
 		8A8BB295238452B600C2F9DE /* StreamChatRealm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatRealm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A8BB2A2238456A200C2F9DE /* StreamChatRealm.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatRealm.podspec; sourceTree = "<group>"; };
@@ -319,10 +317,12 @@
 		8A8BB2A42384573400C2F9DE /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDatabase.swift; sourceTree = "<group>"; };
 		8A8BB2B02384580700C2F9DE /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
+		8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Rx.swift"; sourceTree = "<group>"; };
 		8AB2A02A2423C1B500CE54F6 /* ChannelExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelExtraData.swift; sourceTree = "<group>"; };
 		8AB2A02C242534EA00CE54F6 /* UserExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserExtraData.swift; sourceTree = "<group>"; };
 		8AC0D94B23D4ABC50080B8BC /* ClientTests02+Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClientTests02+Users.swift"; sourceTree = "<group>"; };
 		8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTests.swift; sourceTree = "<group>"; };
+		8ACC2B61242B8B8600EF509D /* Chat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Chat.xcassets; sourceTree = "<group>"; };
 		8ACC7BB2241924AD000750E4 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		8ACC7BB3241924AD000750E4 /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		8ACC7BB6241924AD000750E4 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
@@ -396,7 +396,7 @@
 		8ACC7C49241924B5000750E4 /* ViewChanges.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewChanges.swift; sourceTree = "<group>"; };
 		8ACC7C4B241924B5000750E4 /* ChannelsPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelsPresenter.swift; sourceTree = "<group>"; };
 		8ACC7C4C241924B5000750E4 /* ChannelsPresenter+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChannelsPresenter+Rx.swift"; sourceTree = "<group>"; };
-		8ACC7C4E241924B5000750E4 /* UIApplication+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Rx.swift"; sourceTree = "<group>"; };
+		8ACC7C4E241924B5000750E4 /* UIApplication+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extensions.swift"; sourceTree = "<group>"; };
 		8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssociatedValue.swift; sourceTree = "<group>"; };
 		8ACC7C50241924B5000750E4 /* URL+Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Media.swift"; sourceTree = "<group>"; };
 		8ACC7C51241924B5000750E4 /* Reachability+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Reachability+Rx.swift"; sourceTree = "<group>"; };
@@ -496,7 +496,6 @@
 		8ACC7CF8241924BE000750E4 /* Keyboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
 		8ACC7CFA241924BE000750E4 /* RxGesture+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RxGesture+Extensions.swift"; sourceTree = "<group>"; };
 		8ACC7CFB241924BE000750E4 /* RxDocumentPickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxDocumentPickerViewController.swift; sourceTree = "<group>"; };
-		8ACC7CFC241924BE000750E4 /* Chat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Chat.xcassets; sourceTree = "<group>"; };
 		8ACC7CFD241924BE000750E4 /* ViewController+ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ViewController+ImagePicker.swift"; sourceTree = "<group>"; };
 		8ACC7CFF241924BE000750E4 /* ReadUsersView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReadUsersView.swift; sourceTree = "<group>"; };
 		8ACC7D00241924BE000750E4 /* AvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
@@ -535,6 +534,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A5069B723CE131B009F127A /* Gzip.framework in Frameworks */,
+				8A831C8724294356003F0DB4 /* Reachability.framework in Frameworks */,
 				8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -583,13 +583,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8AD5EDC822E9BAC5005CFAC9 /* RxRelay.framework in Frameworks */,
-				8AD5EDC922E9BAC5005CFAC9 /* Starscream.framework in Frameworks */,
 				8AD5EDCA22E9BAC5005CFAC9 /* RxSwift.framework in Frameworks */,
-				8AD5EDCB22E9BAC5005CFAC9 /* Reachability.framework in Frameworks */,
 				8AD5EDCC22E9BAC5005CFAC9 /* RxCocoa.framework in Frameworks */,
 				8ACB0E9E23EB13CE0066343A /* StreamChatClient.framework in Frameworks */,
 				8AD5EDCD22E9BAC5005CFAC9 /* RxBlocking.framework in Frameworks */,
-				8AD5EDCE22E9BAC5005CFAC9 /* Gzip.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -694,10 +691,12 @@
 		8ACC7BB5241924AD000750E4 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7BB6241924AD000750E4 /* Environment.swift */,
+				8ACC7C3C241924B5000750E4 /* InternetConnection.swift */,
 				8ACC7BB7241924AD000750E4 /* Atomic.swift */,
-				8ACC7BB8241924AD000750E4 /* Bundle+Extensions.swift */,
+				8ACC7BC0241924AD000750E4 /* WeakRef.swift */,
+				8ACC7BB6241924AD000750E4 /* Environment.swift */,
 				8ACC7BB9241924AD000750E4 /* RepeatingTimer.swift */,
+				8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -705,12 +704,13 @@
 		8ACC7BBA241924AD000750E4 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				8ACC7C4E241924B5000750E4 /* UIApplication+Extensions.swift */,
 				8ACC7BBC241924AD000750E4 /* String+Extensions.swift */,
 				8ACC7BBD241924AD000750E4 /* Functions.swift */,
 				8ACC7BBE241924AD000750E4 /* Result+Extensions.swift */,
 				8ACC7BBF241924AD000750E4 /* Codable+Extensions.swift */,
-				8ACC7BC0241924AD000750E4 /* WeakRef.swift */,
 				8ACC7BC1241924AD000750E4 /* Data+Extensions.swift */,
+				8ACC7BB8241924AD000750E4 /* Bundle+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -821,7 +821,6 @@
 		8ACC7C3B241924B5000750E4 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7C3C241924B5000750E4 /* InternetConnection.swift */,
 				8ACC7C59241924B5000750E4 /* InternetConnection+Rx.swift */,
 				8ACC7C5A241924B5000750E4 /* Client */,
 				8ACC7C3D241924B5000750E4 /* Presenter */,
@@ -870,8 +869,7 @@
 		8ACC7C4D241924B5000750E4 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7C4E241924B5000750E4 /* UIApplication+Rx.swift */,
-				8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */,
+				8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */,
 				8ACC7C50241924B5000750E4 /* URL+Media.swift */,
 				8ACC7C51241924B5000750E4 /* Reachability+Rx.swift */,
 				8ACC7C52241924B5000750E4 /* Tests.swift */,
@@ -949,7 +947,7 @@
 				8ACC7CC3241924BE000750E4 /* Web View */,
 				8ACC7CD1241924BE000750E4 /* Banners */,
 				8ACC7CD4241924BE000750E4 /* Extensions */,
-				8ACC7CFC241924BE000750E4 /* Chat.xcassets */,
+				8ACC2B61242B8B8600EF509D /* Chat.xcassets */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1231,7 +1229,6 @@
 				8ACC7CA1241924BE000750E4 /* UI */,
 				8A8BB2AA2384575D00C2F9DE /* Database */,
 				8A5069C023CE23FC009F127A /* Headers */,
-				8A559D25230D937C00E66096 /* Info.plist */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -1492,7 +1489,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8ACC7D4F241924BE000750E4 /* Chat.xcassets in Resources */,
+				8ACC2B62242B8B8600EF509D /* Chat.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1539,6 +1536,7 @@
 				8ACC7BFB241924AD000750E4 /* Connection.swift in Sources */,
 				8ACC7C2B241924AD000750E4 /* Token.swift in Sources */,
 				8ACC7C25241924AD000750E4 /* Channel+WatcherCount.swift in Sources */,
+				8A9ECEF7242A57B900206E7D /* AssociatedValue.swift in Sources */,
 				8AB2A02B2423C1B500CE54F6 /* ChannelExtraData.swift in Sources */,
 				8ACC7C37241924AD000750E4 /* Client+Channels.swift in Sources */,
 				8ACC7C15241924AD000750E4 /* Message+Requests.swift in Sources */,
@@ -1552,6 +1550,7 @@
 				8ACC7C3A241924AD000750E4 /* ClientURLSessionTaskDelegate.swift in Sources */,
 				8ACC7C00241924AD000750E4 /* Bundle+Extensions.swift in Sources */,
 				8ACC7C38241924AD000750E4 /* Endpoint.swift in Sources */,
+				8A831C8624294083003F0DB4 /* InternetConnection.swift in Sources */,
 				8ACC7C16241924AD000750E4 /* Sorting.swift in Sources */,
 				8ACC7C23241924AD000750E4 /* ChannelType.swift in Sources */,
 				8A466E67241A3AB6003C21BA /* BaseURL.swift in Sources */,
@@ -1564,6 +1563,7 @@
 				8ACC7C35241924AD000750E4 /* Client+User.swift in Sources */,
 				8ACC7C22241924AD000750E4 /* Channel+UnreadCount.swift in Sources */,
 				8ACC7C39241924AD000750E4 /* MultipartFormData.swift in Sources */,
+				8A9ECEF6242A573700206E7D /* UIApplication+Extensions.swift in Sources */,
 				8ACC7C30241924AD000750E4 /* Client.swift in Sources */,
 				8A466E63241A3A7D003C21BA /* Client+WebSocket.swift in Sources */,
 				8ACC7C0D241924AD000750E4 /* AttachmentType.swift in Sources */,
@@ -1718,7 +1718,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8ACC7C74241924B5000750E4 /* InternetConnection.swift in Sources */,
 				8ACC7C75241924B5000750E4 /* ChannelPresenter+Events.swift in Sources */,
 				8ACC7C7A241924B5000750E4 /* ChannelPresenter+TypingUsers.swift in Sources */,
 				8ACC7C81241924B5000750E4 /* ChannelsPresenter+Rx.swift in Sources */,
@@ -1726,7 +1725,6 @@
 				8ACC7C97241924B5000750E4 /* Channel+RxRequests.swift in Sources */,
 				8ACC7C9F241924B5000750E4 /* Client+RxEvents.swift in Sources */,
 				8ACC7C85241924B5000750E4 /* Reachability+Rx.swift in Sources */,
-				8ACC7C82241924B5000750E4 /* UIApplication+Rx.swift in Sources */,
 				8ACC7C94241924B5000750E4 /* Client+RxWatcherCount.swift in Sources */,
 				8ACC7C92241924B5000750E4 /* User+RxRequests.swift in Sources */,
 				8ACC7C8D241924B5000750E4 /* Client+RxConnection.swift in Sources */,
@@ -1746,13 +1744,13 @@
 				8ACC7C84241924B5000750E4 /* URL+Media.swift in Sources */,
 				8ACC7C78241924B5000750E4 /* ChannelPresenter+Request.swift in Sources */,
 				8ACC7C9D241924B5000750E4 /* Client+RxUnreadCount.swift in Sources */,
+				8A9ECEF9242A5C3A00206E7D /* UIApplication+Rx.swift in Sources */,
 				8ACC7C86241924B5000750E4 /* Tests.swift in Sources */,
 				8ACC7C9B241924B5000750E4 /* Client+RxDevices.swift in Sources */,
 				8ACC7C7C241924B5000750E4 /* Uploader.swift in Sources */,
 				8ACC7C8F241924B5000750E4 /* Client+RxMessage.swift in Sources */,
 				8ACC7C7F241924B5000750E4 /* ViewChanges.swift in Sources */,
 				8ACC7C9A241924B5000750E4 /* Client+RxUser.swift in Sources */,
-				8ACC7C83241924B5000750E4 /* AssociatedValue.swift in Sources */,
 				8ACC7C8B241924B5000750E4 /* InternetConnection+Rx.swift in Sources */,
 				8ACC7C7D241924B5000750E4 /* Presenter+Rx.swift in Sources */,
 				8ACC7C7B241924B5000750E4 /* PresenterItem.swift in Sources */,

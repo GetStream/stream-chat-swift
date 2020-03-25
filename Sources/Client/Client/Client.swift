@@ -18,6 +18,8 @@ public final class Client {
     public typealias OnTokenChange = (Token?) -> Void
     /// A WebSocket connection callback type.
     public typealias OnConnect = (Connection) -> Void
+    /// A WebSocket connected callback event type.
+    public typealias OnConnected = (Error?) -> Void
     /// A WebSocket events callback type.
     public typealias OnEvent = (Event) -> Void
     
@@ -61,6 +63,9 @@ public final class Client {
     public var onConnect: Client.OnConnect = { _ in } {
         didSet { webSocket.onConnect = setupWebSocketOnConnect }
     }
+    
+    /// Saved onConnect for a completion block in `connect()`.
+    var savedOnConnect: Client.OnConnect?
     
     /// A WebSocket events callback. This should only be used when you only use the Low-Level Client.
     public var onEvent: Client.OnEvent = { _ in } {
@@ -143,44 +148,6 @@ public final class Client {
         }
     }
     
-    /// Connect to websocket.
-    /// - Note:
-    ///   - Skip if the Internet is not available.
-    ///   - Skip if it's already connected.
-    ///   - Skip if it's reconnecting.
-    /// - Parameter completion: Completion closure called once connection is established. Only called once.
-    public func connect(completion: Client.OnConnect? = nil) {
-        if let completion = completion {
-            let oldOnConnect = onConnect
-            
-            onConnect = { [weak self] connection in
-                if connection.isConnected {
-                    oldOnConnect(connection)
-                    completion(connection)
-                    self?.onConnect = oldOnConnect
-                } else {
-                    oldOnConnect(connection)
-                }
-            }
-        }
-        
-        webSocket.connect()
-    }
-    
-    /// Disconnect from the web socket.
-    public func disconnect() {
-        logger?.log("Disconnecting...")
-        webSocket.disconnect()
-        Message.flaggedIds.removeAll()
-        User.flaggedUsers.removeAll()
-        isExpiredTokenInProgress = false
-        
-        performInCallbackQueue { [unowned self] in
-            self.waitingRequests.forEach { $0.cancel() }
-            self.waitingRequests = []
-        }
-    }
-    
     /// Handle a connection with an application state.
     ///
     /// Application State:
@@ -190,17 +157,84 @@ public final class Client {
     /// - `.background` and `isConnected`
     ///   - `disconnectInBackground()`
     /// - Parameter appState: an application state.
-    public func handleConnection(appState: UIApplication.State, isInternetAvailable: Bool) {
-        guard isInternetAvailable else {
-            disconnect()
+    func connect(appState: UIApplication.State = UIApplication.shared.applicationState,
+                 internetConnectionState: InternetConnection.State = InternetConnection.shared.state,
+                 _ completion: Client.OnConnect?) {
+        guard internetConnectionState == .available else {
+            if internetConnectionState == .unavailable {
+                reset()
+                completion?(.disconnected(nil))
+            }
+            
             return
         }
         
         if appState == .active {
             webSocket.cancelBackgroundWork()
-            connect()
+            connect(completion)
         } else if appState == .background, webSocket.isConnected {
             webSocket.disconnectInBackground()
+        }
+    }
+    
+    /// Connect to websocket.
+    /// - Note:
+    ///   - Skip if the Internet is not available.
+    ///   - Skip if it's already connected.
+    ///   - Skip if it's reconnecting.
+    /// - Parameter completion: a completion block will be call once when the connection will be established.
+    func connect(_ completion: Client.OnConnect?) {
+        setupConnectCompletion(completion)
+        webSocket.connect()
+    }
+    
+    private func setupConnectCompletion(_ completion: Client.OnConnect?) {
+        guard let completion = completion else {
+            restoreOnConnect()
+            return
+        }
+        
+        // Save the original user onConnect.
+        savedOnConnect = savedOnConnect ?? onConnect
+        
+        onConnect = { [unowned self] connection in
+            if connection.isConnected {
+                self.savedOnConnect?(connection)
+                completion(connection)
+                self.restoreOnConnect()
+            } else {
+                self.savedOnConnect?(connection)
+            }
+        }
+    }
+    
+    /// Restore onConnect to the user value.
+    private func restoreOnConnect() {
+        if let savedOnConnect = savedOnConnect {
+            onConnect = savedOnConnect
+            self.savedOnConnect = nil
+        }
+    }
+    
+    /// Disconnect the web socket.
+    public func disconnect() {
+        logger?.log("Disconnecting deliberately...")
+        reset()
+        UIApplication.shared.onStateChanged = nil
+        InternetConnection.shared.stopObserving()
+    }
+    
+    /// Disconnect the websocket and reset states.
+    func reset() {
+        logger?.log("Disconnecting...")
+        webSocket.disconnect()
+        Message.flaggedIds.removeAll()
+        User.flaggedUsers.removeAll()
+        isExpiredTokenInProgress = false
+        
+        performInCallbackQueue { [unowned self] in
+            self.waitingRequests.forEach { $0.cancel() }
+            self.waitingRequests = []
         }
     }
 }

@@ -24,22 +24,24 @@ extension Reactive where Base == Client {
     public var connection: Observable<Connection> {
         associated(to: base, key: &Client.rxConnectionKey) { [unowned base] in
             let connection = base.rx.onConnect.filter { _ in !base.isExpiredTokenInProgress }
-            let appState = UIApplication.shared.rx.applicationState.filter({ $0 != .inactive })
-            let isInternetAvailable: Observable<Bool> = InternetConnection.shared.rx.isAvailable
-            
-            let environment = Observable.combineLatest(appState, isInternetAvailable)
-                .distinctUntilChanged({ $0.0 == $1.0 && $0.1 == $1.1 })
-                .observeOn(MainScheduler.instance)
-                .do(onNext: { appState, isInternetAvailable in
-                    base.logger?.log("Environment: appState: \(appState), Internet: \(isInternetAvailable ? "yes" : "no")")
-                    base.handleConnection(appState: appState, isInternetAvailable: isInternetAvailable)
-                })
-            
-            return Observable.combineLatest(connection, environment)
-                .map { connection, _ in connection }
-                .distinctUntilChanged()
-                .do(onDispose: { base.disconnect() })
-                .share(replay: 1)
+            return connection.distinctUntilChanged().share(replay: 1)
+
+//            let appState = UIApplication.shared.rx.applicationState.filter({ $0 != .inactive })
+//            let isInternetAvailable: Observable<Bool> = InternetConnection.shared.rx.state.map { $0 == .available }
+//
+//            let environment = Observable.combineLatest(appState, isInternetAvailable)
+//                .distinctUntilChanged({ $0.0 == $1.0 && $0.1 == $1.1 })
+//                .observeOn(MainScheduler.instance)
+//                .do(onNext: { appState, isInternetAvailable in
+//                    base.logger?.log("Environment: appState: \(appState), Internet: \(isInternetAvailable ? "yes" : "no")")
+//                    base.handleConnection(appState: appState, isInternetAvailable: isInternetAvailable)
+//                })
+//
+//            return Observable.combineLatest(connection, environment)
+//                .map { connection, _ in connection }
+//                .distinctUntilChanged()
+//                .do(onDispose: { base.disconnect() })
+//                .share(replay: 1)
         }
     }
     

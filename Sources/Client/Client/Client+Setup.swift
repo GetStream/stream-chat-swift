@@ -6,7 +6,7 @@
 //  Copyright © 2019 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 // MARK: Setup
 
@@ -15,40 +15,49 @@ extension Client {
     /// Setup the current user with a given token.
     ///
     /// - Parameters:
-    ///     - user: the current user (see `User`).
-    ///     - token: a Stream Chat API token.
-    public func set(user: User, token: Token) {
-        disconnect()
+    ///   - user: the current user (see `User`).
+    ///   - token: a Stream Chat API token.
+    ///   - completion: a connection completion block.
+    public func set(user: User, token: Token, _ completion: @escaping Client.OnConnected) {
+        reset()
         
         if apiKey.isEmpty || token.isEmpty {
             logger?.log("❌ API key or token is empty: \(apiKey), \(token)", level: .error)
+            completion(ClientError.emptyAPIKey)
             return
         }
         
         self.user = user
-        setup(token: token)
+        setup(token: token, completion)
     }
     
     /// Setup the current user as guest.
     ///
     /// Guest sessions do not require any server-side authentication.
     /// Guest users have a limited set of permissions.
-    public func setGuestUser(_ user: User) {
+    /// - Parameters:
+    ///   - user: a guest user.
+    ///   - completion: a connection completion block.
+    public func setGuestUser(_ user: User, _ completion: @escaping Client.OnConnected) {
+        reset()
+        
         if apiKey.isEmpty {
             logger?.log("❌ API key is empty", level: .error)
+            completion(ClientError.emptyAPIKey)
             return
         }
         
-        disconnect()
         self.user = user
         urlSession = setupURLSession()
         logger?.log("Sending a request for a Guest Token...")
         
         request(endpoint: .guestToken(user)) { [unowned self] (result: Result<TokenResponse, ClientError>) in
-            if let response = try? result.get() {
-                self.set(user: response.user, token: response.token)
-            } else {
-                self.logger?.log(result.error, message: "Guest Token")
+            do {
+                let response = try result.get()
+                self.set(user: response.user, token: response.token, completion)
+            } catch {
+                self.logger?.log(error, message: "Guest Token")
+                completion(error)
             }
         }
     }
@@ -58,10 +67,12 @@ extension Client {
     /// If a user is not logged in, you can call the setAnonymousUser method.
     /// While you’re anonymous, you can’t do much, but for the livestream channel type,
     /// you’re still allowed to read the chat conversation.
-    public func setAnonymousUser() {
+    /// - Parameter completion: a connection completion block.
+    public func setAnonymousUser(_ completion: @escaping Client.OnConnected) {
+        reset()
         user = .anonymous
         tokenProvider = nil
-        setup(token: "")
+        setup(token: "", completion)
     }
     
     /// Setup the current user with a token provider (see `TokenProvider`).
@@ -71,44 +82,51 @@ extension Client {
     ///
     /// Example:
     /// ```
-    /// Client.shared.set(user: user) { callback in
-    ///    if let url = URL(string: "https://my.backend.io/token?user_id=\(user.id)") {
-    ///        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-    ///            if error == nil,
-    ///                let json = try? JSONSerialization.jsonObject(with: data),
-    ///                let token = json["token"] as? String {
-    ///                callback(token)
-    ///            } else {
-    ///                // Handle the error.
-    ///                print("Token request failed", error)
-    ///            }
-    ///        }
+    /// let tokenProvider: TokenProvider = { tokenCallback in
+    ///     guard let url = URL(string: "https://my.backend.io/token?user_id=\(user.id)") else {
+    ///         return
+    ///     }
     ///
-    ///        task.resume()
-    ///    }
+    ///     let task = URLSession.shared.dataTask(with: url) { data, response, error in
+    ///         if error == nil,
+    ///             let json = try? JSONSerialization.jsonObject(with: data),
+    ///             let token = json["token"] as? String {
+    ///             tokenCallback(token)
+    ///         } else {
+    ///             // Handle the error.
+    ///             print("Token request failed", error)
+    ///         }
+    ///     }
+    ///
+    ///     task.resume()
+    /// }
+    ///
+    /// Client.shared.set(user: user, tokenProvider: tokenProvider) {
+    ///     // The client is connected.
     /// }
     /// ```
     ///
     /// - Parameters:
     ///   - user: the current user (see `User`).
     ///   - tokenProvider: a token provider.
-    public func set(user: User, _ tokenProvider: @escaping TokenProvider) {
-        disconnect()
+    ///   - completion: a connection completion block.
+    public func set(user: User, tokenProvider: @escaping TokenProvider, _ completion: @escaping Client.OnConnected) {
+        reset()
         
         if apiKey.isEmpty {
             logger?.log("❌ API key is empty.", level: .error)
+            completion(ClientError.emptyAPIKey)
             return
         }
         
         self.user = user
         self.tokenProvider = tokenProvider
-        touchTokenProvider(isExpiredTokenInProgress: false)
+        touchTokenProvider(isExpiredTokenInProgress: false, completion)
     }
     
-    @discardableResult
-    func touchTokenProvider(isExpiredTokenInProgress: Bool) -> Bool {
+    func touchTokenProvider(isExpiredTokenInProgress: Bool, _ completion: Client.OnConnected?) {
         guard let tokenProvider = tokenProvider else {
-            return false
+            return
         }
         
         self.isExpiredTokenInProgress = isExpiredTokenInProgress
@@ -118,12 +136,10 @@ extension Client {
         }
         
         logger?.log("🀄️ Request for a new token from a token provider.")
-        tokenProvider(setup)
-        
-        return true
+        tokenProvider { [unowned self] in self.setup(token: $0, completion) }
     }
     
-    private func setup(token: Token) {
+    private func setup(token: Token, _ completion: Client.OnConnected?) {
         if webSocket.isConnected {
             webSocket.disconnect()
         }
@@ -131,9 +147,10 @@ extension Client {
         var token = token
         
         if token == .development {
-            if let developmentToken = developmentToken() {
-                token = developmentToken
-            } else {
+            do {
+                token = try developmentToken()
+            } catch {
+                completion?(error)
                 return
             }
         }
@@ -148,28 +165,42 @@ extension Client {
         
         if let error = checkUserAndToken(token) {
             logger?.log(error)
+            completion?(error)
             return
         }
         
-        guard let webSocket = setupWebSocket(user: user, token: token) else {
-            return
-        }
-        
-        database?.user = user
-        self.webSocket = webSocket
-        urlSession = setupURLSession(token: token)
-        self.token = token
-        
-        if isExpiredTokenInProgress {
-            connect()
+        do {
+            let webSocket = try setupWebSocket(user: user, token: token)
+            database?.user = user
+            self.webSocket = webSocket
+            urlSession = setupURLSession(token: token)
+            self.token = token
+            
+            let onConnect: OnConnect = {
+                if $0.isConnected {
+                    completion?(nil)
+                } else if case .disconnected(let disconnectedError) = $0, let error = disconnectedError {
+                    completion?(error)
+                }
+            }
+            
+            InternetConnection.shared.startObserving()
+            
+            InternetConnection.shared.onStateChanged = { [unowned self] state in
+                self.connect(internetConnectionState: state, onConnect)
+            }
+            
+            UIApplication.shared.onStateChanged = { [unowned self] state in
+                self.connect(appState: state, onConnect)
+            }
+        } catch {
+            logger?.log(error)
+            completion?(error)
         }
     }
     
-    private func developmentToken() -> Token? {
-        guard let json = try? JSONSerialization.data(withJSONObject: ["user_id": user.id]) else {
-            return nil
-        }
-        
+    private func developmentToken() throws -> Token {
+        let json = try JSONSerialization.data(withJSONObject: ["user_id": user.id])
         return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.\(json.base64EncodedString()).devtoken" // {"alg": "HS256", "typ": "JWT"}
     }
     
@@ -179,13 +210,13 @@ extension Client {
         }
         
         guard token.isValidToken(userId: user.id), let payload = token.payload else {
-            return ClientError.tokenInvalid(description: "Token is invalid or Token payload is invalid")
+            return ClientError.invalidToken(description: "Token is invalid or Token payload is invalid")
         }
         
         if let userId = payload["user_id"] as? String, userId == user.id {
             return nil
         }
         
-        return ClientError.tokenInvalid(description: "Token payload user_id doesn't equal to the client user id")
+        return ClientError.invalidToken(description: "Token payload user_id doesn't equal to the client user id")
     }
 }

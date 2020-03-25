@@ -52,7 +52,7 @@ public extension Reactive  where Base: Presenter {
                 if !connection.isConnected,
                     let base = base,
                     !base.items.isEmpty,
-                    (Client.shared.database == nil || InternetConnection.shared.isAvailable) {
+                    (Client.shared.database == nil || InternetConnection.shared.state == .available) {
                     base.items = []
                     base.next = base.pageSize
                 }
@@ -83,7 +83,7 @@ public extension Reactive  where Base: Presenter {
         }
         
         return Observable.combineLatest(base.loadPagination.asObserver().startWith(pagination),
-                                        InternetConnection.shared.rx.isAvailable.filter({ !$0 }))
+                                        InternetConnection.shared.rx.state.filter({ $0 != .available }))
             .map { pagination, _ in pagination }
             .filter { [weak base] in $0 != .none && (base?.rx.shouldMakeDatabaseFetch(with: $0) ?? false) }
             .share()
