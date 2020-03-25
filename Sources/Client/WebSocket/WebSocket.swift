@@ -112,11 +112,7 @@ extension WebSocket {
         connection = .connecting
         shouldReconnect = true
         
-        if Thread.isMainThread {
-            webSocket.connect()
-        } else {
-            DispatchQueue.main.async(execute: webSocket.connect)
-        }
+        DispatchQueue.main.async(execute: webSocket.connect)
     }
     
     func reconnect() {
@@ -153,6 +149,7 @@ extension WebSocket {
         
         if backgroundTask != .invalid {
             let goingToDisconnect: DispatchWorkItem = DispatchWorkItem { [weak self] in
+                self?.logger?.log("Disconnecting in background...")
                 self?.disconnect()
             }
             
@@ -187,7 +184,7 @@ extension WebSocket {
         if webSocket.isConnected {
             connection = .disconnecting
             webSocket.disconnect(forceTimeout: 0)
-            logger?.log("Disconnecting deliberately...")
+            logger?.log("Disconnecting...")
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
             connection = .disconnected(nil)

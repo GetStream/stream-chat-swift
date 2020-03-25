@@ -17,7 +17,7 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     /// A token is empty.
     case emptyToken
     /// A token is invalid.
-    case tokenInvalid(description: String)
+    case invalidToken(description: String)
     /// A token is expired.
     case expiredToken
     /// The current user is empty.
@@ -73,7 +73,7 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             return "The Client API Key is empty"
         case .emptyToken:
             return "A Client Token is empty"
-        case .tokenInvalid(let description):
+        case .invalidToken(let description):
             return "Token is invalid: \(description)"
         case .expiredToken:
             return "The token was expired"
@@ -120,7 +120,7 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             return "ClientError.emptyToken"
         case .expiredToken:
             return "ClientError.expiredToken"
-        case .tokenInvalid(let description):
+        case .invalidToken(let description):
             return "ClientError.tokenInvalid(\(description))"
         case .emptyUser:
             return "ClientError.emptyUser"

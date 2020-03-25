@@ -11,11 +11,7 @@ import Starscream
 
 extension Client {
     
-    func setupWebSocket(user: User, token: Token) -> WebSocket? {
-        if apiKey.isEmpty {
-            return nil
-        }
-        
+    func setupWebSocket(user: User, token: Token) throws -> WebSocket {
         let logger = logOptions.logger(icon: "🦄", for: [.webSocketError, .webSocket, .webSocketInfo])
         let jsonParameter = WebSocketPayload(user: user, token: token)
         
@@ -32,23 +28,17 @@ extension Client {
             urlComponents.queryItems?.append(URLQueryItem(name: "stream-auth-type", value: "jwt"))
         }
         
-        do {
-            let jsonData = try JSONEncoder.default.encode(jsonParameter)
-            
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                urlComponents.queryItems?.append(URLQueryItem(name: "json", value: jsonString))
-            } else {
-                logger?.log("❌ Can't create a JSON parameter string from the json: \(jsonParameter)", level: .error)
-                return nil
-            }
-        } catch {
-            logger?.log(error)
-            return nil
+        let jsonData = try JSONEncoder.default.encode(jsonParameter)
+        
+        if let jsonString = String(data: jsonData, encoding: .utf8) {
+            urlComponents.queryItems?.append(URLQueryItem(name: "json", value: jsonString))
+        } else {
+            logger?.log("❌ Can't create a JSON parameter string from the json: \(jsonParameter)", level: .error)
         }
         
         guard let url = urlComponents.url else {
             logger?.log("❌ Bad URL: \(urlComponents)", level: .error)
-            return nil
+            throw ClientError.invalidURL(urlComponents.description)
         }
         
         var request = URLRequest(url: url)
