@@ -132,7 +132,6 @@
 		8ACC7C88241924B5000750E4 /* RxFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C54241924B5000750E4 /* RxFunctions.swift */; };
 		8ACC7C8B241924B5000750E4 /* InternetConnection+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C59241924B5000750E4 /* InternetConnection+Rx.swift */; };
 		8ACC7C8C241924B5000750E4 /* Client+RxChannels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C5B241924B5000750E4 /* Client+RxChannels.swift */; };
-		8ACC7C8D241924B5000750E4 /* Client+RxConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C5C241924B5000750E4 /* Client+RxConnection.swift */; };
 		8ACC7C8F241924B5000750E4 /* Client+RxMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C5E241924B5000750E4 /* Client+RxMessage.swift */; };
 		8ACC7C90241924B5000750E4 /* Client+RxChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C5F241924B5000750E4 /* Client+RxChannel.swift */; };
 		8ACC7C91241924B5000750E4 /* Message+RxRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C61241924B5000750E4 /* Message+RxRequests.swift */; };
@@ -403,7 +402,6 @@
 		8ACC7C54241924B5000750E4 /* RxFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxFunctions.swift; sourceTree = "<group>"; };
 		8ACC7C59241924B5000750E4 /* InternetConnection+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "InternetConnection+Rx.swift"; sourceTree = "<group>"; };
 		8ACC7C5B241924B5000750E4 /* Client+RxChannels.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxChannels.swift"; sourceTree = "<group>"; };
-		8ACC7C5C241924B5000750E4 /* Client+RxConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxConnection.swift"; sourceTree = "<group>"; };
 		8ACC7C5E241924B5000750E4 /* Client+RxMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxMessage.swift"; sourceTree = "<group>"; };
 		8ACC7C5F241924B5000750E4 /* Client+RxChannel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxChannel.swift"; sourceTree = "<group>"; };
 		8ACC7C61241924B5000750E4 /* Message+RxRequests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Message+RxRequests.swift"; sourceTree = "<group>"; };
@@ -819,7 +817,6 @@
 		8ACC7C3B241924B5000750E4 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7C59241924B5000750E4 /* InternetConnection+Rx.swift */,
 				8ACC7C5A241924B5000750E4 /* Client */,
 				8ACC7C3D241924B5000750E4 /* Presenter */,
 				8ACC7C4D241924B5000750E4 /* Extensions */,
@@ -867,8 +864,9 @@
 		8ACC7C4D241924B5000750E4 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7C54241924B5000750E4 /* RxFunctions.swift */,
 				8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */,
+				8ACC7C59241924B5000750E4 /* InternetConnection+Rx.swift */,
+				8ACC7C54241924B5000750E4 /* RxFunctions.swift */,
 				8ACC7C50241924B5000750E4 /* URL+Media.swift */,
 				8ACC7C53241924B5000750E4 /* Date+Extensions.swift */,
 				8ACC7C52241924B5000750E4 /* Tests.swift */,
@@ -880,7 +878,6 @@
 			isa = PBXGroup;
 			children = (
 				8ACC7D5A2419366D000750E4 /* Subscription.swift */,
-				8ACC7C5C241924B5000750E4 /* Client+RxConnection.swift */,
 				8ACC7C6E241924B5000750E4 /* Client+RxRequest.swift */,
 				8ACC7C6C241924B5000750E4 /* Client+RxUser.swift */,
 				8ACC7C5B241924B5000750E4 /* Client+RxChannels.swift */,
@@ -1723,7 +1720,6 @@
 				8ACC7C9F241924B5000750E4 /* Client+RxEvents.swift in Sources */,
 				8ACC7C94241924B5000750E4 /* Client+RxWatcherCount.swift in Sources */,
 				8ACC7C92241924B5000750E4 /* User+RxRequests.swift in Sources */,
-				8ACC7C8D241924B5000750E4 /* Client+RxConnection.swift in Sources */,
 				8ACC7C9C241924B5000750E4 /* Client+RxRequest.swift in Sources */,
 				8ACC7C79241924B5000750E4 /* ChannelPresenter.swift in Sources */,
 				8ACC7C96241924B5000750E4 /* Channel+Events.swift in Sources */,
