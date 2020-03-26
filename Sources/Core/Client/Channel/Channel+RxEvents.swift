@@ -18,15 +18,15 @@ public extension Reactive where Base == Channel {
     /// Observe events with a given event type and channel.
     /// - Parameter eventType: an event type.
     /// - Returns: an observable channel events.
-    func onEvent(eventType: EventType) -> Observable<StreamChatClient.Event> {
-        Client.shared.rx.onEventConnected(eventTypes: [eventType], channel: base)
+    func event(eventType: EventType) -> Observable<StreamChatClient.Event> {
+        Client.shared.rx.events(eventTypes: [eventType], cid: base.cid)
     }
     
     /// Observe events with a given event types and channel.
     /// - Parameter eventTypes: event types.
     /// - Returns: an observable channel events.
-    func onEvent(eventTypes: [EventType] = []) -> Observable<StreamChatClient.Event> {
-        Client.shared.rx.onEventConnected(eventTypes: eventTypes, channel: base)
+    func events(eventTypes: [EventType] = []) -> Observable<StreamChatClient.Event> {
+        Client.shared.rx.events(eventTypes: eventTypes, cid: base.cid)
     }
     
     // MARK: - Unread Count

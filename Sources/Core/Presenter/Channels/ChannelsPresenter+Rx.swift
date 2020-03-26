@@ -61,7 +61,7 @@ private extension Reactive where Base == ChannelsPresenter {
     }
     
     var events: Driver<ViewChanges> {
-        Client.shared.rx.onEvent()
+        Client.shared.rx.events()
             .filter({ [weak base] event in
                 if let eventsFilter = base?.eventsFilter {
                     return eventsFilter(event, nil)
