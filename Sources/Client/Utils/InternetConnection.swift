@@ -25,7 +25,7 @@ public final class InternetConnection {
     
     /// A callback type of the Internet connection state.
     public typealias OnStateChanged = (State) -> Void
-
+    
     /// A shared Internet Connection.
     public static let shared = InternetConnection()
     
@@ -69,6 +69,11 @@ public final class InternetConnection {
     
     func startObserving() {
         guard state == .none else {
+            DispatchQueue.main.async {
+                try? self.reachability?.startNotifier()
+                self.onStateChanged?(self.state)
+            }
+            
             return
         }
         
@@ -78,7 +83,7 @@ public final class InternetConnection {
                 
                 try reachability.startNotifier()
                 self.log("Notifying started 🏃‍♂️")
-
+                
                 if case .none = reachability.connection {
                     self.state = .unavailable
                 } else {
