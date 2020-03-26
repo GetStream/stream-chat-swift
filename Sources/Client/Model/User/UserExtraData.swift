@@ -19,6 +19,11 @@ public protocol UserExtraDataCodable: Codable {
 
 /// A default user extra data type with `name` and `avatarURL` properties.
 public struct UserExtraData: UserExtraDataCodable {
+    private enum CodingKeys: String, CodingKey {
+        case name
+        case avatarURL = "image"
+    }
+    
     public var name: String?
     public var avatarURL: URL?
 }
