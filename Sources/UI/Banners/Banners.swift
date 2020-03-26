@@ -40,7 +40,7 @@ public final class Banners {
     
     init() {
         DispatchQueue.main.async {
-            UIApplication.shared.rx.applicationState
+            UIApplication.shared.rx.state
                 .filter { $0 == .background }
                 .subscribe(onNext: { [weak self] _ in self?.items = [] })
                 .disposed(by: self.disposeBag)

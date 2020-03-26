@@ -17,7 +17,7 @@ extension UIApplication {
 extension Reactive where Base == UIApplication {
     
     /// An application state.
-    public var applicationState: Observable<UIApplication.State> {
+    public var state: Observable<UIApplication.State> {
         associated(to: base, key: &UIApplication.rxApplicationStateKey) {
             let center = NotificationCenter.default
             
