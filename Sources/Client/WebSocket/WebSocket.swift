@@ -281,6 +281,10 @@ extension WebSocket {
     }
     
     private func isStopError(_ error: Swift.Error) -> Bool {
+        guard InternetConnection.shared.isAvailable else {
+            return true
+        }
+        
         if let lastJSONError = lastJSONError, lastJSONError.code == 1000 {
             return true
         }
