@@ -176,11 +176,13 @@ extension Client {
             urlSession = setupURLSession(token: token)
             self.token = token
             
-            let onConnect: OnConnect = {
-                if $0.isConnected {
-                    completion?(nil)
-                } else if case .disconnected(let disconnectedError) = $0, let error = disconnectedError {
-                    completion?(error)
+            let onConnect: OnConnect = { connection in
+                DispatchQueue.main.async {
+                    if connection.isConnected {
+                        completion?(nil)
+                    } else if case .disconnected(let disconnectedError) = connection, let error = disconnectedError {
+                        completion?(error)
+                    }
                 }
             }
             
