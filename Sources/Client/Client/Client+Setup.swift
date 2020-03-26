@@ -186,15 +186,19 @@ extension Client {
                 }
             }
             
-            InternetConnection.shared.startObserving()
-            
+            // Observe Internet connection state and handle the Client connection.
             InternetConnection.shared.onStateChanged = { [unowned self] state in
                 self.connect(internetConnectionState: state, onConnect)
             }
             
+            // Observe Application state and handle the Client connection.
             UIApplication.shared.onStateChanged = { [unowned self] state in
                 self.connect(appState: state, onConnect)
             }
+            
+            // Start observing Internet connection state and get the current state.
+            InternetConnection.shared.startObserving()
+            
         } catch {
             logger?.log(error)
             completion?(error)
