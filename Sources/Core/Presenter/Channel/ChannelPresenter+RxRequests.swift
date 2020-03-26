@@ -135,7 +135,7 @@ public extension Reactive where Base == ChannelPresenter {
     /// Send Read event if the app is active.
     /// - Returns: an observable completion.
     func markReadIfPossible() -> Observable<StreamChatClient.Event> {
-        guard InternetConnection.shared.state == .available, base.channel.readEventsEnabled else {
+        guard InternetConnection.shared.isAvailable, base.channel.readEventsEnabled else {
             return .empty()
         }
         

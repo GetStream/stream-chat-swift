@@ -21,7 +21,7 @@ extension ChatViewController {
         
         footerView.hide()
         
-        guard InternetConnection.shared.state == .available else {
+        guard InternetConnection.shared.isAvailable else {
             footerView.isHidden = false
             footerView.textLabel.text = "Waiting for network..."
             return
