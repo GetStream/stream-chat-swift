@@ -18,8 +18,8 @@ public extension Client {
     ///   - eventType: an event type.
     ///   - onNext: an event observable block.
     /// - Returns: an observable event.
-    func onEvent(eventType: EventType, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
-        rx.onEvent(eventTypes: [eventType]).bind(to: onNext)
+    func events(eventType: EventType, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
+        rx.events(eventTypes: [eventType]).bind(to: onNext)
     }
     
     /// Observe connected shared events with a given even types.
@@ -27,8 +27,8 @@ public extension Client {
     ///   - eventTypes: event types.
     ///   - onNext: events observable block.
     /// - Returns: an observable events.
-    func onEvent(eventTypes: [EventType] = [], _ onNext: @escaping Client.Completion<Event>) -> Subscription {
-        rx.onEvent(eventTypes: eventTypes).bind(to: onNext)
+    func event(eventTypes: [EventType] = [], _ onNext: @escaping Client.Completion<Event>) -> Subscription {
+        rx.events(eventTypes: eventTypes).bind(to: onNext)
     }
     
     /// Observe a connected shared event with a given event type and channel.
@@ -37,8 +37,8 @@ public extension Client {
     ///   - channel: a channel.
     ///   - onNext: a channel event observable block.
     /// - Returns: an observable channel events.
-    func onEvent(eventType: EventType, channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
-        rx.onEvent(eventTypes: [eventType], channel: channel).bind(to: onNext)
+    func event(eventType: EventType, channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
+        rx.events(eventTypes: [eventType], cid: channel.cid).bind(to: onNext)
     }
     
     /// Observe connected shared events with a given event types and channel.
@@ -47,8 +47,8 @@ public extension Client {
     ///   - channel: a channel.
     ///   - onNext: channel events observable block.
     /// - Returns: an observable channel events.
-    func onEvent(_ eventTypes: [EventType] = [], channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
-        rx.onEvent(eventTypes: eventTypes, channel: channel).bind(to: onNext)
+    func events(_ eventTypes: [EventType] = [], channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
+        rx.events(eventTypes: eventTypes, cid: channel.cid).bind(to: onNext)
     }
 }
 

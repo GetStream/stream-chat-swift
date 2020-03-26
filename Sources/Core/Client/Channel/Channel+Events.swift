@@ -15,15 +15,15 @@ public extension Channel {
     /// Observe events with a given event type and channel.
     /// - Parameter eventType: an event type.
     /// - Returns: an observable channel events.
-    func onEvent(eventType: EventType, _ onNext: @escaping Client.Completion<StreamChatClient.Event>) -> Subscription {
-        rx.onEvent(eventType: eventType).bind(to: onNext)
+    func event(eventType: EventType, _ onNext: @escaping Client.Completion<StreamChatClient.Event>) -> Subscription {
+        rx.event(eventType: eventType).bind(to: onNext)
     }
     
     /// Observe events with a given event types and channel.
     /// - Parameter eventTypes: event types.
     /// - Returns: an observable channel events.
-    func onEvent(eventTypes: [EventType] = [], _ onNext: @escaping Client.Completion<StreamChatClient.Event>) -> Subscription {
-        rx.onEvent(eventTypes: eventTypes).bind(to: onNext)
+    func events(eventTypes: [EventType] = [], _ onNext: @escaping Client.Completion<StreamChatClient.Event>) -> Subscription {
+        rx.events(eventTypes: eventTypes).bind(to: onNext)
     }
     
     // MARK: - Unread Count

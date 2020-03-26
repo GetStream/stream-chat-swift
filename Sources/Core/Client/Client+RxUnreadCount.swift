@@ -19,7 +19,7 @@ public extension Reactive where Base == Client {
         connection
             .filter({ $0.isConnected })
             .flatMapLatest({ [unowned base] _ -> Observable<UnreadCount> in
-                base.rx.onUserUpdate
+                base.rx.user
                     .map({ $0.unreadCount })
                     .startWith(base.user.unreadCount)
             })
@@ -33,7 +33,7 @@ public extension Reactive where Base == Client {
         queryChannel(channel, messagesPagination: .limit(100), options: [.state, .watch])
             .map { $0.channel }
             .flatMapLatest({ [unowned base] channel -> Observable<ChannelUnreadCount> in
-                base.rx.onEvent(channel: channel)
+                base.rx.events(cid: channel.cid)
                     .map({ _ in channel.unreadCount })
                     .startWith(channel.unreadCount)
             })

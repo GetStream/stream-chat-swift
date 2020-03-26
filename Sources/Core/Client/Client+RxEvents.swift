@@ -12,20 +12,22 @@ import RxSwift
 
 // MARK: Client Rx Events
 
+extension Client: ReactiveCompatible {}
+
 public extension Reactive where Base == Client {
     
     /// Observe events with a given event type.
     /// - Parameter eventType: an event type.
     /// - Returns: an observable event.
-    func onEvent(eventType: EventType) -> Observable<StreamChatClient.Event> {
-        onEventConnected(eventTypes: [eventType])
+    func event(eventType: EventType) -> Observable<StreamChatClient.Event> {
+        connectedEvents(eventTypes: [eventType])
     }
     
     /// Observe events with a given even types.
     /// - Parameter eventTypes: event types.
     /// - Returns: an observable events.
-    func onEvent(eventTypes: [EventType] = []) -> Observable<StreamChatClient.Event> {
-        onEventConnected(eventTypes: eventTypes)
+    func events(eventTypes: [EventType] = []) -> Observable<StreamChatClient.Event> {
+        connectedEvents(eventTypes: eventTypes)
     }
     
     /// Observe events with a given event type and channel.
@@ -33,8 +35,8 @@ public extension Reactive where Base == Client {
     ///   - eventType: an event type.
     ///   - channel: a channel.
     /// - Returns: an observable channel events.
-    func onEvent(eventType: EventType, channel: Channel) -> Observable<StreamChatClient.Event> {
-        onEventConnected(eventTypes: [eventType], channel: channel)
+    func event(eventType: EventType, cid: ChannelId) -> Observable<StreamChatClient.Event> {
+        connectedEvents(eventTypes: [eventType], cid: cid)
     }
     
     /// Observe events with a given event types and channel.
@@ -42,8 +44,8 @@ public extension Reactive where Base == Client {
     ///   - eventTypes: event types.
     ///   - channel: a channel.
     /// - Returns: an observable channel events.
-    func onEvent(eventTypes: [EventType] = [], channel: Channel) -> Observable<StreamChatClient.Event> {
-        onEventConnected(eventTypes: eventTypes, channel: channel)
+    func events(eventTypes: [EventType] = [], cid: ChannelId) -> Observable<StreamChatClient.Event> {
+        connectedEvents(eventTypes: eventTypes, cid: cid)
     }
 }
 
@@ -58,7 +60,7 @@ extension Client {
 
 extension Reactive where Base == Client {
     
-    var onTokenChange: Observable<Token?> {
+    public var token: Observable<Token?> {
         associated(to: base, key: &Client.rxOnTokenChange) { [unowned base] in
             Observable<Token?>.create({ observer in
                 base.onTokenChange = { observer.onNext($0) }
@@ -69,18 +71,20 @@ extension Reactive where Base == Client {
         }
     }
     
-    var onConnect: Observable<Connection> {
+    public var connection: Observable<Connection> {
         associated(to: base, key: &Client.rxOnConnect) { [unowned base] in
             Observable<Connection>.create({ observer in
                 base.onConnect = { observer.onNext($0) }
                 return Disposables.create()
             })
+                .filter { _ in !base.isExpiredTokenInProgress }
+                .distinctUntilChanged()
                 .startWith(base.connection)
-                .share()
+                .share(replay: 1)
         }
     }
     
-    var onEvent: Observable<StreamChatClient.Event> {
+    public var events: Observable<StreamChatClient.Event> {
         associated(to: base, key: &Client.rxOnEvent) { [unowned base] in
             Observable<StreamChatClient.Event>.create({ observer in
                 base.onEvent = { observer.onNext($0) }
@@ -90,7 +94,7 @@ extension Reactive where Base == Client {
         }
     }
     
-    var onUserUpdate: Observable<User> {
+    public var user: Observable<User> {
         associated(to: base, key: &Client.rxOnUserUpdate) { [unowned base] in
             Observable<StreamChatClient.User>.create({ observer in
                 base.onUserUpdate = { observer.onNext($0) }
@@ -101,16 +105,21 @@ extension Reactive where Base == Client {
         }
     }
     
-    func onEventConnected(eventTypes: [EventType], channel: Channel? = nil) -> Observable<StreamChatClient.Event> {
+    /// Observe the connection events and emit an event when the connection will be connected.
+    public var connected: Observable<Void> {
+        connection.filter({ $0.isConnected }).map({ _ in Void() })
+    }
+    
+    func connectedEvents(eventTypes: [EventType], cid: ChannelId? = nil) -> Observable<StreamChatClient.Event> {
         connection
             .filter({ $0.isConnected })
-            .flatMapLatest { [unowned base] _ in base.rx.onEvent }
-            .filter({ [weak channel] in
+            .flatMapLatest { [unowned base] _ in base.rx.events }
+            .filter({
                 if !eventTypes.isEmpty, !eventTypes.contains($0.type) {
                     return false
                 }
                 
-                if let cid = channel?.cid {
+                if let cid = cid {
                     return cid == $0.cid
                 }
                 
