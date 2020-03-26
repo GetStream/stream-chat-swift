@@ -13,7 +13,7 @@ import StreamChatCore
 import StreamChatClient
 import RxGesture
 
-final class LoginViewController: UIViewController {
+final class LoginViewController: ViewController {
     
     @IBOutlet weak var apiKeyLabel: UITextField!
     @IBOutlet weak var userIdLabel: UITextField!
@@ -130,16 +130,25 @@ final class LoginViewController: UIViewController {
     }
     
     func login(showNextViewController: Bool = false, animated: Bool) {
-        if let user = loggedInUser, let token = loggedInToken {
-            if token == "guest" {
-                Client.shared.setGuestUser(user) { _ in }
-            } else {
-                Client.shared.set(user: user, token: token) { _ in }
+        guard let user = loggedInUser, let token = loggedInToken else {
+            return
+        }
+        
+        func showNext(_ error: Error?) {
+            if let error = error {
+                show(error: error)
+                return
             }
             
             if showNextViewController {
                 showRootViewController(animated: animated)
             }
+        }
+        
+        if token == "guest" {
+            Client.shared.setGuestUser(user, showNext)
+        } else {
+            Client.shared.set(user: user, token: token, showNext)
         }
     }
     

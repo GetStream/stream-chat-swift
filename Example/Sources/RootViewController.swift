@@ -45,11 +45,22 @@ final class RootViewController: UIViewController {
             return
         }
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: User.current.name.capitalized,
-                                                            style: .plain,
-                                                            target: nil,
-                                                            action: nil)
-
+        title = User.current.name
+        
+        if let avatarURL = User.current.avatarURL {
+            DispatchQueue.global().async {
+                guard let imageData = try? Data(contentsOf: avatarURL),
+                    let avatar = UIImage(data: imageData)?.resized(targetSize: .init(width: 44, height: 44))?.original else {
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    let barItem = UIBarButtonItem(image: avatar, style: .plain, target: nil, action: nil)
+                    self.navigationItem.rightBarButtonItem = barItem
+                }
+            }
+        }
+        
         versionLabel.text = "Demo Project\nStream Swift SDK v.\(Environment.version)"
         
         totalUnreadCountSwitch.rx.isOn.changed
@@ -85,9 +96,15 @@ final class RootViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-//        offlineMode.rx.isOn.changed
-//            .subscribe(onNext: { InternetConnection.shared.offlineMode = $0 })
-//            .disposed(by: disposeBag)
+        offlineMode.rx.isOn.changed
+            .subscribe(onNext: { [weak self] in
+                if $0 {
+                    Client.shared.disconnect()
+                } else {
+                    self?.navigationController?.popViewController(animated: true)
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     @IBAction func checkForBan(_ sender: Any) {
@@ -145,5 +162,25 @@ final class RootViewController: UIViewController {
             })
             .subscribe()
             .disposed(by: disposeBag)
+    }
+}
+
+extension UIImage {
+    fileprivate func resized(targetSize: CGSize) -> UIImage? {
+        let widthRatio  = targetSize.width  / size.width
+        let heightRatio = targetSize.height / size.height
+        let newSize: CGSize
+        
+        if widthRatio > heightRatio {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0)
+        defer { UIGraphicsEndImageContext() }
+        draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        
+        return UIGraphicsGetImageFromCurrentImageContext()
     }
 }
