@@ -43,7 +43,9 @@ extension UIApplication {
                 }
             }
             
+            subscribers.append(subscribe(for: UIApplication.willEnterForegroundNotification, state: .inactive))
             subscribers.append(subscribe(for: UIApplication.didBecomeActiveNotification, state: .active))
+            subscribers.append(subscribe(for: UIApplication.willResignActiveNotification, state: .inactive))
             subscribers.append(subscribe(for: UIApplication.didEnterBackgroundNotification, state: .background))
             associate(to: self, key: &UIApplication.onStateChangedKey, value: subscribers)
         }
