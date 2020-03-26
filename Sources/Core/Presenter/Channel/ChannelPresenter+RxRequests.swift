@@ -179,7 +179,7 @@ private extension Reactive where Base == ChannelPresenter {
     }
     
     var webSocketEvents: Driver<ViewChanges> {
-        Client.shared.rx.onEvent(channel: base.channel)
+        Client.shared.rx.events(cid: base.channel.cid)
             .filter({ [weak base] event in
                 if let eventsFilter = base?.eventsFilter {
                     return eventsFilter(event, base?.channel)
