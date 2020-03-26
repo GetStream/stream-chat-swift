@@ -15,6 +15,7 @@ public final class InternetConnection {
     /// The Internet connection reachability.
     public enum State {
         /// Notification of an Internet connection has not begun.
+        /// Basically, this is the offline mode.
         case none
         /// The Internet is available.
         case available
@@ -36,15 +37,20 @@ public final class InternetConnection {
         didSet {
             if lastState != state {
                 lastState = state
-                self.log("\(state)")
+                self.log("State: \(state)")
                 onStateChanged?(state)
             }
         }
     }
     
+    /// Checks if the Internet is available.
+    public var isAvailable: Bool {
+        state == .available
+    }
+    
     private var lastState: State = .none
     
-    private(set) lazy var reachability: Reachability? = {
+    private lazy var reachability: Reachability? = {
         let reachability = Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
         
         func handleReachability(_ reachability: Reachability) {

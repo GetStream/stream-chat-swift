@@ -52,7 +52,7 @@ public extension Reactive  where Base: Presenter {
                 if !connection.isConnected,
                     let base = base,
                     !base.items.isEmpty,
-                    (Client.shared.database == nil || InternetConnection.shared.state == .available) {
+                    (Client.shared.database == nil || InternetConnection.shared.isAvailable) {
                     base.items = []
                     base.next = base.pageSize
                 }

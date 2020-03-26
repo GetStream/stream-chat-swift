@@ -227,7 +227,7 @@ extension Notifications {
         DispatchQueue.main.async {
             self.clear()
             
-            UIApplication.shared.rx.applicationState
+            UIApplication.shared.rx.state
                 .filter { $0 == .active }
                 .skip(1)
                 .subscribe(onNext: { [unowned self] _ in self.clear() })
