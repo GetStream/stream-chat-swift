@@ -67,7 +67,7 @@ public final class InternetConnection {
         return reachability
     }()
     
-    public func startObserving() {
+    func startObserving() {
         guard state == .none else {
             return
         }
@@ -91,7 +91,7 @@ public final class InternetConnection {
     }
     
     /// Stop observing the Internet connection.
-    public func stopObserving() {
+    func stopObserving() {
         DispatchQueue.main.async {
             self.reachability?.stopNotifier()
             self.state = .none
