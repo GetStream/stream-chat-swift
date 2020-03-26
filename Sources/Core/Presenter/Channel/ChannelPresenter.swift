@@ -116,6 +116,12 @@ public final class ChannelPresenter: Presenter {
         super.init(pageSize: .messagesPageSize)
         parse(response: response)
     }
+    
+    deinit {
+        if channel.didLoad, Client.shared.isConnected {
+            channel.stopWatching()
+        }
+    }
 }
 
 // MARK: - Changes
