@@ -18,8 +18,6 @@ public final class Client {
     public typealias OnTokenChange = (Token?) -> Void
     /// A WebSocket connection callback type.
     public typealias OnConnect = (Connection) -> Void
-    /// A WebSocket connected callback event type.
-    public typealias OnConnected = (Error?) -> Void
     /// A WebSocket events callback type.
     public typealias OnEvent = (Event) -> Void
     
