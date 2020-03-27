@@ -123,16 +123,20 @@ extension Notifications {
     public func show(newMessage message: Message, in channel: Channel) {
         notificationCenter.getNotificationSettings { [unowned self] settings in
             guard settings.authorizationStatus == .authorized else { return }
-            let content = self.createLocalNotificationContent(newMessage: message, in: channel)
-            let request = UNNotificationRequest(identifier: message.id, content: content, trigger: nil)
-            
-            self.notificationCenter.add(request) { error in
-                if let error = error {
-                    self.logger?.log(error, message: "When adding a local notification")
-                } else {
-                    self.logger?.log("Added a local notification for " +
-                        "channel: \(channel.cid) message id: \(message.id) text: \(message.textOrArgs)")
-                }
+            DispatchQueue.main.async { self.showLocalNotification(for: message, in: channel) }
+        }
+    }
+    
+    private func showLocalNotification(for message: Message, in channel: Channel) {
+        let content = createLocalNotificationContent(newMessage: message, in: channel)
+        let request = UNNotificationRequest(identifier: message.id, content: content, trigger: nil)
+        
+        notificationCenter.add(request) { [unowned self] error in
+            if let error = error {
+                self.logger?.log(error, message: "When adding a local notification")
+            } else {
+                self.logger?.log("Added a local notification for " +
+                    "channel: \(channel.cid) message id: \(message.id) text: \(message.textOrArgs)")
             }
         }
     }
