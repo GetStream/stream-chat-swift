@@ -325,7 +325,7 @@ extension WebSocket {
                 
                 logger.log(data)
             }
-                
+            
             return event
             
         } catch {
@@ -338,7 +338,7 @@ extension WebSocket {
             logger?.log(data, forceToShowData: true)
         }
         
-        return nil  
+        return nil
     }
 }
 
