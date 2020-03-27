@@ -11,8 +11,8 @@ import Starscream
 
 /// A web socket client.
 final class WebSocket {
-    private static let maxBackgroundTime: TimeInterval = 300
-    static var pingTimeInterval = 30
+    private static let maxBackgroundTime: TimeInterval = 40
+    static var pingTimeInterval = 25
     
     /// A WebSocket connection callback.
     var onConnect: Client.OnConnect = { _ in }
@@ -26,7 +26,6 @@ final class WebSocket {
     private var consecutiveFailures: TimeInterval = 0
     private var shouldReconnect = false
     private var isReconnecting = false
-    private var goingToDisconnect: DispatchWorkItem?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private let webSocketInitiated: Bool
     private(set) var lastConnectionId: String?
@@ -41,7 +40,7 @@ final class WebSocket {
     
     private lazy var handshakeTimer =
         RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval), queue: webSocket.callbackQueue) { [weak self] in
-            self?.logger?.log("🏓➡️", level: .info)
+            self?.logger?.log("🏓➡️")
             self?.webSocket.write(ping: .empty)
     }
     
@@ -99,6 +98,8 @@ extension WebSocket {
             return
         }
         
+        cancelBackgroundWork()
+        
         if connection == .connecting || isReconnecting || isConnected {
             logger?.log("Skip connecting: "
                 + "isConnected = \(webSocket.isConnected), "
@@ -115,7 +116,7 @@ extension WebSocket {
         DispatchQueue.main.async(execute: webSocket.connect)
     }
     
-    func reconnect() {
+    private func reconnect() {
         guard !isReconnecting else {
             return
         }
@@ -134,33 +135,31 @@ extension WebSocket {
     }
     
     func disconnectInBackground() {
+        webSocket.callbackQueue.async(execute: disconnectInBackgroundInWebSocketQueue)
+    }
+    
+    private func disconnectInBackgroundInWebSocketQueue() {
         guard stayConnectedInBackground else {
             disconnect(reason: "in background: stayConnectedInBackground is disabled")
             return
         }
         
-        guard backgroundTask == .invalid else {
-            return
+        if backgroundTask != .invalid {
+            UIApplication.shared.endBackgroundTask(backgroundTask)
         }
         
-        backgroundTask = UIApplication.shared.beginBackgroundTask {}
+        backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
+            self?.disconnect(reason: "finished in background")
+            self?.backgroundTask = .invalid
+        }
         
-        if backgroundTask != .invalid {
-            let goingToDisconnect: DispatchWorkItem = DispatchWorkItem { [weak self] in
-                self?.disconnect(reason: "finished in background")
-            }
-            
-            webSocket.callbackQueue.asyncAfter(deadline: .now() + WebSocket.maxBackgroundTime, execute: goingToDisconnect)
-            self.goingToDisconnect = goingToDisconnect
-            logger?.log("💜 Background mode on")
-        } else {
+        if backgroundTask == .invalid {
             disconnect(reason: "in background: can't make a background task")
         }
     }
     
-    func cancelBackgroundWork() {
-        goingToDisconnect?.cancel()
-        goingToDisconnect = nil
+    private func cancelBackgroundWork() {
+        logger?.log("Cancel background work")
         
         if backgroundTask != .invalid {
             UIApplication.shared.endBackgroundTask(backgroundTask)
@@ -189,10 +188,10 @@ extension WebSocket {
     }
     
     private func clearStateAfterDisconnect() {
+        logger?.log("Clear state after disconnect")
         handshakeTimer.suspend()
         lastConnectionId = nil
         cancelBackgroundWork()
-        logger?.log("🔑 connectionId cleaned")
     }
 }
 
@@ -233,13 +232,11 @@ extension WebSocket: WebSocketDelegate {
     }
     
     func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
-}
 
-// MARK: - Parsing
-
-extension WebSocket {
+    // MARK: Parsing Events
     
     private func parseDisconnect(_ error: Error? = nil) {
+        logger?.log("Parsing WebSocket disconnect... (error: \(error?.localizedDescription ?? "<nil>"))")
         clearStateAfterDisconnect()
         
         if let lastJSONError = lastJSONError, lastJSONError.code == ClientErrorResponse.tokenExpiredErrorCode {
