@@ -193,7 +193,7 @@ extension Client {
             }
             
             // Start observing Internet connection state and get the current state.
-            InternetConnection.shared.startObserving()
+            InternetConnection.shared.startNotifier()
             
         } catch {
             logger?.log(error)

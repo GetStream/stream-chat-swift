@@ -16,7 +16,7 @@ public final class InternetConnection {
     public enum State {
         /// Notification of an Internet connection has not begun.
         /// Basically, this is the offline mode.
-        case none
+        case unknown
         /// The Internet is available.
         case available
         /// The Internet is unavailable.
@@ -33,7 +33,7 @@ public final class InternetConnection {
     public var onStateChanged: OnStateChanged?
     
     /// The current Internet connection state.
-    public private(set) var state: State = .none {
+    public private(set) var state: State = .unknown {
         didSet {
             if lastState != state {
                 lastState = state
@@ -48,7 +48,7 @@ public final class InternetConnection {
         state == .available
     }
     
-    private var lastState: State = .none
+    private var lastState: State = .unknown
     
     private lazy var reachability: Reachability? = {
         let reachability = Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
@@ -67,8 +67,9 @@ public final class InternetConnection {
         return reachability
     }()
     
-    func startObserving() {
-        guard state == .none else {
+    /// Start observing the Internet connection state.
+    func startNotifier() {
+        guard state == .unknown else {
             DispatchQueue.main.async {
                 try? self.reachability?.startNotifier()
                 self.onStateChanged?(self.state)
@@ -95,11 +96,11 @@ public final class InternetConnection {
         }
     }
     
-    /// Stop observing the Internet connection.
-    func stopObserving() {
+    /// Stop observing the Internet connection state.
+    func stopNotifier() {
         DispatchQueue.main.async {
             self.reachability?.stopNotifier()
-            self.state = .none
+            self.state = .unknown
             self.log("Notifying stopped 🚶‍♂️")
         }
     }
