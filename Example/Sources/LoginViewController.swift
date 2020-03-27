@@ -134,13 +134,10 @@ final class LoginViewController: ViewController {
             return
         }
         
-        func showNext(_ error: Error?) {
-            if let error = error {
-                show(error: error)
-                return
-            }
-            
-            if showNextViewController {
+        func showNext(_ connection: Connection) {
+            if case .disconnected(let error) = connection {
+                show(errorMessage: error?.localizedDescription ?? "Disconnected")
+            } else if case .connected = connection, showNextViewController {
                 showRootViewController(animated: animated)
             }
         }
