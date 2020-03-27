@@ -219,7 +219,7 @@ public final class Client {
         logger?.log("Disconnecting deliberately...")
         reset()
         UIApplication.shared.onStateChanged = nil
-        InternetConnection.shared.stopObserving()
+        InternetConnection.shared.stopNotifier()
     }
     
     /// Disconnect the websocket and reset states.
