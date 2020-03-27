@@ -39,10 +39,10 @@ final class WebSocket {
         }
     }
     
-    private lazy var handshakeTimer = RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval),
-                                                     queue: webSocket.callbackQueue) { [weak self] in
-                                                        self?.logger?.log("🏓", level: .info)
-                                                        self?.webSocket.write(ping: .empty)
+    private lazy var handshakeTimer =
+        RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval), queue: webSocket.callbackQueue) { [weak self] in
+            self?.logger?.log("🏓➡️", level: .info)
+            self?.webSocket.write(ping: .empty)
     }
     
     /// Checks if the web socket is connected and `connectionId` is not nil.
@@ -72,7 +72,7 @@ final class WebSocket {
     deinit {
         if isConnected {
             logger?.log("💔 Disconnect on deinit")
-            disconnect()
+            disconnect(reason: "on deinit")
         }
     }
     
@@ -135,7 +135,7 @@ extension WebSocket {
     
     func disconnectInBackground() {
         guard stayConnectedInBackground else {
-            disconnect()
+            disconnect(reason: "in background: stayConnectedInBackground is disabled")
             return
         }
         
@@ -143,21 +143,18 @@ extension WebSocket {
             return
         }
         
-        backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
-            self?.disconnect()
-        }
+        backgroundTask = UIApplication.shared.beginBackgroundTask {}
         
         if backgroundTask != .invalid {
             let goingToDisconnect: DispatchWorkItem = DispatchWorkItem { [weak self] in
-                self?.logger?.log("Disconnecting in background...")
-                self?.disconnect()
+                self?.disconnect(reason: "finished in background")
             }
             
             webSocket.callbackQueue.asyncAfter(deadline: .now() + WebSocket.maxBackgroundTime, execute: goingToDisconnect)
             self.goingToDisconnect = goingToDisconnect
             logger?.log("💜 Background mode on")
         } else {
-            disconnect()
+            disconnect(reason: "in background: can't make a background task")
         }
     }
     
@@ -172,7 +169,7 @@ extension WebSocket {
         }
     }
     
-    func disconnect() {
+    func disconnect(reason: String) {
         guard webSocketInitiated else {
             return
         }
@@ -180,11 +177,11 @@ extension WebSocket {
         shouldReconnect = false
         consecutiveFailures = 0
         clearStateAfterDisconnect()
-
+        
         if webSocket.isConnected {
+            logger?.log("Disconnecting \(reason)...")
             connection = .disconnecting
             webSocket.disconnect(forceTimeout: 0)
-            logger?.log("Disconnecting...")
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
             connection = .disconnected(nil)
@@ -309,9 +306,10 @@ extension WebSocket {
             consecutiveFailures = 0
             
             if case .pong = event {
+                logger?.log("⬅️🏓")
                 return nil
             }
-
+            
             if let logger = logger {
                 var userId = ""
                 
@@ -327,7 +325,7 @@ extension WebSocket {
                 
                 logger.log(data)
             }
-            
+                
             return event
             
         } catch {
@@ -340,7 +338,7 @@ extension WebSocket {
             logger?.log(data, forceToShowData: true)
         }
         
-        return nil
+        return nil  
     }
 }
 
