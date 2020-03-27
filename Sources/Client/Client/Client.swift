@@ -168,7 +168,6 @@ public final class Client {
         }
         
         if appState == .active {
-            webSocket.cancelBackgroundWork()
             connect(completion)
         } else if appState == .background, webSocket.isConnected {
             webSocket.disconnectInBackground()
