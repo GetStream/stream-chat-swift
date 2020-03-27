@@ -224,8 +224,7 @@ public final class Client {
     
     /// Disconnect the websocket and reset states.
     func reset() {
-        logger?.log("Disconnecting...")
-        webSocket.disconnect()
+        webSocket.disconnect(reason: "reset")
         Message.flaggedIds.removeAll()
         User.flaggedUsers.removeAll()
         isExpiredTokenInProgress = false

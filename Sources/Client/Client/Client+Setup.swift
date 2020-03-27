@@ -132,7 +132,7 @@ extension Client {
         self.isExpiredTokenInProgress = isExpiredTokenInProgress
         
         if webSocket.isConnected {
-            webSocket.disconnect()
+            webSocket.disconnect(reason: "touched token provider")
         }
         
         logger?.log("🀄️ Request for a new token from a token provider.")
@@ -141,7 +141,7 @@ extension Client {
     
     private func setup(token: Token, _ completion: Client.OnConnect?) {
         if webSocket.isConnected {
-            webSocket.disconnect()
+            webSocket.disconnect(reason: "setup token")
         }
         
         var token = token

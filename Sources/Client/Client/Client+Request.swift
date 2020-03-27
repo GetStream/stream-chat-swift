@@ -302,7 +302,7 @@ extension Client {
         guard httpResponse.statusCode < 400 else {
             if let errorResponse = try? JSONDecoder.default.decode(ClientErrorResponse.self, from: data) {
                 if errorResponse.message.contains("was deactivated") {
-                    webSocket.disconnect()
+                    webSocket.disconnect(reason: "JSON response error: the client was deactivated")
                 }
                 
                 if errorResponse.code == ClientErrorResponse.tokenExpiredErrorCode {
