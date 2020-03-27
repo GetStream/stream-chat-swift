@@ -11,7 +11,6 @@ import Starscream
 
 /// A web socket client.
 final class WebSocket {
-    private static let maxBackgroundTime: TimeInterval = 40
     static var pingTimeInterval = 25
     
     /// A WebSocket connection callback.
