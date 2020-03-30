@@ -70,7 +70,7 @@ final class WebSocket {
     deinit {
         if isConnected {
             logger?.log("💔 Disconnect on deinit")
-            disconnect(reason: "on deinit")
+            disconnect(reason: "Deallocating WebSocket")
         }
     }
     
@@ -139,7 +139,7 @@ extension WebSocket {
     
     private func disconnectInBackgroundInWebSocketQueue() {
         guard stayConnectedInBackground else {
-            disconnect(reason: "in background: stayConnectedInBackground is disabled")
+            disconnect(reason: "Going into background, stayConnectedInBackground is disabled")
             return
         }
         
@@ -148,17 +148,17 @@ extension WebSocket {
         }
         
         backgroundTask = UIApplication.shared.beginBackgroundTask { [weak self] in
-            self?.disconnect(reason: "finished in background")
+            self?.disconnect(reason: "Processing finished in background")
             self?.backgroundTask = .invalid
         }
         
         if backgroundTask == .invalid {
-            disconnect(reason: "in background: can't make a background task")
+            disconnect(reason: "Can't create a background task")
         }
     }
     
     private func cancelBackgroundWork() {
-        logger?.log("Cancel background work")
+        logger?.log("Cancelling background work...")
         
         if backgroundTask != .invalid {
             UIApplication.shared.endBackgroundTask(backgroundTask)
@@ -177,7 +177,7 @@ extension WebSocket {
         clearStateAfterDisconnect()
         
         if webSocket.isConnected {
-            logger?.log("Disconnecting \(reason)...")
+            logger?.log("Disconnecting: \(reason)")
             connection = .disconnecting
             webSocket.disconnect(forceTimeout: 0)
         } else {
@@ -187,7 +187,7 @@ extension WebSocket {
     }
     
     private func clearStateAfterDisconnect() {
-        logger?.log("Clear state after disconnect")
+        logger?.log("Clearing state after disconnect...")
         handshakeTimer.suspend()
         lastConnectionId = nil
         cancelBackgroundWork()

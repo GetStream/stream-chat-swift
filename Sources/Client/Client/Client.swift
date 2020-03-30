@@ -223,7 +223,7 @@ public final class Client {
     
     /// Disconnect the websocket and reset states.
     func reset() {
-        webSocket.disconnect(reason: "reset")
+        webSocket.disconnect(reason: "Resetting connection")
         Message.flaggedIds.removeAll()
         User.flaggedUsers.removeAll()
         isExpiredTokenInProgress = false
