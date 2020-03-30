@@ -69,7 +69,7 @@ public final class ChannelsPresenter: Presenter {
 public extension ChannelsPresenter {
     
     /// View changes (see `ViewChanges`).
-    func changes(_ onNext: @escaping Client.Completion<ViewChanges>) -> AutoCancellingSubscription {
+    func changes(_ onNext: @escaping Client.Completion<ViewChanges>) -> AutoCancellable {
         rx.changes.asObservable().bind(to: onNext)
     }
     
