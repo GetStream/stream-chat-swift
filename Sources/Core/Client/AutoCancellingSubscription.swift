@@ -1,5 +1,5 @@
 //
-//  Subscription.swift
+//  AutoCancellingSubscription.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 09/01/2020.
@@ -15,7 +15,7 @@ import RxSwift
 /// For example:
 /// ```
 /// class MyViewController: UIViewController {
-///     var subscription: Subscription?
+///     var subscription: AutoCancellingSubscription?
 ///
 ///     open override func viewWillAppear() {
 ///         super.viewWillAppear(animated)
@@ -34,8 +34,8 @@ import RxSwift
 ///     }
 /// }
 /// ```
-public final class Subscription {
-    fileprivate static let shared = Subscription()
+public final class AutoCancellingSubscription {
+    fileprivate static let shared = AutoCancellingSubscription()
     private(set) var disposeBag = DisposeBag()
     
     /// Cancel the subscription.
@@ -51,8 +51,8 @@ extension ObservableType {
     /// Bind observable result to a completion block.
     /// - Parameter onNext: a client completion block.
     /// - Returns: A subscription.
-    func bind<T>(to onNext: @escaping Client.Completion<T>) -> Subscription where Element == T {
-        let subscription = Subscription()
+    func bind<T>(to onNext: @escaping Client.Completion<T>) -> AutoCancellingSubscription where Element == T {
+        let subscription = AutoCancellingSubscription()
         subscribe(to: onNext).disposed(by: subscription.disposeBag)
         return subscription
     }
@@ -60,7 +60,7 @@ extension ObservableType {
     /// Bind observable for the first event only to a completion block.
     /// - Parameter completion: a client completion block.
     func bindOnce<T>(to completion: @escaping Client.Completion<T>) where Element == T {
-        take(1).subscribe(to: completion).disposed(by: Subscription.shared.disposeBag)
+        take(1).subscribe(to: completion).disposed(by: AutoCancellingSubscription.shared.disposeBag)
     }
     
     private func subscribe<T>(to onNext: @escaping Client.Completion<T>) -> Disposable where Element == T {
