@@ -169,7 +169,7 @@ extension ChatViewController {
             composerEditingContainerView.animate(show: false)
         }
         
-        composerView.isEnabled = false
+        composerView.styleState = .disabled
         
         presenter?.rx.send(text: text)
             .subscribe(
