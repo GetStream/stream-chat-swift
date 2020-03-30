@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Reference for the subscription initiated. Call `cancel()` to end subscription.
 public struct Subscription {
     private let onCancel: (String) -> ()
     let uuid: String
@@ -17,24 +18,37 @@ public struct Subscription {
         uuid = UUID().uuidString
     }
     
+    /// Cancel the underlying subscription for this object.
     public func cancel() {
         onCancel(uuid)
     }
 }
 
-
 extension Client {
+    /// Observe events for the given event types.
+    /// - Parameters:
+    ///   - eventTypes: A set of event types to be observed. Defaults to all events.
+    ///   - callback: Callback closure to be called for each new event.
+    /// - Returns: `Subscription` object to be able to cancel observing. Call `subscription.cancel()` when you want to stop observing.
+    /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks, so make sure you handle subscriptions correctly.
     public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), _ callback: @escaping OnEvent) -> Subscription {
         subscribe(forEvents: eventTypes, channelId: nil, callback)
     }
     
-    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), channelId: ChannelId?, _ callback: @escaping OnEvent) -> Subscription {
+    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), channelId cid: ChannelId?, _ callback: @escaping OnEvent) -> Subscription {
         let subscription = Subscription { [unowned self] uuid in
             self.onEventObservers[uuid] = nil
         }
         
         let handler: OnEvent = { event in
-            guard eventTypes.contains(event.type) && event.cid == channelId else { return }
+            guard eventTypes.contains(event.type) else {
+                return
+            }
+            
+            if let cid = cid, event.cid != cid {
+                return
+            }
+            
             callback(event)
         }
         
