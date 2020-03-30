@@ -87,8 +87,8 @@ extension Reactive where Base == Client {
     public var events: Observable<StreamChatClient.Event> {
         associated(to: base, key: &Client.rxOnEvent) { [unowned base] in
             Observable<StreamChatClient.Event>.create({ observer in
-                base.onEvent = { observer.onNext($0) }
-                return Disposables.create()
+                let subscription = base.subscribe { observer.onNext($0) }
+                return Disposables.create { subscription.cancel() }
             })
                 .share()
         }
