@@ -13,20 +13,35 @@ import RxCocoa
 
 // MARK: Events
 
+extension Channel {
+    fileprivate static var rxOnEvent: UInt8 = 0
+}
+
 public extension Reactive where Base == Channel {
+    
+    /// Observe all events for this channel.
+    var events: Observable<StreamChatClient.Event> {
+        associated(to: base, key: &Channel.rxOnEvent) { [unowned base] in
+            Observable<StreamChatClient.Event>.create({ observer in
+                let subscription = base.subscribe { observer.onNext($0) }
+                return Disposables.create { subscription.cancel() }
+            })
+                .share()
+        }
+    }
     
     /// Observe events with a given event type and channel.
     /// - Parameter eventType: an event type.
     /// - Returns: an observable channel events.
-    func event(eventType: EventType) -> Observable<StreamChatClient.Event> {
-        Client.shared.rx.events(eventTypes: [eventType], cid: base.cid)
+    func events(for type: EventType) -> Observable<StreamChatClient.Event> {
+        events.filter({ $0.type == type }).share()
     }
     
     /// Observe events with a given event types and channel.
     /// - Parameter eventTypes: event types.
     /// - Returns: an observable channel events.
-    func events(eventTypes: [EventType] = []) -> Observable<StreamChatClient.Event> {
-        Client.shared.rx.events(eventTypes: eventTypes, cid: base.cid)
+    func events(for types: Set<EventType> = Set(EventType.allCases)) -> Observable<StreamChatClient.Event> {
+        events.filter({ types.contains($0.type) }).share()
     }
     
     // MARK: - Unread Count
