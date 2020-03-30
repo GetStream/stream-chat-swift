@@ -198,7 +198,7 @@ public final class Channel: Codable {
     }
     
     public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), _ callback: @escaping Client.OnEvent) -> Subscription {
-        let subscription = Client.shared.subscribe(forEvents: eventTypes, channelId: cid, callback)
+        let subscription = Client.shared.subscribe(forEvents: eventTypes, cid: cid, callback)
         subscriptions.append(subscription)
         return subscription
     }
