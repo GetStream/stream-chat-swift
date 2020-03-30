@@ -16,22 +16,13 @@ final class RepeatingTimer {
     
     typealias EventHandler = () -> Void
     
-    private let queue: DispatchQueue
     private var state: State = .suspended
-    let timeInterval: DispatchTimeInterval
-    var eventHandler: EventHandler
-    
-    private lazy var timer: DispatchSourceTimer = {
-        let timer = DispatchSource.makeTimerSource(queue: queue)
-        timer.schedule(deadline: .now() + timeInterval, repeating: timeInterval, leeway: .seconds(1))
-        timer.setEventHandler { [weak self] in self?.eventHandler() }
-        return timer
-    }()
+    private let timer: DispatchSourceTimer
     
     init(timeInterval: DispatchTimeInterval, queue: DispatchQueue, eventHandler: @escaping EventHandler) {
-        self.timeInterval = timeInterval
-        self.queue = queue
-        self.eventHandler = eventHandler
+        timer = DispatchSource.makeTimerSource(queue: queue)
+        timer.schedule(deadline: .now() + timeInterval, repeating: timeInterval, leeway: .seconds(1))
+        timer.setEventHandler(handler: eventHandler)
     }
     
     deinit {
@@ -40,7 +31,6 @@ final class RepeatingTimer {
         // If the timer is suspended, calling cancel without resuming
         // triggers a crash. This is documented here https://forums.developer.apple.com/thread/15902
         resume()
-        eventHandler = {}
     }
     
     func resume() {
