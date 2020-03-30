@@ -18,14 +18,6 @@ public final class ComposerView: UIView {
     /// A composer view  style.
     public var style: ComposerViewStyle?
     
-    private var styleState: ComposerViewStyle.State = .disabled {
-        didSet {
-            if styleState != oldValue, let style = style {
-                update(for: styleState, with: style)
-            }
-        }
-    }
-    
     private var styleStateStyle: ComposerViewStyle.Style? { style?.style(with: styleState) }
     
     /// An `UITextView`.
@@ -53,9 +45,6 @@ public final class ComposerView: UIView {
     
     /// Uploader for images and files.
     public var uploader: Uploader?
-    
-    /// An editing state of the composer.
-    public var isEditing: Bool = false
     
     /// A placeholder label.
     /// You have to use the `placeholderText` property to change the value of the placeholder label.
@@ -130,9 +119,12 @@ public final class ComposerView: UIView {
                                                              .paragraphStyle: NSParagraphStyle.default])
     }
     
-    /// Toggle `isUserInteractionEnabled` states for all child views.
-    public var isEnabled: Bool = true {
+    /// A composer view style state and it will toggle `isUserInteractionEnabled` states for all child views.
+    public var styleState: ComposerViewStyle.State = .normal {
         didSet {
+            update(for: styleState)
+            let isEnabled = styleState != .disabled
+            
             if let style = style {
                 sendButton.isEnabled = style.sendButtonVisibility == .whenActive ? isEnabled : false
                 sendButtonVisibilityBehaviorSubject.onNext((sendButton.isHidden, sendButton.isEnabled))
@@ -141,7 +133,7 @@ public final class ComposerView: UIView {
             attachmentButton.isEnabled = isEnabled
             imagesCollectionView.isUserInteractionEnabled = isEnabled
             imagesCollectionView.alpha = isEnabled ? 1 : 0.5
-            styleState = isEnabled ? .normal : .disabled
+            textView.isEditable = isEnabled
         }
     }
 }
@@ -259,13 +251,12 @@ public extension ComposerView {
         placeholderLabel.textColor = style.placeholderTextColor
         
         updateToolbarIfNeeded()
-        update(for: .disabled, with: style)
+        styleState = .normal
     }
     
     /// Reset states of all child views and clear all added/generated data.
     func reset() {
-        isEnabled = true
-        isEditing = false
+        styleState = .normal
         previousTextBeforeReset = textView.attributedText
         textView.attributedText = attributedText()
         uploader?.reset()
@@ -304,13 +295,21 @@ public extension ComposerView {
             return
         }
         
-        styleState = !textView.isFirstResponder
+        let styleState: ComposerViewStyle.State = !textView.isFirstResponder
             && imageUploaderItems.isEmpty
             && isUploaderFilesEmpty
-            && text.isEmpty ? .normal : (isEditing ? .edit : .active)
+            && text.isEmpty ? .normal : (self.styleState == .edit ? .edit : .active)
+        
+        if self.styleState != styleState {
+            self.styleState = styleState
+        }
     }
     
-    private func update(for styleState: ComposerViewStyle.State, with style: ComposerViewStyle) {
+    private func update(for styleState: ComposerViewStyle.State) {
+        guard let style = style else {
+            return
+        }
+        
         let styleForCurrentState = style.style(with: styleState)
         layer.borderWidth = styleForCurrentState.borderWidth
         layer.borderColor = styleForCurrentState.tintColor.cgColor
