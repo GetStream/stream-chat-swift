@@ -139,9 +139,7 @@
 		8ACC7C92241924B5000750E4 /* User+RxRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C63241924B5000750E4 /* User+RxRequests.swift */; };
 		8ACC7C94241924B5000750E4 /* Client+RxWatcherCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C65241924B5000750E4 /* Client+RxWatcherCount.swift */; };
 		8ACC7C95241924B5000750E4 /* Channel+RxEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C67241924B5000750E4 /* Channel+RxEvents.swift */; };
-		8ACC7C96241924B5000750E4 /* Channel+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C68241924B5000750E4 /* Channel+Events.swift */; };
 		8ACC7C97241924B5000750E4 /* Channel+RxRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C69241924B5000750E4 /* Channel+RxRequests.swift */; };
-		8ACC7C98241924B5000750E4 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C6A241924B5000750E4 /* Client+Events.swift */; };
 		8ACC7C9A241924B5000750E4 /* Client+RxUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C6C241924B5000750E4 /* Client+RxUser.swift */; };
 		8ACC7C9B241924B5000750E4 /* Client+RxDevices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C6D241924B5000750E4 /* Client+RxDevices.swift */; };
 		8ACC7C9C241924B5000750E4 /* Client+RxRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C6E241924B5000750E4 /* Client+RxRequest.swift */; };
@@ -412,9 +410,7 @@
 		8ACC7C64241924B5000750E4 /* Client+Config.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Config.swift"; sourceTree = "<group>"; };
 		8ACC7C65241924B5000750E4 /* Client+RxWatcherCount.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxWatcherCount.swift"; sourceTree = "<group>"; };
 		8ACC7C67241924B5000750E4 /* Channel+RxEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Channel+RxEvents.swift"; sourceTree = "<group>"; };
-		8ACC7C68241924B5000750E4 /* Channel+Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Channel+Events.swift"; sourceTree = "<group>"; };
 		8ACC7C69241924B5000750E4 /* Channel+RxRequests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Channel+RxRequests.swift"; sourceTree = "<group>"; };
-		8ACC7C6A241924B5000750E4 /* Client+Events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		8ACC7C6C241924B5000750E4 /* Client+RxUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxUser.swift"; sourceTree = "<group>"; };
 		8ACC7C6D241924B5000750E4 /* Client+RxDevices.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxDevices.swift"; sourceTree = "<group>"; };
 		8ACC7C6E241924B5000750E4 /* Client+RxRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+RxRequest.swift"; sourceTree = "<group>"; };
@@ -888,10 +884,9 @@
 				8ACC7C5F241924B5000750E4 /* Client+RxChannel.swift */,
 				8ACC7C5E241924B5000750E4 /* Client+RxMessage.swift */,
 				8ACC7C65241924B5000750E4 /* Client+RxWatcherCount.swift */,
-				8ACC7C71241924B5000750E4 /* Client+RxEvents.swift */,
 				8ACC7C6F241924B5000750E4 /* Client+RxUnreadCount.swift */,
+				8ACC7C71241924B5000750E4 /* Client+RxEvents.swift */,
 				8ACC7C6D241924B5000750E4 /* Client+RxDevices.swift */,
-				8ACC7C6A241924B5000750E4 /* Client+Events.swift */,
 				8ACC7C60241924B5000750E4 /* Message */,
 				8ACC7C62241924B5000750E4 /* User */,
 				8ACC7C66241924B5000750E4 /* Channel */,
@@ -920,7 +915,6 @@
 			children = (
 				8ACC7C69241924B5000750E4 /* Channel+RxRequests.swift */,
 				8ACC7C67241924B5000750E4 /* Channel+RxEvents.swift */,
-				8ACC7C68241924B5000750E4 /* Channel+Events.swift */,
 			);
 			path = Channel;
 			sourceTree = "<group>";
@@ -1728,14 +1722,12 @@
 				8ACC7C92241924B5000750E4 /* User+RxRequests.swift in Sources */,
 				8ACC7C9C241924B5000750E4 /* Client+RxRequest.swift in Sources */,
 				8ACC7C79241924B5000750E4 /* ChannelPresenter.swift in Sources */,
-				8ACC7C96241924B5000750E4 /* Channel+Events.swift in Sources */,
 				8ACC7C77241924B5000750E4 /* ChannelPresenter+RxRequests.swift in Sources */,
 				8ACC7D5B2419366D000750E4 /* AutoCancellingSubscription.swift in Sources */,
 				8ACC7C8C241924B5000750E4 /* Client+RxChannels.swift in Sources */,
 				8ACC7C80241924B5000750E4 /* ChannelsPresenter.swift in Sources */,
 				8ACC7C87241924B5000750E4 /* Date+Extensions.swift in Sources */,
 				8ACC7CA0241924B5000750E4 /* Notifications.swift in Sources */,
-				8ACC7C98241924B5000750E4 /* Client+Events.swift in Sources */,
 				8ACC7C76241924B5000750E4 /* ChannelPresenter+EphemeralMessages.swift in Sources */,
 				8ACC7C95241924B5000750E4 /* Channel+RxEvents.swift in Sources */,
 				8ACC7C7E241924B5000750E4 /* Presenter.swift in Sources */,

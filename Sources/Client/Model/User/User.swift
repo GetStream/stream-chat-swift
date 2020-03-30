@@ -79,7 +79,7 @@ public struct User: Codable {
     
     /// Channels and messages unread counts.
     public var unreadCount: UnreadCount { unreadCountAtomic.get(default: .noUnread) }
-    let unreadCountAtomic = Atomic<UnreadCount>(.noUnread) { _, _ in Client.shared.onUserUpdate?(User.current) }
+    let unreadCountAtomic = Atomic<UnreadCount>(.noUnread) { _, _ in Client.shared.onUserUpdate(User.current) }
     
     /// Check if the user is the current user.
     public var isCurrent: Bool { self == Client.shared.user }

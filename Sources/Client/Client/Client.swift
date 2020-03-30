@@ -68,7 +68,10 @@ public final class Client {
     /// Saved onConnect for a completion block in `connect()`.
     var savedOnConnect: Client.OnConnect?
     
-    let eventHandlingQueue = DispatchQueue(label: "io.getstream.StreamChatClient.eventHandling", qos: .userInteractive)
+    lazy var eventHandlingQueue: DispatchQueue = {
+        self.webSocket.webSocket.callbackQueue
+    }()
+    
     var onEventObservers = [String: OnEvent]()
     lazy var onEvent: Client.OnEvent = { [unowned self] event in
         self.eventHandlingQueue.async {
@@ -84,12 +87,16 @@ public final class Client {
     public let logger: ClientLogger?
     public let logOptions: ClientLogger.Options
     
-    /// An observable user. This should only be used when you only use the Low-Level Client.
-    public var onUserUpdate: OnUpdate<User>?
+    var onUserUpdateObservers = [String: OnUpdate<User>]()
+    lazy var onUserUpdate: OnUpdate<User> = { [unowned self] user in
+        self.eventHandlingQueue.async {
+            self.onUserUpdateObservers.values.forEach({ $0(user) })
+        }
+    }
     
     private(set) lazy var userAtomic = Atomic<User> { [unowned self] newUser, _ in
         if let user = newUser {
-            self.onUserUpdate?(user)
+            self.onUserUpdate(user)
         }
     }
     

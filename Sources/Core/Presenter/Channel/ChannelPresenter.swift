@@ -131,12 +131,12 @@ public extension ChannelPresenter {
     /// Subscribes for `ViewChanges`.
     /// - Parameter onNext: a co    mpletion block with `ViewChanges`.
     /// - Returns: a subscription.
-    func changes(_ onNext: @escaping Client.Completion<ViewChanges>) -> AutoCancellingSubscription {
+    func changes(_ onNext: @escaping Client.Completion<ViewChanges>) -> AutoCancellable {
         rx.changes.asObservable().bind(to: onNext)
     }
     
     /// An observable channel (see `Channel`).
-    func channelDidUpdate(_ onNext: @escaping Client.Completion<Channel>) -> AutoCancellingSubscription {
+    func channelDidUpdate(_ onNext: @escaping Client.Completion<Channel>) -> AutoCancellable {
         rx.channelDidUpdate.asObservable().bind(to: onNext)
     }
 }
