@@ -286,6 +286,7 @@
 		8A1BC0FF2396A2C1006694A1 /* ChannelResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelResponse.swift; sourceTree = "<group>"; };
 		8A1BC1012396A459006694A1 /* MessageRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRead.swift; sourceTree = "<group>"; };
 		8A1D042523D0FB560099AA7F /* ClientTests01+Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClientTests01+Channels.swift"; sourceTree = "<group>"; };
+		8A25C9BA2431F9F600A37577 /* StreamChatClient.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatClient.podspec; sourceTree = "<group>"; };
 		8A2A510F238FE10F00B230E9 /* RealmObjectIndexable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmObjectIndexable.swift; sourceTree = "<group>"; };
 		8A2A511423901C6500B230E9 /* Realm+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Realm+Extensions.swift"; sourceTree = "<group>"; };
 		8A2A511723901EAC00B230E9 /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
@@ -1173,6 +1174,7 @@
 				795FCD1B23EB155000990F15 /* Package.swift */,
 				8A14347823ABBF30002A45BC /* CHANGELOG.md */,
 				8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */,
+				8A25C9BA2431F9F600A37577 /* StreamChatClient.podspec */,
 				8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */,
 				8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */,
 				8A8BB2A2238456A200C2F9DE /* StreamChatRealm.podspec */,

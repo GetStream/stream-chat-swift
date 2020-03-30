@@ -19,4 +19,5 @@ Pod::Spec.new do |spec|
 
   spec.dependency "Starscream", "~> 3.1.0"
   spec.dependency "GzipSwift", "~> 5.0.0"
+  spec.dependency "ReachabilitySwift", "~> 4.3.0"
 end
