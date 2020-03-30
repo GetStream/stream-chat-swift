@@ -164,7 +164,7 @@ extension ChatViewController {
     private func edit(message: Message) {
         composerView.text = message.text
         presenter?.editMessage = message
-        composerView.isEditing = true
+        composerView.styleState = .edit
         composerView.textView.becomeFirstResponder()
         
         if let composerAddFileContainerView = composerAddFileContainerView {

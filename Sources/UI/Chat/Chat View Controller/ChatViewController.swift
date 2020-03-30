@@ -156,9 +156,14 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         
         needsToReload = false
         changesEnabled = true
-        setupFooterUpdates()
+        updateFooterView()
         
         keyboard.notification.bind(to: rx.keyboard).disposed(by: self.disposeBag)
+        
+        Client.shared.rx.connection
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] in self?.update(for: $0) })
+            .disposed(by: disposeBag)
     }
     
     override open func viewDidAppear(_ animated: Bool) {
@@ -242,20 +247,21 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         nil
     }
     
-    /// Setup Footer updates for environement updates.
-    open func setupFooterUpdates() {
-        Client.shared.rx.connection
-            .observeOn(MainScheduler.instance)
-            .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] connection in
-                if let self = self {
-                    self.updateFooterView()
-                    self.composerView.isEnabled = connection.isConnected
-                }
-            })
-            .disposed(by: disposeBag)
-        
+    /// Updates for `FooterView` and `ComposerView` with the client connection.
+    open func update(for connection: Connection) {
+        // Update footer.
         updateFooterView()
+        
+        // Update composer view.
+        if composerView.superview != nil {
+            if connection == .connected {
+                if composerView.styleState == .disabled {
+                    composerView.styleState = .normal
+                }
+            } else {
+                composerView.styleState = .disabled
+            }
+        }
     }
     
     /// Show message actions when long press on a message cell.
