@@ -20,5 +20,4 @@ Pod::Spec.new do |spec|
   spec.dependency "StreamChatClient"
   spec.dependency "RxSwift", "~> 5.0.0"
   spec.dependency "RxCocoa", "~> 5.0.0"
-  spec.dependency "ReachabilitySwift", "~> 4.3.0"
 end
