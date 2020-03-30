@@ -68,8 +68,13 @@ public final class Client {
     /// Saved onConnect for a completion block in `connect()`.
     var savedOnConnect: Client.OnConnect?
     
+    let eventHandlingQueue = DispatchQueue(label: "io.getstream.StreamChatClient.eventHandling", qos: .userInteractive)
     var onEventObservers = [String: OnEvent]()
-    lazy var onEvent: Client.OnEvent = { [unowned self] event in self.onEventObservers.values.forEach({ $0(event) }) }
+    lazy var onEvent: Client.OnEvent = { [unowned self] event in
+        self.eventHandlingQueue.async {
+            self.onEventObservers.values.forEach({ $0(event) })
+        }
+    }
     
     lazy var urlSession = URLSession(configuration: .default)
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate

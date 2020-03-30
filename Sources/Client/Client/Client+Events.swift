@@ -37,7 +37,9 @@ extension Client {
     
     func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), channelId cid: ChannelId?, _ callback: @escaping OnEvent) -> Subscription {
         let subscription = Subscription { [unowned self] uuid in
-            self.onEventObservers[uuid] = nil
+            self.eventHandlingQueue.async {
+                self.onEventObservers[uuid] = nil
+            }
         }
         
         let handler: OnEvent = { event in
