@@ -38,7 +38,7 @@ public extension Presenter {
     /// Observe connection errors as `ViewChanges`.
     /// - Parameter onNext: a completion block with `ViewChanges`.
     /// - Returns: a subscription.
-    func connectionErrors(_ onNext: @escaping Client.Completion<ViewChanges>) -> Subscription {
+    func connectionErrors(_ onNext: @escaping Client.Completion<ViewChanges>) -> AutoCancellingSubscription {
         rx.connectionErrors.asObservable().bind(to: onNext)
     }
 }

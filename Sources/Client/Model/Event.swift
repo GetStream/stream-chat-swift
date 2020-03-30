@@ -9,7 +9,7 @@
 import Foundation
 
 /// A web socket event type.
-public enum EventType: String, Codable {
+public enum EventType: String, Codable, CaseIterable {
     /// Every 30 second to confirm that the client connection is still active.
     case healthCheck = "health.check"
     /// A pong event.

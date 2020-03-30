@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D50C7624321BDA0052BA03 /* Client+Events.swift */; };
 		8A1207CB238ED68000E41790 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207C9238ED66500E41790 /* Message.swift */; };
 		8A1207CD238EE3C700E41790 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207CC238EE3C700E41790 /* Reaction.swift */; };
 		8A1BC0FE23969079006694A1 /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */; };
@@ -228,7 +229,7 @@
 		8ACC7D54241924BE000750E4 /* ChannelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D03241924BE000750E4 /* ChannelsViewController.swift */; };
 		8ACC7D55241924BE000750E4 /* ChannelTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D04241924BE000750E4 /* ChannelTableViewCell.swift */; };
 		8ACC7D5924192529000750E4 /* Client+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C64241924B5000750E4 /* Client+Config.swift */; };
-		8ACC7D5B2419366D000750E4 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D5A2419366D000750E4 /* Subscription.swift */; };
+		8ACC7D5B2419366D000750E4 /* AutoCancellingSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7D5A2419366D000750E4 /* AutoCancellingSubscription.swift */; };
 		8AD5907F23957102005903AC /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD5907E23957102005903AC /* Filter.swift */; };
 		8AD5EDC822E9BAC5005CFAC9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC022E9BAC5005CFAC9 /* RxRelay.framework */; };
 		8AD5EDCA22E9BAC5005CFAC9 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC222E9BAC5005CFAC9 /* RxSwift.framework */; };
@@ -279,6 +280,7 @@
 /* Begin PBXFileReference section */
 		465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentTypeTests.swift; sourceTree = "<group>"; };
 		795FCD1B23EB155000990F15 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		79D50C7624321BDA0052BA03 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		8A1207C9238ED66500E41790 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		8A1207CC238EE3C700E41790 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8A14347823ABBF30002A45BC /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
@@ -499,7 +501,7 @@
 		8ACC7D01241924BE000750E4 /* ReactionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReactionsView.swift; sourceTree = "<group>"; };
 		8ACC7D03241924BE000750E4 /* ChannelsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelsViewController.swift; sourceTree = "<group>"; };
 		8ACC7D04241924BE000750E4 /* ChannelTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelTableViewCell.swift; sourceTree = "<group>"; };
-		8ACC7D5A2419366D000750E4 /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
+		8ACC7D5A2419366D000750E4 /* AutoCancellingSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoCancellingSubscription.swift; sourceTree = "<group>"; };
 		8AD5907E23957102005903AC /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		8AD5EC8F22E9A3E8005CFAC9 /* StreamChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -799,6 +801,7 @@
 				8ACC7BEE241924AD000750E4 /* Client+Message.swift */,
 				8ACC7BEB241924AD000750E4 /* Client+UnreadCount.swift */,
 				8ACC7BF0241924AD000750E4 /* Client+Devices.swift */,
+				79D50C7624321BDA0052BA03 /* Client+Events.swift */,
 				8ACC7BF2241924AD000750E4 /* ClientError.swift */,
 				8ACC7BF5241924AD000750E4 /* ClientLogger.swift */,
 				8ACC7BF7241924AD000750E4 /* Endpoint.swift */,
@@ -878,7 +881,7 @@
 		8ACC7C5A241924B5000750E4 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7D5A2419366D000750E4 /* Subscription.swift */,
+				8ACC7D5A2419366D000750E4 /* AutoCancellingSubscription.swift */,
 				8ACC7C6E241924B5000750E4 /* Client+RxRequest.swift */,
 				8ACC7C6C241924B5000750E4 /* Client+RxUser.swift */,
 				8ACC7C5B241924B5000750E4 /* Client+RxChannels.swift */,
@@ -1526,6 +1529,7 @@
 				8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */,
 				8ACC7C1D241924AD000750E4 /* Channel+Requests.swift in Sources */,
 				8ACC7C18241924AD000750E4 /* User+Requests.swift in Sources */,
+				79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */,
 				8ACC7C27241924AD000750E4 /* Filter.swift in Sources */,
 				8ACC7C0A241924AD000750E4 /* UnreadCount.swift in Sources */,
 				8ACC7C10241924AD000750E4 /* AttachmentFile.swift in Sources */,
@@ -1726,7 +1730,7 @@
 				8ACC7C79241924B5000750E4 /* ChannelPresenter.swift in Sources */,
 				8ACC7C96241924B5000750E4 /* Channel+Events.swift in Sources */,
 				8ACC7C77241924B5000750E4 /* ChannelPresenter+RxRequests.swift in Sources */,
-				8ACC7D5B2419366D000750E4 /* Subscription.swift in Sources */,
+				8ACC7D5B2419366D000750E4 /* AutoCancellingSubscription.swift in Sources */,
 				8ACC7C8C241924B5000750E4 /* Client+RxChannels.swift in Sources */,
 				8ACC7C80241924B5000750E4 /* ChannelsPresenter.swift in Sources */,
 				8ACC7C87241924B5000750E4 /* Date+Extensions.swift in Sources */,

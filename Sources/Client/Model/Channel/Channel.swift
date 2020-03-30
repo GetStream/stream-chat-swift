@@ -121,6 +121,8 @@ public final class Channel: Codable {
     /// Checks if the channel was decoded from a channel response.
     public let didLoad: Bool
     
+    private var subscriptions = [Subscription]()
+    
     public init(type: ChannelType,
                 id: String,
                 members: [User],
@@ -167,6 +169,10 @@ public final class Channel: Codable {
         didLoad = true
     }
     
+    deinit {
+        subscriptions.forEach({ $0.cancel() })
+    }
+    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: EncodingKeys.self)
         try container.encode(name, forKey: .name)
@@ -189,6 +195,12 @@ public final class Channel: Codable {
     public func resetUnreadCount(messageRead: MessageRead) {
         unreadMessageReadAtomic.set(messageRead)
         unreadCountAtomic.set(.noUnread)
+    }
+    
+    public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), _ callback: @escaping Client.OnEvent) -> Subscription {
+        let subscription = Client.shared.subscribe(forEvents: eventTypes, channelId: cid, callback)
+        subscriptions.append(subscription)
+        return subscription
     }
 }
 
