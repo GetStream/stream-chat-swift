@@ -34,7 +34,7 @@ import RxSwift
 ///     }
 /// }
 /// ```
-public final class AutoCancellingSubscription {
+final class AutoCancellingSubscription: AutoCancellable {
     fileprivate static let shared = AutoCancellingSubscription()
     private(set) var disposeBag = DisposeBag()
     
@@ -51,7 +51,7 @@ extension ObservableType {
     /// Bind observable result to a completion block.
     /// - Parameter onNext: a client completion block.
     /// - Returns: A subscription.
-    func bind<T>(to onNext: @escaping Client.Completion<T>) -> AutoCancellingSubscription where Element == T {
+    func bind<T>(to onNext: @escaping Client.Completion<T>) -> AutoCancellable where Element == T {
         let subscription = AutoCancellingSubscription()
         subscribe(to: onNext).disposed(by: subscription.disposeBag)
         return subscription
