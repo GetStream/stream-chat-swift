@@ -19,15 +19,15 @@ public extension Reactive where Base == Client {
     /// Observe events with a given event type.
     /// - Parameter eventType: an event type.
     /// - Returns: an observable event.
-    func event(eventType: EventType) -> Observable<StreamChatClient.Event> {
-        connectedEvents(eventTypes: [eventType])
+    func events(for type: EventType) -> Observable<StreamChatClient.Event> {
+        connectedEvents(for: [type])
     }
     
     /// Observe events with a given even types.
     /// - Parameter eventTypes: event types.
     /// - Returns: an observable events.
-    func events(eventTypes: [EventType] = []) -> Observable<StreamChatClient.Event> {
-        connectedEvents(eventTypes: eventTypes)
+    func events(for types: Set<EventType> = Set(EventType.allCases)) -> Observable<StreamChatClient.Event> {
+        connectedEvents(for: types)
     }
     
     /// Observe events with a given event type and channel.
@@ -35,8 +35,8 @@ public extension Reactive where Base == Client {
     ///   - eventType: an event type.
     ///   - channel: a channel.
     /// - Returns: an observable channel events.
-    func event(eventType: EventType, cid: ChannelId) -> Observable<StreamChatClient.Event> {
-        connectedEvents(eventTypes: [eventType], cid: cid)
+    func events(for type: EventType, cid: ChannelId) -> Observable<StreamChatClient.Event> {
+        connectedEvents(for: [type], cid: cid)
     }
     
     /// Observe events with a given event types and channel.
@@ -44,8 +44,8 @@ public extension Reactive where Base == Client {
     ///   - eventTypes: event types.
     ///   - channel: a channel.
     /// - Returns: an observable channel events.
-    func events(eventTypes: [EventType] = [], cid: ChannelId) -> Observable<StreamChatClient.Event> {
-        connectedEvents(eventTypes: eventTypes, cid: cid)
+    func events(for types: Set<EventType> = Set(EventType.allCases), cid: ChannelId) -> Observable<StreamChatClient.Event> {
+        connectedEvents(for: types, cid: cid)
     }
 }
 
@@ -84,6 +84,7 @@ extension Reactive where Base == Client {
         }
     }
     
+    /// Observe all events.
     public var events: Observable<StreamChatClient.Event> {
         associated(to: base, key: &Client.rxOnEvent) { [unowned base] in
             Observable<StreamChatClient.Event>.create({ observer in
@@ -110,12 +111,12 @@ extension Reactive where Base == Client {
         connection.filter({ $0.isConnected }).map({ _ in Void() })
     }
     
-    func connectedEvents(eventTypes: [EventType], cid: ChannelId? = nil) -> Observable<StreamChatClient.Event> {
+    func connectedEvents(for types: Set<EventType> = Set(EventType.allCases), cid: ChannelId? = nil) -> Observable<StreamChatClient.Event> {
         connection
             .filter({ $0.isConnected })
             .flatMapLatest { [unowned base] _ in base.rx.events }
             .filter({
-                if !eventTypes.isEmpty, !eventTypes.contains($0.type) {
+                if !types.isEmpty, !types.contains($0.type) {
                     return false
                 }
                 

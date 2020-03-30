@@ -11,21 +11,6 @@ import StreamChatClient
 import RxSwift
 
 public extension Channel {
-    
-    /// Observe events with a given event type and channel.
-    /// - Parameter eventType: an event type.
-    /// - Returns: an observable channel events.
-    func event(eventType: EventType, _ onNext: @escaping Client.Completion<StreamChatClient.Event>) -> AutoCancellingSubscription {
-        rx.event(eventType: eventType).bind(to: onNext)
-    }
-    
-    /// Observe events with a given event types and channel.
-    /// - Parameter eventTypes: event types.
-    /// - Returns: an observable channel events.
-    func events(eventTypes: [EventType] = [], _ onNext: @escaping Client.Completion<StreamChatClient.Event>) -> AutoCancellingSubscription {
-        rx.events(eventTypes: eventTypes).bind(to: onNext)
-    }
-    
     // MARK: - Unread Count
     
     /// An observable channel unread count.

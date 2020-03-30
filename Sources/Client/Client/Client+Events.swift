@@ -32,10 +32,10 @@ extension Client {
     /// - Returns: `Subscription` object to be able to cancel observing. Call `subscription.cancel()` when you want to stop observing.
     /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks, so make sure you handle subscriptions correctly.
     public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), _ callback: @escaping OnEvent) -> Subscription {
-        subscribe(forEvents: eventTypes, channelId: nil, callback)
+        subscribe(forEvents: eventTypes, cid: nil, callback)
     }
     
-    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), channelId cid: ChannelId?, _ callback: @escaping OnEvent) -> Subscription {
+    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), cid: ChannelId?, _ callback: @escaping OnEvent) -> Subscription {
         let subscription = Subscription { [unowned self] uuid in
             self.eventHandlingQueue.async {
                 self.onEventObservers[uuid] = nil
