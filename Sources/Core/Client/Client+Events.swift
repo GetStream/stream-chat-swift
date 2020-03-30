@@ -9,49 +9,6 @@
 import Foundation
 import StreamChatClient
 
-// MARK: Events
-
-public extension Client {
-    
-    /// Observe a connected shared event with a given event type.
-    /// - Parameters:
-    ///   - eventType: an event type.
-    ///   - onNext: an event observable block.
-    /// - Returns: an observable event.
-    func events(eventType: EventType, _ onNext: @escaping Client.Completion<Event>) -> AutoCancellingSubscription {
-        rx.events(eventTypes: [eventType]).bind(to: onNext)
-    }
-    
-    /// Observe connected shared events with a given even types.
-    /// - Parameters:
-    ///   - eventTypes: event types.
-    ///   - onNext: events observable block.
-    /// - Returns: an observable events.
-    func event(eventTypes: [EventType] = [], _ onNext: @escaping Client.Completion<Event>) -> AutoCancellingSubscription {
-        rx.events(eventTypes: eventTypes).bind(to: onNext)
-    }
-    
-    /// Observe a connected shared event with a given event type and channel.
-    /// - Parameters:
-    ///   - eventType: an event type.
-    ///   - channel: a channel.
-    ///   - onNext: a channel event observable block.
-    /// - Returns: an observable channel events.
-    func event(eventType: EventType, channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> AutoCancellingSubscription {
-        rx.events(eventTypes: [eventType], cid: channel.cid).bind(to: onNext)
-    }
-    
-    /// Observe connected shared events with a given event types and channel.
-    /// - Parameters:
-    ///   - eventTypes: event types.
-    ///   - channel: a channel.
-    ///   - onNext: channel events observable block.
-    /// - Returns: an observable channel events.
-    func events(_ eventTypes: [EventType] = [], channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> AutoCancellingSubscription {
-        rx.events(eventTypes: eventTypes, cid: channel.cid).bind(to: onNext)
-    }
-}
-
 // MARK: Unread Count
 
 public extension Client {
