@@ -68,8 +68,8 @@ public final class Client {
     /// Saved onConnect for a completion block in `connect()`.
     var savedOnConnect: Client.OnConnect?
     
-    /// A WebSocket events callback. This should only be used when you only use the Low-Level Client.
-    public var onEvent: Client.OnEvent = { _ in }
+    var onEventObservers = [String: OnEvent]()
+    lazy var onEvent: Client.OnEvent = { [unowned self] event in self.onEventObservers.values.forEach({ $0(event) }) }
     
     lazy var urlSession = URLSession(configuration: .default)
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate

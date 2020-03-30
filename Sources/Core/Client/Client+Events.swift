@@ -18,7 +18,7 @@ public extension Client {
     ///   - eventType: an event type.
     ///   - onNext: an event observable block.
     /// - Returns: an observable event.
-    func events(eventType: EventType, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
+    func events(eventType: EventType, _ onNext: @escaping Client.Completion<Event>) -> AutoCancellingSubscription {
         rx.events(eventTypes: [eventType]).bind(to: onNext)
     }
     
@@ -27,7 +27,7 @@ public extension Client {
     ///   - eventTypes: event types.
     ///   - onNext: events observable block.
     /// - Returns: an observable events.
-    func event(eventTypes: [EventType] = [], _ onNext: @escaping Client.Completion<Event>) -> Subscription {
+    func event(eventTypes: [EventType] = [], _ onNext: @escaping Client.Completion<Event>) -> AutoCancellingSubscription {
         rx.events(eventTypes: eventTypes).bind(to: onNext)
     }
     
@@ -37,7 +37,7 @@ public extension Client {
     ///   - channel: a channel.
     ///   - onNext: a channel event observable block.
     /// - Returns: an observable channel events.
-    func event(eventType: EventType, channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
+    func event(eventType: EventType, channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> AutoCancellingSubscription {
         rx.events(eventTypes: [eventType], cid: channel.cid).bind(to: onNext)
     }
     
@@ -47,7 +47,7 @@ public extension Client {
     ///   - channel: a channel.
     ///   - onNext: channel events observable block.
     /// - Returns: an observable channel events.
-    func events(_ eventTypes: [EventType] = [], channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> Subscription {
+    func events(_ eventTypes: [EventType] = [], channel: Channel, _ onNext: @escaping Client.Completion<Event>) -> AutoCancellingSubscription {
         rx.events(eventTypes: eventTypes, cid: channel.cid).bind(to: onNext)
     }
 }
@@ -58,7 +58,7 @@ public extension Client {
     
     /// Observe an unread count of messages nd channels.
     /// - Parameter onNext: an unread count observable block.
-    func unreadCount(_ onNext: @escaping Client.Completion<UnreadCount>) -> Subscription {
+    func unreadCount(_ onNext: @escaping Client.Completion<UnreadCount>) -> AutoCancellingSubscription {
         rx.unreadCount.bind(to: onNext)
     }
     
@@ -68,7 +68,7 @@ public extension Client {
     /// - Parameters:
     ///   - channel: a channel.
     ///   - onNext: a channel unread count observable block.
-    func channelUnreadCount(_ channel: Channel, _ onNext: @escaping Client.Completion<ChannelUnreadCount> ) -> Subscription {
+    func channelUnreadCount(_ channel: Channel, _ onNext: @escaping Client.Completion<ChannelUnreadCount> ) -> AutoCancellingSubscription {
         rx.channelUnreadCount(channel).bind(to: onNext)
     }
 }
@@ -80,7 +80,7 @@ public extension Client {
     /// - Parameters:
     ///   - channel: a channel.
     ///   - onNext: a watcher count observable block.
-    func watcherCount(channel: Channel, _ onNext: @escaping Client.Completion<Int>) -> Subscription {
+    func watcherCount(channel: Channel, _ onNext: @escaping Client.Completion<Int>) -> AutoCancellingSubscription {
         rx.watcherCount(channel: channel).bind(to: onNext)
     }
 }
