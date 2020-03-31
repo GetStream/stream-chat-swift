@@ -19,10 +19,10 @@ public protocol Cancellable {
 public protocol AutoCancellable: Cancellable {}
 
 struct Subscription: Cancellable {
-    private let onCancel: (String) -> ()
+    private let onCancel: (String) -> Void
     let uuid: String
     
-    init(onCancel: @escaping (String) -> ()) {
+    init(onCancel: @escaping (String) -> Void) {
         self.onCancel = onCancel
         uuid = UUID().uuidString
     }
@@ -51,11 +51,14 @@ extension Client {
     ///   - callback: Callback closure to be called for each new event.
     /// - Returns: `Subscription` object to be able to cancel observing. Call `subscription.cancel()` when you want to stop observing.
     /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks, so make sure you handle subscriptions correctly.
-    public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), _ callback: @escaping OnEvent) -> Cancellable {
+    public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
+                          _ callback: @escaping OnEvent) -> Cancellable {
         subscribe(forEvents: eventTypes, cid: nil, callback)
     }
     
-    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), cid: ChannelId?, _ callback: @escaping OnEvent) -> Cancellable {
+    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
+                   cid: ChannelId?,
+                   _ callback: @escaping OnEvent) -> Cancellable {
         let handler: OnEvent = { event in
             if let cid = cid, event.cid != cid {
                 return
