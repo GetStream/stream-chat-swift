@@ -50,7 +50,7 @@ extension Client {
                                   logger: logger)
         
         webSocket.onConnect = setupWebSocketOnConnect
-        webSocket.onEvent = setupWebSocketOnEvent
+        subscriptionBag.add(webSocket.subscribe(callback: webSocketOnEvent))
         
         return webSocket
     }
@@ -64,7 +64,7 @@ extension Client {
         performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
     }
     
-    func setupWebSocketOnEvent(_ event: Event) {
+    func webSocketOnEvent(_ event: Event) {
         // Update the current user on login.
         if case let .healthCheck(_, user) = event {
             self.user = user
@@ -73,7 +73,6 @@ extension Client {
         
         updateUserUnreadCount(event: event) // User unread counts should be updated before channels unread counts.
         updateChannelsUnreadCount(event: event)
-        onEvent(event)
     }
 }
 
