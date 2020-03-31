@@ -20,6 +20,7 @@ final class LoginViewController: ViewController {
     @IBOutlet weak var userNameLabel: UITextField!
     @IBOutlet weak var tokenLabel: UITextView!  
     @IBOutlet weak var versionLabel: UILabel!
+    @IBOutlet weak var loginButton: UIButton!
     let userDefaults = UserDefaults()
     var loggedInToken: Token?
     var loggedInUser: StreamChatClient.User?
@@ -135,12 +136,16 @@ final class LoginViewController: ViewController {
         }
         
         func showNext(_ connection: Connection) {
+            loginButton.isEnabled = true
+            
             if case .disconnected(let error) = connection {
                 show(errorMessage: error?.localizedDescription ?? "Disconnected")
             } else if case .connected = connection, showNextViewController {
                 showRootViewController(animated: animated)
             }
         }
+        
+        loginButton.isEnabled = false
         
         if token == "guest" {
             Client.shared.setGuestUser(user, showNext)
