@@ -53,12 +53,7 @@ public final class Client {
     var waitingRequests = [WaitingRequest]()
     
     /// A web socket client.
-    lazy var webSocket: WebSocket = {
-        let webSocket = WebSocket()
-        webSocket.onConnect = setupWebSocketOnConnect
-        webSocket.onEvent = setupWebSocketOnEvent
-        return webSocket
-    }()
+    lazy var webSocket = WebSocket()
     
     public var connection: Connection { webSocket.connection }
     
@@ -68,17 +63,6 @@ public final class Client {
     /// Saved onConnect for a completion block in `connect()`.
     var savedOnConnect: Client.OnConnect?
     
-    lazy var eventHandlingQueue: DispatchQueue = {
-        self.webSocket.webSocket.callbackQueue
-    }()
-    
-    var onEventObservers = [String: OnEvent]()
-    lazy var onEvent: Client.OnEvent = { [unowned self] event in
-        self.eventHandlingQueue.async {
-            self.onEventObservers.values.forEach({ $0(event) })
-        }
-    }
-    
     lazy var urlSession = URLSession(configuration: .default)
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
@@ -87,9 +71,10 @@ public final class Client {
     public let logger: ClientLogger?
     public let logOptions: ClientLogger.Options
     
+    private(set) lazy var userUpdateHandlingQueue = DispatchQueue(label: "io.getstream.StreamChatClient.userUpdate", qos: .userInteractive)
     var onUserUpdateObservers = [String: OnUpdate<User>]()
     lazy var onUserUpdate: OnUpdate<User> = { [unowned self] user in
-        self.eventHandlingQueue.async {
+        self.userUpdateHandlingQueue.async {
             self.onUserUpdateObservers.values.forEach({ $0(user) })
         }
     }
@@ -99,6 +84,8 @@ public final class Client {
             self.onUserUpdate(user)
         }
     }
+    
+    let subscriptionBag = SubscriptionBag()
     
     /// Weak references to channels by cid.
     let channelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
@@ -148,6 +135,10 @@ public final class Client {
         checkLatestVersion()
         #endif
         checkAPIKey()
+    }
+    
+    deinit {
+        subscriptionBag.cancel()
     }
     
     private func checkAPIKey() {
