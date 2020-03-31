@@ -201,7 +201,9 @@ extension WebSocket {
             callback(event)
         }
         
-        onEventObservers[subscription.uuid] = handler
+        webSocket.callbackQueue.async { [weak self] in
+            self?.onEventObservers[subscription.uuid] = handler
+        }
         
         return subscription
     }
@@ -211,12 +213,6 @@ extension WebSocket {
         handshakeTimer.suspend()
         lastConnectionId = nil
         cancelBackgroundWork()
-    }
-    
-    private func onEvent(_ event: Event) {
-        webSocket.callbackQueue.async { [weak self] in
-            self?.onEventObservers.values.forEach({ $0(event) })
-        }
     }
 }
 
@@ -243,8 +239,9 @@ extension WebSocket: WebSocketDelegate {
             handshakeTimer.resume()
             logger?.log("🥰 Connected")
             
+            onEventObservers.values.forEach({ $0(event) })
+            
             performInCallbackQueue { [weak self] in
-                self?.onEvent(event)
                 self?.connection = .connected
             }
             
@@ -252,7 +249,7 @@ extension WebSocket: WebSocketDelegate {
         }
         
         if isConnected {
-            performInCallbackQueue { [weak self] in self?.onEvent(event) }
+            onEventObservers.values.forEach({ $0(event) })
         }
     }
     
