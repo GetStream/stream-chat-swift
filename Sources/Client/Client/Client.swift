@@ -71,8 +71,11 @@ public final class Client {
     public let logger: ClientLogger?
     public let logOptions: ClientLogger.Options
     
-    private(set) lazy var userUpdateHandlingQueue = DispatchQueue(label: "io.getstream.StreamChatClient.userUpdate", qos: .userInteractive)
+    private(set) lazy var userUpdateHandlingQueue = DispatchQueue(label: "io.getstream.StreamChatClient.userUpdate",
+                                                                  qos: .userInteractive)
+    
     var onUserUpdateObservers = [String: OnUpdate<User>]()
+    
     lazy var onUserUpdate: OnUpdate<User> = { [unowned self] user in
         self.userUpdateHandlingQueue.async {
             self.onUserUpdateObservers.values.forEach({ $0(user) })
