@@ -197,7 +197,8 @@ public final class Channel: Codable {
         unreadCountAtomic.set(.noUnread)
     }
     
-    public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), _ callback: @escaping Client.OnEvent) -> Cancellable {
+    public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
+                          _ callback: @escaping Client.OnEvent) -> Cancellable {
         let subscription = Client.shared.subscribe(forEvents: eventTypes, cid: cid, callback)
         subscriptionBag.add(subscription)
         return subscription

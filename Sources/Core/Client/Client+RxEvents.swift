@@ -111,7 +111,8 @@ extension Reactive where Base == Client {
         connection.filter({ $0.isConnected }).map({ _ in Void() })
     }
     
-    func connectedEvents(for types: Set<EventType> = Set(EventType.allCases), cid: ChannelId? = nil) -> Observable<StreamChatClient.Event> {
+    func connectedEvents(for types: Set<EventType> = Set(EventType.allCases),
+                         cid: ChannelId? = nil) -> Observable<StreamChatClient.Event> {
         connection
             .filter({ $0.isConnected })
             .flatMapLatest { [unowned base] _ in base.rx.events }

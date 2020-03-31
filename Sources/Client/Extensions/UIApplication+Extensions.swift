@@ -21,7 +21,7 @@ extension UIApplication {
     
     /// An application state.
     var onStateChanged: OnStateChanged? {
-        get { nil }
+        get { nil } //swiftlint:disable:this implicit_getter
         set {
             let center = NotificationCenter.default
             
