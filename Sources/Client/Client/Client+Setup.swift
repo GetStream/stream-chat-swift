@@ -18,12 +18,12 @@ extension Client {
     ///   - user: the current user (see `User`).
     ///   - token: a Stream Chat API token.
     ///   - completion: a connection completion block.
-    public func set(user: User, token: Token, _ completion: @escaping Client.OnConnect) {
+    public func set(user: User, token: Token, _ completion: Client.OnConnect? = nil) {
         reset()
         
         if apiKey.isEmpty || token.isEmpty {
             logger?.log("❌ API key or token is empty: \(apiKey), \(token)", level: .error)
-            completion(.disconnected(ClientError.emptyAPIKey))
+            completion?(.disconnected(ClientError.emptyAPIKey))
             return
         }
         
@@ -38,12 +38,12 @@ extension Client {
     /// - Parameters:
     ///   - user: a guest user.
     ///   - completion: a connection completion block.
-    public func setGuestUser(_ user: User, _ completion: @escaping Client.OnConnect) {
+    public func setGuestUser(_ user: User, _ completion: Client.OnConnect? = nil) {
         reset()
         
         if apiKey.isEmpty {
             logger?.log("❌ API key is empty", level: .error)
-            completion(.disconnected(ClientError.emptyAPIKey))
+            completion?(.disconnected(ClientError.emptyAPIKey))
             return
         }
         
@@ -57,7 +57,7 @@ extension Client {
                 self.set(user: response.user, token: response.token, completion)
             } catch {
                 self.logger?.log(error, message: "Guest Token")
-                completion(.disconnected(error))
+                completion?(.disconnected(error))
             }
         }
     }
@@ -68,7 +68,7 @@ extension Client {
     /// While you’re anonymous, you can’t do much, but for the livestream channel type,
     /// you’re still allowed to read the chat conversation.
     /// - Parameter completion: a connection completion block.
-    public func setAnonymousUser(_ completion: @escaping Client.OnConnect) {
+    public func setAnonymousUser(_ completion: Client.OnConnect? = nil) {
         reset()
         user = .anonymous
         tokenProvider = nil
@@ -101,8 +101,11 @@ extension Client {
     ///     task.resume()
     /// }
     ///
-    /// Client.shared.set(user: user, tokenProvider: tokenProvider) {
-    ///     // The client is connected.
+    /// Client.shared.set(user: user, tokenProvider: tokenProvider) { connection in
+    ///     // Use here the client connection state.
+    ///     if connection.isConnected {
+    ///         // E.g. update unread count.
+    ///     }
     /// }
     /// ```
     ///
@@ -110,12 +113,12 @@ extension Client {
     ///   - user: the current user (see `User`).
     ///   - tokenProvider: a token provider.
     ///   - completion: a connection completion block.
-    public func set(user: User, tokenProvider: @escaping TokenProvider, _ completion: @escaping Client.OnConnect) {
+    public func set(user: User, tokenProvider: @escaping TokenProvider, completion: Client.OnConnect? = nil) {
         reset()
         
         if apiKey.isEmpty {
             logger?.log("❌ API key is empty.", level: .error)
-            completion(.disconnected(ClientError.emptyAPIKey))
+            completion?(.disconnected(ClientError.emptyAPIKey))
             return
         }
         
