@@ -45,10 +45,10 @@ final class DarkChannelsViewController: ChannelsViewController {
     }
     
     func observeInvites() {
-        Client.shared.rx.events(eventTypes: [.notificationInvited,
-                                             .notificationInviteAccepted,
-                                             .notificationInviteRejected,
-                                             .memberUpdated])
+        Client.shared.rx.events(for: [.notificationInvited,
+                                      .notificationInviteAccepted,
+                                      .notificationInviteRejected,
+                                      .memberUpdated])
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] event in self?.handleInviteEvent(event) })
             .disposed(by: disposeBag)
@@ -141,7 +141,7 @@ final class DarkChannelsViewController: ChannelsViewController {
         if let channel = chatViewController.presenter?.channel {
             channel.banEnabling = .enabled(timeoutInMinutes: 1, reason: "I don't like you 🤮")
             
-            channel.rx.event(eventType: .userBanned)
+            channel.rx.events(for: .userBanned)
                 .observeOn(MainScheduler.instance)
                 .subscribe(onNext: { event in
                     if case .userBanned(let reason, _, _, _, _) = event {

@@ -35,7 +35,7 @@ struct Subscription: Cancellable {
 public final class SubscriptionBag: Cancellable {
     private var subscriptions = [Cancellable]()
     
-    public func add(_ subscription: Cancellable)  {
+    public func add(_ subscription: Cancellable) {
         subscriptions.append(subscription)
     }
     
@@ -87,13 +87,14 @@ extension Client {
         let subscriptions = SubscriptionBag()
         
         let query = ChannelQuery(channel: channel, messagesPagination: .limit(100), options: [.state, .watch])
+        
         let urlSessionTask = queryChannel(query: query) { [unowned self] result in
             if let error = result.error {
                 callback(.failure(error))
             }
             
             if let response = result.value {
-                let subscription = self.subscribe(cid: response.channel.cid) { (event) in
+                let subscription = self.subscribe(cid: response.channel.cid) { event in
                     callback(.success(channel.unreadCount))
                 }
                 subscriptions.add(subscription)
@@ -109,6 +110,7 @@ extension Client {
         let subscriptions = SubscriptionBag()
         
         let query = ChannelQuery(channel: channel, messagesPagination: .limit(1), options: [.state, .watch])
+        
         let urlSessionTask = queryChannel(query: query) { [unowned self] result in
             if let error = result.error {
                 callback(.failure(error))
@@ -119,7 +121,7 @@ extension Client {
                                                               .userStopWatching,
                                                               .messageNew,
                                                               .notificationMessageNew],
-                                                  cid: response.channel.cid) { (event) in
+                                                  cid: response.channel.cid) { event in
                     callback(.success(channel.watcherCount))
                 }
                 subscriptions.add(subscription)
