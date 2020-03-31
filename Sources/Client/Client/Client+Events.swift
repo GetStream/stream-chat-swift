@@ -83,7 +83,7 @@ extension Client {
         subscribeToUserUpdates { user in callback(user.unreadCount) }
     }
     
-    public func subscribeToUnreadCount(for channel: Channel, _ callback: @escaping Completion<ChannelUnreadCount>) -> Cancellable {
+    func subscribeToUnreadCount(for channel: Channel, _ callback: @escaping Completion<ChannelUnreadCount>) -> Cancellable {
         let subscriptions = SubscriptionBag()
         
         let query = ChannelQuery(channel: channel, messagesPagination: .limit(100), options: [.state, .watch])
@@ -94,7 +94,7 @@ extension Client {
             }
             
             if let response = result.value {
-                let subscription = self.subscribe(cid: response.channel.cid) { event in
+                let subscription = self.subscribe(cid: response.channel.cid) { _ in
                     callback(.success(channel.unreadCount))
                 }
                 subscriptions.add(subscription)
@@ -106,7 +106,7 @@ extension Client {
         return subscriptions
     }
     
-    public func subscribeToWatcherCount(for channel: Channel, _ callback: @escaping Completion<Int>) -> Cancellable {
+    func subscribeToWatcherCount(for channel: Channel, _ callback: @escaping Completion<Int>) -> Cancellable {
         let subscriptions = SubscriptionBag()
         
         let query = ChannelQuery(channel: channel, messagesPagination: .limit(1), options: [.state, .watch])
@@ -121,7 +121,7 @@ extension Client {
                                                               .userStopWatching,
                                                               .messageNew,
                                                               .notificationMessageNew],
-                                                  cid: response.channel.cid) { event in
+                                                  cid: response.channel.cid) { _ in
                     callback(.success(channel.watcherCount))
                 }
                 subscriptions.add(subscription)
