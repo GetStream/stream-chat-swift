@@ -186,7 +186,8 @@ extension WebSocket {
         }
     }
     
-    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), callback: @escaping Client.OnEvent) -> Cancellable {
+    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
+                   callback: @escaping Client.OnEvent) -> Cancellable {
         let subscription = Subscription { [weak self] uuid in
             self?.webSocket.callbackQueue.async {
                 self?.onEventObservers[uuid] = nil
