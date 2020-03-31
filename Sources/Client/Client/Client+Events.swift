@@ -14,7 +14,8 @@ public protocol Cancellable {
     func cancel()
 }
 
-/// Reference for the subscription initiated. Call `cancel()` to end the subscription. Alternatively, when this object is deallocated, it calls `cancel()` on itself automatically.
+/// Reference for the subscription initiated. Call `cancel()` to end the subscription.
+/// Alternatively, when this object is deallocated, it calls `cancel()` on itself automatically.
 public protocol AutoCancellable: Cancellable {}
 
 struct Subscription: Cancellable {
@@ -31,7 +32,7 @@ struct Subscription: Cancellable {
     }
 }
 
-class SubscriptionBag: Cancellable {
+public final class SubscriptionBag: Cancellable {
     private var subscriptions = [Cancellable]()
     
     public func add(_ subscription: Cancellable)  {
@@ -91,16 +92,14 @@ extension Client {
     }
     
     public func subscribeToUnreadCount(_ callback: @escaping OnUpdate<UnreadCount>) -> Cancellable {
-        subscribeToUserUpdates { (user) in
-            callback(user.unreadCount)
-        }
+        subscribeToUserUpdates { user in callback(user.unreadCount) }
     }
     
     public func subscribeToUnreadCount(for channel: Channel, _ callback: @escaping Completion<ChannelUnreadCount>) -> Cancellable {
         let subscriptions = SubscriptionBag()
         
         let query = ChannelQuery(channel: channel, messagesPagination: .limit(100), options: [.state, .watch])
-        let urlSessionTask = queryChannel(query: query) { [unowned self] (result) in
+        let urlSessionTask = queryChannel(query: query) { [unowned self] result in
             if let error = result.error {
                 callback(.failure(error))
             }
@@ -113,9 +112,7 @@ extension Client {
             }
         }
         
-        subscriptions.add(Subscription { _ in
-            urlSessionTask.cancel()
-        })
+        subscriptions.add(Subscription { _ in urlSessionTask.cancel() })
         
         return subscriptions
     }
@@ -123,8 +120,8 @@ extension Client {
     public func subscribeToWatcherCount(for channel: Channel, _ callback: @escaping Completion<Int>) -> Cancellable {
         let subscriptions = SubscriptionBag()
         
-        let query = ChannelQuery(channel: channel, messagesPagination: .limit(100), options: [.state, .watch])
-        let urlSessionTask = queryChannel(query: query) { [unowned self] (result) in
+        let query = ChannelQuery(channel: channel, messagesPagination: .limit(1), options: [.state, .watch])
+        let urlSessionTask = queryChannel(query: query) { [unowned self] result in
             if let error = result.error {
                 callback(.failure(error))
             }
@@ -141,9 +138,7 @@ extension Client {
             }
         }
         
-        subscriptions.add(Subscription { _ in
-            urlSessionTask.cancel()
-        })
+        subscriptions.add(Subscription { _ in urlSessionTask.cancel() })
         
         return subscriptions
     }
