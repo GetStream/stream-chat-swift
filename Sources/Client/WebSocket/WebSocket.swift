@@ -15,11 +15,10 @@ final class WebSocket {
     
     /// A WebSocket connection callback.
     var onConnect: Client.OnConnect = { _ in }
-    /// A WebSocket events callback.
-    var onEvent: Client.OnEvent = { _ in }
     
-    let webSocket: Starscream.WebSocket
+    var onEventObservers = [String: Client.OnEvent]()
     
+    private let webSocket: Starscream.WebSocket
     private let callbackQueue: DispatchQueue?
     private let stayConnectedInBackground: Bool
     private let logger: ClientLogger?
@@ -187,11 +186,37 @@ extension WebSocket {
         }
     }
     
+    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), callback: @escaping Client.OnEvent) -> Cancellable {
+        let subscription = Subscription { [weak self] uuid in
+            self?.webSocket.callbackQueue.async {
+                self?.onEventObservers[uuid] = nil
+            }
+        }
+        
+        let handler: Client.OnEvent = { event in
+            guard eventTypes.contains(event.type) else {
+                return
+            }
+            
+            callback(event)
+        }
+        
+        onEventObservers[subscription.uuid] = handler
+        
+        return subscription
+    }
+    
     private func clearStateAfterDisconnect() {
         logger?.log("Clearing state after disconnect...")
         handshakeTimer.suspend()
         lastConnectionId = nil
         cancelBackgroundWork()
+    }
+    
+    private func onEvent(_ event: Event) {
+        webSocket.callbackQueue.async { [weak self] in
+            self?.onEventObservers.values.forEach({ $0(event) })
+        }
     }
 }
 

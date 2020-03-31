@@ -56,17 +56,7 @@ extension Client {
     }
     
     func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases), cid: ChannelId?, _ callback: @escaping OnEvent) -> Cancellable {
-        let subscription = Subscription { [unowned self] uuid in
-            self.eventHandlingQueue.async {
-                self.onEventObservers[uuid] = nil
-            }
-        }
-        
         let handler: OnEvent = { event in
-            guard eventTypes.contains(event.type) else {
-                return
-            }
-            
             if let cid = cid, event.cid != cid {
                 return
             }
@@ -74,14 +64,12 @@ extension Client {
             callback(event)
         }
         
-        onEventObservers[subscription.uuid] = handler
-        
-        return subscription
+        return webSocket.subscribe(forEvents: eventTypes, callback: handler)
     }
     
     public func subscribeToUserUpdates(_ callback: @escaping OnUpdate<User>) -> Cancellable {
         let subscription = Subscription { [unowned self] uuid in
-            self.eventHandlingQueue.async {
+            self.userUpdateHandlingQueue.async {
                 self.onUserUpdateObservers[uuid] = nil
             }
         }
