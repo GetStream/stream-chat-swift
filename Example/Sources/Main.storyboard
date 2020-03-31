@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wm7-Ii-BZP">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="wm7-Ii-BZP">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -585,6 +585,7 @@ Stream Swift SDK v.1.0.0</string>
                     </navigationItem>
                     <connections>
                         <outlet property="apiKeyLabel" destination="b0t-D9-sKI" id="6Jy-9g-fjj"/>
+                        <outlet property="loginButton" destination="lj1-9I-86W" id="3U2-qX-jtz"/>
                         <outlet property="tokenLabel" destination="No1-11-4jC" id="Eru-Zw-dCK"/>
                         <outlet property="userIdLabel" destination="sRM-UZ-Fap" id="RQb-kk-Z3E"/>
                         <outlet property="userNameLabel" destination="tm9-EU-QhU" id="6VT-Cf-2ts"/>
