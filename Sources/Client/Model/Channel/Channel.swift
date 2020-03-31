@@ -202,6 +202,18 @@ public final class Channel: Codable {
         subscriptionBag.add(subscription)
         return subscription
     }
+    
+    public func subscribeToUnreadCount(_ callback: @escaping Client.Completion<ChannelUnreadCount>) -> Cancellable {
+        let subscription = Client.shared.subscribeToUnreadCount(for: self, callback)
+        subscriptionBag.add(subscription)
+        return subscription
+    }
+    
+    public func subscribeToWatcherCount(_ callback: @escaping Client.Completion<Int>) -> Cancellable {
+        let subscription = Client.shared.subscribeToWatcherCount(for: self, callback)
+        subscriptionBag.add(subscription)
+        return subscription
+    }
 }
 
 extension Channel: Hashable, CustomStringConvertible {
