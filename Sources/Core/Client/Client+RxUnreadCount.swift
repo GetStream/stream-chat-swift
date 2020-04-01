@@ -19,9 +19,11 @@ public extension Reactive where Base == Client {
         connection
             .filter({ $0.isConnected })
             .flatMapLatest({ [unowned base] _ -> Observable<UnreadCount> in
-                base.rx.user
-                    .map({ $0.unreadCount })
-                    .startWith(base.user.unreadCount)
+                Observable<UnreadCount>.create({ observer in
+                    let subscription = base.subscribeToUnreadCount { observer.onNext($0) }
+                    return Disposables.create { subscription.cancel() }
+                })
+                    .distinctUntilChanged()
             })
     }
     
@@ -36,6 +38,7 @@ public extension Reactive where Base == Client {
                 base.rx.events(cid: channel.cid)
                     .map({ _ in channel.unreadCount })
                     .startWith(channel.unreadCount)
+                    .distinctUntilChanged()
             })
     }
 }

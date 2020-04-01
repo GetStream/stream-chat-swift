@@ -101,7 +101,6 @@ extension Reactive where Base == Client {
                 let subscription = base.subscribeToUserUpdates { observer.onNext($0) }
                 return Disposables.create { subscription.cancel() }
             })
-                .startWith(base.user)
                 .share(replay: 1)
         }
     }
