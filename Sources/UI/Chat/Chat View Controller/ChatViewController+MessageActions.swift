@@ -312,7 +312,7 @@ extension ChatViewController {
         }
         
         guard let cell = tableView.cellForRow(at: indexPath),
-            let message = self.presenter?.items[safe: indexPath.row]?.message else {
+              let message = self.presenter?.items[safe: indexPath.row]?.message else {
                 return nil
         }
         
