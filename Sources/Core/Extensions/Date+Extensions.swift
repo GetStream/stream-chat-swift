@@ -85,7 +85,7 @@ extension DateFormatter {
     public static let shortDate: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .none
-        formatter.dateFormat = "MM/dd/yyyy"
+        formatter.dateStyle = .short
         return formatter
     }()
 
