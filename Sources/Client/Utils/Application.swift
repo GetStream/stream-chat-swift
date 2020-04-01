@@ -1,5 +1,5 @@
 //
-//  UIApplication+Rx.swift
+//  Application.swift
 //  StreamChatCore
 //
 //  Created by Alexey Bukhtin on 06/02/2020.
@@ -8,35 +8,32 @@
 
 import UIKit
 
-extension UIApplication {
-    private static var onStateChangedKey: UInt8 = 0
-    private static var lastStateKey: UInt8 = 0
-    
+final class Application {
     typealias OnStateChanged = (UIApplication.State) -> Void
+    static let shared = Application()
     
-    private var lastState: UIApplication.State {
-        get { associated(to: self, key: &UIApplication.lastStateKey) { UIApplication.shared.applicationState } }
-        set { associate(to: self, key: &UIApplication.lastStateKey, value: newValue) }
-    }
+    private var lastState: UIApplication.State?
+    private var subscribers = [NSObjectProtocol]()
     
     /// An application state.
     var onStateChanged: OnStateChanged? {
-        get { nil } //swiftlint:disable:this implicit_getter
-        set {
-            let center = NotificationCenter.default
-            
-            var subscribers = associated(to: self, key: &UIApplication.onStateChangedKey) { [NSObjectProtocol]() }
-            subscribers.forEach({ center.removeObserver($0) })
-            
-            guard let onState = newValue else {
+        didSet {
+            if Environment.isTests || Environment.isExtention {
+                onStateChanged?(.active)
                 return
             }
             
+            let center = NotificationCenter.default
+            subscribers.forEach({ center.removeObserver($0) })
             subscribers = []
+            
+            guard let onState = onStateChanged else {
+                return
+            }
             
             func subscribe(for name: Notification.Name, state: UIApplication.State) -> NSObjectProtocol {
                 return center.addObserver(forName: name, object: nil, queue: nil) { [unowned self] _ in
-                    if self.lastState != state {
+                    if let lastState = self.lastState, lastState != state {
                         self.lastState = state
                         onState(state)
                     }
@@ -47,7 +44,7 @@ extension UIApplication {
             subscribers.append(subscribe(for: UIApplication.didBecomeActiveNotification, state: .active))
             subscribers.append(subscribe(for: UIApplication.willResignActiveNotification, state: .inactive))
             subscribers.append(subscribe(for: UIApplication.didEnterBackgroundNotification, state: .background))
-            associate(to: self, key: &UIApplication.onStateChangedKey, value: subscribers)
+            onState(UIApplication.shared.applicationState)
         }
     }
 }

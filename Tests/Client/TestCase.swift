@@ -31,13 +31,12 @@ class TestCase: XCTestCase {
                               baseURL: Self.baseURL,
                               stayConnectedInBackground: false,
                               callbackQueue: .main,
-                              logOptions: [])
+                              logOptions: .webSocket)
     }
     
     override static func tearDown() {
         Client.shared.disconnect()
         Client.shared.onConnect = { _ in }
-        Client.shared.onEvent = { _ in }
         StorageHelper.shared.removeAll()
     }
 }
@@ -50,7 +49,6 @@ extension TestCase {
         }
         
         TestCase.setupClientUser()
-        Client.shared.connect()
         
         expect("Client should be connected") { expectation in
             Client.shared.onConnect = {
@@ -62,29 +60,16 @@ extension TestCase {
     }
     
     func connect(_ client: Client, user: User = .user1, token: Token = .token1, _ completion: @escaping () -> Void) {
-        var connected = false
-        
-        func finish() {
-            if !connected {
-                connected = true
-                completion()
-            }
-        }
-        
-        client.set(user: user, token: token)
-        
         if client.isConnected {
-            finish()
+            completion()
             return
         }
         
-        client.onConnect = {
-            if case .connected = $0 {
-                finish()
+        client.set(user: user, token: token) { connection in
+            if connection.isConnected {
+                completion()
             }
         }
-        
-        client.connect()
     }
     
     func expect(_ description: String,

@@ -36,8 +36,6 @@ final class ClientTests01_Channels: TestCase {
     /// Temporary the search text changed from: `"Text \(Self.salt)"` to `"Text\(Self.salt)"`,
     /// because on the issue for the search of a text in direct message channels with spaces.
     static let messageText = "Text \(UUID().uuidString)"
-    
-    let member2 = User.user2.asMember
     let loveReactionType = "love"
     
     let unreadCounts: [UnreadCount] = [.init(channels: 0, messages: 0),
@@ -48,37 +46,22 @@ final class ClientTests01_Channels: TestCase {
                                        .init(channels: 1, messages: 1),
                                        .init(channels: 1, messages: 2)]
     
+    var notificationsSubscription: Cancellable?
+    
     func test01BigFlow() {
+        // MARK: User 1
+        
         let client1 = Client(apiKey: TestCase.apiKey,
                              baseURL: TestCase.baseURL,
                              stayConnectedInBackground: false,
                              callbackQueue: .main,
                              logOptions: [])
         
-        Client.shared.set(user: .user2, token: .token2)
-        
-        Client.shared.onEvent = { event in
-            if case .notificationAddedToChannel = event {
-                StorageHelper.shared.increment(key: .notificationAddedToChannel)
-                StorageHelper.shared.append(Client.shared.user.unreadCount, key: .user2UnreadCounts)
-            }
-            
-            if case .notificationMessageNew = event {
-                StorageHelper.shared.increment(key: .notificationMessageNew)
-                StorageHelper.shared.append(Client.shared.user.unreadCount, key: .user2UnreadCounts)
-            }
-            
-            if case .messageRead = event {
-                StorageHelper.shared.increment(key: .notificationMessageNew)
-                StorageHelper.shared.append(Client.shared.user.unreadCount, key: .user2UnreadCounts)
-            }
-        }
-        
         StorageHelper.shared.add(client1, key: .client1)
         
         expect("setup user1") { expectation in
             connect(client1, user: .user1, token: .token1) { [weak client1] in
-                client1?.update(users: [.user1, .user2]) {
+                client1?.update(user: .user1) {
                     if $0.isSuccess {
                         client1?.markAllRead {
                             if $0.isSuccess {
@@ -87,6 +70,25 @@ final class ClientTests01_Channels: TestCase {
                         }
                     }
                 }
+            }
+        }
+        
+        // MARK: User 2
+        
+        notificationsSubscription = Client.shared.subscribe { event in
+            if case .notificationAddedToChannel = event {
+                StorageHelper.shared.increment(key: .notificationAddedToChannel)
+                StorageHelper.shared.append(Client.shared.unreadCount, key: .user2UnreadCounts)
+            }
+            
+            if case .notificationMessageNew = event {
+                StorageHelper.shared.increment(key: .notificationMessageNew)
+                StorageHelper.shared.append(Client.shared.unreadCount, key: .user2UnreadCounts)
+            }
+            
+            if case .messageRead = event {
+                StorageHelper.shared.increment(key: .notificationMessageNew)
+                StorageHelper.shared.append(Client.shared.unreadCount, key: .user2UnreadCounts)
             }
         }
         
@@ -106,23 +108,25 @@ final class ClientTests01_Channels: TestCase {
         
         XCTAssertTrue(client1.isConnected)
         XCTAssertTrue(Client.shared.isConnected)
-        
+
         let cid = ChannelId(type: .team, id: UUID().uuidString)
-        createChannel(client1, cid: cid)
+        createChannel(client1, cid: cid, mentionedUser: Client.shared.user)
         queryChannels(client1, cid: cid)
         checkUnreadCountFromQuery(Client.shared, cid: cid)
-        createChannel1By1(client1)
+        createChannel1By1(client1, anotherUser: Client.shared.user)
         
         // Wait for all events and finish the big flow.
         if let unreadCounts: [UnreadCount] = StorageHelper.shared.value(key: .user2UnreadCounts),
             unreadCounts.count != self.unreadCounts.count {
             expect("finished big flow with \(self.unreadCounts.count) notification events") { expectation in
-                Client.shared.onUserUpdate = { user in
+                var subscription: Cancellable?
+                
+                subscription = Client.shared.subscribeToUserUpdates { user in
                     DispatchQueue.main.async {
                         if let unreadCounts: [UnreadCount] = StorageHelper.shared.value(key: .user2UnreadCounts),
                             unreadCounts.count == self.unreadCounts.count {
+                            subscription?.cancel()
                             expectation.fulfill()
-                            Client.shared.onUserUpdate = nil
                         }
                     }
                 }
@@ -139,7 +143,7 @@ final class ClientTests01_Channels: TestCase {
             client.queryChannel(channel, options: .all) {
                     if let response = $0.value {
                         XCTAssertEqual(response.messages.count, 3)
-                        XCTAssertEqual(response.channel.unreadCount, ChannelUnreadCount(messages: 2, mentionedMessages: 1))
+                        XCTAssertEqual(response.channel.unreadCount, ChannelUnreadCount(messages: 3, mentionedMessages: 1))
                         createdChannel = response.channel
                         expectation.fulfill()
                     }
@@ -183,11 +187,13 @@ final class ClientTests01_Channels: TestCase {
         
         deleteChannels.forEach {
             if !$0.isDirectMessage {
-                self.removeMember(to: $0, client1)
+                self.removeMember(Client.shared.user, from: $0, client1)
             }
             
             self.deleteChannel($0, client1)
         }
+        
+        notificationsSubscription?.cancel()
     }
     
     func test04CheckUnreadCount() {
@@ -199,11 +205,11 @@ final class ClientTests01_Channels: TestCase {
         XCTAssertEqual(unreadCounts, self.unreadCounts)
     }
     
-    func createChannel(_ client: Client, cid: ChannelId) {
+    func createChannel(_ client: Client, cid: ChannelId, mentionedUser: User) {
         var createdChannel: Channel?
         
         expect("a new channel") { expectation in
-            let channel = client.channel(type: cid.type, id: cid.id, members: [User.user1, User.user2])
+            let channel = client.channel(type: cid.type, id: cid.id, members: [client.user, mentionedUser])
             client.queryChannel(channel, options: .all) {
                     if let value = $0.value {
                         XCTAssertEqual(cid, value.channel.cid)
@@ -226,7 +232,7 @@ final class ClientTests01_Channels: TestCase {
             channelUpdatedExpectation?.fulfill()
         }
         
-        client.onEvent = { event in
+        let subscription = client.subscribe { event in
             if case .channelUpdated(let updatedResponse, _, _) = event {
                 XCTAssertEqual(updatedResponse.channel, createdChannel)
                 createdChannel = updatedResponse.channel
@@ -234,49 +240,49 @@ final class ClientTests01_Channels: TestCase {
             }
         }
         
-        addMember(to: createdChannel!, client)
+        addMember(mentionedUser, to: createdChannel!, client)
         
         expect("a channel was updated") { channelUpdatedExpectation = $0 }
-        client.onEvent = { _ in }
+        subscription.cancel()
         
         sendMessage("Message2 \(UUID().uuidString)", channel: createdChannel!, client)
-        sendMessage("Message3 @\(User.user2.name) \(UUID().uuidString)", channel: createdChannel!, client)
+        sendMessage("Message3 @\(mentionedUser.name) \(UUID().uuidString)", channel: createdChannel!, client)
         StorageHelper.shared.append(createdChannel, key: .deleteChannels)
     }
     
-    func addMember(to channel: Channel, _ client: Client) {
+    func addMember(_ user: User, to channel: Channel, _ client: Client) {
         expect("added a member2") { expectation in
-            client.add(member: member2, to: channel) {
+            client.add(member: user.asMember, to: channel) {
                 if let response = $0.value {
-                    XCTAssertTrue(response.channel.members.contains(self.member2))
+                    XCTAssertTrue(response.channel.members.contains(user.asMember))
                     expectation.fulfill()
                 }
             }
         }
     }
     
-    func removeMember(to channel: Channel, _ client: Client) {
+    func removeMember(_ user: User, from channel: Channel, _ client: Client) {
         expect("removed a member2") { expectation in
-            client.remove(member: member2, from: channel) {
+            client.remove(member: user.asMember, from: channel) {
                 if let response = $0.value {
-                    XCTAssertFalse(response.channel.members.contains(self.member2))
+                    XCTAssertFalse(response.channel.members.contains(user.asMember))
                     expectation.fulfill()
                 }
             }
         }
     }
     
-    func createChannel1By1(_ client: Client) {
+    func createChannel1By1(_ client: Client, anotherUser: User) {
         var createdChannel: Channel?
         
         expect("a 1 by 1 channel") { expectation in
-            let channel = client.channel(members: [client.user, User.user2])
-            client.queryChannel(channel, options: .all) {
+            let channel = client.channel(members: [client.user, anotherUser])
+            client.queryChannel(channel, options: .all) { [unowned client] in
                 if let value = $0.value {
                     XCTAssertTrue(value.channel.isDirectMessage)
                     XCTAssertEqual(value.channel.members.count, 2)
-                    XCTAssertTrue(value.channel.members.contains(User.user1.asMember))
-                    XCTAssertTrue(value.channel.members.contains(User.user2.asMember))
+                    XCTAssertTrue(value.channel.members.contains(client.user.asMember))
+                    XCTAssertTrue(value.channel.members.contains(anotherUser.asMember))
                     createdChannel = value.channel
                     expectation.fulfill()
                 }
@@ -285,7 +291,7 @@ final class ClientTests01_Channels: TestCase {
         
         XCTAssertNotNil(createdChannel)
         sendMessage("Message1vs1 \(UUID().uuidString)", channel: createdChannel!, client)
-        sendMessage("Message1vs1 @\(User.user2.name) \(UUID().uuidString)", channel: createdChannel!, client)
+        sendMessage("Message1vs1 @\(anotherUser.name) \(UUID().uuidString)", channel: createdChannel!, client)
         StorageHelper.shared.append(createdChannel, key: .deleteChannels)
     }
     
@@ -312,7 +318,7 @@ final class ClientTests01_Channels: TestCase {
     
     func getMessage(by messageId: String, _ client: Client) {
         expect("a message by id: \"\(messageId)\"") { expectation in
-            client.message(with: messageId) {
+            client.message(withId: messageId) {
                 if $0.isSuccess {
                     expectation.fulfill()
                 }
