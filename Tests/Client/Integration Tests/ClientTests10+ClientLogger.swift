@@ -10,7 +10,7 @@ import XCTest
 @testable import StreamChatClient
 
 final class ClientTests10_ClientLogger: XCTestCase {
-    private let teJstUser = User(id: "test", name: "Test")
+    private let teJstUser = User(id: "test")
     private let testUrl = "getstream.io".url!
     private let testFilter = Filter.in("members", ["test-member"])
     private let testData = "{\"testKey\":\"testValue\"}".data(using: .utf8)!

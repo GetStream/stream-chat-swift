@@ -10,8 +10,8 @@ import Foundation
 @testable import StreamChatClient
 
 extension User {
-    static let user1 = User(id: "broken-waterfall-5", name: "Jon Snow", avatarURL: URL(string: "https://bit.ly/2u9Vc0r"))
-    static let user2 = User(id: "noisy-mountain-3", name: "Noisy mountain")
+    static let user1 = User(id: "broken-waterfall-5")
+    static let user2 = User(id: "noisy-mountain-3")
 }
 
 extension Token {

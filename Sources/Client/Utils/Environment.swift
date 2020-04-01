@@ -57,4 +57,20 @@ public enum Environment {
     private static var hasEmbeddedMobileProvision: Bool {
         Bundle.main.path(forResource: "embedded", ofType: "mobileprovision") != nil
     }
+    
+    static var isExtention: Bool {
+        #if TARGET_IS_EXTENSION
+        return true
+        #else
+        return false
+        #endif
+    }
+    
+    static var isTests: Bool {
+        #if DEBUG
+        return NSClassFromString("XCTest") != nil
+        #else
+        return false
+        #endif
+    }
 }
