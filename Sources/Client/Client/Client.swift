@@ -42,6 +42,12 @@ public final class Client {
     /// A database for an offline mode.
     public internal(set) var database: Database?
     
+    /// A log manager.
+    public let logger: ClientLogger?
+    public let logOptions: ClientLogger.Options
+    
+    // MARK: Token
+    
     public internal(set) var token: Token? {
         didSet { onTokenChange?(token) }
     }
@@ -49,17 +55,20 @@ public final class Client {
     /// A token callback. This should only be used when you only use the Low-Level Client.
     public var onTokenChange: OnTokenChange?
     var tokenProvider: TokenProvider?
+    /// Checks if the expired Token is updating.
     public internal(set) var isExpiredTokenInProgress = false
     var waitingRequests = [WaitingRequest]()
     
+    // MARK: WebSocket
+    
     /// A web socket client.
     lazy var webSocket = WebSocket()
-    
+    /// The current WebSocket connection.
     public var connection: Connection { webSocket.connection }
-    
     /// A WebSocket connection callback. This should only be used when you only use the Low-Level Client.
     public var onConnect: Client.OnConnect = { _ in }
-    
+    /// Check if API key and token are valid and the web socket is connected.
+    public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     /// Saved onConnect for a completion block in `connect()`.
     var savedOnConnect: Client.OnConnect?
     
@@ -67,31 +76,10 @@ public final class Client {
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
     
-    /// A log manager.
-    public let logger: ClientLogger?
-    public let logOptions: ClientLogger.Options
-    
-    private(set) lazy var userUpdateHandlingQueue = DispatchQueue(label: "io.getstream.StreamChatClient.userUpdate",
-                                                                  qos: .userInteractive)
-    
-    var onUserUpdateObservers = [String: OnUpdate<User>]()
-    
-    lazy var onUserUpdate: OnUpdate<User> = { [unowned self] user in
-        self.userUpdateHandlingQueue.async {
-            self.onUserUpdateObservers.values.forEach({ $0(user) })
-        }
-    }
-    
-    private(set) lazy var userAtomic = Atomic<User> { [unowned self] newUser, _ in
-        if let user = newUser {
-            self.onUserUpdate(user)
-        }
-    }
-    
+    private(set) lazy var eventsHandlingQueue = DispatchQueue(label: "io.getstream.Chat.clientEvents", qos: .userInteractive)
     let subscriptionBag = SubscriptionBag()
     
-    /// Weak references to channels by cid.
-    let channelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
+    // MARK: User Events
     
     /// The current user.
     public internal(set) var user: User {
@@ -99,8 +87,32 @@ public final class Client {
         set { userAtomic.set(newValue) }
     }
     
-    /// Check if API key and token are valid and the web socket is connected.
-    public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
+    var onUserUpdateObservers = [String: OnUpdate<User>]()
+    
+    private(set) lazy var userAtomic = Atomic<User> { [unowned self] newUser, _ in
+        if let user = newUser {
+            self.eventsHandlingQueue.async {
+                self.onUserUpdateObservers.values.forEach({ $0(user) })
+            }
+        }
+    }
+    
+    // MARK: Unread Count Events
+    
+    /// Channels and messages unread counts.
+    public var unreadCount: UnreadCount { unreadCountAtomic.get(default: .noUnread) }
+    var onUnreadCountUpdateObservers = [String: OnUpdate<UnreadCount>]()
+    
+    private(set) lazy var unreadCountAtomic = Atomic<UnreadCount>(.noUnread) { [unowned self] newUnreadCount, _ in
+        if let unreadCount = newUnreadCount {
+            self.eventsHandlingQueue.async {
+                self.onUnreadCountUpdateObservers.values.forEach({ $0(unreadCount) })
+            }
+        }
+    }
+    
+    /// Weak references to channels by cid.
+    let channelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
     
     /// Init a network client.
     /// - Parameters:
