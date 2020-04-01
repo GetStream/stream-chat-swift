@@ -438,6 +438,15 @@ public struct MessageResponse: Decodable {
     public let message: Message
     /// A reaction.
     public let reaction: Reaction?
+    /// Owner channel of this message. Only available when a message is queried by its `id`.
+    @NestedKey
+    public var channel: Channel?
+    
+    enum CodingKeys: String, NestableCodingKey {
+        case message
+        case reaction
+        case channel = "message/channel"
+    }
 }
 
 /// An event response.

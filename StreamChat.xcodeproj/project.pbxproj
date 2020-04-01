@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		794BDE4A2434BD7400BFBA1F /* NestableCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */; };
 		79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D50C7624321BDA0052BA03 /* Client+Events.swift */; };
 		8A1207CB238ED68000E41790 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207C9238ED66500E41790 /* Message.swift */; };
 		8A1207CD238EE3C700E41790 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207CC238EE3C700E41790 /* Reaction.swift */; };
@@ -277,6 +278,7 @@
 
 /* Begin PBXFileReference section */
 		465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentTypeTests.swift; sourceTree = "<group>"; };
+		794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestableCodingKey.swift; sourceTree = "<group>"; };
 		795FCD1B23EB155000990F15 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		79D50C7624321BDA0052BA03 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		8A1207C9238ED66500E41790 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -692,6 +694,7 @@
 				8ACC7BB6241924AD000750E4 /* Environment.swift */,
 				8ACC7BB9241924AD000750E4 /* RepeatingTimer.swift */,
 				8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */,
+				794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1545,6 +1548,7 @@
 				8ACC7C00241924AD000750E4 /* Bundle+Extensions.swift in Sources */,
 				8ACC7C38241924AD000750E4 /* Endpoint.swift in Sources */,
 				8A831C8624294083003F0DB4 /* InternetConnection.swift in Sources */,
+				794BDE4A2434BD7400BFBA1F /* NestableCodingKey.swift in Sources */,
 				8ACC7C16241924AD000750E4 /* Sorting.swift in Sources */,
 				8ACC7C23241924AD000750E4 /* ChannelType.swift in Sources */,
 				8A466E67241A3AB6003C21BA /* BaseURL.swift in Sources */,
