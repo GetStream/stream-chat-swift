@@ -41,12 +41,12 @@ final class ClientTests01_Channels: TestCase {
     let unreadCounts: [UnreadCount] = [.init(channels: 0, messages: 0),
                                        .init(channels: 1, messages: 1),
                                        .init(channels: 1, messages: 2),
-                                       .init(channels: 0, messages: 0),
+                                       .init(channels: 1, messages: 3),
                                        .init(channels: 0, messages: 0),
                                        .init(channels: 1, messages: 1),
                                        .init(channels: 1, messages: 2)]
     
-    var notificationsSubscription: Cancellable?
+    let subscriptionBag = SubscriptionBag()
     
     func test01BigFlow() {
         // MARK: User 1
@@ -75,23 +75,6 @@ final class ClientTests01_Channels: TestCase {
         
         // MARK: User 2
         
-        notificationsSubscription = Client.shared.subscribe { event in
-            if case .notificationAddedToChannel = event {
-                StorageHelper.shared.increment(key: .notificationAddedToChannel)
-                StorageHelper.shared.append(Client.shared.unreadCount, key: .user2UnreadCounts)
-            }
-            
-            if case .notificationMessageNew = event {
-                StorageHelper.shared.increment(key: .notificationMessageNew)
-                StorageHelper.shared.append(Client.shared.unreadCount, key: .user2UnreadCounts)
-            }
-            
-            if case .messageRead = event {
-                StorageHelper.shared.increment(key: .notificationMessageNew)
-                StorageHelper.shared.append(Client.shared.unreadCount, key: .user2UnreadCounts)
-            }
-        }
-        
         expect("setup user2") { expectation in
             connect(Client.shared, user: .user2, token: .token2) {
                 Client.shared.update(user: .user2) {
@@ -106,6 +89,23 @@ final class ClientTests01_Channels: TestCase {
             }
         }
         
+        let subscriptionNotifications = Client.shared.subscribe { event in
+            if case .notificationAddedToChannel = event {
+                StorageHelper.shared.increment(key: .notificationAddedToChannel)
+            }
+            
+            if case .notificationMessageNew = event {
+                StorageHelper.shared.increment(key: .notificationMessageNew)
+            }
+        }
+        
+        let unreadCountSubscription = Client.shared.subscribeToUnreadCount { unreadCount in
+            StorageHelper.shared.append(unreadCount, key: .user2UnreadCounts)
+        }
+        
+        subscriptionBag.add(subscriptionNotifications)
+        subscriptionBag.add(unreadCountSubscription)
+        
         XCTAssertTrue(client1.isConnected)
         XCTAssertTrue(Client.shared.isConnected)
 
@@ -117,11 +117,11 @@ final class ClientTests01_Channels: TestCase {
         
         // Wait for all events and finish the big flow.
         if let unreadCounts: [UnreadCount] = StorageHelper.shared.value(key: .user2UnreadCounts),
-            unreadCounts.count != self.unreadCounts.count {
+            unreadCounts.count < self.unreadCounts.count {
             expect("finished big flow with \(self.unreadCounts.count) notification events") { expectation in
                 var subscription: Cancellable?
                 
-                subscription = Client.shared.subscribeToUserUpdates { user in
+                subscription = Client.shared.subscribeToUnreadCount { _ in
                     DispatchQueue.main.async {
                         if let unreadCounts: [UnreadCount] = StorageHelper.shared.value(key: .user2UnreadCounts),
                             unreadCounts.count == self.unreadCounts.count {
@@ -193,7 +193,7 @@ final class ClientTests01_Channels: TestCase {
             self.deleteChannel($0, client1)
         }
         
-        notificationsSubscription?.cancel()
+        subscriptionBag.cancel()
     }
     
     func test04CheckUnreadCount() {
