@@ -77,7 +77,9 @@ extension Client {
             }
         }
         
-        onUserUpdateObservers[subscription.uuid] = callback
+        self.eventsHandlingQueue.async { [unowned self] in
+            self.onUserUpdateObservers[subscription.uuid] = callback
+        }
         
         // Send the current value.
         if !user.isUnknown {
@@ -94,7 +96,10 @@ extension Client {
             }
         }
         
-        onUnreadCountUpdateObservers[subscription.uuid] = callback
+        self.eventsHandlingQueue.async { [unowned self] in
+            self.onUnreadCountUpdateObservers[subscription.uuid] = callback
+        }
+        
         // Send the current value.
         callback(unreadCount)
         
