@@ -67,7 +67,7 @@ extension Client {
     func webSocketOnEvent(_ event: Event) {
         // Update the current user on login.
         if case let .healthCheck(_, user) = event {
-            self.user = user
+            userAtomic.set(user)
             return
         }
         

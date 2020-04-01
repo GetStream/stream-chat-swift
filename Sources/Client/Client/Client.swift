@@ -82,10 +82,7 @@ public final class Client {
     // MARK: User Events
     
     /// The current user.
-    public internal(set) var user: User {
-        get { return userAtomic.get() ?? .unknown }
-        set { userAtomic.set(newValue) }
-    }
+    public var user: User { userAtomic.get() ?? .unknown }
     
     var onUserUpdateObservers = [String: OnUpdate<User>]()
     
@@ -103,8 +100,8 @@ public final class Client {
     public var unreadCount: UnreadCount { unreadCountAtomic.get(default: .noUnread) }
     var onUnreadCountUpdateObservers = [String: OnUpdate<UnreadCount>]()
     
-    private(set) lazy var unreadCountAtomic = Atomic<UnreadCount>(.noUnread) { [unowned self] newUnreadCount, _ in
-        if let unreadCount = newUnreadCount {
+    private(set) lazy var unreadCountAtomic = Atomic<UnreadCount>(.noUnread) { [unowned self] newValue, oldValue in
+        if let unreadCount = newValue, unreadCount != oldValue {
             self.eventsHandlingQueue.async {
                 self.onUnreadCountUpdateObservers.values.forEach({ $0(unreadCount) })
             }

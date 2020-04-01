@@ -15,9 +15,7 @@ final class WebSocket {
     
     /// A WebSocket connection callback.
     var onConnect: Client.OnConnect = { _ in }
-    
-    var onEventObservers = [String: Client.OnEvent]()
-    
+    private var onEventObservers = [String: Client.OnEvent]()
     private let webSocket: Starscream.WebSocket
     private let callbackQueue: DispatchQueue?
     private let stayConnectedInBackground: Bool
