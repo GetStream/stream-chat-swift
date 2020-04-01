@@ -76,11 +76,6 @@ public struct User: Codable {
     public internal(set) var currentDevice: Device?
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
-    
-    /// Channels and messages unread counts.
-    public var unreadCount: UnreadCount { unreadCountAtomic.get(default: .noUnread) }
-    let unreadCountAtomic = Atomic<UnreadCount>(.noUnread) { _, _ in Client.shared.onUserUpdate(User.current) }
-    
     /// Check if the user is the current user.
     public var isCurrent: Bool { self == Client.shared.user }
     /// The current user.
@@ -160,7 +155,7 @@ public struct User: Codable {
         
         let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
         let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
-        unreadCountAtomic.set(UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount))
+        Client.shared.unreadCountAtomic.set(UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount))
     }
     
     public func encode(to encoder: Encoder) throws {

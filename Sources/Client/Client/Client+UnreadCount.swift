@@ -40,7 +40,7 @@ extension Client {
              .notificationMessageNew(_, _, let unreadCount, _, _):
             updatedUnreadCount = unreadCount
         case .messageNew(let message, _, let cid, _) where message.parentId == nil:
-            updatedUnreadCount = User.current.unreadCount
+            updatedUnreadCount = unreadCount
             updatedUnreadCount.messages += 1
             
             // Checks if the number of channels should be increased.
@@ -51,7 +51,7 @@ extension Client {
             return
         }
         
-        user.unreadCountAtomic.set(updatedUnreadCount)
+        unreadCountAtomic.set(updatedUnreadCount)
     }
 }
 

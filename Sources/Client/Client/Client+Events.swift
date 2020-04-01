@@ -72,18 +72,33 @@ extension Client {
     
     public func subscribeToUserUpdates(_ callback: @escaping OnUpdate<User>) -> Cancellable {
         let subscription = Subscription { [unowned self] uuid in
-            self.userUpdateHandlingQueue.async {
+            self.eventsHandlingQueue.async {
                 self.onUserUpdateObservers[uuid] = nil
             }
         }
         
         onUserUpdateObservers[subscription.uuid] = callback
         
+        // Send the current value.
+        if !user.isUnknown {
+            callback(user)
+        }
+        
         return subscription
     }
     
     public func subscribeToUnreadCount(_ callback: @escaping OnUpdate<UnreadCount>) -> Cancellable {
-        subscribeToUserUpdates { user in callback(user.unreadCount) }
+        let subscription = Subscription { [unowned self] uuid in
+            self.eventsHandlingQueue.async {
+                self.onUnreadCountUpdateObservers[uuid] = nil
+            }
+        }
+        
+        onUnreadCountUpdateObservers[subscription.uuid] = callback
+        // Send the current value.
+        callback(unreadCount)
+        
+        return subscription
     }
     
     func subscribeToUnreadCount(for channel: Channel, _ callback: @escaping Completion<ChannelUnreadCount>) -> Cancellable {
@@ -100,6 +115,7 @@ extension Client {
                 let subscription = self.subscribe(cid: response.channel.cid) { _ in
                     callback(.success(channel.unreadCount))
                 }
+                
                 subscriptions.add(subscription)
             }
         }
@@ -120,13 +136,15 @@ extension Client {
             }
             
             if let response = result.value {
-                let subscription = self.subscribe(forEvents: [.userStartWatching,
-                                                              .userStopWatching,
-                                                              .messageNew,
-                                                              .notificationMessageNew],
-                                                  cid: response.channel.cid) { _ in
+                let eventTypes: Set<EventType> = [.userStartWatching,
+                                                  .userStopWatching,
+                                                  .messageNew,
+                                                  .notificationMessageNew]
+                
+                let subscription = self.subscribe(forEvents: eventTypes, cid: response.channel.cid) { _ in
                     callback(.success(channel.watcherCount))
                 }
+                
                 subscriptions.add(subscription)
             }
         }
