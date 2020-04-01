@@ -71,7 +71,7 @@ public extension Client {
             return .empty
         }
         
-        let completion = doBefore(completion) { [unowned self] in self.user = $0.currentUser }
+        let completion = doBefore(completion) { [unowned self] in self.userAtomic.set($0.currentUser) }
         return request(endpoint: .muteUser(user), completion)
     }
     
