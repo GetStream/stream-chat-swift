@@ -311,13 +311,14 @@ extension ChatViewController {
             return nil
         }
         
+        guard let cell = tableView.cellForRow(at: indexPath),
+            let message = self.presenter?.items[safe: indexPath.row]?.message else {
+                return nil
+        }
+        
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
-            guard let self = self,
-                let cell = tableView.cellForRow(at: indexPath),
-                let items = self.presenter?.items,
-                items.count > indexPath.row,
-                let message = items[indexPath.row].message else {
-                    return nil
+            guard let self = self else {
+                return nil
             }
             
             let locationInView = tableView.convert(point, to: cell)
