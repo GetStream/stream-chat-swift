@@ -191,7 +191,7 @@ extension Client {
             }
             
             // Observe Application state and handle the Client connection.
-            UIApplication.shared.onStateChanged = { [unowned self] state in
+            Application.shared.onStateChanged = { [unowned self] state in
                 self.connect(appState: state, onConnect)
             }
             
