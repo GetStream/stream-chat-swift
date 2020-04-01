@@ -39,6 +39,7 @@ struct Keyboard {
             .compactMap { KeyboardNotification(panGesture: $0, with: $1) }
         
         notification = Observable.merge(windowPan, keyboardNotifications)
+            .distinctUntilChanged()
             .observeOn(MainScheduler.instance)
             .share()
             .catchErrorJustReturn(KeyboardNotification(.init(name: UIResponder.keyboardWillChangeFrameNotification)))
