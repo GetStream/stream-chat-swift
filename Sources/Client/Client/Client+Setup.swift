@@ -27,7 +27,7 @@ extension Client {
             return
         }
         
-        self.user = user
+        userAtomic.set(user)
         setup(token: token, completion)
     }
     
@@ -47,7 +47,7 @@ extension Client {
             return
         }
         
-        self.user = user
+        userAtomic.set(user)
         urlSession = setupURLSession()
         logger?.log("Sending a request for a Guest Token...")
         
@@ -70,7 +70,7 @@ extension Client {
     /// - Parameter completion: a connection completion block.
     public func setAnonymousUser(_ completion: Client.OnConnect? = nil) {
         reset()
-        user = .anonymous
+        userAtomic.set(.anonymous)
         tokenProvider = nil
         setup(token: "", completion)
     }
@@ -122,7 +122,7 @@ extension Client {
             return
         }
         
-        self.user = user
+        userAtomic.set(user)
         self.tokenProvider = tokenProvider
         touchTokenProvider(isExpiredTokenInProgress: false, completion)
     }

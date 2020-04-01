@@ -153,9 +153,12 @@ public struct User: Codable {
             self.extraData = extraData
         }
         
-        let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
-        let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
-        Client.shared.unreadCountAtomic.set(UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount))
+        if id == Client.shared.user.id,
+            let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount),
+            let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) {
+            let unreadCount = UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount)
+            Client.shared.unreadCountAtomic.set(unreadCount)
+        }
     }
     
     public func encode(to encoder: Encoder) throws {
