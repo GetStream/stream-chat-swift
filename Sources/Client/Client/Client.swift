@@ -235,7 +235,7 @@ public final class Client {
     public func disconnect() {
         logger?.log("Disconnecting deliberately...")
         reset()
-        UIApplication.shared.onStateChanged = nil
+        Application.shared.onStateChanged = nil
         InternetConnection.shared.stopNotifier()
     }
     

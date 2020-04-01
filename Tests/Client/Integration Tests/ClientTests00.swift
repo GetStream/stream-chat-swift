@@ -13,8 +13,6 @@ final class ClientTests00: TestCase {
     
     func test01WebSocketConnection() {
         expect("WebSocket connected") { expectation in
-            TestCase.setupClientUser()
-            
             Client.shared.onConnect = { connection in
                 if case .connected = connection {
                     XCTAssertTrue(Client.shared.isConnected)
@@ -25,14 +23,12 @@ final class ClientTests00: TestCase {
                 }
             }
             
-            Client.shared.connect()
+            TestCase.setupClientUser()
         }
     }
     
     func test02AnonymousUser() {
         expect("WebSocket connected") { expectation in
-            Client.shared.setAnonymousUser()
-            
             Client.shared.onConnect = { connection in
                 if case .connected = connection {
                     XCTAssertTrue(Client.shared.isConnected)
@@ -41,7 +37,7 @@ final class ClientTests00: TestCase {
                 }
             }
             
-            Client.shared.connect()
+            Client.shared.setAnonymousUser()
         }
         
         expect("create a channel for anonymous") { expectation in
@@ -61,24 +57,6 @@ final class ClientTests00: TestCase {
                     expectation.fulfill()
                 }
             }
-        }
-    }
-    
-    func test03WebSocketPong() {
-        expect("WebSocket recieved a pong") { expectation in
-            WebSocket.pingTimeInterval = 2
-            TestCase.setupClientUser()
-            
-            Client.shared.onEvent = { event in
-                if case .pong = event {
-                    Client.shared.disconnect()
-                    Client.shared.onEvent = { _ in }
-                    WebSocket.pingTimeInterval = 30
-                    expectation.fulfill()
-                }
-            }
-            
-            Client.shared.connect()
         }
     }
 }
