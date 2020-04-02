@@ -298,6 +298,28 @@ public extension Client {
     
     // MARK: - Members
     
+    /// Add a user to the channel as a member.
+    /// - Parameters:
+    ///   - user: a user.
+    ///   - channel: a channel.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func add(user: User, to channel: Channel, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        add(members: Set([user.asMember]), to: channel, completion)
+    }
+    
+    /// Add users to the channel as members.
+    /// - Parameters:
+    ///   - users: users.
+    ///   - channel: a channel.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func add(users: Set<User>,
+             to channel: Channel,
+             _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        add(members: Set(users.map({ $0.asMember })), to: channel, completion)
+    }
+    
     /// Add a member to the channel.
     /// - Parameters:
     ///   - member: a member.
@@ -318,6 +340,30 @@ public extension Client {
              to channel: Channel,
              _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         request(endpoint: .addMembers(members, channel), completion)
+    }
+    
+    /// Remove a user as a member from the channel.
+    /// - Parameters:
+    ///   - user: a user.
+    ///   - channel: a channel.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func remove(user: User,
+                from channel: Channel,
+                _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        remove(members: Set([user.asMember]), from: channel, completion)
+    }
+    
+    /// Remove users as members from the channel.
+    /// - Parameters:
+    ///   - users: users.
+    ///   - channel: a channel.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func remove(users: Set<User>,
+                from channel: Channel,
+                _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        remove(members: Set(users.map({ $0.asMember })), from: channel, completion)
     }
     
     /// Remove a member from the channel.
@@ -498,4 +544,4 @@ public extension Client {
                     _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
         request(endpoint: .deleteFile(url, channel), completion)
     }
-}
+} // swiftlint:disable:this file_length
