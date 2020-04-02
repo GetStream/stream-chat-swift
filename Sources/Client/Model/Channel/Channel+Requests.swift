@@ -135,6 +135,24 @@ public extension Channel {
     
     // MARK: - Members
     
+    /// Add a user as a member to the channel.
+    /// - Parameters:
+    ///   - user: a user.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func add(user: User, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        Client.shared.add(user: user, to: self, completion)
+    }
+    
+    /// Add members to the channel.
+    /// - Parameters:
+    ///   - users: users.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func add(users: Set<User>, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        Client.shared.add(users: users, to: self, completion)
+    }
+    
     /// Add a member to the channel.
     /// - Parameters:
     ///   - member: a member.
@@ -151,6 +169,24 @@ public extension Channel {
     @discardableResult
     func add(members: Set<Member>, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         Client.shared.add(members: members, to: self, completion)
+    }
+    
+    /// Remove a user as a member from the channel.
+    /// - Parameters:
+    ///   - user: a user.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func remove(user: User, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        Client.shared.remove(user: user, from: self, completion)
+    }
+    
+    /// Remove users as members from the channel.
+    /// - Parameters:
+    ///   - users: users.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func remove(users: Set<User>, _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
+        Client.shared.remove(users: users, from: self, completion)
     }
     
     /// Remove a member from the channel.
