@@ -1,12 +1,13 @@
-github "ReactiveX/RxSwift" ~> 5.0.0
-github "daltoniam/Starscream" ~> 3.1.0
-github "ashleymills/Reachability.swift" ~> 4.3.0
-github "1024jp/GzipSwift" ~> 5.0.0
+github "daltoniam/Starscream" ~> 3.1
+github "1024jp/GzipSwift" ~> 5.1
+github "ashleymills/Reachability.swift" ~> 5.0
 
-github "kean/Nuke" ~> 8.2.0
-github "SnapKit/SnapKit" ~> 5.0.0
-github "kirualex/SwiftyGif" ~> 5.1.0
-github "RxSwiftCommunity/RxGesture" ~> 3.0.0
+github "ReactiveX/RxSwift" ~> 5.1
 
-github "kishikawakatsumi/KeychainAccess"
-github "realm/realm-cocoa"
+github "kean/Nuke" ~> 8.0
+github "SnapKit/SnapKit" ~> 5.0
+github "kirualex/SwiftyGif" ~> 5.2.0
+github "RxSwiftCommunity/RxGesture" ~> 3.0
+
+#github "kishikawakatsumi/KeychainAccess"
+#github "realm/realm-cocoa"

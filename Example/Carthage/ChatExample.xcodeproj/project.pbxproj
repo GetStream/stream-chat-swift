@@ -27,9 +27,6 @@
 		8A0A7EBA2301AE4E0033E6D9 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA32301AD330033E6D9 /* SnapKit.framework */; };
 		8A0A7EBB2301AE4E0033E6D9 /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E992301AD330033E6D9 /* Starscream.framework */; };
 		8A0A7EBC2301AE4E0033E6D9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA42301AD330033E6D9 /* SwiftyGif.framework */; };
-		8A55CC1E23955EB700B6CA07 /* KeychainAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A55CC1B23955EB700B6CA07 /* KeychainAccess.framework */; };
-		8A55CC2023955EB700B6CA07 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A55CC1C23955EB700B6CA07 /* RealmSwift.framework */; };
-		8A55CC2223955EB700B6CA07 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A55CC1D23955EB700B6CA07 /* Realm.framework */; };
 		8A7EE010238580BD00BDB18D /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */; };
 		8A7EE011238580BD00BDB18D /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8A7EE013238580BF00BDB18D /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */; };
@@ -135,12 +132,8 @@
 		8A0A7E9F2301AD330033E6D9 /* RxGesture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxGesture.framework; path = ../../Carthage/Build/iOS/RxGesture.framework; sourceTree = "<group>"; };
 		8A0A7EA02301AD330033E6D9 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = ../../Carthage/Build/iOS/RxRelay.framework; sourceTree = "<group>"; };
 		8A0A7EA12301AD330033E6D9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = ../../Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
-		8A0A7EA22301AD330033E6D9 /* RxAppState.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAppState.framework; path = ../../Carthage/Build/iOS/RxAppState.framework; sourceTree = "<group>"; };
 		8A0A7EA32301AD330033E6D9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = ../../Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		8A0A7EA42301AD330033E6D9 /* SwiftyGif.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyGif.framework; path = ../../Carthage/Build/iOS/SwiftyGif.framework; sourceTree = "<group>"; };
-		8A55CC1B23955EB700B6CA07 /* KeychainAccess.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KeychainAccess.framework; path = ../../Carthage/Build/iOS/KeychainAccess.framework; sourceTree = "<group>"; };
-		8A55CC1C23955EB700B6CA07 /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = ../../Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
-		8A55CC1D23955EB700B6CA07 /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = ../../Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		8AD5EC6D22E88C62005CFAC9 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD5EC7C22E88C63005CFAC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AD5EC8422E88DBC005CFAC9 /* ChatExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChatExample.entitlements; sourceTree = "<group>"; };
@@ -151,11 +144,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A55CC2223955EB700B6CA07 /* Realm.framework in Frameworks */,
 				8A7EE010238580BD00BDB18D /* StreamChat.framework in Frameworks */,
 				8A7EE013238580BF00BDB18D /* StreamChatCore.framework in Frameworks */,
-				8A55CC2023955EB700B6CA07 /* RealmSwift.framework in Frameworks */,
-				8A55CC1E23955EB700B6CA07 /* KeychainAccess.framework in Frameworks */,
 				8A0A7EB12301AE4E0033E6D9 /* Gzip.framework in Frameworks */,
 				8A0A7EB22301AE4E0033E6D9 /* Nuke.framework in Frameworks */,
 				8A0A7EB32301AE4E0033E6D9 /* Reachability.framework in Frameworks */,
@@ -177,13 +167,9 @@
 		67207A8BAB4C7C19D8CDF9E0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				8A55CC1B23955EB700B6CA07 /* KeychainAccess.framework */,
-				8A55CC1D23955EB700B6CA07 /* Realm.framework */,
-				8A55CC1C23955EB700B6CA07 /* RealmSwift.framework */,
 				8A0A7E9B2301AD330033E6D9 /* Gzip.framework */,
 				8A0A7E9A2301AD330033E6D9 /* Nuke.framework */,
 				8A0A7E9E2301AD330033E6D9 /* Reachability.framework */,
-				8A0A7EA22301AD330033E6D9 /* RxAppState.framework */,
 				8A0A7E9C2301AD330033E6D9 /* RxBlocking.framework */,
 				8A0A7E9D2301AD330033E6D9 /* RxCocoa.framework */,
 				8A0A7E9F2301AD330033E6D9 /* RxGesture.framework */,
@@ -415,9 +401,6 @@
 				"$(SRCROOT)/../../Carthage/Build/iOS/SnapKit.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/SwiftyGif.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/RxGesture.framework",
-				"$(SRCROOT)/../../Carthage/Build/iOS/Realm.framework",
-				"$(SRCROOT)/../../Carthage/Build/iOS/RealmSwift.framework",
-				"$(SRCROOT)/../../Carthage/Build/iOS/KeychainAccess.framework",
 			);
 			name = Carthage;
 			outputFileListPaths = (
@@ -434,9 +417,6 @@
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyGif.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxGesture.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Realm.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RealmSwift.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/KeychainAccess.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -597,7 +577,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ChatExample/ChatExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 102;
+				CURRENT_PROJECT_VERSION = 200;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../Carthage/Build/iOS";
 				INFOPLIST_FILE = ChatExample/Info.plist;
@@ -606,7 +586,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.12;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.ChatExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -622,7 +602,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = ChatExample/ChatExample.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 102;
+				CURRENT_PROJECT_VERSION = 200;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/../../Carthage/Build/iOS";
 				INFOPLIST_FILE = ChatExample/Info.plist;
@@ -631,7 +611,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.12;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.ChatExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
