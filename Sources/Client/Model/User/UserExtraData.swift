@@ -26,4 +26,9 @@ public struct UserExtraData: UserExtraDataCodable {
     
     public var name: String?
     public var avatarURL: URL?
+    
+    public init(name: String? = nil, avatarURL: URL? = nil) {
+        self.name = name
+        self.avatarURL = avatarURL
+    }
 }
