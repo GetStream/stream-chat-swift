@@ -21,4 +21,9 @@ public protocol ChannelExtraDataCodable: Codable {
 public struct ChannelExtraData: ChannelExtraDataCodable {
     public var name: String?
     public var imageURL: URL?
+    
+    public init(name: String? = nil, imageURL: URL? = nil) {
+        self.name = name
+        self.imageURL = imageURL
+    }
 }
