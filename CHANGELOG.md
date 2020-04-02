@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🐞 Fixed
 
+# [1.6.2](https://github.com/GetStream/stream-chat-swift/releases/tag/1.6.2)
+_April 2, 2020_
+
+### 🐞 Fixed
+- 1.6.1 build error caused from dependency misconfiguration [#147](https://github.com/GetStream/stream-chat-swift/issues/147)
 
 # [1.6.1](https://github.com/GetStream/stream-chat-swift/releases/tag/1.6.1)
 _March 18, 2020_
