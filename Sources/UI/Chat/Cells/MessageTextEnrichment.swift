@@ -68,10 +68,15 @@ final class MessageTextEnrichment {
     func enrich() -> Observable<NSAttributedString> {
         Observable.create({ [weak self] observer -> Disposable in
             if let self = self {
-                self.parse()
-                self.parseLinks()
+                if let cachedAttributedString = self.cachedEnrich() {
+                    self.attributedString = NSMutableAttributedString(attributedString: cachedAttributedString)
+                } else {
+                    self.parse()
+                    self.parseLinks()
+                }
                 
                 if let attributedString = self.attributedString {
+                    self.setCache(attributedString)
                     observer.onNext(attributedString)
                 }
             }
@@ -223,5 +228,21 @@ private extension MessageTextEnrichment {
         }
         
         self.attributedString = attributedString
+    }
+}
+
+// MARK: Cache
+fileprivate var cache = NSCache<NSString, NSAttributedString>()
+extension MessageTextEnrichment {
+    private var cacheKey: NSString {
+        return text as NSString
+    }
+
+    func cachedEnrich() -> NSAttributedString? {
+        return cache.object(forKey: cacheKey)
+    }
+
+    func setCache(_ attributedString: NSAttributedString) {
+        return cache.setObject(attributedString, forKey: cacheKey)
     }
 }

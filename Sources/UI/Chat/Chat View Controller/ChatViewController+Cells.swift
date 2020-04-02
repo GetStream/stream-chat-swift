@@ -43,6 +43,8 @@ extension ChatViewController {
                     .subscribe(onNext: { [weak self] _ in self?.showReplies(parentMessage: message) })
                     .disposed(by: cell.disposeBag)
             }
+            
+            cell.cachedEnrichText(with: message, enrichURLs: true)
         }
         
         var showAvatar = true
@@ -138,7 +140,12 @@ extension ChatViewController {
             return
         }
         
-        cell.enrichText(with: message, enrichURLs: true)
+        cell.enrichText(with: message, enrichURLs: true) {
+            DispatchQueue.main.async {
+                self.tableView.beginUpdates()
+                self.tableView.endUpdates()
+            }
+        }
         
         if (!(cell.readUsersView?.isHidden ?? true) || !cell.additionalDateLabel.isHidden),
             let lastVisibleView = cell.lastVisibleViewFromMessageStackView() {

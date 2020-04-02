@@ -78,15 +78,39 @@ extension MessageTableViewCell {
         messageLabel.text = text
     }
     
-    func enrichText(with message: Message, enrichURLs: Bool) {
+    func cachedEnrichText(with message: Message,
+                          enrichURLs: Bool) {
+        messageTextEnrichment = MessageTextEnrichment(message, style: style, enrichURLs: enrichURLs)
+
+        if let cached = messageTextEnrichment?.cachedEnrich() {
+            self.messageLabel.attributedText = cached
+        }
+    }
+
+    func enrichText(with message: Message, 
+                    enrichURLs: Bool,
+                    onSizeChanged: (() -> Void)? = nil) {
         messageTextEnrichment = MessageTextEnrichment(message, style: style, enrichURLs: enrichURLs)
         
         messageTextEnrichment?.enrich()
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .utility))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] in self?.messageLabel.attributedText = $0 })
-            .disposed(by: disposeBag)
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else {
+                    return
+                }
+
+                self.messageLabel.attributedText = $0
+
+                let previousSize = self.messageLabel.frame.size
+                self.messageLabel.sizeToFit()
+                let newSize = self.messageLabel.frame.size
+
+                if newSize != previousSize {
+                    onSizeChanged?()
+                }
+            }).disposed(by: disposeBag)
     }
     
     func update(reactionsString: String, action: @escaping ReactionAction) {
