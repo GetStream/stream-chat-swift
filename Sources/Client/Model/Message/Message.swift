@@ -37,35 +37,35 @@ public struct Message: Codable {
     static var flaggedIds = Set<String>()
     
     /// A message id.
-    public let id: String
+    public var id: String
     /// A message type (see `MessageType`).
-    public let type: MessageType
+    public var type: MessageType
     /// A user (see `User`).
-    public let user: User
+    public var user: User
     /// A created date.
-    public let created: Date
+    public var created: Date
     /// A updated date.
-    public let updated: Date
+    public var updated: Date
     /// A deleted date.
-    public let deleted: Date?
+    public var deleted: Date?
     /// A text.
-    public let text: String
+    public var text: String
     /// A used command name.
-    public let command: String?
+    public var command: String?
     /// A used command args.
-    public let args: String?
+    public var args: String?
     /// Attachments (see `Attachment`).
-    public let attachments: [Attachment]
+    public var attachments: [Attachment]
     /// A parent message id.
-    public let parentId: String?
+    public var parentId: String?
     /// Check if this reply message needs to show in the channel.
-    public let showReplyInChannel: Bool
+    public var showReplyInChannel: Bool
     /// Mentioned users (see `User`).
     public internal(set) var mentionedUsers: [User]
     /// Reply count.
-    public let replyCount: Int
+    public var replyCount: Int
     /// An extra data for the message.
-    public let extraData: Codable?
+    public var extraData: Codable?
     /// The latest reactions (see `Reaction`).
     public private(set) var latestReactions: [Reaction]
     /// The current user own reactions (see `Reaction`).
