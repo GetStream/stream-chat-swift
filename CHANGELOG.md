@@ -14,6 +14,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🐞 Fixed
 
+# [2.0.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.0)
+_April 2, 2020_
+
+### SteamChat 2.0 here and it's brand new :sparkles: :rocket:
+
+We've added/removed/fixed/changed a lot of stuff, so it's fair to say that StreamChat 2.0 is everything you've liked about 1.x and nothing you didn't like about it :smile:
+
+Most importantly:
+- We have a brand new framework: `StreamChatClient`, that you can use to easily integrate StreamChat into your app without any Presenter or UI logic we have in `StreamChatCore` and `StreamChat` libraries.
+  - `StreamChatClient` has minimal dependencies and it's very low level.
+  - No Reactive dependencies! Everything is handled in good old callbacks.
+  - No reactive makes you sad? StreamChatCore still has all the reactive functionality you'd expect, so you can keep using RxSwift if you want!
+- We've updated our dependencies, and removed some.
+
+Aside from those, we fixed tons of bugs and polished our API. Now it should be more Swifty :tada:
+We're working hard on migration guide for our 1.x users and will publish it shortly.
+You can check out updated docs [here](http://getstream.io/chat/docs/)
+
 # [1.6.2](https://github.com/GetStream/stream-chat-swift/releases/tag/1.6.2)
 _April 2, 2020_
 

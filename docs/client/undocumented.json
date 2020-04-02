@@ -1,0 +1,831 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/BaseURL.swift",
+      "line": 13,
+      "symbol": "BaseURL.usEast",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/BaseURL.swift",
+      "line": 14,
+      "symbol": "BaseURL.dublin",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/BaseURL.swift",
+      "line": 18,
+      "symbol": "BaseURL.baseURL",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/BaseURL.swift",
+      "line": 19,
+      "symbol": "BaseURL.wsURL",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Events.swift",
+      "line": 35,
+      "symbol": "SubscriptionBag",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Events.swift",
+      "line": 38,
+      "symbol": "SubscriptionBag.add(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Events.swift",
+      "line": 59,
+      "symbol": "Client.subscribe(forEvents:cid:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Events.swift",
+      "line": 73,
+      "symbol": "Client.subscribeToUserUpdates(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Events.swift",
+      "line": 92,
+      "symbol": "Client.subscribeToUnreadCount(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Events.swift",
+      "line": 108,
+      "symbol": "Client.subscribeToUnreadCount(for:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Events.swift",
+      "line": 132,
+      "symbol": "Client.subscribeToWatcherCount(for:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Request.swift",
+      "line": 14,
+      "symbol": "Client.setupURLSession(token:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Request.swift",
+      "line": 23,
+      "symbol": "Client.authHeaders(token:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Request.swift",
+      "line": 44,
+      "symbol": "Client.checkLatestVersion()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Request.swift",
+      "line": 228,
+      "symbol": "Client.sendWaitingRequests()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Request.swift",
+      "line": 330,
+      "symbol": "Client.performInCallbackQueue(execute:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Request.swift",
+      "line": 340,
+      "symbol": "URLSessionTask.empty",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+Setup.swift",
+      "line": 130,
+      "symbol": "Client.touchTokenProvider(isExpiredTokenInProgress:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+UnreadCount.swift",
+      "line": 32,
+      "symbol": "Client.updateUserUnreadCount(event:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+UnreadCount.swift",
+      "line": 61,
+      "symbol": "Client.updateChannelsUnreadCount(event:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+WebSocket.swift",
+      "line": 14,
+      "symbol": "Client.setupWebSocket(user:token:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+WebSocket.swift",
+      "line": 58,
+      "symbol": "Client.setupWebSocketOnConnect(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client+WebSocket.swift",
+      "line": 67,
+      "symbol": "Client.webSocketOnEvent(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client.swift",
+      "line": 47,
+      "symbol": "Client.logOptions",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client.swift",
+      "line": 51,
+      "symbol": "Client.token",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Client.swift",
+      "line": 256,
+      "symbol": "Client.WaitingRequest",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/ClientError.swift",
+      "line": 49,
+      "symbol": "ClientError.channelsSearchQueryEmpty",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/ClientError.swift",
+      "line": 50,
+      "symbol": "ClientError.channelsSearchFilterEmpty",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/ClientError.swift",
+      "line": 190,
+      "symbol": "AnyError.init(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/ClientError.swift",
+      "line": 194,
+      "symbol": "AnyError.localizedDescription",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/ClientLogger.swift",
+      "line": 17,
+      "symbol": "ClientLogger.Level.error",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/ClientLogger.swift",
+      "line": 18,
+      "symbol": "ClientLogger.Level.debug",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/ClientLogger.swift",
+      "line": 19,
+      "symbol": "ClientLogger.Level.info",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 61,
+      "symbol": "Endpoint.deleteImage(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 63,
+      "symbol": "Endpoint.deleteFile(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 113,
+      "symbol": "Endpoint.method",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 124,
+      "symbol": "Endpoint.path",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 204,
+      "symbol": "Endpoint.queryItem",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 217,
+      "symbol": "Endpoint.jsonQueryItems",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 234,
+      "symbol": "Endpoint.body",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 324,
+      "symbol": "Endpoint.isUploading",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 346,
+      "symbol": "Endpoint.Method",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 347,
+      "symbol": "Endpoint.Method.get",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 348,
+      "symbol": "Endpoint.Method.post",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Client/Endpoint.swift",
+      "line": 349,
+      "symbol": "Endpoint.Method.delete",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Database.swift",
+      "line": 11,
+      "symbol": "Database",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Extensions/Array+Extensions.swift",
+      "line": 11,
+      "symbol": "Array.subscript(safe:)",
+      "symbol_kind": "source.lang.swift.decl.function.subscript",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Extensions/Codable+Extensions.swift",
+      "line": 76,
+      "symbol": "JSONEncoder.DataEncodingStrategy.gzip",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Extensions/Codable+Extensions.swift",
+      "line": 159,
+      "symbol": "Encodable.encodeSafely(to:logMessage:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Extensions/Data+Extensions.swift",
+      "line": 13,
+      "symbol": "Data.empty",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Extensions/Data+Extensions.swift",
+      "line": 15,
+      "symbol": "Data.prettyPrintedJSONString()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Extensions/Data+Extensions.swift",
+      "line": 21,
+      "symbol": "Data.append(_:encoding:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/Channel+UnreadCount.swift",
+      "line": 29,
+      "symbol": "Channel.updateUnreadCount(newMessage:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/Channel.swift",
+      "line": 126,
+      "symbol": "Channel.init(type:id:members:invitedMembers:extraData:created:deleted:createdBy:lastMessageDate:frozen:config:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/Channel.swift",
+      "line": 200,
+      "symbol": "Channel.subscribe(forEvents:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/Channel.swift",
+      "line": 207,
+      "symbol": "Channel.subscribeToUnreadCount(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/Channel.swift",
+      "line": 213,
+      "symbol": "Channel.subscribeToWatcherCount(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/Channel.swift",
+      "line": 349,
+      "symbol": "Channel.Config.init(reactionsEnabled:typingEventsEnabled:readEventsEnabled:connectEventsEnabled:uploadsEnabled:repliesEnabled:searchEnabled:mutesEnabled:urlEnrichmentEnabled:flagsEnabled:messageRetention:maxMessageLength:commands:created:updated:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/Channel.swift",
+      "line": 388,
+      "symbol": "Channel.Command.set",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/Channel.swift",
+      "line": 392,
+      "symbol": "Channel.Command.init(name:description:set:args:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/ChannelExtraData.swift",
+      "line": 25,
+      "symbol": "ChannelExtraData.init(name:imageURL:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/ChannelQuery.swift",
+      "line": 102,
+      "symbol": "ChannelUpdate",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/ChannelResponse.swift",
+      "line": 160,
+      "symbol": "InviteAnswer.notFound",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/ChannelResponse.swift",
+      "line": 161,
+      "symbol": "InviteAnswer.accepted",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/ChannelResponse.swift",
+      "line": 162,
+      "symbol": "InviteAnswer.rejected",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Channel/ChannelType.swift",
+      "line": 16,
+      "symbol": "ChannelType.custom(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Event.swift",
+      "line": 316,
+      "symbol": "Event.isNotification",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Filter.swift",
+      "line": 25,
+      "symbol": "Filter.Key",
+      "symbol_kind": "source.lang.swift.decl.typealias",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Filter.swift",
+      "line": 171,
+      "symbol": "Filter.&(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Filter.swift",
+      "line": 189,
+      "symbol": "Filter.&=(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Filter.swift",
+      "line": 193,
+      "symbol": "Filter.|(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Filter.swift",
+      "line": 211,
+      "symbol": "Filter.|=(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Filter.swift",
+      "line": 219,
+      "symbol": "Filter.currentUserInMembers",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/Attachment.swift",
+      "line": 241,
+      "symbol": "Attachment.ActionType.button",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/Attachment.swift",
+      "line": 246,
+      "symbol": "Attachment.ActionStyle.default",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/Attachment.swift",
+      "line": 247,
+      "symbol": "Attachment.ActionStyle.primary",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/AttachmentType.swift",
+      "line": 15,
+      "symbol": "AttachmentType.custom(_:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/AttachmentType.swift",
+      "line": 16,
+      "symbol": "AttachmentType.image",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/AttachmentType.swift",
+      "line": 17,
+      "symbol": "AttachmentType.imgur",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/AttachmentType.swift",
+      "line": 18,
+      "symbol": "AttachmentType.giphy",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/AttachmentType.swift",
+      "line": 19,
+      "symbol": "AttachmentType.video",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/AttachmentType.swift",
+      "line": 20,
+      "symbol": "AttachmentType.youtube",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/AttachmentType.swift",
+      "line": 21,
+      "symbol": "AttachmentType.product",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/AttachmentType.swift",
+      "line": 22,
+      "symbol": "AttachmentType.file",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/Message/Attachment/AttachmentType.swift",
+      "line": 23,
+      "symbol": "AttachmentType.link",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/UnreadCount.swift",
+      "line": 11,
+      "symbol": "UnreadCount.noUnread",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/UnreadCount.swift",
+      "line": 12,
+      "symbol": "UnreadCount.channels",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/UnreadCount.swift",
+      "line": 13,
+      "symbol": "UnreadCount.messages",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/UnreadCount.swift",
+      "line": 18,
+      "symbol": "ChannelUnreadCount.noUnread",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/UnreadCount.swift",
+      "line": 19,
+      "symbol": "ChannelUnreadCount.messages",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/UnreadCount.swift",
+      "line": 20,
+      "symbol": "ChannelUnreadCount.mentionedMessages",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/User/Member.swift",
+      "line": 95,
+      "symbol": "Member.Role.member",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/User/Member.swift",
+      "line": 96,
+      "symbol": "Member.Role.moderator",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/User/Member.swift",
+      "line": 97,
+      "symbol": "Member.Role.admin",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/User/Member.swift",
+      "line": 98,
+      "symbol": "Member.Role.owner",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/User/User.swift",
+      "line": 29,
+      "symbol": "User.Role",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/User/User.swift",
+      "line": 92,
+      "symbol": "User.isAnonymous",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Model/User/UserExtraData.swift",
+      "line": 30,
+      "symbol": "UserExtraData.init(name:avatarURL:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Token.swift",
+      "line": 31,
+      "symbol": "Token.payload",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/AssociatedValue.swift",
+      "line": 13,
+      "symbol": "associated(to:key:policy:initialiser:)",
+      "symbol_kind": "source.lang.swift.decl.function.free",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/AssociatedValue.swift",
+      "line": 31,
+      "symbol": "associate(to:key:value:policy:)",
+      "symbol_kind": "source.lang.swift.decl.function.free",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/Atomic.swift",
+      "line": 81,
+      "symbol": "Atomic.update(_:to:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/Atomic.swift",
+      "line": 89,
+      "symbol": "Atomic.append(to:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/Atomic.swift",
+      "line": 97,
+      "symbol": "Atomic.subscript(dynamicMember:)",
+      "symbol_kind": "source.lang.swift.decl.function.subscript",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/Atomic.swift",
+      "line": 114,
+      "symbol": "Atomic.subscript(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.subscript",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/Atomic.swift",
+      "line": 125,
+      "symbol": "Atomic.+=(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/Atomic.swift",
+      "line": 131,
+      "symbol": "Atomic.-=(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/Environment.swift",
+      "line": 12,
+      "symbol": "Environment",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/NestableCodingKey.swift",
+      "line": 32,
+      "symbol": "NestedKey.wrappedValue",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/Utils/NestableCodingKey.swift",
+      "line": 98,
+      "symbol": "NestableCodingKey.path",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/WebSocket/Connection.swift",
+      "line": 25,
+      "symbol": "Connection.isConnected",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/WebSocket/WebSocket.swift",
+      "line": 134,
+      "symbol": "WebSocket.disconnectInBackground()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/WebSocket/WebSocket.swift",
+      "line": 168,
+      "symbol": "WebSocket.disconnect(reason:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/WebSocket/WebSocket.swift",
+      "line": 187,
+      "symbol": "WebSocket.subscribe(forEvents:callback:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/WebSocket/WebSocket.swift",
+      "line": 222,
+      "symbol": "WebSocket.websocketDidConnect(socket:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/WebSocket/WebSocket.swift",
+      "line": 227,
+      "symbol": "WebSocket.websocketDidDisconnect(socket:error:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/WebSocket/WebSocket.swift",
+      "line": 231,
+      "symbol": "WebSocket.websocketDidReceiveMessage(socket:text:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/bahadir/stream/stream-chat-swift/Sources/Client/WebSocket/WebSocket.swift",
+      "line": 255,
+      "symbol": "WebSocket.websocketDidReceiveData(socket:data:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/bahadir/stream/stream-chat-swift"
+}
