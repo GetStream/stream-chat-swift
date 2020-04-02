@@ -158,6 +158,26 @@ public extension Reactive where Base == Client {
     
     // MARK: - Members
     
+    /// Add a user as a member to the channel.
+    /// - Parameters:
+    ///   - user: a user.
+    ///   - channel: a channel.
+    func add(user: User, to channel: Channel) -> Observable<ChannelResponse> {
+        connected(request({ [unowned base] completion in
+            base.add(user: user, to: channel, completion)
+        }))
+    }
+    
+    /// Add users as members to the channel.
+    /// - Parameters:
+    ///   - users: users.
+    ///   - channel: a channel.
+    func add(users: Set<User>, to channel: Channel) -> Observable<ChannelResponse> {
+        connected(request({ [unowned base] completion in
+            base.add(users: users, to: channel, completion)
+        }))
+    }
+    
     /// Add a member to the channel.
     /// - Parameters:
     ///   - member: a member.
@@ -175,6 +195,26 @@ public extension Reactive where Base == Client {
     func add(members: Set<Member>, to channel: Channel) -> Observable<ChannelResponse> {
         connected(request({ [unowned base] completion in
             base.add(members: members, to: channel, completion)
+        }))
+    }
+    
+    /// Remove a user as a member from the channel.
+    /// - Parameters:
+    ///   - user: a user.
+    ///   - channel: a channel.
+    func remove(user: User, from channel: Channel) -> Observable<ChannelResponse> {
+        connected(request({ [unowned base] completion in
+            base.remove(user: user, from: channel, completion)
+        }))
+    }
+    
+    /// Remove users as members from the channel.
+    /// - Parameters:
+    ///   - users: users.
+    ///   - channel: a channel.
+    func remove(users: Set<User>, from channel: Channel) -> Observable<ChannelResponse> {
+        connected(request({ [unowned base] completion in
+            base.remove(users: users, from: channel, completion)
         }))
     }
     

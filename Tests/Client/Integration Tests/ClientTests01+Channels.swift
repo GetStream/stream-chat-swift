@@ -252,7 +252,7 @@ final class ClientTests01_Channels: TestCase {
     
     func addMember(_ user: User, to channel: Channel, _ client: Client) {
         expect("added a member2") { expectation in
-            client.add(member: user.asMember, to: channel) {
+            client.add(user: user, to: channel) {
                 if let response = $0.value {
                     XCTAssertTrue(response.channel.members.contains(user.asMember))
                     expectation.fulfill()
@@ -263,7 +263,7 @@ final class ClientTests01_Channels: TestCase {
     
     func removeMember(_ user: User, from channel: Channel, _ client: Client) {
         expect("removed a member2") { expectation in
-            client.remove(member: user.asMember, from: channel) {
+            client.remove(user: user, from: channel) {
                 if let response = $0.value {
                     XCTAssertFalse(response.channel.members.contains(user.asMember))
                     expectation.fulfill()

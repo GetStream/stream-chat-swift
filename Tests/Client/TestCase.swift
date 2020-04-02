@@ -31,7 +31,7 @@ class TestCase: XCTestCase {
                               baseURL: Self.baseURL,
                               stayConnectedInBackground: false,
                               callbackQueue: .main,
-                              logOptions: .webSocket)
+                              logOptions: [])
     }
     
     override static func tearDown() {
