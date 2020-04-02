@@ -87,7 +87,7 @@ extension MessageTableViewCell {
         }
     }
 
-    func enrichText(with message: Message, 
+    func enrichText(with message: Message,
                     enrichURLs: Bool,
                     onSizeChanged: (() -> Void)? = nil) {
         messageTextEnrichment = MessageTextEnrichment(message, style: style, enrichURLs: enrichURLs)
@@ -110,7 +110,8 @@ extension MessageTableViewCell {
                 if newSize != previousSize {
                     onSizeChanged?()
                 }
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
     
     func update(reactionsString: String, action: @escaping ReactionAction) {

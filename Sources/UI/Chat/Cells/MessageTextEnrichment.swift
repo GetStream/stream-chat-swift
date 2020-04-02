@@ -232,7 +232,7 @@ private extension MessageTextEnrichment {
 }
 
 // MARK: Cache
-fileprivate var cache = NSCache<NSString, NSAttributedString>()
+private var cache = NSCache<NSString, NSAttributedString>()
 extension MessageTextEnrichment {
     private var cacheKey: NSString {
         return text as NSString
