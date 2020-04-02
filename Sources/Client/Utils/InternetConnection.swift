@@ -51,20 +51,25 @@ public final class InternetConnection {
     private var lastState: State = .unknown
     
     private lazy var reachability: Reachability? = {
-        let reachability = Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
-        
-        func handleReachability(_ reachability: Reachability) {
-            if case .none = reachability.connection {
-                state = .unavailable
-            } else {
-                state = .available
+        do {
+            let reachability = try Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
+            
+            func handleReachability(_ reachability: Reachability) {
+                if case .unavailable = reachability.connection {
+                    state = .unavailable
+                } else {
+                    state = .available
+                }
             }
+            
+            reachability.whenReachable = handleReachability
+            reachability.whenUnreachable = handleReachability
+            
+            return reachability
+        } catch {
+            log("❌ \(error)")
+            return nil
         }
-        
-        reachability?.whenReachable = handleReachability
-        reachability?.whenUnreachable = handleReachability
-        
-        return reachability
     }()
     
     /// Start observing the Internet connection state.
@@ -85,7 +90,7 @@ public final class InternetConnection {
                 try reachability.startNotifier()
                 self.log("Notifying started 🏃‍♂️")
                 
-                if case .none = reachability.connection {
+                if case .unavailable = reachability.connection {
                     self.state = .unavailable
                 } else {
                     self.state = .available
