@@ -191,7 +191,7 @@ extension User: Hashable {
 
 extension User {
     
-    /// A channel name.
+    /// User display name.
     public var name: String {
         get {
             extraData?.name ?? id
@@ -203,7 +203,7 @@ extension User {
         }
     }
     
-    /// An image of the channel.
+    /// Avatar image URL for the user.
     public var avatarURL: URL? {
         get {
             extraData?.avatarURL
