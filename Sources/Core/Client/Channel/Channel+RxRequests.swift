@@ -112,6 +112,18 @@ public extension Reactive where Base == Channel {
     
     // MARK: - Members
     
+    /// Add a user as a member to the channel.
+    /// - Parameter user: a member.
+    func add(user: User) -> Observable<ChannelResponse> {
+        Client.shared.rx.add(user: user, to: base)
+    }
+    
+    /// Add users as members to the channel.
+    /// - Parameter users: members.
+    func add(users: Set<User>) -> Observable<ChannelResponse> {
+        Client.shared.rx.add(users: users, to: base)
+    }
+    
     /// Add a member to the channel.
     /// - Parameter member: a member.
     func add(member: Member) -> Observable<ChannelResponse> {
@@ -122,6 +134,18 @@ public extension Reactive where Base == Channel {
     /// - Parameter members: members.
     func add(members: Set<Member>) -> Observable<ChannelResponse> {
         Client.shared.rx.add(members: members, to: base)
+    }
+    
+    /// Remove a user as a member from the channel.
+    /// - Parameter user: a user.
+    func remove(user: User) -> Observable<ChannelResponse> {
+        Client.shared.rx.remove(user: user, from: base)
+    }
+    
+    /// Remove users as members from the channel.
+    /// - Parameter users: users.
+    func remove(users: Set<User>) -> Observable<ChannelResponse> {
+        Client.shared.rx.remove(users: users, from: base)
     }
     
     /// Remove a member from the channel.
