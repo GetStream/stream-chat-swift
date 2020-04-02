@@ -8,7 +8,7 @@ Pod::Spec.new do |spec|
   spec.license = { :type => "BSD-3", :file => "LICENSE" }
   spec.author = { "Alexey Bukhtin" => "alexey@getstream.io" }
   spec.social_media_url = "https://getstream.io"
-  spec.swift_version = "5.0"
+  spec.swift_version = "5.1"
   spec.platform = :ios, "11.0"
   spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
   spec.requires_arc = true
@@ -17,7 +17,7 @@ Pod::Spec.new do |spec|
 
   spec.framework = "Foundation", "UIKit"
 
-  spec.dependency "Starscream", "~> 3.1.0"
-  spec.dependency "GzipSwift", "~> 5.0.0"
-  spec.dependency "ReachabilitySwift", "~> 4.3.0"
+  spec.dependency "Starscream", "~> 3.1"
+  spec.dependency "GzipSwift", "~> 5.1"
+  spec.dependency "ReachabilitySwift", "~> 5.0"
 end
