@@ -33,7 +33,7 @@ final class Application {
             
             func subscribe(for name: Notification.Name, state: UIApplication.State) -> NSObjectProtocol {
                 return center.addObserver(forName: name, object: nil, queue: nil) { [unowned self] _ in
-                    if let lastState = self.lastState, lastState != state {
+                    if self.lastState != state {
                         self.lastState = state
                         onState(state)
                     }
