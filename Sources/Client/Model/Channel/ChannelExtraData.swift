@@ -19,6 +19,11 @@ public protocol ChannelExtraDataCodable: Codable {
 
 /// A default channel extra data type with `name` and `imageURL` properties.
 public struct ChannelExtraData: ChannelExtraDataCodable {
+    private enum CodingKeys: String, CodingKey {
+        case name
+        case imageURL = "image"
+    }
+    
     public var name: String?
     public var imageURL: URL?
     
