@@ -45,6 +45,10 @@ public final class ChannelsPresenter: Presenter {
     /// with a selected channel presenter and this channel events filter.
     public var channelEventsFilter: StreamChatClient.Event.Filter?
     
+    /// It will trigger `channel.stopWatching()` for each channel, if needed when the presenter was deallocated.
+    /// It's no needed if you will disconnect when the presenter will be deallocated.
+    public var stopChannelsWatchingIfNeeded = false
+    
     let actions = PublishSubject<ViewChanges>()
     var disposeBagForInternalRequests = DisposeBag()
     
@@ -101,6 +105,7 @@ extension ChannelsPresenter {
         
         items.append(contentsOf: channels.map {
             let channelPresenter = ChannelPresenter(response: $0, queryOptions: queryOptions)
+            channelPresenter.stopWatchingIfNeeded = stopChannelsWatchingIfNeeded
             onChannelPresenterSetup?(channelPresenter)
             return .channelPresenter(channelPresenter)
         })
@@ -212,6 +217,7 @@ extension ChannelsPresenter {
         }
         
         let channelPresenter = ChannelPresenter(channel: channel, queryOptions: queryOptions)
+        channelPresenter.stopWatchingIfNeeded = stopChannelsWatchingIfNeeded
         onChannelPresenterSetup?(channelPresenter)
         // We need to load messages for new channel.
         loadChannelMessages(channelPresenter)
