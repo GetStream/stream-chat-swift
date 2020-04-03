@@ -50,6 +50,6 @@ extension UITapGestureRecognizer {
                                                             fractionOfDistanceBetweenInsertionPoints: nil)
         
         let attributes = attributedText.attributes(at: indexOfCharacter, effectiveRange: nil)
-        return (attributes[.attachment] ?? attributes[.link])  as? URL
+        return (attributes[.attachment] ?? attributes[.link]) as? URL
     }
 }
