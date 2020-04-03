@@ -87,6 +87,10 @@ public final class ChannelPresenter: Presenter {
     /// Uploader for images and files.
     public private(set) lazy var uploader = Uploader()
     
+    /// It will trigger `channel.stopWatching()` if needed when the presenter was deallocated.
+    /// It's no needed if you will disconnect when the presenter will be deallocated.
+    public var stopWatchingIfNeeded = false
+    
     /// Init a presenter with a given channel.
     ///
     /// - Parameters:
@@ -118,8 +122,14 @@ public final class ChannelPresenter: Presenter {
     }
     
     deinit {
-        if channel.didLoad, Client.shared.isConnected {
-            channel.stopWatching()
+        if stopWatchingIfNeeded, channel.didLoad {
+            let channel = self.channel
+            
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1 + .milliseconds(Int.random(in: 0...3000))) {
+                if Client.shared.isConnected {
+                    channel.stopWatching()
+                }
+            }
         }
     }
 }
