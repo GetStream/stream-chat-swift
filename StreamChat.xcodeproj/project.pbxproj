@@ -1786,7 +1786,7 @@
 		8A50696123CDEA31009F127A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatClient;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 			};
@@ -1795,7 +1795,7 @@
 		8A50696223CDEA31009F127A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatClient;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 			};
@@ -2025,7 +2025,7 @@
 		8AD5EC9822E9A3E8005CFAC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 			};
@@ -2034,7 +2034,7 @@
 		8AD5EC9922E9A3E8005CFAC9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 			};
@@ -2043,7 +2043,7 @@
 		8AD5ECA522E9B355005CFAC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 			};
@@ -2052,7 +2052,7 @@
 		8AD5ECA622E9B355005CFAC9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MARKETING_VERSION = 2.0.0;
+				MARKETING_VERSION = 2.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChatCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 			};
