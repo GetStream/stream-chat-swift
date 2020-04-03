@@ -13,9 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### 🐞 Fixed
-- Connection issue.
-- Channel image parsing.
-- Optionally stop watching channels when view controllers was deallocated. 
+- Connection issue [#155](https://github.com/GetStream/stream-chat-swift/issues/155).
+- Channel image parsing [#155](https://github.com/GetStream/stream-chat-swift/issues/155).
+- Optionally stop watching channels when view controllers was deallocated [#155](https://github.com/GetStream/stream-chat-swift/issues/155).
 
 # [2.0.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.0)
 _April 2, 2020_
