@@ -9,15 +9,15 @@
 import UIKit
 
 extension UITapGestureRecognizer {
-    func didTapAttributedTextInLabel(label: UILabel, inRange targetRange: NSRange) -> Bool {
+    func didTapUrlIn(label: UILabel) -> URL? {
         guard let attributedText = label.attributedText else {
-            return false
+            return nil
         }
         
         let locationOfTouchInLabel = location(in: label)
         
         guard locationOfTouchInLabel.x >= 0, locationOfTouchInLabel.y >= 0 else {
-            return false
+            return nil
         }
         
         // Create instances of NSLayoutManager, NSTextContainer and NSTextStorage.
@@ -49,6 +49,7 @@ extension UITapGestureRecognizer {
                                                             in: textContainer,
                                                             fractionOfDistanceBetweenInsertionPoints: nil)
         
-        return NSLocationInRange(indexOfCharacter, targetRange)
+        let attributes = attributedText.attributes(at: indexOfCharacter, effectiveRange: nil)
+        return (attributes[.attachment] ?? attributes[.link])  as? URL
     }
 }
