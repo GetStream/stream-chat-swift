@@ -10,6 +10,7 @@ import StreamChatClient
 import Reachability
 import RxSwift
 import RxCocoa
+import UIKit
 
 extension InternetConnection: ReactiveCompatible {
     fileprivate static var rxStateKey: UInt8 = 0
