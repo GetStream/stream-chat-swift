@@ -7,6 +7,7 @@
 //
 
 import StreamChatClient
+import Foundation
 import RxSwift
 
 /// A request type with a progress of a sending data.
