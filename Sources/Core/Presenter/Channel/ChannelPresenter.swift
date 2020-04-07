@@ -61,7 +61,7 @@ public final class ChannelPresenter: Presenter {
     /// The last parsed message from WebSocket events.
     public var lastMessage: Message? { lastMessageAtomic.get() }
     var lastAddedOwnMessage: Message?
-    var lastParsedEvent: StreamChatClient.Event?
+    var lastParsedEvent: ChannelEvent?
     var lastWebSocketEventViewChanges: ViewChanges?
     
     /// A list of typing users (see `TypingUser`).
@@ -82,7 +82,7 @@ public final class ChannelPresenter: Presenter {
     public var canReply: Bool { parentMessage == nil && channel.config.repliesEnabled }
     
     /// A filter to discard channel events.
-    public var eventsFilter: StreamChatClient.Event.Filter?
+    public var eventsFilter: ChannelEvent.Filter?
     
     /// Uploader for images and files.
     public private(set) lazy var uploader = Uploader()
@@ -209,13 +209,13 @@ extension ChannelPresenter {
     /// - Parameters:
     ///   - isTyping: a user typing action.
     ///   - completion: a completion block with `Event`.
-    public func sendEvent(isTyping: Bool, _ completion: @escaping Client.Completion<StreamChatClient.Event>) {
+    public func sendEvent(isTyping: Bool, _ completion: @escaping Client.Completion<ChannelEvent>) {
         rx.sendEvent(isTyping: isTyping).bindOnce(to: completion)
     }
     
     /// Send Read event if the app is active.
     /// - Returns: an observable completion.
-    public func markReadIfPossible(_ completion: @escaping Client.Completion<StreamChatClient.Event> = { _ in }) {
+    public func markReadIfPossible(_ completion: @escaping Client.Completion<ChannelEvent> = { _ in }) {
         rx.markReadIfPossible().bindOnce(to: completion)
     }
 }

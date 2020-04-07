@@ -14,8 +14,8 @@ extension Channel {
     
     /// Update the unread count if needed.
     /// - Parameter clientEvent: a client event.
-    func updateWatcherCount(clientEvent: ClientEvent) {
-        if case .notificationMessageNew(_, _, _, let watcherCount, _) = clientEvent {
+    func updateWatcherCount(event: ClientEvent) {
+        if case .notificationMessageNew(_, _, _, let watcherCount, _) = event {
             watcherCountAtomic.set(watcherCount)
         }
     }

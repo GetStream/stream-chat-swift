@@ -19,29 +19,24 @@ extension Channel {
 
 public extension Reactive where Base == Channel {
     
-    /// Observe all events for this channel.
-    var events: Observable<StreamChatClient.Event> {
-        associated(to: base, key: &Channel.rxOnEvent) { [unowned base] in
-            Observable<StreamChatClient.Event>.create({ observer in
-                let subscription = base.subscribe { observer.onNext($0) }
-                return Disposables.create { subscription.cancel() }
-            })
-                .share()
-        }
-    }
-    
     /// Observe events with a given event type and channel.
     /// - Parameter eventType: an event type.
     /// - Returns: an observable channel events.
-    func events(for type: EventType) -> Observable<StreamChatClient.Event> {
-        events.filter({ $0.type == type }).share()
+    func events(for type: ChannelEventType) -> Observable<ChannelEvent> {
+        events(for: [type])
     }
     
     /// Observe events with a given event types and channel.
     /// - Parameter eventTypes: event types.
     /// - Returns: an observable channel events.
-    func events(for types: Set<EventType> = Set(EventType.allCases)) -> Observable<StreamChatClient.Event> {
-        events.filter({ types.contains($0.type) }).share()
+    func events(for types: Set<ChannelEventType> = Set(ChannelEventType.allCases)) -> Observable<ChannelEvent> {
+        associated(to: base, key: &Channel.rxOnEvent) { [unowned base] in
+            Observable<ChannelEvent>.create({ observer in
+                let subscription = base.subscribe(forEvents: types) { observer.onNext($0) }
+                return Disposables.create { subscription.cancel() }
+            })
+                .share()
+        }
     }
     
     // MARK: - Unread Count

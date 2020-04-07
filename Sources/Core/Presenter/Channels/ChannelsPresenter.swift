@@ -38,12 +38,12 @@ public final class ChannelsPresenter: Presenter {
     public var onChannelPresenterSetup: OnChannelPresenterSetup?
     
     /// A filter for channels events.
-    public var eventsFilter: StreamChatClient.Event.Filter?
+    public var eventsFilter: ChannelEvent.Filter?
     
     /// A filter for a selected channel events.
     /// When a user select a channel, then `ChannelsViewController` create a `ChatViewController`
     /// with a selected channel presenter and this channel events filter.
-    public var channelEventsFilter: StreamChatClient.Event.Filter?
+    public var channelEventsFilter: ChannelEvent.Filter?
     
     /// It will trigger `channel.stopWatching()` for each channel, if needed when the presenter was deallocated.
     /// It's no needed if you will disconnect when the presenter will be deallocated.
@@ -126,47 +126,47 @@ extension ChannelsPresenter {
 // MARK: - WebSocket Events Parsing
 
 extension ChannelsPresenter {
-    func parse(event: StreamChatClient.Event) -> ViewChanges {
-        if event.isNotification {
-            return parseNotifications(event: event)
-        }
-        
-        guard let cid = event.cid else {
+    func parse(event: AnyEvent) -> ViewChanges {
+        guard case .channel(let channelEvent) = event else {
+            if case .client(let clientEvent) = event {
+                return parseNotifications(event: clientEvent)
+            }
+            
             return .none
         }
         
-        switch event {
+        switch channelEvent {
         case .channelUpdated(let channelResponse, _, _):
             if let index = items.firstIndex(where: channelResponse.channel.cid),
                 let channelPresenter = items[index].channelPresenter {
-                channelPresenter.parse(event: event)
+                channelPresenter.parse(event: channelEvent)
                 return .itemsUpdated([index], [], items)
             }
             
         case .channelDeleted:
-            if let index = items.firstIndex(where: cid) {
+            if let index = items.firstIndex(where: channelEvent.cid) {
                 items.remove(at: index)
                 return .itemRemoved(index, items)
             }
             
         case .channelHidden:
-            if let index = items.firstIndex(where: cid) {
+            if let index = items.firstIndex(where: channelEvent.cid) {
                 items.remove(at: index)
                 return .itemRemoved(index, items)
             }
             
         case .messageNew:
-            return parseNewMessage(event: event)
+            return parseNewMessage(event: channelEvent)
             
         case .messageDeleted(let message, _, _, _):
-            if let index = items.firstIndex(where: cid),
+            if let index = items.firstIndex(where: channelEvent.cid),
                 let channelPresenter = items[index].channelPresenter {
-                channelPresenter.parse(event: event)
+                channelPresenter.parse(event: channelEvent)
                 return .itemsUpdated([index], [message], items)
             }
             
         case .messageRead:
-            if let index = items.firstIndex(where: cid) {
+            if let index = items.firstIndex(where: channelEvent.cid) {
                 return .itemsUpdated([index], [], items)
             }
             
@@ -177,7 +177,7 @@ extension ChannelsPresenter {
         return .none
     }
     
-    private func parseNotifications(event: StreamChatClient.Event) -> ViewChanges {
+    private func parseNotifications(event: ClientEvent) -> ViewChanges {
         switch event {
         case .notificationAddedToChannel(let channel, _, _):
             return parseNewChannel(channel: channel)
@@ -194,11 +194,10 @@ extension ChannelsPresenter {
         return .none
     }
     
-    private func parseNewMessage(event: StreamChatClient.Event) -> ViewChanges {
-        guard let cid = event.cid,
-            let index = items.firstIndex(where: cid),
+    private func parseNewMessage(event: ChannelEvent) -> ViewChanges {
+        guard let index = items.firstIndex(where: event.cid),
             let channelPresenter = items.remove(at: index).channelPresenter else {
-                return .none
+            return .none
         }
         
         channelPresenter.parse(event: event)

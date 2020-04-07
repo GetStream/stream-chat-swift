@@ -16,10 +16,8 @@ public extension Reactive where Base == Client {
         queryChannel(channel, messagesPagination: .limit(1), options: [.watch, .state])
             .map { $0.channel }
             .flatMapLatest({ [unowned base] channel -> Observable<Int> in
-                base.rx.events(for: [.userStartWatching,
-                                     .userStopWatching,
-                                     .messageNew,
-                                     .notificationMessageNew],
+                base.rx.events(forEvents: [.notificationMessageNew],
+                               forChannelEvents: [.userStartWatching, .userStopWatching, .messageNew],
                                cid: channel.cid)
                     .map { _ in channel.watcherCount }
                     .startWith(channel.watcherCount)

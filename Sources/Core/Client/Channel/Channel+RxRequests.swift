@@ -100,13 +100,13 @@ public extension Reactive where Base == Channel {
     }
     
     /// Mark messages in the channel as read.
-    func markRead() -> Observable<StreamChatClient.Event> {
+    func markRead() -> Observable<ChannelEvent> {
         Client.shared.rx.markRead(channel: base)
     }
     
     /// Send an event.
     /// - Parameter eventType: an event type.
-    func send(eventType: EventType) -> Observable<StreamChatClient.Event> {
+    func send(eventType: ChannelEventType) -> Observable<ChannelEvent> {
         Client.shared.rx.send(eventType: eventType, to: base)
     }
     

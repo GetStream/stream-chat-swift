@@ -24,7 +24,7 @@
 8. Commit updated docs to the repo.
 9. Add release notes: https://github.com/GetStream/stream-chat-swift/releases
 10. Push the release to the Cocoapods: 
-  - `pod trunk push StreamChatColient.podspec`
+  - `pod trunk push StreamChatClient.podspec`
   - `pod trunk push StreamChatCore.podspec`
   - `pod trunk push StreamChat.podspec`
 

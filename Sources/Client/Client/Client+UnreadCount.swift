@@ -30,10 +30,10 @@ import Foundation
 
 extension Client {
     
-    func updateUserUnreadCount(clientEvent: ClientEvent) {
+    func updateUserUnreadCount(event: ClientEvent) {
         var updatedUnreadCount = UnreadCount.noUnread
         
-        switch clientEvent {
+        switch event {
         case .notificationMarkAllRead:
             break
         case .notificationAddedToChannel(_, let unreadCount, _),
@@ -68,8 +68,8 @@ extension Client {
 
 extension Client {
     
-    func updateChannelsUnreadCount(clientEvent: ClientEvent) {
-        if case .notificationMarkAllRead(let messageRead, _) = clientEvent {
+    func updateChannelsUnreadCount(event: ClientEvent) {
+        if case .notificationMarkAllRead(let messageRead, _) = event {
             channelsAtomic.get(default: [:]).forEach {
                 $0.value.forEach {
                     if let channel = $0.value {
@@ -77,7 +77,7 @@ extension Client {
                     }
                 }
             }
-        } else if case .notificationMessageNew(let message, let channel, _, _, _) = clientEvent {
+        } else if case .notificationMessageNew(let message, let channel, _, _, _) = event {
             if let channels = channelsAtomic[channel.cid] {
                 channels.forEach {
                     if let watchingChannel = $0.value, watchingChannel.cid == channel.cid {
@@ -95,7 +95,7 @@ extension Client {
         
         channels.forEach {
             if let channel = $0.value {
-                channel.updateWatcherCount(channelEvent:  channelEvent)
+                channel.updateWatcherCount(channelEvent: channelEvent)
                 
                 if channel.readEventsEnabled {
                     channel.updateUnreadCount(channelEvent: channelEvent)

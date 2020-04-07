@@ -11,7 +11,7 @@ public protocol EventType: Codable, CaseIterable {}
 
 /// An event protocol.
 public protocol Event: Decodable {
-    associatedtype T = EventType
+    associatedtype T = EventType // swiftlint:disable:this type_name
     
     /// An event type.
     var type: T { get }
@@ -22,6 +22,14 @@ public protocol Event: Decodable {
 
 extension Event {
     var cid: ChannelId? { nil }
+}
+
+/// Any event.
+public enum AnyEvent {
+    /// A client event.
+    case client(ClientEvent)
+    /// A channel event.
+    case channel(ChannelEvent)
 }
 
 // MARK: Event Response

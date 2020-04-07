@@ -684,6 +684,7 @@
 				8ACC7BB1241924AD000750E4 /* WebSocket */,
 				8ACC7BF8241924AD000750E4 /* URL Session Task */,
 				8ACC7BC3241924AD000750E4 /* Model */,
+				8ACC7BB5241924AD000750E4 /* Utils */,
 				8ACC7BBA241924AD000750E4 /* Extensions */,
 			);
 			path = Client;
@@ -731,7 +732,6 @@
 			isa = PBXGroup;
 			children = (
 				8ADE7156243B505B0043CCD7 /* Events */,
-				8ACC7BB5241924AD000750E4 /* Utils */,
 				8ACC7BC4241924AD000750E4 /* UnreadCount.swift */,
 				8ACC7BC7241924AD000750E4 /* Message */,
 				8ACC7BD2241924AD000750E4 /* Sorting.swift */,

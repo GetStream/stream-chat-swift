@@ -236,6 +236,10 @@ extension WebSocket {
 
 extension WebSocket: WebSocketDelegate {
     
+    private struct EventTypeResponse: Decodable {
+        let type: String
+    }
+    
     private struct ErrorContainer: Decodable {
         /// A server error was recieved.
         let error: ClientErrorResponse
@@ -252,8 +256,13 @@ extension WebSocket: WebSocketDelegate {
             return
         }
         
+        guard let eventTypeResponse = try? JSONDecoder.stream.decode(EventTypeResponse.self, from: data) else {
+            logger?.log("📦 Can't get event type from the message: \(text)", level: .error)
+            return
+        }
+        
         // Parse channel events.
-        if let channelEvent: ChannelEvent = parseEvent(data) {
+        if ChannelEventType(rawValue: eventTypeResponse.type) != nil, let channelEvent: ChannelEvent = parseEvent(data) {
             onChannelEventObservers.values.forEach({ $0(channelEvent) })
             return
         }

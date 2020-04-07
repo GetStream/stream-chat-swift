@@ -140,7 +140,7 @@ public extension Reactive where Base == Client {
     /// Mark messages in the channel as read.
     /// - Parameters:
     ///   - channel: a channel.
-    func markRead(channel: Channel) -> Observable<StreamChatClient.Event> {
+    func markRead(channel: Channel) -> Observable<ChannelEvent> {
         connected(request({ [unowned base] completion in
             base.markRead(channel: channel, completion)
         }))
@@ -150,7 +150,7 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - eventType: an event type.
     ///   - channel: a channel.
-    func send(eventType: EventType, to channel: Channel) -> Observable<StreamChatClient.Event> {
+    func send(eventType: ChannelEventType, to channel: Channel) -> Observable<ChannelEvent> {
         connected(request({ [unowned base] completion in
             base.send(eventType: eventType, to: channel, completion)
         }))

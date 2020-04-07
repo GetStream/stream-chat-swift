@@ -62,7 +62,7 @@ public final class Client {
     /// A web socket client.
     lazy var webSocket = WebSocket()
     /// The current WebSocket connection.
-    var connectionState: ConnectionState { webSocket.connectionState }
+    public var connectionState: ConnectionState { webSocket.connectionState }
     /// A WebSocket connection callback. This should only be used when you only use the Low-Level Client.
     var onConnect: Client.OnConnect = { _ in }
     /// Check if API key and token are valid and the web socket is connected.
@@ -229,6 +229,7 @@ public final class Client {
     public func disconnect() {
         logger?.log("Disconnecting deliberately...")
         reset()
+        subscriptionBag.cancel()
         Application.shared.onStateChanged = nil
         InternetConnection.shared.stopNotifier()
     }

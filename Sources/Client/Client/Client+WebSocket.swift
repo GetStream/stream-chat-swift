@@ -73,8 +73,8 @@ extension Client {
             return
         }
         
-        updateUserUnreadCount(clientEvent: event) // User unread counts should be updated before channels unread counts.
-        updateChannelsUnreadCount(clientEvent: event)
+        updateUserUnreadCount(event: event) // User unread counts should be updated before channels unread counts.
+        updateChannelsUnreadCount(event: event)
     }
     
     func observeChannelEvents(_ event: ChannelEvent) {

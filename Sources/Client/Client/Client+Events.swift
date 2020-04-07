@@ -35,18 +35,42 @@ struct Subscription: Cancellable {
 public final class SubscriptionBag: Cancellable {
     private var subscriptions = [Cancellable]()
     
-    @discardableResult
-    public func add(_ subscription: Cancellable) -> Self {
+    public func add(_ subscription: Cancellable) {
         subscriptions.append(subscription)
+    }
+    
+    @discardableResult
+    public func adding(_ subscription: Cancellable) -> Self {
+        add(subscription)
         return self
     }
     
     public func cancel() {
         subscriptions.forEach { $0.cancel() }
+        subscriptions = []
     }
 }
 
 extension Client {
+    
+    /// Observe all events.
+    /// - Parameters:
+    ///   - eventTypes: A set of client event types to be observed. Defaults to all client events.
+    ///   - channelEventTypes: A set of channel event types to be observed. Defaults to all channel events.
+    ///   - cid: a channel id.
+    ///   - callback: Callback closure to be called for each new event.
+    /// - Returns: `Subscription` object to be able to cancel observing.
+    ///            Call `subscription.cancel()` when you want to stop observing.
+    /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks,
+    ///            so make sure you handle subscriptions correctly.
+    public func subscribe(forEvents eventTypes: Set<ClientEventType> = Set(ClientEventType.allCases),
+                          forChannelEvents channelEventTypes: Set<ChannelEventType> = Set(ChannelEventType.allCases),
+                          cid: ChannelId? = nil,
+                          _ callback: @escaping OnEvent<AnyEvent>) -> Cancellable {
+        SubscriptionBag()
+            .adding(subscribe(forEvents: eventTypes, { callback(.client($0)) }))
+            .adding(subscribe(forChannelEvents: channelEventTypes, cid: cid, { callback(.channel($0)) }))
+    }
     
     /// Observe events for the given client event types.
     /// - Parameters:
@@ -56,14 +80,23 @@ extension Client {
     ///            Call `subscription.cancel()` when you want to stop observing.
     /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks,
     ///            so make sure you handle subscriptions correctly.
-    public func subscribe(forClientEvents eventTypes: Set<ClientEventType> = Set(ClientEventType.allCases),
+    public func subscribe(forEvents eventTypes: Set<ClientEventType> = Set(ClientEventType.allCases),
                           _ callback: @escaping OnEvent<ClientEvent>) -> Cancellable {
         webSocket.subscribe(forEvents: eventTypes, callback)
     }
     
-    func subscribe(forChannelEvents eventTypes: Set<ChannelEventType> = Set(ChannelEventType.allCases),
-                   cid: ChannelId? = nil,
-                   _ callback: @escaping OnEvent<ChannelEvent>) -> Cancellable {
+    /// Observe events for the given channel event types.
+    /// - Parameters:
+    ///   - eventTypes: A set of channel event types to be observed. Defaults to all channel events.
+    ///   - cid: a channel id.
+    ///   - callback: Callback closure to be called for each new event.
+    /// - Returns: `Subscription` object to be able to cancel observing.
+    ///            Call `subscription.cancel()` when you want to stop observing.
+    /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks,
+    ///            so make sure you handle subscriptions correctly.
+    public func subscribe(forChannelEvents eventTypes: Set<ChannelEventType> = Set(ChannelEventType.allCases),
+                          cid: ChannelId? = nil,
+                          _ callback: @escaping OnEvent<ChannelEvent>) -> Cancellable {
         webSocket.subscribe(forEvents: eventTypes, callback)
     }
     
@@ -121,7 +154,7 @@ extension Client {
             }
         }
         
-        return subscriptions.add(Subscription { _ in urlSessionTask.cancel() })
+        return subscriptions.adding(Subscription { _ in urlSessionTask.cancel() })
     }
     
     func subscribeToWatcherCount(for channel: Channel, _ callback: @escaping Completion<Int>) -> Cancellable {
@@ -142,14 +175,14 @@ extension Client {
             let channelEventTypes: Set<ChannelEventType> = [.userStartWatching, .userStopWatching, .messageNew]
             
             subscriptions
-                .add(self.subscribe(forClientEvents: [.notificationMessageNew]) { _ in
+                .adding(self.subscribe(forEvents: [.notificationMessageNew]) { _ in
                     callback(.success(channel.watcherCount))
                 })
-                .add(self.subscribe(forChannelEvents: channelEventTypes, cid: response.channel.cid) { _ in
+                .adding(self.subscribe(forChannelEvents: channelEventTypes, cid: response.channel.cid) { _ in
                     callback(.success(channel.watcherCount))
                 })
         }
         
-        return subscriptions.add(Subscription { _ in urlSessionTask.cancel() })
+        return subscriptions.adding(Subscription { _ in urlSessionTask.cancel() })
     }
 }

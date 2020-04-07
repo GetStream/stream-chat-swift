@@ -248,13 +248,13 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     }
     
     /// Updates for `FooterView` and `ComposerView` with the client connection.
-    open func update(for connection: Connection) {
+    open func update(for connectionState: ConnectionState) {
         // Update footer.
         updateFooterView()
         
         // Update composer view.
         if composerView.superview != nil {
-            if connection == .connected {
+            if connectionState.isConnected {
                 if composerView.styleState == .disabled {
                     composerView.styleState = .normal
                 }

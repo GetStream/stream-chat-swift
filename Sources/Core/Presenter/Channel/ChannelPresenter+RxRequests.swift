@@ -114,7 +114,7 @@ public extension Reactive where Base == ChannelPresenter {
     
     /// Send a typing event.
     /// - Parameter isTyping: a user typing action.
-    func sendEvent(isTyping: Bool) -> Observable<StreamChatClient.Event> {
+    func sendEvent(isTyping: Bool) -> Observable<ChannelEvent> {
         guard base.parentMessage == nil else {
             return .empty()
         }
@@ -134,7 +134,7 @@ public extension Reactive where Base == ChannelPresenter {
     
     /// Send Read event if the app is active.
     /// - Returns: an observable completion.
-    func markReadIfPossible() -> Observable<StreamChatClient.Event> {
+    func markReadIfPossible() -> Observable<ChannelEvent> {
         guard InternetConnection.shared.isAvailable, base.channel.readEventsEnabled else {
             return .empty()
         }
@@ -179,7 +179,7 @@ private extension Reactive where Base == ChannelPresenter {
     }
     
     var webSocketEvents: Driver<ViewChanges> {
-        Client.shared.rx.events(cid: base.channel.cid)
+        Client.shared.rx.channelEvents(cid: base.channel.cid)
             .filter({ [weak base] event in
                 if let eventsFilter = base?.eventsFilter {
                     return eventsFilter(event, base?.channel)

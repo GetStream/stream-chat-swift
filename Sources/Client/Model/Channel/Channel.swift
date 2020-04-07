@@ -199,15 +199,15 @@ public final class Channel: Codable {
     
     public func subscribe(forEvents eventTypes: Set<ChannelEventType> = Set(ChannelEventType.allCases),
                           _ callback: @escaping OnEvent<ChannelEvent>) -> Cancellable {
-        subscriptionBag.add(Client.shared.subscribe(forChannelEvents: eventTypes, cid: cid, callback))
+        subscriptionBag.adding(Client.shared.subscribe(forChannelEvents: eventTypes, cid: cid, callback))
     }
     
     public func subscribeToUnreadCount(_ callback: @escaping Client.Completion<ChannelUnreadCount>) -> Cancellable {
-        subscriptionBag.add(Client.shared.subscribeToUnreadCount(for: self, callback))
+        subscriptionBag.adding(Client.shared.subscribeToUnreadCount(for: self, callback))
     }
     
     public func subscribeToWatcherCount(_ callback: @escaping Client.Completion<Int>) -> Cancellable {
-        subscriptionBag.add(Client.shared.subscribeToWatcherCount(for: self, callback))
+        subscriptionBag.adding(Client.shared.subscribeToWatcherCount(for: self, callback))
     }
 }
 

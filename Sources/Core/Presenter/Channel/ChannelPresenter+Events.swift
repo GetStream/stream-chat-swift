@@ -16,7 +16,7 @@ import RxCocoa
 extension ChannelPresenter {
     
     @discardableResult
-    func parse(event: StreamChatClient.Event) -> ViewChanges {
+    func parse(event: ChannelEvent) -> ViewChanges {
         if let lastWebSocketEvent = lastParsedEvent,
             event == lastWebSocketEvent,
             let lastViewChanges = lastWebSocketEventViewChanges {

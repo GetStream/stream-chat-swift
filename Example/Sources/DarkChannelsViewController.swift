@@ -45,17 +45,29 @@ final class DarkChannelsViewController: ChannelsViewController {
     }
     
     func observeInvites() {
-        Client.shared.rx.events(for: [.notificationInvited,
-                                      .notificationInviteAccepted,
-                                      .notificationInviteRejected,
-                                      .memberUpdated])
+        Client.shared.rx.events(forEvents: [.notificationInvited,
+                                            .notificationInviteAccepted,
+                                            .notificationInviteRejected],
+                                forChannelEvents: [.memberUpdated])
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] event in self?.handleInviteEvent(event) })
             .disposed(by: disposeBag)
     }
     
-    func handleInviteEvent(_ event: StreamChatClient.Event) {
-        if case .notificationInvited(let channel, _) = event {
+    func handleInviteEvent(_ event: AnyEvent) {
+        guard case .client(let clientEvent) = event else {
+            if case .channel(let channelEvent) = event, case .memberUpdated(let member, _, _) = channelEvent {
+                if member.inviteAccepted != nil {
+                    Banners.shared.show("🙋🏻‍♀️ \(member.user.name) accepted invite")
+                } else if member.inviteRejected != nil {
+                    Banners.shared.show("🙅🏻‍♀️ \(member.user.name) rejected invite")
+                }
+            }
+            
+            return
+        }
+        
+        if case .notificationInvited(let channel, _) = clientEvent {
             let alert = UIAlertController(title: "Invite",
                                           message: "You are invited to the \(channel.name ?? "<?>") channel",
                 preferredStyle: .alert)
@@ -72,21 +84,13 @@ final class DarkChannelsViewController: ChannelsViewController {
             return
         }
         
-        if case .notificationInviteAccepted = event {
+        if case .notificationInviteAccepted = clientEvent {
             Banners.shared.show("🙋🏻‍♀️ Invite accepted")
             presenter.reload()
         }
         
-        if case .notificationInviteRejected = event {
+        if case .notificationInviteRejected = clientEvent {
             Banners.shared.show("🙅🏻‍♀️ Invite rejected")
-        }
-        
-        if case .memberUpdated(let member, _, _) = event {
-            if member.inviteAccepted != nil {
-                Banners.shared.show("🙋🏻‍♀️ \(member.user.name) accepted invite")
-            } else if member.inviteRejected != nil {
-                Banners.shared.show("🙅🏻‍♀️ \(member.user.name) rejected invite")
-            }
         }
     }
     
