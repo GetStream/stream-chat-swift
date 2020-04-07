@@ -48,7 +48,18 @@ public extension Reactive where Base == Channel {
     
     /// An observable channel unread count.
     var unreadCount: Observable<ChannelUnreadCount> {
-        Client.shared.rx.channelUnreadCount(base)
+        .create { [unowned base] (observer) -> Disposable in
+            let subscription = base.subscribeToUnreadCount { (result) in
+                do {
+                    let response = try result.get()
+                    observer.onNext(response)
+                } catch {
+                    observer.onError(error)
+                }
+            }
+            
+            return Disposables.create { subscription.cancel() }
+        }
     }
     
     /// An observable channel isUnread state.

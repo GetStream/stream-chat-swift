@@ -102,7 +102,7 @@ public final class ChannelPresenter: Presenter {
         channelId = channel.id
         self.parentMessage = parentMessage
         self.queryOptions = queryOptions
-        super.init(pageSize: .messagesPageSize)
+        super.init(pageSize: [.messagesPageSize])
         channelAtomic.set(channel)
     }
     
@@ -117,7 +117,7 @@ public final class ChannelPresenter: Presenter {
         parentMessage = nil
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
-        super.init(pageSize: .messagesPageSize)
+        super.init(pageSize: [.messagesPageSize])
         parse(response: response)
     }
     

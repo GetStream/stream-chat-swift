@@ -28,7 +28,7 @@ public struct SearchQuery: Encodable {
     ///   - filter: a filter for channels, e.g. `"members", .in(["john"])`
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
-    public init(filter: Filter, query: String, pagination: Pagination = .channelsPageSize) {
+    public init(filter: Filter, query: String, pagination: Pagination = [.channelsPageSize]) {
         self.filter = filter
         self.query = query
         self.pagination = pagination

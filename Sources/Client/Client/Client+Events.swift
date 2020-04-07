@@ -108,7 +108,7 @@ extension Client {
     func subscribeToUnreadCount(for channel: Channel, _ callback: @escaping Completion<ChannelUnreadCount>) -> Cancellable {
         let subscriptions = SubscriptionBag()
         
-        let query = ChannelQuery(channel: channel, messagesPagination: .limit(100), options: [.state, .watch])
+        let query = ChannelQuery(channel: channel, messagesPagination: [.limit(100)], options: [.state, .watch])
         
         let urlSessionTask = queryChannel(query: query) { [unowned self] result in
             if let error = result.error {
@@ -132,7 +132,7 @@ extension Client {
     func subscribeToWatcherCount(for channel: Channel, _ callback: @escaping Completion<Int>) -> Cancellable {
         let subscriptions = SubscriptionBag()
         
-        let query = ChannelQuery(channel: channel, messagesPagination: .limit(1), options: [.state, .watch])
+        let query = ChannelQuery(channel: channel, messagesPagination: [.limit(1)], options: [.state, .watch])
         
         let urlSessionTask = queryChannel(query: query) { [unowned self] result in
             if let error = result.error {

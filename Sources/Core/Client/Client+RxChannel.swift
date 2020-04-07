@@ -32,9 +32,9 @@ public extension Reactive where Base == Client {
     ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
     ///   - options: a query options. All by default (see `QueryOptions`), e.g. `.watch`.
     func queryChannel(_ channel: Channel,
-                      messagesPagination: Pagination = .none,
-                      membersPagination: Pagination = .none,
-                      watchersPagination: Pagination = .none,
+                      messagesPagination: Pagination = [],
+                      membersPagination: Pagination = [],
+                      watchersPagination: Pagination = [],
                       options: QueryOptions = []) -> Observable<ChannelResponse> {
         queryChannel(query: .init(channel: channel,
                                   messagesPagination: messagesPagination,
