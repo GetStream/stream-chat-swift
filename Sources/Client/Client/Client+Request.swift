@@ -155,7 +155,7 @@ extension Client {
         
         var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
         
-        if let connectionId = webSocket.lastConnectionId {
+        if let connectionId = webSocket.connectionId {
             queryItems.append(URLQueryItem(name: "client_id", value: connectionId))
         }
         
@@ -230,9 +230,9 @@ extension Client {
         waitingRequests.forEach { $0.perform() }
         
         performInCallbackQueue { [unowned self] in
-            if !self.isExpiredTokenInProgress {
+            if !self.isExpiredTokenInProgress, let connectionId = self.webSocket.connectionId {
                 self.waitingRequests = []
-                self.onConnect(.connected)
+                self.onConnect(.connected(UserConnection(user: User.current, connectionId: connectionId)))
             }
         }
     }

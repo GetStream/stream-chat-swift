@@ -197,23 +197,17 @@ public final class Channel: Codable {
         unreadCountAtomic.set(.noUnread)
     }
     
-    public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
-                          _ callback: @escaping Client.OnEvent) -> Cancellable {
-        let subscription = Client.shared.subscribe(forEvents: eventTypes, cid: cid, callback)
-        subscriptionBag.add(subscription)
-        return subscription
+    public func subscribe(forEvents eventTypes: Set<ChannelEventType> = Set(ChannelEventType.allCases),
+                          _ callback: @escaping OnEvent<ChannelEvent>) -> Cancellable {
+        subscriptionBag.add(Client.shared.subscribe(forChannelEvents: eventTypes, cid: cid, callback))
     }
     
     public func subscribeToUnreadCount(_ callback: @escaping Client.Completion<ChannelUnreadCount>) -> Cancellable {
-        let subscription = Client.shared.subscribeToUnreadCount(for: self, callback)
-        subscriptionBag.add(subscription)
-        return subscription
+        subscriptionBag.add(Client.shared.subscribeToUnreadCount(for: self, callback))
     }
     
     public func subscribeToWatcherCount(_ callback: @escaping Client.Completion<Int>) -> Cancellable {
-        let subscription = Client.shared.subscribeToWatcherCount(for: self, callback)
-        subscriptionBag.add(subscription)
-        return subscription
+        subscriptionBag.add(Client.shared.subscribeToWatcherCount(for: self, callback))
     }
 }
 
@@ -447,12 +441,6 @@ public struct MessageResponse: Decodable {
         case reaction
         case channel = "message/channel"
     }
-}
-
-/// An event response.
-public struct EventResponse: Decodable {
-    /// An event (see `Event`).
-    public let event: Event
 }
 
 /// A file upload response.

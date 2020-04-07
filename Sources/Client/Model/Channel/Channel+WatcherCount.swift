@@ -11,14 +11,22 @@ import Foundation
 // MARK: Watcher Count
 
 extension Channel {
+    
     /// Update the unread count if needed.
-    /// - Parameter response: a web socket event.
-    func updateWatcherCount(event: Event) {
-        switch event {
+    /// - Parameter clientEvent: a client event.
+    func updateWatcherCount(clientEvent: ClientEvent) {
+        if case .notificationMessageNew(_, _, _, let watcherCount, _) = clientEvent {
+            watcherCountAtomic.set(watcherCount)
+        }
+    }
+    
+    /// Update the unread count if needed.
+    /// - Parameter channelEvent: a channel event.
+    func updateWatcherCount(channelEvent: ChannelEvent) {
+        switch channelEvent {
         case .userStartWatching(_, let watcherCount, _, _),
              .userStopWatching(_, let watcherCount, _, _),
-             .messageNew(_, let watcherCount, _, _),
-             .notificationMessageNew(_, _, _, let watcherCount, _):
+             .messageNew(_, let watcherCount, _, _):
             watcherCountAtomic.set(watcherCount)
         default:
             break

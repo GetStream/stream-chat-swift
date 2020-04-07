@@ -9,29 +9,36 @@
 import Foundation
 
 /// A web socket connection state.
-public enum Connection: Equatable {
+public enum ConnectionState: Equatable {
     
     /// The websocket is not connected.
     case notConnected
     /// The websocket was connected, waiting for a `connectionId` for requests.
     case connecting
     /// The websocket was connected.
-    case connected
+    case connected(UserConnection)
     /// The websocket is disconnecting.
     case disconnecting
-    /// The websocket was disconnected with an error.
-    case disconnected(Swift.Error?)
+    /// The websocket was disconnected.
+    case disconnected(Error?)
     
-    public var isConnected: Bool { self == .connected }
+    /// Checks if the connection state is `.connected`.
+    public var isConnected: Bool {
+        if case .connected = self {
+            return true
+        }
+        
+        return false
+    }
     
-    public static func == (lhs: Connection, rhs: Connection) -> Bool {
+    public static func == (lhs: ConnectionState, rhs: ConnectionState) -> Bool {
         switch (lhs, rhs) {
         case (.notConnected, .notConnected),
              (.connecting, .connecting),
-             (.connected, .connected):
+             (.connected, .connected),
+             (.disconnecting, .disconnecting),
+             (.disconnected, .disconnected):
             return true
-        case (.disconnected(let error1), .disconnected(let error2)):
-            return error1?.localizedDescription == error2?.localizedDescription
         default:
             return false
         }

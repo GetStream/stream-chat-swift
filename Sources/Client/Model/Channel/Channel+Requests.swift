@@ -120,16 +120,16 @@ public extension Channel {
     /// Mark messages in the channel as read.
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
-    func markRead(_ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
+    func markRead(_ completion: @escaping Client.Completion<ChannelEvent>) -> URLSessionTask {
         Client.shared.markRead(channel: self, completion)
     }
     
-    /// Send an event.
+    /// Send a channel event.
     /// - Parameters:
-    ///   - eventType: an event type.
+    ///   - eventType: a channel event type.
     ///   - completion: a completion block with `Event`.
     @discardableResult
-    func send(eventType: EventType, _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
+    func send(eventType: ChannelEventType, _ completion: @escaping Client.Completion<ChannelEvent>) -> URLSessionTask {
         Client.shared.send(eventType: eventType, to: self, completion)
     }
     

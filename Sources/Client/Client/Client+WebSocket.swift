@@ -50,29 +50,36 @@ extension Client {
                                   logger: logger)
         
         webSocket.onConnect = setupWebSocketOnConnect
-        subscriptionBag.add(webSocket.subscribe(callback: webSocketOnEvent))
+        
+        subscriptionBag.add(subscribe(observeClientEvents))
+        subscriptionBag.add(subscribe(observeChannelEvents))
         
         return webSocket
     }
     
-    func setupWebSocketOnConnect(_ connection: Connection) {
-        guard isExpiredTokenInProgress, connection.isConnected else {
-            onConnect(connection)
+    func setupWebSocketOnConnect(_ connectionState: ConnectionState) {
+        guard isExpiredTokenInProgress, connectionState.isConnected else {
+            onConnect(connectionState)
             return
         }
         
         performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
     }
     
-    func webSocketOnEvent(_ event: Event) {
+    func observeClientEvents(_ event: ClientEvent) {
         // Update the current user on login.
-        if case let .healthCheck(_, user) = event {
+        if case let .healthCheck(user, _) = event {
             userAtomic.set(user)
             return
         }
         
-        updateUserUnreadCount(event: event) // User unread counts should be updated before channels unread counts.
-        updateChannelsUnreadCount(event: event)
+        updateUserUnreadCount(clientEvent: event) // User unread counts should be updated before channels unread counts.
+        updateChannelsUnreadCount(clientEvent: event)
+    }
+    
+    func observeChannelEvents(_ event: ChannelEvent) {
+        updateUserUnreadCount(channelEvent: event) // User unread counts should be updated before channels unread counts.
+        updateChannelsUnreadCount(channelEvent: event)
     }
 }
 

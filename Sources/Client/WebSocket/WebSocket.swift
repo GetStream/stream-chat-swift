@@ -15,7 +15,8 @@ final class WebSocket {
     
     /// A WebSocket connection callback.
     var onConnect: Client.OnConnect = { _ in }
-    private var onEventObservers = [String: Client.OnEvent]()
+    private var onClientEventObservers = [String: OnEvent<ClientEvent>]()
+    private var onChannelEventObservers = [String: OnEvent<ChannelEvent>]()
     private let webSocket: Starscream.WebSocket
     private let callbackQueue: DispatchQueue?
     private let stayConnectedInBackground: Bool
@@ -25,12 +26,12 @@ final class WebSocket {
     private var isReconnecting = false
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private let webSocketInitiated: Bool
-    private(set) var lastConnectionId: String?
-    private(set) var lastJSONError: ClientErrorResponse?
+    private(set) var connectionId: String?
+    private(set) var eventError: ClientErrorResponse?
     
-    private(set) var connection = Connection.notConnected {
+    private(set) var connectionState = ConnectionState.notConnected {
         didSet {
-            let lastConnection = connection
+            let lastConnection = connectionState
             performInCallbackQueue { [weak self] in self?.onConnect(lastConnection) }
         }
     }
@@ -42,7 +43,7 @@ final class WebSocket {
     }
     
     /// Checks if the web socket is connected and `connectionId` is not nil.
-    var isConnected: Bool { lastConnectionId != nil && webSocket.isConnected }
+    var isConnected: Bool { connectionId != nil && webSocket.isConnected }
     
     init(_ urlRequest: URLRequest,
          callbackQueue: DispatchQueue? = nil,
@@ -97,17 +98,17 @@ extension WebSocket {
         
         cancelBackgroundWork()
         
-        if connection == .connecting || isReconnecting || isConnected {
+        if connectionState == .connecting || isReconnecting || isConnected {
             logger?.log("Skip connecting: "
                 + "isConnected = \(webSocket.isConnected), "
                 + "isReconnecting = \(isReconnecting), "
-                + "isConnecting = \(connection == .connecting)")
+                + "isConnecting = \(connectionState == .connecting)")
             return
         }
         
         logger?.log("Connecting...")
         logger?.log(webSocket.request)
-        connection = .connecting
+        connectionState = .connecting
         shouldReconnect = true
         
         DispatchQueue.main.async(execute: webSocket.connect)
@@ -176,99 +177,123 @@ extension WebSocket {
         
         if webSocket.isConnected {
             logger?.log("Disconnecting: \(reason)")
-            connection = .disconnecting
+            connectionState = .disconnecting
             webSocket.disconnect(forceTimeout: 0)
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
-            connection = .disconnected(nil)
+            connectionState = .disconnected(nil)
         }
-    }
-    
-    func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
-                   callback: @escaping Client.OnEvent) -> Cancellable {
-        let subscription = Subscription { [weak self] uuid in
-            self?.webSocket.callbackQueue.async {
-                self?.onEventObservers[uuid] = nil
-            }
-        }
-        
-        let handler: Client.OnEvent = { event in
-            guard eventTypes.contains(event.type) else {
-                return
-            }
-            
-            callback(event)
-        }
-        
-        webSocket.callbackQueue.async { [weak self] in
-            self?.onEventObservers[subscription.uuid] = handler
-        }
-        
-        return subscription
     }
     
     private func clearStateAfterDisconnect() {
         logger?.log("Clearing state after disconnect...")
         handshakeTimer.suspend()
-        lastConnectionId = nil
+        connectionId = nil
         cancelBackgroundWork()
     }
 }
 
-// MARK: - Web Socket Delegate
+// MARK: - Subscriptions
+
+extension WebSocket {
+    func subscribe<T: EventType, E: Event>(forEvents eventTypes: Set<T> = Set(T.allCases),
+                                           cid: ChannelId? = nil,
+                                           _ callback: @escaping OnEvent<E>) -> Cancellable where E.T == T {
+        let subscription = Subscription { [weak self] uuid in
+            self?.webSocket.callbackQueue.async {
+                if E.self is ChannelEvent.Type {
+                    self?.onChannelEventObservers[uuid] = nil
+                } else {
+                    self?.onClientEventObservers[uuid] = nil
+                }
+            }
+        }
+        
+        let handler: OnEvent<E> = { event in
+            if eventTypes.contains(event.type) {
+                // Filter channel events by cid, if needed.
+                if let cid = cid, event.cid != cid {
+                    return
+                }
+                
+                callback(event)
+            }
+        }
+        
+        webSocket.callbackQueue.async { [weak self] in
+            if let handler = handler as? OnEvent<ChannelEvent> {
+                self?.onChannelEventObservers[subscription.uuid] = handler
+            } else if let handler = handler as? OnEvent<ClientEvent> {
+                self?.onClientEventObservers[subscription.uuid] = handler
+            }
+        }
+        
+        return subscription
+    }
+}
+
+// MARK: - Starscream Web Socket Delegate
 
 extension WebSocket: WebSocketDelegate {
     
-    func websocketDidConnect(socket: Starscream.WebSocketClient) {
+    private struct ErrorContainer: Decodable {
+        /// A server error was recieved.
+        let error: ClientErrorResponse
+    }
+    
+    func websocketDidConnect(socket: WebSocketClient) {
         logger?.log("❤️ Connected. Waiting for the current user data and connectionId...")
-        connection = .connecting
+        connectionState = .connecting
     }
     
-    func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
-        parseDisconnect(error)
-    }
-    
-    func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
-        guard let event = parseEvent(with: text) else {
+    func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
+        guard let data = text.data(using: .utf8) else {
+            logger?.log("📦 Can't get a data from the message: \(text)", level: .error)
             return
         }
         
-        if case let .healthCheck(connectionId, _) = event {
-            lastConnectionId = connectionId
-            handshakeTimer.resume()
+        // Parse channel events.
+        if let channelEvent: ChannelEvent = parseEvent(data) {
+            onChannelEventObservers.values.forEach({ $0(channelEvent) })
+            return
+        }
+        
+        // Parse client events.
+        guard let clientEvent: ClientEvent = parseEvent(data) else {
+            return
+        }
+        
+        if case .pong = clientEvent {
+            logger?.log("⬅️🏓")
+            return
+        }
+        
+        if case let .healthCheck(user, connectionId) = clientEvent {
             logger?.log("🥰 Connected")
-            
-            onEventObservers.values.forEach({ $0(event) })
-            
-            performInCallbackQueue { [weak self] in
-                self?.connection = .connected
-            }
-            
-            return
+            self.connectionId = connectionId
+            handshakeTimer.resume()
+            let userConnection = UserConnection(user: user, connectionId: connectionId)
+            performInCallbackQueue { [weak self] in self?.connectionState = .connected(userConnection) }
         }
         
-        if isConnected {
-            onEventObservers.values.forEach({ $0(event) })
-        }
+        onClientEventObservers.values.forEach({ $0(clientEvent) })
     }
     
-    func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
-
-    // MARK: Parsing Events
+    func websocketDidReceiveData(socket: WebSocketClient, data: Data) {}
     
-    private func parseDisconnect(_ error: Error? = nil) {
+    func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
         logger?.log("Parsing WebSocket disconnect... (error: \(error?.localizedDescription ?? "<nil>"))")
         clearStateAfterDisconnect()
         
-        if let lastJSONError = lastJSONError, lastJSONError.code == ClientErrorResponse.tokenExpiredErrorCode {
+        if let eventError = eventError, eventError.code == ClientErrorResponse.tokenExpiredErrorCode {
             logger?.log("Disconnected. 🀄️ Token is expired")
-            connection = .disconnected(ClientError.expiredToken)
+            connectionState = .disconnected(ClientError.expiredToken)
             return
         }
         
         guard let error = error else {
             logger?.log("💔 Disconnected")
-            connection = .disconnected(nil)
+            connectionState = .disconnected(nil)
             
             if shouldReconnect {
                 reconnect()
@@ -286,47 +311,23 @@ extension WebSocket: WebSocketDelegate {
         }
         
         logger?.log(error, message: "💔😡 Disconnected by error")
-        logger?.log(lastJSONError)
-        ClientLogger.showConnectionAlert(error, jsonError: lastJSONError)
-        connection = .disconnected(error)
+        logger?.log(eventError)
+        ClientLogger.showConnectionAlert(error, jsonError: eventError)
+        connectionState = .disconnected(error)
         
         if shouldReconnect {
             reconnect()
         }
     }
     
-    private func isStopError(_ error: Swift.Error) -> Bool {
-        guard InternetConnection.shared.isAvailable else {
-            return true
-        }
-        
-        if let lastJSONError = lastJSONError, lastJSONError.code == 1000 {
-            return true
-        }
-        
-        if let wsError = error as? WSError, wsError.code == 1000 {
-            return true
-        }
-        
-        return false
-    }
+    // MARK: Parsing Events
     
-    private func parseEvent(with message: String) -> Event? {
-        guard let data = message.data(using: .utf8) else {
-            logger?.log("📦 Can't get a data from the message: \(message)", level: .error)
-            return nil
-        }
-        
-        lastJSONError = nil
+    private func parseEvent<T: Event>(_ data: Data) -> T? {
+        eventError = nil
         
         do {
-            let event = try JSONDecoder.default.decode(Event.self, from: data)
+            let event = try JSONDecoder.default.decode(T.self, from: data)
             consecutiveFailures = 0
-            
-            if case .pong = event {
-                logger?.log("⬅️🏓")
-                return nil
-            }
             
             if let logger = logger {
                 var userId = ""
@@ -348,7 +349,7 @@ extension WebSocket: WebSocketDelegate {
             
         } catch {
             if let errorContainer = try? JSONDecoder.default.decode(ErrorContainer.self, from: data) {
-                lastJSONError = errorContainer.error
+                eventError = errorContainer.error
             } else {
                 logger?.log(error, message: "😡 Decode response")
             }
@@ -358,10 +359,20 @@ extension WebSocket: WebSocketDelegate {
         
         return nil
     }
-}
-
-/// WebSocket Error
-private struct ErrorContainer: Decodable {
-    /// A server error was recieved.
-    let error: ClientErrorResponse
+    
+    private func isStopError(_ error: Swift.Error) -> Bool {
+        guard InternetConnection.shared.isAvailable else {
+            return true
+        }
+        
+        if let eventError = eventError, eventError.code == 1000 {
+            return true
+        }
+        
+        if let wsError = error as? WSError, wsError.code == 1000 {
+            return true
+        }
+        
+        return false
+    }
 }

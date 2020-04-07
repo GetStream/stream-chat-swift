@@ -9,6 +9,9 @@
 /// A did update block type.
 public typealias OnUpdate<T> = (T) -> Void
 
+/// An incoming event block type.
+public typealias OnEvent<T> = (T) -> Void
+
 /// A completion block type with a `Result`.
 public typealias ResultCompletion<T, E: Error> = (Result<T, E>) -> Void
 

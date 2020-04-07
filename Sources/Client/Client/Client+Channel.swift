@@ -271,7 +271,7 @@ public extension Client {
     ///   - channel: a channel.
     ///   - completion: a completion block with `Event`.
     @discardableResult
-    func markRead(channel: Channel, _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
+    func markRead(channel: Channel, _ completion: @escaping Client.Completion<ChannelEvent>) -> URLSessionTask {
         guard channel.readEventsEnabled else {
             return .empty
         }
@@ -289,8 +289,9 @@ public extension Client {
     ///   - channel: a channel.
     ///   - completion: a completion block with `Event`.
     @discardableResult
-    func send(eventType: EventType, to channel: Channel, _ completion: @escaping Client.Completion<Event>) -> URLSessionTask {
-        request(endpoint: .sendEvent(eventType, channel)) { [unowned self] (result: Result<EventResponse, ClientError>) in
+    func send(eventType: ChannelEventType, to channel: Channel,
+              _ completion: @escaping Client.Completion<ChannelEvent>) -> URLSessionTask {
+        request(endpoint: .sendEvent(eventType, channel)) { [unowned self] (result: Result<ChannelEventResponse, ClientError>) in
             self.logger?.log("🎫 \(eventType.rawValue)")
             completion(result.map(to: \.event))
         }

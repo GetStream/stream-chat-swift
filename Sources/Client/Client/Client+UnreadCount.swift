@@ -29,26 +29,35 @@ import Foundation
 // MARK: User Unread Count
 
 extension Client {
-    func updateUserUnreadCount(event: Event) {
+    
+    func updateUserUnreadCount(clientEvent: ClientEvent) {
         var updatedUnreadCount = UnreadCount.noUnread
         
-        switch event {
+        switch clientEvent {
         case .notificationMarkAllRead:
             break
         case .notificationAddedToChannel(_, let unreadCount, _),
              .notificationMarkRead(_, _, let unreadCount, _),
              .notificationMessageNew(_, _, let unreadCount, _, _):
             updatedUnreadCount = unreadCount
-        case .messageNew(let message, _, let cid, _) where message.parentId == nil:
-            updatedUnreadCount = unreadCount
-            updatedUnreadCount.messages += 1
-            
-            // Checks if the number of channels should be increased.
-            if let cid = cid, channelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
-                updatedUnreadCount.channels += 1
-            }
         default:
             return
+        }
+        
+        unreadCountAtomic.set(updatedUnreadCount)
+    }
+    
+    func updateUserUnreadCount(channelEvent: ChannelEvent) {
+        guard case .messageNew(let message, _, let cid, _) = channelEvent, message.parentId == nil else {
+            return
+        }
+        
+        var updatedUnreadCount = unreadCount
+        updatedUnreadCount.messages += 1
+        
+        // Checks if the number of channels should be increased.
+        if channelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
+            updatedUnreadCount.channels += 1
         }
         
         unreadCountAtomic.set(updatedUnreadCount)
@@ -58,8 +67,9 @@ extension Client {
 // MARK: Channel Unread Count
 
 extension Client {
-    func updateChannelsUnreadCount(event: Event) {
-        if case .notificationMarkAllRead(let messageRead, _) = event {
+    
+    func updateChannelsUnreadCount(clientEvent: ClientEvent) {
+        if case .notificationMarkAllRead(let messageRead, _) = clientEvent {
             channelsAtomic.get(default: [:]).forEach {
                 $0.value.forEach {
                     if let channel = $0.value {
@@ -67,11 +77,7 @@ extension Client {
                     }
                 }
             }
-            
-            return
-        }
-        
-        if case .notificationMessageNew(let message, let channel, _, _, _) = event {
+        } else if case .notificationMessageNew(let message, let channel, _, _, _) = clientEvent {
             if let channels = channelsAtomic[channel.cid] {
                 channels.forEach {
                     if let watchingChannel = $0.value, watchingChannel.cid == channel.cid {
@@ -79,18 +85,20 @@ extension Client {
                     }
                 }
             }
-            
+        }
+    }
+    
+    func updateChannelsUnreadCount(channelEvent: ChannelEvent) {
+        guard let channels = channelsAtomic[channelEvent.cid] else {
             return
         }
         
-        if let eventChannelId = event.cid, let channels = channelsAtomic[eventChannelId] {
-            channels.forEach {
-                if let channel = $0.value {
-                    channel.updateWatcherCount(event: event)
-                    
-                    if channel.readEventsEnabled {
-                        channel.updateUnreadCount(event: event)
-                    }
+        channels.forEach {
+            if let channel = $0.value {
+                channel.updateWatcherCount(channelEvent:  channelEvent)
+                
+                if channel.readEventsEnabled {
+                    channel.updateUnreadCount(channelEvent: channelEvent)
                 }
             }
         }

@@ -64,7 +64,7 @@ public enum Endpoint {
     /// Send a read event.
     case markRead(Channel)
     /// Send an event to a channel.
-    case sendEvent(EventType, Channel)
+    case sendEvent(ChannelEventType, Channel)
     /// Send a message action.
     case sendMessageAction(MessageAction)
     /// Add members to the channel

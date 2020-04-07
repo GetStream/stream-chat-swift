@@ -17,9 +17,7 @@ public final class Client {
     /// A token block type.
     public typealias OnTokenChange = (Token?) -> Void
     /// A WebSocket connection callback type.
-    public typealias OnConnect = (Connection) -> Void
-    /// A WebSocket events callback type.
-    public typealias OnEvent = (Event) -> Void
+    typealias OnConnect = (ConnectionState) -> Void
     
     /// A client config (see `Config`).
     public static var config = Config(apiKey: "")
@@ -64,9 +62,9 @@ public final class Client {
     /// A web socket client.
     lazy var webSocket = WebSocket()
     /// The current WebSocket connection.
-    public var connection: Connection { webSocket.connection }
+    var connectionState: ConnectionState { webSocket.connectionState }
     /// A WebSocket connection callback. This should only be used when you only use the Low-Level Client.
-    public var onConnect: Client.OnConnect = { _ in }
+    var onConnect: Client.OnConnect = { _ in }
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     /// Saved onConnect for a completion block in `connect()`.
@@ -172,11 +170,10 @@ public final class Client {
     /// - Parameter appState: an application state.
     func connect(appState: UIApplication.State = UIApplication.shared.applicationState,
                  internetConnectionState: InternetConnection.State = InternetConnection.shared.state,
-                 _ completion: Client.OnConnect?) {
+                 _ completion: Client.Completion<UserConnection>?) {
         guard internetConnectionState == .available else {
             if internetConnectionState == .unavailable {
                 reset()
-                completion?(.disconnected(nil))
             }
             
             return
@@ -195,12 +192,12 @@ public final class Client {
     ///   - Skip if it's already connected.
     ///   - Skip if it's reconnecting.
     /// - Parameter completion: a completion block will be call once when the connection will be established.
-    func connect(_ completion: Client.OnConnect?) {
+    func connect(_ completion: Client.Completion<UserConnection>?) {
         setupConnectCompletion(completion)
         webSocket.connect()
     }
     
-    private func setupConnectCompletion(_ completion: Client.OnConnect?) {
+    private func setupConnectCompletion(_ completion: Client.Completion<UserConnection>?) {
         guard let completion = completion else {
             restoreOnConnect()
             return
@@ -210,9 +207,9 @@ public final class Client {
         savedOnConnect = savedOnConnect ?? onConnect
         
         onConnect = { [unowned self] connection in
-            if connection.isConnected {
+            if case let .connected(userConnection) = connection {
                 self.savedOnConnect?(connection)
-                completion(connection)
+                completion(.success(userConnection))
                 self.restoreOnConnect()
             } else {
                 self.savedOnConnect?(connection)

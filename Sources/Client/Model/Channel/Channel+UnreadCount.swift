@@ -11,16 +11,15 @@ extension Channel {
     /// Update the unread count if needed.
     /// - Parameters:
     ///   - channel: a channel.
-    ///   - event: an event.
-    func updateUnreadCount(event: Event) {
-        switch event {
+    ///   - channelEvent: an event.
+    func updateUnreadCount(channelEvent: ChannelEvent) {
+        switch channelEvent {
         case .messageNew(let message, _, _, _):
             updateUnreadCount(newMessage: message)
         case .messageRead(let messageRead, _, _):
             if messageRead.user.isCurrent {
                 resetUnreadCount(messageRead: messageRead)
             }
-            
         default:
             break
         }
