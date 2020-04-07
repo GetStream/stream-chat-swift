@@ -21,7 +21,7 @@ public extension Client {
     @discardableResult
     func search(filter: Filter,
                 query: String,
-                pagination: Pagination = .channelsPageSize,
+                pagination: Pagination = [.channelsPageSize],
                 _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
         search(query: SearchQuery(filter: filter, query: query, pagination: pagination), completion)
     }
@@ -48,8 +48,8 @@ public extension Client {
     @discardableResult
     func queryChannels(filter: Filter = .none,
                        sort: [Sorting] = [],
-                       pagination: Pagination = .channelsPageSize,
-                       messagesLimit: Pagination = .messagesPageSize,
+                       pagination: Pagination = [.channelsPageSize],
+                       messagesLimit: Pagination = [.messagesPageSize],
                        options: QueryOptions = [],
                        _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
         queryChannels(query: .init(filter: filter,

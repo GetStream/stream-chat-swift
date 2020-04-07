@@ -37,9 +37,9 @@ public struct ChannelQuery: Encodable {
     ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
     ///   - options: a query options (see `QueryOptions`).
     public init(channel: Channel,
-                messagesPagination: Pagination = .none,
-                membersPagination: Pagination = .none,
-                watchersPagination: Pagination = .none,
+                messagesPagination: Pagination = [],
+                membersPagination: Pagination = [],
+                watchersPagination: Pagination = [],
                 options: QueryOptions = []) {
         self.channel = channel
         self.messagesPagination = messagesPagination
@@ -57,15 +57,15 @@ public struct ChannelQuery: Encodable {
             try container.encode(channel, forKey: .data)
         }
         
-        if messagesPagination != .none {
+        if !messagesPagination.isEmpty {
             try container.encode(messagesPagination, forKey: .messages)
         }
         
-        if membersPagination != .none {
+        if !membersPagination.isEmpty {
             try container.encode(membersPagination, forKey: .members)
         }
         
-        if watchersPagination != .none {
+        if !watchersPagination.isEmpty {
             try container.encode(watchersPagination, forKey: .watchers)
         }
     }

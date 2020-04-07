@@ -13,16 +13,17 @@ import RxSwift
 public extension Reactive where Base == Client {
     /// Observe a watcher count of users for a given channel.
     func watcherCount(channel: Channel) -> Observable<Int> {
-        queryChannel(channel, messagesPagination: .limit(1), options: [.watch, .state])
-            .map { $0.channel }
-            .flatMapLatest({ [unowned base] channel -> Observable<Int> in
-                base.rx.events(for: [.userStartWatching,
-                                     .userStopWatching,
-                                     .messageNew,
-                                     .notificationMessageNew],
-                               cid: channel.cid)
-                    .map { _ in channel.watcherCount }
-                    .startWith(channel.watcherCount)
-            })
+        .create { (observer) -> Disposable in
+            let subscription = channel.subscribeToWatcherCount { (result) in
+                do {
+                    let response = try result.get()
+                    observer.onNext(response)
+                } catch {
+                    observer.onError(error)
+                }
+            }
+            
+            return  Disposables.create { subscription.cancel() }
+        }
     }
 }

@@ -46,7 +46,7 @@ public extension Reactive  where Base: Presenter {
     ///
     /// - Parameter pagination: an initial page size (see `Pagination`).
     /// - Returns: an observable pagination for a request.
-    func prepareRequest(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
+    func prepareRequest(startPaginationWith pagination: Pagination = []) -> Observable<Pagination> {
         let connectionObservable = Client.shared.rx.connection
             .do(onNext: { [weak base] connection in
                 if !connection.isConnected,
@@ -77,7 +77,7 @@ public extension Reactive  where Base: Presenter {
     /// Prepare a fetch request from a local database with pagination.
     ///
     /// - Returns: an observable pagination for a fetching data from a local database.
-    func prepareDatabaseFetch(startPaginationWith pagination: Pagination = .none) -> Observable<Pagination> {
+    func prepareDatabaseFetch(startPaginationWith pagination: Pagination = []) -> Observable<Pagination> {
         guard Client.shared.database != nil else {
             return .empty()
         }
@@ -85,7 +85,7 @@ public extension Reactive  where Base: Presenter {
         return Observable.combineLatest(base.loadPagination.asObserver().startWith(pagination),
                                         InternetConnection.shared.rx.state.filter({ $0 != .available }))
             .map { pagination, _ in pagination }
-            .filter { [weak base] in $0 != .none && (base?.rx.shouldMakeDatabaseFetch(with: $0) ?? false) }
+            .filter { [weak base] in !$0.isEmpty && (base?.rx.shouldMakeDatabaseFetch(with: $0) ?? false) }
             .share()
     }
     

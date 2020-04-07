@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### 🔄 Changed
-
+- `Pagination` doesn't support `+` operator anymore, please use a set of  `PaginationOption`s from now on [#158](https://github.com/GetStream/stream-chat-swift/issues/158)
 
 ### ✅ Added
 

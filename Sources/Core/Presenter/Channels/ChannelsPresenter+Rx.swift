@@ -88,7 +88,7 @@ private extension Reactive where Base == ChannelsPresenter {
         
         // Update pagination offset.
         if base.next != base.pageSize {
-            base.next = .channelsNextPageSize + .offset(base.next.offset - 1)
+            base.next = [.channelsNextPageSize, .offset((base.next.offset ?? 0) - 1)]
         }
         
         base.items.remove(at: index)

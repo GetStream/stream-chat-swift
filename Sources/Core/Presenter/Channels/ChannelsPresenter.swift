@@ -64,7 +64,7 @@ public final class ChannelsPresenter: Presenter {
         self.queryOptions = queryOptions
         self.filter = filter
         self.sorting = sorting
-        super.init(pageSize: .channelsPageSize)
+        super.init(pageSize: [.channelsPageSize])
     }
 }
 
@@ -110,8 +110,8 @@ extension ChannelsPresenter {
             return .channelPresenter(channelPresenter)
         })
         
-        if channels.count == next.limit {
-            next = .channelsNextPageSize + .offset(next.offset + next.limit)
+        if channels.count == (next.limit ?? 0) {
+            next = [.channelsNextPageSize, .offset((next.offset ?? 0) + (next.limit ?? 0))]
             items.append(.loading(false))
         } else {
             next = pageSize
@@ -225,7 +225,7 @@ extension ChannelsPresenter {
         
         // Update pagination offset.
         if next != pageSize {
-            next = .channelsNextPageSize + .offset(next.offset + 1)
+            next = [.channelsNextPageSize, .offset((next.offset ?? 0) + 1)]
         }
         
         return .itemsAdded([0], nil, false, items)
