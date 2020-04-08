@@ -156,8 +156,9 @@ public final class Client {
     private func checkAPIKey() {
         if apiKey.isEmpty {
             ClientLogger.logger("❌❌❌", "", "The Stream Chat Client didn't setup properly. "
-                + "You are trying to use it before setup the API Key.")
-            Thread.callStackSymbols.forEach { ClientLogger.logger("", "", $0) }
+                + "You are trying to use it before setting up the API Key. "
+                + "Please use `Client.config = .init(apiKey:) to setup your api key. "
+                + "You can debug this issue by putting a breakpoint in \(#file)\(#line)")
         }
     }
     
