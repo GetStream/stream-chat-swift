@@ -128,33 +128,24 @@ extension Client {
         
         return subscriptions
     }
-    
+
+    /// Subscribes to the watcher count for a channel that the user is watching
     func subscribeToWatcherCount(for channel: Channel, _ callback: @escaping Completion<Int>) -> Cancellable {
-        let subscriptions = SubscriptionBag()
-        
-        let query = ChannelQuery(channel: channel, messagesPagination: [.limit(1)], options: [.state, .watch])
-        
-        let urlSessionTask = queryChannel(query: query) { [unowned self] result in
-            if let error = result.error {
-                callback(.failure(error))
+        let eventTypes: Set<EventType> = [.userStartWatching,
+                                          .userStopWatching,
+                                          .messageNew,
+                                          .notificationMessageNew]
+
+        return channel.subscribe(forEvents: eventTypes, { event in
+            switch event {
+            case .userStartWatching(_, let watcherCount, _, _),
+                 .userStopWatching(_, let watcherCount, _, _),
+                 .messageNew(_, let watcherCount, _, _),
+                 .notificationMessageNew(_, _, _, let watcherCount, _):
+                callback(.success(watcherCount))
+            default:
+                break
             }
-            
-            if let response = result.value {
-                let eventTypes: Set<EventType> = [.userStartWatching,
-                                                  .userStopWatching,
-                                                  .messageNew,
-                                                  .notificationMessageNew]
-                
-                let subscription = self.subscribe(forEvents: eventTypes, cid: response.channel.cid) { _ in
-                    callback(.success(channel.watcherCount))
-                }
-                
-                subscriptions.add(subscription)
-            }
-        }
-        
-        subscriptions.add(Subscription { _ in urlSessionTask.cancel() })
-        
-        return subscriptions
+        })
     }
 }
