@@ -156,7 +156,9 @@ extension Client {
         var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
         
         if let connectionId = webSocket.lastConnectionId {
-            queryItems.append(URLQueryItem(name: "client_id", value: connectionId))
+            queryItems.append(URLQueryItem(name: "connection_id", value: connectionId))
+        } else if endpoint.requiresConnectionId {
+            return .failure(.emptyConnectionId)
         }
         
         if let endpointQueryItems = endpoint.jsonQueryItems {

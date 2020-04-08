@@ -70,7 +70,8 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
         case .unexpectedError(let description, _):
             return "Unexpected error: \(description)"
         case .emptyAPIKey:
-            return "The Client API Key is empty"
+            return "Client API Key is empty."
+                + " Please use `Client.config = .init(apiKey:) before using Client to setup your api key correctly."
         case .emptyToken:
             return "A Client Token is empty"
         case .invalidToken(let description):
@@ -80,7 +81,7 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
         case .emptyUser:
             return "The current Client user is empty"
         case .emptyConnectionId:
-            return "A Web Socket connection id is empty. Authorization missed"
+            return "Web Socket connection id is empty. Authorization missed. Please call set(user:) and wait for its completion."
         case .emptyChannelId:
             return "A channel id is empty"
         case .emptyMessageId:
