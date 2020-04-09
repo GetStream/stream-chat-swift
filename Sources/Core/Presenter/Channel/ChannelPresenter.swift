@@ -24,7 +24,7 @@ public final class ChannelPresenter: Presenter {
     /// A callback type for the adding an extra data for an image attachment.
     public typealias ImageAttachmentExtraDataCallback = (URL?, UIImage?, _ isVideo: Bool, Channel) -> Codable?
     /// A callback type for preparing the message before sending.
-    public typealias MessageTextPreparationCallback = (Message) -> Message?
+    public typealias MessagePreparationCallback = (Message) -> Message?
     
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
