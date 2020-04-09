@@ -24,6 +24,12 @@ public extension Set where Element == PaginationOption {
     }
 }
 
+public extension KeyedEncodingContainer {
+    mutating func encode(_ value: Pagination, forKey key: Self.Key) throws {
+        try value.forEach({ try self.encode($0, forKey: key) })
+    }
+}
+
 /// Pagination options.
 ///
 /// For example:
