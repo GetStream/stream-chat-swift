@@ -35,7 +35,7 @@ public final class ChannelPresenter: Presenter {
     /// A callback for the adding an extra data for a file attachment.
     public var imageAttachmentExtraDataCallback: ImageAttachmentExtraDataCallback?
     /// A callback for preparing the message before sending.
-    public var messagePreparationCallback: MessageTextPreparationCallback?
+    public var messagePreparationCallback: MessagePreparationCallback?
     
     let channelType: ChannelType
     let channelId: String
