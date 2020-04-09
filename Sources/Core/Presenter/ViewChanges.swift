@@ -31,7 +31,7 @@ public enum ViewChanges: Equatable, Decodable {
     /// Disconnected deliberately.
     case disconnected
     /// Error message.
-    case error(AnyError)
+    case error(ClientError)
     
     public init(from decoder: Decoder) throws {
         self = .none

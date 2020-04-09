@@ -32,25 +32,42 @@ struct Subscription: Cancellable {
     }
 }
 
+/// A subscription bag allows you collect multiple subscriptions and cancel them at once.
 public final class SubscriptionBag: Cancellable {
     private var subscriptions = [Cancellable]()
     
+    /// Add a subscription.
+    /// - Parameter subscription: a subscriiption.
     public func add(_ subscription: Cancellable) {
         subscriptions.append(subscription)
     }
     
+    /// Add multiple subscriptions in a chain way.
+    /// - Parameter subscription: a subscription
+    /// - Returns: this subscription bag.
+    @discardableResult
+    public func adding(_ subscription: Cancellable) -> Self {
+        subscriptions.append(subscription)
+        return self
+    }
+    
+    /// Cancel and clear all subscriptions in the bag.
     public func cancel() {
         subscriptions.forEach { $0.cancel() }
+        subscriptions = []
     }
 }
 
 extension Client {
+    
     /// Observe events for the given event types.
     /// - Parameters:
     ///   - eventTypes: A set of event types to be observed. Defaults to all events.
     ///   - callback: Callback closure to be called for each new event.
-    /// - Returns: `Subscription` object to be able to cancel observing. Call `subscription.cancel()` when you want to stop observing.
-    /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks, so make sure you handle subscriptions correctly.
+    /// - Returns: `Subscription` object to be able to cancel observing.
+    ///            Call `subscription.cancel()` when you want to stop observing.
+    /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks,
+    ///            so make sure you handle subscriptions correctly.
     public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
                           _ callback: @escaping OnEvent) -> Cancellable {
         subscribe(forEvents: eventTypes, cid: nil, callback)

@@ -9,7 +9,8 @@
 import Foundation
 
 /// A client error.
-public enum ClientError: LocalizedError, CustomDebugStringConvertible {
+public enum ClientError: LocalizedError, CustomDebugStringConvertible, Equatable {
+    
     /// An unexpected error.
     case unexpectedError(description: String, error: Error?)
     /// The API Key is empty.
@@ -38,6 +39,8 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
     case requestFailed(Error?)
     /// A response client error.
     case responseError(ClientErrorResponse)
+    /// A websocket disconnect error.
+    case websocketDisconnectError(Swift.Error)
     /// An encoding failed with an error.
     case encodingFailure(Error, object: Encodable)
     /// A decoding failed with an error.
@@ -100,14 +103,23 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             
             return "A request failed with unknown error"
             
-        case .responseError(let error): return error.localizedDescription
-        case .encodingFailure(let error, _): return "An encoding failed: \(error.localizedDescription)"
-        case .decodingFailure(let error): return "A decoding failed: \(error.localizedDescription)"
-        case .errorMessage(let message): return message.text
-        case .emptyDeviceToken: return "A device token is empty"
+        case .responseError(let error):
+            return error.localizedDescription
+        case .websocketDisconnectError(let error):
+            return error.localizedDescription
+        case .encodingFailure(let error, _):
+            return "An encoding failed: \(error.localizedDescription)"
+        case .decodingFailure(let error):
+            return "A decoding failed: \(error.localizedDescription)"
+        case .errorMessage(let message):
+            return message.text
+        case .emptyDeviceToken:
+            return "A device token is empty"
             
-        case .channelsSearchQueryEmpty: return "A channels search query is empty"
-        case .channelsSearchFilterEmpty: return "Filter can't be an empty for the message search"
+        case .channelsSearchQueryEmpty:
+            return "A channels search query is empty"
+        case .channelsSearchFilterEmpty:
+            return "Filter can't be an empty for the message search"
         }
     }
     
@@ -141,6 +153,8 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
             return "ClientError.requestFailed(\(String(describing: error)))"
         case .responseError(let error):
             return "ClientError.responseError(\(error))"
+        case .websocketDisconnectError(let error):
+            return "ClientError.websocketDisconnectError(\(error)"
         case .encodingFailure(let error, let object):
             return "ClientError.encodingFailure(\(error), \(object))"
         case .decodingFailure(let error):
@@ -154,6 +168,10 @@ public enum ClientError: LocalizedError, CustomDebugStringConvertible {
         case .channelsSearchFilterEmpty:
             return "ClientError.channelsSearchFilterEmpty"
         }
+    }
+    
+    public static func == (lhs: ClientError, rhs: ClientError) -> Bool {
+        lhs.debugDescription == rhs.debugDescription
     }
 }
 

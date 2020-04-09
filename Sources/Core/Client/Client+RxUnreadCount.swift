@@ -16,7 +16,7 @@ public extension Reactive where Base == Client {
     
     /// Observe an unread count of messages and channels.
     var unreadCount: Observable<UnreadCount> {
-        connection
+        connectionState
             .filter({ $0.isConnected })
             .flatMapLatest({ [unowned base] _ -> Observable<UnreadCount> in
                 Observable<UnreadCount>.create({ observer in

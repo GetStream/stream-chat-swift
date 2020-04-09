@@ -42,7 +42,9 @@
 		8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; };
 		8A5211D5238EE7DC004BED65 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5211D4238EE7DC004BED65 /* Attachment.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
+		8A65559D243DF2D00023046C /* UserConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A65559C243DF2D00023046C /* UserConnection.swift */; };
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
+		8A7C58EE243DE9740062487E /* EventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C58ED243DE9740062487E /* EventType.swift */; };
 		8A831C8624294083003F0DB4 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C3C241924B5000750E4 /* InternetConnection.swift */; };
 		8A831C8724294356003F0DB4 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC322E9BAC5005CFAC9 /* Reachability.framework */; };
 		8A8BB2A52384573400C2F9DE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A32384573400C2F9DE /* Realm.framework */; };
@@ -60,7 +62,7 @@
 		8AC0D94F23D4BA7D0080B8BC /* FilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */; };
 		8ACB0E9E23EB13CE0066343A /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; };
 		8ACC2B62242B8B8600EF509D /* Chat.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8ACC2B61242B8B8600EF509D /* Chat.xcassets */; };
-		8ACC7BFB241924AD000750E4 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB2241924AD000750E4 /* Connection.swift */; };
+		8ACC7BFB241924AD000750E4 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB2241924AD000750E4 /* ConnectionState.swift */; };
 		8ACC7BFC241924AD000750E4 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB3241924AD000750E4 /* WebSocket.swift */; };
 		8ACC7BFE241924AD000750E4 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB6241924AD000750E4 /* Environment.swift */; };
 		8ACC7BFF241924AD000750E4 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB7241924AD000750E4 /* Atomic.swift */; };
@@ -315,7 +317,9 @@
 		8A50696A23CDEDA4009F127A /* StreamChatCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChatCore.h; sourceTree = "<group>"; };
 		8A5211D4238EE7DC004BED65 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A65559C243DF2D00023046C /* UserConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnection.swift; sourceTree = "<group>"; };
 		8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Tests.swift"; sourceTree = "<group>"; };
+		8A7C58ED243DE9740062487E /* EventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventType.swift; sourceTree = "<group>"; };
 		8A8BB295238452B600C2F9DE /* StreamChatRealm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatRealm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A8BB2A2238456A200C2F9DE /* StreamChatRealm.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatRealm.podspec; sourceTree = "<group>"; };
 		8A8BB2A32384573400C2F9DE /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
@@ -328,7 +332,7 @@
 		8AC0D94B23D4ABC50080B8BC /* ClientTests02+Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ClientTests02+Users.swift"; sourceTree = "<group>"; };
 		8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTests.swift; sourceTree = "<group>"; };
 		8ACC2B61242B8B8600EF509D /* Chat.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Chat.xcassets; sourceTree = "<group>"; };
-		8ACC7BB2241924AD000750E4 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		8ACC7BB2241924AD000750E4 /* ConnectionState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
 		8ACC7BB3241924AD000750E4 /* WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		8ACC7BB6241924AD000750E4 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		8ACC7BB7241924AD000750E4 /* Atomic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
@@ -685,7 +689,7 @@
 			isa = PBXGroup;
 			children = (
 				8ACC7BB3241924AD000750E4 /* WebSocket.swift */,
-				8ACC7BB2241924AD000750E4 /* Connection.swift */,
+				8ACC7BB2241924AD000750E4 /* ConnectionState.swift */,
 			);
 			path = WebSocket;
 			sourceTree = "<group>";
@@ -722,13 +726,15 @@
 		8ACC7BC3241924AD000750E4 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7BC4241924AD000750E4 /* UnreadCount.swift */,
+				8A7C58ED243DE9740062487E /* EventType.swift */,
 				8ACC7BC5241924AD000750E4 /* Event.swift */,
+				8A65559C243DF2D00023046C /* UserConnection.swift */,
 				8ACC7BC7241924AD000750E4 /* Message */,
 				8ACC7BD2241924AD000750E4 /* Sorting.swift */,
 				8ACC7BD3241924AD000750E4 /* User */,
 				8ACC7BD9241924AD000750E4 /* QueryOptions.swift */,
 				8ACC7BDA241924AD000750E4 /* Channel */,
+				8ACC7BC4241924AD000750E4 /* UnreadCount.swift */,
 				8ACC7BE4241924AD000750E4 /* Pagination.swift */,
 				8ACC7BE5241924AD000750E4 /* Filter.swift */,
 				8ACC7BE6241924AD000750E4 /* SearchQuery.swift */,
@@ -778,14 +784,14 @@
 		8ACC7BDA241924AD000750E4 /* Channel */ = {
 			isa = PBXGroup;
 			children = (
+				8ACC7BE1241924AD000750E4 /* ChannelType.swift */,
+				8ACC7BDF241924AD000750E4 /* ChannelId.swift */,
 				8ACC7BDE241924AD000750E4 /* Channel.swift */,
 				8ACC7BDB241924AD000750E4 /* Channel+Requests.swift */,
 				8AB2A02A2423C1B500CE54F6 /* ChannelExtraData.swift */,
 				8ACC7BDC241924AD000750E4 /* ChannelQuery.swift */,
 				8ACC7BDD241924AD000750E4 /* ChannelsQuery.swift */,
-				8ACC7BDF241924AD000750E4 /* ChannelId.swift */,
 				8ACC7BE0241924AD000750E4 /* Channel+UnreadCount.swift */,
-				8ACC7BE1241924AD000750E4 /* ChannelType.swift */,
 				8ACC7BE2241924AD000750E4 /* ChannelResponse.swift */,
 				8ACC7BE3241924AD000750E4 /* Channel+WatcherCount.swift */,
 			);
@@ -1531,12 +1537,13 @@
 				8ACC7C09241924AD000750E4 /* Database.swift in Sources */,
 				8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */,
 				8ACC7C1D241924AD000750E4 /* Channel+Requests.swift in Sources */,
+				8A7C58EE243DE9740062487E /* EventType.swift in Sources */,
 				8ACC7C18241924AD000750E4 /* User+Requests.swift in Sources */,
 				79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */,
 				8ACC7C27241924AD000750E4 /* Filter.swift in Sources */,
 				8ACC7C0A241924AD000750E4 /* UnreadCount.swift in Sources */,
 				8ACC7C10241924AD000750E4 /* AttachmentFile.swift in Sources */,
-				8ACC7BFB241924AD000750E4 /* Connection.swift in Sources */,
+				8ACC7BFB241924AD000750E4 /* ConnectionState.swift in Sources */,
 				8ACC7C2B241924AD000750E4 /* Token.swift in Sources */,
 				8ACC7C25241924AD000750E4 /* Channel+WatcherCount.swift in Sources */,
 				8A9ECEF7242A57B900206E7D /* AssociatedValue.swift in Sources */,
@@ -1575,6 +1582,7 @@
 				8ACC7C13241924AD000750E4 /* MessageAction.swift in Sources */,
 				8ACC7C24241924AD000750E4 /* ChannelResponse.swift in Sources */,
 				8AB2A02D242534EA00CE54F6 /* UserExtraData.swift in Sources */,
+				8A65559D243DF2D00023046C /* UserConnection.swift in Sources */,
 				8ACC7C1E241924AD000750E4 /* ChannelQuery.swift in Sources */,
 				8ACC7C2F241924AD000750E4 /* Client+Message.swift in Sources */,
 				8ACC7C01241924AD000750E4 /* RepeatingTimer.swift in Sources */,

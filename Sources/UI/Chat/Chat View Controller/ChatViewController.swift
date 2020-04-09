@@ -160,7 +160,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         
         keyboard.notification.bind(to: rx.keyboard).disposed(by: self.disposeBag)
         
-        Client.shared.rx.connection
+        Client.shared.rx.connectionState
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] in self?.update(for: $0) })
             .disposed(by: disposeBag)
@@ -247,14 +247,14 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         nil
     }
     
-    /// Updates for `FooterView` and `ComposerView` with the client connection.
-    open func update(for connection: Connection) {
+    /// Updates for `FooterView` and `ComposerView` with the client connectionState.
+    open func update(for connectionState: ConnectionState) {
         // Update footer.
         updateFooterView()
         
         // Update composer view.
         if composerView.superview != nil {
-            if connection == .connected {
+            if connectionState.isConnected {
                 if composerView.styleState == .disabled {
                     composerView.styleState = .normal
                 }
