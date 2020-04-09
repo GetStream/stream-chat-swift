@@ -14,19 +14,19 @@ import RxSwift
 
 extension Client: ReactiveCompatible {}
 
-public extension Reactive where Base == Client {
+extension Reactive where Base == Client {
     
     /// Observe events with a given event type.
     /// - Parameter eventType: an event type.
     /// - Returns: an observable event.
-    func events(for type: EventType) -> Observable<StreamChatClient.Event> {
+    public func events(for type: EventType) -> Observable<StreamChatClient.Event> {
         connectedEvents(for: [type])
     }
     
     /// Observe events with a given even types.
     /// - Parameter eventTypes: event types.
     /// - Returns: an observable events.
-    func events(for types: Set<EventType> = Set(EventType.allCases)) -> Observable<StreamChatClient.Event> {
+    public func events(for types: Set<EventType> = Set(EventType.allCases)) -> Observable<StreamChatClient.Event> {
         connectedEvents(for: types)
     }
     
@@ -52,7 +52,6 @@ public extension Reactive where Base == Client {
 // MARK: Private Client Rx Events
 
 extension Client {
-    fileprivate static var rxOnTokenChange: UInt8 = 0
     fileprivate static var rxOnConnect: UInt8 = 0
     fileprivate static var rxOnEvent: UInt8 = 0
     fileprivate static var rxOnUserUpdate: UInt8 = 0
@@ -60,26 +59,19 @@ extension Client {
 
 extension Reactive where Base == Client {
     
-    public var token: Observable<Token?> {
-        associated(to: base, key: &Client.rxOnTokenChange) { [unowned base] in
-            Observable<Token?>.create({ observer in
-                base.onTokenChange = { observer.onNext($0) }
-                return Disposables.create()
-            })
-                .startWith(base.token)
-                .share(replay: 1)
-        }
-    }
-    
-    public var connection: Observable<Connection> {
+    public var connectionState: Observable<ConnectionState> {
         associated(to: base, key: &Client.rxOnConnect) { [unowned base] in
-            Observable<Connection>.create({ observer in
-                base.onConnect = { observer.onNext($0) }
-                return Disposables.create()
-            })
-                .filter { _ in !base.isExpiredTokenInProgress }
+            base.rx.events
+                .filter({ _ in !base.isExpiredTokenInProgress })
+                .map({
+                    if case .connectionChanged(let state) = $0 {
+                        return state
+                    }
+                    
+                    return nil
+                })
+                .unwrap()
                 .distinctUntilChanged()
-                .startWith(base.connection)
                 .share(replay: 1)
         }
     }
@@ -107,12 +99,12 @@ extension Reactive where Base == Client {
     
     /// Observe the connection events and emit an event when the connection will be connected.
     public var connected: Observable<Void> {
-        connection.filter({ $0.isConnected }).map({ _ in Void() })
+        connectionState.filter({ $0.isConnected }).map({ _ in Void() })
     }
     
     func connectedEvents(for types: Set<EventType> = Set(EventType.allCases),
                          cid: ChannelId? = nil) -> Observable<StreamChatClient.Event> {
-        connection
+        connectionState
             .filter({ $0.isConnected })
             .flatMapLatest { [unowned base] _ in base.rx.events }
             .filter({

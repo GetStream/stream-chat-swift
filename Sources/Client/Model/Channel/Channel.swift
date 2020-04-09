@@ -196,25 +196,6 @@ public final class Channel: Codable {
         unreadMessageReadAtomic.set(messageRead)
         unreadCountAtomic.set(.noUnread)
     }
-    
-    public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
-                          _ callback: @escaping Client.OnEvent) -> Cancellable {
-        let subscription = Client.shared.subscribe(forEvents: eventTypes, cid: cid, callback)
-        subscriptionBag.add(subscription)
-        return subscription
-    }
-    
-    public func subscribeToUnreadCount(_ callback: @escaping Client.Completion<ChannelUnreadCount>) -> Cancellable {
-        let subscription = Client.shared.subscribeToUnreadCount(for: self, callback)
-        subscriptionBag.add(subscription)
-        return subscription
-    }
-    
-    public func subscribeToWatcherCount(_ callback: @escaping Client.Completion<Int>) -> Cancellable {
-        let subscription = Client.shared.subscribeToWatcherCount(for: self, callback)
-        subscriptionBag.add(subscription)
-        return subscription
-    }
 }
 
 extension Channel: Hashable, CustomStringConvertible {
@@ -230,6 +211,40 @@ extension Channel: Hashable, CustomStringConvertible {
     public var description: String {
         let opaque: UnsafeMutableRawPointer = Unmanaged.passUnretained(self).toOpaque()
         return "Channel<\(opaque)>:\(cid):\(name ?? "<NoName>")"
+    }
+}
+
+// MARK: Subscriptions
+
+extension Channel {
+    
+    public func subscribe(forEvents eventTypes: Set<EventType> = EventType.channelCases,
+                          _ callback: @escaping Client.OnEvent) -> Cancellable {
+        if eventTypes != EventType.channelCases, !eventTypes.isStrictSubset(of: EventType.channelCases) {
+            var badEvents = eventTypes
+            badEvents.subtract(EventType.channelCases)
+            
+            let message = "The events \(badEvents) are not channel events and will never get handled by your completion handler. "
+                + "Please check the documentation on event for more information."
+            
+            Client.shared.logger?.log(message, level: .error)
+        }
+        
+        let subscription = Client.shared.subscribe(forEvents: eventTypes, cid: cid, callback)
+        subscriptionBag.add(subscription)
+        return subscription
+    }
+    
+    public func subscribeToUnreadCount(_ callback: @escaping Client.Completion<ChannelUnreadCount>) -> Cancellable {
+        let subscription = Client.shared.subscribeToUnreadCount(for: self, callback)
+        subscriptionBag.add(subscription)
+        return subscription
+    }
+    
+    public func subscribeToWatcherCount(_ callback: @escaping Client.Completion<Int>) -> Cancellable {
+        let subscription = Client.shared.subscribeToWatcherCount(for: self, callback)
+        subscriptionBag.add(subscription)
+        return subscription
     }
 }
 

@@ -44,35 +44,21 @@ extension Client {
         var request = URLRequest(url: url)
         request.allHTTPHeaderFields = authHeaders(token: token)
         
-        let webSocket = WebSocket(request,
-                                  callbackQueue: callbackQueue,
-                                  stayConnectedInBackground: stayConnectedInBackground,
-                                  logger: logger)
-        
-        webSocket.onConnect = setupWebSocketOnConnect
-        subscriptionBag.add(webSocket.subscribe(callback: webSocketOnEvent))
-        
-        return webSocket
-    }
-    
-    func setupWebSocketOnConnect(_ connection: Connection) {
-        guard isExpiredTokenInProgress, connection.isConnected else {
-            onConnect(connection)
-            return
+        return WebSocket(request, stayConnectedInBackground: stayConnectedInBackground, logger: logger) { [unowned self] event in
+            guard case .connectionChanged(let connectionState) = event else {
+                self.updateUserUnreadCount(event: event) // User unread counts should be updated before channels unread counts.
+                self.updateChannelsUnreadCount(event: event)
+                return
+            }
+            
+            if case .connected(let userConnection) = connectionState {
+                self.userAtomic.set(userConnection.user)
+                
+                if self.isExpiredTokenInProgress {
+                    self.performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
+                }
+            }
         }
-        
-        performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
-    }
-    
-    func webSocketOnEvent(_ event: Event) {
-        // Update the current user on login.
-        if case let .healthCheck(_, user) = event {
-            userAtomic.set(user)
-            return
-        }
-        
-        updateUserUnreadCount(event: event) // User unread counts should be updated before channels unread counts.
-        updateChannelsUnreadCount(event: event)
     }
 }
 

@@ -155,7 +155,7 @@ extension Client {
         
         var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
         
-        if let connectionId = webSocket.lastConnectionId {
+        if let connectionId = webSocket.connectionId {
             queryItems.append(URLQueryItem(name: "connection_id", value: connectionId))
         } else if endpoint.requiresConnectionId {
             return .failure(.emptyConnectionId)
@@ -234,7 +234,6 @@ extension Client {
         performInCallbackQueue { [unowned self] in
             if !self.isExpiredTokenInProgress {
                 self.waitingRequests = []
-                self.onConnect(.connected)
             }
         }
     }

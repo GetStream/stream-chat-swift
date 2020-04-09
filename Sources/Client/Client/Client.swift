@@ -14,10 +14,6 @@ public final class Client {
     public typealias Completion<T: Decodable> = (Result<T, ClientError>) -> Void
     /// A client progress block type.
     public typealias Progress = (Float) -> Void
-    /// A token block type.
-    public typealias OnTokenChange = (Token?) -> Void
-    /// A WebSocket connection callback type.
-    public typealias OnConnect = (Connection) -> Void
     /// A WebSocket events callback type.
     public typealias OnEvent = (Event) -> Void
     
@@ -48,29 +44,18 @@ public final class Client {
     
     // MARK: Token
     
-    public internal(set) var token: Token? {
-        didSet { onTokenChange?(token) }
-    }
-    
-    /// A token callback. This should only be used when you only use the Low-Level Client.
-    public var onTokenChange: OnTokenChange?
+    var token: Token?
     var tokenProvider: TokenProvider?
     /// Checks if the expired Token is updating.
-    public internal(set) var isExpiredTokenInProgress = false
+    public internal(set) var isExpiredTokenInProgress = false // FIXME: Should be internal.
     var waitingRequests = [WaitingRequest]()
     
     // MARK: WebSocket
     
     /// A web socket client.
     lazy var webSocket = WebSocket()
-    /// The current WebSocket connection.
-    public var connection: Connection { webSocket.connection }
-    /// A WebSocket connection callback. This should only be used when you only use the Low-Level Client.
-    public var onConnect: Client.OnConnect = { _ in }
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
-    /// Saved onConnect for a completion block in `connect()`.
-    var savedOnConnect: Client.OnConnect?
     
     lazy var urlSession = URLSession(configuration: .default)
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
@@ -173,11 +158,10 @@ public final class Client {
     /// - Parameter appState: an application state.
     func connect(appState: UIApplication.State = UIApplication.shared.applicationState,
                  internetConnectionState: InternetConnection.State = InternetConnection.shared.state,
-                 _ completion: Client.OnConnect?) {
+                 _ completion: Client.Completion<UserConnection>?) {
         guard internetConnectionState == .available else {
             if internetConnectionState == .unavailable {
                 reset()
-                completion?(.disconnected(nil))
             }
             
             return
@@ -196,37 +180,25 @@ public final class Client {
     ///   - Skip if it's already connected.
     ///   - Skip if it's reconnecting.
     /// - Parameter completion: a completion block will be call once when the connection will be established.
-    func connect(_ completion: Client.OnConnect?) {
-        setupConnectCompletion(completion)
-        webSocket.connect()
-    }
-    
-    private func setupConnectCompletion(_ completion: Client.OnConnect?) {
-        guard let completion = completion else {
-            restoreOnConnect()
-            return
-        }
-        
-        // Save the original user onConnect.
-        savedOnConnect = savedOnConnect ?? onConnect
-        
-        onConnect = { [unowned self] connection in
-            if connection.isConnected {
-                self.savedOnConnect?(connection)
-                completion(connection)
-                self.restoreOnConnect()
-            } else {
-                self.savedOnConnect?(connection)
+    func connect(_ completion: Client.Completion<UserConnection>?) {
+        if let completion = completion {
+            var subscription: Cancellable?
+            subscription = subscribe(forEvents: [.connectionChanged]) { event in
+                if case .connectionChanged(let state) = event {
+                    if case .connected(let userConnection) = state {
+                        completion(.success(userConnection))
+                        subscription?.cancel()
+                    }
+                    
+                    if case .disconnected(let error) = state, let clientError = error {
+                        completion(.failure(clientError))
+                        subscription?.cancel()
+                    }
+                }
             }
         }
-    }
-    
-    /// Restore onConnect to the user value.
-    private func restoreOnConnect() {
-        if let savedOnConnect = savedOnConnect {
-            onConnect = savedOnConnect
-            self.savedOnConnect = nil
-        }
+        
+        webSocket.connect()
     }
     
     /// Disconnect the web socket.

@@ -108,8 +108,7 @@ final class RootViewController: UIViewController {
     }
     
     @IBAction func checkForBan(_ sender: Any) {
-        Client.shared.rx.connection
-            .filter({ $0.isConnected })
+        Client.shared.rx.connected
             .take(1)
             .subscribe(onNext: { _ in
                 if User.current.isBanned {

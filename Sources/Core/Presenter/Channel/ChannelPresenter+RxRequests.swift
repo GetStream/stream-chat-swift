@@ -92,7 +92,7 @@ extension Reactive where Base == ChannelPresenter {
             .filter { $0 != .none }
             .map { [weak base] in base?.mapWithEphemeralMessage($0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
+            .asClientDriver()
     }
 }
 
@@ -191,7 +191,7 @@ private extension Reactive where Base == ChannelPresenter {
             .filter { $0 != .none }
             .map { [weak base] in base?.mapWithEphemeralMessage($0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
+            .asClientDriver()
     }
     
     var ephemeralMessageEvents: Driver<ViewChanges> {
@@ -199,13 +199,13 @@ private extension Reactive where Base == ChannelPresenter {
             .skip(1)
             .map { [weak base] in base?.parseEphemeralMessageEvents($0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
+            .asClientDriver()
     }
     
     func parsedRepliesResponse(_ repliesResponse: Observable<[Message]>) -> Driver<ViewChanges> {
         repliesResponse
             .map { [weak base] in base?.parse(replies: $0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
+            .asClientDriver()
     }
 }

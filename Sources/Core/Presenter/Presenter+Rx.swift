@@ -20,10 +20,10 @@ extension Reactive  where Base: Presenter {
     /// Observe connection errors as `ViewChanges`.
     public var connectionErrors: Driver<ViewChanges> {
         associated(to: base, key: &Presenter.rxConnectionErrorsKey) {
-            Client.shared.rx.connection
+            Client.shared.rx.connectionState
                 .map({ connection -> ViewChanges? in
-                    if case .disconnected(let error) = connection, let errorResponse = error as? ClientErrorResponse {
-                        return .error(AnyError(errorResponse))
+                    if case .disconnected(let error) = connection, let disconnectError = error {
+                        return .error(disconnectError)
                     }
                     
                     if case .notConnected = connection {
@@ -47,7 +47,7 @@ public extension Reactive  where Base: Presenter {
     /// - Parameter pagination: an initial page size (see `Pagination`).
     /// - Returns: an observable pagination for a request.
     func prepareRequest(startPaginationWith pagination: Pagination = []) -> Observable<Pagination> {
-        let connectionObservable = Client.shared.rx.connection
+        let connectionObservable = Client.shared.rx.connectionState
             .do(onNext: { [weak base] connection in
                 if !connection.isConnected,
                     let base = base,

@@ -7,17 +7,32 @@
 //
 
 import Foundation
+import StreamChatClient
 import RxSwift
+import RxCocoa
 
 public extension ObservableType {
     
     /// Unwrap an optional event value.
     func unwrap<T>() -> Observable<T> where Element == T? {
-        return filter { $0 != nil }.map { $0! }
+        filter { $0 != nil }.map { $0! }
     }
     
     /// Map an event value to `Void()`.
     func void() -> Observable<Void> {
-        return map { _ in Void() }
+        map { _ in Void() }
+    }
+}
+
+public extension ObservableType where Element == ViewChanges {
+    
+    func asClientDriver() -> Driver<Element> {
+        asDriver(onErrorRecover: { error in
+            if let clientError = error as? ClientError {
+                return Driver.just(Element.error(clientError))
+            }
+            
+            return Driver.just(Element.error(.unexpectedError(description: error.localizedDescription, error: error)))
+        })
     }
 }
