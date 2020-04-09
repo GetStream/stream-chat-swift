@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🔄 Changed
 - `Pagination` doesn't support `+` operator anymore, please use a set of  `PaginationOption`s from now on [#158](https://github.com/GetStream/stream-chat-swift/issues/158)
+- `channel.subscribeToWatcherCount` uses channel events to publish updated counts and does not call `channel.watch` as a side-effect anymore [#161](https://github.com/GetStream/stream-chat-swift/issues/161)
 
 ### ✅ Added
 
