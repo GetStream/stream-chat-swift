@@ -70,7 +70,7 @@ extension Reactive where Base == Client {
                     
                     return nil
                 })
-                .unwrap()
+                .compactMap { $0 }
                 .distinctUntilChanged()
                 .share(replay: 1)
         }

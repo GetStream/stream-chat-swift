@@ -12,12 +12,6 @@ import RxSwift
 import RxCocoa
 
 public extension ObservableType {
-    
-    /// Unwrap an optional event value.
-    func unwrap<T>() -> Observable<T> where Element == T? {
-        filter { $0 != nil }.map { $0! }
-    }
-    
     /// Map an event value to `Void()`.
     func void() -> Observable<Void> {
         map { _ in Void() }

@@ -32,7 +32,7 @@ extension Reactive  where Base: Presenter {
                     
                     return nil
                 })
-                .unwrap()
+                .compactMap { $0 }
                 .asDriver(onErrorJustReturn: .none)
         }
     }
