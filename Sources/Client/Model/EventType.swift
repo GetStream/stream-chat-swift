@@ -88,11 +88,11 @@ public enum EventType: String, Codable, CaseIterable {
     
     /// Checks if the type is a channel event type.
     public var isChannelCase: Bool {
-        EventType.channelCases.contains(self)
+        EventType.channelEventTypes.contains(self)
     }
     
     /// All channel event types.
-    public static var channelCases: Set<EventType> {
+    public static var channelEventTypes: Set<EventType> {
         [.userBanned,
          .userStartWatching,
          .userStopWatching,
