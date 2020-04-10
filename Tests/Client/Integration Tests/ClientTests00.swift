@@ -13,31 +13,33 @@ final class ClientTests00: TestCase {
     
     func test01WebSocketConnection() {
         expect("WebSocket connected") { expectation in
-            Client.shared.onConnect = { connection in
-                if case .connected = connection {
+            TestCase.setupClientUser()
+            
+            var subscription: Cancellable?
+            subscription = Client.shared.subscribe(forEvents: [.connectionChanged]) {
+                if case .connectionChanged(let connectionState) = $0, connectionState.isConnected {
                     XCTAssertTrue(Client.shared.isConnected)
                     Client.shared.disconnect()
                     XCTAssertFalse(Client.shared.isConnected)
-                    Client.shared.onConnect = { _ in }
+                    subscription?.cancel()
                     expectation.fulfill()
                 }
             }
-            
-            TestCase.setupClientUser()
         }
     }
     
     func test02AnonymousUser() {
         expect("WebSocket connected") { expectation in
-            Client.shared.onConnect = { connection in
-                if case .connected = connection {
+            Client.shared.setAnonymousUser()
+            
+            var subscription: Cancellable?
+            subscription = Client.shared.subscribe(forEvents: [.connectionChanged]) {
+                if case .connectionChanged(let connectionState) = $0, connectionState.isConnected {
                     XCTAssertTrue(Client.shared.isConnected)
-                    Client.shared.onConnect = { _ in }
+                    subscription?.cancel()
                     expectation.fulfill()
                 }
             }
-            
-            Client.shared.setAnonymousUser()
         }
         
         expect("create a channel for anonymous") { expectation in
