@@ -45,6 +45,10 @@ public final class ChannelsPresenter: Presenter {
     /// with a selected channel presenter and this channel events filter.
     public var channelEventsFilter: StreamChatClient.Event.Filter?
     
+    /// It will trigger `channel.stopWatching()` for each channel, if needed when the presenter was deallocated.
+    /// It's no needed if you will disconnect when the presenter will be deallocated.
+    public var stopChannelsWatchingIfNeeded = false
+    
     let actions = PublishSubject<ViewChanges>()
     var disposeBagForInternalRequests = DisposeBag()
     
@@ -60,7 +64,7 @@ public final class ChannelsPresenter: Presenter {
         self.queryOptions = queryOptions
         self.filter = filter
         self.sorting = sorting
-        super.init(pageSize: .channelsPageSize)
+        super.init(pageSize: [.channelsPageSize])
     }
 }
 
@@ -101,12 +105,13 @@ extension ChannelsPresenter {
         
         items.append(contentsOf: channels.map {
             let channelPresenter = ChannelPresenter(response: $0, queryOptions: queryOptions)
+            channelPresenter.stopWatchingIfNeeded = stopChannelsWatchingIfNeeded
             onChannelPresenterSetup?(channelPresenter)
             return .channelPresenter(channelPresenter)
         })
         
-        if channels.count == next.limit {
-            next = .channelsNextPageSize + .offset(next.offset + next.limit)
+        if channels.count == (next.limit ?? 0) {
+            next = [.channelsNextPageSize, .offset((next.offset ?? 0) + (next.limit ?? 0))]
             items.append(.loading(false))
         } else {
             next = pageSize
@@ -212,6 +217,7 @@ extension ChannelsPresenter {
         }
         
         let channelPresenter = ChannelPresenter(channel: channel, queryOptions: queryOptions)
+        channelPresenter.stopWatchingIfNeeded = stopChannelsWatchingIfNeeded
         onChannelPresenterSetup?(channelPresenter)
         // We need to load messages for new channel.
         loadChannelMessages(channelPresenter)
@@ -219,7 +225,7 @@ extension ChannelsPresenter {
         
         // Update pagination offset.
         if next != pageSize {
-            next = .channelsNextPageSize + .offset(next.offset + 1)
+            next = [.channelsNextPageSize, .offset((next.offset ?? 0) + 1)]
         }
         
         return .itemsAdded([0], nil, false, items)

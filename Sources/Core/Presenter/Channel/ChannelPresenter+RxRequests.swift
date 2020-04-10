@@ -57,21 +57,21 @@ extension Reactive where Base == ChannelPresenter {
     
     var messagesRequest: Observable<ChannelResponse> {
         prepareRequest()
-            .filter { [weak base] in $0 != .none && base?.parentMessage == nil }
+            .filter { [weak base] in !$0.isEmpty && base?.parentMessage == nil }
             .flatMapLatest({ [weak base] pagination -> Observable<ChannelResponse> in
                 guard let base = base else {
                     return .empty()
                 }
                 
                 // Request for the fist page.
-                if pagination.isLimit {
+                if pagination.limit != nil {
                     return base.channel.rx.query(messagesPagination: pagination, options: base.queryOptions).retry(3)
                 }
                 
                 // We need only the next page of messages.
                 // Skip members and default query options.
                 return base.channel.rx
-                    .query(messagesPagination: pagination, membersPagination: .limit(0), options: .state)
+                    .query(messagesPagination: pagination, membersPagination: [.limit(0)], options: .state)
                     .retry(3)
             })
     }
@@ -174,7 +174,7 @@ private extension Reactive where Base == ChannelPresenter {
     
     var repliesRequest: Observable<[Message]> {
         prepareRequest()
-            .filter { [weak base] in $0 != .none && base?.parentMessage != nil }
+            .filter { [weak base] in !$0.isEmpty && base?.parentMessage != nil }
             .flatMapLatest { [weak base] in (base?.parentMessage?.rx.replies(pagination: $0) ?? .empty()).retry(3) }
     }
     

@@ -21,6 +21,15 @@ open class ChannelsViewController: ViewController {
     public lazy var style = defaultStyle
     /// A default chat style. This is useful for subclasses.
     open var defaultStyle: ChatViewStyle { .init() }
+    
+    /// It will trigger `channel.stopWatching()` for each channel, if needed when the view controller was deallocated.
+    /// It's no needed if you will disconnect when the view controller will be deallocated.
+    public lazy var stopChannelsWatchingIfNeeded = defaultStopChannelsWatchingIfNeeded
+    
+    /// It will trigger `channel.stopWatching()`, for each channel  if needed when the view controller was deallocated.
+    /// It's no needed if you will disconnect when the view controller will be deallocated.
+    open var defaultStopChannelsWatchingIfNeeded: Bool { false }
+    
     /// A list of table view items, e.g. channel presenters.
     public private(set) var items = [PresenterItem]()
     
@@ -105,6 +114,8 @@ open class ChannelsViewController: ViewController {
     }
     
     private func setupChannelsPresenter() {
+        presenter.stopChannelsWatchingIfNeeded = stopChannelsWatchingIfNeeded
+        
         presenter.rx.changes
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)

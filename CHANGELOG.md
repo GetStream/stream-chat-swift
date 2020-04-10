@@ -7,17 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### 🔄 Changed
-
+- `Pagination` doesn't support `+` operator anymore, please use a set of  `PaginationOption`s from now on [#158](https://github.com/GetStream/stream-chat-swift/issues/158)
+- `channel.subscribeToWatcherCount` uses channel events to publish updated counts and does not call `channel.watch` as a side-effect anymore [#161](https://github.com/GetStream/stream-chat-swift/issues/161)
 
 ### ✅ Added
 - Message preparation callback on `ChannelPresenter` to modify messages before they're sent [#142](https://github.com/GetStream/stream-chat-swift/issues/142)
+- Better errors when developers forget to call `set(user:)` or don't wait for its completion [#160](https://github.com/GetStream/stream-chat-swift/issues/160)
 
 ### 🐞 Fixed
+- SPM support [#156](https://github.com/GetStream/stream-chat-swift/issues/156).
+
+# [2.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.1)
+_April 3, 2020_
+
+### 🐞 Fixed
+- Connection issue [#155](https://github.com/GetStream/stream-chat-swift/issues/155).
+- Channel image parsing [#155](https://github.com/GetStream/stream-chat-swift/issues/155).
+- Optionally stop watching channels when view controllers was deallocated [#155](https://github.com/GetStream/stream-chat-swift/issues/155).
 
 # [2.0.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.0)
 _April 2, 2020_
 
-### SteamChat 2.0 here and it's brand new :sparkles: :rocket:
+### StreamChat 2.0 here and it's brand new :sparkles: :rocket:
 
 We've added/removed/fixed/changed a lot of stuff, so it's fair to say that StreamChat 2.0 is everything you've liked about 1.x and nothing you didn't like about it :smile:
 
@@ -29,6 +40,7 @@ Most importantly:
 - We've updated our dependencies, and removed some.
 
 Aside from those, we fixed tons of bugs and polished our API. Now it should be more Swifty :tada:
+
 We're working hard on migration guide for our 1.x users and will publish it shortly.
 You can check out updated docs [here](http://getstream.io/chat/docs/)
 

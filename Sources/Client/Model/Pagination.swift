@@ -8,6 +8,29 @@
 
 import Foundation
 
+public typealias Pagination = Set<PaginationOption>
+
+public extension Pagination {
+    var limit: Int? {
+        first(where: { $0.limit != nil })?.limit
+    }
+    
+    var offset: Int? {
+        first(where: { $0.offset != nil })?.offset
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        try forEach({ try $0.encode(to: encoder) })
+    }
+}
+
+public extension KeyedEncodingContainer {
+    mutating func encode(_ value: Pagination, forKey key: Self.Key) throws {
+        let encoder = self.superEncoder(forKey: key)
+        try value.forEach({ try $0.encode(to: encoder) })
+    }
+}
+
 /// Pagination options.
 ///
 /// For example:
@@ -20,15 +43,15 @@ import Foundation
 /// // Another pagination:
 /// let pagination = Pagination.limit(50) + .lessThan("some_id")
 /// ```
-public enum Pagination: Codable, Equatable {
+public enum PaginationOption: Encodable, Equatable, Hashable {
     /// A default channels page size.
-    public static let channelsPageSize: Pagination = .limit(20)
+    public static let channelsPageSize: Self = .limit(20)
     /// A default channels page sizefor the next page.
-    public static let channelsNextPageSize: Pagination = .limit(30)
+    public static let channelsNextPageSize: Self = .limit(30)
     /// A default messages page size.
-    public static let messagesPageSize: Pagination = .limit(25)
+    public static let messagesPageSize: Self = .limit(25)
     /// A default messages page size for the next page.
-    public static let messagesNextPageSize: Pagination = .limit(50)
+    public static let messagesNextPageSize: Self = .limit(50)
     
     private enum CodingKeys: String, CodingKey {
         case limit
@@ -38,9 +61,6 @@ public enum Pagination: Codable, Equatable {
         case lessThan = "id_lt"
         case lessThanOrEqual = "id_lte"
     }
-    
-    /// No pagination.
-    case none
     
     /// The amount of items requested from the APIs.
     case limit(_ limit: Int)
@@ -61,107 +81,47 @@ public enum Pagination: Codable, Equatable {
     /// Filter on ids smaller than or equal to the given value.
     case lessThanOrEqual(_ id: String)
     
-    /// Combine `Pagination`'s with each other.
-    ///
-    /// It's easy to use with the `+` operator. Examples:
-    /// ```
-    /// var pagination = .limit(10) + .greaterThan("news123")
-    /// pagination += .lessThan("news987")
-    /// print(pagination)
-    /// // It will print:
-    /// // and(pagination: .and(pagination: .limit(10), another: .greaterThan("news123")),
-    /// //     another: .lessThan("news987"))
-    /// ```
-    indirect case and(pagination: Pagination, another: Pagination)
-    
-    /// A limit value, if the pagination has it or 0.
-    public var limit: Int {
+    /// A limit value, if the pagination has it or nil.
+    public var limit: Int? {
         if case .limit(let limit) = self {
             return limit
         }
         
-        if case let .and(lhs, rhs) = self {
-            let limit = lhs.limit
-            
-            if limit == 0 {
-                return rhs.limit
-            }
-            
-            return limit
-        }
-        
-        return 0
+        return nil
     }
     
-    /// Checks if the pagination is a limit only.
-    public var isLimit: Bool {
-        if case .limit = self {
-            return true
-        }
-        
-        return false
-    }
-    
-    /// An offset value, if the pagination has it or 0.
-    public var offset: Int {
+    /// An offset value, if the pagination has it or nil.
+    public var offset: Int? {
         if case .offset(let offset) = self {
             return offset
         }
         
-        if case let .and(lhs, rhs) = self {
-            let offset = lhs.offset
-            
-            if offset == 0 {
-                return rhs.offset
-            }
-            
-            return offset
-        }
-        
-        return 0
+        return nil
     }
     
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let urlString = try container.decode(String.self)
-        var pagination = Pagination.none
+    /// Parameters for a request.
+    var parameters: [String: Any] {
         
-        if let urlComponents = URLComponents(string: urlString), let queryItems = urlComponents.queryItems {
-            queryItems.forEach { queryItem in
-                if let value = queryItem.value, !value.isEmpty {
-                    switch queryItem.name {
-                    case "limit":
-                        if let intValue = Int(value) {
-                            pagination += .limit(intValue)
-                        }
-                    case "offset":
-                        if let intValue = Int(value) {
-                            pagination += .offset(intValue)
-                        }
-                    case "id_gt":
-                        pagination += .greaterThan(value)
-                    case "id_gte":
-                        pagination += .greaterThanOrEqual(value)
-                    case "id_lt":
-                        pagination += .lessThan(value)
-                    case "id_lte":
-                        pagination += .lessThanOrEqual(value)
-                    default:
-                        break
-                    }
-                }
-            }
+        switch self {
+        case .limit(let limit):
+            return ["limit": limit]
+        case let .offset(offset):
+            return ["offset": offset]
+        case let .greaterThan(id):
+            return ["id_gt": id]
+        case let .greaterThanOrEqual(id):
+            return ["id_gte": id]
+        case let .lessThan(id):
+            return ["id_lt": id]
+        case let .lessThanOrEqual(id):
+            return ["id_lte": id]
         }
-        
-        self = pagination
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {
-        case .none:
-            break
         case .limit(let limit):
             try container.encode(limit, forKey: .limit)
         case .offset(let offset):
@@ -174,57 +134,20 @@ public enum Pagination: Codable, Equatable {
             try container.encode(id, forKey: .lessThan)
         case .lessThanOrEqual(let id):
             try container.encode(id, forKey: .lessThanOrEqual)
-        case .and(let pagination, let another):
-            try pagination.encode(to: encoder)
-            try another.encode(to: encoder)
         }
     }
     
-    /// Parameters for a request.
-    var parameters: [String: Any] {
-        var params: [String: Any] = [:]
-        
-        switch self {
-        case .none:
-            return [:]
-        case .limit(let limit):
-            params["limit"] = limit
-        case let .offset(offset):
-            params["offset"] = offset
-        case let .greaterThan(id):
-            params["id_gt"] = id
-        case let .greaterThanOrEqual(id):
-            params["id_gte"] = id
-        case let .lessThan(id):
-            params["id_lt"] = id
-        case let .lessThanOrEqual(id):
-            params["id_lte"] = id
-        case let .and(pagination1, pagination2):
-            params = pagination1.parameters.merging(pagination2.parameters) { _, new in new }
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        switch (lhs, rhs) {
+        case (.limit, .limit),
+             (.offset, .offset),
+             (.greaterThan, .greaterThan),
+             (.greaterThanOrEqual, .greaterThanOrEqual),
+             (.lessThan, .lessThan),
+             (.lessThanOrEqual, .lessThanOrEqual):
+            return true
+        default:
+            return false
         }
-        
-        return params
-    }
-}
-
-// MARK: - Helper Operator
-
-extension Pagination {
-    /// An operator for combining Pagination's.
-    public static func + (lhs: Pagination, rhs: Pagination) -> Pagination {
-        if case .none = lhs {
-            return rhs
-        }
-        
-        if case .none = rhs {
-            return lhs
-        }
-        
-        return .and(pagination: lhs, another: rhs)
-    }
-    
-    /// An operator for combining Pagination's.
-    public static func += (lhs: inout Pagination, rhs: Pagination) {
-        lhs = lhs + rhs // swiftlint:disable:this shorthand_operator
     }
 }

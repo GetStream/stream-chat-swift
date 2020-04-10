@@ -15,19 +15,22 @@ let package = Package(
         .library(
             name: "StreamChatCore",
             targets: ["StreamChatCore"]),
+        .library(
+            name: "StreamChatClient",
+            targets: ["StreamChatClient"]),
     ],
     dependencies: [
         // UI
-        .package(url: "https://github.com/kean/Nuke.git", from: "8.2.0"),
+        .package(url: "https://github.com/kean/Nuke.git", from: "8.4.0"),
         .package(url: "https://github.com/SnapKit/SnapKit.git", from: "5.0.0"),
-        .package(url: "https://github.com/kirualex/SwiftyGif.git", from: "5.1.0"),
+        .package(url: "https://github.com/kirualex/SwiftyGif.git", from: "5.2.0"),
         .package(url: "https://github.com/RxSwiftCommunity/RxGesture.git", from: "3.0.0"),
         // Core
-        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "5.0.0"),
-        .package(url: "https://github.com/GetStream/RxAppState.git", from: "1.6.0"),
+        .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "5.1.0"),
+        // Client
         .package(url: "https://github.com/daltoniam/Starscream.git", from: "3.1.0"),
-        .package(url: "https://github.com/ashleymills/Reachability.swift.git", from: "4.3.0"),
-        .package(url: "https://github.com/1024jp/GzipSwift.git", from: "5.0.0"),
+        .package(url: "https://github.com/ashleymills/Reachability.swift.git", from: "5.0.0"),
+        .package(url: "https://github.com/1024jp/GzipSwift.git", from: "5.1.0"),
     ],
     targets: [
         .target(
@@ -36,7 +39,11 @@ let package = Package(
             path: "Sources/UI"),
         .target(
             name: "StreamChatCore",
-            dependencies: ["RxSwift", "RxAppState", "Starscream", "Reachability", "Gzip"],
+            dependencies: ["StreamChatClient", "RxSwift", "RxCocoa"],
             path: "Sources/Core"),
+        .target(
+            name: "StreamChatClient",
+            dependencies: ["Starscream", "Reachability", "Gzip"],
+            path: "Sources/Client")
     ]
 )

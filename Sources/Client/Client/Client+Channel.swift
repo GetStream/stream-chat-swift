@@ -82,9 +82,9 @@ public extension Client {
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
     func queryChannel(_ channel: Channel,
-                      messagesPagination: Pagination = .none,
-                      membersPagination: Pagination = .none,
-                      watchersPagination: Pagination = .none,
+                      messagesPagination: Pagination = [],
+                      membersPagination: Pagination = [],
+                      watchersPagination: Pagination = [],
                       options: QueryOptions = [],
                       _ completion: @escaping Client.Completion<ChannelResponse>) -> URLSessionTask {
         queryChannel(query: .init(channel: channel,
