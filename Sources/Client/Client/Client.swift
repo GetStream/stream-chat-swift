@@ -220,6 +220,13 @@ public final class Client {
             self.waitingRequests = []
         }
     }
+    
+    /// Checks if the given channel is watching.
+    /// - Parameter channel: a channel.
+    /// - Returns: returns true if the client is watching for the channel.
+    public func isWatching(channel: Channel) -> Bool {
+        channelsAtomic.get(default: [:])[channel.cid] != nil
+    }
 }
 
 // MARK: - Waiting Request
