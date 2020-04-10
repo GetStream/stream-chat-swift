@@ -148,6 +148,10 @@ public final class Client {
     }
     
     /// Handle a connection with an application state.
+    /// - Note:
+    ///   - Skip if the Internet is not available.
+    ///   - Skip if it's already connected.
+    ///   - Skip if it's reconnecting.
     ///
     /// Application State:
     /// - `.active`
@@ -175,10 +179,6 @@ public final class Client {
     }
     
     /// Connect to websocket.
-    /// - Note:
-    ///   - Skip if the Internet is not available.
-    ///   - Skip if it's already connected.
-    ///   - Skip if it's reconnecting.
     /// - Parameter completion: a completion block will be call once when the connection will be established.
     func connect(_ completion: Client.Completion<UserConnection>?) {
         if let completion = completion {
@@ -192,7 +192,6 @@ public final class Client {
                     
                     if case .disconnected(let error) = state, let clientError = error {
                         completion(.failure(clientError))
-                        subscription?.cancel()
                     }
                 }
             }
