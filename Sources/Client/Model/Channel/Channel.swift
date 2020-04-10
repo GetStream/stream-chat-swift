@@ -78,12 +78,8 @@ public final class Channel: Codable {
     public var extraData: ChannelExtraDataCodable?
     /// Check if the channel was deleted.
     public var isDeleted: Bool { deleted != nil }
-    
     /// Checks if read events evalable for the current user.
-    public var readEventsEnabled: Bool {
-        config.readEventsEnabled && members.contains(Member.current)
-    }
-    
+    public var readEventsEnabled: Bool { config.readEventsEnabled && members.contains(Member.current) }
     /// Returns the current unread count.
     public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get(default: .noUnread) }
     
@@ -107,20 +103,15 @@ public final class Channel: Codable {
     public var unreadMessageRead: MessageRead? { unreadMessageReadAtomic.get() }
     /// Checks if the current status of the channel is unread.
     public var isUnread: Bool { unreadCount.messages > 0 }
-    
     /// An option to enable ban users.
     public var banEnabling = BanEnabling.disabled
     var bannedUsers = [User]()
-    
     /// Checks if the channel is direct message type between 2 users.
     public var isDirectMessage: Bool { id.hasPrefix("!members") && members.count == 2 }
-    
     /// An event when the channel was updated.
     public var onUpdate: OnUpdate<Channel>?
-    
     /// Checks if the channel was decoded from a channel response.
     public let didLoad: Bool
-    
     /// Checks if the channel is watching by the client.
     public var isWatching: Bool { Client.shared.isWatching(channel: self) }
     

@@ -116,7 +116,7 @@ extension ChatViewController {
                 .disposed(by: disposeBag)
         }
         
-        let textViewEvents = composerView.textView.rx.text.skip(1).unwrap().share()
+        let textViewEvents = composerView.textView.rx.text.skip(1).compactMap({ $0 }).share()
         
         // Dispatch commands from text view.
         textViewEvents.subscribe(onNext: { [weak self] in self?.dispatchCommands(in: $0) }).disposed(by: disposeBag)
