@@ -10,7 +10,7 @@ import Foundation
 
 public typealias Pagination = Set<PaginationOption>
 
-public extension Set where Element == PaginationOption {
+public extension Pagination {
     var limit: Int? {
         first(where: { $0.limit != nil })?.limit
     }
@@ -26,7 +26,8 @@ public extension Set where Element == PaginationOption {
 
 public extension KeyedEncodingContainer {
     mutating func encode(_ value: Pagination, forKey key: Self.Key) throws {
-        try value.forEach({ try self.encode($0, forKey: key) })
+        let encoder = self.superEncoder(forKey: key)
+        try value.forEach({ try $0.encode(to: encoder) })
     }
 }
 
