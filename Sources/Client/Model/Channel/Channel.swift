@@ -221,16 +221,22 @@ extension Channel: Hashable, CustomStringConvertible {
 
 extension Channel {
     
-    public func subscribe(forEvents eventTypes: Set<EventType> = EventType.channelCases,
+    public func subscribe(forEvents eventTypes: Set<EventType> = EventType.channelEventTypes,
                           _ callback: @escaping Client.OnEvent) -> Cancellable {
-        if eventTypes != EventType.channelCases, !eventTypes.isStrictSubset(of: EventType.channelCases) {
+        let validEvents = eventTypes.intersection(EventType.channelEventTypes)
+        
+        if validEvents.count != eventTypes.count, let logger = Client.shared.logger {
             var badEvents = eventTypes
-            badEvents.subtract(EventType.channelCases)
+            badEvents.subtract(EventType.channelEventTypes)
             
-            let message = "The events \(badEvents) are not channel events and will never get handled by your completion handler. "
+            let message = "⚠️ The events \(badEvents) are not channel events and will never get handled by your completion handler. "
                 + "Please check the documentation on event for more information."
             
-            Client.shared.logger?.log(message, level: .error)
+            logger.log(message, level: .error)
+        }
+        
+        guard !validEvents.isEmpty else {
+            return Subscription { _ in }
         }
         
         let subscription = Client.shared.subscribe(forEvents: eventTypes, cid: cid, callback)
