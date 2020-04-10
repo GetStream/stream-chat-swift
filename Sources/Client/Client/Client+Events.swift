@@ -148,12 +148,7 @@ extension Client {
 
     /// Subscribes to the watcher count for a channel that the user is watching
     func subscribeToWatcherCount(for channel: Channel, _ callback: @escaping Completion<Int>) -> Cancellable {
-        let eventTypes: Set<EventType> = [.userStartWatching,
-                                          .userStopWatching,
-                                          .messageNew,
-                                          .notificationMessageNew]
-
-        return channel.subscribe(forEvents: eventTypes, { event in
+        channel.subscribe(forEvents: [.userStartWatching, .userStopWatching, .messageNew], { event in
             switch event {
             case .userStartWatching(_, let watcherCount, _, _),
                  .userStopWatching(_, let watcherCount, _, _),

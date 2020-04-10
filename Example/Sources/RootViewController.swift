@@ -13,19 +13,17 @@ import StreamChatClient
 import StreamChatCore
 import StreamChat
 
-final class RootViewController: UIViewController {
+final class RootViewController: ViewController {
     
     @IBOutlet weak var splitViewButton: UIButton!
-    @IBOutlet weak var splitViewSeparator: UIView!
     @IBOutlet weak var totalUnreadCountLabel: UILabel!
     @IBOutlet weak var totalUnreadCountSwitch: UISwitch!
-    @IBOutlet weak var badgeLabel: UILabel!
-    @IBOutlet weak var badgeSwitch: UISwitch!
+    @IBOutlet weak var unreadCountSwitch: UISwitch!
+    @IBOutlet weak var unreadCountLabel: UILabel!
     @IBOutlet weak var onlinelabel: UILabel!
     @IBOutlet weak var onlineSwitch: UISwitch!
     @IBOutlet weak var notificationsSwitch: UISwitch!
     @IBOutlet weak var versionLabel: UILabel!
-    @IBOutlet weak var offlineMode: UISwitch!
     
     let disposeBag = DisposeBag()
     var totalUnreadCountDisposeBag = DisposeBag()
@@ -36,7 +34,6 @@ final class RootViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         splitViewButton.isHidden = UIDevice.current.userInterfaceIdiom == .phone
-        splitViewSeparator.isHidden = UIDevice.current.userInterfaceIdiom == .phone
         setupNotifications()
         navigationController?.navigationBar.prefersLargeTitles = true
         
@@ -74,13 +71,13 @@ final class RootViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        badgeSwitch.rx.isOn.changed
+        unreadCountSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in
                 if isOn {
                     self?.subscribeForUnreadCount()
                 } else {
                     self?.badgeDisposeBag = DisposeBag()
-                    self?.badgeLabel.text = "–"
+                    self?.unreadCountLabel.text = "Unread Count: <Disabled>"
                 }
             })
             .disposed(by: disposeBag)
@@ -88,61 +85,45 @@ final class RootViewController: UIViewController {
         onlineSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in
                 if isOn {
-                    self?.subscribeForOnlineUsers()
+                    self?.subscribeForWatcherCount()
                 } else {
                     self?.onlineDisposeBag = DisposeBag()
                     self?.onlinelabel.text = "Watcher Count: <Disabled>"
                 }
             })
             .disposed(by: disposeBag)
-        
-        offlineMode.rx.isOn.changed
-            .subscribe(onNext: { [weak self] in
-                if $0 {
-                    Client.shared.disconnect()
-                } else {
-                    self?.navigationController?.popViewController(animated: true)
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    @IBAction func checkForBan(_ sender: Any) {
-        Client.shared.rx.connected
-            .take(1)
-            .subscribe(onNext: { _ in
-                if User.current.isBanned {
-                    Banners.shared.show("🙅‍♂️ You are banned")
-                } else {
-                    Banners.shared.show("👍 You are not banned")
-                }
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    func subscribeForTotalUnreadCount() {
-        Client.shared.rx.unreadCount
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] unreadCount in
-                self?.totalUnreadCountLabel.text = "Unread channels \(unreadCount.channels), messages: \(unreadCount.messages)"
-                UIApplication.shared.applicationIconBadgeNumber = unreadCount.messages
-            })
-            .disposed(by: totalUnreadCountDisposeBag)
     }
     
     func subscribeForUnreadCount() {
         channel.rx.unreadCount
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] unreadCount in self?.badgeLabel.text = "\(unreadCount.messages)  " })
+            .subscribe(onNext: { [weak self] unreadCount in self?.unreadCountLabel.text = "Unread Count: \(unreadCount.messages)" },
+                       onError: { [weak self] in self?.show(error: $0); self?.unreadCountSwitch.isOn = false })
             .disposed(by: badgeDisposeBag)
     }
     
-    func subscribeForOnlineUsers() {
+    func subscribeForWatcherCount() {
         channel.rx.watcherCount
             .observeOn(MainScheduler.instance)
             .startWith(0)
-            .subscribe(onNext: { [weak self] in self?.onlinelabel.text = "Watcher Count: \($0)" })
+            .subscribe(onNext: { [weak self] in self?.onlinelabel.text = "Watcher Count: \($0)" },
+                       onError: { [weak self] in self?.show(error: $0); self?.unreadCountSwitch.isOn = false })
             .disposed(by: onlineDisposeBag)
+    }
+
+    func subscribeForTotalUnreadCount() {
+        Client.shared.rx.unreadCount
+            .observeOn(MainScheduler.instance)
+            .subscribe(
+                onNext: { [weak self] unreadCount in
+                    self?.totalUnreadCountLabel.text = "Unread channels \(unreadCount.channels), messages: \(unreadCount.messages)"
+                    UIApplication.shared.applicationIconBadgeNumber = unreadCount.messages
+                },
+                onError: { [weak self] in
+                    self?.show(error: $0)
+                    self?.unreadCountSwitch.isOn = false
+            })
+            .disposed(by: totalUnreadCountDisposeBag)
     }
     
     func setupNotifications() {
