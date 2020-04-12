@@ -17,14 +17,14 @@ public extension Client {
     ///   - messageId: a message id.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func message(withId messageId: String, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+    func message(withId messageId: String, _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         request(endpoint: .message(messageId), completion)
     }
     
     /// Mark all messages as read.
     /// - Parameter completion: an empty completion block.
     @discardableResult
-    func markAllRead(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+    func markAllRead(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         request(endpoint: .markAllRead, completion)
     }
     
@@ -33,7 +33,7 @@ public extension Client {
     ///   - message: a message for deleting.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func delete(message: Message, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+    func delete(message: Message, _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         request(endpoint: .deleteMessage(message), completion)
     }
     
@@ -45,7 +45,7 @@ public extension Client {
     @discardableResult
     func replies(for message: Message,
                  pagination: Pagination,
-                 _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
+                 _ completion: @escaping Client.Completion<[Message]>) -> Cancellable {
         request(endpoint: .replies(message, pagination)) { (result: Result<MessagesResponse, ClientError>) in
             completion(result.map(to: \.messages))
         }
@@ -65,7 +65,7 @@ public extension Client {
                      score: Int = 1,
                      extraData: Codable? = nil,
                      to message: Message,
-                     _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+                     _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         let reaction = Reaction(type: type, score: score, messageId: message.id, extraData: extraData)
         return request(endpoint: .addReaction(reaction), completion)
     }
@@ -78,7 +78,7 @@ public extension Client {
     @discardableResult
     func deleteReaction(type: String,
                         from message: Message,
-                        _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+                        _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         request(endpoint: .deleteReaction(type, message), completion)
     }
     
@@ -89,15 +89,15 @@ public extension Client {
     ///   - message: a message.
     ///   - completion: a completion block with `FlagMessageResponse`.
     @discardableResult
-    func flag(message: Message, _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+    func flag(message: Message, _ completion: @escaping Client.Completion<FlagMessageResponse>) -> Cancellable {
         if message.id.isEmpty {
             completion(.failure(.emptyMessageId))
-            return .empty
+            return Subscription.empty
         }
         
         if user.isCurrent {
             completion(.success(.init(messageId: message.id, created: Date(), updated: Date())))
-            return .empty
+            return Subscription.empty
         }
         
         let completion = doAfter(completion) { _ in
@@ -112,15 +112,15 @@ public extension Client {
     ///   - message: a message.
     ///   - completion: a completion block with `FlagMessageResponse`.
     @discardableResult
-    func unflag(message: Message, _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+    func unflag(message: Message, _ completion: @escaping Client.Completion<FlagMessageResponse>) -> Cancellable {
         if message.id.isEmpty {
             completion(.failure(.emptyMessageId))
-            return .empty
+            return Subscription.empty
         }
         
         if user.isCurrent {
             completion(.success(.init(messageId: message.id, created: Date(), updated: Date())))
-            return .empty
+            return Subscription.empty
         }
         
         let completion = doAfter(completion) { _ in
@@ -134,7 +134,7 @@ public extension Client {
     
     private func toggleFlagMessage(_ message: Message,
                                    endpoint: Endpoint,
-                                   _ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+                                   _ completion: @escaping Client.Completion<FlagMessageResponse>) -> Cancellable {
         request(endpoint: endpoint) { (result: Result<FlagMessageResponse, ClientError>) in
             let result = result.catchError { error in
                 if case .responseError(let clientResponseError) = error,

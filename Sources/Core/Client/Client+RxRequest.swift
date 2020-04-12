@@ -11,7 +11,7 @@ import Foundation
 import RxSwift
 
 /// A request type with a progress of a sending data.
-public typealias ProgressRequest<T: Decodable> = (@escaping Client.Progress, @escaping Client.Completion<T>) -> URLSessionTask
+public typealias ProgressRequest<T: Decodable> = (@escaping Client.Progress, @escaping Client.Completion<T>) -> Cancellable
 
 /// A response type with a progress of a sending data.
 /// The progress property can have float values from 0.0 to 1.0.
@@ -24,9 +24,9 @@ public struct ProgressResponse<T: Decodable>: Decodable {
 
 public extension Reactive where Base == Client {
     
-    func request<T: Decodable>(_ request: @escaping (@escaping Client.Completion<T>) -> URLSessionTask) -> Observable<T> {
+    func request<T: Decodable>(_ request: @escaping (@escaping Client.Completion<T>) -> Cancellable) -> Observable<T> {
         .create { observer in
-            let urlSessionTask = request { result in
+            let subscription = request { result in
                 if let value = result.value {
                     observer.onNext(value)
                     observer.onCompleted()
@@ -35,13 +35,13 @@ public extension Reactive where Base == Client {
                 }
             }
             
-            return Disposables.create { urlSessionTask.cancel() }
+            return Disposables.create { subscription.cancel() }
         }
     }
     
     func progressRequest<T: Decodable>(_ request: @escaping ProgressRequest<T>) -> Observable<ProgressResponse<T>> {
         .create { observer in
-            let urlSessionTask = request({ progress in
+            let subscription = request({ progress in
                 observer.onNext(.init(progress: progress, value: nil))
             }, { result in
                 if let value = result.value {
@@ -52,7 +52,7 @@ public extension Reactive where Base == Client {
                 }
             })
             
-            return Disposables.create { urlSessionTask.cancel() }
+            return Disposables.create { subscription.cancel() }
         }
     }
     

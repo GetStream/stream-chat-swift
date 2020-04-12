@@ -113,7 +113,7 @@ public final class Channel: Codable {
     /// Checks if the channel was decoded from a channel response.
     public let didLoad: Bool
     /// Checks if the channel is watching by the client.
-    public var isWatching: Bool { Client.shared.isWatching(channel: self) }
+    public var isWatched: Bool { Client.shared.isWatching(channel: self) }
     
     private var subscriptionBag = SubscriptionBag()
     

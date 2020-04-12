@@ -22,7 +22,7 @@ public extension Client {
     func queryUsers(filter: Filter,
                     sort: Sorting? = nil,
                     options: QueryOptions = [],
-                    _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
+                    _ completion: @escaping Client.Completion<[User]>) -> Cancellable {
         queryUsers(query: .init(filter: filter, sort: sort, options: options), completion)
     }
     
@@ -31,7 +31,7 @@ public extension Client {
     ///   - query: a users query (see `UsersQuery`).
     ///   - completion: a completion block with `[User]`.
     @discardableResult
-    func queryUsers(query: UsersQuery, _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
+    func queryUsers(query: UsersQuery, _ completion: @escaping Client.Completion<[User]>) -> Cancellable {
         request(endpoint: .users(query)) { (result: Result<UsersResponse, ClientError>) in
             completion(result.map(to: \.users))
         }
@@ -42,7 +42,7 @@ public extension Client {
     /// Update or create a user.
     /// - Parameter completion: a completion block with `[User]`.
     @discardableResult
-    func update(users: [User], _ completion: @escaping Client.Completion<[User]>) -> URLSessionTask {
+    func update(users: [User], _ completion: @escaping Client.Completion<[User]>) -> Cancellable {
         request(endpoint: .updateUsers(users)) { [unowned self] (result: Result<UpdatedUsersResponse, ClientError>) in
             var updatedCompletion = completion
             let usersResult = result.map(to: \.users)
@@ -60,7 +60,7 @@ public extension Client {
     ///   - user: a user.
     ///   - completion: a completion block with `User`.
     @discardableResult
-    func update(user: User, _ completion: @escaping Client.Completion<User>) -> URLSessionTask {
+    func update(user: User, _ completion: @escaping Client.Completion<User>) -> Cancellable {
         update(users: [user]) { (result: Result<[User], ClientError>) in
             completion(result.first(orError: .emptyUser))
         }
@@ -73,9 +73,9 @@ public extension Client {
     ///   - user: a user.
     ///   - completion: a completion block with `MutedUsersResponse`.
     @discardableResult
-    func mute(user: User, _ completion: @escaping Client.Completion<MutedUsersResponse>) -> URLSessionTask {
+    func mute(user: User, _ completion: @escaping Client.Completion<MutedUsersResponse>) -> Cancellable {
         if user.isCurrent {
-            return .empty
+            return Subscription.empty
         }
         
         let completion = doBefore(completion) { [unowned self] in self.userAtomic.set($0.currentUser) }
@@ -87,9 +87,9 @@ public extension Client {
     ///   - user: a user.
     ///   - completion: an empty completion block.
     @discardableResult
-    func unmute(user: User, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+    func unmute(user: User, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         if user.isCurrent {
-            return .empty
+            return Subscription.empty
         }
         
         let completion = doBefore(completion) { [unowned self] _ in
@@ -110,7 +110,7 @@ public extension Client {
     ///   - user: a user.
     ///   - completion: a completion block with `FlagUserResponse`.
     @discardableResult
-    func flag(user: User, _ completion: @escaping Client.Completion<FlagUserResponse>) -> URLSessionTask {
+    func flag(user: User, _ completion: @escaping Client.Completion<FlagUserResponse>) -> Cancellable {
         toggleFlag(user, endpoint: .flagUser(user), completion)
     }
     
@@ -119,13 +119,13 @@ public extension Client {
     ///   - user: a user.
     ///   - completion: a completion block with `FlagUserResponse`.
     @discardableResult
-    func unflag(user: User, _ completion: @escaping Client.Completion<FlagUserResponse>) -> URLSessionTask {
+    func unflag(user: User, _ completion: @escaping Client.Completion<FlagUserResponse>) -> Cancellable {
         toggleFlag(user, endpoint: .unflagUser(user), completion)
     }
     
     private func toggleFlag(_ user: User,
                             endpoint: Endpoint,
-                            _ completion: @escaping Client.Completion<FlagUserResponse>) -> URLSessionTask {
+                            _ completion: @escaping Client.Completion<FlagUserResponse>) -> Cancellable {
         request(endpoint: endpoint) { (result: Result<FlagUserResponse, ClientError>) in
             let result = result.catchError { error in
                 if case .responseError(let clientResponseError) = error,

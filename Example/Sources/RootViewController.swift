@@ -29,7 +29,8 @@ final class RootViewController: ViewController {
     var totalUnreadCountDisposeBag = DisposeBag()
     var badgeDisposeBag = DisposeBag()
     var onlineDisposeBag = DisposeBag()
-    let channel = Client.shared.channel(type: .messaging, id: "general")
+    let subscriptionBag = SubscriptionBag()
+    var channel = Client.shared.channel(type: .messaging, id: "general")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,7 +75,7 @@ final class RootViewController: ViewController {
         unreadCountSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in
                 if isOn {
-                    self?.subscribeForUnreadCount()
+                    self?.rxUnreadCount()
                 } else {
                     self?.badgeDisposeBag = DisposeBag()
                     self?.unreadCountLabel.text = "Unread Count: <Disabled>"
@@ -94,18 +95,65 @@ final class RootViewController: ViewController {
             .disposed(by: disposeBag)
     }
     
-    func subscribeForUnreadCount() {
-        channel.rx.unreadCount
+    func rxUnreadCount() {
+        let unreadCountChanges: (Channel) -> Observable<ChannelUnreadCount> = { [weak self] channel in
+            channel.rx.unreadCount
+                .observeOn(MainScheduler.instance)
+                .do(onNext: { [weak self] unreadCount in self?.unreadCountLabel.text = "Unread Count: \(unreadCount.messages)" },
+                    onError: { [weak self] in self?.show(error: $0); self?.unreadCountSwitch.isOn = false })
+        }
+        
+        // Subscribe for the watched channel unread count changes.
+        if channel.isWatched {
+            unreadCountChanges(channel).subscribe().disposed(by: badgeDisposeBag)
+            return
+        }
+        
+        // Watch the channel and request 100 messages to get the initial value of unread count.
+        channel.rx.query(messagesPagination: [.limit(100)], options: [.watch, .state])
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] unreadCount in self?.unreadCountLabel.text = "Unread Count: \(unreadCount.messages)" },
-                       onError: { [weak self] in self?.show(error: $0); self?.unreadCountSwitch.isOn = false })
+            .flatMapLatest({ [weak self] response -> Observable<ChannelUnreadCount> in
+                self?.channel = response.channel
+                return unreadCountChanges(response.channel)
+            })
+            .subscribe()
             .disposed(by: badgeDisposeBag)
+    }
+    
+    @IBAction func subscribeForUnreadCount(_ sender: Any) {
+        subscriptionBag.cancel()
+        
+        func unreadCountChanges(_ channel: Channel) -> Cancellable {
+            channel.subscribeToUnreadCount { [weak self] result in
+                DispatchQueue.main.async {
+                    if let unreadCount = result.value {
+                        self?.unreadCountLabel.text = "Unread Count: \(unreadCount.messages)"
+                    } else if let error = result.error {
+                        self?.show(error: error)
+                        self?.unreadCountSwitch.isOn = false
+                    }
+                }
+            }
+        }
+        
+        if channel.isWatched {
+            subscriptionBag.add(unreadCountChanges(channel))
+            return
+        }
+        
+        subscriptionBag.add(channel.query(messagesPagination: [.limit(100)], options: [.watch, .state], { [weak self] result in
+            if let response = result.value {
+                DispatchQueue.main.async {
+                    self?.channel = response.channel
+                    self?.subscriptionBag.add(unreadCountChanges(response.channel))
+                }
+            }
+        }))
     }
     
     func subscribeForWatcherCount() {
         channel.rx.watcherCount
             .observeOn(MainScheduler.instance)
-            .startWith(0)
             .subscribe(onNext: { [weak self] in self?.onlinelabel.text = "Watcher Count: \($0)" },
                        onError: { [weak self] in self?.show(error: $0); self?.unreadCountSwitch.isOn = false })
             .disposed(by: onlineDisposeBag)
