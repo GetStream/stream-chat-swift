@@ -99,7 +99,7 @@ extension Client {
 
 extension Client {
     // Update unread and watcher counts for all channels with the same cid.
-    func refreshWatchingChannels(with channel: Channel, queryOptions: QueryOptions) {
+    func refreshWatchingChannels(with channel: Channel) {
         guard let weakWatchingChannels = watchingChannelsAtomic.get(default: [:])[channel.cid], !weakWatchingChannels.isEmpty else {
             watchingChannelsAtomic.add(channel, key: channel.cid)
             return
@@ -109,23 +109,19 @@ extension Client {
         weakChannels.append(WeakRef(channel))
         
         // Update unread count.
-        if queryOptions.contains(.state) {
-            // Find the max unread count.
-            let maxUnreadCount: ChannelUnreadCount = weakChannels.reduce(.noUnread) { result, weakChannel in
-                if let channel = weakChannel.value, channel.unreadCount.messages > result.messages {
-                    return channel.unreadCount
-                }
-                
-                return result
+        // Find the max unread count.
+        let maxUnreadCount: ChannelUnreadCount = weakChannels.reduce(.noUnread) { result, weakChannel in
+            if let channel = weakChannel.value, channel.unreadCount.messages > result.messages {
+                return channel.unreadCount
             }
             
-            weakChannels.forEach { $0.value?.unreadCountAtomic.set(maxUnreadCount) }
+            return result
         }
         
+        weakChannels.forEach { $0.value?.unreadCountAtomic.set(maxUnreadCount) }
+        
         // Update watcher count.
-        if queryOptions.contains(.presence) {
-            weakChannels.forEach { $0.value?.watcherCountAtomic.set(channel.watcherCount) }
-        }
+        weakChannels.forEach { $0.value?.watcherCountAtomic.set(channel.watcherCount) }
         
         watchingChannelsAtomic.update { watchingChannels in
             var watchingChannels = watchingChannels

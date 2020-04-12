@@ -27,8 +27,8 @@ final class RootViewController: ViewController {
     
     let disposeBag = DisposeBag()
     var totalUnreadCountDisposeBag = DisposeBag()
-    var badgeDisposeBag = DisposeBag()
-    var onlineDisposeBag = DisposeBag()
+    var unreadCountDisposeBag = DisposeBag()
+    var watcherCountDisposeBag = DisposeBag()
     let subscriptionBag = SubscriptionBag()
     var channel = Client.shared.channel(type: .messaging, id: "general")
     
@@ -67,7 +67,7 @@ final class RootViewController: ViewController {
                     self?.subscribeForTotalUnreadCount()
                 } else {
                     self?.totalUnreadCountDisposeBag = DisposeBag()
-                    self?.totalUnreadCountLabel.text = "Total Unread Count: <Disabled>"
+                    self?.totalUnreadCountLabel.text = "Total Unread Count"
                 }
             })
             .disposed(by: disposeBag)
@@ -75,10 +75,10 @@ final class RootViewController: ViewController {
         unreadCountSwitch.rx.isOn.changed
             .subscribe(onNext: { [weak self] isOn in
                 if isOn {
-                    self?.rxUnreadCount()
+                    self?.rxSubscribeForUnreadCount()
                 } else {
-                    self?.badgeDisposeBag = DisposeBag()
-                    self?.unreadCountLabel.text = "Unread Count: <Disabled>"
+                    self?.unreadCountDisposeBag = DisposeBag()
+                    self?.unreadCountLabel.text = "Unread Count"
                 }
             })
             .disposed(by: disposeBag)
@@ -88,38 +88,22 @@ final class RootViewController: ViewController {
                 if isOn {
                     self?.subscribeForWatcherCount()
                 } else {
-                    self?.onlineDisposeBag = DisposeBag()
-                    self?.onlinelabel.text = "Watcher Count: <Disabled>"
+                    self?.watcherCountDisposeBag = DisposeBag()
+                    self?.onlinelabel.text = "Watcher Count"
                 }
             })
             .disposed(by: disposeBag)
     }
     
-    func rxUnreadCount() {
-        let unreadCountChanges: (Channel) -> Observable<ChannelUnreadCount> = { [weak self] channel in
-            channel.rx.unreadCount
-                .observeOn(MainScheduler.instance)
-                .do(onNext: { [weak self] unreadCount in self?.unreadCountLabel.text = "Unread Count: \(unreadCount.messages)" },
-                    onError: { [weak self] in self?.show(error: $0); self?.unreadCountSwitch.isOn = false })
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "allChannels",
+            let navigationController = segue.destination as? UINavigationController,
+            let channelsViewController = navigationController.viewControllers.first as? ChannelsViewController {
+            channelsViewController.presenter = ChannelsPresenter(filter: .currentUserInMembers)
         }
-        
-        // Subscribe for the watched channel unread count changes.
-        if channel.isWatched {
-            unreadCountChanges(channel).subscribe().disposed(by: badgeDisposeBag)
-            return
-        }
-        
-        // Watch the channel and request 100 messages to get the initial value of unread count.
-        channel.rx.query(messagesPagination: [.limit(100)], options: [.watch, .state])
-            .observeOn(MainScheduler.instance)
-            .flatMapLatest({ [weak self] response -> Observable<ChannelUnreadCount> in
-                self?.channel = response.channel
-                return unreadCountChanges(response.channel)
-            })
-            .subscribe()
-            .disposed(by: badgeDisposeBag)
     }
     
+    /// A classic way to subscribe for a channel unread count.
     @IBAction func subscribeForUnreadCount(_ sender: Any) {
         subscriptionBag.cancel()
         
@@ -151,12 +135,54 @@ final class RootViewController: ViewController {
         }))
     }
     
-    func subscribeForWatcherCount() {
-        channel.rx.watcherCount
+    func rxSubscribeForUnreadCount() {
+        let unreadCountChanges: (Channel) -> Observable<ChannelUnreadCount> = { [weak self] channel in
+            channel.rx.unreadCount
+                .observeOn(MainScheduler.instance)
+                .do(onNext: { [weak self] unreadCount in self?.unreadCountLabel.text = "Unread Count: \(unreadCount.messages)" },
+                    onError: { [weak self] in self?.show(error: $0); self?.unreadCountSwitch.isOn = false })
+        }
+        
+        // Subscribe for the watched channel unread count changes.
+        if channel.isWatched {
+            unreadCountChanges(channel).subscribe().disposed(by: unreadCountDisposeBag)
+            return
+        }
+        
+        // Watch the channel and request 100 messages to get the initial value of unread count.
+        channel.rx.query(messagesPagination: [.limit(100)], options: [.watch, .state])
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] in self?.onlinelabel.text = "Watcher Count: \($0)" },
-                       onError: { [weak self] in self?.show(error: $0); self?.unreadCountSwitch.isOn = false })
-            .disposed(by: onlineDisposeBag)
+            .flatMapLatest({ [weak self] response -> Observable<ChannelUnreadCount> in
+                self?.channel = response.channel
+                return unreadCountChanges(response.channel)
+            })
+            .subscribe()
+            .disposed(by: unreadCountDisposeBag)
+    }
+    
+    func subscribeForWatcherCount() {
+        let watcherCountChanges: (Channel) -> Observable<Int> = { [weak self] channel in
+            channel.rx.watcherCount
+                .observeOn(MainScheduler.instance)
+                .do(onNext: { [weak self] in self?.onlinelabel.text = "Watcher Count: \($0)" },
+                    onError: { [weak self] in self?.show(error: $0); self?.unreadCountSwitch.isOn = false })
+        }
+        
+        // Subscribe for the watched channel watcher count changes.
+        if channel.isWatched {
+            watcherCountChanges(channel).subscribe().disposed(by: watcherCountDisposeBag)
+            return
+        }
+        
+        // Watch the channel and request 100 messages to get the initial value of unread count.
+        channel.rx.query(messagesPagination: [.limit(1)], options: [.watch, .state])
+            .observeOn(MainScheduler.instance)
+            .flatMapLatest({ [weak self] response -> Observable<Int> in
+                self?.channel = response.channel
+                return watcherCountChanges(response.channel)
+            })
+            .subscribe()
+            .disposed(by: watcherCountDisposeBag)
     }
 
     func subscribeForTotalUnreadCount() {
@@ -164,7 +190,7 @@ final class RootViewController: ViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(
                 onNext: { [weak self] unreadCount in
-                    self?.totalUnreadCountLabel.text = "Unread channels \(unreadCount.channels), messages: \(unreadCount.messages)"
+                    self?.totalUnreadCountLabel.text = "Total unread channels \(unreadCount.channels), messages: \(unreadCount.messages)"
                     UIApplication.shared.applicationIconBadgeNumber = unreadCount.messages
                 },
                 onError: { [weak self] in

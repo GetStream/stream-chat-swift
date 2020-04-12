@@ -83,7 +83,7 @@
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
                                         <state key="normal" title="All channels"/>
                                         <connections>
-                                            <segue destination="aEe-dp-x44" kind="presentation" modalPresentationStyle="fullScreen" id="seW-P6-fEX"/>
+                                            <segue destination="aEe-dp-x44" kind="presentation" identifier="allChannels" modalPresentationStyle="fullScreen" id="seW-P6-fEX"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Try-iz-4dr">
@@ -110,26 +110,26 @@
                                             <segue destination="Z71-Wp-boH" kind="presentation" modalPresentationStyle="fullScreen" id="x9o-K0-tAV"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unread Count: &lt;Disabled&gt;" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r90-MX-Ekn" userLabel="UnreadCount">
-                                        <rect key="frame" x="0.0" y="240" width="172" height="17"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unread Count" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r90-MX-Ekn" userLabel="UnreadCount">
+                                        <rect key="frame" x="0.0" y="240" width="90" height="17"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Watcher Count: &lt;Disabled&gt;" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LML-Ms-XJg">
-                                        <rect key="frame" x="0.0" y="287" width="179" height="17"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Watcher Count" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LML-Ms-XJg">
+                                        <rect key="frame" x="0.0" y="287" width="97" height="17"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total Unread Count: &lt;Disabled&gt;" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tp6-sE-CBi">
-                                        <rect key="frame" x="0.0" y="334" width="207" height="17"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total Unread Count" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tp6-sE-CBi">
+                                        <rect key="frame" x="0.0" y="334" width="125" height="17"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push  notifications:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MVq-bk-kzB">
-                                        <rect key="frame" x="0.0" y="381" width="123.5" height="17"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Push  notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MVq-bk-kzB">
+                                        <rect key="frame" x="0.0" y="381" width="119.5" height="17"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -168,6 +168,12 @@
                                 <rect key="frame" x="16" y="467" width="283" height="29"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Filter: the current user is a member of channels" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZnC-yl-OYz">
+                                <rect key="frame" x="16" y="94" width="268" height="14.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Filter: the current user is a member of channels" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ncz-qn-Ssy">
@@ -211,6 +217,7 @@ Stream Swift SDK v.1.0.0</string>
                             <constraint firstItem="jQp-EN-Voh" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" id="JHC-nQ-XuY"/>
                             <constraint firstItem="H0k-lx-tmL" firstAttribute="centerY" secondItem="MVq-bk-kzB" secondAttribute="centerY" id="JiW-cq-VUP"/>
                             <constraint firstItem="H0k-lx-tmL" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" id="UPl-Cd-D6W"/>
+                            <constraint firstItem="ZnC-yl-OYz" firstAttribute="top" secondItem="lMz-sX-zDG" secondAttribute="bottom" id="VIr-PM-04v"/>
                             <constraint firstItem="Fyw-02-BDi" firstAttribute="centerX" secondItem="pUb-7p-fIc" secondAttribute="centerX" id="WfN-1q-yri"/>
                             <constraint firstItem="fQM-5J-VyU" firstAttribute="trailing" secondItem="jrn-MT-IQv" secondAttribute="trailing" id="Y6b-uF-Qxa"/>
                             <constraint firstItem="B0u-JV-sSq" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" constant="-60" id="YXy-7G-fdL"/>
@@ -224,6 +231,7 @@ Stream Swift SDK v.1.0.0</string>
                             <constraint firstItem="1lG-cg-5R8" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" id="qTd-Gz-MV4"/>
                             <constraint firstItem="Ncz-qn-Ssy" firstAttribute="leading" secondItem="Try-iz-4dr" secondAttribute="leading" id="ttA-na-RZj"/>
                             <constraint firstItem="pUb-7p-fIc" firstAttribute="bottom" secondItem="Fyw-02-BDi" secondAttribute="bottom" constant="20" id="vik-Ho-cFz"/>
+                            <constraint firstItem="ZnC-yl-OYz" firstAttribute="leading" secondItem="lMz-sX-zDG" secondAttribute="leading" id="x6G-C0-mfJ"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="pUb-7p-fIc"/>
                     </view>

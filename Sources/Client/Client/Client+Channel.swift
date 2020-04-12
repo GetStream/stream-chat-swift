@@ -104,10 +104,10 @@ public extension Client {
         
         var modifiedCompletion = completion
         
-        if query.options.contains(.watch) && (query.options.contains(.state) || query.options.contains(.presence)) {
+        if query.options.contains(.watch), query.options.contains(.state) {
             modifiedCompletion = { [unowned self] result in
                 if let channel = result.value?.channel {
-                    self.refreshWatchingChannels(with: channel, queryOptions: query.options)
+                    self.refreshWatchingChannels(with: channel)
                 }
                 
                 completion(result)
