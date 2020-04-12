@@ -17,7 +17,7 @@ public extension Client {
     ///   - deviceToken: a device token.
     ///   - completion: an empty completion block.
     @discardableResult
-    func addDevice(deviceToken: Data, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+    func addDevice(deviceToken: Data, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         addDevice(deviceId: deviceToken.deviceToken, completion)
     }
     
@@ -26,7 +26,7 @@ public extension Client {
     ///   - deviceId: a Push Notifications device identifier.
     ///   - completion: an empty completion block.
     @discardableResult
-    func addDevice(deviceId: String, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+    func addDevice(deviceId: String, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         let device = Device(deviceId)
         
         let completion = doBefore(completion) { [unowned self] _ in
@@ -41,7 +41,7 @@ public extension Client {
     /// Gets a list of user devices.
     /// - Parameter completion: a completion block wiith `[Device]`.
     @discardableResult
-    func devices(_ completion: @escaping Client.Completion<[Device]>) -> URLSessionTask {
+    func devices(_ completion: @escaping Client.Completion<[Device]>) -> Cancellable {
         let completion = doBefore(completion) { [unowned self] devices in
             self.userAtomic.devices = devices
             self.logger?.log("📱 Devices updated")
@@ -57,7 +57,7 @@ public extension Client {
     ///   - deviceId: a Push Notifications device identifier.
     ///   - completion: an empty completion block.
     @discardableResult
-    func removeDevice(deviceId: String, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> URLSessionTask {
+    func removeDevice(deviceId: String, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         let completion = doBefore(completion) { [unowned self] devices in
             self.userAtomic.update { oldUser in
                 if let index = self.user.devices.firstIndex(where: { $0.id == deviceId }) {

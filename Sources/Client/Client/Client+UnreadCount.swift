@@ -8,25 +8,15 @@
 
 import Foundation
 
-// `The current user Unread Count`
+// MARK: User Unread Count
 //
 // To get global user unread count:
 //   1. Get the latest values from me on connect.
 //   2. Listing notifications for new values:
-//     - messageNew and notificationMessageNew
-//     - notificationMarkRead
-//     - notificationAddedToChannel
-//     - notificationMarkAllRead: 0 values
-//
-// `A channel Unread Count`
-//
-// The channel should be watched.
-//   1. Make a query with watch for messages and read state.
-//     - calculate the current values
-//   2. +1 for messageNew event
-//   3. set to 0 for notificationMarkRead or notificationMarkAllRead
-
-// MARK: User Unread Count
+//     - `.messageNew` and `.notificationMessageNew`
+//     - `.notificationMarkRead`
+//     - `.notificationAddedToChannel`
+//     - `.notificationMarkAllRead`: 0 values
 
 extension Client {
     func updateUserUnreadCount(event: Event) {
@@ -44,7 +34,7 @@ extension Client {
             updatedUnreadCount.messages += 1
             
             // Checks if the number of channels should be increased.
-            if let cid = cid, channelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
+            if let cid = cid, watchingChannelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
                 updatedUnreadCount.channels += 1
             }
         default:
@@ -56,11 +46,18 @@ extension Client {
 }
 
 // MARK: Channel Unread Count
+//
+// The channel should be watched.
+//   1. Make query options to `[.watch, .state]`:
+//     - for the unread count set the pagination to `.limit(100)` and calculate the current value.
+//     - for the watcher count set the pagination to `.limit(1)`.
+//   2. +1 to the unread count for `.messageNew` event.
+//   3. Set to 0 for the unread count with `.notificationMarkRead` or `.notificationMarkAllRead`.
 
 extension Client {
-    func updateChannelsUnreadCount(event: Event) {
+    func updateChannelsForWatcherAndUnreadCount(event: Event) {
         if case .notificationMarkAllRead(let messageRead, _) = event {
-            channelsAtomic.get(default: [:]).forEach {
+            watchingChannelsAtomic.get(default: [:]).forEach {
                 $0.value.forEach {
                     if let channel = $0.value {
                         channel.resetUnreadCount(messageRead: messageRead)
@@ -72,7 +69,7 @@ extension Client {
         }
         
         if case .notificationMessageNew(let message, let channel, _, _, _) = event {
-            if let channels = channelsAtomic[channel.cid] {
+            if let channels = watchingChannelsAtomic[channel.cid] {
                 channels.forEach {
                     if let watchingChannel = $0.value, watchingChannel.cid == channel.cid {
                         watchingChannel.updateUnreadCount(newMessage: message)
@@ -83,16 +80,57 @@ extension Client {
             return
         }
         
-        if let eventChannelId = event.cid, let channels = channelsAtomic[eventChannelId] {
-            channels.forEach {
-                if let channel = $0.value {
-                    channel.updateWatcherCount(event: event)
-                    
-                    if channel.readEventsEnabled {
-                        channel.updateUnreadCount(event: event)
-                    }
+        guard let eventCid = event.cid, let watchingChannels = watchingChannelsAtomic[eventCid] else {
+            return
+        }
+        
+        // Update watching channels for unread count and watcher count.
+        watchingChannels.forEach {
+            if let channel = $0.value {
+                channel.updateWatcherCount(event: event)
+                
+                if channel.readEventsEnabled {
+                    channel.updateUnreadCount(event: event)
                 }
             }
+        }
+    }
+}
+
+extension Client {
+    // Update unread and watcher counts for all channels with the same cid.
+    func refreshWatchingChannels(with channel: Channel, queryOptions: QueryOptions) {
+        guard let weakWatchingChannels = watchingChannelsAtomic.get(default: [:])[channel.cid], !weakWatchingChannels.isEmpty else {
+            watchingChannelsAtomic.add(channel, key: channel.cid)
+            return
+        }
+        
+        var weakChannels = weakWatchingChannels
+        weakChannels.append(WeakRef(channel))
+        
+        // Update unread count.
+        if queryOptions.contains(.state) {
+            // Find the max unread count.
+            let maxUnreadCount: ChannelUnreadCount = weakChannels.reduce(.noUnread) { result, weakChannel in
+                if let channel = weakChannel.value, channel.unreadCount.messages > result.messages {
+                    return channel.unreadCount
+                }
+                
+                return result
+            }
+            
+            weakChannels.forEach { $0.value?.unreadCountAtomic.set(maxUnreadCount) }
+        }
+        
+        // Update watcher count.
+        if queryOptions.contains(.presence) {
+            weakChannels.forEach { $0.value?.watcherCountAtomic.set(channel.watcherCount) }
+        }
+        
+        watchingChannelsAtomic.update { watchingChannels in
+            var watchingChannels = watchingChannels
+            watchingChannels[channel.cid] = weakChannels
+            return watchingChannels
         }
     }
 }

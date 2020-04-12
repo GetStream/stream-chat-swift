@@ -77,7 +77,29 @@ extension Client {
     ///   - completion: a completion block.
     /// - Returns: an URLSessionTask that can be canncelled.
     @discardableResult
-    func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask {
+    func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> Cancellable {
+        let task = prepareRequest(endpoint: endpoint, completion)
+        task.resume()
+        return Subscription { _  in task.cancel() }
+    }
+    
+    /// Send a progress request.
+    ///
+    /// - Parameters:
+    ///   - endpoint: an endpoint (see `Endpoint`).
+    ///   - completion: a completion block.
+    /// - Returns: an URLSessionTask that can be canncelled.
+    @discardableResult
+    func request<T: Decodable>(endpoint: Endpoint,
+                               _ progress: @escaping Progress,
+                               _ completion: @escaping Completion<T>) -> Cancellable {
+        let task = prepareRequest(endpoint: endpoint, completion)
+        urlSessionTaskDelegate.addProgessHandler(id: task.taskIdentifier, progress)
+        task.resume()
+        return Subscription { _  in task.cancel() }
+    }
+    
+    private func prepareRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask {
         if let logger = logger {
             logger.log("Request: \(String(describing: endpoint).prefix(100))...", level: .debug)
         }
@@ -106,8 +128,6 @@ extension Client {
             }
             
             logger?.log(task.currentRequest ?? urlRequest, isUploading: endpoint.isUploading)
-            task.resume()
-            
             return task
             
         } catch let error as ClientError {
@@ -117,21 +137,6 @@ extension Client {
         }
         
         return .empty
-    }
-    
-    /// Send a progress request.
-    ///
-    /// - Parameters:
-    ///   - endpoint: an endpoint (see `Endpoint`).
-    ///   - completion: a completion block.
-    /// - Returns: an URLSessionTask that can be canncelled.
-    @discardableResult
-    func request<T: Decodable>(endpoint: Endpoint,
-                               _ progress: @escaping Progress,
-                               _ completion: @escaping Completion<T>) -> URLSessionTask {
-        let task = request(endpoint: endpoint, completion)
-        urlSessionTaskDelegate.addProgessHandler(id: task.taskIdentifier, progress)
-        return task
     }
     
     private func requestURL(for endpoint: Endpoint, queryItems: [URLQueryItem]) -> Result<URL, ClientError> {
@@ -222,7 +227,7 @@ extension Client {
     
     private func addWaitingRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) {
         performInCallbackQueue { [unowned self] in
-            let item = WaitingRequest { self.request(endpoint: endpoint, completion) }
+            let item = WaitingRequest { [unowned self] in self.request(endpoint: endpoint, completion) }
             self.waitingRequests.append(item)
         }
     }

@@ -33,7 +33,7 @@ final class WebSocket {
     
     private lazy var handshakeTimer =
         RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval), queue: webSocket.callbackQueue) { [weak self] in
-            self?.logger?.log("🏓➡️")
+            self?.logger?.log("🏓➡️", level: .info)
             self?.webSocket.write(ping: .empty)
     }
     
@@ -316,7 +316,7 @@ extension WebSocket: WebSocketDelegate {
             
             // Skip pong events.
             if case .pong = event {
-                logger?.log("⬅️🏓")
+                logger?.log("⬅️🏓", level: .info)
                 return nil
             }
             

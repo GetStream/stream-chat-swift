@@ -94,7 +94,7 @@ public final class Client {
     }
     
     /// Weak references to channels by cid.
-    let channelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
+    let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
     
     /// Init a network client.
     /// - Parameters:
@@ -225,31 +225,32 @@ public final class Client {
     /// - Parameter channel: a channel.
     /// - Returns: returns true if the client is watching for the channel.
     public func isWatching(channel: Channel) -> Bool {
-        channelsAtomic.get(default: [:])[channel.cid] != nil
+        let watchingChannels: [WeakRef<Channel>]? = watchingChannelsAtomic.get(default: [:])[channel.cid]
+        return watchingChannels?.first { $0.value === channel } != nil
     }
 }
 
 // MARK: - Waiting Request
 
 extension Client {
-    final class WaitingRequest {
-        typealias Request = () -> URLSessionTask // swiftlint:disable:this nesting
+    final class WaitingRequest: Cancellable {
+        typealias Request = () -> Cancellable // swiftlint:disable:this nesting
         
-        var urlSessionTask: URLSessionTask?
-        let request: Request
+        private var subscription: Cancellable?
+        private let request: Request
         
         init(request: @escaping Request) {
             self.request = request
         }
         
         func perform() {
-            if urlSessionTask == nil {
-                urlSessionTask = request()
+            if subscription == nil {
+                subscription = request()
             }
         }
         
         func cancel() {
-            urlSessionTask?.cancel()
+            subscription?.cancel()
         }
     }
 }

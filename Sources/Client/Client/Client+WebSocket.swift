@@ -47,7 +47,7 @@ extension Client {
         return WebSocket(request, stayConnectedInBackground: stayConnectedInBackground, logger: logger) { [unowned self] event in
             guard case .connectionChanged(let connectionState) = event else {
                 self.updateUserUnreadCount(event: event) // User unread counts should be updated before channels unread counts.
-                self.updateChannelsUnreadCount(event: event)
+                self.updateChannelsForWatcherAndUnreadCount(event: event)
                 return
             }
             
