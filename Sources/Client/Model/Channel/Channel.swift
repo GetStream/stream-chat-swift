@@ -117,6 +117,9 @@ public final class Channel: Codable {
     
     private var subscriptionBag = SubscriptionBag()
     
+    /// Checks for the channel data encoding is empty.
+    var isEmpty: Bool { extraData == nil && members.isEmpty && invitedMembers.isEmpty }
+    
     public init(type: ChannelType,
                 id: String,
                 members: [User],
@@ -169,8 +172,6 @@ public final class Channel: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: EncodingKeys.self)
-        try container.encode(name, forKey: .name)
-        try container.encodeIfPresent(imageURL, forKey: .imageURL)
         extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a channel extra data")
         
         var allMembers = members

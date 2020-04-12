@@ -44,7 +44,7 @@ final class QueryEncodingTests: XCTestCase {
                                    watchersPagination: self.complexPagination(),
                                    options: .watch) }
         
-        let expectedString = #"{"messages":{"limit":10},"data":{"name":null},"watch":true,"watchers":{"id_gt":"42","id_lt":"92","offset":10,"limit":10},"members":{"limit":10,"offset":20}}"#
+        let expectedString = #"{"messages":{"limit":10},"watch":true,"watchers":{"id_gt":"42","id_lt":"92","offset":10,"limit":10},"members":{"limit":10,"offset":20}}"#
         
         nonDeterministicAssertEqual(expectedString, try encode(query()))
     }
