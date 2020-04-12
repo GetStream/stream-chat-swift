@@ -137,7 +137,7 @@ extension Client {
         }
         
         return subscription
-    }      
+    }
     
     func subscribeToUnreadCount(for channel: Channel, _ callback: @escaping Completion<ChannelUnreadCount>) -> Cancellable {
         let subscription = subscribe(forEvents: [.messageNew, .messageRead], cid: channel.cid) { _ in
@@ -178,7 +178,7 @@ extension Client {
         } else {
             logger?.log("⚠️ You are trying to subscribe to watcher count for the channel: (\(channel.cid)), "
                 + "but you didn't start watching it. Please, make a query with "
-                + "pagination: `[.limit(1)]` and query options: `[.watch, .presence]`")
+                + "pagination: `[.limit(1)]` and query options: `[.watch, .state]`")
         }
 
         return subscription
