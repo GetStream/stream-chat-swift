@@ -9,12 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🔄 Changed
 - `Pagination` doesn't support `+` operator anymore, please use a set of  `PaginationOption`s from now on [#158](https://github.com/GetStream/stream-chat-swift/issues/158)
 - `channel.subscribeToWatcherCount` uses channel events to publish updated counts and does not call `channel.watch` as a side-effect anymore [#161](https://github.com/GetStream/stream-chat-swift/issues/161)
+- Subscriptions for a channel unread count and watcher count [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
+- Changed a returning type for requests as `Cancellable` instead of `URLSessionTask` to make requests and events more consistent [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
+- The example project was updated [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 
 ### ✅ Added
 - Better errors when developers forget to call `set(user:)` or don't wait for its completion [#160](https://github.com/GetStream/stream-chat-swift/issues/160)
+- Examples for a channel unread count and watcher count in the Example app [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 
 ### 🐞 Fixed
 - SPM support [#156](https://github.com/GetStream/stream-chat-swift/issues/156).
+- Made `SubscriptionBag.init` public [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 
 # [2.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.1)
 _April 3, 2020_
