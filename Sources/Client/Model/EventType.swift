@@ -87,7 +87,7 @@ public enum EventType: String, Codable, CaseIterable {
     case notificationInviteRejected = "notification.invite_rejected"
     
     /// Checks if the type is a channel event type.
-    public var isChannelCase: Bool {
+    public var isChannelEventType: Bool {
         EventType.channelEventTypes.contains(self)
     }
     
