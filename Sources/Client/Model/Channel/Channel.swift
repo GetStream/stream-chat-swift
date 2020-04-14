@@ -217,20 +217,17 @@ extension Channel {
         let validEvents = eventTypes.intersection(EventType.channelEventTypes)
         
         if validEvents.count != eventTypes.count, let logger = Client.shared.logger {
-            var badEvents = eventTypes
-            badEvents.subtract(EventType.channelEventTypes)
-            
-            let message = "⚠️ The events \(badEvents) are not channel events and will never get handled by your completion handler. "
-                + "Please check the documentation on event for more information."
-            
-            logger.log(message, level: .error)
+            let notValidEvents = eventTypes.subtracting(EventType.channelEventTypes)
+            logger.log("⚠️ The events \(notValidEvents) are not channel events "
+                + "and will never get handled by your completion handler. "
+                + "Please check the documentation on event for more information.", level: .error)
         }
         
         guard !validEvents.isEmpty else {
             return Subscription { _ in }
         }
         
-        let subscription = Client.shared.subscribe(forEvents: eventTypes, cid: cid, callback)
+        let subscription = Client.shared.subscribe(forEvents: validEvents, cid: cid, callback)
         subscriptionBag.add(subscription)
         return subscription
     }
