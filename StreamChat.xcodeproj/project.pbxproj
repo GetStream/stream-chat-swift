@@ -11,6 +11,7 @@
 		794BDE4A2434BD7400BFBA1F /* NestableCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */; };
 		79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D50C7624321BDA0052BA03 /* Client+Events.swift */; };
 		80B937A52434F5FC003D950E /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B937A42434F5FC003D950E /* Array+Extensions.swift */; };
+		8A0673B42445E0570042CFD3 /* Channel+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0673B32445E0570042CFD3 /* Channel+Config.swift */; };
 		8A1207CB238ED68000E41790 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207C9238ED66500E41790 /* Message.swift */; };
 		8A1207CD238EE3C700E41790 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207CC238EE3C700E41790 /* Reaction.swift */; };
 		8A1BC0FE23969079006694A1 /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */; };
@@ -287,6 +288,7 @@
 		795FCD1B23EB155000990F15 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		79D50C7624321BDA0052BA03 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		80B937A42434F5FC003D950E /* Array+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
+		8A0673B32445E0570042CFD3 /* Channel+Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Config.swift"; sourceTree = "<group>"; };
 		8A1207C9238ED66500E41790 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		8A1207CC238EE3C700E41790 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8A14347823ABBF30002A45BC /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
@@ -787,6 +789,7 @@
 				8ACC7BE1241924AD000750E4 /* ChannelType.swift */,
 				8ACC7BDF241924AD000750E4 /* ChannelId.swift */,
 				8ACC7BDE241924AD000750E4 /* Channel.swift */,
+				8A0673B32445E0570042CFD3 /* Channel+Config.swift */,
 				8ACC7BDB241924AD000750E4 /* Channel+Requests.swift */,
 				8AB2A02A2423C1B500CE54F6 /* ChannelExtraData.swift */,
 				8ACC7BDC241924AD000750E4 /* ChannelQuery.swift */,
@@ -1532,6 +1535,7 @@
 				8ACC7D5924192529000750E4 /* Client+Config.swift in Sources */,
 				8ACC7C17241924AD000750E4 /* UsersQuery.swift in Sources */,
 				8A466E61241A3A4D003C21BA /* Client+Request.swift in Sources */,
+				8A0673B42445E0570042CFD3 /* Channel+Config.swift in Sources */,
 				8ACC7C2A241924AD000750E4 /* BanEnabling.swift in Sources */,
 				8ACC7C31241924AD000750E4 /* Client+Devices.swift in Sources */,
 				8ACC7C09241924AD000750E4 /* Database.swift in Sources */,

@@ -148,7 +148,8 @@ extension Client {
         guard isWatching(channel: channel) else {
             logger?.log("⚠️ You are trying to subscribe for a channel unread count: (\(channel.cid)), "
                 + "but you didn't start watching it. Please, make a query first with "
-                + "pagination: `[.limit(100)]` and query options: `[.watch, .state]`")
+                + "messages pagination: `[.limit(100)]` and query options: `[.watch, .state]`: "
+                + "`channel.query(messagesPagination: [.limit(100)], options: [.watch, .state])`")
             
             return subscription
         }
@@ -178,7 +179,8 @@ extension Client {
         } else {
             logger?.log("⚠️ You are trying to subscribe to watcher count for the channel: (\(channel.cid)), "
                 + "but you didn't start watching it. Please, make a query with "
-                + "pagination: `[.limit(1)]` and query options: `[.watch, .state]`")
+                + "messages pagination: `[.limit(1)]` and query options: `[.watch, .state]`:"
+                + "`channel.query(messagesPagination: [.limit(1)], options: [.watch, .state])`")
         }
 
         return subscription
