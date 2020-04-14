@@ -216,6 +216,7 @@ extension ChatViewController {
         messagePresenter.reactionExtraDataCallback = presenter.reactionExtraDataCallback
         messagePresenter.fileAttachmentExtraDataCallback = presenter.fileAttachmentExtraDataCallback
         messagePresenter.imageAttachmentExtraDataCallback = presenter.imageAttachmentExtraDataCallback
+        messagePresenter.messagePreparationCallback = presenter.messagePreparationCallback
         
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style

@@ -43,6 +43,16 @@ class CustomChatViewController: ChatViewController {
         }
         
         title = presenter.channel.name
+
+        presenter.messagePreparationCallback = {
+            var message = $0
+            
+            if message.text.lowercased() == "unicorn" {
+                message.text = "*neighs* 🦄"
+            }
+            
+            return message
+        }
         
         presenter.rx.channelDidUpdate
             .drive(onNext: { [weak self] channel in

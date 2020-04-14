@@ -23,6 +23,8 @@ public final class ChannelPresenter: Presenter {
     public typealias FileAttachmentExtraDataCallback = (URL, Channel) -> Codable?
     /// A callback type for the adding an extra data for an image attachment.
     public typealias ImageAttachmentExtraDataCallback = (URL?, UIImage?, _ isVideo: Bool, Channel) -> Codable?
+    /// A callback type for preparing the message before sending.
+    public typealias MessagePreparationCallback = (Message) -> Message?
     
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
@@ -32,6 +34,8 @@ public final class ChannelPresenter: Presenter {
     public var fileAttachmentExtraDataCallback: FileAttachmentExtraDataCallback?
     /// A callback for the adding an extra data for a file attachment.
     public var imageAttachmentExtraDataCallback: ImageAttachmentExtraDataCallback?
+    /// A callback for preparing the message before sending.
+    public var messagePreparationCallback: MessagePreparationCallback?
     
     let channelType: ChannelType
     let channelId: String
@@ -191,13 +195,15 @@ extension ChannelPresenter {
             }
         }
         
-        return Message(id: messageId,
-                       parentId: parentId,
-                       text: text,
-                       attachments: attachments,
-                       mentionedUsers: mentionedUsers,
-                       extraData: extraData,
-                       showReplyInChannel: false)
+        let message = Message(id: messageId,
+                              parentId: parentId,
+                              text: text,
+                              attachments: attachments,
+                              mentionedUsers: mentionedUsers,
+                              extraData: extraData,
+                              showReplyInChannel: false)
+        
+        return messagePreparationCallback?(message) ?? message
     }
 }
 

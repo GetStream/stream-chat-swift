@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The example project was updated [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 
 ### ✅ Added
+- Message preparation callback on `ChannelPresenter` to modify messages before they're sent [#142](https://github.com/GetStream/stream-chat-swift/issues/142)
 - Better errors when developers forget to call `set(user:)` or don't wait for its completion [#160](https://github.com/GetStream/stream-chat-swift/issues/160)
 - Examples for a channel unread count and watcher count in the Example app [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 
