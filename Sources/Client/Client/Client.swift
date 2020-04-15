@@ -161,8 +161,7 @@ public final class Client {
     ///   - `disconnectInBackground()`
     /// - Parameter appState: an application state.
     func connect(appState: UIApplication.State = UIApplication.shared.applicationState,
-                 internetConnectionState: InternetConnection.State = InternetConnection.shared.state,
-                 _ completion: Client.Completion<UserConnection>?) {
+                 internetConnectionState: InternetConnection.State = InternetConnection.shared.state) {
         guard internetConnectionState == .available else {
             if internetConnectionState == .unavailable {
                 reset()
@@ -172,32 +171,10 @@ public final class Client {
         }
         
         if appState == .active {
-            connect(completion)
+            webSocket.connect()
         } else if appState == .background, webSocket.isConnected {
             webSocket.disconnectInBackground()
         }
-    }
-    
-    /// Connect to websocket.
-    /// - Parameter completion: a completion block will be call once when the connection will be established.
-    func connect(_ completion: Client.Completion<UserConnection>?) {
-        if let completion = completion {
-            var subscription: Cancellable?
-            subscription = subscribe(forEvents: [.connectionChanged]) { event in
-                if case .connectionChanged(let state) = event {
-                    if case .connected(let userConnection) = state {
-                        completion(.success(userConnection))
-                        subscription?.cancel()
-                    }
-                    
-                    if case .disconnected(let error) = state, let clientError = error {
-                        completion(.failure(clientError))
-                    }
-                }
-            }
-        }
-        
-        webSocket.connect()
     }
     
     /// Disconnect the web socket.

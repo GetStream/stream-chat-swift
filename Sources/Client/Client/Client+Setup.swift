@@ -185,16 +185,27 @@ extension Client {
             urlSession = setupURLSession(token: token)
             self.token = token
             
-            // Observe Internet connection state and handle the Client connection.
-            InternetConnection.shared.onStateChanged = { [unowned self] state in
-                self.connect(internetConnectionState: state, completion)
+            if let completion = completion {
+                var subscription: Cancellable?
+                
+                subscription = subscribe(forEvents: [.connectionChanged]) { event in
+                    if case .connectionChanged(let state) = event {
+                        if case .connected(let userConnection) = state {
+                            completion(.success(userConnection))
+                            subscription?.cancel()
+                        }
+                        
+                        if case .disconnected(let error) = state, let clientError = error {
+                            completion(.failure(clientError))
+                        }
+                    }
+                }
             }
             
             // Observe Application state and handle the Client connection.
-            Application.shared.onStateChanged = { [unowned self] state in
-                self.connect(appState: state, completion)
-            }
-            
+            Application.shared.onStateChanged = { [unowned self] state in self.connect(appState: state) }
+            // Observe Internet connection state and handle the Client connection.
+            InternetConnection.shared.onStateChanged = { [unowned self] state in self.connect(internetConnectionState: state) }
             // Start observing Internet connection state and get the current state.
             InternetConnection.shared.startNotifier()
             
