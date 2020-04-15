@@ -94,16 +94,20 @@ extension Client {
     ///         } else {
     ///             // Handle the error.
     ///             print("Token request failed", error)
+    ///             disconnect()
     ///         }
     ///     }
     ///
     ///     task.resume()
     /// }
     ///
-    /// Client.shared.set(user: user, tokenProvider: tokenProvider) { connection in
-    ///     // Use here the client connection state.
-    ///     if connection.isConnected {
-    ///         // E.g. update unread count.
+    /// Client.shared.set(user: user, tokenProvider: tokenProvider) { result in
+    ///     do {
+    ///         let userConnection = try result.get()
+    ///         // Print the current user.
+    ///         print(userConnection.user)
+    ///     } catch {
+    ///         print(error)
     ///     }
     /// }
     /// ```
