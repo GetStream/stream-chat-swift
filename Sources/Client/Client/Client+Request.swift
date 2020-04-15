@@ -11,6 +11,8 @@ import UIKit
 
 extension Client {
     
+    // MARK: URL Session Setup
+    
     func setupURLSession(token: Token = "") -> URLSession {
         let headers = authHeaders(token: token)
         logger?.log(headers: headers)
@@ -41,34 +43,7 @@ extension Client {
         return headers
     }
     
-    func checkLatestVersion() {
-        // Check latest pod version and log warning if there's a new version
-        guard let podUrl = URL(string: "https://trunk.cocoapods.org/api/v1/pods/StreamChat") else { return }
-        
-        // swiftlint:disable nesting
-        struct PodTrunk: Codable {
-            struct Version: Codable {
-                let name: String
-            }
-            
-            let versions: [Version]
-        }
-        // swiftlint:enable nesting
-        
-        let versionTask = URLSession(configuration: .default).dataTask(with: podUrl) { data, _, error in
-            guard let data = data, error == nil else {
-                return
-            }
-            do {
-                let podTrunk = try JSONDecoder().decode(PodTrunk.self, from: data)
-                if let latestVersion = podTrunk.versions.last?.name, latestVersion > Environment.version {
-                    ClientLogger.logger("📢", "", "StreamChat \(latestVersion) is released (you are on \(Environment.version)). "
-                        + "It's recommended to update to the latest version.")
-                }
-            } catch {}
-        }
-        versionTask.resume()
-    }
+    // MARK: - Request
     
     /// Send a request.
     ///
@@ -225,6 +200,8 @@ extension Client {
         return .success(urlRequest)
     }
     
+    // MARK: - Waiting Requests
+    
     private func addWaitingRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) {
         performInCallbackQueue { [unowned self] in
             let item = WaitingRequest { [unowned self] in self.request(endpoint: endpoint, completion) }
@@ -242,11 +219,9 @@ extension Client {
             }
         }
     }
-}
-
-// MARK: - Upload files
-
-extension Client {
+    
+    // MARK: - Upload Files
+    
     private func encodeRequestForUpload(for endpoint: Endpoint, url: URL) -> Result<URLRequest, ClientError> {
         let multipartFormData: MultipartFormData
         var urlRequest = URLRequest(url: url)
@@ -268,11 +243,8 @@ extension Client {
         
         return .success(urlRequest)
     }
-}
-
-// MARK: - Parsing response
-
-extension Client {
+    
+    // MARK: - Parsing
     
     private func parse<T: Decodable>(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<T>) {
         if let error = error {
@@ -339,6 +311,37 @@ extension Client {
         } else {
             block()
         }
+    }
+    
+    // MARK: - Check SDK version
+    
+    func checkLatestVersion() {
+        // Check latest pod version and log warning if there's a new version
+        guard let podUrl = URL(string: "https://trunk.cocoapods.org/api/v1/pods/StreamChat") else { return }
+        
+        // swiftlint:disable nesting
+        struct PodTrunk: Codable {
+            struct Version: Codable {
+                let name: String
+            }
+            
+            let versions: [Version]
+        }
+        // swiftlint:enable nesting
+        
+        let versionTask = URLSession(configuration: .default).dataTask(with: podUrl) { data, _, error in
+            guard let data = data, error == nil else {
+                return
+            }
+            do {
+                let podTrunk = try JSONDecoder().decode(PodTrunk.self, from: data)
+                if let latestVersion = podTrunk.versions.last?.name, latestVersion > Environment.version {
+                    ClientLogger.logger("📢", "", "StreamChat \(latestVersion) is released (you are on \(Environment.version)). "
+                        + "It's recommended to update to the latest version.")
+                }
+            } catch {}
+        }
+        versionTask.resume()
     }
 }
 
