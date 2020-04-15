@@ -125,8 +125,11 @@ public extension Client {
     @discardableResult
     func watch(channel: Channel,
                options: QueryOptions = [],
-               _ completion: @escaping Client.Completion<ChannelResponse>) -> Cancellable {
-        queryChannel(channel, options: options.union(.watch), completion)
+               _ completion: @escaping Client.Completion<ChannelResponse> = { _ in }) -> Cancellable {
+        watchingChannelsAtomic.flush()
+        watchingChannelsAtomic.add(channel, key: channel.cid)
+        rewatchingChannelIdsAtomic.insert(channel.cid)
+        return queryChannel(channel, options: options.union(.watch), completion)
     }
     
     /// Stop watching the channel for a state changes.
@@ -135,7 +138,8 @@ public extension Client {
     ///   - completion: an empty completion block.
     @discardableResult
     func stopWatching(channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
-        request(endpoint: .stopWatching(channel), completion)
+        rewatchingChannelIdsAtomic.remove(channel.cid)
+        return request(endpoint: .stopWatching(channel), completion)
     }
     
     /// Hide the channel from queryChannels for the user until a message is added.

@@ -49,16 +49,21 @@ public final class SubscriptionBag: Cancellable {
     
     /// Add a subscription.
     /// - Parameter subscription: a subscriiption.
-    public func add(_ subscription: Cancellable) {
-        subscriptions.append(subscription)
+    public func add(_ subscription: Cancellable?) {
+        if let subscription = subscription {
+            subscriptions.append(subscription)
+        }
     }
     
     /// Add multiple subscriptions in a chain way.
     /// - Parameter subscription: a subscription
     /// - Returns: this subscription bag.
     @discardableResult
-    public func adding(_ subscription: Cancellable) -> Self {
-        subscriptions.append(subscription)
+    public func adding(_ subscription: Cancellable?) -> Self {
+        if let subscription = subscription {
+            subscriptions.append(subscription)
+        }
+        
         return self
     }
     

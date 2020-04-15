@@ -36,7 +36,7 @@ public final class InternetConnection {
         didSet {
             if lastState != state {
                 lastState = state
-                self.log("State: \(state)")
+                self.log("State: \(state) (\(reachability?.description ?? ""))")
                 onStateChanged?(state)
             }
         }
@@ -48,25 +48,14 @@ public final class InternetConnection {
     }
     
     private var lastState: State = .unknown
-    
     private lazy var reachability: Reachability? = {
         do {
             let reachability = try Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
-            
-            func handleReachability(_ reachability: Reachability) {
-                if case .unavailable = reachability.connection {
-                    state = .unavailable
-                } else {
-                    state = .available
-                }
-            }
-            
-            reachability.whenReachable = handleReachability
-            reachability.whenUnreachable = handleReachability
-            
+            reachability.whenReachable = { [unowned self] _ in self.state = .available }
+            reachability.whenUnreachable = { [unowned self] _ in self.state = .unavailable }
             return reachability
         } catch {
-            log("❌ \(error)")
+            log("❌ Can't initiate Reachability: \(error)")
             return nil
         }
     }()
