@@ -36,14 +36,14 @@ extension Channel {
             return
         }
         
-        var unreadCount = self.unreadCount
-        unreadCount.messages += 1
+        var updatedUnreadCount = unreadCount
+        updatedUnreadCount.messages += 1
         
         if !message.user.isCurrent, message.mentionedUsers.contains(User.current) {
-            unreadCount.mentionedMessages += 1
+            updatedUnreadCount.mentionedMessages += 1
         }
         
         unreadMessageReadAtomic.set(.init(user: User.current, lastReadDate: message.created))
-        unreadCountAtomic.set(unreadCount)
+        unreadCountAtomic.set(updatedUnreadCount)
     }
 }

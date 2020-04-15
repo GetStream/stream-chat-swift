@@ -43,7 +43,7 @@ public extension Channel {
     ///   - options: an additional channel options, e.g. `.presence`
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
-    func watch(options: QueryOptions = [], _ completion: @escaping Client.Completion<ChannelResponse>) -> Cancellable {
+    func watch(options: QueryOptions = [], _ completion: @escaping Client.Completion<ChannelResponse> = { _ in }) -> Cancellable {
         Client.shared.watch(channel: self, options: options, completion)
     }
     

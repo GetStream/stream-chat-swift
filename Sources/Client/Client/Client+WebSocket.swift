@@ -58,6 +58,7 @@ extension Client {
             
             if case .connected(let userConnection) = connectionState {
                 self.userAtomic.set(userConnection.user)
+                self.restoreWatchingChannels()
                 
                 if self.isExpiredTokenInProgress {
                     self.performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
