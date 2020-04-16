@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>StreamChatCore  Reference</title>
+    <title>StreamChat  Reference</title>
     <link rel="stylesheet" type="text/css" href="core/css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="core/css/highlight.css" />
     <meta charset='utf-8'>
@@ -17,6 +17,9 @@
       <nav class="sidebar">
         <ul class="nav-groups">
           <li class="nav-group-name">
+            <a href="client/">Stream Chat Client</a>
+          </li>
+          <li class="nav-group-name">
             <a href="core/">Stream Chat Core</a>
           </li>
           <li class="nav-group-name">
@@ -29,9 +32,10 @@
           <section class="section">
             <h1 id='stream-chat-swift' class='heading'>Stream Chat Swift</h1>
             
-            <p>Stream Chat SDK consists of two frameworks:</p>
-            <p>1. <a href="core/">Stream Chat Core</a> — provide Stream Chat with models, presenters, notification manager and the client for requests and web socket events.</p>
-            <p>2. <a href="ui/">Stream Chat UI</a> — depends on the first one and implements UI with customizable styles.</p>
+            <p>Stream Chat SDK consists of three frameworks:</p>
+            <p>1. <a href="client/">Stream Chat Client</a> — the low level library to connect & communicate with StreamChat backend.</p>
+            <p>2. <a href="core/">Stream Chat Core</a> — building on top of Client, it includes models, presenters, and notification manager. Additionally it has RxSwift support for reactive programming.</p>
+            <p>3. <a href="ui/">Stream Chat UI</a> — building on top of Core, it's the full SDK library with all UI components. Styling and deep customizations are all supported out of the box.</p>
           </section>
         </section>
       </article>
