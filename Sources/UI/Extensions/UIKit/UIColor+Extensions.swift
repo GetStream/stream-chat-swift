@@ -31,6 +31,15 @@ extension UIColor {
     public static let messageErrorBorder = UIColor(red: 0.9, green: 0.80, blue: 0.83, alpha: 1)
     /// A chat separator color.
     public static let chatSeparator = UIColor.chatGray.withAlphaComponent(0.4)
+    
+    @available(iOS 13, *)
+    public static let dynamicAccent = UIColor.systemBlue
+    
+    @available(iOS 13, *)
+    public static let dynamicLightAccent = UIColor.systemTeal
+    
+    @available(iOS 13, *)
+    public static let dynamicAccent2 = UIColor.systemGreen
 }
 
 extension UIColor {
