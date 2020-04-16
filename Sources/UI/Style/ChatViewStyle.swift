@@ -20,31 +20,14 @@ public struct ChatViewStyle {
     /// An outgoing message view style.
     public var outgoingMessage: MessageViewStyle
     
-    /// A dark chat view style.
-    public static let dark =
-        ChatViewStyle(channel: ChannelViewStyle(backgroundColor: .chatSuperDarkGray,
-                                                nameColor: .chatGray,
-                                                nameUnreadColor: .white,
-                                                messageUnreadColor: .white),
-                      composer: ComposerViewStyle(textColor: .white,
-                                                  helperContainerBackgroundColor: .chatDarkGray,
-                                                  states: [.active: .init(tintColor: .chatBlue, borderWidth: 2),
-                                                           .edit: .init(tintColor: .chatGreen, borderWidth: 2),
-                                                           .disabled: .init(tintColor: .chatGray, borderWidth: 2)]),
-                      incomingMessage: MessageViewStyle(chatBackgroundColor: .chatSuperDarkGray,
-                                                        textColor: .white,
-                                                        backgroundColor: .chatSuperDarkGray,
-                                                        borderColor: .chatGray,
-                                                        reactionViewStyle: .init(backgroundColor: .darkGray,
-                                                                                 chatBackgroundColor: .chatSuperDarkGray)),
-                      outgoingMessage: MessageViewStyle(alignment: .right,
-                                                        chatBackgroundColor: .chatSuperDarkGray,
-                                                        textColor: .white,
-                                                        backgroundColor: .chatDarkGray,
-                                                        borderWidth: 0,
-                                                        reactionViewStyle: .init(alignment: .right,
-                                                                                 backgroundColor: .darkGray,
-                                                                                 chatBackgroundColor: .chatSuperDarkGray)))
+    /// The default chat view style (dynamic for iOS 13+).
+    public static let `default`: ChatViewStyle = {
+        if #available(iOS 13, *) {
+            return .dynamic
+        }
+        
+        return ChatViewStyle()
+    }()
     
     /// Init a composition of view styles.
     ///

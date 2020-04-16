@@ -136,22 +136,6 @@
                                     </label>
                                 </subviews>
                             </stackView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DARK MODE" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="11f-PJ-qcd">
-                                <rect key="frame" x="172" y="131" width="72" height="16"/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="72" id="i8J-3r-nDA"/>
-                                    <constraint firstAttribute="height" constant="16" id="jhD-Tj-2Um"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="9"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                        <integer key="value" value="8"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </label>
                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="jQp-EN-Voh">
                                 <rect key="frame" x="310" y="297" width="51" height="31"/>
                             </switch>
@@ -206,7 +190,6 @@ Stream Swift SDK v.1.0.0</string>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="jrn-MT-IQv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="LML-Ms-XJg" secondAttribute="trailing" constant="10" id="21z-y7-4iv"/>
-                            <constraint firstItem="11f-PJ-qcd" firstAttribute="leading" secondItem="Try-iz-4dr" secondAttribute="trailing" constant="10" id="4ic-pP-d1B"/>
                             <constraint firstItem="KXt-y3-Xl9" firstAttribute="leading" secondItem="LML-Ms-XJg" secondAttribute="leading" id="5AX-Ou-M4D"/>
                             <constraint firstItem="jQp-EN-Voh" firstAttribute="centerY" secondItem="r90-MX-Ekn" secondAttribute="centerY" id="5hn-mW-dvy"/>
                             <constraint firstItem="wdX-uG-nfO" firstAttribute="leading" secondItem="r90-MX-Ekn" secondAttribute="leading" id="CcP-zs-9BN"/>
@@ -223,7 +206,6 @@ Stream Swift SDK v.1.0.0</string>
                             <constraint firstItem="B0u-JV-sSq" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" constant="-60" id="YXy-7G-fdL"/>
                             <constraint firstItem="fQM-5J-VyU" firstAttribute="leading" secondItem="pUb-7p-fIc" secondAttribute="leading" constant="16" id="Yjs-jQ-l1d"/>
                             <constraint firstItem="pUb-7p-fIc" firstAttribute="trailing" secondItem="fQM-5J-VyU" secondAttribute="trailing" constant="16" id="Ztz-Qr-06v"/>
-                            <constraint firstItem="11f-PJ-qcd" firstAttribute="centerY" secondItem="Try-iz-4dr" secondAttribute="centerY" id="aut-4i-Eio"/>
                             <constraint firstItem="fQM-5J-VyU" firstAttribute="top" secondItem="pUb-7p-fIc" secondAttribute="top" constant="20" id="bmR-kQ-ZPs"/>
                             <constraint firstItem="jrn-MT-IQv" firstAttribute="centerY" secondItem="LML-Ms-XJg" secondAttribute="centerY" id="hcw-6a-JAC"/>
                             <constraint firstItem="B0u-JV-sSq" firstAttribute="top" secondItem="MVq-bk-kzB" secondAttribute="bottom" constant="5" id="qS7-8L-5W1"/>
@@ -320,8 +302,7 @@ Stream Swift SDK v.1.0.0</string>
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Jpg-eB-15H" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" prompted="NO"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" barStyle="black" id="fub-QL-sHd">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="fub-QL-sHd">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

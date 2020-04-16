@@ -51,6 +51,7 @@
 		8A8BB2A52384573400C2F9DE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A32384573400C2F9DE /* Realm.framework */; };
 		8A8BB2A72384573400C2F9DE /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A42384573400C2F9DE /* RealmSwift.framework */; };
 		8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */; };
+		8A9D2C7424487E18007BD497 /* ChatViewStyle+Presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9D2C7224487E0E007BD497 /* ChatViewStyle+Presets.swift */; };
 		8A9ECEF6242A573700206E7D /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4E241924B5000750E4 /* Application.swift */; };
 		8A9ECEF7242A57B900206E7D /* AssociatedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */; };
 		8A9ECEF9242A5C3A00206E7D /* UIApplication+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */; };
@@ -330,6 +331,7 @@
 		8A8BB2A42384573400C2F9DE /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDatabase.swift; sourceTree = "<group>"; };
 		8A8BB2B02384580700C2F9DE /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
+		8A9D2C7224487E0E007BD497 /* ChatViewStyle+Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewStyle+Presets.swift"; sourceTree = "<group>"; };
 		8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Rx.swift"; sourceTree = "<group>"; };
 		8AB2A02A2423C1B500CE54F6 /* ChannelExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelExtraData.swift; sourceTree = "<group>"; };
 		8AB2A02C242534EA00CE54F6 /* UserExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserExtraData.swift; sourceTree = "<group>"; };
@@ -1056,6 +1058,7 @@
 				8ACC7CCD241924BE000750E4 /* VerticalAlignment.swift */,
 				8ACC7CCE241924BE000750E4 /* ChannelViewStyle.swift */,
 				8ACC7CCF241924BE000750E4 /* ChatViewStyle.swift */,
+				8A9D2C7224487E0E007BD497 /* ChatViewStyle+Presets.swift */,
 				8ACC7CD0241924BE000750E4 /* AvatarViewStyle.swift */,
 			);
 			path = Style;
@@ -1701,6 +1704,7 @@
 				8ACC7D40241924BE000750E4 /* UILabel+Extensions.swift in Sources */,
 				8ACC7D1C241924BE000750E4 /* ChatViewController+Cells.swift in Sources */,
 				8ACC7D26241924BE000750E4 /* Spacing.swift in Sources */,
+				8A9D2C7424487E18007BD497 /* ChatViewStyle+Presets.swift in Sources */,
 				8ACC7D55241924BE000750E4 /* ChannelTableViewCell.swift in Sources */,
 				8ACC7D09241924BE000750E4 /* MessageTextEnrichment.swift in Sources */,
 				8ACC7D21241924BE000750E4 /* WebViewController.swift in Sources */,

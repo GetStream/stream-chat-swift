@@ -18,7 +18,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     /// A chat style.
     public lazy var style = defaultStyle
     /// A default chat style. This is useful for subclasses.
-    open var defaultStyle: ChatViewStyle { .init() }
+    open var defaultStyle: ChatViewStyle { .default }
     /// Message actions (see `MessageAction`).
     public lazy var messageActions = defaultMessageActions
     /// A default message actions. This is useful for subclasses.

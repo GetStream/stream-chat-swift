@@ -20,7 +20,7 @@ open class ChannelsViewController: ViewController {
     /// A chat style.
     public lazy var style = defaultStyle
     /// A default chat style. This is useful for subclasses.
-    open var defaultStyle: ChatViewStyle { .init() }
+    open var defaultStyle: ChatViewStyle { .default }
     
     /// It will trigger `channel.stopWatching()` for each channel, if needed when the view controller was deallocated.
     /// It's no needed if you will disconnect when the view controller will be deallocated.
