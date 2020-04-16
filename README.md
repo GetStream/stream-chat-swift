@@ -62,7 +62,7 @@ You'll typically want to start out using the UI components, and implement your o
 Stream Chat SDK consists of three frameworks: `StreamChat`, `StreamChatCore` and `StreamChatClient`
 
 - `StreamChatClient` - the low level library to connect & communicate with StreamChat backend.
-- `StreamChatCore` — building on top of Client, it includes models, presenters, notification manager and HTTP interface. Additionally it has RxSwift support for reactive programming.
+- `StreamChatCore` — building on top of Client, it includes models, presenters, and notification manager. Additionally it has RxSwift support for reactive programming.
 - `StreamChat` — building on top of Core, it's the full SDK library with all UI components. Styling and deep customizations are all supported out of the box.
 
 
