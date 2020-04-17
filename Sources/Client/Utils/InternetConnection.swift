@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Reachability
 
 /// The Internect connection manager.
 public final class InternetConnection {
