@@ -2,6 +2,8 @@ fastlane_version "2.68.0"
 default_platform :ios
 
 lane :beta do
+  match(type: "adhoc", readonly: true)
+
   gym(
     project: "./Example/Carthage/ChatExample.xcodeproj",
     scheme: "ChatExample",
@@ -9,7 +11,7 @@ lane :beta do
     export_method: "ad-hoc",
     export_options: {
                       compileBitcode: false,
-                      provisioningProfiles: { "io.getstream.ChatExample" => "EHV7XZLAHA.io.getstream.ChatExample AdHoc Bahadir" },
+                      provisioningProfiles: { "io.getstream.ChatExample" => "match AdHoc io.getstream.ChatExample" },
                       iCloudContainerEnvironment: 'Development'
                     },
     silent: true,
