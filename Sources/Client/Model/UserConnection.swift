@@ -12,6 +12,8 @@ import Foundation
 public struct UserConnection: Decodable {
     /// An authorized user.
     public let user: User
+    /// Channels and messages unread counts.
+    public var unreadCount: UnreadCount { Client.shared.unreadCount }
     /// A websocket connection id.
     public let connectionId: String
 }
