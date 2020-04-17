@@ -18,6 +18,5 @@ Pod::Spec.new do |spec|
   spec.framework = "Foundation", "UIKit"
 
   spec.dependency "Starscream", "~> 3.1"
-  spec.dependency "GzipSwift", "~> 5.1"
   spec.dependency "ReachabilitySwift", "~> 5.0"
 end

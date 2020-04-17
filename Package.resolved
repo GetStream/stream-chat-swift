@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "Gzip",
-        "repositoryURL": "https://github.com/1024jp/GzipSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "ba0b6cb51cc6202f896e469b87d2889a46b10d1b",
-          "version": "5.1.1"
-        }
-      },
-      {
         "package": "Nuke",
         "repositoryURL": "https://github.com/kean/Nuke.git",
         "state": {

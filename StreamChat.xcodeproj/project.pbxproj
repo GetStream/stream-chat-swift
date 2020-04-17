@@ -40,7 +40,6 @@
 		8A50696C23CDEDAC009F127A /* StreamChatClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A50696823CDEDA3009F127A /* StreamChatClient.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A50696D23CDEDB1009F127A /* StreamChatCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A50696A23CDEDA4009F127A /* StreamChatCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8A50696E23CDEDB6009F127A /* StreamChatRealm.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A50696923CDEDA3009F127A /* StreamChatRealm.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		8A5069B723CE131B009F127A /* Gzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC622E9BAC5005CFAC9 /* Gzip.framework */; };
 		8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; };
 		8A5211D5238EE7DC004BED65 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5211D4238EE7DC004BED65 /* Attachment.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
@@ -541,7 +540,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A5069B723CE131B009F127A /* Gzip.framework in Frameworks */,
 				8A831C8724294356003F0DB4 /* Reachability.framework in Frameworks */,
 				8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */,
 			);
