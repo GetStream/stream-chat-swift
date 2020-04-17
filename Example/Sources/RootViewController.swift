@@ -127,8 +127,10 @@ final class RootViewController: ViewController {
         
         // Watch the channel.
         subscriptionBag.add(channel.watch({ [weak self] _ in
+            guard let self = self else { return }
+            
             // Request 100 messages to get the initial value of unread count.
-            let subscription = self?.channel.query(messagesPagination: [.limit(100)], options: [.watch, .state], { [weak self] in
+            let subscription = self.channel.query(messagesPagination: [.limit(100)], options: [.watch, .state], { [weak self] in
                 if let response = $0.value {
                     DispatchQueue.main.async {
                         self?.channel = response.channel
@@ -137,7 +139,7 @@ final class RootViewController: ViewController {
                 }
             })
             
-            self?.subscriptionBag.add(subscription)
+            self.subscriptionBag.add(subscription)
         }))
     }
     
