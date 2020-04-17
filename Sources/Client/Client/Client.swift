@@ -95,7 +95,6 @@ public final class Client {
     
     /// Weak references to channels by cid.
     let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
-    let rewatchingChannelIdsAtomic = Atomic<Set<ChannelId>>([])
     
     /// Init a network client.
     /// - Parameters:
@@ -205,14 +204,6 @@ public final class Client {
     public func isWatching(channel: Channel) -> Bool {
         let watchingChannels: [WeakRef<Channel>]? = watchingChannelsAtomic.get(default: [:])[channel.cid]
         return watchingChannels?.first { $0.value === channel } != nil
-    }
-    
-    func restoreWatchingChannels() {
-        rewatchingChannelIdsAtomic.get()?.forEach { cid in
-            if let channel = watchingChannelsAtomic.get()?[cid]?.first(where: { $0.value != nil })?.value {
-                channel.watch()
-            }
-        }
     }
 }
 
