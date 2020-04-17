@@ -116,24 +116,6 @@ public extension Atomic where T: Collection {
         queue.sync { [weak self] in currentValue = self?.value?[key] }
         return currentValue
     }
-    
-    /// Inserts the given element in the set if it is not already present.
-    func insert<Element>(_ value: Element) where T == Set<Element> {
-        update { values in
-            var values = values
-            values.insert(value)
-            return values
-        }
-    }
-    
-    /// Removes the given element and any elements subsumed by the given element.
-    func remove<Element>(_ value: Element) where T == Set<Element> {
-        update { values in
-            var values = values
-            values.remove(value)
-            return values
-        }
-    }
 }
 
 // MARK: - Helper Operator
