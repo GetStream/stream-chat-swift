@@ -48,7 +48,6 @@
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		8A7C58EE243DE9740062487E /* EventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C58ED243DE9740062487E /* EventType.swift */; };
 		8A831C8624294083003F0DB4 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C3C241924B5000750E4 /* InternetConnection.swift */; };
-		8A831C8724294356003F0DB4 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC322E9BAC5005CFAC9 /* Reachability.framework */; };
 		8A8BB2A52384573400C2F9DE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A32384573400C2F9DE /* Realm.framework */; };
 		8A8BB2A72384573400C2F9DE /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A42384573400C2F9DE /* RealmSwift.framework */; };
 		8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */; };
@@ -542,7 +541,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A831C8724294356003F0DB4 /* Reachability.framework in Frameworks */,
 				8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
