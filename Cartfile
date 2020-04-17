@@ -1,5 +1,4 @@
 github "daltoniam/Starscream" ~> 3.1
-github "ashleymills/Reachability.swift" ~> 5.0
 
 github "ReactiveX/RxSwift" ~> 5.1
 

@@ -29,7 +29,6 @@ let package = Package(
         .package(url: "https://github.com/ReactiveX/RxSwift.git", from: "5.1.0"),
         // Client
         .package(url: "https://github.com/daltoniam/Starscream.git", from: "3.1.0"),
-        .package(url: "https://github.com/ashleymills/Reachability.swift.git", from: "5.0.0"),
     ],
     targets: [
         .target(
@@ -42,7 +41,7 @@ let package = Package(
             path: "Sources/Core"),
         .target(
             name: "StreamChatClient",
-            dependencies: ["Starscream", "Reachability"],
+            dependencies: ["Starscream"],
             path: "Sources/Client")
     ]
 )
