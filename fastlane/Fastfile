@@ -1,0 +1,35 @@
+fastlane_version "2.68.0"
+default_platform :ios
+
+lane :beta do
+  gym(
+    project: "./Example/Carthage/ChatExample.xcodeproj",
+    scheme: "ChatExample",
+    configuration: "Debug",
+    export_method: "ad-hoc",
+    export_options: {
+                      compileBitcode: false,
+                      provisioningProfiles: { "io.getstream.ChatExample" => "EHV7XZLAHA.io.getstream.ChatExample AdHoc Bahadir" },
+                      iCloudContainerEnvironment: 'Development'
+                    },
+    silent: true,
+    clean: true,
+    include_symbols: true,
+    output_directory: "./Example/Carthage/dist"
+  )
+  
+  message = changelog_from_git_commits(commits_count: 10)
+  
+  firebase_app_distribution(
+      app: "1:674907137625:ios:10131789dab2e7cad7f348",
+      groups: "ios-stream-testers",
+      release_notes: message
+  )
+  
+  build_number = increment_build_number(xcodeproj: "./Example/Carthage/ChatExample.xcodeproj")
+  
+  commit_version_bump(
+    message: "Build bump v#{build_number}",
+    xcodeproj: "./Example/Carthage/ChatExample.xcodeproj",
+  )
+end

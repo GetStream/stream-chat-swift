@@ -70,3 +70,5 @@ StreamChatCore.framework.coverage.txt
 StreamChatCoreTests.xctest.coverage.txt
 vendor/bundle/
 .swiftpm
+Example/Carthage/.env
+Example/Carthage/fastlane/report.xml
