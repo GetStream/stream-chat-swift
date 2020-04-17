@@ -1,6 +1,11 @@
 fastlane_version "2.68.0"
 default_platform :ios
 
+lane :match_me do
+  match(type: "adhoc", readonly: true)
+  match(type: "development", readonly: true)
+end
+
 lane :beta do
   match(type: "adhoc", readonly: true)
 

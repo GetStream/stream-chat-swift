@@ -15,6 +15,11 @@ Install _fastlane_ using
 or alternatively using `brew cask install fastlane`
 
 # Available Actions
+### match_me
+```
+fastlane match_me
+```
+
 ### beta
 ```
 fastlane beta
