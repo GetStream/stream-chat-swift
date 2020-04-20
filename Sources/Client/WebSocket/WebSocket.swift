@@ -232,12 +232,24 @@ extension WebSocket: WebSocketDelegate {
             return
         }
         
-        if case let .healthCheck(user, connectionId) = event {
+        switch event {
+        case let .healthCheck(user, connectionId):
             logger?.log("🥰 Connected")
             self.connectionId = connectionId
             handshakeTimer.resume()
             connectionState = .connected(UserConnection(user: user, connectionId: connectionId))
             return
+            
+        case let .messageNew(message, _, _, _) where message.user.isMuted:
+            logger?.log("Skip a message (\(message.id)) from muted user (\(message.user.id)): \(message.textOrArgs)", level: .info)
+            return
+        case let .typingStart(user, _, _), let .typingStop(user, _, _):
+            if user.isMuted {
+                logger?.log("Skip typing events from muted user (\(user.id))", level: .info)
+                return
+            }
+        default:
+            break
         }
         
         if isConnected {
