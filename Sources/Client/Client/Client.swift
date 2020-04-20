@@ -71,11 +71,9 @@ public final class Client {
     
     var onUserUpdateObservers = [String: OnUpdate<User>]()
     
-    private(set) lazy var userAtomic = Atomic<User> { [unowned self] newUser, _ in
+    private(set) lazy var userAtomic = Atomic<User>(callbackQueue: eventsHandlingQueue) { [unowned self] newUser, _ in
         if let user = newUser {
-            self.eventsHandlingQueue.async {
-                self.onUserUpdateObservers.values.forEach({ $0(user) })
-            }
+            self.onUserUpdateObservers.values.forEach({ $0(user) })
         }
     }
     
@@ -85,11 +83,9 @@ public final class Client {
     public var unreadCount: UnreadCount { unreadCountAtomic.get(default: .noUnread) }
     var onUnreadCountUpdateObservers = [String: OnUpdate<UnreadCount>]()
     
-    private(set) lazy var unreadCountAtomic = Atomic<UnreadCount>(.noUnread) { [unowned self] newValue, oldValue in
-        if let unreadCount = newValue, unreadCount != oldValue {
-            self.eventsHandlingQueue.async {
-                self.onUnreadCountUpdateObservers.values.forEach({ $0(unreadCount) })
-            }
+    private(set) lazy var unreadCountAtomic = Atomic<UnreadCount>(.noUnread, callbackQueue: eventsHandlingQueue) { [unowned self] in
+        if let unreadCount = $0, unreadCount != $1 {
+            self.onUnreadCountUpdateObservers.values.forEach({ $0(unreadCount) })
         }
     }
     

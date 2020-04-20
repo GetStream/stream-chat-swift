@@ -41,7 +41,7 @@ public final class ChannelPresenter: Presenter {
     let channelId: String
     let channelPublishSubject = PublishSubject<Channel>()
     
-    private(set) lazy var channelAtomic = Atomic<Channel> { [weak self] channel, oldChannel in
+    private(set) lazy var channelAtomic = Atomic<Channel>(callbackQueue: .main) { [weak self] channel, oldChannel in
         if let channel = channel {
             if let oldChannel = oldChannel {
                 channel.banEnabling = oldChannel.banEnabling
