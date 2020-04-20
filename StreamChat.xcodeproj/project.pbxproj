@@ -1050,16 +1050,16 @@
 		8ACC7CC7241924BE000750E4 /* Style */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7CC8241924BE000750E4 /* ReactionViewStyle.swift */,
-				8ACC7CC9241924BE000750E4 /* MessageViewStyle.swift */,
-				8ACC7CCA241924BE000750E4 /* SeparatorStyle.swift */,
-				8ACC7CCB241924BE000750E4 /* Spacing.swift */,
-				8ACC7CCC241924BE000750E4 /* ComposerViewStyle.swift */,
-				8ACC7CCD241924BE000750E4 /* VerticalAlignment.swift */,
-				8ACC7CCE241924BE000750E4 /* ChannelViewStyle.swift */,
 				8ACC7CCF241924BE000750E4 /* ChatViewStyle.swift */,
 				8A9D2C7224487E0E007BD497 /* ChatViewStyle+Presets.swift */,
+				8ACC7CCE241924BE000750E4 /* ChannelViewStyle.swift */,
+				8ACC7CCC241924BE000750E4 /* ComposerViewStyle.swift */,
+				8ACC7CC9241924BE000750E4 /* MessageViewStyle.swift */,
 				8ACC7CD0241924BE000750E4 /* AvatarViewStyle.swift */,
+				8ACC7CC8241924BE000750E4 /* ReactionViewStyle.swift */,
+				8ACC7CCA241924BE000750E4 /* SeparatorStyle.swift */,
+				8ACC7CCD241924BE000750E4 /* VerticalAlignment.swift */,
+				8ACC7CCB241924BE000750E4 /* Spacing.swift */,
 			);
 			path = Style;
 			sourceTree = "<group>";
