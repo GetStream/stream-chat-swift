@@ -35,6 +35,11 @@ end
 desc "Builds the latest version with ad-hoc and uploads to firebase"
 lane :beta do
   match_me
+  
+  build_number = increment_build_number(
+                   xcodeproj: "./Example/Carthage/ChatExample.xcodeproj",
+                   build_number: ENV["GITHUB_SHA"]
+                 )
 
   gym(
     project: "./Example/Carthage/ChatExample.xcodeproj",
@@ -55,13 +60,4 @@ lane :beta do
       groups: "ios-stream-testers",
       release_notes: message
   )
-  
-  build_number = increment_build_number(xcodeproj: "./Example/Carthage/ChatExample.xcodeproj")
-  
-  commit_version_bump(
-    message: "Build bump v#{build_number}",
-    xcodeproj: "./Example/Carthage/ChatExample.xcodeproj",
-  )
-  
-  push_to_git_remote
 end
