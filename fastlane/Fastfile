@@ -7,6 +7,48 @@ before_all do
   end
 end
 
+desc "Release a new version"
+lane :release do |options|
+  UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
+  
+  version_number = increment_version_number(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj")
+  increment_version_number(version_number: version_number, xcodeproj: "./Example/Carthage/ChatExample.xcodeproj")
+  
+  changes = touch_changelog(release_version: version_number)
+  
+  version_bump_podspec(path: "StreamChatClient.podspec", version_number: version_number)
+  version_bump_podspec(path: "StreamChatCore.podspec", version_number: version_number)
+  version_bump_podspec(path: "StreamChat.podspec", version_number: version_number)
+  
+  jazzy_command_start = "bundle exec jazzy --xcodebuild-arguments "
+  jazzy_command_end = "-a GetStream.io -u getstream.io -g https://github.com/GetStream/stream-chat-swift"
+  sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatClient\",\"-sdk\",\"iphonesimulator\" --output \"../docs/client\" " + jazzy_command_end)
+  sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatCore\",\"-sdk\",\"iphonesimulator\" --output \"../docs/core\" " + jazzy_command_end)
+  sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChat\",\"-sdk\",\"iphonesimulator\" --output \"../docs/ui\" " + jazzy_command_end)
+  
+  sh("git add -A")
+  sh("git commit -m 'Bump #{version_number}'")
+  sh("git tag #{version_number}")
+  
+  github_release = set_github_release(
+                     repository_name: "GetStream/stream-chat-swift",
+                     api_token: ENV["GITHUB_TOKEN"],
+                     name: version_number,
+                     tag_name: version_number,
+                     description: changes,
+                     is_draft: true
+                   )
+                   
+  push_to_git_remote(tags: true)
+                   
+  pod_push(path: "StreamChatClient.podspec", allow_warnings: true)
+  pod_push(path: "StreamChatCore.podspec", allow_warnings: true)
+  pod_push(path: "StreamChat.podspec", allow_warnings: true)
+  
+  UI.success("Successfully released #{version_number}")
+  UI.success("Github release was created as draft, please visit #{github_release["url"]} to publish it")
+end
+
 desc "Installs all Certs and Profiles necessary for development and ad-hoc"
 lane :match_me do
   match(
@@ -38,7 +80,7 @@ lane :beta do
   
   build_number = increment_build_number(
                    xcodeproj: "./Example/Carthage/ChatExample.xcodeproj",
-                   build_number: ENV["GITHUB_SHA"]
+                   build_number: ENV["GITHUB_SHA"].truncate(7, omission: '')
                  )
 
   gym(
