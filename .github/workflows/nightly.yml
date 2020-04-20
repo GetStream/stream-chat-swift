@@ -1,8 +1,9 @@
 name: Nightly
     
 on:
-  schedule:
-    - cron:  '0 2 * * *' # Everyday 2AM UTC
+  push:
+    branches:
+      - master
 
 jobs:
   nightly:
