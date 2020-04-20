@@ -66,7 +66,7 @@ extension ChatViewController {
             }
         }
         
-        var isContinueMessage = false
+        cell.isContinueMessage = false
         let prevRow = indexPath.row - 1
         
         if prevRow >= 0,
@@ -75,10 +75,10 @@ extension ChatViewController {
             prevMessage.user == message.user,
             !prevMessage.text.messageContainsOnlyEmoji,
             (!presenter.channel.config.reactionsEnabled || !message.hasReactions) {
-            isContinueMessage = true
+            cell.isContinueMessage = true
         }
         
-        cell.updateBackground(isContinueMessage: isContinueMessage)
+        cell.updateBackground()
         
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
@@ -109,7 +109,8 @@ extension ChatViewController {
                 })
             }
             
-            cell.updateBackground(isContinueMessage: !message.isEphemeral)
+            cell.isContinueMessage = !message.isEphemeral
+            cell.updateBackground()
         }
         
         guard !message.isEphemeral else {

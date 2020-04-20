@@ -62,14 +62,14 @@ extension UIImage {
 extension UIImage {
     /// Render resizable rounded image with specified corners.
     static func renderRounded(cornerRadius: CGFloat,
-                              type: RoundedImageType,
+                              pointedCornerRadius: CGFloat,
+                              corners: UIRectCorner,
                               color: UIColor,
                               backgroundColor: UIColor = .clear,
                               borderWidth: CGFloat = 0,
                               borderColor: UIColor = .black) -> UIImage {
         let width = 2 * cornerRadius + 1
         let rect = CGRect(width: width, height: width)
-        let cornerRadii = CGSize(width: cornerRadius, height: cornerRadius)
         UIGraphicsBeginImageContextWithOptions(rect.size, !backgroundColor.isClear, 0.0)
         defer { UIGraphicsEndImageContext() }
         
@@ -81,15 +81,19 @@ extension UIImage {
         UIRectFill(rect)
         
         color.setFill()
-        UIBezierPath(roundedRect: rect, byRoundingCorners: type.corners, cornerRadii: cornerRadii).fill()
+
+        UIBezierPath(cgPath: cgPath(rect: rect,
+                                    cornerRadius: cornerRadius,
+                                    pointedCornerRadius: pointedCornerRadius,
+                                    corners: corners)).fill()
         
         if borderWidth > 0 {
             borderColor.setStroke()
-            let path = UIBezierPath(roundedRect: rect.inset(by: .all(borderWidth / 2)),
-                                    byRoundingCorners: type.corners,
-                                    cornerRadii: cornerRadii)
+            let path = UIBezierPath(cgPath: cgPath(rect: rect.inset(by: .all(borderWidth / 2)),
+                                                   cornerRadius: cornerRadius,
+                                                   pointedCornerRadius: pointedCornerRadius,
+                                                   corners: corners))
             path.lineWidth = borderWidth
-            path.close()
             path.stroke()
         }
         
@@ -99,22 +103,87 @@ extension UIImage {
         
         return UIImage(color: .black)
     }
+    
+    private static func cgPath(rect: CGRect,
+                               cornerRadius: CGFloat,
+                               pointedCornerRadius: CGFloat,
+                               corners: UIRectCorner) -> CGPath {
+        let topLeft = rect.origin
+        let topRight = CGPoint(x: rect.maxX, y: rect.minY)
+        let bottomRight = CGPoint(x: rect.maxX, y: rect.maxY)
+        let bottomLeft = CGPoint(x: rect.minX, y: rect.maxY)
+        let path = CGMutablePath()
+        var lastPoint = CGPoint.zero
+       
+        if corners.contains(.topRight) {
+            lastPoint = CGPoint(x: topRight.x - cornerRadius, y: topRight.y)
+            path.move(to: lastPoint)
+            lastPoint = CGPoint(x: topRight.x, y: topRight.y + cornerRadius)
+            path.addQuadCurve(to: lastPoint, control: topRight)
+        } else {
+            lastPoint = CGPoint(x: topRight.x - pointedCornerRadius, y: topRight.y)
+            path.move(to: lastPoint)
+            
+            if pointedCornerRadius > 0 {
+                lastPoint = CGPoint(x: topRight.x, y: topRight.y + pointedCornerRadius)
+                path.addQuadCurve(to: lastPoint, control: topRight)
+            }
+        }
+        
+        if corners.contains(.bottomRight) {
+            lastPoint = CGPoint(x: bottomRight.x, y: bottomRight.y - cornerRadius)
+            path.addLine(to: lastPoint)
+            lastPoint = CGPoint(x: bottomRight.x - cornerRadius, y: bottomRight.y)
+            path.addQuadCurve(to: lastPoint, control: bottomRight)
+        } else {
+            lastPoint = CGPoint(x: bottomRight.x, y: bottomRight.y - pointedCornerRadius)
+            path.addLine(to: lastPoint)
+            
+            if pointedCornerRadius > 0 {
+                lastPoint = CGPoint(x: bottomRight.x - pointedCornerRadius, y: bottomRight.y)
+                path.addQuadCurve(to: lastPoint, control: bottomRight)
+            }
+        }
+        
+        if corners.contains(.bottomLeft) {
+            lastPoint = CGPoint(x: bottomLeft.x + cornerRadius, y: bottomLeft.y)
+            path.addLine(to: lastPoint)
+            lastPoint = CGPoint(x: bottomLeft.x, y: bottomLeft.y - cornerRadius)
+            path.addQuadCurve(to: lastPoint, control: bottomLeft)
+        } else {
+            lastPoint = CGPoint(x: bottomLeft.x + pointedCornerRadius, y: bottomLeft.y)
+            path.addLine(to: lastPoint)
+            
+            if pointedCornerRadius > 0 {
+                lastPoint = CGPoint(x: bottomLeft.x, y: bottomLeft.y - pointedCornerRadius)
+                path.addQuadCurve(to: lastPoint, control: bottomLeft)
+            }
+        }
+        
+        if corners.contains(.topLeft) {
+            lastPoint = CGPoint(x: topLeft.x, y: topLeft.y + cornerRadius)
+            path.addLine(to: lastPoint)
+            lastPoint = CGPoint(x: topLeft.x + cornerRadius, y: topLeft.y)
+            path.addQuadCurve(to: lastPoint, control: topLeft)
+        } else {
+            lastPoint = CGPoint(x: topLeft.x, y: topLeft.y + pointedCornerRadius)
+            path.addLine(to: lastPoint)
+            
+            if pointedCornerRadius > 0 {
+                lastPoint = CGPoint(x: topLeft.x + pointedCornerRadius, y: topLeft.y)
+                path.addQuadCurve(to: lastPoint, control: topLeft)
+            }
+        }
+        
+        path.closeSubpath()
+        
+        return path
+    }
 }
 
-enum RoundedImageType: Hashable {
-    case all
-    case leftBottomCorner
-    case leftSide
-    case rightBottomCorner
-    case rightSide
-    
-    fileprivate var corners: UIRectCorner {
-        switch self {
-        case .all: return .allCorners
-        case .leftBottomCorner: return [.topLeft, .topRight, .bottomRight]
-        case .leftSide: return [.topRight, .bottomRight]
-        case .rightBottomCorner: return [.topLeft, .topRight, .bottomLeft]
-        case .rightSide: return [.topLeft, .bottomLeft]
-        }
-    }
+extension UIRectCorner: Hashable {
+    public static let leftSide: UIRectCorner = [.topLeft, .bottomLeft]
+    public static let rightSide: UIRectCorner = [.topRight, .bottomRight]
+    public static let pointedLeftBottom: UIRectCorner = [.topLeft, .topRight, .bottomRight]
+    public static let pointedRightBottom: UIRectCorner = [.topLeft, .topRight, .bottomLeft]
 }

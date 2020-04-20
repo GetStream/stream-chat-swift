@@ -135,15 +135,15 @@ extension MessageTableViewCell {
         }
         
         if style.alignment == .left {
-            if offset == 0, messageContainerViewImage == style.backgroundImages[.leftBottomCorner] {
-                return style.transparentBackgroundImages[.leftBottomCorner]
+            if offset == 0, messageContainerViewImage == style.backgroundImages[.pointedLeftBottom] {
+                return style.transparentBackgroundImages[.pointedLeftBottom]
             }
             
             return style.transparentBackgroundImages[.leftSide]
         }
         
-        if offset == 0, messageContainerViewImage == style.backgroundImages[.rightBottomCorner] {
-            return style.transparentBackgroundImages[.rightBottomCorner]
+        if offset == 0, messageContainerViewImage == style.backgroundImages[.pointedRightBottom] {
+            return style.transparentBackgroundImages[.pointedRightBottom]
         }
         
         return style.transparentBackgroundImages[.rightSide]

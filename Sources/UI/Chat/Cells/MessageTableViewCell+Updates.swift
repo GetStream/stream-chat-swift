@@ -15,14 +15,14 @@ import RxSwift
 
 extension MessageTableViewCell {
     
-    func updateBackground(isContinueMessage: Bool) {
+    func updateBackground() {
         if let text = messageLabel.text, text.messageContainsOnlyEmoji {
             messageLabel.font = style.emojiFont
             messageLabel.backgroundColor = style.chatBackgroundColor
             return
         }
         
-        if let messageBackgroundImage = messageBackgroundImage(isContinueMessage: isContinueMessage) {
+        if let messageBackgroundImage = messageBackgroundImage() {
             messageContainerView.image = messageBackgroundImage
         } else {
             messageContainerView.backgroundColor = style.backgroundColor
@@ -34,14 +34,14 @@ extension MessageTableViewCell {
         }
     }
     
-    private func messageBackgroundImage(isContinueMessage: Bool) -> UIImage? {
+    func messageBackgroundImage() -> UIImage? {
         guard style.hasBackgroundImage else {
             return nil
         }
         
         return style.alignment == .left
-            ? (isContinueMessage ? style.backgroundImages[.leftSide] : style.backgroundImages[.leftBottomCorner])
-            : (isContinueMessage ? style.backgroundImages[.rightSide] : style.backgroundImages[.rightBottomCorner])
+            ? (isContinueMessage ? style.backgroundImages[.rightSide] : style.backgroundImages[.pointedLeftBottom])
+            : (isContinueMessage ? style.backgroundImages[.leftSide] : style.backgroundImages[.pointedRightBottom])
     }
     
     func update(name: String? = nil, date: Date) {
