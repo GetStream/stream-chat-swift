@@ -95,7 +95,7 @@ public extension Client {
             return Subscription.empty
         }
         
-        if user.isCurrent {
+        if message.user.isCurrent {
             completion(.success(.init(messageId: message.id, created: Date(), updated: Date())))
             return Subscription.empty
         }
@@ -118,15 +118,13 @@ public extension Client {
             return Subscription.empty
         }
         
-        if user.isCurrent {
+        if message.user.isCurrent {
             completion(.success(.init(messageId: message.id, created: Date(), updated: Date())))
             return Subscription.empty
         }
         
         let completion = doAfter(completion) { _ in
-            if let index = Message.flaggedIds.firstIndex(where: { $0 == message.id }) {
-                Message.flaggedIds.remove(at: index)
-            }
+            Message.flaggedIds.remove(message.id)
         }
         
         return toggleFlagMessage(message, endpoint: .unflagMessage(message), completion)
@@ -135,17 +133,18 @@ public extension Client {
     private func toggleFlagMessage(_ message: Message,
                                    endpoint: Endpoint,
                                    _ completion: @escaping Client.Completion<FlagMessageResponse>) -> Cancellable {
-        request(endpoint: endpoint) { (result: Result<FlagMessageResponse, ClientError>) in
+        request(endpoint: endpoint) { (result: Result<FlagResponse<FlagMessageResponse>, ClientError>) in
             let result = result.catchError { error in
                 if case .responseError(let clientResponseError) = error,
                     clientResponseError.message.contains("flag already exists") {
-                    return .success(.init(messageId: message.id, created: Date(), updated: Date()))
+                    let flagMessageResponse = FlagMessageResponse(messageId: message.id, created: Date(), updated: Date())
+                    return .success(FlagResponse(flag: flagMessageResponse))
                 }
                 
                 return .failure(error)
             }
             
-            completion(result)
+            completion(result.map(to: \.flag))
         }
     }
 }
