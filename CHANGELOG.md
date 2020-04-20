@@ -27,7 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unused `RxBlocking` dependency removed [#177](https://github.com/GetStream/stream-chat-swift/pull/177).
 - Unnecessary `Gzip` dependency removed [#183](https://github.com/GetStream/stream-chat-swift/pull/183).
 - Unnecessary `Reachability` dependency removed [#184](https://github.com/GetStream/stream-chat-swift/pull/184).
-- Flag message/user [#186](https://github.com/GetStream/stream-chat-swift/pull/186).   
+- Flag message/user [#186](https://github.com/GetStream/stream-chat-swift/pull/186).
+- Discard messages from muted users [#186](https://github.com/GetStream/stream-chat-swift/pull/186).
 
 # [2.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.1)
 _April 3, 2020_
