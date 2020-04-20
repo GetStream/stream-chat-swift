@@ -83,7 +83,7 @@ public final class Channel: Codable {
     /// Returns the current unread count.
     public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get(default: .noUnread) }
     
-    private(set) lazy var unreadCountAtomic = Atomic<ChannelUnreadCount>(.noUnread) { [weak self] _, _ in
+    private(set) lazy var unreadCountAtomic = Atomic<ChannelUnreadCount>(.noUnread, callbackQueue: .main) { [weak self] _, _ in
         if let self = self {
             self.onUpdate?(self)
         }
@@ -92,7 +92,7 @@ public final class Channel: Codable {
     /// Online watchers in the channel.
     public var watcherCount: Int { watcherCountAtomic.get(default: 0) }
     
-    private(set) lazy var watcherCountAtomic = Atomic(0) { [weak self] _, _ in
+    private(set) lazy var watcherCountAtomic = Atomic(0, callbackQueue: .main) { [weak self] _, _ in
         if let self = self {
             self.onUpdate?(self)
         }
