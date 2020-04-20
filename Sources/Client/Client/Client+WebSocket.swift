@@ -77,12 +77,10 @@ extension Client {
         let cids = Array(keys).chunked(into: 50)
         
         cids.forEach { chunk in
-            eventsHandlingQueue.asyncAfter(deadline: .now() + .milliseconds(Int.random(in: 0...500))) { [unowned self] in
-                self.queryChannels(filter: .in("cid", chunk),
-                                   pagination: [.limit(1)],
-                                   messagesLimit: [.limit(1)],
-                                   options: .watch) { _ in }
-            }
+            queryChannels(filter: .in("cid", chunk),
+                          pagination: [.limit(1)],
+                          messagesLimit: [.limit(1)],
+                          options: .watch) { _ in }
         }
     }
 }
