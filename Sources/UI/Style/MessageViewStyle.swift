@@ -59,6 +59,11 @@ public struct MessageViewStyle {
         didSet { updateBackgroundImages() }
     }
     
+    /// A corner radius.
+    public var pointedCornerRadius: CGFloat {
+        didSet { updateBackgroundImages() }
+    }
+    
     // Spacings between elements.
     public var spacing: Spacing
     /// A margin.
@@ -72,11 +77,13 @@ public struct MessageViewStyle {
     /// For example: makes italic text for "*italic*", bold text for "**bold**".
     public var markdownEnabled: Bool
     
-    private(set) var backgroundImages: [RoundedImageType: UIImage] = [:]
-    private(set) var transparentBackgroundImages: [RoundedImageType: UIImage] = [:]
+    private(set) var backgroundImages: [UIRectCorner: UIImage] = [:]
+    private(set) var transparentBackgroundImages: [UIRectCorner: UIImage] = [:]
     
     /// Check if the message has a generated background bubble image.
-    public var hasBackgroundImage: Bool { cornerRadius > 1 && (chatBackgroundColor != backgroundColor || borderWidth > 0) }
+    public var hasBackgroundImage: Bool {
+        (cornerRadius > 1 || pointedCornerRadius > 1) && (chatBackgroundColor != backgroundColor || borderWidth > 0)
+    }
     
     /// A margin left or right offset with avatar size.
     public var marginWithAvatarOffset: CGFloat {
@@ -104,6 +111,7 @@ public struct MessageViewStyle {
     ///   - borderColor: a border color.
     ///   - borderWidth: a border width.
     ///   - cornerRadius: a corner radius.
+    ///   - pointedCornerRadius: a pointed corner radius.
     ///   - spacing: spacings between elements.
     ///   - edgeInsets: edge insets.
     ///   - reactionViewStyle: a reaction style.
@@ -125,6 +133,7 @@ public struct MessageViewStyle {
                 borderColor: UIColor = .chatSuperLightGray,
                 borderWidth: CGFloat = 1,
                 cornerRadius: CGFloat = .messageCornerRadius,
+                pointedCornerRadius: CGFloat = 0,
                 spacing: Spacing = .init(horizontal: .messageInnerPadding, vertical: .messageSpacing),
                 edgeInsets: UIEdgeInsets = .init(top: .messageSpacing,
                                                  left: .messageEdgePadding,
@@ -148,7 +157,8 @@ public struct MessageViewStyle {
         self.backgroundColor = backgroundColor
         self.borderColor = borderColor
         self.borderWidth = borderWidth
-        self.cornerRadius = cornerRadius
+        self.cornerRadius = cornerRadius > 1 ? cornerRadius : 0
+        self.pointedCornerRadius = pointedCornerRadius > 1 ? pointedCornerRadius : 0
         self.spacing = spacing
         self.edgeInsets = edgeInsets
         self.reactionViewStyle = reactionViewStyle
@@ -165,48 +175,56 @@ public struct MessageViewStyle {
             return
         }
         
-        backgroundImages = [.leftBottomCorner: .renderRounded(cornerRadius: cornerRadius,
-                                                              type: .leftBottomCorner,
-                                                              color: backgroundColor,
-                                                              backgroundColor: chatBackgroundColor,
-                                                              borderWidth: borderWidth,
-                                                              borderColor: borderColor),
-                            .leftSide: .renderRounded(cornerRadius: cornerRadius,
-                                                      type: .leftSide,
-                                                      color: backgroundColor,
-                                                      backgroundColor: chatBackgroundColor,
-                                                      borderWidth: borderWidth,
-                                                      borderColor: borderColor),
-                            .rightBottomCorner: .renderRounded(cornerRadius: cornerRadius,
-                                                               type: .rightBottomCorner,
+        backgroundImages = [.pointedLeftBottom: .renderRounded(cornerRadius: cornerRadius,
+                                                               pointedCornerRadius: pointedCornerRadius,
+                                                               corners: .pointedLeftBottom,
                                                                color: backgroundColor,
                                                                backgroundColor: chatBackgroundColor,
                                                                borderWidth: borderWidth,
                                                                borderColor: borderColor),
+                            .leftSide: .renderRounded(cornerRadius: cornerRadius,
+                                                      pointedCornerRadius: pointedCornerRadius,
+                                                      corners: .leftSide,
+                                                      color: backgroundColor,
+                                                      backgroundColor: chatBackgroundColor,
+                                                      borderWidth: borderWidth,
+                                                      borderColor: borderColor),
+                            .pointedRightBottom: .renderRounded(cornerRadius: cornerRadius,
+                                                                pointedCornerRadius: pointedCornerRadius,
+                                                                corners: .pointedRightBottom,
+                                                                color: backgroundColor,
+                                                                backgroundColor: chatBackgroundColor,
+                                                                borderWidth: borderWidth,
+                                                                borderColor: borderColor),
                             .rightSide: .renderRounded(cornerRadius: cornerRadius,
-                                                       type: .rightSide,
+                                                       pointedCornerRadius: pointedCornerRadius,
+                                                       corners: .rightSide,
                                                        color: backgroundColor,
                                                        backgroundColor: chatBackgroundColor,
                                                        borderWidth: borderWidth,
                                                        borderColor: borderColor)]
         
-        transparentBackgroundImages = [.leftBottomCorner: .renderRounded(cornerRadius: cornerRadius,
-                                                                         type: .leftBottomCorner,
-                                                                         color: backgroundColor,
-                                                                         borderWidth: borderWidth,
-                                                                         borderColor: borderColor),
-                                       .leftSide: .renderRounded(cornerRadius: cornerRadius,
-                                                                 type: .leftSide,
-                                                                 color: backgroundColor,
-                                                                 borderWidth: borderWidth,
-                                                                 borderColor: borderColor),
-                                       .rightBottomCorner: .renderRounded(cornerRadius: cornerRadius,
-                                                                          type: .rightBottomCorner,
+        transparentBackgroundImages = [.pointedLeftBottom: .renderRounded(cornerRadius: cornerRadius,
+                                                                          pointedCornerRadius: pointedCornerRadius,
+                                                                          corners: .pointedLeftBottom,
                                                                           color: backgroundColor,
                                                                           borderWidth: borderWidth,
                                                                           borderColor: borderColor),
+                                       .leftSide: .renderRounded(cornerRadius: cornerRadius,
+                                                                 pointedCornerRadius: pointedCornerRadius,
+                                                                 corners: .leftSide,
+                                                                 color: backgroundColor,
+                                                                 borderWidth: borderWidth,
+                                                                 borderColor: borderColor),
+                                       .pointedRightBottom: .renderRounded(cornerRadius: cornerRadius,
+                                                                           pointedCornerRadius: pointedCornerRadius,
+                                                                           corners: .pointedRightBottom,
+                                                                           color: backgroundColor,
+                                                                           borderWidth: borderWidth,
+                                                                           borderColor: borderColor),
                                        .rightSide: .renderRounded(cornerRadius: cornerRadius,
-                                                                  type: .rightSide,
+                                                                  pointedCornerRadius: pointedCornerRadius,
+                                                                  corners: .rightSide,
                                                                   color: backgroundColor,
                                                                   borderWidth: borderWidth,
                                                                   borderColor: borderColor)]
@@ -247,6 +265,7 @@ extension MessageViewStyle: Hashable {
             && lhs.borderColor == rhs.borderColor
             && lhs.borderWidth == rhs.borderWidth
             && lhs.cornerRadius == rhs.cornerRadius
+            && lhs.pointedCornerRadius == rhs.pointedCornerRadius
             && lhs.spacing == rhs.spacing
             && lhs.edgeInsets == rhs.edgeInsets
             && lhs.reactionViewStyle == rhs.reactionViewStyle
@@ -271,6 +290,7 @@ extension MessageViewStyle: Hashable {
         hasher.combine(borderColor)
         hasher.combine(borderWidth)
         hasher.combine(cornerRadius)
+        hasher.combine(pointedCornerRadius)
         hasher.combine(spacing)
         hasher.combine(edgeInsets.top)
         hasher.combine(edgeInsets.bottom)
