@@ -9,7 +9,21 @@
 import UIKit
 
 /// A message view style.
-public struct MessageViewStyle {
+public struct MessageViewStyle: Hashable {
+    
+    /// An alignment of a message for incoming or outgoing messages.
+    public enum Alignment: String {
+        /// A message view style alignment.
+        case left, right
+    }
+    
+    /// Additional date style will work with `showTimeThreshold` paramenter.
+    public enum AdditionalDateStyle {
+        /// Show additional date as a default style for the last message.
+        case userNameAndDate
+        /// Show additional date near a message without user name.
+        case messageAndDate
+    }
     
     /// An alignment of a message for incoming or outgoing messages.
     public var alignment: Alignment
@@ -38,7 +52,7 @@ public struct MessageViewStyle {
     public var showTimeThreshold: TimeInterval
     /// An additional date style (see `AdditionalDateStyle`).
     public var additionalDateStyle: AdditionalDateStyle
-
+    
     /// A background color of the chat screen.
     public var chatBackgroundColor: UIColor {
         didSet { updateBackgroundImages() }
@@ -68,7 +82,7 @@ public struct MessageViewStyle {
     public var spacing: Spacing
     /// A margin.
     public var edgeInsets: UIEdgeInsets
-
+    
     /// A reaction style.
     public var reactionViewStyle: ReactionViewStyle
     
@@ -77,8 +91,8 @@ public struct MessageViewStyle {
     /// For example: makes italic text for "*italic*", bold text for "**bold**".
     public var markdownEnabled: Bool
     
-    private(set) var backgroundImages: [UIRectCorner: UIImage] = [:]
-    private(set) var transparentBackgroundImages: [UIRectCorner: UIImage] = [:]
+    private(set) var backgroundImages: [UIRectCorner: BackgroundImage] = [:]
+    private(set) var transparentBackgroundImages: [UIRectCorner: BackgroundImage] = [:]
     
     /// Check if the message has a generated background bubble image.
     public var hasBackgroundImage: Bool {
@@ -175,79 +189,62 @@ public struct MessageViewStyle {
             return
         }
         
-        backgroundImages = [.pointedLeftBottom: .renderRounded(cornerRadius: cornerRadius,
-                                                               pointedCornerRadius: pointedCornerRadius,
-                                                               corners: .pointedLeftBottom,
-                                                               color: backgroundColor,
-                                                               backgroundColor: chatBackgroundColor,
-                                                               borderWidth: borderWidth,
-                                                               borderColor: borderColor),
-                            .leftSide: .renderRounded(cornerRadius: cornerRadius,
-                                                      pointedCornerRadius: pointedCornerRadius,
-                                                      corners: .leftSide,
-                                                      color: backgroundColor,
-                                                      backgroundColor: chatBackgroundColor,
-                                                      borderWidth: borderWidth,
-                                                      borderColor: borderColor),
-                            .pointedRightBottom: .renderRounded(cornerRadius: cornerRadius,
+        backgroundImages = [.pointedLeftBottom: BackgroundImage(cornerRadius: cornerRadius,
                                                                 pointedCornerRadius: pointedCornerRadius,
-                                                                corners: .pointedRightBottom,
+                                                                corners: .pointedLeftBottom,
                                                                 color: backgroundColor,
                                                                 backgroundColor: chatBackgroundColor,
                                                                 borderWidth: borderWidth,
                                                                 borderColor: borderColor),
-                            .rightSide: .renderRounded(cornerRadius: cornerRadius,
+                            .leftSide: BackgroundImage(cornerRadius: cornerRadius,
                                                        pointedCornerRadius: pointedCornerRadius,
-                                                       corners: .rightSide,
+                                                       corners: .leftSide,
                                                        color: backgroundColor,
                                                        backgroundColor: chatBackgroundColor,
                                                        borderWidth: borderWidth,
-                                                       borderColor: borderColor)]
-        
-        transparentBackgroundImages = [.pointedLeftBottom: .renderRounded(cornerRadius: cornerRadius,
-                                                                          pointedCornerRadius: pointedCornerRadius,
-                                                                          corners: .pointedLeftBottom,
-                                                                          color: backgroundColor,
-                                                                          borderWidth: borderWidth,
-                                                                          borderColor: borderColor),
-                                       .leftSide: .renderRounded(cornerRadius: cornerRadius,
+                                                       borderColor: borderColor),
+                            .pointedRightBottom: BackgroundImage(cornerRadius: cornerRadius,
                                                                  pointedCornerRadius: pointedCornerRadius,
-                                                                 corners: .leftSide,
+                                                                 corners: .pointedRightBottom,
                                                                  color: backgroundColor,
+                                                                 backgroundColor: chatBackgroundColor,
                                                                  borderWidth: borderWidth,
                                                                  borderColor: borderColor),
-                                       .pointedRightBottom: .renderRounded(cornerRadius: cornerRadius,
+                            .rightSide: BackgroundImage(cornerRadius: cornerRadius,
+                                                        pointedCornerRadius: pointedCornerRadius,
+                                                        corners: .rightSide,
+                                                        color: backgroundColor,
+                                                        backgroundColor: chatBackgroundColor,
+                                                        borderWidth: borderWidth,
+                                                        borderColor: borderColor)]
+        
+        transparentBackgroundImages = [.pointedLeftBottom: BackgroundImage(cornerRadius: cornerRadius,
                                                                            pointedCornerRadius: pointedCornerRadius,
-                                                                           corners: .pointedRightBottom,
+                                                                           corners: .pointedLeftBottom,
                                                                            color: backgroundColor,
                                                                            borderWidth: borderWidth,
                                                                            borderColor: borderColor),
-                                       .rightSide: .renderRounded(cornerRadius: cornerRadius,
+                                       .leftSide: BackgroundImage(cornerRadius: cornerRadius,
                                                                   pointedCornerRadius: pointedCornerRadius,
-                                                                  corners: .rightSide,
+                                                                  corners: .leftSide,
                                                                   color: backgroundColor,
                                                                   borderWidth: borderWidth,
-                                                                  borderColor: borderColor)]
-    }
-}
-
-public extension MessageViewStyle {
-    /// An alignment of a message for incoming or outgoing messages.
-    enum Alignment: String {
-        /// A message view style alignment.
-        case left, right
+                                                                  borderColor: borderColor),
+                                       .pointedRightBottom: BackgroundImage(cornerRadius: cornerRadius,
+                                                                            pointedCornerRadius: pointedCornerRadius,
+                                                                            corners: .pointedRightBottom,
+                                                                            color: backgroundColor,
+                                                                            borderWidth: borderWidth,
+                                                                            borderColor: borderColor),
+                                       .rightSide: BackgroundImage(cornerRadius: cornerRadius,
+                                                                   pointedCornerRadius: pointedCornerRadius,
+                                                                   corners: .rightSide,
+                                                                   color: backgroundColor,
+                                                                   borderWidth: borderWidth,
+                                                                   borderColor: borderColor)]
     }
     
-    /// Additional date style will work with `showTimeThreshold` paramenter.
-    enum AdditionalDateStyle {
-        /// Show additional date as a default style for the last message.
-        case userNameAndDate
-        /// Show additional date near a message without user name.
-        case messageAndDate
-    }
-}
-
-extension MessageViewStyle: Hashable {
+    // MARK: - Hashable
     
     public static func == (lhs: MessageViewStyle, rhs: MessageViewStyle) -> Bool {
         lhs.alignment == rhs.alignment
@@ -300,5 +297,77 @@ extension MessageViewStyle: Hashable {
         hasher.combine(showTimeThreshold)
         hasher.combine(additionalDateStyle)
         hasher.combine(markdownEnabled)
+    }
+}
+
+extension MessageViewStyle {
+    struct BackgroundImage {
+        private let images: [Int: UIImage]
+        private let image: UIImage?
+        
+        init(cornerRadius: CGFloat,
+             pointedCornerRadius: CGFloat,
+             corners: UIRectCorner,
+             color: UIColor,
+             backgroundColor: UIColor = .clear,
+             borderWidth: CGFloat = 0,
+             borderColor: UIColor = .black) {
+            if #available(iOS 13, *) {
+                let lightTrait = UITraitCollection(userInterfaceStyle: .light)
+                let darkTrait = UITraitCollection(userInterfaceStyle: .dark)
+                let lightColor = color.resolvedColor(with: lightTrait)
+                let darkColor = color.resolvedColor(with: darkTrait)
+                let lightBackgroundColor = backgroundColor.resolvedColor(with: lightTrait)
+                let darkBackgroundColor = backgroundColor.resolvedColor(with: darkTrait)
+                let lightBorderColor = borderColor.resolvedColor(with: lightTrait)
+                let darkBorderColor = borderColor.resolvedColor(with: darkTrait)
+                
+                if lightColor != darkColor || lightBackgroundColor != darkBackgroundColor || lightBorderColor != darkBorderColor {
+                    image = nil
+                    
+                    images = [UIUserInterfaceStyle.light.rawValue: .renderRounded(cornerRadius: cornerRadius,
+                                                                                  pointedCornerRadius: pointedCornerRadius,
+                                                                                  corners: corners,
+                                                                                  color: lightColor,
+                                                                                  backgroundColor: lightBackgroundColor,
+                                                                                  borderWidth: borderWidth,
+                                                                                  borderColor: lightBorderColor),
+                              
+                              UIUserInterfaceStyle.dark.rawValue: .renderRounded(cornerRadius: cornerRadius,
+                                                                                 pointedCornerRadius: pointedCornerRadius,
+                                                                                 corners: corners,
+                                                                                 color: darkColor,
+                                                                                 backgroundColor: darkBackgroundColor,
+                                                                                 borderWidth: borderWidth,
+                                                                                 borderColor: darkBorderColor)]
+                    
+                    return
+                }
+            }
+            
+            images = [:]
+            
+            image = .renderRounded(cornerRadius: cornerRadius,
+                                   pointedCornerRadius: pointedCornerRadius,
+                                   corners: corners,
+                                   color: color,
+                                   backgroundColor: backgroundColor,
+                                   borderWidth: borderWidth,
+                                   borderColor: borderColor)
+        }
+        
+        func image(for traitCollection: UITraitCollection) -> UIImage? {
+            guard #available(iOS 13, *), !images.isEmpty else {
+                return image
+            }
+            
+            switch traitCollection.userInterfaceStyle {
+            case .dark:
+                return images[UIUserInterfaceStyle.dark.rawValue]
+            default:
+                return images[UIUserInterfaceStyle.light.rawValue]
+            }
+            
+        }
     }
 }
