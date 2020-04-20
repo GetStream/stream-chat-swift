@@ -15,11 +15,16 @@ Install _fastlane_ using
 or alternatively using `brew cask install fastlane`
 
 # Available Actions
+### match_me
+```
+fastlane match_me
+```
+Installs all Certs and Profiles necessary for development and ad-hoc
 ### beta
 ```
 fastlane beta
 ```
-
+Builds the latest version with ad-hoc and uploads to firebase
 
 ----
 
