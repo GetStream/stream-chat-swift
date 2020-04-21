@@ -155,7 +155,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         didSet { bottomPaddingView.isHidden = paddingType == .small }
     }
     
-    override public func prepareForReuse() {
+    override open func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }
