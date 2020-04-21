@@ -39,10 +39,10 @@ enum ReachabilityError: Error {
 }
 
 extension Notification.Name {
-    static let reachabilityChanged = Notification.Name("io.getstream.StreamChatClient.reachabilityChanged")
+    public static let reachabilityChanged = Notification.Name("io.getstream.StreamChatClient.reachabilityChanged")
 }
 
-class Reachability {
+public class Reachability {
 
     typealias NetworkReachable = (Reachability) -> ()
     typealias NetworkUnreachable = (Reachability) -> ()
@@ -59,11 +59,11 @@ class Reachability {
         }
     }
 
-    enum Connection: CustomStringConvertible {
+    public enum Connection: CustomStringConvertible {
         @available(*, deprecated, renamed: "unavailable")
         case none
         case unavailable, wifi, cellular
-        var description: String {
+        public var description: String {
             switch self {
             case .cellular: return "Cellular"
             case .wifi: return "WiFi"
@@ -95,7 +95,7 @@ class Reachability {
         return connection
     }
 
-    var connection: Connection {
+    public var connection: Connection {
         if flags == nil {
             try? setReachabilityFlags()
         }
