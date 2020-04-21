@@ -33,7 +33,7 @@ jobs:
         restore-keys: ${{ runner.os }}-gem-
     - name: Install Carthage dependencies
       if: steps.carthage-cache.outputs.cache-hit != 'true'
-      run: echo 'BUILD_LIBRARY_FOR_DISTRIBUTION=YES'>/tmp/config.xcconfig; XCODE_XCCONFIG_FILE=/tmp/config.xcconfig carthage update --platform iOS --new-resolver --no-use-binaries --cache-builds; rm /tmp/config.xcconfig
+      run: echo 'BUILD_LIBRARY_FOR_DISTRIBUTION=YES'>/tmp/config.xcconfig; XCODE_XCCONFIG_FILE=/tmp/config.xcconfig carthage bootstrap --platform iOS --new-resolver --no-use-binaries --cache-builds; rm /tmp/config.xcconfig
     - name: Install RubyGems
       if: steps.rubygem-cache.outputs.cache-hit != 'true'
       run: bundle install
