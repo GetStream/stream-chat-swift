@@ -21,7 +21,6 @@ final class WebSocket {
     private let logger: ClientLogger?
     private var consecutiveFailures: TimeInterval = 0
     private var shouldReconnect = false
-    private var isReconnecting = false
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private let webSocketInitiated: Bool
     private(set) var connectionId: String?
@@ -85,10 +84,10 @@ extension WebSocket {
         
         cancelBackgroundWork()
         
-        if connectionState == .connecting || isReconnecting || isConnected {
+        if isConnected || connectionState == .connecting || connectionState == .reconnecting {
             logger?.log("Skip connecting: "
                 + "isConnected = \(webSocket.isConnected), "
-                + "isReconnecting = \(isReconnecting), "
+                + "isReconnecting = \(connectionState == .reconnecting), "
                 + "isConnecting = \(connectionState == .connecting)")
             return
         }
@@ -102,11 +101,11 @@ extension WebSocket {
     }
     
     private func reconnect() {
-        guard !isReconnecting else {
+        guard connectionState != .reconnecting else {
             return
         }
         
-        isReconnecting = true
+        connectionState = .reconnecting
         let maxDelay: TimeInterval = min(500 + consecutiveFailures * 2000, 25000) / 1000
         let minDelay: TimeInterval = min(max(250, (consecutiveFailures - 1) * 2000), 25000) / 1000
         consecutiveFailures += 1
@@ -114,7 +113,7 @@ extension WebSocket {
         logger?.log("⏳ Reconnect in \(delay) sec")
         
         webSocket.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
-            self?.isReconnecting = false
+            self?.connectionState = .connecting
             self?.connect()
         }
     }

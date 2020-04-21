@@ -17,6 +17,8 @@ public enum ConnectionState: Equatable {
     case connecting
     /// The websocket was connected.
     case connected(UserConnection)
+    /// The websocket is reconnecting.
+    case reconnecting
     /// The websocket is disconnecting.
     case disconnecting
     /// The websocket was disconnected with an error.
