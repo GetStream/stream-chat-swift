@@ -163,7 +163,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         }
     }
     
-    override public func prepareForReuse() {
+    override open func prepareForReuse() {
         reset()
         super.prepareForReuse()
     }
