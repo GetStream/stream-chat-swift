@@ -41,7 +41,7 @@ public struct ChannelsQuery: Encodable {
     ///   - pagination: a channels pagination.
     ///   - messagesLimit: a messages pagination for the each channel.
     ///   - options: a query options (see `QueryOptions`).
-    public init(filter: Filter = .none,
+    public init(filter: Filter,
                 sort: [Sorting] = [],
                 pagination: Pagination = [.channelsPageSize],
                 messagesLimit: Pagination = [.messagesPageSize],
@@ -55,10 +55,7 @@ public struct ChannelsQuery: Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
-        if case .none = filter {} else {
-            try container.encode(filter, forKey: .filter)
-        }
+        try container.encode(filter, forKey: .filter)
         
         if !sort.isEmpty {
             try container.encode(sort, forKey: .sort)

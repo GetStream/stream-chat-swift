@@ -24,9 +24,6 @@ import Foundation
 public enum Filter: Encodable, CustomStringConvertible {
     public typealias Key = String
     
-    /// No filter.
-    case none
-    
     // MARK: Operators
     
     /// An equal operator.
@@ -61,8 +58,6 @@ public enum Filter: Encodable, CustomStringConvertible {
     
     public var description: String {
         switch self {
-        case .none:
-            return ""
         case let .equal(key, object):
             return "\(key) = \(object)"
         case let .notEqual(key, object):
@@ -99,8 +94,6 @@ public enum Filter: Encodable, CustomStringConvertible {
         var operands: [Encodable] = []
         
         switch self {
-        case .none:
-            return
         case let .equal(key, object):
             try [key: AnyEncodable(object)].encode(to: encoder)
             return

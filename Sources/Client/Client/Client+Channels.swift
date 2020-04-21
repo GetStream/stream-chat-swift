@@ -46,7 +46,7 @@ public extension Client {
     ///   - options: a query options (see `QueryOptions`).
     ///   - completion: a completion block with `Client.Completion<[ChannelResponse]`.
     @discardableResult
-    func queryChannels(filter: Filter = .none,
+    func queryChannels(filter: Filter,
                        sort: [Sorting] = [],
                        pagination: Pagination = [.channelsPageSize],
                        messagesLimit: Pagination = [.messagesPageSize],
