@@ -16,10 +16,7 @@
 		8A08B1872395281300C900EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A08B17F2395281300C900EB /* AppDelegate.swift */; };
 		8A08B1882395281300C900EB /* CustomChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A08B1802395281300C900EB /* CustomChatViewController.swift */; };
 		8A08B1892395281300C900EB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8A08B1812395281300C900EB /* LaunchScreen.storyboard */; };
-		8A0A7EB12301AE4E0033E6D9 /* Gzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9B2301AD330033E6D9 /* Gzip.framework */; };
 		8A0A7EB22301AE4E0033E6D9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9A2301AD330033E6D9 /* Nuke.framework */; };
-		8A0A7EB32301AE4E0033E6D9 /* Reachability.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9E2301AD330033E6D9 /* Reachability.framework */; };
-		8A0A7EB52301AE4E0033E6D9 /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9C2301AD330033E6D9 /* RxBlocking.framework */; };
 		8A0A7EB62301AE4E0033E6D9 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9D2301AD330033E6D9 /* RxCocoa.framework */; };
 		8A0A7EB72301AE4E0033E6D9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E9F2301AD330033E6D9 /* RxGesture.framework */; };
 		8A0A7EB82301AE4E0033E6D9 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7EA02301AD330033E6D9 /* RxRelay.framework */; };
@@ -146,10 +143,7 @@
 			files = (
 				8A7EE010238580BD00BDB18D /* StreamChat.framework in Frameworks */,
 				8A7EE013238580BF00BDB18D /* StreamChatCore.framework in Frameworks */,
-				8A0A7EB12301AE4E0033E6D9 /* Gzip.framework in Frameworks */,
 				8A0A7EB22301AE4E0033E6D9 /* Nuke.framework in Frameworks */,
-				8A0A7EB32301AE4E0033E6D9 /* Reachability.framework in Frameworks */,
-				8A0A7EB52301AE4E0033E6D9 /* RxBlocking.framework in Frameworks */,
 				8A0A7EB62301AE4E0033E6D9 /* RxCocoa.framework in Frameworks */,
 				8A0A7EB72301AE4E0033E6D9 /* RxGesture.framework in Frameworks */,
 				8A0A7EB82301AE4E0033E6D9 /* RxRelay.framework in Frameworks */,
@@ -391,9 +385,6 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/../../Carthage/Build/iOS/RxCocoa.framework",
-				"$(SRCROOT)/../../Carthage/Build/iOS/Gzip.framework",
-				"$(SRCROOT)/../../Carthage/Build/iOS/RxBlocking.framework",
-				"$(SRCROOT)/../../Carthage/Build/iOS/Reachability.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/RxRelay.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/Starscream.framework",
 				"$(SRCROOT)/../../Carthage/Build/iOS/RxSwift.framework",
@@ -407,9 +398,6 @@
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Gzip.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxBlocking.framework",
-				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Reachability.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Starscream.framework",
 				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
