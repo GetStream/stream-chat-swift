@@ -303,7 +303,7 @@ public struct MessageViewStyle: Hashable {
 extension MessageViewStyle {
     struct BackgroundImage {
         private let images: [Int: UIImage]
-        private let image: UIImage?
+        private let defaultImage: UIImage?
         
         init(cornerRadius: CGFloat,
              pointedCornerRadius: CGFloat,
@@ -323,7 +323,7 @@ extension MessageViewStyle {
                 let darkBorderColor = borderColor.resolvedColor(with: darkTrait)
                 
                 if lightColor != darkColor || lightBackgroundColor != darkBackgroundColor || lightBorderColor != darkBorderColor {
-                    image = nil
+                    defaultImage = nil
                     
                     images = [UIUserInterfaceStyle.light.rawValue: .renderRounded(cornerRadius: cornerRadius,
                                                                                   pointedCornerRadius: pointedCornerRadius,
@@ -347,7 +347,7 @@ extension MessageViewStyle {
             
             images = [:]
             
-            image = .renderRounded(cornerRadius: cornerRadius,
+            defaultImage = .renderRounded(cornerRadius: cornerRadius,
                                    pointedCornerRadius: pointedCornerRadius,
                                    corners: corners,
                                    color: color,
@@ -358,7 +358,7 @@ extension MessageViewStyle {
         
         func image(for traitCollection: UITraitCollection) -> UIImage? {
             guard #available(iOS 13, *), !images.isEmpty else {
-                return image
+                return defaultImage
             }
             
             switch traitCollection.userInterfaceStyle {
