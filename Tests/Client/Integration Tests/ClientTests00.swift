@@ -53,7 +53,7 @@ final class ClientTests00: TestCase {
         }
         
         expect("channels for anonymous") { expectation in
-            Client.shared.queryChannels {
+            Client.shared.queryChannels(filter: .currentUserInMembers) {
                 if $0.isSuccess {
                     Client.shared.disconnect()
                     expectation.fulfill()
