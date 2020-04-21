@@ -62,7 +62,9 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             return tabBar.frame.height
         }
         
-        return view.safeAreaInsets.bottom > 0 ? view.safeAreaInsets.bottom : (parent?.view.safeAreaInsets.bottom ?? 0)
+        let initialSafeAreaInsetBottom = view.safeAreaInsets.bottom - additionalSafeAreaInsets.bottom
+        
+        return initialSafeAreaInsetBottom > 0 ? initialSafeAreaInsetBottom : (parent?.view.safeAreaInsets.bottom ?? 0)
     }
     
     /// Attachments file types for thw composer view.
