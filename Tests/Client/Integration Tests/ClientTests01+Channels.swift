@@ -328,7 +328,7 @@ final class ClientTests01_Channels: TestCase {
     
     func queryChannels(_ client: Client, cid: ChannelId) {
         expect("channels with current user member") { expectation in
-            client.queryChannels(pagination: [.limit(1)]) { result in
+            client.queryChannels(filter: .currentUserInMembers, pagination: [.limit(1)]) { result in
                 if let channelResponses = try? result.get() {
                     XCTAssertEqual(channelResponses.count, 1)
                     channelResponses.forEach { XCTAssertTrue($0.channel.cid == cid || $0.channel.isDirectMessage) }
