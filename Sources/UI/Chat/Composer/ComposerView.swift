@@ -361,22 +361,31 @@ extension ComposerView {
 private extension ComposerView {
     func addBlurredBackground(blurEffectStyle: UIBlurEffect.Style) {
         let isDark = blurEffectStyle == .dark
+        let blurEffect: UIBlurEffect
         
-        guard !UIAccessibility.isReduceTransparencyEnabled else {
-            backgroundColor = isDark ? .chatDarkGray : .chatComposer
-            return
+        if #available(iOS 13, *) {
+            blurEffect = UIBlurEffect(style: .systemThinMaterial)
+        } else {
+            if UIAccessibility.isReduceTransparencyEnabled {
+                backgroundColor = isDark ? .chatDarkGray : .chatComposer
+                return
+            }
+            
+            blurEffect = UIBlurEffect(style: blurEffectStyle)
         }
         
-        let blurEffect = UIBlurEffect(style: blurEffectStyle)
         let blurView = UIVisualEffectView(effect: blurEffect)
         blurView.isUserInteractionEnabled = false
         insertSubview(blurView, at: 0)
         blurView.makeEdgesEqualToSuperview()
         
-        let adjustingView = UIView(frame: .zero)
-        adjustingView.isUserInteractionEnabled = false
-        adjustingView.backgroundColor = .init(white: isDark ? 1 : 0, alpha: isDark ? 0.25 : 0.1)
-        insertSubview(adjustingView, at: 0)
-        adjustingView.makeEdgesEqualToSuperview()
+        // Adjust the blur effect for iOS 12 and below.
+        if #available(iOS 13, *) {} else {
+            let adjustingView = UIView(frame: .zero)
+            adjustingView.isUserInteractionEnabled = false
+            adjustingView.backgroundColor = .init(white: isDark ? 1 : 0, alpha: isDark ? 0.25 : 0.1)
+            insertSubview(adjustingView, at: 0)
+            adjustingView.makeEdgesEqualToSuperview()
+        }
     }
 }
