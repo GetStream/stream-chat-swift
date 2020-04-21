@@ -7,7 +7,6 @@
 //
 
 import StreamChatClient
-import Reachability
 import RxSwift
 import RxCocoa
 import UIKit
