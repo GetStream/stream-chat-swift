@@ -38,7 +38,7 @@ open class ChannelsViewController: ViewController {
         didSet {
             reset()
             
-            if isVisible {
+            if viewIfLoaded != nil {
                 setupChannelsPresenter()
             }
         }
@@ -113,7 +113,9 @@ open class ChannelsViewController: ViewController {
         }
     }
     
-    private func setupChannelsPresenter() {
+    /// Setup the channels presenter for changes.
+    /// It will be called when the view controller will be visible or when the presenter was changed.
+    open func setupChannelsPresenter() {
         presenter.stopChannelsWatchingIfNeeded = stopChannelsWatchingIfNeeded
         
         presenter.rx.changes
