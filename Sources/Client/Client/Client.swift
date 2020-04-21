@@ -56,6 +56,7 @@ public final class Client {
     lazy var webSocket = WebSocket()
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
+    var needsToRecoverConnection = false
     
     lazy var urlSession = URLSession(configuration: .default)
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
@@ -183,6 +184,10 @@ public final class Client {
     
     /// Disconnect the websocket and reset states.
     func reset() {
+        if webSocket.connectionId != nil {
+            needsToRecoverConnection = true
+        }
+        
         webSocket.disconnect(reason: "Resetting connection")
         Message.flaggedIds.removeAll()
         User.flaggedUsers.removeAll()

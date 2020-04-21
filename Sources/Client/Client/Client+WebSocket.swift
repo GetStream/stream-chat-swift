@@ -58,13 +58,24 @@ extension Client {
             
             if case .connected(let userConnection) = connectionState {
                 self.userAtomic.set(userConnection.user)
-                self.restoreWatchingChannels()
+                self.recoverConnection()
                 
                 if self.isExpiredTokenInProgress {
                     self.performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
                 }
+            } else if case .reconnecting = connectionState {
+                self.needsToRecoverConnection = true
             }
         }
+    }
+    
+    private func recoverConnection() {
+        guard needsToRecoverConnection else {
+            return
+        }
+        
+        needsToRecoverConnection = false
+        restoreWatchingChannels()
     }
     
     private func restoreWatchingChannels() {
