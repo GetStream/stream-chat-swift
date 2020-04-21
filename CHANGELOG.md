@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unnecessary `Reachability` dependency removed [#184](https://github.com/GetStream/stream-chat-swift/pull/184).
 - Flag message/user [#186](https://github.com/GetStream/stream-chat-swift/pull/186).
 - Discard messages from muted users [#186](https://github.com/GetStream/stream-chat-swift/pull/186).
+- Open `prepareForReuse()` in `ChannelTableViewCell` and `MessageTableViewCell` [#190](https://github.com/GetStream/stream-chat-swift/pull/190).
 
 # [2.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.1)
 _April 3, 2020_
