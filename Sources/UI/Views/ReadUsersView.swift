@@ -19,8 +19,7 @@ final class ReadUsersView: UIView {
     
     override var backgroundColor: UIColor? {
         didSet {
-            rightAvatarView.layer.borderColor = backgroundColor?.cgColor
-            leftAvatarView.layer.borderColor = backgroundColor?.cgColor
+            updateAvatarsBorderColors()
             countLabel.backgroundColor = backgroundColor
         }
     }
@@ -56,6 +55,10 @@ final class ReadUsersView: UIView {
         super.init(coder: aDecoder)
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        updateAvatarsBorderColors()
+    }
+
     func reset() {
         isHidden = true
         rightAvatarView.reset()
@@ -86,5 +89,10 @@ final class ReadUsersView: UIView {
         if readUsers.count > 2 {
             countLabel.text = String(readUsers.count)
         }
+    }
+    
+    private func updateAvatarsBorderColors() {
+        rightAvatarView.layer.borderColor = backgroundColor?.cgColor
+        leftAvatarView.layer.borderColor = backgroundColor?.cgColor
     }
 }

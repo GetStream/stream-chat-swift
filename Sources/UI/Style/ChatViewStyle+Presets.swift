@@ -58,7 +58,7 @@ extension ChatViewStyle {
                                                 dateColor: .tertiaryLabel),
                       
                       composer: ComposerViewStyle(textColor: .label,
-                                                  placeholderTextColor: .systemGray2,
+                                                  placeholderTextColor: .secondaryLabel,
                                                   helperContainerBackgroundColor: .tertiarySystemBackground,
                                                   states: [.active: .init(tintColor: .dynamicAccent, borderWidth: 2),
                                                            .edit: .init(tintColor: .dynamicAccent2, borderWidth: 2),
@@ -68,7 +68,7 @@ extension ChatViewStyle {
                                                         textColor: .label,
                                                         backgroundColor: .systemBackground,
                                                         borderColor: .systemGray5,
-                                                        reactionViewStyle: .init(backgroundColor: .systemGray,
+                                                        reactionViewStyle: .init(backgroundColor: .chatDarkGray,
                                                                                  chatBackgroundColor: .systemBackground)),
                       
                       outgoingMessage: MessageViewStyle(alignment: .right,
@@ -77,6 +77,6 @@ extension ChatViewStyle {
                                                         backgroundColor: .systemGray6,
                                                         borderWidth: 0,
                                                         reactionViewStyle: .init(alignment: .right,
-                                                                                 backgroundColor: .systemGray,
+                                                                                 backgroundColor: .chatDarkGray,
                                                                                  chatBackgroundColor: .systemBackground)))
 }
