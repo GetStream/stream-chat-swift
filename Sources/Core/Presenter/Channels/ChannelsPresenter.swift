@@ -58,7 +58,7 @@ public final class ChannelsPresenter: Presenter {
     ///   - filter: a channel filter.
     ///   - sorting: a channel sorting. By default channels will be sorted by the last message date.
     ///   - queryOptions: query options (see `QueryOptions`).
-    public init(filter: Filter = .none,
+    public init(filter: Filter,
                 sorting: [Sorting] = [],
                 queryOptions: QueryOptions = .all) {
         self.queryOptions = queryOptions

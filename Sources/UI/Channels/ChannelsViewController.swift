@@ -34,7 +34,7 @@ open class ChannelsViewController: ViewController {
     public private(set) var items = [PresenterItem]()
     
     /// A channels presenter.
-    open var presenter = ChannelsPresenter() {
+    open var presenter = ChannelsPresenter(filter: .currentUserInMembers) {
         didSet {
             reset()
             
