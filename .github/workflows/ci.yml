@@ -34,8 +34,6 @@ jobs:
       run: bundle install
     - name: Install Carthage dependencies
       run: bundle exec fastlane carthage_bootstrap
-    - name: Test integrations with Carthage, Cocoapods and SPM
-      run: bundle exec fastlane test_integrations
     - name: Run all tests
       run: bundle exec fastlane test
     - name: Post Codecov report
@@ -44,3 +42,30 @@ jobs:
       run: bundle exec danger
       env:
         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+  test-integrations:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Carthage dependencies
+      uses: actions/cache@v1.1.0
+      id: carthage-cache
+      with:
+        path: Carthage
+        key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
+    - name: Test Carthage integration
+      run: bundle exec fastlane test_carthage_integration
+    - name: Test Cocoapods integration
+      run: bundle exec fastlane test_cocoapods_integration
+    - name: Test SPM integration
+      run: bundle exec fastlane test_spm_integration
+

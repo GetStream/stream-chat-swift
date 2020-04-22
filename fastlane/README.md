@@ -30,6 +30,11 @@ Installs all Certs and Profiles necessary for development and ad-hoc
 fastlane beta
 ```
 Builds the latest version with ad-hoc and uploads to firebase
+### carthage_bootstrap
+```
+fastlane carthage_bootstrap
+```
+Installs Carthage dependencies necessary for development (and building Carthage Example)
 ### test
 ```
 fastlane test
