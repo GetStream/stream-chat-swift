@@ -49,6 +49,7 @@ open func updateFooterTypingUserAvatarView(footerView: ChatFooterView, user: Use
 - Discard messages from muted users [#186](https://github.com/GetStream/stream-chat-swift/pull/186).
 - Fix composerView hiding behind keyboard after launching from bg [#188](https://github.com/GetStream/stream-chat-swift/pull/188).
 - Open `prepareForReuse()` in `ChannelTableViewCell` and `MessageTableViewCell` [#190](https://github.com/GetStream/stream-chat-swift/pull/190).
+- Channel query options default to `.state`, in-line with documentation instead of empty [#198](https://github.com/GetStream/stream-chat-swift/pull/198)
 - Fix the deprecation warning in the `UI` framework [#201](https://github.com/GetStream/stream-chat-swift/pull/201).
 - Fix current user's messages are counted towards unread count [#206](https://github.com/GetStream/stream-chat-swift/pull/206)
 
