@@ -30,11 +30,36 @@ Installs all Certs and Profiles necessary for development and ad-hoc
 fastlane beta
 ```
 Builds the latest version with ad-hoc and uploads to firebase
+### carthage_bootstrap
+```
+fastlane carthage_bootstrap
+```
+Installs Carthage dependencies necessary for development (and building Carthage Example)
 ### test
 ```
 fastlane test
 ```
 Builds and runs all the tests
+### test_integrations
+```
+fastlane test_integrations
+```
+Tests SDK integrations with Carthage, Cocoapods and SPM
+### test_carthage_integration
+```
+fastlane test_carthage_integration
+```
+Tests integration with Carthage by building Carthage Example
+### test_cocoapods_integration
+```
+fastlane test_cocoapods_integration
+```
+Tests integration with Cocoapods by building Cocoapods Example
+### test_spm_integration
+```
+fastlane test_spm_integration
+```
+Tests integration with SPM by building SPM Example
 
 ----
 
