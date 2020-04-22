@@ -22,13 +22,13 @@ public extension Channel {
     /// Request for a channel data, e.g. messages, members, read states, etc
     /// - Parameters:
     ///   - pagination: a pagination for messages (see `Pagination`).
-    ///   - options: a query options. All by default (see `QueryOptions`), e.g. `.watch`.
+    ///   - options: a query options. `.state` by default (see `QueryOptions`)
     ///   - completion: a completion block with `ChannelResponse`.
     @discardableResult
     func query(messagesPagination: Pagination = [],
                membersPagination: Pagination = [],
                watchersPagination: Pagination = [],
-               options: QueryOptions = [],
+               options: QueryOptions = .state,
                _ completion: @escaping Client.Completion<ChannelResponse>) -> Cancellable {
         Client.shared.queryChannel(self,
                                    messagesPagination: messagesPagination,
