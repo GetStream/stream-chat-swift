@@ -43,7 +43,7 @@ open func updateFooterTypingUserAvatarView(footerView: ChatFooterView, user: Use
 - SPM support [#156](https://github.com/GetStream/stream-chat-swift/issues/156).
 - Made `SubscriptionBag.init` public [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 - Unused `RxBlocking` dependency removed [#177](https://github.com/GetStream/stream-chat-swift/pull/177).
-- When calling `channel.watch()` for a channel, it will be restored when the connection returns [#178](https://github.com/GetStream/stream-chat-swift/pull/178).
+- Reconnection now automatically re-watches all channels watched up to that point [#178](https://github.com/GetStream/stream-chat-swift/pull/178).
 - Unnecessary `Gzip` dependency removed [#183](https://github.com/GetStream/stream-chat-swift/pull/183).
 - Unnecessary `Reachability` dependency removed [#184](https://github.com/GetStream/stream-chat-swift/pull/184).
 - Flag message/user [#186](https://github.com/GetStream/stream-chat-swift/pull/186).
