@@ -121,31 +121,35 @@ Then run: `carthage update --platform iOS --new-resolver`. This will build frame
   - `$(SRCROOT)/Carthage/Build/iOS/StreamChatClient.framework`
   - `$(SRCROOT)/Carthage/Build/iOS/Starscream.framework`
   
-  - `$(SRCROOT)/Carthage/Build/iOS/StreamChatCore.framework` (if you need Core library)
-  - `$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework`
-  - `$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework`
-  - `$(SRCROOT)/Carthage/Build/iOS/RxRelay.framework`
+  - if you need Core library:
+    - `$(SRCROOT)/Carthage/Build/iOS/StreamChatCore.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/RxRelay.framework`
   
-  - `$(SRCROOT)/Carthage/Build/iOS/StreamChat.framework` (if you need UI components)
-  - `$(SRCROOT)/Carthage/Build/iOS/Nuke.framework`
-  - `$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework`
-  - `$(SRCROOT)/Carthage/Build/iOS/SwiftyGif.framework`
-  - `$(SRCROOT)/Carthage/Build/iOS/RxGesture.framework`
+  - if you need UI components:
+    - `$(SRCROOT)/Carthage/Build/iOS/StreamChat.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/Nuke.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/SwiftyGif.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/RxGesture.framework`
   
 - Add to `Output Files`:
   - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChatClient.framework`
   - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Starscream.framework`
   
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChatCore.framework` (if you need Core library)
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework`
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework`
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework`
+  - if you need Core library:
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChatCore.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework`
+   - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework`
   
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChat.framework` (if you need UI components)
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Nuke.framework`
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework`
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyGif.framework`
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxGesture.framework`
+  - if you need UI components:
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChat.framework` ()
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Nuke.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyGif.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxGesture.framework`
   
 Now you can build your app and use `StreamChat`.
 
