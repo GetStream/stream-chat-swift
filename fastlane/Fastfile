@@ -80,7 +80,7 @@ lane :beta do
   
   build_number = increment_build_number(
                    xcodeproj: "./Example/Carthage/ChatExample.xcodeproj",
-                   build_number: ENV["GITHUB_SHA"].truncate(7, omission: '')
+                   build_number: ENV["GITHUB_SHA"][0...7]
                  )
 
   gym(

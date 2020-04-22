@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  nightly:
+  beta:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
