@@ -30,6 +30,11 @@ Installs all Certs and Profiles necessary for development and ad-hoc
 fastlane beta
 ```
 Builds the latest version with ad-hoc and uploads to firebase
+### test
+```
+fastlane test
+```
+Builds and runs all the tests
 
 ----
 

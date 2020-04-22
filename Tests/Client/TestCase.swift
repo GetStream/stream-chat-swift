@@ -9,6 +9,8 @@
 import XCTest
 @testable import StreamChatClient
 
+let defaultTimeout = 10
+
 class TestCase: XCTestCase {
     
     static let apiKey = "qk4nn7rpcn75"
@@ -74,7 +76,7 @@ extension TestCase {
     }
     
     func expect(_ description: String,
-                timeout: TimeInterval = TimeInterval(5),
+                timeout: TimeInterval = TimeInterval(defaultTimeout),
                 callback: (_ test: XCTestExpectation) -> Void) {
         let test = expectation(description: "\n💥💀✝️ expecting \(description)")
         callback(test)

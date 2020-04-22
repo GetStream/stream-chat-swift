@@ -103,3 +103,8 @@ lane :beta do
       release_notes: message
   )
 end
+
+desc "Builds and runs all the tests"
+lane:test do
+  scan(scheme: "StreamChat")
+end
