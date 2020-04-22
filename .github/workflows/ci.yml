@@ -29,12 +29,14 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install Carthage dependencies
-      run: echo 'BUILD_LIBRARY_FOR_DISTRIBUTION=YES'>/tmp/config.xcconfig; XCODE_XCCONFIG_FILE=/tmp/config.xcconfig carthage bootstrap --platform iOS --new-resolver --no-use-binaries --cache-builds; rm /tmp/config.xcconfig
     - name: Install RubyGems
       if: steps.rubygem-cache.outputs.cache-hit != 'true'
       run: bundle install
-    - name: Clean and build the StreamChat scheme
+    - name: Install Carthage dependencies
+      run: bundle exec fastlane carthage_bootstrap
+    - name: Test integrations with Carthage, Cocoapods and SPM
+      run: bundle exec fastlane test_integrations
+    - name: Run all tests
       run: bundle exec fastlane test
     - name: Post Codecov report
       run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}

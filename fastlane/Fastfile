@@ -82,6 +82,8 @@ lane :beta do
                    xcodeproj: "./Example/Carthage/ChatExample.xcodeproj",
                    build_number: ENV["GITHUB_SHA"][0...7]
                  )
+                 
+  carthage_bootstrap
 
   gym(
     project: "./Example/Carthage/ChatExample.xcodeproj",
@@ -104,7 +106,54 @@ lane :beta do
   )
 end
 
+desc "Installs Carthage dependencies necessary for development (and building Carthage Example)"
+lane :carthage_bootstrap do
+  sh("cd ..; echo 'BUILD_LIBRARY_FOR_DISTRIBUTION=YES'>/tmp/config.xcconfig; XCODE_XCCONFIG_FILE=/tmp/config.xcconfig carthage bootstrap --platform iOS --new-resolver --no-use-binaries --cache-builds; rm /tmp/config.xcconfig")
+end
+
 desc "Builds and runs all the tests"
-lane:test do
-  scan(scheme: "StreamChat")
+lane :test do
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat")
+end
+
+desc "Tests SDK integrations with Carthage, Cocoapods and SPM"
+lane :test_integrations do
+  test_carthage_integration
+  test_cocoapods_integration
+  test_spm_integration
+end
+
+desc "Tests integration with Carthage by building Carthage Example"
+# NOTE: lane `beta` relies on Carthage example being built, so this lane might be redundant
+lane :test_carthage_integration do
+  carthage_bootstrap
+
+  scan(
+    project: "./Example/Carthage/ChatExample.xcodeproj",
+    scheme: "ChatExample",
+    clean: true,
+    build_for_testing: true
+  )
+end
+
+desc "Tests integration with Cocoapods by building Cocoapods Example"
+lane :test_cocoapods_integration do
+  cocoapods(use_bundle_exec: true, try_repo_update_on_error: true, clean_install: true, podfile: "./Example/Cocoapods/")
+  
+  scan(
+    workspace: "./Example/Cocoapods/ChatExample.xcworkspace",
+    scheme: "ChatExample",
+    clean: true,
+    build_for_testing: true
+  )
+end
+
+desc "Tests integration with SPM by building SPM Example"
+lane :test_spm_integration do
+  scan(
+    project: "./Example/SPM/ChatExample.xcodeproj",
+    scheme: "ChatExample",
+    clean: true,
+    build_for_testing: true
+  )
 end
