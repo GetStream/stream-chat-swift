@@ -34,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Discard messages from muted users [#186](https://github.com/GetStream/stream-chat-swift/pull/186).
 - Fix composerView hiding behind keyboard after launching from bg [#188](https://github.com/GetStream/stream-chat-swift/pull/188).
 - Open `prepareForReuse()` in `ChannelTableViewCell` and `MessageTableViewCell` [#190](https://github.com/GetStream/stream-chat-swift/pull/190).
+- Fix the deprecation warning in the `UI` framework [#201](https://github.com/GetStream/stream-chat-swift/pull/201).
+
 
 # [2.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.1)
 _April 3, 2020_
