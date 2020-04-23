@@ -17,6 +17,13 @@ public final class Client {
     /// A WebSocket events callback type.
     public typealias OnEvent = (Event) -> Void
     
+    /// A custom uploading url block type.
+    public typealias UploadingURL = (Channel, _ fileName: String, _ mimeType: String, _ isImage: Bool) -> Result<URL, ClientError>
+    /// A custom uploaded response url block type.
+    public typealias UploadedResponseURL = (Data?, URLResponse?, Error?) -> Result<URL, ClientError>
+    /// A handler to upload to a custom URL.
+    public static var uploading: (uploadingURL: UploadingURL, responseURL: UploadedResponseURL)?
+    
     /// A client config (see `Config`).
     public static var config = Config(apiKey: "")
     /// A shared client.
