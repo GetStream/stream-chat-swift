@@ -15,6 +15,10 @@ public struct AvatarViewStyle: Hashable {
     public var radius: CGFloat
     /// A placeholder font.
     public var placeholderFont: UIFont?
+    /// A placeholder text color.
+    public var placeholderTextColor: UIColor?
+    /// A placeholder background color.
+    public var placeholderBackgroundColor: UIColor?
     /// Vertical alignment inside the cell
     public var verticalAlignment: VerticalAlignment
     
@@ -27,9 +31,13 @@ public struct AvatarViewStyle: Hashable {
     ///   - placeholderFont: a placeholder font.
     public init(radius: CGFloat = .messageAvatarRadius,
                 placeholderFont: UIFont? = nil,
+                placeholderTextColor: UIColor? = nil,
+                placeholderBackgroundColor: UIColor? = nil,
                 verticalAlignment: VerticalAlignment = .center) {
         self.radius = radius
         self.placeholderFont = placeholderFont
+        self.placeholderTextColor = placeholderTextColor
+        self.placeholderBackgroundColor = placeholderBackgroundColor
         self.verticalAlignment = verticalAlignment
     }
 }

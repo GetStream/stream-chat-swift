@@ -18,8 +18,7 @@ open class ChannelTableViewCell: UITableViewCell, Reusable {
     public private(set) var needsToSetup = true
     
     /// An avatar view.
-    public private(set) lazy var avatarView = AvatarView(cornerRadius: style.avatarViewStyle?.radius ?? .channelAvatarRadius,
-                                                         font: style.avatarViewStyle?.placeholderFont)
+    public private(set) lazy var avatarView = AvatarView(style: style.avatarViewStyle)
     
     /// A dispose bag for the cell.
     public private(set) var disposeBag = DisposeBag()
@@ -97,6 +96,7 @@ open class ChannelTableViewCell: UITableViewCell, Reusable {
         
         if let avatarViewStyle = style.avatarViewStyle {
             hasAvatar = true
+            avatarView.backgroundColor = style.backgroundColor
             contentView.addSubview(avatarView)
             
             avatarView.backgroundColor = backgroundColor

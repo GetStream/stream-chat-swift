@@ -228,6 +228,23 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         extensionMessageCell(at: indexPath, message: message, readUsers: readUsers)
     }
     
+    /// Updates message cell avatar view.
+    /// - Parameters:
+    ///   - cell: a message cell.
+    ///   - message: a message.
+    ///   - messageStyle: a message style.
+    open func updateMessageCellAvatarView(in cell: MessageTableViewCell, message: Message, messageStyle: MessageViewStyle) {
+        cell.avatarView.update(with: message.user.avatarURL, name: message.user.name)
+    }
+    
+    /// Updates typing user avatar in the footer view.
+    /// - Parameters:
+    ///   - footerView: a footer view.
+    ///   - user: a user.
+    open func updateFooterTypingUserAvatarView(footerView: ChatFooterView, user: User) {
+        footerView.avatarView.update(with: user.avatarURL, name: user.name)
+    }
+    
     /// A custom loading cell to insert in a particular location of the table view.
     ///
     /// - Parameters:
@@ -314,10 +331,10 @@ extension ChatViewController {
         }
         
         title = presenter.channel.name
-        let channelAvatar = AvatarView(cornerRadius: .messageAvatarRadius)
+        let channelAvatar = AvatarView(style: .init(radius: .messageAvatarRadius))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatar)
         let imageURL = presenter.parentMessage == nil ? presenter.channel.imageURL : presenter.parentMessage?.user.avatarURL
-        channelAvatar.update(with: imageURL, name: title, baseColor: style.incomingMessage.chatBackgroundColor)
+        channelAvatar.update(with: imageURL, name: title)
     }
     
     private func updateTitleReplyCount() {

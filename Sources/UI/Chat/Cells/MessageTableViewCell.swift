@@ -32,8 +32,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     public private(set) var needsToSetup = true
     
     /// An avatar.
-    public private(set) lazy var avatarView = AvatarView(cornerRadius: style.avatarViewStyle?.radius ?? 0,
-                                                         font: style.avatarViewStyle?.placeholderFont)
+    public private(set) lazy var avatarView = AvatarView(style: style.avatarViewStyle)
     
     let reactionsContainer: UIImageView = UIImageView(frame: .zero)
     let reactionsOverlayView = UIView(frame: .zero)
@@ -225,6 +224,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         // MARK: Avatar
         
         if style.avatarViewStyle != nil {
+            avatarView.backgroundColor = style.chatBackgroundColor
             contentView.addSubview(avatarView)
             
             avatarView.snp.makeConstraints { make in
