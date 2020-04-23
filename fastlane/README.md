@@ -35,11 +35,16 @@ Builds the latest version with ad-hoc and uploads to firebase
 fastlane carthage_bootstrap
 ```
 Installs Carthage dependencies necessary for development (and building Carthage Example)
-### test
+### build_for_testing
 ```
-fastlane test
+fastlane build_for_testing
 ```
-Builds and runs all the tests
+Builds the project for testing
+### test_without_building
+```
+fastlane test_without_building
+```
+Runs all the tests without building
 ### test_integrations
 ```
 fastlane test_integrations
