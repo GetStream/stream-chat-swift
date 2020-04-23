@@ -24,11 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `ChatViewStyle.dynamic` for iOS 13 to support dynamic colors for dark mode.
 - Added `MessageViewStyle.pointedCornerRadius` to make pointed corner rounded.
 - Added methods for `AvatarView` customization:
-  - in `ChannelsViewController`:
+`ChannelsViewController`:
 ```swift
 open func updateChannelCellAvatarView(in cell: ChannelTableViewCell, channel: Channel)
 ```
-  - in `ChatViewController`:
+`ChatViewController`:
 ```swift
 open func updateMessageCellAvatarView(in cell: MessageTableViewCell, message: Message, messageStyle: MessageViewStyle)
 open func updateFooterTypingUserAvatarView(footerView: ChatFooterView, user: User)
