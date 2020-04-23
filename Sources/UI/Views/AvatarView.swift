@@ -24,7 +24,8 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
         return label
     }()
     
-    /// Create a AvatarView with a given corner radius.
+    /// Create a AvatarView with a given avatar view style.
+    /// - Parameter style: an avatar style.
     public init(style: AvatarViewStyle?) {
         super.init(frame: .zero)
         setup(with: style ?? AvatarViewStyle())
