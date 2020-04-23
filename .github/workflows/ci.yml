@@ -13,6 +13,7 @@ on:
 
 jobs:
   build-and-test:
+    name: Build and Test
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -34,15 +35,19 @@ jobs:
       run: bundle install
     - name: Install Carthage dependencies
       run: bundle exec fastlane carthage_bootstrap
-    - name: Run all tests
-      run: bundle exec fastlane test
+    - name: Build all targets
+      run: bundle exec fastlane build_for_testing
+    # - name: Run all tests
+    #   run: bundle exec fastlane test_without_building
     - name: Post Codecov report
       run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
     - name: Run Danger - Code conventions & linting
       run: bundle exec danger
       env:
         GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
-  test-integrations:
+
+  test-carthage-integration:
+    name: Test Carthage integration
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -64,8 +69,39 @@ jobs:
       run: bundle install
     - name: Test Carthage integration
       run: bundle exec fastlane test_carthage_integration
+
+  test-cocoapods-integration:
+    name: Test CocoaPods integration
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
     - name: Test Cocoapods integration
       run: bundle exec fastlane test_cocoapods_integration
+
+  test-spm-integration:
+    name: Test SPM integration
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
     - name: Test SPM integration
       run: bundle exec fastlane test_spm_integration
-

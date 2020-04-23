@@ -6,11 +6,6 @@
 
 devices(["iPhone 11"])
 
-# Enable skip_build to skip debug builds for faster test performance
-skip_build(true)
-
-clean(true)
-
 # Needed for codecov
 code_coverage(true)
 
