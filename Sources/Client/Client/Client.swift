@@ -17,14 +17,6 @@ public final class Client {
     /// A WebSocket events callback type.
     public typealias OnEvent = (Event) -> Void
     
-    /// A custom uploading url block type.
-    public typealias UploadingURL =
-        (Channel, _ fileName: String, _ mimeType: String, _ isImage: Bool) -> Result<(URL, headers: [String: String]), ClientError>
-    /// A custom uploaded response url block type.
-    public typealias UploadedResponseURL = (Data?, URLResponse?, Error?) -> Result<URL, ClientError>
-    /// A custom uploading block type.
-    public typealias Uploading = (uploadingURL: UploadingURL, responseURL: UploadedResponseURL)
-    
     /// A client config (see `Config`).
     public static var config = Config(apiKey: "")
     /// A shared client.
@@ -102,7 +94,7 @@ public final class Client {
     let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
     
     /// A custom flow for uploading with a custom URL.
-    let uploading: Uploading?
+    let uploader: Uploader?
     
     /// Init a network client.
     /// - Parameters:
@@ -110,14 +102,14 @@ public final class Client {
     ///   - baseURL: a base URL (see `BaseURL`).
     ///   - stayConnectedInBackground: when the app will go to the background,
     ///                                start a background task to stay connected for 5 min.
-    ///   - uploading: a custom flow for uploading with a custom URL.
+    ///   - uploader: a custom uploader.
     ///   - database: a database manager (in development).
     ///   - callbackQueue: a request callback queue, default nil (some background thread).
     ///   - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`.
     init(apiKey: String = Client.config.apiKey,
          baseURL: BaseURL = Client.config.baseURL,
          stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
-         uploading: Uploading? = nil,
+         uploader: Uploader? = nil,
          database: Database? = Client.config.database,
          callbackQueue: DispatchQueue? = Client.config.callbackQueue,
          logOptions: ClientLogger.Options = Client.config.logOptions) {
@@ -135,7 +127,7 @@ public final class Client {
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue ?? .global(qos: .userInitiated)
         self.stayConnectedInBackground = stayConnectedInBackground
-        self.uploading = uploading
+        self.uploader = uploader
         self.database = database
         self.logOptions = logOptions
         logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])

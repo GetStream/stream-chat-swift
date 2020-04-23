@@ -68,6 +68,36 @@ extension Client {
     func request<T: Decodable>(endpoint: Endpoint,
                                _ progress: @escaping Progress,
                                _ completion: @escaping Completion<T>) -> Cancellable {
+        if let uploader = uploader, let completion = completion as? Completion<FileUploadResponse> {
+            let fileUploadResponseCompletion: Completion<URL> = { result in
+                if let url = result.value {
+                    completion(.success(FileUploadResponse(file: url)))
+                } else if let error = result.error {
+                    completion(.failure(error))
+                }
+            }
+            
+            switch endpoint {
+            case let .sendImage(fileName, mimeType, data, channel):
+                return uploader.uploadImage(data: data,
+                                            fileName: fileName,
+                                            mimeType: mimeType,
+                                            channel: channel,
+                                            progress: progress,
+                                            completion: fileUploadResponseCompletion)
+                
+            case let .sendFile(fileName, mimeType, data, channel):
+                return uploader.uploadFile(data: data,
+                                           fileName: fileName,
+                                           mimeType: mimeType,
+                                           channel: channel,
+                                           progress: progress,
+                                           completion: fileUploadResponseCompletion)
+            default:
+                break
+            }
+        }
+        
         let task = prepareRequest(endpoint: endpoint, completion)
         urlSessionTaskDelegate.addProgessHandler(id: task.taskIdentifier, progress)
         task.resume()
@@ -88,25 +118,12 @@ extension Client {
             let task: URLSessionDataTask
             let queryItems = try self.queryItems(for: endpoint).get()
             let url = try requestURL(for: endpoint, queryItems: queryItems).get()
-            let isUploading = endpoint.isUploading
             
-            let urlRequest = try isUploading
+            let urlRequest = try endpoint.isUploading
                 ? encodeRequestForUpload(for: endpoint, url: url).get()
                 : encodeRequest(for: endpoint, url: url).get()
             
             task = urlSession.dataTask(with: urlRequest) { [unowned self] in
-                // Parse custom uploading response.
-                guard isUploading, self.uploading != nil else {
-                    if let completion = completion as? Client.Completion<FileUploadResponse> {
-                        self.parseUploading(data: $0, response: $1, error: $2, completion: completion)
-                    } else {
-                        let error = "Custom uploading completion type should be FileUploadResponse, but it's \(T.self)"
-                        self.performInCallbackQueue { completion(.failure(.unexpectedError(description: error, error: nil))) }
-                    }
-                    
-                    return
-                }
-                
                 // Parse the response.
                 self.parse(data: $0, response: $1, error: $2, completion: completion)
                 
@@ -123,7 +140,7 @@ extension Client {
         } catch let error as ClientError {
             performInCallbackQueue { completion(.failure(error)) }
         } catch {
-            completion(.failure(.unexpectedError(description: error.localizedDescription, error: error)))
+            performInCallbackQueue { completion(.failure(.unexpectedError(description: error.localizedDescription, error: error))) }
         }
         
         return .empty
@@ -240,37 +257,6 @@ extension Client {
     private func encodeRequestForUpload(for endpoint: Endpoint, url: URL) -> Result<URLRequest, ClientError> {
         let multipartFormData: MultipartFormData
         var urlRequest = URLRequest(url: url)
-        
-        // Check custom uploading URL.
-        if let uploading = uploading {
-            var isImage = true
-            
-            if case .sendFile = endpoint {
-                isImage = false
-            }
-            
-            switch endpoint {
-            case let .sendImage(fileName, mimeType, _, channel),
-                 let .sendFile(fileName, mimeType, _, channel):
-                let result = uploading.uploadingURL(channel, fileName, mimeType, isImage)
-                
-                if let customUploading = result.value {
-                    urlRequest = URLRequest(url: customUploading.0)
-                    
-                    if !customUploading.headers.isEmpty {
-                        customUploading.headers.forEach {
-                            urlRequest.addValue($0.value, forHTTPHeaderField: $0.key)
-
-                        }
-                    }
-                } else if let error = result.error {
-                    return .failure(error)
-                }
-            default:
-                break
-            }
-        }
-        
         urlRequest.httpMethod = endpoint.method.rawValue
         
         switch endpoint {
@@ -348,23 +334,6 @@ extension Client {
         } catch {
             logger?.log(error)
             performInCallbackQueue { completion(.failure(.decodingFailure(error))) }
-        }
-    }
-    
-    private func parseUploading(data: Data?,
-                                response: URLResponse?,
-                                error: Error?,
-                                completion: @escaping Completion<FileUploadResponse>) {
-        guard let uploading = uploading else {
-            return
-        }
-        
-        let result = uploading.responseURL(data, response, error)
-        
-        if let url = result.value {
-            performInCallbackQueue { completion(.success(.init(file: url))) }
-        } else if let error = result.error {
-            performInCallbackQueue { completion(.failure(error)) }
         }
     }
     
