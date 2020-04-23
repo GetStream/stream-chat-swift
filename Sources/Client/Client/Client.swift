@@ -18,11 +18,12 @@ public final class Client {
     public typealias OnEvent = (Event) -> Void
     
     /// A custom uploading url block type.
-    public typealias UploadingURL = (Channel, _ fileName: String, _ mimeType: String, _ isImage: Bool) -> Result<URL, ClientError>
+    public typealias UploadingURL =
+        (Channel, _ fileName: String, _ mimeType: String, _ isImage: Bool) -> Result<(URL, headers: [String: String]), ClientError>
     /// A custom uploaded response url block type.
     public typealias UploadedResponseURL = (Data?, URLResponse?, Error?) -> Result<URL, ClientError>
-    /// A handler to upload to a custom URL.
-    public static var uploading: (uploadingURL: UploadingURL, responseURL: UploadedResponseURL)?
+    /// A custom uploading block type.
+    public typealias Uploading = (uploadingURL: UploadingURL, responseURL: UploadedResponseURL)
     
     /// A client config (see `Config`).
     public static var config = Config(apiKey: "")
@@ -100,17 +101,23 @@ public final class Client {
     /// Weak references to channels by cid.
     let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
     
+    /// A custom flow for uploading with a custom URL.
+    let uploading: Uploading?
+    
     /// Init a network client.
     /// - Parameters:
-    ///     - apiKey: a Stream Chat API key.
-    ///     - baseURL: a base URL (see `BaseURL`).
-    ///     - callbackQueue: a request callback queue, default nil (some background thread).
-    ///     - stayConnectedInBackground: when the app will go to the background,
-    ///                                  start a background task to stay connected for 5 min
-    ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+    ///   - apiKey: a Stream Chat API key.
+    ///   - baseURL: a base URL (see `BaseURL`).
+    ///   - stayConnectedInBackground: when the app will go to the background,
+    ///                                start a background task to stay connected for 5 min.
+    ///   - uploading: a custom flow for uploading with a custom URL.
+    ///   - database: a database manager (in development).
+    ///   - callbackQueue: a request callback queue, default nil (some background thread).
+    ///   - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`.
     init(apiKey: String = Client.config.apiKey,
          baseURL: BaseURL = Client.config.baseURL,
          stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
+         uploading: Uploading? = nil,
          database: Database? = Client.config.database,
          callbackQueue: DispatchQueue? = Client.config.callbackQueue,
          logOptions: ClientLogger.Options = Client.config.logOptions) {
@@ -128,6 +135,7 @@ public final class Client {
         self.baseURL = baseURL
         self.callbackQueue = callbackQueue ?? .global(qos: .userInitiated)
         self.stayConnectedInBackground = stayConnectedInBackground
+        self.uploading = uploading
         self.database = database
         self.logOptions = logOptions
         logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])

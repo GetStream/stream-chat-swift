@@ -21,6 +21,8 @@ extension Client {
         public let callbackQueue: DispatchQueue?
         /// When the app will go to the background, start a background task to stay connected for 5 min.
         public let stayConnectedInBackground: Bool
+        /// A custom flow for uploading with a custom URL.
+        public let uploading: Uploading?
         /// A local database.
         public let database: Database?
         /// Enable logs (see `ClientLogger.Options`), e.g. `.all`.
@@ -38,12 +40,14 @@ extension Client {
         public init(apiKey: String,
                     baseURL: BaseURL = .usEast,
                     stayConnectedInBackground: Bool = true,
+                    uploading: Uploading? = nil,
                     database: Database? = nil,
                     callbackQueue: DispatchQueue? = nil,
                     logOptions: ClientLogger.Options = []) {
             self.apiKey = apiKey
             self.baseURL = baseURL
             self.stayConnectedInBackground = stayConnectedInBackground
+            self.uploading = uploading
             self.database = database
             self.callbackQueue = callbackQueue
             self.logOptions = logOptions
@@ -55,10 +59,11 @@ extension Client {
         ///     - apiKey: a Stream Chat API key.
         ///     - baseURL: a base URL.
         ///     - stayConnectedInBackground: when the app will go to the background,
-        ///                                  start a background task to stay connected for 5 min
+        ///                                  start a background task to stay connected for 5 min.
+        ///     - uploading: a custom flow for uploading with a custom URL.
         ///     - database: a database manager.
         ///     - callbackQueue: a request callback queue, default nil (some background thread).
-        ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+        ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`
         public init(apiKey: String,
                     baseURL: URL,
                     stayConnectedInBackground: Bool = true,
