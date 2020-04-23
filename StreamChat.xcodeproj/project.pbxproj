@@ -34,6 +34,7 @@
 		8A2A51212390274800B230E9 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
 		8A2A51242390275500B230E9 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
 		8A2A51282391218E00B230E9 /* RealmDatabase+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2A51272391218E00B230E9 /* RealmDatabase+Database.swift */; };
+		8A2C1EF12451EED700A33E3B /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2C1EF02451EED700A33E3B /* Uploader.swift */; };
 		8A2DD95123849108007775E9 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD95023849108007775E9 /* User.swift */; };
 		8A2DD9532385565B007775E9 /* MutedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD9522385565B007775E9 /* MutedUser.swift */; };
 		8A2DD95423855690007775E9 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2B02384580700C2F9DE /* Channel.swift */; };
@@ -316,6 +317,7 @@
 		8A2A511B2390266A00B230E9 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		8A2A511D2390273E00B230E9 /* KeychainAccess.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KeychainAccess.framework; path = Carthage/Build/iOS/KeychainAccess.framework; sourceTree = "<group>"; };
 		8A2A51272391218E00B230E9 /* RealmDatabase+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RealmDatabase+Database.swift"; sourceTree = "<group>"; };
+		8A2C1EF02451EED700A33E3B /* Uploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
 		8A2DD95023849108007775E9 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8A2DD9522385565B007775E9 /* MutedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUser.swift; sourceTree = "<group>"; };
 		8A2DD955238556A7007775E9 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
@@ -847,8 +849,9 @@
 		8ACC7BF8241924AD000750E4 /* URL Session Task */ = {
 			isa = PBXGroup;
 			children = (
-				8ACC7BF9241924AD000750E4 /* MultipartFormData.swift */,
 				8ACC7BFA241924AD000750E4 /* ClientURLSessionTaskDelegate.swift */,
+				8ACC7BF9241924AD000750E4 /* MultipartFormData.swift */,
+				8A2C1EF02451EED700A33E3B /* Uploader.swift */,
 			);
 			path = "URL Session Task";
 			sourceTree = "<group>";
@@ -1657,6 +1660,7 @@
 				8A65559D243DF2D00023046C /* UserConnection.swift in Sources */,
 				8ACC7C1E241924AD000750E4 /* ChannelQuery.swift in Sources */,
 				8ACC7C2F241924AD000750E4 /* Client+Message.swift in Sources */,
+				8A2C1EF12451EED700A33E3B /* Uploader.swift in Sources */,
 				8ACC7C01241924AD000750E4 /* RepeatingTimer.swift in Sources */,
 				8ACC7BFF241924AD000750E4 /* Atomic.swift in Sources */,
 				8ACC7C1A241924AD000750E4 /* Member.swift in Sources */,
