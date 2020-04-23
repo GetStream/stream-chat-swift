@@ -7,7 +7,6 @@
 
 [![Language: Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://swift.org)
 [![Build Status](https://github.com/GetStream/stream-chat-swift/workflows/CI/badge.svg)](https://github.com/GetStream/stream-chat-swift/actions)
-[![Code Coverage](https://codecov.io/gh/GetStream/stream-chat-swift/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-chat-swift)
 
 |![StreamChatClient](https://img.shields.io/badge/Framework-StreamChatClient-blue)|![StreamChatCore](https://img.shields.io/badge/Framework-StreamChatCore-blue)|![StreamChat](https://img.shields.io/badge/Framework-StreamChat-blue)|
 |-|-|-|
