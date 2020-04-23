@@ -1,7 +1,7 @@
 # Official iOS SDK for [Stream Chat](https://getstream.io/chat/)
 
-<p float="center" style="vertical-align:middle;">
-  <img src="https://i.imgur.com/B7przBT.png" width="55%" />
+<p align="center">
+  <img src="https://i.imgur.com/B7przBT.png" width="60%" />
 </p>
 
 [![Language: Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://swift.org)
@@ -24,6 +24,10 @@
 The best place to start is the [iOS Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/). It teaches you how to use this SDK and also shows how to make common changes. 
 
 ## Example App
+
+<p align="center">
+  <img src="https://i0.wp.com/apptractor.ru/wp-content/uploads/2019/10/Stream-Chat.jpg" width="60%" />
+</p>
 
 This repo includes a fully functional example app with setup instructions. The example is available under the [Example](https://github.com/GetStream/stream-chat-swift/tree/master/Example) folder.
 
