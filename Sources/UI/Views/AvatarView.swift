@@ -116,17 +116,25 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
             avatarLabel.text = (name.prefix(1) + name.suffix(1)).uppercased()
         }
         
-        let nameColor = UIColor.color(by: name, isDark: backgroundColor?.isDark ?? false)
-        
         if let textColor = style.placeholderTextColor {
             avatarLabel.textColor = textColor
+        } else if #available(iOS 13, *) {
+            avatarLabel.textColor = UIColor(dynamicProvider: { trait -> UIColor in
+                UIColor.color(by: name, isDark: trait.userInterfaceStyle == .dark).withAlphaComponent(0.8)
+            })
         } else {
-            avatarLabel.textColor = nameColor.withAlphaComponent(0.8)
+            avatarLabel.textColor = UIColor.color(by: name, isDark: backgroundColor?.isDark ?? false).withAlphaComponent(0.8)
         }
         
         if let backgroundColor = style.placeholderBackgroundColor {
             avatarLabel.backgroundColor = backgroundColor
+        } else if #available(iOS 13, *) {
+            avatarLabel.backgroundColor = UIColor(dynamicProvider: { [weak self] trait -> UIColor in
+                (self?.backgroundColor ?? .white)
+                    .blendAlpha(coverColor: .color(by: name, isDark: trait.userInterfaceStyle == .dark))
+            })
         } else {
+            let nameColor = UIColor.color(by: name, isDark: backgroundColor?.isDark ?? false)
             avatarLabel.backgroundColor = (backgroundColor ?? .white).blendAlpha(coverColor: nameColor)
         }
         
