@@ -13,6 +13,8 @@
 
 [stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications.
 
+<img align="right" src="https://i0.wp.com/apptractor.ru/wp-content/uploads/2019/10/Stream-Chat.jpg" width="60%" />
+
 **Quick Links**
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat
@@ -24,8 +26,6 @@
 The best place to start is the [iOS Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/). It teaches you how to use this SDK and also shows how to make common changes. 
 
 ## Example App
-
-  <img align="right" src="https://i0.wp.com/apptractor.ru/wp-content/uploads/2019/10/Stream-Chat.jpg" width="60%" />
 
 This repo includes a fully functional example app with setup instructions. The example is available under the [Example](https://github.com/GetStream/stream-chat-swift/tree/master/Example) folder.
 
