@@ -1,7 +1,7 @@
 # Official iOS SDK for [Stream Chat](https://getstream.io/chat/)
 
 <p align="center">
-  <img src="https://i.imgur.com/B7przBT.png" width="60%" />
+  <a href="https://getstream.io/tutorials/ios-chat/"><img src="https://i.imgur.com/B7przBT.png" width="60%" /></a>
 </p>
 
 <p align="center">
