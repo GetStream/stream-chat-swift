@@ -84,9 +84,7 @@ extension ChatViewController {
             cell.update(name: message.user.name, date: message.created)
             
             if messageStyle.avatarViewStyle != nil {
-                cell.avatarView.update(with: message.user.avatarURL,
-                                       name: message.user.name,
-                                       baseColor: messageStyle.chatBackgroundColor)
+                updateMessageCellAvatarView(in: cell, message: message, messageStyle: messageStyle)
             }
         }
         
@@ -196,14 +194,6 @@ extension ChatViewController {
         }
         
         showWebView(url: attachment.url, title: attachment.title)
-    }
-    
-    private func userActivityCell(at indexPath: IndexPath, user: User, _ text: String) -> UITableViewCell {
-        let cell = tableView.dequeueMessageCell(for: indexPath, style: style.incomingMessage)
-        cell.update(info: text)
-        cell.update(date: Date())
-        cell.avatarView.update(with: user.avatarURL, name: user.name, baseColor: style.incomingMessage.chatBackgroundColor)
-        return cell
     }
     
     func showReplies(parentMessage: Message) {

@@ -175,10 +175,7 @@ open class ChannelsViewController: ViewController {
     open func updateChannelCell(_ cell: ChannelTableViewCell, channelPresenter: ChannelPresenter) {
         cell.setupIfNeeded(style: style.channel)
         cell.nameLabel.text = channelPresenter.channel.name
-        
-        cell.avatarView.update(with: channelPresenter.channel.imageURL,
-                               name: channelPresenter.channel.name,
-                               baseColor: style.channel.backgroundColor)
+        updateChannelCellAvatarView(in: cell, channel: channelPresenter.channel)
         
         if let lastMessage = channelPresenter.lastMessage {
             var text = lastMessage.isDeleted ? "Message was deleted" : lastMessage.textOrArgs
@@ -195,6 +192,14 @@ open class ChannelsViewController: ViewController {
         } else {
             cell.update(message: "No messages", isMeta: true, isUnread: false)
         }
+    }
+    
+    /// Updates channel avatar view with the given channel.
+    /// - Parameters:
+    ///   - cell: a channel cell.
+    ///   - channel: a channel.
+    open func updateChannelCellAvatarView(in cell: ChannelTableViewCell, channel: Channel) {
+        cell.avatarView.update(with: channel.imageURL, name: channel.name)
     }
     
     // MARK: - Loading Cell
