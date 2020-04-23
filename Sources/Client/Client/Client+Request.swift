@@ -96,7 +96,7 @@ extension Client {
             
             task = urlSession.dataTask(with: urlRequest) { [unowned self] in
                 // Parse custom uploading response.
-                guard isUploading, Client.uploading != nil else {
+                guard isUploading, self.uploading != nil else {
                     if let completion = completion as? Client.Completion<FileUploadResponse> {
                         self.parseUploading(data: $0, response: $1, error: $2, completion: completion)
                     } else {
@@ -242,7 +242,7 @@ extension Client {
         var urlRequest = URLRequest(url: url)
         
         // Check custom uploading URL.
-        if let uploading = Client.uploading {
+        if let uploading = uploading {
             var isImage = true
             
             if case .sendFile = endpoint {
@@ -254,8 +254,15 @@ extension Client {
                  let .sendFile(fileName, mimeType, _, channel):
                 let result = uploading.uploadingURL(channel, fileName, mimeType, isImage)
                 
-                if let url = result.value {
-                    urlRequest = URLRequest(url: url)
+                if let customUploading = result.value {
+                    urlRequest = URLRequest(url: customUploading.0)
+                    
+                    if !customUploading.headers.isEmpty {
+                        customUploading.headers.forEach {
+                            urlRequest.addValue($0.value, forHTTPHeaderField: $0.key)
+
+                        }
+                    }
                 } else if let error = result.error {
                     return .failure(error)
                 }
@@ -344,8 +351,11 @@ extension Client {
         }
     }
     
-    private func parseUploading(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<FileUploadResponse>) {
-        guard let uploading = Client.uploading else {
+    private func parseUploading(data: Data?,
+                                response: URLResponse?,
+                                error: Error?,
+                                completion: @escaping Completion<FileUploadResponse>) {
+        guard let uploading = uploading else {
             return
         }
         
