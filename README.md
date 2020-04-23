@@ -1,5 +1,4 @@
 # Official iOS SDK for [Stream Chat](https://getstream.io/chat/)
-[![Stream Chat](https://i.imgur.com/B7przBT.png)![Stream Chat 2](https://i0.wp.com/apptractor.ru/wp-content/uploads/2019/10/Stream-Chat.jpg)](https://getstream.io/tutorials/ios-chat/)
 
 <p float="center" style="vertical-align:middle;">
   <img src="https://i.imgur.com/B7przBT.png" width="55%" />
