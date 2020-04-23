@@ -88,14 +88,29 @@ extension Client {
             let task: URLSessionDataTask
             let queryItems = try self.queryItems(for: endpoint).get()
             let url = try requestURL(for: endpoint, queryItems: queryItems).get()
+            let isUploading = endpoint.isUploading
             
-            let urlRequest = try endpoint.isUploading
+            let urlRequest = try isUploading
                 ? encodeRequestForUpload(for: endpoint, url: url).get()
                 : encodeRequest(for: endpoint, url: url).get()
             
             task = urlSession.dataTask(with: urlRequest) { [unowned self] in
+                // Parse custom uploading response.
+                guard isUploading, Client.uploading != nil else {
+                    if let completion = completion as? Client.Completion<FileUploadResponse> {
+                        self.parseUploading(data: $0, response: $1, error: $2, completion: completion)
+                    } else {
+                        let error = "Custom uploading completion type should be FileUploadResponse, but it's \(T.self)"
+                        self.performInCallbackQueue { completion(.failure(.unexpectedError(description: error, error: nil))) }
+                    }
+                    
+                    return
+                }
+                
+                // Parse the response.
                 self.parse(data: $0, response: $1, error: $2, completion: completion)
                 
+                // Check expired Token on the request.
                 if self.isExpiredTokenInProgress {
                     self.logger?.log("Reconnect and retry a request when the token was expired...", level: .debug)
                     self.addWaitingRequest(endpoint: endpoint, completion)
@@ -225,11 +240,35 @@ extension Client {
     private func encodeRequestForUpload(for endpoint: Endpoint, url: URL) -> Result<URLRequest, ClientError> {
         let multipartFormData: MultipartFormData
         var urlRequest = URLRequest(url: url)
+        
+        // Check custom uploading URL.
+        if let uploading = Client.uploading {
+            var isImage = true
+            
+            if case .sendFile = endpoint {
+                isImage = false
+            }
+            
+            switch endpoint {
+            case let .sendImage(fileName, mimeType, _, channel),
+                 let .sendFile(fileName, mimeType, _, channel):
+                let result = uploading.uploadingURL(channel, fileName, mimeType, isImage)
+                
+                if let url = result.value {
+                    urlRequest = URLRequest(url: url)
+                } else if let error = result.error {
+                    return .failure(error)
+                }
+            default:
+                break
+            }
+        }
+        
         urlRequest.httpMethod = endpoint.method.rawValue
         
         switch endpoint {
-        case .sendImage(let fileName, let mimeType, let data, _),
-             .sendFile(let fileName, let mimeType, let data, _):
+        case let .sendImage(fileName, mimeType, data, _),
+             let .sendFile(fileName, mimeType, data, _):
             multipartFormData = MultipartFormData(data, fileName: fileName, mimeType: mimeType)
         default:
             let errorDescription = "Encoding unexpected endpoint \(endpoint) for a file uploading."
@@ -302,6 +341,20 @@ extension Client {
         } catch {
             logger?.log(error)
             performInCallbackQueue { completion(.failure(.decodingFailure(error))) }
+        }
+    }
+    
+    private func parseUploading(data: Data?, response: URLResponse?, error: Error?, completion: @escaping Completion<FileUploadResponse>) {
+        guard let uploading = Client.uploading else {
+            return
+        }
+        
+        let result = uploading.responseURL(data, response, error)
+        
+        if let url = result.value {
+            performInCallbackQueue { completion(.success(.init(file: url))) }
+        } else if let error = result.error {
+            performInCallbackQueue { completion(.failure(error)) }
         }
     }
     
