@@ -1,5 +1,10 @@
 # Official iOS SDK for [Stream Chat](https://getstream.io/chat/)
-[![Stream Chat](https://i.imgur.com/B7przBT.png)](https://getstream.io/tutorials/ios-chat/)
+[![Stream Chat](https://i.imgur.com/B7przBT.png)![Stream Chat 2](https://i0.wp.com/apptractor.ru/wp-content/uploads/2019/10/Stream-Chat.jpg)](https://getstream.io/tutorials/ios-chat/)
+
+<p float="center" style="vertical-align:middle;">
+  <img src="https://i.imgur.com/B7przBT.png" width="55%" />
+  <img src="https://i0.wp.com/apptractor.ru/wp-content/uploads/2019/10/Stream-Chat.jpg" width="40%" /> 
+</p>
 
 [![Language: Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://swift.org)
 [![Build Status](https://github.com/GetStream/stream-chat-swift/workflows/CI/badge.svg)](https://github.com/GetStream/stream-chat-swift/actions)
