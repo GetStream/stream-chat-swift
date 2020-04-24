@@ -59,7 +59,7 @@ extension ComposerView {
         }
         
         var height = min(max(height + 2 * textViewPadding, style.height), maxHeight)
-        imagesCollectionView.isHidden = imageUploaderItems.isEmpty
+        imagesCollectionView.isHidden = imageUploadingItems.isEmpty
         filesStackView.isHidden = isUploaderFilesEmpty
         var textViewTopOffset = textViewPadding
         

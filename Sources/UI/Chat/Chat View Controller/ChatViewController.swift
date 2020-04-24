@@ -136,7 +136,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             setupComposerView()
         }
         
-        composerView.uploader = presenter.uploader
+        composerView.uploadManager = presenter.uploadManager
         
         presenter.rx.changes
             .filter { [weak self] _ in

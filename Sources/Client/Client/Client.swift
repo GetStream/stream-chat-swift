@@ -93,9 +93,6 @@ public final class Client: Uploader {
     /// Weak references to channels by cid.
     let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
     
-    /// A custom flow for uploading with a custom URL.
-    private(set) var uploader: Uploader
-    
     /// Init a network client.
     /// - Parameters:
     ///   - apiKey: a Stream Chat API key.
@@ -109,7 +106,6 @@ public final class Client: Uploader {
     init(apiKey: String = Client.config.apiKey,
          baseURL: BaseURL = Client.config.baseURL,
          stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
-         uploader: Uploader? = Client.config.uploader,
          database: Database? = Client.config.database,
          callbackQueue: DispatchQueue? = Client.config.callbackQueue,
          logOptions: ClientLogger.Options = Client.config.logOptions) {
@@ -130,8 +126,6 @@ public final class Client: Uploader {
         self.database = database
         self.logOptions = logOptions
         logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
-        self.uploader = EmptyUploader.instance
-        self.uploader = uploader ?? self
         
         #if DEBUG
         checkLatestVersion()
@@ -238,36 +232,5 @@ extension Client {
         func cancel() {
             subscription?.cancel()
         }
-    }
-}
-
-/// Init Helper.
-private enum EmptyUploader: Uploader {
-    case instance
-    
-    func sendImage(data: Data,
-                   fileName: String,
-                   mimeType: String,
-                   channel: Channel,
-                   progress: @escaping Client.Progress,
-                   completion: @escaping Client.Completion<URL>) -> Cancellable {
-        Subscription.empty
-    }
-    
-    func sendFile(data: Data,
-                  fileName: String,
-                  mimeType: String,
-                  channel: Channel,
-                  progress: @escaping Client.Progress,
-                  completion: @escaping Client.Completion<URL>) -> Cancellable {
-        Subscription.empty
-    }
-    
-    func deleteImage(url: URL, channel: Channel, _ completion: @escaping (Result<EmptyData, ClientError>) -> Void) -> Cancellable {
-        Subscription.empty
-    }
-    
-    func deleteFile(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData>) -> Cancellable {
-        Subscription.empty
     }
 }

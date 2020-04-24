@@ -11,7 +11,7 @@ import StreamChatClient
 import StreamChatCore
 import Photos.PHPhotoLibrary
 
-extension UploaderItem {
+extension UploadingItem {
     convenience init(channel: Channel, pickedImage: PickedImage, extraData: Codable? = nil) {
         let fileName = pickedImage.fileName
         var fileType = AttachmentFileType.generic
