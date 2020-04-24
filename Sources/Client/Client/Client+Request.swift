@@ -68,50 +68,10 @@ extension Client {
     func request<T: Decodable>(endpoint: Endpoint,
                                _ progress: @escaping Progress,
                                _ completion: @escaping Completion<T>) -> Cancellable {
-        if uploader != nil {
-            return requestFromUploader(endpoint: endpoint, progress, completion)
-        }
-        
         let task = prepareRequest(endpoint: endpoint, completion)
         urlSessionTaskDelegate.addProgessHandler(id: task.taskIdentifier, progress)
         task.resume()
         return Subscription { _  in task.cancel() }
-    }
-    
-    private func requestFromUploader<T: Decodable>(endpoint: Endpoint,
-                                                   _ progress: @escaping Progress,
-                                                   _ completion: @escaping Completion<T>) -> Cancellable {
-        guard let uploader = uploader, let completion = completion as? Completion<FileUploadResponse> else {
-            return Subscription.empty
-        }
-        
-        let uploaderCompletion: Completion<URL> = { result in
-            if let url = result.value {
-                completion(.success(FileUploadResponse(file: url)))
-            } else if let error = result.error {
-                completion(.failure(error))
-            }
-        }
-        
-        switch endpoint {
-        case let .sendImage(data, fileName, mimeType, channel):
-            return uploader.uploadImage(data: data,
-                                        fileName: fileName,
-                                        mimeType: mimeType,
-                                        channel: channel,
-                                        progress: progress,
-                                        completion: uploaderCompletion)
-            
-        case let .sendFile(data, fileName, mimeType, channel):
-            return uploader.uploadFile(data: data,
-                                       fileName: fileName,
-                                       mimeType: mimeType,
-                                       channel: channel,
-                                       progress: progress,
-                                       completion: uploaderCompletion)
-        default:
-            return Subscription.empty
-        }
     }
     
     private func prepareRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask {

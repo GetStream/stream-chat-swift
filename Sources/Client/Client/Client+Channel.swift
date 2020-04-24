@@ -478,7 +478,7 @@ public extension Client {
         return request(endpoint: .inviteAnswer(answer), completion)
     }
     
-    // MARK: - File Requests
+    // MARK: - Uploading
     
     /// Upload an image to the channel.
     /// - Parameters:
@@ -493,8 +493,8 @@ public extension Client {
                    fileName: String,
                    mimeType: String,
                    channel: Channel,
-                   _ progress: @escaping Client.Progress,
-                   _ completion: @escaping Client.Completion<URL>) -> Cancellable {
+                   progress: @escaping Client.Progress,
+                   completion: @escaping Client.Completion<URL>) -> Cancellable {
         sendFile(endpoint: .sendImage(data, fileName, mimeType, channel), progress, completion)
     }
     
@@ -511,8 +511,8 @@ public extension Client {
                   fileName: String,
                   mimeType: String,
                   channel: Channel,
-                  _ progress: @escaping Client.Progress,
-                  _ completion: @escaping Client.Completion<URL>) -> Cancellable {
+                  progress: @escaping Client.Progress,
+                  completion: @escaping Client.Completion<URL>) -> Cancellable {
         sendFile(endpoint: .sendFile(data, fileName, mimeType, channel), progress, completion)
     }
     
@@ -530,9 +530,7 @@ public extension Client {
     ///   - channel: a channel.
     ///   - completion: an empty completion block.
     @discardableResult
-    func deleteImage(url: URL,
-                     from channel: Channel,
-                     _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+    func deleteImage(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         request(endpoint: .deleteImage(url, channel), completion)
     }
     
@@ -542,9 +540,7 @@ public extension Client {
     ///   - channel: a channel.
     ///   - completion: an empty completion block.
     @discardableResult
-    func deleteFile(url: URL,
-                    from channel: Channel,
-                    _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+    func deleteFile(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         request(endpoint: .deleteFile(url, channel), completion)
     }
 } // swiftlint:disable:this file_length

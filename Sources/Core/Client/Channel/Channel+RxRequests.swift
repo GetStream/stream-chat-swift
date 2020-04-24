@@ -196,7 +196,7 @@ public extension Reactive where Base == Channel {
         Client.shared.rx.rejectInvite(for: base, with: message)
     }
     
-    // MARK: - File Requests
+    // MARK: - Uploading
     
     /// Upload an image to the channel.
     /// - Parameters:
@@ -219,12 +219,12 @@ public extension Reactive where Base == Channel {
     /// Delete an image with a given URL.
     /// - Parameter url: an image URL.
     func deleteImage(url: URL) -> Observable<EmptyData> {
-        Client.shared.rx.deleteImage(url: url, from: base)
+        Client.shared.rx.deleteImage(url: url, channel: base)
     }
     
     /// Delete a file with a given URL.
     /// - Parameter url: a file URL.
     func deleteFile(url: URL) -> Observable<EmptyData> {
-        Client.shared.rx.deleteFile(url: url, from: base)
+        Client.shared.rx.deleteFile(url: url, channel: base)
     }
 }

@@ -263,7 +263,7 @@ public extension Channel {
         Client.shared.rejectInvite(for: self, with: message, completion)
     }
     
-    // MARK: - File Requests
+    // MARK: - Uploading
     
     /// Upload an image to the channel.
     /// - Parameters:
@@ -277,7 +277,12 @@ public extension Channel {
                    mimeType: String,
                    _ progress: @escaping Client.Progress,
                    _ completion: @escaping Client.Completion<URL>) -> Cancellable {
-        Client.shared.sendImage(data: data, fileName: fileName, mimeType: mimeType, channel: self, progress, completion)
+        Client.shared.sendImage(data: data,
+                                fileName: fileName,
+                                mimeType: mimeType,
+                                channel: self,
+                                progress: progress,
+                                completion: completion)
     }
     
     /// Upload a file to the channel.
@@ -292,7 +297,12 @@ public extension Channel {
                   mimeType: String,
                   _ progress: @escaping Client.Progress,
                   _ completion: @escaping Client.Completion<URL>) -> Cancellable {
-        Client.shared.sendFile(data: data, fileName: fileName, mimeType: mimeType, channel: self, progress, completion)
+        Client.shared.sendFile(data: data,
+                               fileName: fileName,
+                               mimeType: mimeType,
+                               channel: self,
+                               progress: progress,
+                               completion: completion)
     }
     
     /// Delete an image with a given URL.
@@ -301,7 +311,7 @@ public extension Channel {
     ///   - completion: an empty completion block.
     @discardableResult
     func deleteImage(url: URL, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
-        Client.shared.deleteImage(url: url, from: self, completion)
+        Client.shared.deleteImage(url: url, channel: self, completion)
     }
     
     /// Delete a file with a given URL.
@@ -310,6 +320,6 @@ public extension Channel {
     ///   - completion: an empty completion block.
     @discardableResult
     func deleteFile(url: URL, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
-        Client.shared.deleteFile(url: url, from: self, completion)
+        Client.shared.deleteFile(url: url, channel: self, completion)
     }
 }

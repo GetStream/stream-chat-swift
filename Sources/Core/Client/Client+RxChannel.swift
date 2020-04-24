@@ -297,7 +297,7 @@ public extension Reactive where Base == Client {
         }))
     }
     
-    // MARK: - File Requests
+    // MARK: - Uploading
     
     /// Upload an image to the channel.
     /// - Parameters:
@@ -308,7 +308,12 @@ public extension Reactive where Base == Client {
     ///   - progress: a progress block with `Client.Progress`.
     func sendImage(data: Data, fileName: String, mimeType: String, channel: Channel) -> Observable<ProgressResponse<URL>> {
         connected(progressRequest({ [unowned base] progress, completion in
-            base.sendImage(data: data, fileName: fileName, mimeType: mimeType, channel: channel, progress, completion)
+            base.sendImage(data: data,
+                           fileName: fileName,
+                           mimeType: mimeType,
+                           channel: channel,
+                           progress: progress,
+                           completion: completion)
         }))
     }
     
@@ -321,7 +326,12 @@ public extension Reactive where Base == Client {
     ///   - progress: a progress block with `Client.Progress`.
     func sendFile(data: Data, fileName: String, mimeType: String, channel: Channel) -> Observable<ProgressResponse<URL>> {
         connected(progressRequest({ [unowned base] progress, completion in
-            base.sendFile(data: data, fileName: fileName, mimeType: mimeType, channel: channel, progress, completion)
+            base.sendFile(data: data,
+                          fileName: fileName,
+                          mimeType: mimeType,
+                          channel: channel,
+                          progress: progress,
+                          completion: completion)
         }))
     }
     
@@ -329,9 +339,9 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - url: an image URL.
     ///   - channel: a channel.
-    func deleteImage(url: URL, from channel: Channel) -> Observable<EmptyData> {
+    func deleteImage(url: URL, channel: Channel) -> Observable<EmptyData> {
         connected(request({ [unowned base] completion in
-            base.deleteImage(url: url, from: channel, completion)
+            base.deleteImage(url: url, channel: channel, completion)
         }))
     }
     
@@ -339,9 +349,9 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - url: a file URL.
     ///   - channel: a channel.
-    func deleteFile(url: URL, from channel: Channel) -> Observable<EmptyData> {
+    func deleteFile(url: URL, channel: Channel) -> Observable<EmptyData> {
         connected(request({ [unowned base] completion in
-            base.deleteFile(url: url, from: channel, completion)
+            base.deleteFile(url: url, channel: channel, completion)
         }))
     }
 }
