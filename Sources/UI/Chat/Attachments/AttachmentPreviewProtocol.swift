@@ -11,9 +11,10 @@ import StreamChatClient
 import StreamChatCore
 import RxSwift
 
-protocol AttachmentPreviewProtocol where Self: UIView {
+protocol AttachmentPreview where Self: UIView {
     typealias Completion = (Self, Error?) -> Void
     
+    var index: Int { get set }
     var disposeBag: DisposeBag { get }
     
     /// An attachment.

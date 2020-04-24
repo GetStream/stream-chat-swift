@@ -54,14 +54,28 @@ final class FileAttachmentPreview: UIImageView, AttachmentPreview {
         
         label.snp.makeConstraints { make in
             make.top.equalTo(iconImageView.snp.centerY)
-            make.left.equalTo(iconImageView.snp.right).offset(CGFloat.messageEdgePadding)
+            make.left.equalTo(iconImageView.snp.right).offset(CGFloat.messageInnerPadding)
             make.right.equalToSuperview().offset(-CGFloat.messageEdgePadding)
         }
         
         return label
     }()
     
-    func update(maskImage: UIImage?, _ completion: @escaping AttachmentPreview.Completion) {
+    /// Setup a message style.
+    func setup(attachment: Attachment, style: MessageViewStyle) {
+        self.attachment = attachment
+        backgroundColor = style.chatBackgroundColor
+        titleLabel.textColor = style.replyColor
+        sizeLabel.textColor = style.infoColor
+    }
+    
+    /// Update image mask.
+    func update(imageMask: UIImage?) {
+        image = imageMask
+    }
+    
+    /// Update attachment preview with a given attachment.
+    func update(_ completion: @escaping Completion) {
         guard let attachment = attachment, let file = attachment.file else {
             return
         }
@@ -69,7 +83,6 @@ final class FileAttachmentPreview: UIImageView, AttachmentPreview {
         iconImageView.image = file.type.icon
         titleLabel.text = attachment.title
         sizeLabel.text = file.sizeString
-        image = maskImage
         completion(self, nil)
     }
 }
