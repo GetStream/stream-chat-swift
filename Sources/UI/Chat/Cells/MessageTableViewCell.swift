@@ -136,7 +136,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     }()
     
     var messageTextEnrichment: MessageTextEnrichment?
-    var attachmentPreviews: [AttachmentPreviewProtocol] = []
+    var attachmentPreviews: [AttachmentPreview] = []
     
     private(set) lazy var bottomPaddingView: UIView = {
         let view = UIView(frame: .zero)
@@ -159,6 +159,12 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         if let messageBackgroundImage = messageBackgroundImage() {
             messageContainerView.image = messageBackgroundImage
+        }
+        
+        attachmentPreviews.forEach { attachmentPreview in
+            if let filePreview = attachmentPreview as? FileAttachmentPreview {
+                filePreview.update(imageMask: backgroundImageForAttachment(at: filePreview.index))
+            }
         }
     }
     
