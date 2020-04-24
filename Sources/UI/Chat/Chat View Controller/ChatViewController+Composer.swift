@@ -456,36 +456,42 @@ extension ChatViewController {
             return
         }
         
-        showImagePicker(sourceType: pickerSourceType) { [weak self] pickedImage, status in
+        showImagePicker(sourceType: pickerSourceType) { [weak self] result in
             guard let self = self else {
                 return
             }
             
-            guard status == .authorized else {
-                self.showImagePickerAuthorizationStatusAlert(status)
-                return
+            do {
+                let pickedImage = try result.get()
+                
+                if let resources = try? pickedImage.fileURL?.resourceValues(forKeys: [.fileSizeKey]) {
+                    if let fileSize = resources.fileSize,
+                       fileSize >= 20 * 1_048_576 { // 20 MB Upload limit
+                        self.show(errorMessage: "File size exceeds limit of 20MB")
+                        return
+                    }
+                } else {
+                    ClientLogger.log("📁", "File size limit cannot be determined. "
+                        + "Keep in mind that files over 20MB will fail to upload.")
+                }
+                
+                guard let presenter = self.presenter,
+                    (pickedImage.fileURL != nil || pickedImage.image != nil) else {
+                    return
+                }
+                
+                let extraData = presenter.imageAttachmentExtraDataCallback?(pickedImage.fileURL,
+                                                                            pickedImage.image,
+                                                                            pickedImage.isVideo,
+                                                                            presenter.channel)
+                
+                let uploaderItem = UploadingItem(channel: presenter.channel, pickedImage: pickedImage, extraData: extraData)
+                self.composerView.addImageUploaderItem(uploaderItem)
+            } catch let error as ImagePickerError {
+                self.showImagePickerAlert(for: error)
+            } catch {
+                assertionFailure("Impossible error: \(error)")
             }
-            
-            if let resources = try? pickedImage?.fileURL?.resourceValues(forKeys: [.fileSizeKey]),
-               let fileSize = resources.fileSize,
-               fileSize >= 20 * 1_048_576 { // 20 MB Upload limit
-                self.show(errorMessage: "File size exceeds limit of 20MB")
-                return
-            }
-            
-            guard let presenter = self.presenter,
-                let pickedImage = pickedImage,
-                (pickedImage.fileURL != nil || pickedImage.image != nil) else {
-                return
-            }
-            
-            let extraData = presenter.imageAttachmentExtraDataCallback?(pickedImage.fileURL,
-                                                                        pickedImage.image,
-                                                                        pickedImage.isVideo,
-                                                                        presenter.channel)
-            
-            let uploaderItem = UploadingItem(channel: presenter.channel, pickedImage: pickedImage, extraData: extraData)
-            self.composerView.addImageUploaderItem(uploaderItem)
         }
         
         hideAddFileView()

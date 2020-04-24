@@ -39,6 +39,7 @@ func deleteFile(url: URL, channel: Channel, _ completion: @escaping Client.Compl
 - Subscriptions for a channel unread count and watcher count [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 - Changed a returning type for requests as `Cancellable` instead of `URLSessionTask` to make requests and events more consistent [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 - The example project was updated [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
+- Rename `showImagePickerAuthorizationStatusAlert` to `showImagePickerAlert` [#215](https://github.com/GetStream/stream-chat-swift/pull/215)
 
 ### ✅ Added
 - Message preparation callback on `ChannelPresenter` to modify messages before they're sent [#142](https://github.com/GetStream/stream-chat-swift/issues/142).
@@ -86,6 +87,8 @@ open func updateFooterTypingUserAvatarView(footerView: ChatFooterView, user: Use
 - Channel query options default to `.state`, in-line with documentation instead of empty [#198](https://github.com/GetStream/stream-chat-swift/pull/198)
 - Fix the deprecation warning in the `UI` framework [#201](https://github.com/GetStream/stream-chat-swift/pull/201).
 - Fix current user's messages are counted towards unread count [#206](https://github.com/GetStream/stream-chat-swift/pull/206)
+- Fix ImagePicker not asking for permission for avaible source types [#215](https://github.com/GetStream/stream-chat-swift/pull/215)
+- Fix ImagePicker showing an error when no image is selected [#215](https://github.com/GetStream/stream-chat-swift/pull/215)
 
 
 # [2.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.1)
