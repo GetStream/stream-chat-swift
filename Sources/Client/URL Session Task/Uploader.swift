@@ -19,6 +19,7 @@ public protocol Uploader {
     ///   - channel: a channel.
     ///   - progress: a progress block of the uploading.
     ///   - completion: a completion block.
+    @discardableResult
     func uploadImage(data: Data,
                      fileName: String,
                      mimeType: String,
@@ -34,6 +35,7 @@ public protocol Uploader {
     ///   - channel: a channel.
     ///   - progress: a progress block of the uploading.
     ///   - completion: a completion block.
+    @discardableResult
     func uploadFile(data: Data,
                     fileName: String,
                     mimeType: String,

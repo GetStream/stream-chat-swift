@@ -267,30 +267,32 @@ public extension Channel {
     
     /// Upload an image to the channel.
     /// - Parameters:
+    ///   - data: an image data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
     ///   - completion: a completion block with `ProgressResponse<URL>`.
     @discardableResult
-    func sendImage(fileName: String,
+    func sendImage(data: Data,
+                   fileName: String,
                    mimeType: String,
-                   imageData: Data,
                    _ progress: @escaping Client.Progress,
                    _ completion: @escaping Client.Completion<URL>) -> Cancellable {
-        Client.shared.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData, to: self, progress, completion)
+        Client.shared.sendImage(data: data, fileName: fileName, mimeType: mimeType, channel: self, progress, completion)
     }
     
     /// Upload a file to the channel.
     /// - Parameters:
+    ///   - data: a file data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
     ///   - completion: a completion block with `ProgressResponse<URL>`.
     @discardableResult
-    func sendFile(fileName: String,
+    func sendFile(data: Data,
+                  fileName: String,
                   mimeType: String,
-                  fileData: Data,
                   _ progress: @escaping Client.Progress,
                   _ completion: @escaping Client.Completion<URL>) -> Cancellable {
-        Client.shared.sendFile(fileName: fileName, mimeType: mimeType, fileData: fileData, to: self, progress, completion)
+        Client.shared.sendFile(data: data, fileName: fileName, mimeType: mimeType, channel: self, progress, completion)
     }
     
     /// Delete an image with a given URL.

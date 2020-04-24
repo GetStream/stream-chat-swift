@@ -482,38 +482,38 @@ public extension Client {
     
     /// Upload an image to the channel.
     /// - Parameters:
+    ///   - data: an image data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
-    ///   - imageData: an image data.
     ///   - channel: a channel.
     ///   - progress: a progress block with `Client.Progress`.
     ///   - completion: a completion block with `Client.Completion<URL>`.
     @discardableResult
-    func sendImage(fileName: String,
+    func sendImage(data: Data,
+                   fileName: String,
                    mimeType: String,
-                   imageData: Data,
-                   to channel: Channel,
+                   channel: Channel,
                    _ progress: @escaping Client.Progress,
                    _ completion: @escaping Client.Completion<URL>) -> Cancellable {
-        sendFile(endpoint: .sendImage(fileName, mimeType, imageData, channel), progress, completion)
+        sendFile(endpoint: .sendImage(data, fileName, mimeType, channel), progress, completion)
     }
     
     /// Upload a file to the channel.
     /// - Parameters:
+    ///   - data: a file data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
-    ///   - fileData: a file data.
     ///   - channel: a channel.
     ///   - progress: a progress block with `Client.Progress`.
     ///   - completion: a completion block with `Client.Completion<URL>`.
     @discardableResult
-    func sendFile(fileName: String,
+    func sendFile(data: Data,
+                  fileName: String,
                   mimeType: String,
-                  fileData: Data,
-                  to channel: Channel,
+                  channel: Channel,
                   _ progress: @escaping Client.Progress,
                   _ completion: @escaping Client.Completion<URL>) -> Cancellable {
-        sendFile(endpoint: .sendFile(fileName, mimeType, fileData, channel), progress, completion)
+        sendFile(endpoint: .sendFile(data, fileName, mimeType, channel), progress, completion)
     }
     
     private func sendFile(endpoint: Endpoint,

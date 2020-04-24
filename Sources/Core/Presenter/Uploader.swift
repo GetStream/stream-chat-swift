@@ -165,21 +165,21 @@ public final class UploaderItem: Equatable {
         
         if type == .file || type == .video {
             if let url = url, let data = try? Data(contentsOf: url) {
-                request = channel.rx.sendFile(fileName: fileName, mimeType: fileType.mimeType, fileData: data)
+                request = channel.rx.sendFile(data: data, fileName: fileName, mimeType: fileType.mimeType)
             } else {
                 return .error(ClientError.emptyBody(description: "For file at URL: \(url?.absoluteString ?? "<unknown>")"))
             }
         } else {
-            let imageData: Data
+            let data: Data
             var mimeType: String = fileType.mimeType
             
             if let gifData = gifData {
-                imageData = gifData
+                data = gifData
                 mimeType = AttachmentFileType.gif.mimeType
             } else if let url = url, let localImageData = try? Data(contentsOf: url) {
-                imageData = localImageData
+                data = localImageData
             } else if let encodedImageData = image?.jpegData(compressionQuality: 0.9) {
-                imageData = encodedImageData
+                data = encodedImageData
                 mimeType = AttachmentFileType.jpeg.mimeType
             } else {
                 let errorDescription = "For image: gifData = \(gifData == nil ? "no" : "yes"), "
@@ -189,7 +189,7 @@ public final class UploaderItem: Equatable {
                 return .error(ClientError.emptyBody(description: errorDescription))
             }
             
-            request = channel.rx.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData)
+            request = channel.rx.sendImage(data: data, fileName: fileName, mimeType: mimeType)
         }
         
         return request
