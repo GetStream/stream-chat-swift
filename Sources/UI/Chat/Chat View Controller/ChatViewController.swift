@@ -308,8 +308,9 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         defaultActionsContextMenu(from: cell, for: message, locationInView: locationInView)
     }
     
-    /// Creates a chat view controller for the message being replied to. Override this to change style and other properties of the thread's view controller.
+    /// Creates a chat view controller for the message being replied to.
     ///
+    /// Override this to change style and other properties of the thread's view controller.
     /// - Parameters:
     ///     - channelPresenter: the channel presenter of the message being replied to.
     /// - Returns: a chat view controller.
