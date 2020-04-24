@@ -301,27 +301,27 @@ public extension Reactive where Base == Client {
     
     /// Upload an image to the channel.
     /// - Parameters:
+    ///   - data: an image data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
-    ///   - imageData: an image data.
     ///   - channel: a channel.
     ///   - progress: a progress block with `Client.Progress`.
-    func sendImage(fileName: String, mimeType: String, imageData: Data, to channel: Channel) -> Observable<ProgressResponse<URL>> {
+    func sendImage(data: Data, fileName: String, mimeType: String, channel: Channel) -> Observable<ProgressResponse<URL>> {
         connected(progressRequest({ [unowned base] progress, completion in
-            base.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData, to: channel, progress, completion)
+            base.sendImage(data: data, fileName: fileName, mimeType: mimeType, channel: channel, progress, completion)
         }))
     }
     
     /// Upload a file to the channel.
     /// - Parameters:
+    ///   - data: a file data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
-    ///   - fileData: a file data.
     ///   - channel: a channel.
     ///   - progress: a progress block with `Client.Progress`.
-    func sendFile(fileName: String, mimeType: String, fileData: Data, to channel: Channel) -> Observable<ProgressResponse<URL>> {
+    func sendFile(data: Data, fileName: String, mimeType: String, channel: Channel) -> Observable<ProgressResponse<URL>> {
         connected(progressRequest({ [unowned base] progress, completion in
-            base.sendFile(fileName: fileName, mimeType: mimeType, fileData: fileData, to: channel, progress, completion)
+            base.sendFile(data: data, fileName: fileName, mimeType: mimeType, channel: channel, progress, completion)
         }))
     }
     
