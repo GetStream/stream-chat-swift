@@ -66,8 +66,8 @@ class CustomChatViewController: ChatViewController {
             .disposed(by: disposeBag)
     }
     
-    override func createChatViewController(with channelPresenter: ChannelPresenter) -> ChatViewController {
-        let controller = super.createChatViewController(with: channelPresenter)
+    override func createThreadChatViewController(with channelPresenter: ChannelPresenter) -> ChatViewController {
+        let controller = super.createThreadChatViewController(with: channelPresenter)
         
         if let message = channelPresenter.parentMessage {
             controller.style.composer.placeholderText = "Reply to \(message.user.name)"
