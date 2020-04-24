@@ -113,12 +113,13 @@ end
 
 desc "Builds the project for testing"
 lane :build_for_testing do
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", build_for_testing: true, clean: true)
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", clean: true, build_for_testing: true)
 end
 
 desc "Runs all the tests without building"
 lane :test_without_building do
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true)
+  # Integration Tests (StreamChatClientIntegrationTests) are disabled since they make HTTP/WS connections
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, only_testing: ["StreamChatClientTests"])
 end
 
 desc "Tests SDK integrations with Carthage, Cocoapods and SPM"
