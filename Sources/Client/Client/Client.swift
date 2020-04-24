@@ -9,7 +9,7 @@
 import UIKit
 
 /// A network client.
-public final class Client {
+public final class Client: Uploader {
     /// A client completion block type.
     public typealias Completion<T: Decodable> = (Result<T, ClientError>) -> Void
     /// A client progress block type.

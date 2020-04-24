@@ -166,8 +166,8 @@ extension Encodable {
     }
 }
 
-/// Try in the most cases map it to `Void`.
+/// Empty `Codable` data.
 public struct EmptyData: Codable {
-    /// A shared instance of empty data.
+    /// A shared instance of empty `Codable` data.
     public static let empty = EmptyData()
 }

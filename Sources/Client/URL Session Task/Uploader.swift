@@ -20,12 +20,12 @@ public protocol Uploader {
     ///   - progress: a progress block of the uploading.
     ///   - completion: a completion block.
     @discardableResult
-    func uploadImage(data: Data,
-                     fileName: String,
-                     mimeType: String,
-                     channel: Channel,
-                     progress: @escaping Client.Progress,
-                     completion: @escaping Client.Completion<URL>) -> Cancellable
+    func sendImage(data: Data,
+                   fileName: String,
+                   mimeType: String,
+                   channel: Channel,
+                   progress: @escaping (Float) -> Void,
+                   completion: @escaping (Result<URL, ClientError>) -> Void) -> Cancellable
     
     /// Uploads a file with a given local file.
     /// - Parameters:
@@ -36,10 +36,18 @@ public protocol Uploader {
     ///   - progress: a progress block of the uploading.
     ///   - completion: a completion block.
     @discardableResult
-    func uploadFile(data: Data,
-                    fileName: String,
-                    mimeType: String,
-                    channel: Channel,
-                    progress: @escaping Client.Progress,
-                    completion: @escaping Client.Completion<URL>) -> Cancellable
+    func sendFile(data: Data,
+                  fileName: String,
+                  mimeType: String,
+                  channel: Channel,
+                  progress: @escaping (Float) -> Void,
+                  completion: @escaping (Result<URL, ClientError>) -> Void) -> Cancellable
+    
+    /// Delete a file with a given URL.
+    /// - Parameters:
+    ///   - url: a file URL.
+    ///   - channel: a channel.
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func deleteFile(url: URL, channel: Channel, _ completion: @escaping (Result<EmptyData, ClientError>) -> Void) -> Cancellable
 }
