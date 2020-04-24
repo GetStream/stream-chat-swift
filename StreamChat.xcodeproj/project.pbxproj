@@ -12,7 +12,6 @@
 		79A9E4F72449D3AF00599B95 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */; };
 		79A9E4F92449DF2D00599B95 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F82449DF2D00599B95 /* Reachability.swift */; };
 		79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D50C7624321BDA0052BA03 /* Client+Events.swift */; };
-		79EE393A2453204E0034EBF3 /* StreamChatClientIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79EE39392453204E0034EBF3 /* StreamChatClientIntegrationTests.swift */; };
 		79EE393C2453204E0034EBF3 /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; };
 		79EE3942245320610034EBF3 /* ClientTests00.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE6206923CF63F000AB3426 /* ClientTests00.swift */; };
 		79EE3943245320650034EBF3 /* ClientTests01+Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1D042523D0FB560099AA7F /* ClientTests01+Channels.swift */; };
@@ -301,8 +300,6 @@
 		79A9E4F82449DF2D00599B95 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		79D50C7624321BDA0052BA03 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		79EE39372453204E0034EBF3 /* StreamChatClientIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatClientIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		79EE39392453204E0034EBF3 /* StreamChatClientIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamChatClientIntegrationTests.swift; sourceTree = "<group>"; };
-		79EE393B2453204E0034EBF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		80B937A42434F5FC003D950E /* Array+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		8A0673B32445E0570042CFD3 /* Channel+Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Config.swift"; sourceTree = "<group>"; };
 		8A1207C9238ED66500E41790 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -622,15 +619,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		79EE39382453204E0034EBF3 /* StreamChatClientIntegrationTests */ = {
-			isa = PBXGroup;
-			children = (
-				79EE39392453204E0034EBF3 /* StreamChatClientIntegrationTests.swift */,
-				79EE393B2453204E0034EBF3 /* Info.plist */,
-			);
-			path = StreamChatClientIntegrationTests;
-			sourceTree = "<group>";
-		};
 		8A5069C023CE23FC009F127A /* Headers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1217,7 +1205,6 @@
 			children = (
 				8AD5ECA922E9BA39005CFAC9 /* Sources */,
 				8A559D22230D937C00E66096 /* Tests */,
-				79EE39382453204E0034EBF3 /* StreamChatClientIntegrationTests */,
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
 				8AD5EDD822E9C7BC005CFAC9 /* README.md */,
@@ -1587,7 +1574,6 @@
 				79EE3942245320610034EBF3 /* ClientTests00.swift in Sources */,
 				79EE39452453206E0034EBF3 /* ClientTests10+ClientLogger.swift in Sources */,
 				79EE3944245320690034EBF3 /* ClientTests02+Users.swift in Sources */,
-				79EE393A2453204E0034EBF3 /* StreamChatClientIntegrationTests.swift in Sources */,
 				79EE3943245320650034EBF3 /* ClientTests01+Channels.swift in Sources */,
 				79EE3946245321820034EBF3 /* TestCase.swift in Sources */,
 				79EE3947245322620034EBF3 /* User+Tests.swift in Sources */,
@@ -1887,7 +1873,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = StreamChatClientIntegrationTests/Info.plist;
+				INFOPLIST_FILE = Sources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1906,7 +1892,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = StreamChatClientIntegrationTests/Info.plist;
+				INFOPLIST_FILE = Sources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
