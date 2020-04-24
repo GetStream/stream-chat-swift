@@ -114,7 +114,7 @@ extension Channel {
         var mentionedCount = 0
         
         for message in channelResponse.messages.reversed() {
-            if message.created > unreadMessageRead.lastReadDate {
+            if message.created > unreadMessageRead.lastReadDate, message.user != currentUser {
                 count += 1
                 
                 if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
