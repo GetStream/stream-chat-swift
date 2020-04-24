@@ -21,8 +21,6 @@ extension Client {
         public let callbackQueue: DispatchQueue?
         /// When the app will go to the background, start a background task to stay connected for 5 min.
         public let stayConnectedInBackground: Bool
-        /// A custom flow for uploading with a custom URL.
-        public let uploader: Uploader?
         /// A local database.
         public let database: Database?
         /// Enable logs (see `ClientLogger.Options`), e.g. `.all`.
@@ -34,21 +32,18 @@ extension Client {
         ///     - baseURL: a base URL (see `BaseURL`).
         ///     - stayConnectedInBackground: when the app will go to the background,
         ///                                  start a background task to stay connected for 5 min.
-        ///     - uploader: a custom uploader.
         ///     - database: a database manager.
         ///     - callbackQueue: a request callback queue, default nil (some background thread).
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
         public init(apiKey: String,
                     baseURL: BaseURL = .usEast,
                     stayConnectedInBackground: Bool = true,
-                    uploader: Uploader? = nil,
                     database: Database? = nil,
                     callbackQueue: DispatchQueue? = nil,
                     logOptions: ClientLogger.Options = []) {
             self.apiKey = apiKey
             self.baseURL = baseURL
             self.stayConnectedInBackground = stayConnectedInBackground
-            self.uploader = uploader
             self.database = database
             self.callbackQueue = callbackQueue
             self.logOptions = logOptions

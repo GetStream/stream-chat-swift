@@ -21,6 +21,7 @@
 		79EE3947245322620034EBF3 /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		80B937A52434F5FC003D950E /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B937A42434F5FC003D950E /* Array+Extensions.swift */; };
 		8A0673B42445E0570042CFD3 /* Channel+Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0673B32445E0570042CFD3 /* Channel+Config.swift */; };
+		8A0C80DA2453333600124413 /* UploadingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0C80D92453333600124413 /* UploadingItem.swift */; };
 		8A1207CB238ED68000E41790 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207C9238ED66500E41790 /* Message.swift */; };
 		8A1207CD238EE3C700E41790 /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1207CC238EE3C700E41790 /* Reaction.swift */; };
 		8A1BC0FE23969079006694A1 /* ChannelsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1BC0FD23969079006694A1 /* ChannelsResponse.swift */; };
@@ -134,7 +135,7 @@
 		8ACC7C79241924B5000750E4 /* ChannelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C43241924B5000750E4 /* ChannelPresenter.swift */; };
 		8ACC7C7A241924B5000750E4 /* ChannelPresenter+TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C44241924B5000750E4 /* ChannelPresenter+TypingUsers.swift */; };
 		8ACC7C7B241924B5000750E4 /* PresenterItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C45241924B5000750E4 /* PresenterItem.swift */; };
-		8ACC7C7C241924B5000750E4 /* Uploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C46241924B5000750E4 /* Uploader.swift */; };
+		8ACC7C7C241924B5000750E4 /* UploadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C46241924B5000750E4 /* UploadManager.swift */; };
 		8ACC7C7D241924B5000750E4 /* Presenter+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C47241924B5000750E4 /* Presenter+Rx.swift */; };
 		8ACC7C7E241924B5000750E4 /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C48241924B5000750E4 /* Presenter.swift */; };
 		8ACC7C7F241924B5000750E4 /* ViewChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C49241924B5000750E4 /* ViewChanges.swift */; };
@@ -303,6 +304,7 @@
 		79EE39372453204E0034EBF3 /* StreamChatClientIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatClientIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		80B937A42434F5FC003D950E /* Array+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		8A0673B32445E0570042CFD3 /* Channel+Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Config.swift"; sourceTree = "<group>"; };
+		8A0C80D92453333600124413 /* UploadingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadingItem.swift; sourceTree = "<group>"; };
 		8A1207C9238ED66500E41790 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		8A1207CC238EE3C700E41790 /* Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reaction.swift; sourceTree = "<group>"; };
 		8A14347823ABBF30002A45BC /* CHANGELOG.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CHANGELOG.md; sourceTree = "<group>"; };
@@ -417,7 +419,7 @@
 		8ACC7C43241924B5000750E4 /* ChannelPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelPresenter.swift; sourceTree = "<group>"; };
 		8ACC7C44241924B5000750E4 /* ChannelPresenter+TypingUsers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChannelPresenter+TypingUsers.swift"; sourceTree = "<group>"; };
 		8ACC7C45241924B5000750E4 /* PresenterItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresenterItem.swift; sourceTree = "<group>"; };
-		8ACC7C46241924B5000750E4 /* Uploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Uploader.swift; sourceTree = "<group>"; };
+		8ACC7C46241924B5000750E4 /* UploadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadManager.swift; sourceTree = "<group>"; };
 		8ACC7C47241924B5000750E4 /* Presenter+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Presenter+Rx.swift"; sourceTree = "<group>"; };
 		8ACC7C48241924B5000750E4 /* Presenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Presenter.swift; sourceTree = "<group>"; };
 		8ACC7C49241924B5000750E4 /* ViewChanges.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewChanges.swift; sourceTree = "<group>"; };
@@ -874,7 +876,8 @@
 				8ACC7C47241924B5000750E4 /* Presenter+Rx.swift */,
 				8ACC7C45241924B5000750E4 /* PresenterItem.swift */,
 				8ACC7C49241924B5000750E4 /* ViewChanges.swift */,
-				8ACC7C46241924B5000750E4 /* Uploader.swift */,
+				8ACC7C46241924B5000750E4 /* UploadManager.swift */,
+				8A0C80D92453333600124413 /* UploadingItem.swift */,
 				8ACC7C4A241924B5000750E4 /* Channels */,
 				8ACC7C3E241924B5000750E4 /* Channel */,
 			);
@@ -1829,10 +1832,11 @@
 				8A9ECEF9242A5C3A00206E7D /* UIApplication+Rx.swift in Sources */,
 				8ACC7C86241924B5000750E4 /* Tests.swift in Sources */,
 				8ACC7C9B241924B5000750E4 /* Client+RxDevices.swift in Sources */,
-				8ACC7C7C241924B5000750E4 /* Uploader.swift in Sources */,
+				8ACC7C7C241924B5000750E4 /* UploadManager.swift in Sources */,
 				8ACC7C8F241924B5000750E4 /* Client+RxMessage.swift in Sources */,
 				8ACC7C7F241924B5000750E4 /* ViewChanges.swift in Sources */,
 				8ACC7C9A241924B5000750E4 /* Client+RxUser.swift in Sources */,
+				8A0C80DA2453333600124413 /* UploadingItem.swift in Sources */,
 				8ACC7C8B241924B5000750E4 /* InternetConnection+Rx.swift in Sources */,
 				8ACC7C7D241924B5000750E4 /* Presenter+Rx.swift in Sources */,
 				8ACC7C7B241924B5000750E4 /* PresenterItem.swift in Sources */,
