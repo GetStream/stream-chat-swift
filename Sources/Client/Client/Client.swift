@@ -263,9 +263,11 @@ private enum EmptyUploader: Uploader {
         Subscription.empty
     }
     
-    func deleteFile(url: URL,
-                    channel: Channel,
-                    _ completion: @escaping Client.Completion<EmptyData>) -> Cancellable {
+    func deleteImage(url: URL, channel: Channel, _ completion: @escaping (Result<EmptyData, ClientError>) -> Void) -> Cancellable {
+        Subscription.empty
+    }
+    
+    func deleteFile(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData>) -> Cancellable {
         Subscription.empty
     }
 }

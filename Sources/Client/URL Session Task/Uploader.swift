@@ -43,6 +43,14 @@ public protocol Uploader {
                   progress: @escaping (Float) -> Void,
                   completion: @escaping (Result<URL, ClientError>) -> Void) -> Cancellable
     
+    /// Delete an image with a given URL.
+    /// - Parameters:
+    ///   - url: an image URL.
+    ///   - channel: a channel.
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func deleteImage(url: URL, channel: Channel, _ completion: @escaping (Result<EmptyData, ClientError>) -> Void) -> Cancellable
+    
     /// Delete a file with a given URL.
     /// - Parameters:
     ///   - url: a file URL.

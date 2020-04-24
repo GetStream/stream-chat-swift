@@ -495,12 +495,21 @@ public extension Client {
                    channel: Channel,
                    progress: @escaping Client.Progress,
                    completion: @escaping Client.Completion<URL>) -> Cancellable {
-        sendFile(endpoint: .sendImage(data, fileName, mimeType, channel), progress, completion)
+        guard uploader as AnyObject === self else {
+            return uploader.sendImage(data: data,
+                                      fileName: fileName,
+                                      mimeType: mimeType,
+                                      channel: channel,
+                                      progress: progress,
+                                      completion: completion)
+        }
+        
+        return sendFile(endpoint: .sendImage(data, fileName, mimeType, channel), progress, completion)
     }
     
     /// Upload a file to the channel.
     /// - Parameters:
-    ///   - data: a file data.
+    ///   - data: a filbe data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
     ///   - channel: a channel.
@@ -513,7 +522,16 @@ public extension Client {
                   channel: Channel,
                   progress: @escaping Client.Progress,
                   completion: @escaping Client.Completion<URL>) -> Cancellable {
-        sendFile(endpoint: .sendFile(data, fileName, mimeType, channel), progress, completion)
+        guard uploader as AnyObject === self else {
+            return uploader.sendFile(data: data,
+                                      fileName: fileName,
+                                      mimeType: mimeType,
+                                      channel: channel,
+                                      progress: progress,
+                                      completion: completion)
+        }
+        
+        return sendFile(endpoint: .sendFile(data, fileName, mimeType, channel), progress, completion)
     }
     
     private func sendFile(endpoint: Endpoint,
@@ -531,7 +549,11 @@ public extension Client {
     ///   - completion: an empty completion block.
     @discardableResult
     func deleteImage(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
-        request(endpoint: .deleteImage(url, channel), completion)
+        guard uploader as AnyObject === self else {
+            return uploader.deleteImage(url: url, channel: channel, completion)
+        }
+        
+        return request(endpoint: .deleteImage(url, channel), completion)
     }
     
     /// Delete a file with a given URL.
@@ -541,6 +563,10 @@ public extension Client {
     ///   - completion: an empty completion block.
     @discardableResult
     func deleteFile(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
-        request(endpoint: .deleteFile(url, channel), completion)
+        guard uploader as AnyObject === self else {
+            return uploader.deleteFile(url: url, channel: channel, completion)
+        }
+        
+        return request(endpoint: .deleteFile(url, channel), completion)
     }
 } // swiftlint:disable:this file_length
