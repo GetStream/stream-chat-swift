@@ -331,6 +331,52 @@ extension Endpoint {
         }
     }
     
+    var requiresConnectionId: Bool {
+        switch self {
+        case .users,
+             .updateUsers,
+             .channels,
+             .channel,
+             .stopWatching:
+            return true
+        case .guestToken,
+             .message,
+             .markAllRead,
+             .deleteChannel,
+             .invite,
+             .addMembers,
+             .removeMembers,
+             .replies,
+             .deleteMessage,
+             .deleteReaction,
+             .sendImage,
+             .sendFile,
+             .deleteImage,
+             .deleteFile,
+             .inviteAnswer,
+             .addDevice,
+             .removeDevice,
+             .devices,
+             .search,
+             .updateChannel,
+             .showChannel,
+             .hideChannel,
+             .sendMessage,
+             .sendMessageAction,
+             .markRead,
+             .addReaction,
+             .sendEvent,
+             .muteUser,
+             .unmuteUser,
+             .flagUser,
+             .unflagUser,
+             .flagMessage,
+             .unflagMessage,
+             .ban:
+            return false
+        }
+    }
+    
     private func path(to channel: Channel, _ subPath: String? = nil) -> String {
         "channels/\(channel.type.rawValue)\(channel.id.isEmpty ? "" : "/\(channel.id)")\(subPath == nil ? "" : "/\(subPath ?? "")")"
     }

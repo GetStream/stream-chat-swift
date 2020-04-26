@@ -65,6 +65,16 @@
                </Test>
             </SkippedTests>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "79EE39362453204E0034EBF3"
+               BuildableName = "StreamChatClientIntegrationTests.xctest"
+               BlueprintName = "StreamChatClientIntegrationTests"
+               ReferencedContainer = "container:StreamChat.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

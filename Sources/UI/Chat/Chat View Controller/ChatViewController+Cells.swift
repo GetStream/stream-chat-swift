@@ -68,7 +68,7 @@ extension ChatViewController {
             }
         }
         
-        var isContinueMessage = false
+        cell.isContinueMessage = false
         let prevRow = indexPath.row - 1
         
         if prevRow >= 0,
@@ -77,18 +77,16 @@ extension ChatViewController {
             prevMessage.user == message.user,
             !prevMessage.text.messageContainsOnlyEmoji,
             (!presenter.channel.config.reactionsEnabled || !message.hasReactions) {
-            isContinueMessage = true
+            cell.isContinueMessage = true
         }
         
-        cell.updateBackground(isContinueMessage: isContinueMessage)
+        cell.updateBackground()
         
         if showAvatar {
             cell.update(name: message.user.name, date: message.created)
             
             if messageStyle.avatarViewStyle != nil {
-                cell.avatarView.update(with: message.user.avatarURL,
-                                       name: message.user.name,
-                                       baseColor: messageStyle.chatBackgroundColor)
+                updateMessageCellAvatarView(in: cell, message: message, messageStyle: messageStyle)
             }
         }
         
@@ -111,7 +109,8 @@ extension ChatViewController {
                 })
             }
             
-            cell.updateBackground(isContinueMessage: !message.isEphemeral)
+            cell.isContinueMessage = !message.isEphemeral
+            cell.updateBackground()
         }
         
         guard !message.isEphemeral else {
@@ -200,14 +199,6 @@ extension ChatViewController {
         showWebView(url: attachment.url, title: attachment.title)
     }
     
-    private func userActivityCell(at indexPath: IndexPath, user: User, _ text: String) -> UITableViewCell {
-        let cell = tableView.dequeueMessageCell(for: indexPath, style: style.incomingMessage)
-        cell.update(info: text)
-        cell.update(date: Date())
-        cell.avatarView.update(with: user.avatarURL, name: user.name, baseColor: style.incomingMessage.chatBackgroundColor)
-        return cell
-    }
-    
     func showReplies(parentMessage: Message) {
         guard let presenter = presenter else {
             return
@@ -219,6 +210,7 @@ extension ChatViewController {
         messagePresenter.reactionExtraDataCallback = presenter.reactionExtraDataCallback
         messagePresenter.fileAttachmentExtraDataCallback = presenter.fileAttachmentExtraDataCallback
         messagePresenter.imageAttachmentExtraDataCallback = presenter.imageAttachmentExtraDataCallback
+        messagePresenter.messagePreparationCallback = presenter.messagePreparationCallback
         
         let chatViewController = ChatViewController(nibName: nil, bundle: nil)
         chatViewController.style = style

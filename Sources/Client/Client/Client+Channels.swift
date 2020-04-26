@@ -21,8 +21,8 @@ public extension Client {
     @discardableResult
     func search(filter: Filter,
                 query: String,
-                pagination: Pagination = .channelsPageSize,
-                _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
+                pagination: Pagination = [.channelsPageSize],
+                _ completion: @escaping Client.Completion<[Message]>) -> Cancellable {
         search(query: SearchQuery(filter: filter, query: query, pagination: pagination), completion)
     }
     
@@ -31,7 +31,7 @@ public extension Client {
     ///   - query: a search query.
     ///   - completion: a completion block with `[Message]`.
     @discardableResult
-    func search(query: SearchQuery, _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
+    func search(query: SearchQuery, _ completion: @escaping Client.Completion<[Message]>) -> Cancellable {
         request(endpoint: .search(query)) { (result: Result<SearchResponse, ClientError>) in
             completion(result.map(to: \.messages).compactMap({ $0["message"] }))
         }
@@ -46,12 +46,12 @@ public extension Client {
     ///   - options: a query options (see `QueryOptions`).
     ///   - completion: a completion block with `Client.Completion<[ChannelResponse]`.
     @discardableResult
-    func queryChannels(filter: Filter = .none,
+    func queryChannels(filter: Filter,
                        sort: [Sorting] = [],
-                       pagination: Pagination = .channelsPageSize,
-                       messagesLimit: Pagination = .messagesPageSize,
+                       pagination: Pagination = [.channelsPageSize],
+                       messagesLimit: Pagination = [.messagesPageSize],
                        options: QueryOptions = [],
-                       _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
+                       _ completion: @escaping Client.Completion<[ChannelResponse]>) -> Cancellable {
         queryChannels(query: .init(filter: filter,
                                    sort: sort,
                                    pagination: pagination,
@@ -65,15 +65,15 @@ public extension Client {
     ///   - query: a channels query.
     ///   - completion: a completion block with `Client.Completion<[ChannelResponse]`.
     @discardableResult
-    func queryChannels(query: ChannelsQuery, _ completion: @escaping Client.Completion<[ChannelResponse]>) -> URLSessionTask {
-        channelsAtomic.flush()
+    func queryChannels(query: ChannelsQuery, _ completion: @escaping Client.Completion<[ChannelResponse]>) -> Cancellable {
+        watchingChannelsAtomic.flush()
         
         return request(endpoint: .channels(query)) { [unowned self] (result: Result<ChannelsResponse, ClientError>) in
             let result = result.map(to: \.channels)
             
             if (query.options.contains(.watch) || query.options.contains(.presence)),
                 let channels = result.value?.map({ $0.channel }) {
-                channels.forEach { self.channelsAtomic.add($0, key: $0.cid) }
+                channels.forEach { self.watchingChannelsAtomic.add($0, key: $0.cid) }
             }
             
             completion(result)

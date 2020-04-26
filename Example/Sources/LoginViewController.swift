@@ -135,12 +135,12 @@ final class LoginViewController: ViewController {
             return
         }
         
-        func showNext(_ connection: Connection) {
+        func showNext(_ result: Result<UserConnection, ClientError>) {
             loginButton.isEnabled = true
             
-            if case .disconnected(let error) = connection {
-                show(errorMessage: error?.localizedDescription ?? "Disconnected")
-            } else if case .connected = connection, showNextViewController {
+            if let error = result.error {
+                show(errorMessage: error.localizedDescription)
+            } else if showNextViewController {
                 showRootViewController(animated: animated)
             }
         }

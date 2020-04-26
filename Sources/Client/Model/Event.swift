@@ -8,86 +8,6 @@
 
 import Foundation
 
-/// A web socket event type.
-public enum EventType: String, Codable, CaseIterable {
-    /// Every 30 second to confirm that the client connection is still active.
-    case healthCheck = "health.check"
-    /// A pong event.
-    case pong
-    /// ⚠️ When the state of the connection changed.
-    case connectionChanged = "connection.changed"
-    /// ⚠️ When the connection to chat servers is back online.
-    case connectionRecovered = "connection.recovered"
-    
-    /// When a user presence changed, e.g. online, offline, away (when subscribed to the user presence).
-    case userPresenceChanged = "user.presence.changed"
-    /// When a user was updated (when subscribed to the user presence).
-    case userUpdated = "user.updated"
-    /// When a user was banned (when subscribed to the user presence).
-    case userBanned = "user.banned"
-    /// When a user starts watching a channel (when watching the channel).
-    case userStartWatching = "user.watching.start"
-    /// When a user stops watching a channel (when watching the channel).
-    case userStopWatching = "user.watching.stop"
-    
-    /// Sent when a user starts typing (when watching the channel).
-    case typingStart = "typing.start"
-    /// Sent when a user stops typing (when watching the channel).
-    case typingStop = "typing.stop"
-    
-    /// When a channel was updated (when watching the channel).
-    case channelUpdated = "channel.updated"
-    /// When a channel was deleted (when watching the channel).
-    case channelDeleted = "channel.deleted"
-    /// When a channel was hidden (when watching the channel).
-    case channelHidden = "channel.hidden"
-
-    /// When a new message was added on a channel (when watching the channel).
-    case messageNew = "message.new"
-    /// When a message was updated (when watching the channel).
-    case messageUpdated = "message.updated"
-    /// When a message was deleted (when watching the channel).
-    case messageDeleted = "message.deleted"
-    /// When a channel was marked as read (when watching the channel).
-    case messageRead = "message.read"
-    /// ⚠️ When a message reaction was added or deleted (when watching the channel).
-    case messageReaction = "message.reaction"
-    
-    /// When a member was added to a channel (when watching the channel).
-    case memberAdded = "member.added"
-    /// When a member was updated (when watching the channel).
-    case memberUpdated = "member.updated"
-    /// When a member was removed from a channel (when watching the channel).
-    case memberRemoved = "member.removed"
-    
-    /// When a message reaction was added.
-    case reactionNew = "reaction.new"
-    /// When a message reaction updated.
-    case reactionUpdated = "reaction.updated"
-    /// When a message reaction deleted.
-    case reactionDeleted = "reaction.deleted"
-    
-    /// When a message was added to a channel (when clients that are not currently watching the channel).
-    case notificationMessageNew = "notification.message_new"
-    /// When the total count of unread messages (across all channels the user is a member) changes
-    /// (when clients from the user affected by the change).
-    case notificationMarkRead = "notification.mark_read"
-    /// When the user mutes someone.
-    case notificationMutesUpdated = "notification.mutes_updated"
-    
-    /// When the user accepts an invite (when the user invited).
-    case notificationAddedToChannel = "notification.added_to_channel"
-    /// When a user was removed from a channel (when the user invited).
-    case notificationRemovedFromChannel = "notification.removed_from_channel"
-
-    /// When the user was invited to join a channel (when the user invited).
-    case notificationInvited = "notification.invited"
-    /// When the user accepts an invite (when the user invited).
-    case notificationInviteAccepted = "notification.invite_accepted"
-    /// When the user reject an invite (when the user invited).
-    case notificationInviteRejected = "notification.invite_rejected"
-}
-
 /// A web socket event.
 public enum Event: Decodable {
     private enum CodingKeys: String, CodingKey {
@@ -110,15 +30,12 @@ public enum Event: Decodable {
         case expiration
     }
     
-    struct ResponseTypeError: Swift.Error {
-        let type: EventType
-    }
-    
     /// A filter type for events.
     public typealias Filter = (Event, Channel?) -> Bool
     
+    case connectionChanged(ConnectionState)
     /// Every 30 second to confirm that the client connection is still active.
-    case healthCheck(_ connectionId: String, User)
+    case healthCheck(User, _ connectionId: String)
     /// A pong event.
     case pong
     
@@ -193,9 +110,10 @@ public enum Event: Decodable {
     /// An event type.
     public var type: EventType {
         switch self {
+        case .connectionChanged:
+            return .connectionChanged
         case .healthCheck:
             return .healthCheck
-            
         case .pong:
             return .pong
             
@@ -243,7 +161,10 @@ public enum Event: Decodable {
     /// A cid from the event.
     public var cid: ChannelId? {
         switch self {
-        case .healthCheck, .pong, .notificationMarkAllRead:
+        case .connectionChanged,
+             .healthCheck,
+             .pong,
+             .notificationMarkAllRead:
             return nil
             
         case .channelUpdated(_, let cid, _),
@@ -289,7 +210,7 @@ public enum Event: Decodable {
     /// A user from the event.
     public var user: User? {
         switch self {
-        case .healthCheck(_, let user),
+        case .healthCheck(let user, _),
              .userUpdated(let user, _, _),
              .userPresenceChanged(let user, _, _),
              .userStartWatching(let user, _, _, _),
@@ -336,18 +257,6 @@ public enum Event: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let type = try container.decode(EventType.self, forKey: .type)
         
-        if type == .healthCheck {
-            let connectionId = try container.decode(String.self, forKey: .connectionId)
-            
-            if let user = try container.decodeIfPresent(User.self, forKey: .me) {
-                self = .healthCheck(connectionId, user)
-            } else {
-                self = .pong
-            }
-            
-            return
-        }
-        
         func user() throws -> User {
             try container.decode(User.self, forKey: .user)
         }
@@ -384,11 +293,26 @@ public enum Event: Decodable {
             try container.decode(Date.self, forKey: .created)
         }
         
-        let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
-        let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
-        let unreadCount = UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount)
+        func unreadCount() throws -> UnreadCount {
+            let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
+            let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
+            return UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount)
+        }
         
         switch type {
+        case .connectionChanged:
+            self = .connectionChanged(.notConnected)
+        case .healthCheck:
+            let connectionId = try container.decode(String.self, forKey: .connectionId)
+            
+            if let user = try container.decodeIfPresent(User.self, forKey: .me) {
+                self = .healthCheck(user, connectionId)
+            } else {
+                self = .pong
+            }
+        case .pong:
+            self = .pong
+            
         // Channel
         case .channelUpdated:
             self = try .channelUpdated(ChannelUpdatedResponse(from: decoder), cid(), type)
@@ -462,17 +386,17 @@ public enum Event: Decodable {
             let messageRead = try MessageRead(user: .current, lastReadDate: created())
             
             if let channel = try optionalChannel() {
-                self = .notificationMarkRead(messageRead, channel, unreadCount, type)
+                self = try .notificationMarkRead(messageRead, channel, unreadCount(), type)
             } else {
                 self = .notificationMarkAllRead(messageRead, type)
             }
         case .notificationAddedToChannel:
-            self = try .notificationAddedToChannel(channel(), unreadCount, type)
+            self = try .notificationAddedToChannel(channel(), unreadCount(), type)
         case .notificationRemovedFromChannel:
             self = try .notificationRemovedFromChannel(channel(), type)
         case .notificationMessageNew:
             let watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount) ?? 0
-            self = try .notificationMessageNew(message(), channel(), unreadCount, watcherCount, type)
+            self = try .notificationMessageNew(message(), channel(), unreadCount(), watcherCount, type)
             
         // Invites
         case .notificationInvited:
@@ -481,9 +405,6 @@ public enum Event: Decodable {
             self = try .notificationInviteAccepted(channel(), type)
         case .notificationInviteRejected:
             self = try .notificationInviteRejected(channel(), type)
-            
-        default:
-            throw ResponseTypeError(type: type)
         }
     }
 }
@@ -557,4 +478,4 @@ extension Event: Equatable {
             return false
         }
     }
-} // swiftlint:disable:this file_length
+}

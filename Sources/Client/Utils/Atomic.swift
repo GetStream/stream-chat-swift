@@ -78,6 +78,10 @@ public final class Atomic<T> {
 
 public extension Atomic {
     
+    /// Updates a sub value at the given keypath.
+    /// - Parameters:
+    ///   - keyPath: a keypath.
+    ///   - value: a new value.
     func update<Element>(_ keyPath: WritableKeyPath<T, Element>, to value: Element) {
         update { instance in
             var instance = instance
@@ -86,6 +90,10 @@ public extension Atomic {
         }
     }
     
+    /// Adds an element to the end of the collection at the given keypath.
+    /// - Parameters:
+    ///   - keyPath: a keypath.
+    ///   - value: a new value of the collection.
     func append<Element>(to keyPath: WritableKeyPath<T, [Element]>, _ value: Element) {
         update { instance in
             var instance = instance
@@ -94,6 +102,7 @@ public extension Atomic {
         }
     }
     
+    /// Accesses a sub value by the given keypath.
     subscript<Element>(dynamicMember keyPath: WritableKeyPath<T, Element>) -> Element? {
         get {
             return get()?[keyPath: keyPath]
@@ -122,12 +131,20 @@ public extension Atomic where T: Collection {
 
 public extension Atomic where T == Int {
     
+    /// Adds two values and stores the result in the left-hand-side variable.
+    /// - Parameters:
+    ///   - lhs: the current atomic value.
+    ///   - rhs: the second value.
     static func += (lhs: Atomic<T>, rhs: T) {
         if let currentValue = lhs.get() {
             lhs.set(currentValue + rhs)
         }
     }
     
+    /// Subtracts the second value from the first and stores the difference in the left-hand-side variable.
+    /// - Parameters:
+    ///   - lhs: the current atomic value.
+    ///   - rhs: the second value.
     static func -= (lhs: Atomic<T>, rhs: T) {
         if let currentValue = lhs.get() {
             lhs.set(currentValue - rhs)

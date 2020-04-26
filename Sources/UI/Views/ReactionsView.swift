@@ -129,9 +129,7 @@ final class ReactionsView: UIView {
         
         if increment > 0 {
             if let avatarView = avatarsStackView.subviews[reactionIndex].subviews.first as? AvatarView {
-                avatarView.update(with: User.current.avatarURL,
-                                  name: User.current.name,
-                                  baseColor: backgroundColor?.withAlphaComponent(1))
+                avatarView.update(with: User.current.avatarURL, name: User.current.name)
             }
         } else {
             avatarsStackView.subviews[reactionIndex].subviews.first?.removeFromSuperview()
@@ -237,12 +235,11 @@ final class ReactionsView: UIView {
         let viewContainer = UIView(frame: .zero)
         viewContainer.snp.makeConstraints { $0.width.height.equalTo(CGFloat.reactionsPickerButtonWidth).priority(999) }
         
-        let avatarView = AvatarView(cornerRadius: .reactionsPickerAvatarRadius)
+        let avatarView = AvatarView(style: .init(radius: .reactionsPickerAvatarRadius))
         avatarView.makeCenterEqualToSuperview(superview: viewContainer)
         
         if let user = users?.first {
-            let baseColor = backgroundColor?.withAlphaComponent(1)
-            avatarView.update(with: user.avatarURL, name: user.name, baseColor: baseColor)
+            avatarView.update(with: user.avatarURL, name: user.name)
         } else {
             avatarView.isHidden = true
         }

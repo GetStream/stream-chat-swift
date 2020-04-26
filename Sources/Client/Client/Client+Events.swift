@@ -10,6 +10,8 @@ import Foundation
 
 /// Reference for the subscription initiated. Call `cancel()` to end subscription.
 public protocol Cancellable {
+    typealias OnCancel = (String) -> Void
+    
     /// Cancel the underlying subscription for this object.
     func cancel()
 }
@@ -19,10 +21,11 @@ public protocol Cancellable {
 public protocol AutoCancellable: Cancellable {}
 
 struct Subscription: Cancellable {
-    private let onCancel: (String) -> Void
+    static let empty = Subscription { _ in }
+    private let onCancel: Cancellable.OnCancel
     let uuid: String
     
-    init(onCancel: @escaping (String) -> Void) {
+    init(onCancel: @escaping Cancellable.OnCancel) {
         self.onCancel = onCancel
         uuid = UUID().uuidString
     }
@@ -32,25 +35,52 @@ struct Subscription: Cancellable {
     }
 }
 
+/// A subscription bag allows you collect multiple subscriptions and cancel them at once.
 public final class SubscriptionBag: Cancellable {
     private var subscriptions = [Cancellable]()
     
+    /// Init a subscription bag.
+    /// - Parameter onCancel: a cancel block for a subscription to put in the bag.
+    public init(onCancel: Cancellable.OnCancel? = nil) {
+        if let onCancel = onCancel {
+            subscriptions.append(Subscription(onCancel: onCancel))
+        }
+    }
+    
+    /// Add a subscription.
+    /// - Parameter subscription: a subscriiption.
     public func add(_ subscription: Cancellable) {
         subscriptions.append(subscription)
     }
     
+    /// Add multiple subscriptions in a chain way.
+    /// - Parameter subscription: a subscription
+    /// - Returns: this subscription bag.
+    @discardableResult
+    public func adding(_ subscription: Cancellable) -> Self {
+        add(subscription)
+        return self
+    }
+    
+    /// Cancel and clear all subscriptions in the bag.
     public func cancel() {
         subscriptions.forEach { $0.cancel() }
+        subscriptions = []
     }
 }
 
 extension Client {
+    
+    // MARK: Events
+    
     /// Observe events for the given event types.
     /// - Parameters:
     ///   - eventTypes: A set of event types to be observed. Defaults to all events.
     ///   - callback: Callback closure to be called for each new event.
-    /// - Returns: `Subscription` object to be able to cancel observing. Call `subscription.cancel()` when you want to stop observing.
-    /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks, so make sure you handle subscriptions correctly.
+    /// - Returns: `Subscription` object to be able to cancel observing.
+    ///            Call `subscription.cancel()` when you want to stop observing.
+    /// - Warning: Subscriptions do not cancel on `deinit` and that can cause crashes / memory leaks,
+    ///            so make sure you handle subscriptions correctly.
     public func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
                           _ callback: @escaping OnEvent) -> Cancellable {
         subscribe(forEvents: eventTypes, cid: nil, callback)
@@ -69,6 +99,8 @@ extension Client {
         
         return webSocket.subscribe(forEvents: eventTypes, callback: handler)
     }
+    
+    // MARK: - User Updates
     
     public func subscribeToUserUpdates(_ callback: @escaping OnUpdate<User>) -> Cancellable {
         let subscription = Subscription { [unowned self] uuid in
@@ -89,6 +121,8 @@ extension Client {
         return subscription
     }
     
+    // MARK: - Unread Count
+    
     public func subscribeToUnreadCount(_ callback: @escaping OnUpdate<UnreadCount>) -> Cancellable {
         let subscription = Subscription { [unowned self] uuid in
             self.eventsHandlingQueue.async {
@@ -106,55 +140,49 @@ extension Client {
     }
     
     func subscribeToUnreadCount(for channel: Channel, _ callback: @escaping Completion<ChannelUnreadCount>) -> Cancellable {
-        let subscriptions = SubscriptionBag()
-        
-        let query = ChannelQuery(channel: channel, messagesPagination: .limit(100), options: [.state, .watch])
-        
-        let urlSessionTask = queryChannel(query: query) { [unowned self] result in
-            if let error = result.error {
-                callback(.failure(error))
-            }
-            
-            if let response = result.value {
-                let subscription = self.subscribe(cid: response.channel.cid) { _ in
-                    callback(.success(channel.unreadCount))
-                }
-                
-                subscriptions.add(subscription)
-            }
+        let subscription = subscribe(forEvents: [.messageNew, .messageRead], cid: channel.cid) { _ in
+            callback(.success(channel.unreadCount))
         }
         
-        subscriptions.add(Subscription { _ in urlSessionTask.cancel() })
+        // Check if the channel is watching by the client.
+        guard isWatching(channel: channel) else {
+            logger?.log("⚠️ You are trying to subscribe for a channel unread count: (\(channel.cid)), "
+                + "but you didn't start watching it. Please, make a query first with "
+                + "messages pagination: `[.limit(100)]` and query options: `[.watch, .state]`: "
+                + "`channel.query(messagesPagination: [.limit(100)], options: [.watch, .state])`")
+            
+            return subscription
+        }
         
-        return subscriptions
+        // Return the current unread count.
+        callback(.success(channel.unreadCount))
+        
+        if channel.didLoad, !channel.members.contains(Member.current) {
+            logger?.log("⚠️ The current user is not a member of the channel: (\(channel.cid)) "
+                + "to get updates for the unread count.")
+        }
+        
+        return subscription
     }
     
+    // MARK: - Watcher Count
+
+    /// Subscribes to the watcher count for a channel that the user is watching
     func subscribeToWatcherCount(for channel: Channel, _ callback: @escaping Completion<Int>) -> Cancellable {
-        let subscriptions = SubscriptionBag()
+        let subscription = channel.subscribe(forEvents: [.userStartWatching, .userStopWatching, .messageNew], { _ in
+            callback(.success(channel.watcherCount))
+        })
         
-        let query = ChannelQuery(channel: channel, messagesPagination: .limit(1), options: [.state, .watch])
-        
-        let urlSessionTask = queryChannel(query: query) { [unowned self] result in
-            if let error = result.error {
-                callback(.failure(error))
-            }
-            
-            if let response = result.value {
-                let eventTypes: Set<EventType> = [.userStartWatching,
-                                                  .userStopWatching,
-                                                  .messageNew,
-                                                  .notificationMessageNew]
-                
-                let subscription = self.subscribe(forEvents: eventTypes, cid: response.channel.cid) { _ in
-                    callback(.success(channel.watcherCount))
-                }
-                
-                subscriptions.add(subscription)
-            }
+        // Check if the channel is watching by the client.
+        if isWatching(channel: channel) {
+            callback(.success(channel.watcherCount))
+        } else {
+            logger?.log("⚠️ You are trying to subscribe to watcher count for the channel: (\(channel.cid)), "
+                + "but you didn't start watching it. Please, make a query with "
+                + "messages pagination: `[.limit(1)]` and query options: `[.watch, .state]`:"
+                + "`channel.query(messagesPagination: [.limit(1)], options: [.watch, .state])`")
         }
-        
-        subscriptions.add(Subscription { _ in urlSessionTask.cancel() })
-        
-        return subscriptions
+
+        return subscription
     }
 }

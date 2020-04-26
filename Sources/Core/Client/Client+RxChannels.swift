@@ -19,7 +19,7 @@ public extension Reactive where Base == Client {
     ///   - filter: a filter for channels, e.g. `"members".in(["john"])`
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
-    func search(filter: Filter = .none, query: String, pagination: Pagination = .channelsPageSize) -> Observable<[Message]> {
+    func search(filter: Filter, query: String, pagination: Pagination = [.channelsPageSize]) -> Observable<[Message]> {
         search(query: .init(filter: filter, query: query, pagination: pagination))
     }
     
@@ -39,10 +39,10 @@ public extension Reactive where Base == Client {
     ///   - pagination: a channels pagination.
     ///   - messagesLimit: a messages pagination for the each channel.
     ///   - options: a query options (see `QueryOptions`).
-    func queryChannels(filter: Filter = .none,
+    func queryChannels(filter: Filter,
                        sort: [Sorting] = [],
-                       pagination: Pagination = .channelsPageSize,
-                       messagesLimit: Pagination = .messagesPageSize,
+                       pagination: Pagination = [.channelsPageSize],
+                       messagesLimit: Pagination = [.messagesPageSize],
                        options: QueryOptions = []) -> Observable<[ChannelResponse]> {
         connected(request({ [unowned base] completion in
             base.queryChannels(filter: filter,

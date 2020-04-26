@@ -18,7 +18,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     /// A chat style.
     public lazy var style = defaultStyle
     /// A default chat style. This is useful for subclasses.
-    open var defaultStyle: ChatViewStyle { .init() }
+    open var defaultStyle: ChatViewStyle { .default }
     /// Message actions (see `MessageAction`).
     public lazy var messageActions = defaultMessageActions
     /// A default message actions. This is useful for subclasses.
@@ -62,7 +62,9 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             return tabBar.frame.height
         }
         
-        return view.safeAreaInsets.bottom > 0 ? view.safeAreaInsets.bottom : (parent?.view.safeAreaInsets.bottom ?? 0)
+        let initialSafeAreaInsetBottom = view.safeAreaInsets.bottom - additionalSafeAreaInsets.bottom
+        
+        return initialSafeAreaInsetBottom > 0 ? initialSafeAreaInsetBottom : (parent?.view.safeAreaInsets.bottom ?? 0)
     }
     
     /// Attachments file types for thw composer view.
@@ -160,7 +162,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         
         keyboard.notification.bind(to: rx.keyboard).disposed(by: self.disposeBag)
         
-        Client.shared.rx.connection
+        Client.shared.rx.connectionState
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] in self?.update(for: $0) })
             .disposed(by: disposeBag)
@@ -226,6 +228,23 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         extensionMessageCell(at: indexPath, message: message, readUsers: readUsers)
     }
     
+    /// Updates message cell avatar view.
+    /// - Parameters:
+    ///   - cell: a message cell.
+    ///   - message: a message.
+    ///   - messageStyle: a message style.
+    open func updateMessageCellAvatarView(in cell: MessageTableViewCell, message: Message, messageStyle: MessageViewStyle) {
+        cell.avatarView.update(with: message.user.avatarURL, name: message.user.name)
+    }
+    
+    /// Updates typing user avatar in the footer view.
+    /// - Parameters:
+    ///   - footerView: a footer view.
+    ///   - user: a user.
+    open func updateFooterTypingUserAvatarView(footerView: ChatFooterView, user: User) {
+        footerView.avatarView.update(with: user.avatarURL, name: user.name)
+    }
+    
     /// A custom loading cell to insert in a particular location of the table view.
     ///
     /// - Parameters:
@@ -247,14 +266,14 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         nil
     }
     
-    /// Updates for `FooterView` and `ComposerView` with the client connection.
-    open func update(for connection: Connection) {
+    /// Updates for `FooterView` and `ComposerView` with the client connectionState.
+    open func update(for connectionState: ConnectionState) {
         // Update footer.
         updateFooterView()
         
         // Update composer view.
         if composerView.superview != nil {
-            if connection == .connected {
+            if connectionState.isConnected {
                 if composerView.styleState == .disabled {
                     composerView.styleState = .normal
                 }
@@ -312,10 +331,10 @@ extension ChatViewController {
         }
         
         title = presenter.channel.name
-        let channelAvatar = AvatarView(cornerRadius: .messageAvatarRadius)
+        let channelAvatar = AvatarView(style: .init(radius: .messageAvatarRadius))
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatar)
         let imageURL = presenter.parentMessage == nil ? presenter.channel.imageURL : presenter.parentMessage?.user.avatarURL
-        channelAvatar.update(with: imageURL, name: title, baseColor: style.incomingMessage.chatBackgroundColor)
+        channelAvatar.update(with: imageURL, name: title)
     }
     
     private func updateTitleReplyCount() {

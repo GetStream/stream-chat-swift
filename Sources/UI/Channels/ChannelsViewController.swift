@@ -20,16 +20,25 @@ open class ChannelsViewController: ViewController {
     /// A chat style.
     public lazy var style = defaultStyle
     /// A default chat style. This is useful for subclasses.
-    open var defaultStyle: ChatViewStyle { .init() }
+    open var defaultStyle: ChatViewStyle { .default }
+    
+    /// It will trigger `channel.stopWatching()` for each channel, if needed when the view controller was deallocated.
+    /// It's no needed if you will disconnect when the view controller will be deallocated.
+    public lazy var stopChannelsWatchingIfNeeded = defaultStopChannelsWatchingIfNeeded
+    
+    /// It will trigger `channel.stopWatching()`, for each channel  if needed when the view controller was deallocated.
+    /// It's no needed if you will disconnect when the view controller will be deallocated.
+    open var defaultStopChannelsWatchingIfNeeded: Bool { false }
+    
     /// A list of table view items, e.g. channel presenters.
     public private(set) var items = [PresenterItem]()
     
     /// A channels presenter.
-    open var presenter = ChannelsPresenter() {
+    open var presenter = ChannelsPresenter(filter: .currentUserInMembers) {
         didSet {
             reset()
             
-            if isVisible {
+            if viewIfLoaded != nil {
                 setupChannelsPresenter()
             }
         }
@@ -104,7 +113,11 @@ open class ChannelsViewController: ViewController {
         }
     }
     
-    private func setupChannelsPresenter() {
+    /// Setup the channels presenter for changes.
+    /// It will be called when the view controller will be visible or when the presenter was changed.
+    open func setupChannelsPresenter() {
+        presenter.stopChannelsWatchingIfNeeded = stopChannelsWatchingIfNeeded
+        
         presenter.rx.changes
             .drive(onNext: { [weak self] in self?.updateTableView(with: $0) })
             .disposed(by: disposeBag)
@@ -162,10 +175,7 @@ open class ChannelsViewController: ViewController {
     open func updateChannelCell(_ cell: ChannelTableViewCell, channelPresenter: ChannelPresenter) {
         cell.setupIfNeeded(style: style.channel)
         cell.nameLabel.text = channelPresenter.channel.name
-        
-        cell.avatarView.update(with: channelPresenter.channel.imageURL,
-                               name: channelPresenter.channel.name,
-                               baseColor: style.channel.backgroundColor)
+        updateChannelCellAvatarView(in: cell, channel: channelPresenter.channel)
         
         if let lastMessage = channelPresenter.lastMessage {
             var text = lastMessage.isDeleted ? "Message was deleted" : lastMessage.textOrArgs
@@ -182,6 +192,14 @@ open class ChannelsViewController: ViewController {
         } else {
             cell.update(message: "No messages", isMeta: true, isUnread: false)
         }
+    }
+    
+    /// Updates channel avatar view with the given channel.
+    /// - Parameters:
+    ///   - cell: a channel cell.
+    ///   - channel: a channel.
+    open func updateChannelCellAvatarView(in cell: ChannelTableViewCell, channel: Channel) {
+        cell.avatarView.update(with: channel.imageURL, name: channel.name)
     }
     
     // MARK: - Loading Cell

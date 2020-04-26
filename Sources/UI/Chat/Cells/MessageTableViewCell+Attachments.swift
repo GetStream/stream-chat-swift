@@ -123,10 +123,10 @@ extension MessageTableViewCell {
         }
         
         if style.alignment == .left {
-            return offset == 0 ? messageContainerView.image : style.backgroundImages[.leftSide]
+            return offset == 0 ? messageContainerView.image : style.backgroundImages[.leftSide]?.image(for: traitCollection)
         }
         
-        return offset == 0 ? messageContainerView.image : style.backgroundImages[.rightSide]
+        return offset == 0 ? messageContainerView.image : style.backgroundImages[.rightSide]?.image(for: traitCollection)
     }
     
     private func maskImageForAttachment(at offset: Int) -> UIImage? {
@@ -135,17 +135,18 @@ extension MessageTableViewCell {
         }
         
         if style.alignment == .left {
-            if offset == 0, messageContainerViewImage == style.backgroundImages[.leftBottomCorner] {
-                return style.transparentBackgroundImages[.leftBottomCorner]
+            if offset == 0,
+                messageContainerViewImage == style.backgroundImages[.pointedLeftBottom]?.image(for: traitCollection) {
+                return style.transparentBackgroundImages[.pointedLeftBottom]?.image(for: traitCollection)
             }
             
-            return style.transparentBackgroundImages[.leftSide]
+            return style.transparentBackgroundImages[.leftSide]?.image(for: traitCollection)
         }
         
-        if offset == 0, messageContainerViewImage == style.backgroundImages[.rightBottomCorner] {
-            return style.transparentBackgroundImages[.rightBottomCorner]
+        if offset == 0, messageContainerViewImage == style.backgroundImages[.pointedRightBottom]?.image(for: traitCollection) {
+            return style.transparentBackgroundImages[.pointedRightBottom]?.image(for: traitCollection)
         }
         
-        return style.transparentBackgroundImages[.rightSide]
+        return style.transparentBackgroundImages[.rightSide]?.image(for: traitCollection)
     }
 }

@@ -1,0 +1,17 @@
+# For more information about this configuration visit
+# https://docs.fastlane.tools/actions/scan/#scanfile
+
+# In general, you can use the options available
+# fastlane scan --help
+
+devices(["iPhone 11"])
+
+# Needed for codecov
+code_coverage(true)
+
+# Our integration tests need to run in parallel
+disable_concurrent_testing(true)
+
+configuration("Debug")
+
+result_bundle(true)

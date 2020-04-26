@@ -9,15 +9,15 @@
 import UIKit
 import SnapKit
 
-final class ChatFooterView: UIView {
+public final class ChatFooterView: UIView {
     typealias TimerCompletion = () -> Void
     
     private var timerWorker: DispatchWorkItem?
     private var timerCompletion: TimerCompletion?
     private var timeout: TimeInterval = 0
     
-    private(set) lazy var avatarView: AvatarView = {
-        let avatarView = AvatarView(cornerRadius: .chatFooterAvatarRadius)
+    public private(set) lazy var avatarView: AvatarView = {
+        let avatarView = AvatarView(style: .init(radius: .chatFooterAvatarRadius))
         addSubview(avatarView)
         
         avatarView.snp.makeConstraints { make in
@@ -29,7 +29,7 @@ final class ChatFooterView: UIView {
         return avatarView
     }()
     
-    private(set) lazy var activityIndicatorView: UIActivityIndicatorView = {
+    public private(set) lazy var activityIndicatorView: UIActivityIndicatorView = {
         let style: UIActivityIndicatorView.Style = (backgroundColor?.isDark ?? false) ? .white : .gray
         let activityIndicator = UIActivityIndicatorView(style: style)
         activityIndicator.stopAnimating()
@@ -38,7 +38,7 @@ final class ChatFooterView: UIView {
         return activityIndicator
     }()
     
-    private(set) lazy var textLabel: UILabel = {
+    public private(set) lazy var textLabel: UILabel = {
         let label = UILabel(frame: .zero)
         label.font = UIFont.chatMedium
         label.textColor = .chatGray
@@ -59,7 +59,7 @@ final class ChatFooterView: UIView {
         timerWorker?.cancel()
     }
     
-    func hide() {
+    public func hide() {
         isHidden = true
         avatarView.reset()
         avatarView.backgroundColor = backgroundColor
@@ -68,12 +68,12 @@ final class ChatFooterView: UIView {
         timerWorker = nil
     }
     
-    func hide(after timeout: TimeInterval) {
+    public func hide(after timeout: TimeInterval) {
         self.timeout = timeout
         restartHidingTimer()
     }
     
-    func restartHidingTimer() {
+    private func restartHidingTimer() {
         timerWorker?.cancel()
         
         if timeout > 0 {

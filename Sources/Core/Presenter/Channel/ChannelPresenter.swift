@@ -23,6 +23,8 @@ public final class ChannelPresenter: Presenter {
     public typealias FileAttachmentExtraDataCallback = (URL, Channel) -> Codable?
     /// A callback type for the adding an extra data for an image attachment.
     public typealias ImageAttachmentExtraDataCallback = (URL?, UIImage?, _ isVideo: Bool, Channel) -> Codable?
+    /// A callback type for preparing the message before sending.
+    public typealias MessagePreparationCallback = (Message) -> Message?
     
     /// A callback for the adding an extra data for a new message.
     public var messageExtraDataCallback: MessageExtraDataCallback?
@@ -32,12 +34,14 @@ public final class ChannelPresenter: Presenter {
     public var fileAttachmentExtraDataCallback: FileAttachmentExtraDataCallback?
     /// A callback for the adding an extra data for a file attachment.
     public var imageAttachmentExtraDataCallback: ImageAttachmentExtraDataCallback?
+    /// A callback for preparing the message before sending.
+    public var messagePreparationCallback: MessagePreparationCallback?
     
     let channelType: ChannelType
     let channelId: String
     let channelPublishSubject = PublishSubject<Channel>()
     
-    private(set) lazy var channelAtomic = Atomic<Channel> { [weak self] channel, oldChannel in
+    private(set) lazy var channelAtomic = Atomic<Channel>(callbackQueue: .main) { [weak self] channel, oldChannel in
         if let channel = channel {
             if let oldChannel = oldChannel {
                 channel.banEnabling = oldChannel.banEnabling
@@ -87,6 +91,10 @@ public final class ChannelPresenter: Presenter {
     /// Uploader for images and files.
     public private(set) lazy var uploader = Uploader()
     
+    /// It will trigger `channel.stopWatching()` if needed when the presenter was deallocated.
+    /// It's no needed if you will disconnect when the presenter will be deallocated.
+    public var stopWatchingIfNeeded = false
+    
     /// Init a presenter with a given channel.
     ///
     /// - Parameters:
@@ -98,7 +106,7 @@ public final class ChannelPresenter: Presenter {
         channelId = channel.id
         self.parentMessage = parentMessage
         self.queryOptions = queryOptions
-        super.init(pageSize: .messagesPageSize)
+        super.init(pageSize: [.messagesPageSize])
         channelAtomic.set(channel)
     }
     
@@ -113,13 +121,19 @@ public final class ChannelPresenter: Presenter {
         parentMessage = nil
         self.queryOptions = queryOptions
         self.showStatuses = showStatuses
-        super.init(pageSize: .messagesPageSize)
+        super.init(pageSize: [.messagesPageSize])
         parse(response: response)
     }
     
     deinit {
-        if channel.didLoad, Client.shared.isConnected {
-            channel.stopWatching()
+        if stopWatchingIfNeeded, channel.didLoad {
+            let channel = self.channel
+            
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1 + .milliseconds(Int.random(in: 0...3000))) {
+                if Client.shared.isConnected {
+                    channel.stopWatching()
+                }
+            }
         }
     }
 }
@@ -181,13 +195,15 @@ extension ChannelPresenter {
             }
         }
         
-        return Message(id: messageId,
-                       parentId: parentId,
-                       text: text,
-                       attachments: attachments,
-                       mentionedUsers: mentionedUsers,
-                       extraData: extraData,
-                       showReplyInChannel: false)
+        let message = Message(id: messageId,
+                              parentId: parentId,
+                              text: text,
+                              attachments: attachments,
+                              mentionedUsers: mentionedUsers,
+                              extraData: extraData,
+                              showReplyInChannel: false)
+        
+        return messagePreparationCallback?(message) ?? message
     }
 }
 

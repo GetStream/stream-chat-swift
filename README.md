@@ -1,9 +1,15 @@
 # Official iOS SDK for [Stream Chat](https://getstream.io/chat/)
 [![Stream Chat](https://i.imgur.com/B7przBT.png)](https://getstream.io/tutorials/ios-chat/)
 
-[![Language: Swift 5.0](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://swift.org)
+[![Language: Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://swift.org)
 [![Build Status](https://github.com/GetStream/stream-chat-swift/workflows/CI/badge.svg)](https://github.com/GetStream/stream-chat-swift/actions)
 [![Code Coverage](https://codecov.io/gh/GetStream/stream-chat-swift/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-chat-swift)
+
+![StreamChatClient](https://img.shields.io/badge/Framework-StreamChatClient-blue)
+![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatClient.svg)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
+[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
+[![Client Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/client/badge.svg)](https://getstream.github.io/stream-chat-swift/client)
 
 ![StreamChatCore](https://img.shields.io/badge/Framework-StreamChatCore-blue)
 ![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatCore.svg)
@@ -53,37 +59,43 @@ You'll typically want to start out using the UI components, and implement your o
 
 ## Installation
 
-Stream Chat SDK consists of two frameworks: `StreamChat` and `StreamChatCore`
+Stream Chat SDK consists of three frameworks: `StreamChat`, `StreamChatCore` and `StreamChatClient`
 
-- `StreamChat` — the full SDK library with all UI components. Styling and deep customizations are all supported out of the box.
-- `StreamChatCore` — low-level library to use Stream Chat APIs. It includes models, presenters, notification manager and HTTP interface.
+- `StreamChatClient` - the low level library to connect & communicate with StreamChat backend.
+- `StreamChatCore` — building on top of Client, it includes models, presenters, and notification manager. Additionally it has RxSwift support for reactive programming.
+- `StreamChat` — building on top of Core, it's the full SDK library with all UI components. Styling and deep customizations are all supported out of the box.
+
 
 ### CocoaPods
 
 To integrate StreamChat into your Xcode project using CocoaPods, add this entry in your `Podfile`:
 
-```
+```ruby
 pod 'StreamChat'
 ```
 
 Then run `pod install`.
 
-If you want to use only `StreamChatCore`, you can add this entry in your `Podfile`:
+If you want to use only `StreamChatCore` or `StreamChatClient', you can add this entry in your `Podfile`:
 
-```
+```ruby
 pod 'StreamChatCore'
+# or
+pod 'StreamChatClient'
 ```
 
 In any file you'd like to use Stream Chat in, don't forget to import the frameworks:
 
-```
+```swift
 import StreamChat
 ```
 
-**or** `StreamChatCore` if you are working with the low-level client:
+**or** if you are working with the low-level client or Core:
 
-```
+```swift
 import StreamChatCore
+// or
+import StreamChatClient
 ```
 
 ### Carthage
@@ -94,23 +106,50 @@ To integrate Stream Chat into your Xcode project using Carthage, specify it in y
 github "GetStream/stream-chat-swift"
 ```
 
-Then run: `carthage update --platform iOS --new-resolver`. This will build frameworks: `StreamChatCore.framework` and `StreamChat.framework` into `<Path to your Project>/Carthage/Build/iOS/` from where you can add them to your project and link them with your app target. Follow with these steps:
+Then run: `carthage update --platform iOS --new-resolver`. This will build frameworks: `StreamChatClient.framework`, `StreamChatCore.framework` and `StreamChat.framework` into `<Path to your Project>/Carthage/Build/iOS/` from where you can add them to your project and link them with your app target. Follow with these steps:
 
 - Open your Xcode project
 - Select the project in the Navigator
 - Select your app target
 - Open `General` panel
-- Open `<Path to your Project>/Carthage/Build/iOS/` in Finder and find `StreamChatCore.framework`, drag and drop it into `Frameworks, Libraries and Embedded Content` area in Xcode. Do the same for `StreamChat.framework` if you need UI components.
+- Open `<Path to your Project>/Carthage/Build/iOS/` in Finder and find `StreamChatClient.framework`, drag and drop it into `Frameworks, Libraries and Embedded Content` area in Xcode. Do the same for `StreamChatCore.framework` and `StreamChat.framework` if you need UI components.
 - After adding libraries, select "Do Not Embed" option in "Embed" section. (Right next to the library name after adding it)
 - Open `Build Phases` panel in Xcode
 - Click the `+` button and select `New Run Script Phase`
 - Set the content to: `/usr/local/bin/carthage copy-frameworks`  
 - Add to `Input Files`:
-  - `$(SRCROOT)/Carthage/Build/iOS/StreamChatCore.framework`
-  - `$(SRCROOT)/Carthage/Build/iOS/StreamChat.framework` (if you need UI components)
+  - `$(SRCROOT)/Carthage/Build/iOS/StreamChatClient.framework`
+  - `$(SRCROOT)/Carthage/Build/iOS/Starscream.framework`
+  
+  - if you need Core library:
+    - `$(SRCROOT)/Carthage/Build/iOS/StreamChatCore.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/RxRelay.framework`
+  
+  - if you need UI components:
+    - `$(SRCROOT)/Carthage/Build/iOS/StreamChat.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/Nuke.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/SwiftyGif.framework`
+    - `$(SRCROOT)/Carthage/Build/iOS/RxGesture.framework`
+  
 - Add to `Output Files`:
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChatCore.framework`
-  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChat.framework` (if you need UI components)
+  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChatClient.framework`
+  - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Starscream.framework`
+  
+  - if you need Core library:
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChatCore.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework`
+  
+  - if you need UI components:
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/StreamChat.framework` ()
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Nuke.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SnapKit.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/SwiftyGif.framework`
+    - `$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxGesture.framework`
   
 Now you can build your app and use `StreamChat`.
 

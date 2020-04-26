@@ -44,35 +44,55 @@ extension Client {
         var request = URLRequest(url: url)
         request.allHTTPHeaderFields = authHeaders(token: token)
         
-        let webSocket = WebSocket(request,
-                                  callbackQueue: callbackQueue,
-                                  stayConnectedInBackground: stayConnectedInBackground,
-                                  logger: logger)
-        
-        webSocket.onConnect = setupWebSocketOnConnect
-        subscriptionBag.add(webSocket.subscribe(callback: webSocketOnEvent))
-        
-        return webSocket
+        return WebSocket(request, stayConnectedInBackground: stayConnectedInBackground, logger: logger) { [unowned self] event in
+            guard case .connectionChanged(let connectionState) = event else {
+                if case .notificationMutesUpdated(let user, _, _) = event {
+                    self.userAtomic.set(user)
+                    return
+                }
+                
+                self.updateUserUnreadCount(event: event) // User unread counts should be updated before channels unread counts.
+                self.updateChannelsForWatcherAndUnreadCount(event: event)
+                return
+            }
+            
+            if case .connected(let userConnection) = connectionState {
+                self.userAtomic.set(userConnection.user)
+                self.recoverConnection()
+                
+                if self.isExpiredTokenInProgress {
+                    self.performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
+                }
+            } else if case .reconnecting = connectionState {
+                self.needsToRecoverConnection = true
+            }
+        }
     }
     
-    func setupWebSocketOnConnect(_ connection: Connection) {
-        guard isExpiredTokenInProgress, connection.isConnected else {
-            onConnect(connection)
+    private func recoverConnection() {
+        guard needsToRecoverConnection else {
             return
         }
         
-        performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
+        needsToRecoverConnection = false
+        restoreWatchingChannels()
     }
     
-    func webSocketOnEvent(_ event: Event) {
-        // Update the current user on login.
-        if case let .healthCheck(_, user) = event {
-            userAtomic.set(user)
+    private func restoreWatchingChannels() {
+        watchingChannelsAtomic.flush()
+        
+        guard let keys = watchingChannelsAtomic.get()?.keys, !keys.isEmpty else {
             return
         }
         
-        updateUserUnreadCount(event: event) // User unread counts should be updated before channels unread counts.
-        updateChannelsUnreadCount(event: event)
+        let cids = Array(keys).chunked(into: 50)
+        
+        cids.forEach { chunk in
+            queryChannels(filter: .in("cid", chunk),
+                          pagination: [.limit(1)],
+                          messagesLimit: [.limit(1)],
+                          options: .watch) { _ in }
+        }
     }
 }
 

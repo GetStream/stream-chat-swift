@@ -14,10 +14,6 @@ public final class Client {
     public typealias Completion<T: Decodable> = (Result<T, ClientError>) -> Void
     /// A client progress block type.
     public typealias Progress = (Float) -> Void
-    /// A token block type.
-    public typealias OnTokenChange = (Token?) -> Void
-    /// A WebSocket connection callback type.
-    public typealias OnConnect = (Connection) -> Void
     /// A WebSocket events callback type.
     public typealias OnEvent = (Event) -> Void
     
@@ -48,29 +44,19 @@ public final class Client {
     
     // MARK: Token
     
-    public internal(set) var token: Token? {
-        didSet { onTokenChange?(token) }
-    }
-    
-    /// A token callback. This should only be used when you only use the Low-Level Client.
-    public var onTokenChange: OnTokenChange?
+    var token: Token?
     var tokenProvider: TokenProvider?
     /// Checks if the expired Token is updating.
-    public internal(set) var isExpiredTokenInProgress = false
+    public internal(set) var isExpiredTokenInProgress = false // FIXME: Should be internal.
     var waitingRequests = [WaitingRequest]()
     
     // MARK: WebSocket
     
     /// A web socket client.
     lazy var webSocket = WebSocket()
-    /// The current WebSocket connection.
-    public var connection: Connection { webSocket.connection }
-    /// A WebSocket connection callback. This should only be used when you only use the Low-Level Client.
-    public var onConnect: Client.OnConnect = { _ in }
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
-    /// Saved onConnect for a completion block in `connect()`.
-    var savedOnConnect: Client.OnConnect?
+    var needsToRecoverConnection = false
     
     lazy var urlSession = URLSession(configuration: .default)
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
@@ -86,11 +72,9 @@ public final class Client {
     
     var onUserUpdateObservers = [String: OnUpdate<User>]()
     
-    private(set) lazy var userAtomic = Atomic<User> { [unowned self] newUser, _ in
+    private(set) lazy var userAtomic = Atomic<User>(callbackQueue: eventsHandlingQueue) { [unowned self] newUser, _ in
         if let user = newUser {
-            self.eventsHandlingQueue.async {
-                self.onUserUpdateObservers.values.forEach({ $0(user) })
-            }
+            self.onUserUpdateObservers.values.forEach({ $0(user) })
         }
     }
     
@@ -100,16 +84,14 @@ public final class Client {
     public var unreadCount: UnreadCount { unreadCountAtomic.get(default: .noUnread) }
     var onUnreadCountUpdateObservers = [String: OnUpdate<UnreadCount>]()
     
-    private(set) lazy var unreadCountAtomic = Atomic<UnreadCount>(.noUnread) { [unowned self] newValue, oldValue in
-        if let unreadCount = newValue, unreadCount != oldValue {
-            self.eventsHandlingQueue.async {
-                self.onUnreadCountUpdateObservers.values.forEach({ $0(unreadCount) })
-            }
+    private(set) lazy var unreadCountAtomic = Atomic<UnreadCount>(.noUnread, callbackQueue: eventsHandlingQueue) { [unowned self] in
+        if let unreadCount = $0, unreadCount != $1 {
+            self.onUnreadCountUpdateObservers.values.forEach({ $0(unreadCount) })
         }
     }
     
     /// Weak references to channels by cid.
-    let channelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
+    let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
     
     /// Init a network client.
     /// - Parameters:
@@ -156,12 +138,17 @@ public final class Client {
     private func checkAPIKey() {
         if apiKey.isEmpty {
             ClientLogger.logger("❌❌❌", "", "The Stream Chat Client didn't setup properly. "
-                + "You are trying to use it before setup the API Key.")
-            Thread.callStackSymbols.forEach { ClientLogger.logger("", "", $0) }
+                + "You are trying to use it before setting up the API Key. "
+                + "Please use `Client.config = .init(apiKey:) to setup your api key. "
+                + "You can debug this issue by putting a breakpoint in \(#file)\(#line)")
         }
     }
     
     /// Handle a connection with an application state.
+    /// - Note:
+    ///   - Skip if the Internet is not available.
+    ///   - Skip if it's already connected.
+    ///   - Skip if it's reconnecting.
     ///
     /// Application State:
     /// - `.active`
@@ -171,60 +158,19 @@ public final class Client {
     ///   - `disconnectInBackground()`
     /// - Parameter appState: an application state.
     func connect(appState: UIApplication.State = UIApplication.shared.applicationState,
-                 internetConnectionState: InternetConnection.State = InternetConnection.shared.state,
-                 _ completion: Client.OnConnect?) {
+                 internetConnectionState: InternetConnection.State = InternetConnection.shared.state) {
         guard internetConnectionState == .available else {
             if internetConnectionState == .unavailable {
                 reset()
-                completion?(.disconnected(nil))
             }
             
             return
         }
         
         if appState == .active {
-            connect(completion)
+            webSocket.connect()
         } else if appState == .background, webSocket.isConnected {
             webSocket.disconnectInBackground()
-        }
-    }
-    
-    /// Connect to websocket.
-    /// - Note:
-    ///   - Skip if the Internet is not available.
-    ///   - Skip if it's already connected.
-    ///   - Skip if it's reconnecting.
-    /// - Parameter completion: a completion block will be call once when the connection will be established.
-    func connect(_ completion: Client.OnConnect?) {
-        setupConnectCompletion(completion)
-        webSocket.connect()
-    }
-    
-    private func setupConnectCompletion(_ completion: Client.OnConnect?) {
-        guard let completion = completion else {
-            restoreOnConnect()
-            return
-        }
-        
-        // Save the original user onConnect.
-        savedOnConnect = savedOnConnect ?? onConnect
-        
-        onConnect = { [unowned self] connection in
-            if connection.isConnected {
-                self.savedOnConnect?(connection)
-                completion(connection)
-                self.restoreOnConnect()
-            } else {
-                self.savedOnConnect?(connection)
-            }
-        }
-    }
-    
-    /// Restore onConnect to the user value.
-    private func restoreOnConnect() {
-        if let savedOnConnect = savedOnConnect {
-            onConnect = savedOnConnect
-            self.savedOnConnect = nil
         }
     }
     
@@ -238,6 +184,10 @@ public final class Client {
     
     /// Disconnect the websocket and reset states.
     func reset() {
+        if webSocket.connectionId != nil {
+            needsToRecoverConnection = true
+        }
+        
         webSocket.disconnect(reason: "Resetting connection")
         Message.flaggedIds.removeAll()
         User.flaggedUsers.removeAll()
@@ -248,29 +198,37 @@ public final class Client {
             self.waitingRequests = []
         }
     }
+    
+    /// Checks if the given channel is watching.
+    /// - Parameter channel: a channel.
+    /// - Returns: returns true if the client is watching for the channel.
+    public func isWatching(channel: Channel) -> Bool {
+        let watchingChannels: [WeakRef<Channel>]? = watchingChannelsAtomic.get(default: [:])[channel.cid]
+        return watchingChannels?.first { $0.value === channel } != nil
+    }
 }
 
 // MARK: - Waiting Request
 
 extension Client {
-    final class WaitingRequest {
-        typealias Request = () -> URLSessionTask // swiftlint:disable:this nesting
+    final class WaitingRequest: Cancellable {
+        typealias Request = () -> Cancellable // swiftlint:disable:this nesting
         
-        var urlSessionTask: URLSessionTask?
-        let request: Request
+        private var subscription: Cancellable?
+        private let request: Request
         
         init(request: @escaping Request) {
             self.request = request
         }
         
         func perform() {
-            if urlSessionTask == nil {
-                urlSessionTask = request()
+            if subscription == nil {
+                subscription = request()
             }
         }
         
         func cancel() {
-            urlSessionTask?.cancel()
+            subscription?.cancel()
         }
     }
 }

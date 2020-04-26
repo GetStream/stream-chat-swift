@@ -1,0 +1,36 @@
+name: Beta
+    
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  beta:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Carthage dependencies
+      uses: actions/cache@v1.1.0
+      id: carthage-cache
+      with:
+        path: Carthage
+        key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
+    - name: Install firebase-tools
+      run: npm install -g firebase-tools
+    - name: Run beta lane on fastlane for nightly build
+      env:
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      run: bundle exec fastlane beta

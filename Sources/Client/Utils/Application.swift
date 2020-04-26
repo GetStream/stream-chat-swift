@@ -23,29 +23,33 @@ final class Application {
                 return
             }
             
-            let center = NotificationCenter.default
-            subscribers.forEach({ center.removeObserver($0) })
-            subscribers = []
-            
-            guard let onState = onStateChanged else {
-                return
-            }
-            
-            func subscribe(for name: Notification.Name, state: UIApplication.State) -> NSObjectProtocol {
-                return center.addObserver(forName: name, object: nil, queue: nil) { [unowned self] _ in
-                    if let lastState = self.lastState, lastState != state {
-                        self.lastState = state
-                        onState(state)
-                    }
+            DispatchQueue.main.async(execute: subscribeForApplicationStateChanges)
+        }
+    }
+    
+    private func subscribeForApplicationStateChanges() {
+        let center = NotificationCenter.default
+        subscribers.forEach { center.removeObserver($0) }
+        subscribers = []
+        
+        guard let onState = onStateChanged else {
+            return
+        }
+        
+        func subscribe(for name: Notification.Name, state: UIApplication.State) -> NSObjectProtocol {
+            return center.addObserver(forName: name, object: nil, queue: nil) { [unowned self] _ in
+                if self.lastState != state {
+                    self.lastState = state
+                    onState(state)
                 }
             }
-            
-            subscribers.append(subscribe(for: UIApplication.willEnterForegroundNotification, state: .inactive))
-            subscribers.append(subscribe(for: UIApplication.didBecomeActiveNotification, state: .active))
-            subscribers.append(subscribe(for: UIApplication.willResignActiveNotification, state: .inactive))
-            subscribers.append(subscribe(for: UIApplication.didEnterBackgroundNotification, state: .background))
-            onState(UIApplication.shared.applicationState)
         }
+        
+        subscribers.append(subscribe(for: UIApplication.willEnterForegroundNotification, state: .inactive))
+        subscribers.append(subscribe(for: UIApplication.didBecomeActiveNotification, state: .active))
+        subscribers.append(subscribe(for: UIApplication.willResignActiveNotification, state: .inactive))
+        subscribers.append(subscribe(for: UIApplication.didEnterBackgroundNotification, state: .background))
+        onState(UIApplication.shared.applicationState)
     }
 }
 

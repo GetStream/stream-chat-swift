@@ -51,7 +51,7 @@ private extension Reactive where Base == ChannelsPresenter {
         channelResponses
             .map { [weak base] in base?.parseChannels($0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
+            .asClientDriver()
     }
     
     var channelsRequest: Observable<[ChannelResponse]> {
@@ -71,7 +71,7 @@ private extension Reactive where Base == ChannelsPresenter {
             })
             .map { [weak base] in base?.parse(event: $0) ?? .none }
             .filter { $0 != .none }
-            .asDriver { Driver.just(ViewChanges.error(AnyError($0))) }
+            .asClientDriver()
     }
     
     func channelsQuery(pagination: Pagination) -> ChannelsQuery {
@@ -88,7 +88,7 @@ private extension Reactive where Base == ChannelsPresenter {
         
         // Update pagination offset.
         if base.next != base.pageSize {
-            base.next = .channelsNextPageSize + .offset(base.next.offset - 1)
+            base.next = [.channelsNextPageSize, .offset((base.next.offset ?? 0) - 1)]
         }
         
         base.items.remove(at: index)

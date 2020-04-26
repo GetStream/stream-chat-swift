@@ -13,14 +13,13 @@ import SnapKit
 
 final class ReadUsersView: UIView {
     
-    private let rightAvatarView = AvatarView(cornerRadius: .messageReadUsersAvatarCornerRadius)
-    private let leftAvatarView = AvatarView(cornerRadius: .messageReadUsersAvatarCornerRadius)
+    private let rightAvatarView = AvatarView(style: .init(radius: .messageReadUsersAvatarCornerRadius))
+    private let leftAvatarView = AvatarView(style: .init(radius: .messageReadUsersAvatarCornerRadius))
     let countLabel = UILabel(frame: .zero)
     
     override var backgroundColor: UIColor? {
         didSet {
-            rightAvatarView.layer.borderColor = backgroundColor?.cgColor
-            leftAvatarView.layer.borderColor = backgroundColor?.cgColor
+            updateAvatarsBorderColors()
             countLabel.backgroundColor = backgroundColor
         }
     }
@@ -56,6 +55,10 @@ final class ReadUsersView: UIView {
         super.init(coder: aDecoder)
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        updateAvatarsBorderColors()
+    }
+
     func reset() {
         isHidden = true
         rightAvatarView.reset()
@@ -74,17 +77,22 @@ final class ReadUsersView: UIView {
         
         if let user = readUsers.last {
             rightAvatarView.isHidden = false
-            rightAvatarView.update(with: user.avatarURL, name: user.name, baseColor: backgroundColor)
+            rightAvatarView.update(with: user.avatarURL, name: user.name)
         }
         
         if readUsers.count > 1, readUsers.count < 100 {
             let user = readUsers[readUsers.count - 2]
             rightAvatarView.isHidden = false
-            leftAvatarView.update(with: user.avatarURL, name: user.name, baseColor: backgroundColor)
+            leftAvatarView.update(with: user.avatarURL, name: user.name)
         }
         
         if readUsers.count > 2 {
             countLabel.text = String(readUsers.count)
         }
+    }
+    
+    private func updateAvatarsBorderColors() {
+        rightAvatarView.layer.borderColor = backgroundColor?.cgColor
+        leftAvatarView.layer.borderColor = backgroundColor?.cgColor
     }
 }

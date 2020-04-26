@@ -18,12 +18,12 @@ extension Client {
     ///   - user: the current user (see `User`).
     ///   - token: a Stream Chat API token.
     ///   - completion: a connection completion block.
-    public func set(user: User, token: Token, _ completion: Client.OnConnect? = nil) {
+    public func set(user: User, token: Token, _ completion: Client.Completion<UserConnection>? = nil) {
         reset()
         
         if apiKey.isEmpty || token.isEmpty {
             logger?.log("❌ API key or token is empty: \(apiKey), \(token)", level: .error)
-            completion?(.disconnected(ClientError.emptyAPIKey))
+            completion?(.failure(.emptyAPIKey))
             return
         }
         
@@ -38,12 +38,12 @@ extension Client {
     /// - Parameters:
     ///   - user: a guest user.
     ///   - completion: a connection completion block.
-    public func setGuestUser(_ user: User, _ completion: Client.OnConnect? = nil) {
+    public func setGuestUser(_ user: User, _ completion: Client.Completion<UserConnection>? = nil) {
         reset()
         
         if apiKey.isEmpty {
             logger?.log("❌ API key is empty", level: .error)
-            completion?(.disconnected(ClientError.emptyAPIKey))
+            completion?(.failure(.emptyAPIKey))
             return
         }
         
@@ -52,12 +52,11 @@ extension Client {
         logger?.log("Sending a request for a Guest Token...")
         
         request(endpoint: .guestToken(user)) { [unowned self] (result: Result<TokenResponse, ClientError>) in
-            do {
-                let response = try result.get()
+            if let response = result.value {
                 self.set(user: response.user, token: response.token, completion)
-            } catch {
+            } else if let error = result.error {
                 self.logger?.log(error, message: "Guest Token")
-                completion?(.disconnected(error))
+                completion?(.failure(error))
             }
         }
     }
@@ -68,7 +67,7 @@ extension Client {
     /// While you’re anonymous, you can’t do much, but for the livestream channel type,
     /// you’re still allowed to read the chat conversation.
     /// - Parameter completion: a connection completion block.
-    public func setAnonymousUser(_ completion: Client.OnConnect? = nil) {
+    public func setAnonymousUser(_ completion: Client.Completion<UserConnection>? = nil) {
         reset()
         userAtomic.set(.anonymous)
         tokenProvider = nil
@@ -95,16 +94,20 @@ extension Client {
     ///         } else {
     ///             // Handle the error.
     ///             print("Token request failed", error)
+    ///             disconnect()
     ///         }
     ///     }
     ///
     ///     task.resume()
     /// }
     ///
-    /// Client.shared.set(user: user, tokenProvider: tokenProvider) { connection in
-    ///     // Use here the client connection state.
-    ///     if connection.isConnected {
-    ///         // E.g. update unread count.
+    /// Client.shared.set(user: user, tokenProvider: tokenProvider) { result in
+    ///     do {
+    ///         let userConnection = try result.get()
+    ///         // Print the current user.
+    ///         print(userConnection.user)
+    ///     } catch {
+    ///         print(error)
     ///     }
     /// }
     /// ```
@@ -113,12 +116,12 @@ extension Client {
     ///   - user: the current user (see `User`).
     ///   - tokenProvider: a token provider.
     ///   - completion: a connection completion block.
-    public func set(user: User, tokenProvider: @escaping TokenProvider, completion: Client.OnConnect? = nil) {
+    public func set(user: User, tokenProvider: @escaping TokenProvider, completion: Client.Completion<UserConnection>? = nil) {
         reset()
         
         if apiKey.isEmpty {
             logger?.log("❌ API key is empty.", level: .error)
-            completion?(.disconnected(ClientError.emptyAPIKey))
+            completion?(.failure(.emptyAPIKey))
             return
         }
         
@@ -127,7 +130,7 @@ extension Client {
         touchTokenProvider(isExpiredTokenInProgress: false, completion)
     }
     
-    func touchTokenProvider(isExpiredTokenInProgress: Bool, _ completion: Client.OnConnect?) {
+    func touchTokenProvider(isExpiredTokenInProgress: Bool, _ completion: Client.Completion<UserConnection>?) {
         guard let tokenProvider = tokenProvider else {
             return
         }
@@ -142,7 +145,7 @@ extension Client {
         tokenProvider { [unowned self] in self.setup(token: $0, completion) }
     }
     
-    private func setup(token: Token, _ completion: Client.OnConnect?) {
+    private func setup(token: Token, _ completion: Client.Completion<UserConnection>?) {
         if webSocket.isConnected {
             webSocket.disconnect(reason: "Requesting new token")
         }
@@ -153,7 +156,7 @@ extension Client {
             do {
                 token = try developmentToken()
             } catch {
-                completion?(.disconnected(error))
+                completion?(.failure(.encodingFailure(error, object: ["jwt": ["user_id": user.id]])))
                 return
             }
         }
@@ -168,9 +171,12 @@ extension Client {
         
         if let error = checkUserAndToken(token) {
             logger?.log(error)
-            completion?(.disconnected(error))
+            completion?(.failure(error))
             return
         }
+        
+        // Switch completion block to the main thread.
+        let completion = completion == nil ? nil : { result in DispatchQueue.main.async { completion?(result) } }
         
         do {
             let webSocket = try setupWebSocket(user: user, token: token)
@@ -179,28 +185,33 @@ extension Client {
             urlSession = setupURLSession(token: token)
             self.token = token
             
-            var onConnect: OnConnect?
-                
             if let completion = completion {
-                onConnect = { connection in DispatchQueue.main.async { completion(connection) } }
-            }
-            
-            // Observe Internet connection state and handle the Client connection.
-            InternetConnection.shared.onStateChanged = { [unowned self] state in
-                self.connect(internetConnectionState: state, onConnect)
+                var subscription: Cancellable?
+                
+                subscription = subscribe(forEvents: [.connectionChanged]) { event in
+                    if case .connectionChanged(let state) = event {
+                        if case .connected(let userConnection) = state {
+                            completion(.success(userConnection))
+                            subscription?.cancel()
+                        }
+                        
+                        if case .disconnected(let error) = state, let clientError = error {
+                            completion(.failure(clientError))
+                        }
+                    }
+                }
             }
             
             // Observe Application state and handle the Client connection.
-            Application.shared.onStateChanged = { [unowned self] state in
-                self.connect(appState: state, onConnect)
-            }
-            
+            Application.shared.onStateChanged = { [unowned self] state in self.connect(appState: state) }
+            // Observe Internet connection state and handle the Client connection.
+            InternetConnection.shared.onStateChanged = { [unowned self] state in self.connect(internetConnectionState: state) }
             // Start observing Internet connection state and get the current state.
             InternetConnection.shared.startNotifier()
             
         } catch {
             logger?.log(error)
-            completion?(.disconnected(error))
+            completion?(.failure(.unexpectedError(description: error.localizedDescription, error: error)))
         }
     }
     

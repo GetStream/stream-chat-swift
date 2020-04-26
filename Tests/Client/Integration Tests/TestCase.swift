@@ -9,11 +9,14 @@
 import XCTest
 @testable import StreamChatClient
 
+let defaultTimeout = 10
+
 class TestCase: XCTestCase {
     
     static let apiKey = "qk4nn7rpcn75"
     static let baseURL = BaseURL(url: URL(string: "https://chat-us-east-staging.stream-io-api.com/")!)
     private static var isClientReady = false
+    static let subscriptionBag = SubscriptionBag()
     
     static func setupClientUser() {
         Client.shared.set(user: .user2, token: .token2)
@@ -36,7 +39,7 @@ class TestCase: XCTestCase {
     
     override static func tearDown() {
         Client.shared.disconnect()
-        Client.shared.onConnect = { _ in }
+        subscriptionBag.cancel()
         StorageHelper.shared.removeAll()
     }
 }
@@ -51,11 +54,11 @@ extension TestCase {
         TestCase.setupClientUser()
         
         expect("Client should be connected") { expectation in
-            Client.shared.onConnect = {
-                if case .connected = $0 {
+            TestCase.subscriptionBag.add(Client.shared.subscribe(forEvents: [.connectionChanged], {
+                if case .connectionChanged(let connectionState) = $0, connectionState.isConnected {
                     expectation.fulfill()
                 }
-            }
+            }))
         }
     }
     
@@ -65,15 +68,15 @@ extension TestCase {
             return
         }
         
-        client.set(user: user, token: token) { connection in
-            if connection.isConnected {
+        client.set(user: user, token: token) { result in
+            if result.isSuccess {
                 completion()
             }
         }
     }
     
     func expect(_ description: String,
-                timeout: TimeInterval = TimeInterval(5),
+                timeout: TimeInterval = TimeInterval(defaultTimeout),
                 callback: (_ test: XCTestExpectation) -> Void) {
         let test = expectation(description: "\n💥💀✝️ expecting \(description)")
         callback(test)

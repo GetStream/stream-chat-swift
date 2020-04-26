@@ -1,0 +1,165 @@
+fastlane_version "2.68.0"
+default_platform :ios
+
+before_all do
+  if is_ci
+    setup_ci()
+  end
+end
+
+desc "Release a new version"
+lane :release do |options|
+  UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
+  
+  version_number = increment_version_number(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj")
+  increment_version_number(version_number: version_number, xcodeproj: "./Example/Carthage/ChatExample.xcodeproj")
+  
+  changes = touch_changelog(release_version: version_number)
+  
+  version_bump_podspec(path: "StreamChatClient.podspec", version_number: version_number)
+  version_bump_podspec(path: "StreamChatCore.podspec", version_number: version_number)
+  version_bump_podspec(path: "StreamChat.podspec", version_number: version_number)
+  
+  jazzy_command_start = "bundle exec jazzy --xcodebuild-arguments "
+  jazzy_command_end = "-a GetStream.io -u getstream.io -g https://github.com/GetStream/stream-chat-swift"
+  sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatClient\",\"-sdk\",\"iphonesimulator\" --output \"../docs/client\" " + jazzy_command_end)
+  sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatCore\",\"-sdk\",\"iphonesimulator\" --output \"../docs/core\" " + jazzy_command_end)
+  sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChat\",\"-sdk\",\"iphonesimulator\" --output \"../docs/ui\" " + jazzy_command_end)
+  
+  sh("git add -A")
+  sh("git commit -m 'Bump #{version_number}'")
+  sh("git tag #{version_number}")
+  
+  github_release = set_github_release(
+                     repository_name: "GetStream/stream-chat-swift",
+                     api_token: ENV["GITHUB_TOKEN"],
+                     name: version_number,
+                     tag_name: version_number,
+                     description: changes,
+                     is_draft: true
+                   )
+                   
+  push_to_git_remote(tags: true)
+                   
+  pod_push(path: "StreamChatClient.podspec", allow_warnings: true)
+  pod_push(path: "StreamChatCore.podspec", allow_warnings: true)
+  pod_push(path: "StreamChat.podspec", allow_warnings: true)
+  
+  UI.success("Successfully released #{version_number}")
+  UI.success("Github release was created as draft, please visit #{github_release["url"]} to publish it")
+end
+
+desc "Installs all Certs and Profiles necessary for development and ad-hoc"
+lane :match_me do
+  match(
+    type: "development",
+    app_identifier: [
+      "io.getstream.ChatExample",
+      "io.getstream.StreamChatClient",
+      "io.getstream.StreamChatCore",
+      "io.getstream.StreamChat"
+    ],
+    readonly: true
+  )
+  
+  match(
+    type: "adhoc",
+    app_identifier: [
+      "io.getstream.ChatExample",
+      "io.getstream.StreamChatClient",
+      "io.getstream.StreamChatCore",
+      "io.getstream.StreamChat"
+    ],
+    readonly: true
+  )
+end
+
+desc "Builds the latest version with ad-hoc and uploads to firebase"
+lane :beta do
+  match_me
+  
+  build_number = increment_build_number(
+                   xcodeproj: "./Example/Carthage/ChatExample.xcodeproj",
+                   build_number: ENV["GITHUB_SHA"][0...7]
+                 )
+                 
+  carthage_bootstrap
+
+  gym(
+    project: "./Example/Carthage/ChatExample.xcodeproj",
+    scheme: "ChatExample",
+    configuration: "Debug",
+    export_method: "ad-hoc",
+    export_options: "./fastlane/beta_gym_export_options.plist",
+    silent: true,
+    clean: true,
+    include_symbols: true,
+    output_directory: "./dist"
+  )
+  
+  message = changelog_from_git_commits(commits_count: 10)
+  
+  firebase_app_distribution(
+      app: "1:674907137625:ios:10131789dab2e7cad7f348",
+      groups: "ios-stream-testers",
+      release_notes: message
+  )
+end
+
+desc "Installs Carthage dependencies necessary for development (and building Carthage Example)"
+lane :carthage_bootstrap do
+  sh("cd ..; echo 'BUILD_LIBRARY_FOR_DISTRIBUTION=YES'>/tmp/config.xcconfig; XCODE_XCCONFIG_FILE=/tmp/config.xcconfig carthage bootstrap --platform iOS --new-resolver --no-use-binaries --cache-builds; rm /tmp/config.xcconfig")
+end
+
+desc "Builds the project for testing"
+lane :build_for_testing do
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", clean: true, build_for_testing: true)
+end
+
+desc "Runs all the tests without building"
+lane :test_without_building do
+  # Integration Tests (StreamChatClientIntegrationTests) are disabled since they make HTTP/WS connections
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, only_testing: ["StreamChatClientTests"])
+end
+
+desc "Tests SDK integrations with Carthage, Cocoapods and SPM"
+lane :test_integrations do
+  test_carthage_integration
+  test_cocoapods_integration
+  test_spm_integration
+end
+
+desc "Tests integration with Carthage by building Carthage Example"
+# NOTE: lane `beta` relies on Carthage example being built, so this lane might be redundant
+lane :test_carthage_integration do
+  carthage_bootstrap
+
+  scan(
+    project: "./Example/Carthage/ChatExample.xcodeproj",
+    scheme: "ChatExample",
+    clean: true,
+    build_for_testing: true
+  )
+end
+
+desc "Tests integration with Cocoapods by building Cocoapods Example"
+lane :test_cocoapods_integration do
+  cocoapods(use_bundle_exec: true, try_repo_update_on_error: true, clean_install: true, podfile: "./Example/Cocoapods/")
+  
+  scan(
+    workspace: "./Example/Cocoapods/ChatExample.xcworkspace",
+    scheme: "ChatExample",
+    clean: true,
+    build_for_testing: true
+  )
+end
+
+desc "Tests integration with SPM by building SPM Example"
+lane :test_spm_integration do
+  scan(
+    project: "./Example/SPM/ChatExample.xcodeproj",
+    scheme: "ChatExample",
+    clean: true,
+    build_for_testing: true
+  )
+end

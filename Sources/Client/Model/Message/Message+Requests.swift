@@ -13,7 +13,7 @@ public extension Message {
     /// Delete the message.
     /// - Parameter completion: a completion block with `MessageResponse`.
     @discardableResult
-    func delete(_ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+    func delete(_ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         Client.shared.delete(message: self, completion)
     }
     
@@ -22,7 +22,7 @@ public extension Message {
     ///   - pagination: a pagination (see `Pagination`).
     ///   - completion: a completion block with `[Message]`.
     @discardableResult
-    func replies(pagination: Pagination, _ completion: @escaping Client.Completion<[Message]>) -> URLSessionTask {
+    func replies(pagination: Pagination, _ completion: @escaping Client.Completion<[Message]>) -> Cancellable {
         Client.shared.replies(for: self, pagination: pagination, completion)
     }
     
@@ -36,7 +36,7 @@ public extension Message {
     func addReaction(type: String,
                      score: Int,
                      extraData: Codable? = nil,
-                     _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+                     _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         Client.shared.addReaction(type: type, score: score, extraData: extraData, to: self, completion)
     }
     
@@ -45,7 +45,7 @@ public extension Message {
     ///   - type: a reaction type, e.g. like.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func deleteReaction(type: String, _ completion: @escaping Client.Completion<MessageResponse>) -> URLSessionTask {
+    func deleteReaction(type: String, _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         Client.shared.deleteReaction(type: type, from: self, completion)
     }
     
@@ -54,14 +54,14 @@ public extension Message {
     /// Flag a message.
     /// - Parameter completion: a completion block with `FlagMessageResponse`.
     @discardableResult
-    func flag(_ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+    func flag(_ completion: @escaping Client.Completion<FlagMessageResponse>) -> Cancellable {
         Client.shared.flag(message: self, completion)
     }
     
     /// Unflag a message.
     /// - Parameter completion: a completion block with `FlagMessageResponse`.
     @discardableResult
-    func unflag(_ completion: @escaping Client.Completion<FlagMessageResponse>) -> URLSessionTask {
+    func unflag(_ completion: @escaping Client.Completion<FlagMessageResponse>) -> Cancellable {
         Client.shared.unflag(message: self, completion)
     }
 }

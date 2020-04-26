@@ -164,9 +164,9 @@ extension ChannelPresenter {
             }
         }
         
-        if messages.count == (isNextPage ? Pagination.messagesNextPageSize : pageSize).limit,
+        if messages.count == (isNextPage ? [.messagesNextPageSize] : pageSize).limit ?? 0,
             let first = messages.first {
-            next = .messagesNextPageSize + .lessThan(first.id)
+            next = [.messagesNextPageSize, .lessThan(first.id)]
             items.insert(.loading(false), at: startIndex)
         } else {
             next = pageSize
