@@ -85,7 +85,7 @@ extension MessageTableViewCell {
                           enrichURLs: Bool) {
         messageTextEnrichment = MessageTextEnrichment(message, style: style, enrichURLs: enrichURLs)
 
-        if let cached = messageTextEnrichment?.cachedEnrich() {
+        if let cached = messageTextEnrichment?.cachedEnrichment() {
             self.messageLabel.attributedText = cached
         }
     }
