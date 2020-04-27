@@ -410,11 +410,11 @@ extension ChatViewController {
         showCommands(show: false)
         
         composerAddFileContainerView.containerView.arrangedSubviews.forEach { subview in
-            if let addFileView = subview as? ComposerAddFileView {
+            if let addFileView = subview as? ComposerAddFileView, let uploadManager = composerView.uploadManager {
                 if case .file = addFileView.sourceType {
-                    addFileView.isHidden = !composerView.imageUploadingItems.isEmpty
+                    addFileView.isHidden = !uploadManager.images.isEmpty
                 } else {
-                    addFileView.isHidden = !composerView.isUploaderFilesEmpty
+                    addFileView.isHidden = !uploadManager.files.isEmpty
                 }
             }
         }

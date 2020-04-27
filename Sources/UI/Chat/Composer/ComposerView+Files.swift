@@ -74,10 +74,8 @@ extension ComposerView {
         updateFilesStackView()
     }
     
-    var isUploaderFilesEmpty: Bool { (uploadManager?.items.firstIndex(where: { $0.type == .file })) == nil }
-    
     func updateFilesStackView() {
-        filesStackView.isHidden = isUploaderFilesEmpty
+        filesStackView.isHidden = uploadManager?.files.isEmpty ?? true
         
         if filesStackView.isHidden {
            filesStackView.removeAllArrangedSubviews()

@@ -13,8 +13,10 @@ import RxSwift
 /// An uploader manager.
 public final class UploadManager {
     
-    /// A list of UploaderItem for the upload.
-    public private(set) var items: [UploadingItem] = []
+    /// A list of images for the upload.
+    public private(set) var images: [UploadingItem] = []
+    /// A list of files for the upload.
+    public private(set) var files: [UploadingItem] = []
     public let uploader: Uploader
     
     /// Init an upload manager
@@ -26,21 +28,38 @@ public final class UploadManager {
     /// Add an uploading item to the manager.
     /// - Parameter item: an uploading item.
     public func add(item: UploadingItem) {
-        items.insert(item, at: 0)
+        if item.type == .image {
+            images.insert(item, at: 0)
+        } else {
+            files.insert(item, at: 0)
+        }
     }
     
     /// Remove an uploading item and cancel the current uploading state.
     ///
     /// - Parameter item: an uploading item for remove.
     public func remove(_ item: UploadingItem) {
-        if let index = items.firstIndex(of: item) {
-            items.remove(at: index)
+        item.cancelUploading.onNext(())
+        
+        if let index = images.firstIndex(of: item) {
+            images.remove(at: index)
+            
+            if let attachment = item.attachment, let imageURL = attachment.imageURL, let channel = item.channel {
+                uploader.deleteImage(url: imageURL, channel: channel) { _ in }
+            }
+        } else if let index = files.firstIndex(of: item) {
+            files.remove(at: index)
+            
+            if let attachment = item.attachment, let url = attachment.url, let channel = item.channel {
+                uploader.deleteFile(url: url, channel: channel) { _ in }
+            }
         }
     }
     
     /// Remove all uploading items and cancel all uploading states.s
     public func reset() {
-        items = []
+        images = []
+        files = []
     }
     
     public func startUploading(item: UploadingItem) -> Observable<ProgressResponse<URL>> {
@@ -95,7 +114,8 @@ public final class UploadManager {
             }
         })
         
-        return request
+        item.uploading = request
+            .takeUntil(item.cancelUploading)
             .do(onNext: { [weak item] progressResponse in
                 item?.lastProgress = progressResponse.progress
                 
@@ -121,5 +141,7 @@ public final class UploadManager {
                 }
             })
             .share()
+        
+        return item.uploading ?? .empty()
     }
 }

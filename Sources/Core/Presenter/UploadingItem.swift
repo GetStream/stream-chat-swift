@@ -43,6 +43,8 @@ public final class UploadingItem: Equatable {
     public internal(set) var lastProgress: Float = 0
     /// An observable uploading progress.
     var uploading: Observable<ProgressResponse<URL>>?
+    /// An observable uploading progress.
+    let cancelUploading = PublishSubject<Void>()
     
     /// A mime type.
     public private(set) var mimeType: String?
