@@ -56,7 +56,6 @@ extension Client {
         ///     - baseURL: a base URL.
         ///     - stayConnectedInBackground: when the app will go to the background,
         ///                                  start a background task to stay connected for 5 min.
-        ///     - uploading: a custom flow for uploading with a custom URL.
         ///     - database: a database manager.
         ///     - callbackQueue: a request callback queue, default nil (some background thread).
         ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`

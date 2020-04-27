@@ -251,7 +251,7 @@ extension Endpoint {
         case .markAllRead,
              .markRead,
              .stopWatching:
-            return EmptyData()
+            return EmptyData.empty
             
         case .updateChannel(let channelUpdate):
             return channelUpdate

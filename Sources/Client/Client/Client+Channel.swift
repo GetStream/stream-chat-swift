@@ -500,7 +500,7 @@ public extension Client {
     
     /// Upload a file to the channel.
     /// - Parameters:
-    ///   - data: a filbe data.
+    ///   - data: a file data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
     ///   - channel: a channel.

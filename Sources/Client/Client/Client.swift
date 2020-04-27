@@ -99,7 +99,6 @@ public final class Client: Uploader {
     ///   - baseURL: a base URL (see `BaseURL`).
     ///   - stayConnectedInBackground: when the app will go to the background,
     ///                                start a background task to stay connected for 5 min.
-    ///   - uploader: a custom uploader.
     ///   - database: a database manager (in development).
     ///   - callbackQueue: a request callback queue, default nil (some background thread).
     ///   - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`.
