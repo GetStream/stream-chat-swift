@@ -495,7 +495,7 @@ public extension Client {
                    channel: Channel,
                    progress: @escaping Client.Progress,
                    completion: @escaping Client.Completion<URL>) -> Cancellable {
-        sendFile(endpoint: .sendImage(data, fileName, mimeType, channel), progress, completion)
+        sendFile(endpoint: .sendImage(data, fileName, mimeType, channel), progress: progress, completion: completion)
     }
     
     /// Upload a file to the channel.
@@ -513,13 +513,13 @@ public extension Client {
                   channel: Channel,
                   progress: @escaping Client.Progress,
                   completion: @escaping Client.Completion<URL>) -> Cancellable {
-        sendFile(endpoint: .sendFile(data, fileName, mimeType, channel), progress, completion)
+        sendFile(endpoint: .sendFile(data, fileName, mimeType, channel), progress: progress, completion: completion)
     }
     
     private func sendFile(endpoint: Endpoint,
-                          _ progress: @escaping Client.Progress,
-                          _ completion: @escaping Client.Completion<URL>) -> Cancellable {
-        request(endpoint: endpoint, progress) { (result: Result<FileUploadResponse, ClientError>) in
+                          progress: @escaping Client.Progress,
+                          completion: @escaping Client.Completion<URL>) -> Cancellable {
+        request(endpoint: endpoint, progress: progress) { (result: Result<FileUploadResponse, ClientError>) in
             completion(result.map(to: \.file))
         }
     }

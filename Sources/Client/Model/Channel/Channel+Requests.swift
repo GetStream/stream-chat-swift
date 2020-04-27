@@ -275,8 +275,8 @@ public extension Channel {
     func sendImage(data: Data,
                    fileName: String,
                    mimeType: String,
-                   _ progress: @escaping Client.Progress,
-                   _ completion: @escaping Client.Completion<URL>) -> Cancellable {
+                   progress: @escaping Client.Progress,
+                   completion: @escaping Client.Completion<URL>) -> Cancellable {
         Client.shared.sendImage(data: data,
                                 fileName: fileName,
                                 mimeType: mimeType,
@@ -295,8 +295,8 @@ public extension Channel {
     func sendFile(data: Data,
                   fileName: String,
                   mimeType: String,
-                  _ progress: @escaping Client.Progress,
-                  _ completion: @escaping Client.Completion<URL>) -> Cancellable {
+                  progress: @escaping Client.Progress,
+                  completion: @escaping Client.Completion<URL>) -> Cancellable {
         Client.shared.sendFile(data: data,
                                fileName: fileName,
                                mimeType: mimeType,
