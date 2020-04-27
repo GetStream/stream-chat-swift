@@ -9,6 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ⚠️ Breaking Changes
 - Set user will return a `Result<UserConnection, ClientError>` in callback. `UserConnection` has the current user data, connection id and unread count for channels and messages [#182](https://github.com/GetStream/stream-chat-swift/issues/182).
 - `AvatarView.init` changed and it requires `AvatarViewStyle` intead of `cornerRadius` and `font` [#203](https://github.com/GetStream/stream-chat-swift/issues/203).
+- Renamed:
+  - `ChannelPresnter.uploader` to `ChannelPresnter.uploadManager`,
+  - `UploadItem` to `UploadingItem`.
+- Modified signatures:
+```swift
+func sendImage(data: Data, 
+               fileName: String, 
+               mimeType: String, 
+               channel: Channel,
+               progress: @escaping Client.Progress, 
+               completion: @escaping Client.Completion<URL>) -> Cancellable
+
+func sendFile(data: Data,
+              fileName: String,
+              mimeType: String,
+              channel: Channel,
+              progress: @escaping Client.Progress,
+              completion: @escaping Client.Completion<URL>) -> Cancellable
+              
+func deleteImage(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable
+
+func deleteFile(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable
+```
 
 ### 🔄 Changed
 - `Pagination` doesn't support `+` operator anymore, please use a set of  `PaginationOption`s from now on [#158](https://github.com/GetStream/stream-chat-swift/issues/158).
@@ -28,7 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added methods for `AvatarView` customization [#203](https://github.com/GetStream/stream-chat-swift/issues/203):
 - Added `messageInsetSpacing` to `MessageViewStyle` to allow control of spacing between message and container
    [#216](https://github.com/GetStream/stream-chat-swift/pull/216).
-
+- Added `Uploader` protocol. Use them to create own uploader for your file storage. Assign your uploader into `ChannelPresenter` [#100](https://github.com/GetStream/stream-chat-swift/issues/100):
+```swift
+presenter.uploadManager = UploadManager(uploader: customUploader)
+```
 `ChannelsViewController`:
 ```swift
 open func updateChannelCellAvatarView(in cell: ChannelTableViewCell, channel: Channel)

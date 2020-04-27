@@ -66,8 +66,8 @@ extension Client {
     /// - Returns: an URLSessionTask that can be canncelled.
     @discardableResult
     func request<T: Decodable>(endpoint: Endpoint,
-                               _ progress: @escaping Progress,
-                               _ completion: @escaping Completion<T>) -> Cancellable {
+                               progress: @escaping Progress,
+                               completion: @escaping Completion<T>) -> Cancellable {
         let task = prepareRequest(endpoint: endpoint, completion)
         urlSessionTaskDelegate.addProgessHandler(id: task.taskIdentifier, progress)
         task.resume()
