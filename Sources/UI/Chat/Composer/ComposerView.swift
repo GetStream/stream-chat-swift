@@ -44,7 +44,6 @@ public final class ComposerView: UIView {
     
     /// Uploader for images and files.
     public var uploadManager: UploadManager?
-    var imageUploadingItems: [UploadingItem] = []
     
     /// A placeholder label.
     /// You have to use the `placeholderText` property to change the value of the placeholder label.
@@ -260,7 +259,6 @@ public extension ComposerView {
         previousTextBeforeReset = textView.attributedText
         textView.attributedText = attributedText()
         uploadManager?.reset()
-        imageUploadingItems = []
         updatePlaceholder()
         filesStackView.isHidden = true
         filesStackView.removeAllArrangedSubviews()
@@ -275,7 +273,8 @@ public extension ComposerView {
     }
     
     internal func updateSendButton() {
-        let isAnyFileUploaded = uploadManager?.items.first(where: { $0.attachment != nil }) != nil
+        let isAnyFileUploaded = uploadManager?.images.first(where: { $0.attachment != nil }) != nil
+            || uploadManager?.files.first(where: { $0.attachment != nil }) != nil
         
         if let style = style {
             let isHidden = text.isEmpty && !isAnyFileUploaded
@@ -296,8 +295,8 @@ public extension ComposerView {
         }
         
         let styleState: ComposerViewStyle.State = !textView.isFirstResponder
-            && imageUploadingItems.isEmpty
-            && isUploaderFilesEmpty
+            && (uploadManager?.images.isEmpty ?? true)
+            && (uploadManager?.files.isEmpty ?? true)
             && text.isEmpty ? .normal : (self.styleState == .edit ? .edit : .active)
         
         if self.styleState != styleState {

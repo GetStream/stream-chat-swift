@@ -49,15 +49,14 @@ extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
         uploadManager.add(item: item)
         updateImagesCollectionView()
         
-        if !imageUploadingItems.isEmpty {
+        if !uploadManager.images.isEmpty {
             imagesCollectionView.scrollToItem(at: .item(0), at: .right, animated: false)
         }
     }
     
     func updateImagesCollectionView() {
-        imageUploadingItems = uploadManager?.items.filter({ $0.type != .file }) ?? []
         imagesCollectionView.reloadData()
-        imagesCollectionView.isHidden = imageUploadingItems.isEmpty
+        imagesCollectionView.isHidden = uploadManager?.images.isEmpty ?? true
         updateTextHeightIfNeeded()
         updateSendButton()
         updateStyleState()
@@ -65,17 +64,15 @@ extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
     }
     
     private func uploaderItem(at indexPath: IndexPath) -> UploadingItem? {
-        let imageIndex = indexPath.item - (imagesAddAction == nil ? 0 : 1)
-        
-        guard imageIndex >= 0, imageIndex < imageUploadingItems.count else {
-            return nil
-        }
-        
-        return imageUploadingItems[imageIndex]
+        uploadManager?.images[safe: (indexPath.item - (imagesAddAction == nil ? 0 : 1))]
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        imageUploadingItems.isEmpty ? 0 : imageUploadingItems.count + (imagesAddAction == nil ? 0 : 1)
+        guard let uploadManager = uploadManager, !uploadManager.images.isEmpty else {
+            return 0
+        }
+        
+        return uploadManager.images.count + (imagesAddAction == nil ? 0 : 1)
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
