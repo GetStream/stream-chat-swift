@@ -9,10 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ⚠️ Breaking Changes
 - Set user will return a `Result<UserConnection, ClientError>` in callback. `UserConnection` has the current user data, connection id and unread count for channels and messages [#182](https://github.com/GetStream/stream-chat-swift/issues/182).
 - `AvatarView.init` changed and it requires `AvatarViewStyle` intead of `cornerRadius` and `font` [#203](https://github.com/GetStream/stream-chat-swift/issues/203).
-- Renamed:
-  - `ChannelPresnter.uploader` to `ChannelPresnter.uploadManager`,
+- Renamed [#100](https://github.com/GetStream/stream-chat-swift/issues/100):
+  - `ChannelPresenter.uploader` to `ChannelPresenter.uploadManager`,
   - `UploadItem` to `UploadingItem`.
-- Modified signatures:
+- Modified signatures [#100](https://github.com/GetStream/stream-chat-swift/issues/100):
 ```swift
 func sendImage(data: Data, 
                fileName: String, 
@@ -67,6 +67,10 @@ open func updateFooterTypingUserAvatarView(footerView: ChatFooterView, user: Use
 - New properties for `AvatarViewStyle` [#203](https://github.com/GetStream/stream-chat-swift/issues/203): 
   - `placeholderTextColor: UIColor?` 
   - `placeholderBackgroundColor: UIColor?`
+- Added `Uploader` protocol. Use them to create own uploader for your file storage. Assign your uploader into `ChannelPresenter` [#100](https://github.com/GetStream/stream-chat-swift/issues/100):
+```swift
+  presenter.uploadManager = UploadManager(uploader: customUploader)
+```
 
 ### 🐞 Fixed
 - SPM support [#156](https://github.com/GetStream/stream-chat-swift/issues/156).

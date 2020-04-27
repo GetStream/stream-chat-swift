@@ -28,7 +28,7 @@ extension ComposerView {
             return
         }
         
-        uploadManager.upload(item: item)
+        uploadManager.add(item: item)
         
         filesStackView.isHidden = false
         let fileView = ComposerFileView(frame: .zero)

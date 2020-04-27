@@ -23,10 +23,9 @@ public final class UploadManager {
         self.uploader = uploader
     }
     
-    /// Uplode the item.
-    ///
+    /// Add an uploading item to the manager.
     /// - Parameter item: an uploading item.
-    public func upload(item: UploadingItem) {
+    public func add(item: UploadingItem) {
         items.insert(item, at: 0)
     }
     

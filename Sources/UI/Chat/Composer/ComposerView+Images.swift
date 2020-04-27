@@ -46,7 +46,7 @@ extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
             return
         }
         
-        uploadManager.upload(item: item)
+        uploadManager.add(item: item)
         updateImagesCollectionView()
         
         if !imageUploadingItems.isEmpty {

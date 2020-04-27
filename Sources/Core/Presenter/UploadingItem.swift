@@ -136,12 +136,17 @@ public final class UploadingItem: Equatable {
     }
     
     private func encodeData() {
-        if type == .file || type == .video {
-            if let url = url, let data = try? Data(contentsOf: url) {
+        guard type != .file, type != .video else {
+            guard let url = url else {
+                error = .emptyBody(description: "Invalid URL: \(self.url?.absoluteString ?? "<unknown>")")
+                return
+            }
+            
+            do {
                 self.mimeType = fileType.mimeType
-                self.data = data
-            } else {
-                error = .emptyBody(description: "For file at URL: \(url?.absoluteString ?? "<unknown>")")
+                data = try Data(contentsOf: url)
+            } catch {
+                self.error = .unexpectedError(description: error.localizedDescription, error: error)
             }
             
             return
