@@ -28,9 +28,10 @@ public final class UploadManager {
     /// Add an uploading item to the manager.
     /// - Parameter item: an uploading item.
     public func add(item: UploadingItem) {
-        if item.type == .image {
+        switch item.type {
+        case .image:
             images.insert(item, at: 0)
-        } else {
+        case .file, .video:
             files.insert(item, at: 0)
         }
     }
@@ -47,6 +48,7 @@ public final class UploadManager {
             if let attachment = item.attachment, let imageURL = attachment.imageURL, let channel = item.channel {
                 uploader.deleteImage(url: imageURL, channel: channel) { _ in }
             }
+            
         } else if let index = files.firstIndex(of: item) {
             files.remove(at: index)
             
@@ -75,7 +77,7 @@ public final class UploadManager {
         guard let mimeType = item.mimeType, let data = item.data else {
             return .empty()
         }
-
+        
         let request: Observable<ProgressResponse<URL>> = .create({ [weak self, weak item] observer -> Disposable in
             guard let uploader = self?.uploader, let item = item, let channel = item.channel else {
                 return Disposables.create()
@@ -93,20 +95,21 @@ public final class UploadManager {
                 }
             }
             
-            if item.type == .file || item.type == .video {
-                subscription = uploader.sendFile(data: data,
-                                                 fileName: item.fileName,
-                                                 mimeType: mimeType,
-                                                 channel: channel,
-                                                 progress: progress,
-                                                 completion: completion)
-            } else {
+            switch item.type {
+            case .image:
                 subscription = uploader.sendImage(data: data,
                                                   fileName: item.fileName,
                                                   mimeType: mimeType,
                                                   channel: channel,
                                                   progress: progress,
                                                   completion: completion)
+            case .file, .video:
+                subscription = uploader.sendFile(data: data,
+                                                 fileName: item.fileName,
+                                                 mimeType: mimeType,
+                                                 channel: channel,
+                                                 progress: progress,
+                                                 completion: completion)
             }
             
             return Disposables.create {
@@ -123,12 +126,13 @@ public final class UploadManager {
                     return
                 }
                 
-                if item.type == .image {
+                switch item.type {
+                case .image:
                     item.attachment = Attachment(type: .image,
                                                  title: item.fileName,
                                                  imageURL: fileURL,
                                                  extraData: item.extraData)
-                } else {
+                case .file, .video:
                     let fileAttachment = AttachmentFile(type: item.fileType,
                                                         size: item.fileSize,
                                                         mimeType: item.fileType.mimeType)
