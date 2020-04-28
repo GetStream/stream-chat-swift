@@ -273,11 +273,11 @@ public extension ComposerView {
     }
     
     internal func updateSendButton() {
-        let isAnyFileUploaded = uploadManager?.images.first(where: { $0.attachment != nil }) != nil
-            || uploadManager?.files.first(where: { $0.attachment != nil }) != nil
+        let anyUploadedItem = uploadManager?.images.first(where: { $0.attachment != nil })
+            ?? uploadManager?.files.first(where: { $0.attachment != nil })
         
         if let style = style {
-            let isHidden = text.isEmpty && !isAnyFileUploaded
+            let isHidden = text.isEmpty && anyUploadedItem == nil
             
             if style.sendButtonVisibility == .whenActive {
                 sendButton.isHidden = isHidden
