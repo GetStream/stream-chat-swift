@@ -39,8 +39,8 @@ jobs:
       run: bundle exec fastlane build_for_testing
     - name: Run all tests
       run: bundle exec fastlane test_without_building
-    - name: Post Codecov report
-      run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
+    # - name: Post Codecov report
+    #   run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
     - name: Run Danger - Code conventions & linting
       run: bundle exec danger
       env:
