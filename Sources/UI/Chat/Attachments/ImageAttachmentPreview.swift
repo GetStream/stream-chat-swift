@@ -207,7 +207,7 @@ final class ImageAttachmentPreview: UIView, AttachmentPreview {
         layer.cornerRadius = style.cornerRadius
     }
     
-    func update(imageMask: UIImage?) {
+    func apply(imageMask: UIImage?) {
         guard let imageMask = imageMask, calculatedSize != .zero else {
             return
         }

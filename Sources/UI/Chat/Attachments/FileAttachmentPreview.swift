@@ -69,12 +69,12 @@ final class FileAttachmentPreview: UIImageView, AttachmentPreview {
     }
     
     /// Update image mask.
-    func update(imageMask: UIImage?) {
+    func apply(imageMask: UIImage?) {
         image = imageMask
     }
     
     /// Update attachment preview with a given attachment.
-    func update(_ completion: @escaping Completion) {
+    func update(_ completion: @escaping Completion = { _, _ in }) {
         guard let attachment = attachment, let file = attachment.file else {
             return
         }

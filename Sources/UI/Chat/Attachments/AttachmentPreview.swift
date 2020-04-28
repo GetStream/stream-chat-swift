@@ -21,7 +21,7 @@ protocol AttachmentPreview where Self: UIView {
     func setup(attachment: Attachment, style: MessageViewStyle)
     
     /// Update image mask.
-    func update(imageMask: UIImage?)
+    func apply(imageMask: UIImage?)
     
     /// Update attachment preview with a given attachment.
     func update(_ completion: @escaping Completion)

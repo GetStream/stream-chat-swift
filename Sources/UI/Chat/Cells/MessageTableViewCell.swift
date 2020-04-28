@@ -163,7 +163,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         
         attachmentPreviews.forEach { attachmentPreview in
             if let filePreview = attachmentPreview as? FileAttachmentPreview {
-                filePreview.update(imageMask: backgroundImageForAttachment(at: filePreview.index))
+                filePreview.apply(imageMask: backgroundImageForAttachment(at: filePreview.index))
             }
         }
     }
