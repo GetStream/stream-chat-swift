@@ -8,8 +8,6 @@
 
 import UIKit
 import StreamChatClient
-import StreamChatCore
-import RxSwift
 
 protocol AttachmentPreview where Self: UIView {
     typealias Completion = (AttachmentPreview, Error?) -> Void
@@ -18,7 +16,6 @@ protocol AttachmentPreview where Self: UIView {
     var index: Int { get set }
     /// An attachment.
     var attachment: Attachment? { get }
-    var disposeBag: DisposeBag { get }
     
     /// Setup a message style.
     func setup(attachment: Attachment, style: MessageViewStyle)

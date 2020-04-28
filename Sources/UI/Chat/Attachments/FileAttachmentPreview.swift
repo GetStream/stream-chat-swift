@@ -15,7 +15,6 @@ import RxSwift
 final class FileAttachmentPreview: UIImageView, AttachmentPreview {
     
     var index = 0
-    let disposeBag = DisposeBag()
     var attachment: Attachment?
     
     private lazy var iconImageView: UIImageView = {
