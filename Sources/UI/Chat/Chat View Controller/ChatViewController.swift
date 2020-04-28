@@ -308,6 +308,20 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         defaultActionsContextMenu(from: cell, for: message, locationInView: locationInView)
     }
     
+    /// Creates a chat view controller for the message being replied to.
+    ///
+    /// Override this to change style and other properties of the thread's view controller.
+    /// - Parameters:
+    ///     - channelPresenter: the channel presenter of the message being replied to.
+    /// - Returns: a chat view controller.
+    open func createThreadChatViewController(with channelPresenter: ChannelPresenter) -> ChatViewController {
+        let chatViewController = ChatViewController(nibName: nil, bundle: nil)
+        chatViewController.style = style
+        chatViewController.presenter = channelPresenter
+        
+        return chatViewController
+    }
+    
     private func markReadIfPossible() {
         if isVisible {
             presenter?.rx.markReadIfPossible().subscribe().disposed(by: disposeBag)
