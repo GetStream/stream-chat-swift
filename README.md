@@ -1,29 +1,21 @@
 # Official iOS SDK for [Stream Chat](https://getstream.io/chat/)
-[![Stream Chat](https://i.imgur.com/B7przBT.png)](https://getstream.io/tutorials/ios-chat/)
 
-[![Language: Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://swift.org)
-[![Build Status](https://github.com/GetStream/stream-chat-swift/workflows/CI/badge.svg)](https://github.com/GetStream/stream-chat-swift/actions)
-[![Code Coverage](https://codecov.io/gh/GetStream/stream-chat-swift/branch/master/graph/badge.svg)](https://codecov.io/gh/GetStream/stream-chat-swift)
+<p align="center">
+  <a href="https://getstream.io/tutorials/ios-chat/"><img src="https://i.imgur.com/B7przBT.png" width="60%" /></a>
+</p>
 
-![StreamChatClient](https://img.shields.io/badge/Framework-StreamChatClient-blue)
-![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatClient.svg)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
-[![Client Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/client/badge.svg)](https://getstream.github.io/stream-chat-swift/client)
+<p align="center">
+  <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.1-orange.svg" /></a>
+  <a href="https://github.com/GetStream/stream-chat-swift/actions"><img src="https://github.com/GetStream/stream-chat-swift/workflows/CI/badge.svg" /></a>
+</p>
 
-![StreamChatCore](https://img.shields.io/badge/Framework-StreamChatCore-blue)
-![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatCore.svg)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
-[![Core Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/core/badge.svg)](https://getstream.github.io/stream-chat-swift/core)
-
-![StreamChat](https://img.shields.io/badge/Framework-StreamChat-blue)
-![Cocoapods](https://img.shields.io/cocoapods/v/StreamChat.svg)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
-[![UI Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/ui/badge.svg)](https://getstream.github.io/stream-chat-swift/ui)
+|![StreamChatClient](https://img.shields.io/badge/Framework-StreamChatClient-blue)|![StreamChatCore](https://img.shields.io/badge/Framework-StreamChatCore-blue)|![StreamChat](https://img.shields.io/badge/Framework-StreamChat-blue)|
+|:-:|:-:|:-:|
+|![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatClient.svg) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)[![Client Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/client/badge.svg)](https://getstream.github.io/stream-chat-swift/client)|![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatCore.svg) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)[![Core Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/core/badge.svg)](https://getstream.github.io/stream-chat-swift/core)|![Cocoapods](https://img.shields.io/cocoapods/v/StreamChat.svg) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)[![UI Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/ui/badge.svg)](https://getstream.github.io/stream-chat-swift/ui)|
 
 [stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications.
+
+<img align="right" src="https://i0.wp.com/apptractor.ru/wp-content/uploads/2019/10/Stream-Chat.jpg" width="50%" />
 
 **Quick Links**
 
