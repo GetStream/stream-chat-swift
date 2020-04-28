@@ -24,5 +24,11 @@ protocol AttachmentPreview where Self: UIView {
     func apply(imageMask: UIImage?)
     
     /// Update attachment preview with a given attachment.
-    func update(_ completion: @escaping Completion)
+    func update(_ completion: Completion?)
+}
+
+extension AttachmentPreview {
+    func update(_ completion: Completion? = nil) {
+        update(completion)
+    }
 }

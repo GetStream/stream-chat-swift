@@ -74,7 +74,7 @@ final class FileAttachmentPreview: UIImageView, AttachmentPreview {
     }
     
     /// Update attachment preview with a given attachment.
-    func update(_ completion: @escaping Completion = { _, _ in }) {
+    func update(_ completion: Completion? = nil) {
         guard let attachment = attachment, let file = attachment.file else {
             return
         }
@@ -82,6 +82,6 @@ final class FileAttachmentPreview: UIImageView, AttachmentPreview {
         iconImageView.image = file.type.icon
         titleLabel.text = attachment.title
         sizeLabel.text = file.sizeString
-        completion(self, nil)
+        completion?(self, nil)
     }
 }

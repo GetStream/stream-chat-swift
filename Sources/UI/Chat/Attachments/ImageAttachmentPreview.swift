@@ -219,7 +219,7 @@ final class ImageAttachmentPreview: UIView, AttachmentPreview {
         mask = maskView
     }
     
-    func update(_ completion: @escaping AttachmentPreview.Completion) {
+    func update(_ completion: AttachmentPreview.Completion? = nil) {
         guard let attachment = attachment else {
             return
         }
@@ -252,7 +252,7 @@ final class ImageAttachmentPreview: UIView, AttachmentPreview {
                 linkStackViewTopConstraint?.update(offset: CGFloat.messageCornerRadius)
             }
             
-            completion(self, nil)
+            completion?(self, nil)
             return
         }
         
@@ -284,7 +284,7 @@ final class ImageAttachmentPreview: UIView, AttachmentPreview {
     
     private func parse(imageResult: Result<ImageResponse, ImagePipeline.Error>,
                        cached: Bool,
-                       _ completion: @escaping Completion) {
+                       _ completion: Completion?) {
         guard let attachment = attachment, let image = try? imageResult.get().image else {
             if isLink {
                 imageView.isHidden = true
@@ -293,7 +293,7 @@ final class ImageAttachmentPreview: UIView, AttachmentPreview {
                 heightConstraint?.deactivate()
             }
             
-            completion(self, imageResult.error)
+            completion?(self, imageResult.error)
             return
         }
         
@@ -334,7 +334,7 @@ final class ImageAttachmentPreview: UIView, AttachmentPreview {
         
         calculatedSize = CGSize(width: width, height: height)
         
-        completion(self, nil)
+        completion?(self, nil)
     }
     
     private func showGif() {
