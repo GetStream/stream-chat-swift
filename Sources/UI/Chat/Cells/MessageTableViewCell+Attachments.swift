@@ -58,7 +58,7 @@ extension MessageTableViewCell {
         
         guard let imagePreview = preview as? ImageAttachmentPreview else {
             // File preview.
-            (preview as? FileAttachmentPreview)?.update()
+            preview.update()
             preview.apply(imageMask: backgroundImageForAttachment(at: index))
             addGetures(preview, nil)
             return
