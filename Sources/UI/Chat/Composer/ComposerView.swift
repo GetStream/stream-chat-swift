@@ -272,21 +272,23 @@ public extension ComposerView {
         DispatchQueue.main.async { [weak self] in self?.updateSendButton() }
     }
     
-    internal func updateSendButton() {
+    func updateSendButton() {
+        guard let style = style else {
+            return
+        }
+        
         let anyUploadedItem = uploadManager?.images.first(where: { $0.attachment != nil })
             ?? uploadManager?.files.first(where: { $0.attachment != nil })
         
-        if let style = style {
-            let isHidden = text.isEmpty && anyUploadedItem == nil
-            
-            if style.sendButtonVisibility == .whenActive {
-                sendButton.isHidden = isHidden
-            } else {
-                sendButton.isEnabled = !isHidden
-            }
-            
-            sendButtonVisibilityBehaviorSubject.onNext((sendButton.isHidden, sendButton.isEnabled))
+        let isHidden = text.isEmpty && anyUploadedItem == nil
+        
+        if style.sendButtonVisibility == .whenActive {
+            sendButton.isHidden = isHidden
+        } else {
+            sendButton.isEnabled = !isHidden
         }
+        
+        sendButtonVisibilityBehaviorSubject.onNext((sendButton.isHidden, sendButton.isEnabled))
     }
     
     internal func updateStyleState() {
