@@ -37,12 +37,6 @@ if !has_changelog_escape && !git.modified_files.include?("CHANGELOG.md") && has_
     fail("Please include a CHANGELOG entry. \nYou can find it at [CHANGELOG.md](https://github.com/GetStream/stream-chat-swift/blob/master/CHANGELOG.md).")
 end
 
-## Finally, let's combine them and put extra condition 
-## for changed number of lines of code
-if has_app_changes && !has_test_changes && git.lines_of_code > 20
-    warn("Tests were not updated", sticky: false)
-end
-
 swiftlint.config_file = '.swiftlint.yml'
 swiftlint.directory = 'Sources'
 swiftlint.lint_files inline_mode: true
