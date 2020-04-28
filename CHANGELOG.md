@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `ChatViewStyle.dynamic` for iOS 13 to support dynamic colors for dark mode [#191](https://github.com/GetStream/stream-chat-swift/issues/191). 
 - Added `MessageViewStyle.pointedCornerRadius` to make pointed corner rounded [#191](https://github.com/GetStream/stream-chat-swift/issues/191). 
 - Added methods for `AvatarView` customization [#203](https://github.com/GetStream/stream-chat-swift/issues/203):
+- Added `messageInsetSpacing` to `MessageViewStyle` to allow control of spacing between message and container
+   [#216](https://github.com/GetStream/stream-chat-swift/pull/216).
 
 `ChannelsViewController`:
 ```swift
