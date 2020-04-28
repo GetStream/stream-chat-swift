@@ -56,10 +56,10 @@ extension MessageTableViewCell {
         messageStackView.insertArrangedSubview(preview, at: index)
         attachmentPreviews.append(preview)
         
-        // File preview.
         guard let imagePreview = preview as? ImageAttachmentPreview else {
-            preview.update { _, _ in }
-            preview.update(imageMask: backgroundImageForAttachment(at: index))
+            // File preview.
+            (preview as? FileAttachmentPreview)?.update()
+            preview.apply(imageMask: backgroundImageForAttachment(at: index))
             addGetures(preview, nil)
             return
         }
@@ -67,7 +67,7 @@ extension MessageTableViewCell {
         // Image/Video preview.
         guard message.isEphemeral else {
             imagePreview.update { [weak self, weak imagePreview] in
-                imagePreview?.update(imageMask: self?.imageMaskForAttachment(at: index))
+                imagePreview?.apply(imageMask: self?.imageMaskForAttachment(at: index))
                 addGetures($0, $1)
             }
             return
