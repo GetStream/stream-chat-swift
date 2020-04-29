@@ -174,27 +174,29 @@ open class ChannelTableViewCell: UITableViewCell, Reusable {
     ///   - message: a last message text.
     ///   - isMeta: shows the message text as a meta data.
     ///   - isUnread: shows the message as unread.
+    public func update(name: String?, isUnread: Bool) {
+        nameLabel.text = name
+        nameLabel.font = isUnread ? style.nameUnreadFont : style.nameFont
+        nameLabel.textColor = isUnread ? style.nameUnreadColor : style.nameColor
+    }
+    
+    /// Update the channel cell with a message text.
+    ///
+    /// - Parameters:
+    ///   - message: a last message text.
+    ///   - isMeta: shows the message text as a meta data.
+    ///   - isUnread: shows the message as unread.
     public func update(message: String, isMeta: Bool, isUnread: Bool) {
+        messageLabel.text = message
+        
         if isMeta {
             messageLabel.font = style.messageDeletedFont
             messageLabel.textColor = style.messageDeletedColor
-            messageLabel.text = message
             return
         }
         
-        if isUnread {
-            nameLabel.font = style.nameUnreadFont
-            nameLabel.textColor = style.nameUnreadColor
-            messageLabel.font = style.messageUnreadFont
-            messageLabel.textColor = style.messageUnreadColor
-        } else {
-            nameLabel.font = style.nameFont
-            nameLabel.textColor = style.nameColor
-            messageLabel.font = style.messageFont
-            messageLabel.textColor = style.messageColor
-        }
-        
-        messageLabel.text = message
+        messageLabel.font = isUnread ? style.messageUnreadFont : style.messageFont
+        messageLabel.textColor = isUnread ? style.messageUnreadColor : style.messageColor
     }
     
     /// Update the channel cell with an info text.
