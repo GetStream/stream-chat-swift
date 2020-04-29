@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Message Structure Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Struct/Message" class="dashAnchor"></a>
+    <a title="Message Structure Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html">StreamChatCore Docs</a> (85% documented)</p>
+        <p class="header-right"><a href="https://github.com/GetStream/stream-chat-swift"><img src="../img/gh.png"/>View on GitHub</a></p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html">StreamChatCore Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        Message Structure Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/Atomic.html">Atomic</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel.html">Channel</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel/DecodingKeys.html">– DecodingKeys</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel/Config.html">– Config</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Channel/Command.html">– Command</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelPresenter.html">ChannelPresenter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ChannelsPresenter.html">ChannelsPresenter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Client.html">Client</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Client/Config.html">– Config</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ClientLogger.html">ClientLogger</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ClientLogger/Level.html">– Level</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ClientLogger/Options.html">– Options</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/InternetConnection.html">InternetConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Notifications.html">Notifications</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Presenter.html">Presenter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/RxWebSocketDelegateProxy.html">RxWebSocketDelegateProxy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Uploader.html">Uploader</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/UploaderItem.html">UploaderItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/UploaderItem/UploadingType.html">– UploadingType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebSocket.html">WebSocket</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebSocket.html#/s:14StreamChatCore9WebSocketC14ErrorContainerV">– ErrorContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebSocket/Connection.html">– Connection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/WebSocket/Response.html">– Response</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/AttachmentFileType.html">AttachmentFileType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/AttachmentType.html">AttachmentType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/BanEnabling.html">BanEnabling</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChannelType.html">ChannelType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ChatItem.html">ChatItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ClientError.html">ClientError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/EncodingError.html">EncodingError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Endpoint.html">Endpoint</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Endpoint/Method.html">– Method</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Environment.html">Environment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Event.html">Event</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/EventType.html">EventType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Filter.html">Filter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Filter/Operator.html">– Operator</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/InviteAnswer.html">InviteAnswer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/MessageType.html">MessageType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/Pagination.html">Pagination</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ReactionType.html">ReactionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/SearchQueryError.html">SearchQueryError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/ViewChanges.html">ViewChanges</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/WebSocketEvent.html">WebSocketEvent</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Bundle.html">Bundle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Data.html">Data</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Date.html">Date</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/DateFormatter.html">DateFormatter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/DateFormatter/Stream.html">– Stream</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Dictionary.html">Dictionary</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Encodable.html">Encodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Int.html">Int</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/JSONDecoder.html">JSONDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/JSONEncoder.html">JSONEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/JSONEncoder/DataEncodingStrategy.html">– DataEncodingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/JSONEncoder/DateEncodingStrategy.html">– DateEncodingStrategy</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Optional.html">Optional</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Result.html">Result</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Token.html">Token</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/UIApplication.html">UIApplication</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/URL.html">URL</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/Database.html">Database</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Structs/AnyError.html">AnyError</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment.html">Attachment</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment/Action.html">– Action</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment/ActionType.html">– ActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Attachment/ActionStyle.html">– ActionStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/AttachmentFile.html">AttachmentFile</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/BaseURL.html">BaseURL</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/BaseURL/ServerLocation.html">– ServerLocation</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelDeletedResponse.html">ChannelDeletedResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelId.html">ChannelId</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore19ChannelInviteAnswerV">ChannelInviteAnswer</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore21ChannelInviteResponseV">ChannelInviteResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelQuery.html">ChannelQuery</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelResponse.html">ChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore13ChannelUpdateV">ChannelUpdate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelUpdatedResponse.html">ChannelUpdatedResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelsQuery.html">ChannelsQuery</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ChannelsResponse.html">ChannelsResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ClientErrorResponse.html">ClientErrorResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Device.html">Device</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/DevicesResponse.html">DevicesResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/EventResponse.html">EventResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html">ExtraData</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData/DecodableType.html">– DecodableType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData/Wrapper.html">– Wrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV11UserWrapperC">– UserWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV14ChannelWrapperC">– ChannelWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV14MessageWrapperC">– MessageWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV17AttachmentWrapperC">– AttachmentWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ExtraData.html#/s:14StreamChatCore9ExtraDataV15ReactionWrapperC">– ReactionWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/FileUploadResponse.html">FileUploadResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/FlagMessageResponse.html">FlagMessageResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/FlagUserResponse.html">FlagUserResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/HiddenChannelResponse.html">HiddenChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Member.html">Member</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Member/Role.html">– Role</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Message.html">Message</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageAction.html">MessageAction</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageRead.html">MessageRead</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageResponse.html">MessageResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore16MessagesResponseV">MessagesResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MutedUser.html">MutedUser</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MutedUsersResponse.html">MutedUsersResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/QueryOptions.html">QueryOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Reaction.html">Reaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ReactionScores.html">ReactionScores</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/SearchQuery.html">SearchQuery</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/Sorting.html">Sorting</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/TypingUser.html">TypingUser</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/UpdatedUsersResponse.html">UpdatedUsersResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/User.html">User</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/User/Role.html">– Role</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs.html#/s:14StreamChatCore7UserBanV">UserBan</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/UsersQuery.html">UsersQuery</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/UsersResponse.html">UsersResponse</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:14StreamChatCore16ProgressResponsea">ProgressResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:14StreamChatCore5Tokena">Token</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:14StreamChatCore13TokenProvidera">TokenProvider</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>Message</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Message</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Message</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
+
+                </div>
+              </div>
+            <p>A message.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV2idSSvp"></a>
+                    <a name="//apple_ref/swift/Property/id" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV2idSSvp">id</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A message id.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV4typeAA0D4TypeOvp"></a>
+                    <a name="//apple_ref/swift/Property/type" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV4typeAA0D4TypeOvp">type</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A message type (see <code><a href="../Enums/MessageType.html">MessageType</a></code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/MessageType.html">MessageType</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV4userAA4UserVvp"></a>
+                    <a name="//apple_ref/swift/Property/user" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV4userAA4UserVvp">user</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A user (see <code><a href="../Structs/User.html">User</a></code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV7created10Foundation4DateVvp"></a>
+                    <a name="//apple_ref/swift/Property/created" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV7created10Foundation4DateVvp">created</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A created date.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">created</span><span class="p">:</span> <span class="kt">Date</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV7updated10Foundation4DateVvp"></a>
+                    <a name="//apple_ref/swift/Property/updated" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV7updated10Foundation4DateVvp">updated</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A updated date.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">updated</span><span class="p">:</span> <span class="kt">Date</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV7deleted10Foundation4DateVSgvp"></a>
+                    <a name="//apple_ref/swift/Property/deleted" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV7deleted10Foundation4DateVSgvp">deleted</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A deleted date.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">deleted</span><span class="p">:</span> <span class="kt">Date</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV4textSSvp"></a>
+                    <a name="//apple_ref/swift/Property/text" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV4textSSvp">text</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A text.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV7commandSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/command" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV7commandSSSgvp">command</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A used command name.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">command</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV4argsSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/args" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV4argsSSSgvp">args</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A used command args.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">args</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV11attachmentsSayAA10AttachmentVGvp"></a>
+                    <a name="//apple_ref/swift/Property/attachments" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV11attachmentsSayAA10AttachmentVGvp">attachments</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Attachments (see <code><a href="../Structs/Attachment.html">Attachment</a></code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Attachment.html">Attachment</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV8parentIdSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/parentId" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV8parentIdSSSgvp">parentId</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A parent message id.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">parentId</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV18showReplyInChannelSbvp"></a>
+                    <a name="//apple_ref/swift/Property/showReplyInChannel" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV18showReplyInChannelSbvp">showReplyInChannel</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if this reply message needs to show in the channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">showReplyInChannel</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV14mentionedUsersSayAA4UserVGvp"></a>
+                    <a name="//apple_ref/swift/Property/mentionedUsers" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV14mentionedUsersSayAA4UserVGvp">mentionedUsers</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Mentioned users (see <code><a href="../Structs/User.html">User</a></code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">mentionedUsers</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV10replyCountSivp"></a>
+                    <a name="//apple_ref/swift/Property/replyCount" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV10replyCountSivp">replyCount</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Reply count.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">replyCount</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV9extraDataAA05ExtraF0VSgvp"></a>
+                    <a name="//apple_ref/swift/Property/extraData" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV9extraDataAA05ExtraF0VSgvp">extraData</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>An extra data for the message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">extraData</span><span class="p">:</span> <span class="kt"><a href="../Structs/ExtraData.html">ExtraData</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV15latestReactionsSayAA8ReactionVGvp"></a>
+                    <a name="//apple_ref/swift/Property/latestReactions" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV15latestReactionsSayAA8ReactionVGvp">latestReactions</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The latest reactions (see <code><a href="../Structs/Reaction.html">Reaction</a></code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">latestReactions</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Reaction.html">Reaction</a></span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV12ownReactionsSayAA8ReactionVGvp"></a>
+                    <a name="//apple_ref/swift/Property/ownReactions" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV12ownReactionsSayAA8ReactionVGvp">ownReactions</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The current user own reactions (see <code><a href="../Structs/Reaction.html">Reaction</a></code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">ownReactions</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Reaction.html">Reaction</a></span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV14reactionScoresAA08ReactionF0VSgvp"></a>
+                    <a name="//apple_ref/swift/Property/reactionScores" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV14reactionScoresAA08ReactionF0VSgvp">reactionScores</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A reactions count (see <code>ReactionCounts</code>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">reactionScores</span><span class="p">:</span> <span class="kt"><a href="../Structs/ReactionScores.html">ReactionScores</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV11isEphemeralSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isEphemeral" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV11isEphemeralSbvp">isEphemeral</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if the message is ephemeral, e.g. Giphy preview.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isEphemeral</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV9isDeletedSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isDeleted" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV9isDeletedSbvp">isDeleted</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if the message was deleted.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isDeleted</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV5isOwnSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isOwn" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV5isOwnSbvp">isOwn</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if the message is own message of the current user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isOwn</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV7canEditSbvp"></a>
+                    <a name="//apple_ref/swift/Property/canEdit" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV7canEditSbvp">canEdit</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if the message could be edited.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">canEdit</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV9canDeleteSbvp"></a>
+                    <a name="//apple_ref/swift/Property/canDelete" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV9canDeleteSbvp">canDelete</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if the message could be deleted.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">canDelete</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV12hasReactionsSbvp"></a>
+                    <a name="//apple_ref/swift/Property/hasReactions" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV12hasReactionsSbvp">hasReactions</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if the message has reactions.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">hasReactions</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV10textOrArgsSSvp"></a>
+                    <a name="//apple_ref/swift/Property/textOrArgs" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV10textOrArgsSSvp">textOrArgs</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A combination of message text and command args.</p>
+
+<ol>
+<li>if the text is not empty and it&rsquo;s not equal to the single attachment URL, then it will return empty string.</li>
+<li>if the text is empty, then it will return commands args.</li>
+</ol>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">textOrArgs</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV5isBanSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isBan" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV5isBanSbvp">isBan</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Returns true if the message is type of error with a text for the banned user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isBan</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV7isEmptySbvp"></a>
+                    <a name="//apple_ref/swift/Property/isEmpty" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV7isEmptySbvp">isEmpty</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if the message is empty.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isEmpty</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV2id4type8parentId7created7updated7deleted4text7command4args4user11attachments14mentionedUsers9extraData15latestReactions03ownV014reactionScores10replyCount18showReplyInChannelACSS_AA0D4TypeOSSSg10Foundation4DateVA_A_SgSSA2xA4UserVSayAA10AttachmentVGSayA2_GSe_SEpSgSayAA8ReactionVGA10_AA08ReactionY0VSgSiSbtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(id:type:parentId:created:updated:deleted:text:command:args:user:attachments:mentionedUsers:extraData:latestReactions:ownReactions:reactionScores:replyCount:showReplyInChannel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV2id4type8parentId7created7updated7deleted4text7command4args4user11attachments14mentionedUsers9extraData15latestReactions03ownV014reactionScores10replyCount18showReplyInChannelACSS_AA0D4TypeOSSSg10Foundation4DateVA_A_SgSSA2xA4UserVSayAA10AttachmentVGSayA2_GSe_SEpSgSayAA8ReactionVGA10_AA08ReactionY0VSgSiSbtcfc">init(id:type:parentId:created:updated:deleted:text:command:args:user:attachments:mentionedUsers:extraData:latestReactions:ownReactions:reactionScores:replyCount:showReplyInChannel:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Init a message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">id</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+            <span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/MessageType.html">MessageType</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">regular</span><span class="p">,</span>
+            <span class="nv">parentId</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">created</span><span class="p">:</span> <span class="kt">Date</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
+            <span class="nv">updated</span><span class="p">:</span> <span class="kt">Date</span> <span class="o">=</span> <span class="o">.</span><span class="k">default</span><span class="p">,</span>
+            <span class="nv">deleted</span><span class="p">:</span> <span class="kt">Date</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">command</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">args</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">unknown</span><span class="p">,</span>
+            <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Attachment.html">Attachment</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nv">mentionedUsers</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nv">extraData</span><span class="p">:</span> <span class="kt">Codable</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">latestReactions</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Reaction.html">Reaction</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nv">ownReactions</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Reaction.html">Reaction</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+            <span class="nv">reactionScores</span><span class="p">:</span> <span class="kt"><a href="../Structs/ReactionScores.html">ReactionScores</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">replyCount</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nv">showReplyInChannel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>id</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a message id.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>text</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a text.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>attachments</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>attachments (see <code><a href="../Structs/Attachment.html">Attachment</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>extraData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an extra data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parentId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a parent message id.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>mentionedUsers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a list of mentioned users.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>showReplyInChannel</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a flag to show reply messages in a channel, not in a separate thread.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SE6encode2toys7Encoder_p_tKF"></a>
+                    <a name="//apple_ref/swift/Method/encode(to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SE6encode2toys7Encoder_p_tKF">encode(to:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">encode</span><span class="p">(</span><span class="n">to</span> <span class="nv">encoder</span><span class="p">:</span> <span class="kt">Encoder</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:Se4fromxs7Decoder_p_tKcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(from:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:Se4fromxs7Decoder_p_tKcfc">init(from:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">from</span> <span class="nv">decoder</span><span class="p">:</span> <span class="kt">Decoder</span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Database"></a>
+                <a name="//apple_ref/swift/Section/Database" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Database"></a>
+                  <h3 class="section-name"><p>Database</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV12fetchReplies10pagination7RxSwift10ObservableCySayACGGAA10PaginationO_tF"></a>
+                    <a name="//apple_ref/swift/Method/fetchReplies(pagination:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV12fetchReplies10pagination7RxSwift10ObservableCySayACGGAA10PaginationO_tF">fetchReplies(pagination:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Fetch a reply messages from a database.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchReplies</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">Message</span><span class="p">]</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>pagination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a pagination (see <code><a href="../Enums/Pagination.html">Pagination</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV3add17repliesToDatabaseySayACG_tF"></a>
+                    <a name="//apple_ref/swift/Method/add(repliesToDatabase:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV3add17repliesToDatabaseySayACG_tF">add(repliesToDatabase:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Add reply messages to a message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="n">repliesToDatabase</span> <span class="nv">replies</span><span class="p">:</span> <span class="p">[</span><span class="kt">Message</span><span class="p">])</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>messages</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>message</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Requests"></a>
+                <a name="//apple_ref/swift/Section/Requests" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Requests"></a>
+                  <h3 class="section-name"><p>Requests</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV6delete7RxSwift10ObservableCyAA0D8ResponseVGyF"></a>
+                    <a name="//apple_ref/swift/Method/delete()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV6delete7RxSwift10ObservableCyAA0D8ResponseVGyF">delete()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delete the message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">delete</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV11addReaction4type5score9extraData7RxSwift10ObservableCyAA0D8ResponseVGAA0F4TypeO_SiSe_SEpSgtF"></a>
+                    <a name="//apple_ref/swift/Method/addReaction(type:score:extraData:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV11addReaction4type5score9extraData7RxSwift10ObservableCyAA0D8ResponseVGAA0F4TypeO_SiSe_SEpSgtF">addReaction(type:score:extraData:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Add a reaction to the message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">addReaction</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">,</span> <span class="nv">score</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">extraData</span><span class="p">:</span> <span class="kt">Codable</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>type</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>score</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction score, e.g. <code>.cumulative</code> it could be more then 1.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>extraData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction extra data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV14deleteReaction4type7RxSwift10ObservableCyAA0D8ResponseVGAA0F4TypeO_tF"></a>
+                    <a name="//apple_ref/swift/Method/deleteReaction(type:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV14deleteReaction4type7RxSwift10ObservableCyAA0D8ResponseVGAA0F4TypeO_tF">deleteReaction(type:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delete a reaction to the message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">deleteReaction</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>type</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction type, e.g. like.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV7replies10pagination7RxSwift10ObservableCySayACGGAA10PaginationO_tF"></a>
+                    <a name="//apple_ref/swift/Method/replies(pagination:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV7replies10pagination7RxSwift10ObservableCySayACGGAA10PaginationO_tF">replies(pagination:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send a request for reply messages.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">replies</span><span class="p">(</span><span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Enums/Pagination.html">Pagination</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">Message</span><span class="p">]</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>pagination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a pagination (see <code><a href="../Enums/Pagination.html">Pagination</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Flag%20Message"></a>
+                <a name="//apple_ref/swift/Section/Flag Message" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Flag%20Message"></a>
+                  <h3 class="section-name"><p>Flag Message</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV9isFlaggedSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isFlagged" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV9isFlaggedSbvp">isFlagged</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if the message is flagged (locally).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">isFlagged</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV4flag7RxSwift10ObservableCyAA04FlagD8ResponseVGyF"></a>
+                    <a name="//apple_ref/swift/Method/flag()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV4flag7RxSwift10ObservableCyAA04FlagD8ResponseVGyF">flag()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Flag a message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">flag</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/FlagMessageResponse.html">FlagMessageResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable flag message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV6unflag7RxSwift10ObservableCyAA04FlagD8ResponseVGyF"></a>
+                    <a name="//apple_ref/swift/Method/unflag()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV6unflag7RxSwift10ObservableCyAA04FlagD8ResponseVGyF">unflag()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unflag a message.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">unflag</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/FlagMessageResponse.html">FlagMessageResponse</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>an observable flag message response.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SQ2eeoiySbx_xtFZ"></a>
+                    <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SQ2eeoiySbx_xtFZ">==(_:_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">Message</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">Message</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SH4hash4intoys6HasherVz_tF"></a>
+                    <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SH4hash4intoys6HasherVz_tF">hash(into:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Reactions"></a>
+                <a name="//apple_ref/swift/Section/Reactions" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Reactions"></a>
+                  <h3 class="section-name"><p>Reactions</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV14hasOwnReaction4typeSbAA0G4TypeO_tF"></a>
+                    <a name="//apple_ref/swift/Method/hasOwnReaction(type:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV14hasOwnReaction4typeSbAA0G4TypeO_tF">hasOwnReaction(type:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if the message has a reaction with the given type from the current user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">hasOwnReaction</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ReactionType.html">ReactionType</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>type</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction type.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>true if the message has a reaction type.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV11addOrUpdate8reaction14toOwnReactionsyAA8ReactionV_SayAHGtF"></a>
+                    <a name="//apple_ref/swift/Method/addOrUpdate(reaction:toOwnReactions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV11addOrUpdate8reaction14toOwnReactionsyAA8ReactionV_SayAHGtF">addOrUpdate(reaction:toOwnReactions:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Add a given reaction to the current user own reactions.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">mutating</span> <span class="k">mutating</span> <span class="kd">func</span> <span class="nf">addOrUpdate</span><span class="p">(</span><span class="nv">reaction</span><span class="p">:</span> <span class="kt"><a href="../Structs/Reaction.html">Reaction</a></span><span class="p">,</span> <span class="n">toOwnReactions</span> <span class="nv">reactions</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Reaction.html">Reaction</a></span><span class="p">])</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>reaction</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction for adding.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>reactions</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the current list of user own reactions.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore7MessageV6delete8reaction16fromOwnReactionsyAA8ReactionV_SayAHGtF"></a>
+                    <a name="//apple_ref/swift/Method/delete(reaction:fromOwnReactions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore7MessageV6delete8reaction16fromOwnReactionsyAA8ReactionV_SayAHGtF">delete(reaction:fromOwnReactions:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delete a given reaction from the current user own reaction.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">mutating</span> <span class="k">mutating</span> <span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="nv">reaction</span><span class="p">:</span> <span class="kt"><a href="../Structs/Reaction.html">Reaction</a></span><span class="p">,</span> <span class="n">fromOwnReactions</span> <span class="nv">reactions</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Reaction.html">Reaction</a></span><span class="p">])</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>reaction</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reaction for deleting.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>reactions</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the current list of user own reactions.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-04-02)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.1</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

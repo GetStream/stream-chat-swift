@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.0)
+_April 29, 2020_
+
 ### ⚠️ Breaking Changes
 - Set user will return a `Result<UserConnection, ClientError>` in callback. `UserConnection` has the current user data, connection id and unread count for channels and messages [#182](https://github.com/GetStream/stream-chat-swift/issues/182).
 - `AvatarView.init` changed and it requires `AvatarViewStyle` intead of `cornerRadius` and `font` [#203](https://github.com/GetStream/stream-chat-swift/issues/203).
