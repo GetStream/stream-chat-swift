@@ -404,7 +404,7 @@ extension ChatViewController {
     private func showAddFileView() {
         guard let composerAddFileContainerView = composerAddFileContainerView,
             !composerAddFileContainerView.containerView.arrangedSubviews.isEmpty else {
-            return
+                return
         }
         
         showCommands(show: false)
@@ -464,24 +464,25 @@ extension ChatViewController {
             do {
                 let pickedImage = try result.get()
                 
-                if let resources = try? pickedImage.fileURL?.resourceValues(forKeys: [.fileSizeKey]) {
-                    if let fileSize = resources.fileSize,
-                       fileSize >= 20 * 1_048_576 { // 20 MB Upload limit
-                        self.show(errorMessage: "File size exceeds limit of 20MB")
-                        return
-                    }
-                } else {
-                    ClientLogger.log("📁", "File size limit cannot be determined. "
-                        + "Keep in mind that files over 20MB will fail to upload.")
-                }
-                
-                guard let presenter = self.presenter,
-                    (pickedImage.fileURL != nil || pickedImage.image != nil) else {
+                guard let fileURL = pickedImage.fileURL else {
+                    ClientLogger.log("📁", "File URL cannot be determined for file named: \(pickedImage.fileName)")
                     return
                 }
                 
-                let extraData = presenter.imageAttachmentExtraDataCallback?(pickedImage.fileURL,
-                                                                            pickedImage.image,
+                let fileSizeResource = try fileURL.resourceValues(forKeys: [.fileSizeKey])
+                
+                if let fileSize = fileSizeResource.fileSize,
+                   fileSize >= 20 * 1_048_576 { // 20 MB Upload limit
+                    self.show(errorMessage: "File size exceeds limit of 20MB")
+                    return
+                }
+                
+                guard let presenter = self.presenter, let image = pickedImage.image else {
+                    return
+                }
+                
+                let extraData = presenter.imageAttachmentExtraDataCallback?(fileURL,
+                                                                            image,
                                                                             pickedImage.isVideo,
                                                                             presenter.channel)
                 
@@ -490,7 +491,7 @@ extension ChatViewController {
             } catch let error as ImagePickerError {
                 self.showImagePickerAlert(for: error)
             } catch {
-                assertionFailure("Impossible error: \(error)")
+                ClientLogger.log("📁", "Error occurred when trying to get file size: \(error)")
             }
         }
         

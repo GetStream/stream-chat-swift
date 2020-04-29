@@ -50,8 +50,7 @@ func deleteFile(url: URL, channel: Channel, _ completion: @escaping Client.Compl
 - Added `ChatViewStyle.dynamic` for iOS 13 to support dynamic colors for dark mode [#191](https://github.com/GetStream/stream-chat-swift/issues/191). 
 - Added `MessageViewStyle.pointedCornerRadius` to make pointed corner rounded [#191](https://github.com/GetStream/stream-chat-swift/issues/191). 
 - Added methods for `AvatarView` customization [#203](https://github.com/GetStream/stream-chat-swift/issues/203):
-- Added `messageInsetSpacing` to `MessageViewStyle` to allow control of spacing between message and container
-   [#216](https://github.com/GetStream/stream-chat-swift/pull/216).
+- Added `messageInsetSpacing` to `MessageViewStyle` to allow control of spacing between message and container [#216](https://github.com/GetStream/stream-chat-swift/pull/216).
 - Added `Uploader` protocol. Use them to create own uploader for your file storage. Assign your uploader into `ChannelPresenter` [#100](https://github.com/GetStream/stream-chat-swift/issues/100):
 ```swift
 presenter.uploadManager = UploadManager(uploader: customUploader)
