@@ -161,7 +161,9 @@ extension ChannelPresenter {
     }
     
     private func appendOrUpdateMessageItem(_ message: Message, at index: Int = -1) {
-        lastMessageAtomic.set(message)
+        if let lastMessage = lastMessage, (message.created > lastMessage.created || message.id == lastMessage.id) {
+            lastMessageAtomic.set(message)
+        }
         
         if index == -1 {
             if message.isOwn {
