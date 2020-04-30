@@ -169,8 +169,6 @@ extension ChatViewController {
             composerEditingContainerView.animate(show: false)
         }
         
-        composerView.styleState = .disabled
-        
         presenter?.rx.send(text: text)
             .subscribe(
                 onNext: { [weak self] messageResponse in
