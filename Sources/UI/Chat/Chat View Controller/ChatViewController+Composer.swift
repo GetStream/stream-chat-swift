@@ -169,6 +169,10 @@ extension ChatViewController {
             composerEditingContainerView.animate(show: false)
         }
         
+        // We don't want users to send the same message multiple times
+        // in case their internet is slow and message isn't sent immediately
+        composerView.sendButton.isEnabled = false
+        
         presenter?.rx.send(text: text)
             .subscribe(
                 onNext: { [weak self] messageResponse in
