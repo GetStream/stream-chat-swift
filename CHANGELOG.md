@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Fix keyboard disappearing after every message [#227](https://github.com/GetStream/stream-chat-swift/issues/227)
 
 # [2.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.0)
 _April 29, 2020_
