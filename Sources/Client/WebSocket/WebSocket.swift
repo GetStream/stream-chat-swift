@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Starscream
 
 /// A web socket client.
 final class WebSocket {
@@ -16,8 +15,8 @@ final class WebSocket {
     /// A WebSocket connection callback.
     private let onEvent: (Event) -> Void
     private var onEventObservers = [String: Client.OnEvent]()
-    private let webSocket: Starscream.WebSocket
-    private let stayConnectedInBackground: Bool
+    private var webSocketProvider: WebSocketProvider
+    private let options: WebSocketOptions
     private let logger: ClientLogger?
     private var consecutiveFailures: TimeInterval = 0
     private var shouldReconnect = false
@@ -34,31 +33,30 @@ final class WebSocket {
     }
     
     private lazy var handshakeTimer =
-        RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval), queue: webSocket.callbackQueue) { [weak self] in
+        RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval), queue: webSocketProvider.callbackQueue) { [weak self] in
             self?.logger?.log("🏓➡️", level: .info)
-            self?.webSocket.write(ping: .empty)
+            self?.webSocketProvider.sendPing()
     }
     
     /// Checks if the web socket is connected and `connectionId` is not nil.
-    var isConnected: Bool { connectionId != nil && webSocket.isConnected }
+    var isConnected: Bool { connectionId != nil && webSocketProvider.isConnected }
     
-    init(_ urlRequest: URLRequest,
-         stayConnectedInBackground: Bool = true,
+    init(_ provider: WebSocketProvider,
+         options: WebSocketOptions,
          logger: ClientLogger? = nil,
          onEvent: @escaping (Event) -> Void = { _ in }) {
-        self.stayConnectedInBackground = stayConnectedInBackground
+        self.webSocketProvider = provider
+        self.options = options
         self.logger = logger
         self.onEvent = onEvent
-        webSocket = Starscream.WebSocket(request: urlRequest)
-        webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
         webSocketInitiated = true
-        webSocket.delegate = self
+        webSocketProvider.delegate = self
     }
     
     init() {
-        webSocket = .init(url: BaseURL.placeholderURL)
+        webSocketProvider = EmptyWebSocketProvider(request: URLRequest(url: BaseURL.placeholderURL))
         webSocketInitiated = false
-        stayConnectedInBackground = false
+        options = []
         logger = nil
         onEvent = { _ in }
     }
@@ -89,18 +87,18 @@ extension WebSocket {
         
         if isConnected || connectionState == .connecting || connectionState == .reconnecting {
             logger?.log("Skip connecting: "
-                + "isConnected = \(webSocket.isConnected), "
+                + "isConnected = \(webSocketProvider.isConnected), "
                 + "isReconnecting = \(connectionState == .reconnecting), "
                 + "isConnecting = \(connectionState == .connecting)")
             return
         }
         
         logger?.log("Connecting...")
-        logger?.log(webSocket.request)
+        logger?.log(webSocketProvider.request)
         connectionStateAtomic.set(.connecting)
         shouldReconnect = true
         
-        DispatchQueue.main.async(execute: webSocket.connect)
+        DispatchQueue.main.async(execute: webSocketProvider.connect)
     }
     
     private func reconnect() {
@@ -115,18 +113,18 @@ extension WebSocket {
         let delay = minDelay + TimeInterval.random(in: 0...(maxDelay - minDelay))
         logger?.log("⏳ Reconnect in \(delay) sec")
         
-        webSocket.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
+        webSocketProvider.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
             self?.connectionStateAtomic.set(.connecting)
             self?.connect()
         }
     }
     
     func disconnectInBackground() {
-        webSocket.callbackQueue.async(execute: disconnectInBackgroundInWebSocketQueue)
+        webSocketProvider.callbackQueue.async(execute: disconnectInBackgroundInWebSocketQueue)
     }
     
     private func disconnectInBackgroundInWebSocketQueue() {
-        guard stayConnectedInBackground else {
+        guard options.contains(.stayConnectedInBackground) else {
             disconnect(reason: "Going into background, stayConnectedInBackground is disabled")
             return
         }
@@ -164,10 +162,10 @@ extension WebSocket {
         consecutiveFailures = 0
         clearStateAfterDisconnect()
         
-        if webSocket.isConnected {
+        if webSocketProvider.isConnected {
             logger?.log("Disconnecting: \(reason)")
             connectionStateAtomic.set(.disconnecting)
-            webSocket.disconnect(forceTimeout: 0)
+            webSocketProvider.disconnect()
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
             connectionStateAtomic.set(.disconnected(nil))
@@ -189,7 +187,7 @@ extension WebSocket {
     func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
                    callback: @escaping Client.OnEvent) -> Cancellable {
         let subscription = Subscription { [weak self] uuid in
-            self?.webSocket.callbackQueue.async {
+            self?.webSocketProvider.callbackQueue.async {
                 self?.onEventObservers[uuid] = nil
             }
         }
@@ -200,7 +198,7 @@ extension WebSocket {
             }
         }
         
-        webSocket.callbackQueue.async { [weak self] in
+        webSocketProvider.callbackQueue.async { [weak self] in
             self?.onEventObservers[subscription.uuid] = handler
             
             // Reply the last connectoin state.
@@ -213,7 +211,7 @@ extension WebSocket {
     }
     
     private func publishEvent(_ event: Event) {
-        webSocket.callbackQueue.async { [weak self] in
+        webSocketProvider.callbackQueue.async { [weak self] in
             self?.onEvent(event)
             self?.onEventObservers.forEach({ $0.value(event) })
         }
@@ -222,14 +220,14 @@ extension WebSocket {
 
 // MARK: - Web Socket Delegate
 
-extension WebSocket: WebSocketDelegate {
+extension WebSocket: WebSocketProviderDelegate {
     
-    func websocketDidConnect(socket: Starscream.WebSocketClient) {
+    func websocketDidConnect(_ provider: WebSocketProvider) {
         logger?.log("❤️ Connected. Waiting for the current user data and connectionId...")
         connectionStateAtomic.set(.connecting)
     }
     
-    func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
+    func websocketDidReceiveMessage(_ provider: WebSocketProvider, text: String) {
         guard let event = parseEvent(with: text) else {
             return
         }
@@ -259,9 +257,7 @@ extension WebSocket: WebSocketDelegate {
         }
     }
     
-    func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
-    
-    func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
+    func websocketDidDisconnect(_ provider: WebSocketProvider, error: WebSocketProviderError?) {
         logger?.log("Parsing WebSocket disconnect... (error: \(error?.localizedDescription ?? "<nil>"))")
         clearStateAfterDisconnect()
         
@@ -300,7 +296,7 @@ extension WebSocket: WebSocketDelegate {
         }
     }
     
-    private func isStopError(_ error: Swift.Error) -> Bool {
+    private func isStopError(_ error: WebSocketProviderError) -> Bool {
         guard InternetConnection.shared.isAvailable else {
             return true
         }
@@ -309,7 +305,7 @@ extension WebSocket: WebSocketDelegate {
             return true
         }
         
-        if let wsError = error as? WSError, wsError.code == 1000 {
+        if error.code == 1000 {
             return true
         }
         
@@ -364,6 +360,16 @@ extension WebSocket: WebSocketDelegate {
         }
         
         return nil
+    }
+}
+
+struct WebSocketOptions: OptionSet {
+    let rawValue: Int
+    
+    static let stayConnectedInBackground = WebSocketOptions(rawValue: 1 << 0)
+    
+    init(rawValue: Int) {
+        self.rawValue = rawValue
     }
 }
 
