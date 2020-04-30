@@ -1,0 +1,15 @@
+name: Rebase-Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  rebase-release:
+    name: Rebase release/* branches onto master
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Rebase branches
+      run: git branch -r | grep "release/" | xargs git rebase master
