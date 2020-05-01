@@ -11,5 +11,11 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Configure git for pushing
+      run: |
+        git config --local user.email "bahadir+iosbot@getstream.io"
+        git config --local user.name "Stream iOS Bot"
     - name: Rebase branches
-      run: git branch -r | grep -o -e "release/.*$" | xargs -I % sh -c 'git checkout %; git rebase origin/master; git push'
+      run: git branch -r | grep -o -e "release/.*$" | xargs -I % sh -c 'git checkout %; git rebase origin/master; git push "https://Stream-iOS-Bot:${GITHUB_TOKEN}@github.com/GetStream/stream-chat-swift.git"'
+      env: |
+        GITHUB_TOKEN: ${{ secrets.REBASE_PUSH }}
