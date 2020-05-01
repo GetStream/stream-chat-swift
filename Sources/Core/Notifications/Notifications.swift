@@ -107,6 +107,10 @@ extension Notifications {
     ///   - message: a message.
     ///   - channel: a channel.
     public func showIfNeeded(newMessage message: Message, in channel: Channel) {
+        if message.user.isMuted {
+            return
+        }
+        
         DispatchQueue.main.async {
             if UIApplication.shared.applicationState == .background {
                 self.logger?.log("Show channel: \(channel.cid) message id: \(message.id) text: \(message.textOrArgs)")
