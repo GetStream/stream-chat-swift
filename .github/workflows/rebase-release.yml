@@ -12,4 +12,4 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Rebase branches
-      run: git branch -r | grep -o -e "release/.*$" | xargs -I % sh -c 'git checkout %; git rebase origin/master' 
+      run: git branch -r | grep -o -e "release/.*$" | xargs -I % sh -c 'git checkout %; git rebase origin/master; git push'
