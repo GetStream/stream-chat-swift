@@ -12,6 +12,7 @@ import Foundation
 public protocol Uploader {
     
     /// Uploads an image with a given data from the camera.
+    /// - Note: Please be sure to call `progress` and `completion` callbacks on the main thread.
     /// - Parameters:
     ///   - data: an image data.
     ///   - fileName: a default file name.
@@ -28,6 +29,7 @@ public protocol Uploader {
                    completion: @escaping (Result<URL, ClientError>) -> Void) -> Cancellable
     
     /// Uploads a file with a given local file.
+    /// - Note: Please be sure to call `progress` and `completion` callbacks on the main thread.
     /// - Parameters:
     ///   - data: a file data.
     ///   - fileName: a default file name.
@@ -44,6 +46,7 @@ public protocol Uploader {
                   completion: @escaping (Result<URL, ClientError>) -> Void) -> Cancellable
     
     /// Delete an image with a given URL.
+    /// - Note: Please be sure to call the `completion` callback on the main thread.
     /// - Parameters:
     ///   - url: an image URL.
     ///   - channel: a channel.
@@ -52,6 +55,7 @@ public protocol Uploader {
     func deleteImage(url: URL, channel: Channel, _ completion: @escaping (Result<EmptyData, ClientError>) -> Void) -> Cancellable
     
     /// Delete a file with a given URL.
+    /// - Note: Please be sure to call the `completion` callback on the main thread.
     /// - Parameters:
     ///   - url: a file URL.
     ///   - channel: a channel.
