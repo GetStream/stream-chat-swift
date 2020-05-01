@@ -103,6 +103,8 @@ public final class Client: Uploader {
     
     /// A web socket client.
     lazy var webSocket = WebSocket()
+    /// A default WebSocketProvider type.
+    let defaultWebSocketProviderType: WebSocketProvider.Type?
     /// The current connection state.
     public var connectionState: ConnectionState { webSocket.connectionState }
     /// Check if API key and token are valid and the web socket is connected.
@@ -148,10 +150,13 @@ public final class Client: Uploader {
     /// Creates a new instance of the network client.
     ///
     /// - Parameters:
-    ///   - config: The configuration object with details of how the new instance should be set up.
-    ///   - defaultURLSessionConfiguration: The base URLSession configuration `Client` uses for its
-    ///     URL sessions. `Client` is allowed to override the configuration with its own settings.
-    init(config: Client.Config, defaultURLSessionConfiguration: URLSessionConfiguration = .default) {
+    ///   - config: the configuration object with details of how the new instance should be set up.
+    ///   - defaultURLSessionConfiguration: the base URLSession configuration `Client` uses for its URL sessions.
+    ///                                     `Client` is allowed to override the configuration with its own settings.
+    ///   - defaultWebSocketProviderType: the default WebSocket provider type. `Client` will create it on set user.
+    init(config: Client.Config,
+         defaultURLSessionConfiguration: URLSessionConfiguration = .default,
+         defaultWebSocketProviderType: WebSocketProvider.Type? = nil) {
         self.apiKey = config.apiKey
         self.baseURL = config.baseURL
         self.callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
@@ -159,9 +164,9 @@ public final class Client: Uploader {
         self.database = config.database
         self.logOptions = config.logOptions
         logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
-
+        
         self.defaultURLSessionConfiguration = defaultURLSessionConfiguration
-
+        
         if !apiKey.isEmpty, logOptions.isEnabled {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Environment.version)")
             ClientLogger.logger("🔑", "", apiKey)
@@ -171,7 +176,22 @@ public final class Client: Uploader {
                 ClientLogger.logger("💽", "", "\(database.self)")
             }
         }
-
+        
+        // Seetup a default WebSocketProvider type.
+        if let defaultWebSocketProviderType = defaultWebSocketProviderType {
+            self.defaultWebSocketProviderType = defaultWebSocketProviderType
+        } else if #available(iOS 13, *) {
+            // Use iOS build-in WebSocket provider.
+            // Starscream does the same by default.
+            self.defaultWebSocketProviderType = URLSessionWebSocketProvider.self
+        } else if let providerClass = NSClassFromString("StreamChatClient.StarscreamWebSocketProvider"),
+            let starscreamWebSocketProviderClass = providerClass as? WebSocketProvider.Type {
+            // Use Starscream WebSocket provider lazily.
+            self.defaultWebSocketProviderType = starscreamWebSocketProviderClass
+        } else {
+            self.defaultWebSocketProviderType = nil
+        }
+        
         #if DEBUG
         checkLatestVersion()
         #endif
