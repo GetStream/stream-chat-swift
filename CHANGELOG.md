@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.1)
+_May 01, 2020_
+
 ### 🐞 Fixed
 - Fix keyboard disappearing after every message [#227](https://github.com/GetStream/stream-chat-swift/issues/227).
 - Suppress local notifications for muted users [#234](https://github.com/GetStream/stream-chat-swift/issues/234).
