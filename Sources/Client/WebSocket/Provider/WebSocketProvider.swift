@@ -33,7 +33,10 @@ protocol WebSocketProviderDelegate: class {
 }
 
 struct WebSocketProviderError: Error {
-    let error: Error
+    let reason: String
     let code: Int
-    var localizedDescription: String { error.localizedDescription }
+    let providerType: WebSocketProvider.Type
+    let providerError: Error?
+    
+    var localizedDescription: String { reason }
 }
