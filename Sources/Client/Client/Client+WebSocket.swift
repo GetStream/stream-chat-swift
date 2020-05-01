@@ -45,8 +45,22 @@ extension Client {
         request.allHTTPHeaderFields = authHeaders(token: token)
         
         let callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
-        let webSocketProvider = StarscreamWebSocketProvider(request: request, callbackQueue: callbackQueue)
         let webSocketOptions: WebSocketOptions = stayConnectedInBackground ? .stayConnectedInBackground : []
+        let webSocketProvider: WebSocketProvider
+        
+        if #available(iOS 13, *) {
+            // Use iOS build-in WebSocket provider.
+            // Starscream does the same by default.
+            webSocketProvider = URLSessionWebSocketProvider(request: request, callbackQueue: callbackQueue)
+            
+        } else if let providerClass = NSClassFromString("StreamChatClient.StarscreamWebSocketProvider"),
+            let starscreamWebSocketProviderClass = providerClass as? WebSocketProvider.Type {
+            // Use Starscream WebSocket provider lazily.
+            webSocketProvider = starscreamWebSocketProviderClass.init(request: request, callbackQueue: callbackQueue)
+            
+        } else {
+            throw ClientError.unexpectedError(description: "WebSocket provider not found", error: nil)
+        }
         
         return WebSocket(webSocketProvider, options: webSocketOptions, logger: logger) { [unowned self] event in
             guard case .connectionChanged(let connectionState) = event else {
