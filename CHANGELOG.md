@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐞 Fixed
 - Fix keyboard disappearing after every message [#227](https://github.com/GetStream/stream-chat-swift/issues/227).
 - Unread count for deleted messages  [#223](https://github.com/GetStream/stream-chat-swift/issues/223).
+- Public access to set `ChannelPresenter.uploadManager` to use custom `Uploader`  [#232](https://github.com/GetStream/stream-chat-swift/issues/232).
+  - ⚠️ Please be sure to call `progress` and `completion` callbacks on the main thread.
 
 # [2.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.0)
 _April 29, 2020_

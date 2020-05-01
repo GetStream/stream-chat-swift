@@ -89,7 +89,7 @@ public final class ChannelPresenter: Presenter {
     public var eventsFilter: StreamChatClient.Event.Filter?
     
     /// Uploader for images and files.
-    public private(set) lazy var uploadManager = UploadManager()
+    public lazy var uploadManager = UploadManager()
     
     /// It will trigger `channel.stopWatching()` if needed when the presenter was deallocated.
     /// It's no needed if you will disconnect when the presenter will be deallocated.
