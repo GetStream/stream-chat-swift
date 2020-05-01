@@ -17,6 +17,6 @@ Pod::Spec.new do |spec|
 
   spec.framework = "Foundation"
 
-  spec.dependency "StreamChatCore"
+  spec.dependency "StreamChatCore", "#{spec.version}"
   spec.dependency "RealmSwift"
 end
