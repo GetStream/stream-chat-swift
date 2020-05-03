@@ -39,12 +39,11 @@ public final class ComposerView: UIView {
     
     /// An images collection view.
     public private(set) lazy var imagesCollectionView = setupImagesCollectionView()
-    var imageUploaderItems: [UploaderItem] = []
     /// A files stack view.
     public private(set) lazy var filesStackView = setupFilesStackView()
     
     /// Uploader for images and files.
-    public var uploader: Uploader?
+    public var uploadManager: UploadManager?
     
     /// A placeholder label.
     /// You have to use the `placeholderText` property to change the value of the placeholder label.
@@ -259,8 +258,7 @@ public extension ComposerView {
         styleState = .normal
         previousTextBeforeReset = textView.attributedText
         textView.attributedText = attributedText()
-        uploader?.reset()
-        imageUploaderItems = []
+        uploadManager?.reset()
         updatePlaceholder()
         filesStackView.isHidden = true
         filesStackView.removeAllArrangedSubviews()
@@ -274,20 +272,23 @@ public extension ComposerView {
         DispatchQueue.main.async { [weak self] in self?.updateSendButton() }
     }
     
-    internal func updateSendButton() {
-        let isAnyFileUploaded = uploader?.items.first(where: { $0.attachment != nil }) != nil
-        
-        if let style = style {
-            let isHidden = text.isEmpty && !isAnyFileUploaded
-            
-            if style.sendButtonVisibility == .whenActive {
-                sendButton.isHidden = isHidden
-            } else {
-                sendButton.isEnabled = !isHidden
-            }
-            
-            sendButtonVisibilityBehaviorSubject.onNext((sendButton.isHidden, sendButton.isEnabled))
+    func updateSendButton() {
+        guard let style = style else {
+            return
         }
+        
+        let anyUploadedItem = uploadManager?.images.first(where: { $0.attachment != nil })
+            ?? uploadManager?.files.first(where: { $0.attachment != nil })
+        
+        let isHidden = text.isEmpty && anyUploadedItem == nil
+        
+        if style.sendButtonVisibility == .whenActive {
+            sendButton.isHidden = isHidden
+        } else {
+            sendButton.isEnabled = !isHidden
+        }
+        
+        sendButtonVisibilityBehaviorSubject.onNext((sendButton.isHidden, sendButton.isEnabled))
     }
     
     internal func updateStyleState() {
@@ -296,8 +297,8 @@ public extension ComposerView {
         }
         
         let styleState: ComposerViewStyle.State = !textView.isFirstResponder
-            && imageUploaderItems.isEmpty
-            && isUploaderFilesEmpty
+            && (uploadManager?.images.isEmpty ?? true)
+            && (uploadManager?.files.isEmpty ?? true)
             && text.isEmpty ? .normal : (self.styleState == .edit ? .edit : .active)
         
         if self.styleState != styleState {

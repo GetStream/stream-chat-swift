@@ -6,9 +6,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.1)
+_May 01, 2020_
+
+### 🐞 Fixed
+- Fix keyboard disappearing after every message [#227](https://github.com/GetStream/stream-chat-swift/issues/227).
+- Suppress local notifications for muted users [#234](https://github.com/GetStream/stream-chat-swift/issues/234).
+- Unread count for deleted messages  [#223](https://github.com/GetStream/stream-chat-swift/issues/223).
+- Public access to set `ChannelPresenter.uploadManager` to use custom `Uploader`  [#232](https://github.com/GetStream/stream-chat-swift/issues/232).
+  - ⚠️ Please be sure to call `progress` and `completion` callbacks on the main thread.
+
+# [2.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.0)
+_April 29, 2020_
+
 ### ⚠️ Breaking Changes
 - Set user will return a `Result<UserConnection, ClientError>` in callback. `UserConnection` has the current user data, connection id and unread count for channels and messages [#182](https://github.com/GetStream/stream-chat-swift/issues/182).
 - `AvatarView.init` changed and it requires `AvatarViewStyle` intead of `cornerRadius` and `font` [#203](https://github.com/GetStream/stream-chat-swift/issues/203).
+- Renamed [#100](https://github.com/GetStream/stream-chat-swift/issues/100):
+  - `ChannelPresenter.uploader` to `ChannelPresenter.uploadManager`,
+  - `UploadItem` to `UploadingItem`.
+- Modified signatures [#100](https://github.com/GetStream/stream-chat-swift/issues/100):
+```swift
+func sendImage(data: Data, 
+               fileName: String, 
+               mimeType: String, 
+               channel: Channel,
+               progress: @escaping Client.Progress, 
+               completion: @escaping Client.Completion<URL>) -> Cancellable
+
+func sendFile(data: Data,
+              fileName: String,
+              mimeType: String,
+              channel: Channel,
+              progress: @escaping Client.Progress,
+              completion: @escaping Client.Completion<URL>) -> Cancellable
+              
+func deleteImage(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable
+
+func deleteFile(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable
+```
 
 ### 🔄 Changed
 - `Pagination` doesn't support `+` operator anymore, please use a set of  `PaginationOption`s from now on [#158](https://github.com/GetStream/stream-chat-swift/issues/158).
@@ -16,16 +54,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Subscriptions for a channel unread count and watcher count [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 - Changed a returning type for requests as `Cancellable` instead of `URLSessionTask` to make requests and events more consistent [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 - The example project was updated [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
+- Rename `showImagePickerAuthorizationStatusAlert` to `showImagePickerAlert` [#215](https://github.com/GetStream/stream-chat-swift/pull/215)
 
 ### ✅ Added
 - Message preparation callback on `ChannelPresenter` to modify messages before they're sent [#142](https://github.com/GetStream/stream-chat-swift/issues/142).
+- The view controller for threads can now be customized by overriding `createThreadViewController` in `ChatViewController`. This is useful if you need a different style for threads. [#136](https://github.com/GetStream/stream-chat-swift/issues/136).
 - Better errors when developers forget to call `set(user:)` or don't wait for its completion [#160](https://github.com/GetStream/stream-chat-swift/issues/160).
 - Examples for a channel unread count and watcher count in the Example app [#172](https://github.com/GetStream/stream-chat-swift/issues/172).
 - Added `ChatViewStyle.default` [#191](https://github.com/GetStream/stream-chat-swift/issues/191). 
 - Added `ChatViewStyle.dynamic` for iOS 13 to support dynamic colors for dark mode [#191](https://github.com/GetStream/stream-chat-swift/issues/191). 
 - Added `MessageViewStyle.pointedCornerRadius` to make pointed corner rounded [#191](https://github.com/GetStream/stream-chat-swift/issues/191). 
 - Added methods for `AvatarView` customization [#203](https://github.com/GetStream/stream-chat-swift/issues/203):
-
+- Added `messageInsetSpacing` to `MessageViewStyle` to allow control of spacing between message and container [#216](https://github.com/GetStream/stream-chat-swift/pull/216).
+- Added `Uploader` protocol. Use them to create own uploader for your file storage. Assign your uploader into `ChannelPresenter` [#100](https://github.com/GetStream/stream-chat-swift/issues/100):
+```swift
+presenter.uploadManager = UploadManager(uploader: customUploader)
+```
 `ChannelsViewController`:
 ```swift
 open func updateChannelCellAvatarView(in cell: ChannelTableViewCell, channel: Channel)
@@ -38,6 +82,10 @@ open func updateFooterTypingUserAvatarView(footerView: ChatFooterView, user: Use
 - New properties for `AvatarViewStyle` [#203](https://github.com/GetStream/stream-chat-swift/issues/203): 
   - `placeholderTextColor: UIColor?` 
   - `placeholderBackgroundColor: UIColor?`
+- Added `Uploader` protocol. Use them to create own uploader for your file storage. Assign your uploader into `ChannelPresenter` [#100](https://github.com/GetStream/stream-chat-swift/issues/100):
+```swift
+  presenter.uploadManager = UploadManager(uploader: customUploader)
+```
 
 ### 🐞 Fixed
 - SPM support [#156](https://github.com/GetStream/stream-chat-swift/issues/156).
@@ -53,6 +101,8 @@ open func updateFooterTypingUserAvatarView(footerView: ChatFooterView, user: Use
 - Channel query options default to `.state`, in-line with documentation instead of empty [#198](https://github.com/GetStream/stream-chat-swift/pull/198)
 - Fix the deprecation warning in the `UI` framework [#201](https://github.com/GetStream/stream-chat-swift/pull/201).
 - Fix current user's messages are counted towards unread count [#206](https://github.com/GetStream/stream-chat-swift/pull/206)
+- Fix ImagePicker not asking for permission for avaible source types [#215](https://github.com/GetStream/stream-chat-swift/pull/215)
+- Fix ImagePicker showing an error when no image is selected [#215](https://github.com/GetStream/stream-chat-swift/pull/215)
 
 
 # [2.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.0.1)

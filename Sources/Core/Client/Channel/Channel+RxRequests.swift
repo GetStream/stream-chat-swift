@@ -196,33 +196,35 @@ public extension Reactive where Base == Channel {
         Client.shared.rx.rejectInvite(for: base, with: message)
     }
     
-    // MARK: - File Requests
+    // MARK: - Uploading
     
     /// Upload an image to the channel.
     /// - Parameters:
+    ///   - data: an image data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
-    func sendImage(fileName: String, mimeType: String, imageData: Data) -> Observable<ProgressResponse<URL>> {
-        Client.shared.rx.sendImage(fileName: fileName, mimeType: mimeType, imageData: imageData, to: base)
+    func sendImage(data: Data, fileName: String, mimeType: String) -> Observable<ProgressResponse<URL>> {
+        Client.shared.rx.sendImage(data: data, fileName: fileName, mimeType: mimeType, channel: base)
     }
     
     /// Upload a file to the channel.
     /// - Parameters:
+    ///   - data: a file data.
     ///   - fileName: a file name.
     ///   - mimeType: a file mime type.
-    func sendFile(fileName: String, mimeType: String, fileData: Data) -> Observable<ProgressResponse<URL>> {
-        Client.shared.rx.sendFile(fileName: fileName, mimeType: mimeType, fileData: fileData, to: base)
+    func sendFile(data: Data, fileName: String, mimeType: String) -> Observable<ProgressResponse<URL>> {
+        Client.shared.rx.sendFile(data: data, fileName: fileName, mimeType: mimeType, channel: base)
     }
     
     /// Delete an image with a given URL.
     /// - Parameter url: an image URL.
     func deleteImage(url: URL) -> Observable<EmptyData> {
-        Client.shared.rx.deleteImage(url: url, from: base)
+        Client.shared.rx.deleteImage(url: url, channel: base)
     }
     
     /// Delete a file with a given URL.
     /// - Parameter url: a file URL.
     func deleteFile(url: URL) -> Observable<EmptyData> {
-        Client.shared.rx.deleteFile(url: url, from: base)
+        Client.shared.rx.deleteFile(url: url, channel: base)
     }
 }

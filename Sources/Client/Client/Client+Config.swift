@@ -55,10 +55,10 @@ extension Client {
         ///     - apiKey: a Stream Chat API key.
         ///     - baseURL: a base URL.
         ///     - stayConnectedInBackground: when the app will go to the background,
-        ///                                  start a background task to stay connected for 5 min
+        ///                                  start a background task to stay connected for 5 min.
         ///     - database: a database manager.
         ///     - callbackQueue: a request callback queue, default nil (some background thread).
-        ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+        ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`
         public init(apiKey: String,
                     baseURL: URL,
                     stayConnectedInBackground: Bool = true,

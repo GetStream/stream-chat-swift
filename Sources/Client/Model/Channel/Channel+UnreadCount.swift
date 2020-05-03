@@ -16,6 +16,8 @@ extension Channel {
         switch event {
         case .messageNew(let message, _, _, _):
             updateUnreadCount(newMessage: message)
+        case .messageDeleted(let message, _, _, _):
+            updateUnreadCount(deletedMessage: message)
         case .messageRead(let messageRead, _, _):
             if messageRead.user.isCurrent {
                 resetUnreadCount(messageRead: messageRead)
@@ -39,8 +41,33 @@ extension Channel {
         var updatedUnreadCount = unreadCount
         updatedUnreadCount.messages += 1
         
-        if !message.user.isCurrent, message.mentionedUsers.contains(User.current) {
+        if message.mentionedUsers.contains(User.current) {
             updatedUnreadCount.mentionedMessages += 1
+        }
+        
+        unreadMessageReadAtomic.set(.init(user: User.current, lastReadDate: message.created))
+        unreadCountAtomic.set(updatedUnreadCount)
+    }
+    
+    private func updateUnreadCount(deletedMessage message: Message) {
+        guard message.parentId == nil else {
+            return
+        }
+        
+        if message.user.isCurrent {
+            resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created))
+            return
+        }
+        
+        guard unreadCount.messages > 0 else {
+            return
+        }
+        
+        var updatedUnreadCount = unreadCount
+        updatedUnreadCount.messages -= 1
+        
+        if message.mentionedUsers.contains(User.current), updatedUnreadCount.mentionedMessages > 0 {
+            updatedUnreadCount.mentionedMessages -= 1
         }
         
         unreadMessageReadAtomic.set(.init(user: User.current, lastReadDate: message.created))

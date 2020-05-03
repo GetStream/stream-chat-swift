@@ -23,10 +23,12 @@ extension ComposerView {
     /// Add a file upload item for message attachments.
     ///
     /// - Parameter item: a file upload item.
-    public func addFileUploaderItem(_ item: UploaderItem) {
-        guard let uploader = uploader else {
+    public func addFileUploaderItem(_ item: UploadingItem) {
+        guard let uploadManager = uploadManager else {
             return
         }
+        
+        uploadManager.add(item: item)
         
         filesStackView.isHidden = false
         let fileView = ComposerFileView(frame: .zero)
@@ -39,19 +41,19 @@ extension ComposerView {
         
         fileView.updateRemoveButton(tintColor: style?.textColor) { [weak self, weak item, weak fileView] in
             if let self = self, let item = item, let fileView = fileView {
-                self.uploader?.remove(item)
+                self.uploadManager?.remove(item)
                 self.filesStackView.removeArrangedSubview(fileView)
                 fileView.removeFromSuperview()
                 self.updateFilesStackView()
             }
         }
         
-        if item.attachment == nil, item.error == nil {
+        if item.attachment == nil {
             fileView.updateForProgress(item.lastProgress)
             
-            item.uploading
+            uploadManager.startUploading(item: item)
                 .observeOn(MainScheduler.instance)
-                .do(onError: { [weak fileView] error in fileView?.updateForError("\(error)") },
+                .do(onError: { [weak fileView] error in fileView?.updateForError("\(error.localizedDescription)") },
                     onCompleted: { [weak self, weak fileView] in
                         fileView?.updateForProgress(1)
                         self?.updateSendButton()
@@ -67,19 +69,13 @@ extension ComposerView {
                 .catchErrorJustReturn(0)
                 .bind(to: fileView.progressView.rx.progress)
                 .disposed(by: fileView.disposeBag)
-            
-        } else if let error = item.error {
-            fileView.updateForError("\(error)")
         }
         
-        uploader.upload(item: item)
         updateFilesStackView()
     }
     
-    var isUploaderFilesEmpty: Bool { (uploader?.items.firstIndex(where: { $0.type == .file })) == nil }
-    
     func updateFilesStackView() {
-        filesStackView.isHidden = isUploaderFilesEmpty
+        filesStackView.isHidden = uploadManager?.files.isEmpty ?? true
         
         if filesStackView.isHidden {
            filesStackView.removeAllArrangedSubviews()

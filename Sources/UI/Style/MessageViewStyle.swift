@@ -83,6 +83,9 @@ public struct MessageViewStyle: Hashable {
     /// A margin.
     public var edgeInsets: UIEdgeInsets
     
+    /// The spacing between the message text and the message container
+    public var messageInsetSpacing: Spacing
+    
     /// A reaction style.
     public var reactionViewStyle: ReactionViewStyle
     
@@ -128,6 +131,7 @@ public struct MessageViewStyle: Hashable {
     ///   - pointedCornerRadius: a pointed corner radius.
     ///   - spacing: spacings between elements.
     ///   - edgeInsets: edge insets.
+    ///   - messageInsetSpacing: spacing between the message and the message container
     ///   - reactionViewStyle: a reaction style.
     ///   - showTimeThreshold: a time threshold between messages to show additional time. To enable it should be more than 60 sec.
     ///   - additionalDateStyle: additional date style will work with showTimeThreshold paramenter.
@@ -153,6 +157,8 @@ public struct MessageViewStyle: Hashable {
                                                  left: .messageEdgePadding,
                                                  bottom: .messageBottomPadding,
                                                  right: .messageEdgePadding),
+                messageInsetSpacing: Spacing = .init(horizontal: .messageHorizontalInset,
+                                                     vertical: .messageVerticalInset),
                 reactionViewStyle: ReactionViewStyle = ReactionViewStyle(),
                 showTimeThreshold: TimeInterval = 0,
                 additionalDateStyle: AdditionalDateStyle = .userNameAndDate,
@@ -175,6 +181,7 @@ public struct MessageViewStyle: Hashable {
         self.pointedCornerRadius = pointedCornerRadius > 1 ? pointedCornerRadius : 0
         self.spacing = spacing
         self.edgeInsets = edgeInsets
+        self.messageInsetSpacing = messageInsetSpacing
         self.reactionViewStyle = reactionViewStyle
         self.showTimeThreshold = showTimeThreshold
         self.additionalDateStyle = additionalDateStyle
@@ -265,6 +272,7 @@ public struct MessageViewStyle: Hashable {
             && lhs.pointedCornerRadius == rhs.pointedCornerRadius
             && lhs.spacing == rhs.spacing
             && lhs.edgeInsets == rhs.edgeInsets
+            && lhs.messageInsetSpacing == rhs.messageInsetSpacing
             && lhs.reactionViewStyle == rhs.reactionViewStyle
             && lhs.showTimeThreshold == rhs.showTimeThreshold
             && lhs.additionalDateStyle == rhs.additionalDateStyle
@@ -293,6 +301,7 @@ public struct MessageViewStyle: Hashable {
         hasher.combine(edgeInsets.bottom)
         hasher.combine(edgeInsets.left)
         hasher.combine(edgeInsets.right)
+        hasher.combine(messageInsetSpacing)
         hasher.combine(reactionViewStyle)
         hasher.combine(showTimeThreshold)
         hasher.combine(additionalDateStyle)

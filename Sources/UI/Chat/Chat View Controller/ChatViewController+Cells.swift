@@ -212,9 +212,7 @@ extension ChatViewController {
         messagePresenter.imageAttachmentExtraDataCallback = presenter.imageAttachmentExtraDataCallback
         messagePresenter.messagePreparationCallback = presenter.messagePreparationCallback
         
-        let chatViewController = ChatViewController(nibName: nil, bundle: nil)
-        chatViewController.style = style
-        chatViewController.presenter = messagePresenter
+        let chatViewController = createThreadChatViewController(with: messagePresenter)
         
         if let navigationController = navigationController {
             navigationController.pushViewController(chatViewController, animated: true)

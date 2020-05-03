@@ -9,7 +9,7 @@
 import UIKit
 
 /// A network client.
-public final class Client {
+public final class Client: Uploader {
     /// A client completion block type.
     public typealias Completion<T: Decodable> = (Result<T, ClientError>) -> Void
     /// A client progress block type.
@@ -95,12 +95,13 @@ public final class Client {
     
     /// Init a network client.
     /// - Parameters:
-    ///     - apiKey: a Stream Chat API key.
-    ///     - baseURL: a base URL (see `BaseURL`).
-    ///     - callbackQueue: a request callback queue, default nil (some background thread).
-    ///     - stayConnectedInBackground: when the app will go to the background,
-    ///                                  start a background task to stay connected for 5 min
-    ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+    ///   - apiKey: a Stream Chat API key.
+    ///   - baseURL: a base URL (see `BaseURL`).
+    ///   - stayConnectedInBackground: when the app will go to the background,
+    ///                                start a background task to stay connected for 5 min.
+    ///   - database: a database manager (in development).
+    ///   - callbackQueue: a request callback queue, default nil (some background thread).
+    ///   - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`.
     init(apiKey: String = Client.config.apiKey,
          baseURL: BaseURL = Client.config.baseURL,
          stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,

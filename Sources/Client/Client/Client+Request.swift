@@ -66,8 +66,8 @@ extension Client {
     /// - Returns: an URLSessionTask that can be canncelled.
     @discardableResult
     func request<T: Decodable>(endpoint: Endpoint,
-                               _ progress: @escaping Progress,
-                               _ completion: @escaping Completion<T>) -> Cancellable {
+                               progress: @escaping Progress,
+                               completion: @escaping Completion<T>) -> Cancellable {
         let task = prepareRequest(endpoint: endpoint, completion)
         urlSessionTaskDelegate.addProgessHandler(id: task.taskIdentifier, progress)
         task.resume()
@@ -94,8 +94,10 @@ extension Client {
                 : encodeRequest(for: endpoint, url: url).get()
             
             task = urlSession.dataTask(with: urlRequest) { [unowned self] in
+                // Parse the response.
                 self.parse(data: $0, response: $1, error: $2, completion: completion)
                 
+                // Check expired Token on the request.
                 if self.isExpiredTokenInProgress {
                     self.logger?.log("Reconnect and retry a request when the token was expired...", level: .debug)
                     self.addWaitingRequest(endpoint: endpoint, completion)
@@ -108,7 +110,7 @@ extension Client {
         } catch let error as ClientError {
             performInCallbackQueue { completion(.failure(error)) }
         } catch {
-            completion(.failure(.unexpectedError(description: error.localizedDescription, error: error)))
+            performInCallbackQueue { completion(.failure(.unexpectedError(description: error.localizedDescription, error: error))) }
         }
         
         return .empty
@@ -228,8 +230,8 @@ extension Client {
         urlRequest.httpMethod = endpoint.method.rawValue
         
         switch endpoint {
-        case .sendImage(let fileName, let mimeType, let data, _),
-             .sendFile(let fileName, let mimeType, let data, _):
+        case let .sendImage(data, fileName, mimeType, _),
+             let .sendFile(data, fileName, mimeType, _):
             multipartFormData = MultipartFormData(data, fileName: fileName, mimeType: mimeType)
         default:
             let errorDescription = "Encoding unexpected endpoint \(endpoint) for a file uploading."

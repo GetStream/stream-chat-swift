@@ -89,7 +89,7 @@ public final class ChannelPresenter: Presenter {
     public var eventsFilter: StreamChatClient.Event.Filter?
     
     /// Uploader for images and files.
-    public private(set) lazy var uploader = Uploader()
+    public lazy var uploadManager = UploadManager()
     
     /// It will trigger `channel.stopWatching()` if needed when the presenter was deallocated.
     /// It's no needed if you will disconnect when the presenter will be deallocated.
@@ -169,7 +169,11 @@ extension ChannelPresenter {
     
     func createMessage(with text: String) -> Message {
         let messageId = editMessage?.id ?? ""
-        var attachments = uploader.items.compactMap({ $0.attachment })
+        
+        var attachments = uploadManager.images.isEmpty
+            ? uploadManager.files.compactMap({ $0.attachment })
+            : uploadManager.images.compactMap({ $0.attachment })
+        
         let parentId = parentMessage?.id
         var extraData: Codable?
         

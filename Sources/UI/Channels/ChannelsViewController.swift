@@ -174,7 +174,7 @@ open class ChannelsViewController: ViewController {
     ///   - channelPresenter: `ChannelPresenter` for the given cell
     open func updateChannelCell(_ cell: ChannelTableViewCell, channelPresenter: ChannelPresenter) {
         cell.setupIfNeeded(style: style.channel)
-        cell.nameLabel.text = channelPresenter.channel.name
+        cell.update(name: channelPresenter.channel.name, isUnread: channelPresenter.isUnread)
         updateChannelCellAvatarView(in: cell, channel: channelPresenter.channel)
         
         if let lastMessage = channelPresenter.lastMessage {

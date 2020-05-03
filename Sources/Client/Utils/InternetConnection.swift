@@ -50,7 +50,14 @@ public final class InternetConnection {
     private var lastState: State = .unknown
     private lazy var reachability: Reachability? = {
         do {
-            let reachability = try Reachability(hostname: Client.shared.baseURL.wsURL.host ?? "getstream.io")
+            let reachability: Reachability
+            
+            if let hostname = Client.shared.baseURL.wsURL.host {
+                reachability = try Reachability(hostname: hostname)
+            } else {
+                reachability = try Reachability()
+            }
+            
             reachability.whenReachable = { [unowned self] _ in self.state = .available }
             reachability.whenUnreachable = { [unowned self] _ in self.state = .unavailable }
             return reachability

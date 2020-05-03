@@ -66,6 +66,16 @@ class CustomChatViewController: ChatViewController {
             .disposed(by: disposeBag)
     }
     
+    override func createThreadChatViewController(with channelPresenter: ChannelPresenter) -> ChatViewController {
+        let controller = super.createThreadChatViewController(with: channelPresenter)
+        
+        if let message = channelPresenter.parentMessage {
+            controller.style.composer.placeholderText = "Reply to \(message.user.name)"
+        }
+        
+        return controller
+    }
+    
     func touchMembersCount() {
         if let membersCount = presenter?.channel.members.count {
             membersCountButton.title = (membersCount > 0 ? "🙋🏻‍♀️" : "🤷🏻‍♀️") + String(membersCount)

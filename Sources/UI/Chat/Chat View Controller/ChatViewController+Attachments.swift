@@ -26,14 +26,14 @@ extension ChatViewController {
         }
     }
     
-    private func visibleAttachmentPreviews(action: (_ attachmentPreview: AttachmentPreview) -> Void) {
+    private func visibleAttachmentPreviews(action: (_ attachmentPreview: ImageAttachmentPreview) -> Void) {
         tableView.visibleCells.forEach { cell in
             guard let messageCell = cell as? MessageTableViewCell else {
                 return
             }
             
             messageCell.attachmentPreviews.forEach {
-                if let attachmentPreview = $0 as? AttachmentPreview {
+                if let attachmentPreview = $0 as? ImageAttachmentPreview {
                     action(attachmentPreview)
                 }
             }

@@ -136,7 +136,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     }()
     
     var messageTextEnrichment: MessageTextEnrichment?
-    var attachmentPreviews: [AttachmentPreviewProtocol] = []
+    var attachmentPreviews: [AttachmentPreview] = []
     
     private(set) lazy var bottomPaddingView: UIView = {
         let view = UIView(frame: .zero)
@@ -159,6 +159,12 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         if let messageBackgroundImage = messageBackgroundImage() {
             messageContainerView.image = messageBackgroundImage
+        }
+        
+        attachmentPreviews.forEach { attachmentPreview in
+            if let filePreview = attachmentPreview as? FileAttachmentPreview {
+                filePreview.apply(imageMask: backgroundImageForAttachment(at: filePreview.index))
+            }
         }
     }
     
@@ -249,10 +255,10 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         messageContainerView.addSubview(messageLabel)
         
         messageLabel.snp.makeConstraints { make in
-            make.left.equalTo(CGFloat.messageHorizontalInset)
-            make.right.equalTo(-CGFloat.messageHorizontalInset)
-            make.top.equalTo(CGFloat.messageVerticalInset).priority(999)
-            make.bottom.equalTo(-CGFloat.messageVerticalInset).priority(999)
+            make.left.equalTo(style.messageInsetSpacing.horizontal)
+            make.right.equalTo(-style.messageInsetSpacing.horizontal)
+            make.top.equalTo(style.messageInsetSpacing.vertical).priority(999)
+            make.bottom.equalTo(-style.messageInsetSpacing.vertical).priority(999)
         }
         
         contentView.addSubview(messageStackView)

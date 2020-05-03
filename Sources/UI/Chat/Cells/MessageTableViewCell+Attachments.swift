@@ -23,9 +23,7 @@ extension MessageTableViewCell {
                        tap: @escaping AttachmentTapAction,
                        actionTap: @escaping AttachmentActionTapAction,
                        reload: @escaping () -> Void) {
-        let imageBackgroundColor = UIColor.color(by: message.user.name, isDark: !(messageLabel.textColor?.isDark ?? true))
-        
-        func addGetures(_ preview: AttachmentPreviewProtocol, _ error: Error?) {
+        func addGetures(_ preview: AttachmentPreview, _ error: Error?) {
             guard !message.isEphemeral else {
                 return
             }
@@ -40,96 +38,76 @@ extension MessageTableViewCell {
                 .disposed(by: disposeBag)
         }
         
-        let preview: AttachmentPreviewProtocol
+        let preview: AttachmentPreview
         let isFileAttachment = attachment.type == .file
         
         if isFileAttachment {
-            preview = createAttachmentFilePreview(with: attachment, style: style)
+            preview = FileAttachmentPreview(frame: .zero)
+            preview.setup(attachment: attachment, style: style)
+            preview.snp.makeConstraints { $0.height.equalTo(CGFloat.attachmentFilePreviewHeight).priority(999) }
         } else {
-            preview = createAttachmentPreview(with: attachment,
-                                              style: style,
-                                              imageBackgroundColor: imageBackgroundColor,
-                                              reload: reload)
+            let imagePreview = ImageAttachmentPreview(frame: .zero)
+            imagePreview.setup(attachment: attachment, style: style)
+            imagePreview.forceToReload = reload
+            preview = imagePreview
         }
         
+        preview.index = index
         messageStackView.insertArrangedSubview(preview, at: index)
         attachmentPreviews.append(preview)
         
-        // File preview.
-        if isFileAttachment {
-            preview.update(maskImage: backgroundImageForAttachment(at: index)) { _, _ in }
+        guard let imagePreview = preview as? ImageAttachmentPreview else {
+            // File preview.
+            preview.update()
+            preview.apply(imageMask: backgroundImageForAttachment(at: index))
             addGetures(preview, nil)
-        } else if let preview = preview as? AttachmentPreview {
-            // Ephemeral preview.
-            if message.isEphemeral {
-                preview.update(maskImage: nil, addGetures)
-                preview.layer.cornerRadius = 0
-                
-                preview.actionsStackView.arrangedSubviews.forEach {
-                    if let button = $0 as? UIButton {
-                        button.rx.tap
-                            .subscribe(onNext: { [weak button, weak preview] _ in
-                                if let button = button {
-                                    preview?.actionsStackView.arrangedSubviews.forEach {
-                                        if let button = $0 as? UIButton, let title = button.title(for: .normal) {
-                                            button.isEnabled = title.lowercased() == "cancel"
-                                        }
-                                    }
-                                    
-                                    actionTap(message, button)
+            return
+        }
+        
+        // Image/Video preview.
+        guard message.isEphemeral else {
+            imagePreview.update { [weak self, weak imagePreview] in
+                imagePreview?.apply(imageMask: self?.imageMaskForAttachment(at: index))
+                addGetures($0, $1)
+            }
+            return
+        }
+        
+        // Ephemeral preview.
+        imagePreview.update(addGetures)
+        
+        imagePreview.actionsStackView.arrangedSubviews.forEach {
+            if let button = $0 as? UIButton {
+                button.rx.tap
+                    .subscribe(onNext: { [weak button, weak imagePreview] _ in
+                        if let button = button {
+                            imagePreview?.actionsStackView.arrangedSubviews.forEach {
+                                if let button = $0 as? UIButton, let title = button.title(for: .normal) {
+                                    button.isEnabled = title.lowercased() == "cancel"
                                 }
-                            })
-                            .disposed(by: preview.disposeBag)
-                    }
-                }
-            } else {
-                // Image/Video preview.
-                preview.update(maskImage: maskImageForAttachment(at: index), addGetures)
+                            }
+                            
+                            actionTap(message, button)
+                        }
+                    })
+                    .disposed(by: imagePreview.disposeBag)
             }
         }
     }
     
-    private func createAttachmentPreview(with attachment: Attachment,
-                                         style: MessageViewStyle,
-                                         imageBackgroundColor: UIColor,
-                                         reload: @escaping () -> Void) -> AttachmentPreview {
-        let preview = AttachmentPreview(frame: .zero)
-        preview.maxWidth = .attachmentPreviewMaxWidth
-        preview.tintColor = style.textColor
-        preview.imageView.backgroundColor = imageBackgroundColor
-        preview.layer.cornerRadius = style.cornerRadius
-        preview.attachment = attachment
-        preview.forceToReload = reload
-        
-        preview.backgroundColor = attachment.isImage && attachment.actions.isEmpty
-            ? style.chatBackgroundColor
-            : (style.textColor.isDark ? .chatSuperLightGray : .chatDarkGray)
-        
-        return preview
-    }
-    
-    private func createAttachmentFilePreview(with attachment: Attachment,
-                                             style: MessageViewStyle) -> AttachmentFilePreview {
-        let preview = AttachmentFilePreview(frame: .zero)
-        preview.attachment = attachment
-        preview.backgroundColor = style.chatBackgroundColor
-        preview.snp.makeConstraints { $0.height.equalTo(CGFloat.attachmentFilePreviewHeight).priority(999) }
-        return preview
-    }
-    
-    private func backgroundImageForAttachment(at offset: Int) -> UIImage? {
+    func backgroundImageForAttachment(at offset: Int) -> UIImage? {
         guard style.hasBackgroundImage else {
             return nil
         }
         
         if style.alignment == .left {
-            return offset == 0 ? messageContainerView.image : style.backgroundImages[.leftSide]?.image(for: traitCollection)
+            return offset == 0 ? messageContainerView.image : style.backgroundImages[.rightSide]?.image(for: traitCollection)
         }
         
         return offset == 0 ? messageContainerView.image : style.backgroundImages[.rightSide]?.image(for: traitCollection)
     }
     
-    private func maskImageForAttachment(at offset: Int) -> UIImage? {
+    private func imageMaskForAttachment(at offset: Int) -> UIImage? {
         guard style.hasBackgroundImage, let messageContainerViewImage = messageContainerView.image else {
             return nil
         }
@@ -140,13 +118,13 @@ extension MessageTableViewCell {
                 return style.transparentBackgroundImages[.pointedLeftBottom]?.image(for: traitCollection)
             }
             
-            return style.transparentBackgroundImages[.leftSide]?.image(for: traitCollection)
+            return style.transparentBackgroundImages[.rightSide]?.image(for: traitCollection)
         }
         
         if offset == 0, messageContainerViewImage == style.backgroundImages[.pointedRightBottom]?.image(for: traitCollection) {
             return style.transparentBackgroundImages[.pointedRightBottom]?.image(for: traitCollection)
         }
         
-        return style.transparentBackgroundImages[.rightSide]?.image(for: traitCollection)
+        return style.transparentBackgroundImages[.leftSide]?.image(for: traitCollection)
     }
 }

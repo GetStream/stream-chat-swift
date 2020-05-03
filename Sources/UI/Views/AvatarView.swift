@@ -93,6 +93,8 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
             do {
                 let image = try result.get().image
                 self?.image = image
+                self?.avatarLabel.text = nil
+                self?.avatarLabel.isHidden = true
                 completion?(.success(image))
             } catch {
                 completion?(.failure(error))

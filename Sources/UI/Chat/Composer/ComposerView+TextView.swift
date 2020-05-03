@@ -58,9 +58,12 @@ extension ComposerView {
             maxHeight -= filesHeight
         }
         
+        if let uploadManager = uploadManager {
+            imagesCollectionView.isHidden = uploadManager.images.isEmpty
+            filesStackView.isHidden = uploadManager.files.isEmpty
+        }
+        
         var height = min(max(height + 2 * textViewPadding, style.height), maxHeight)
-        imagesCollectionView.isHidden = imageUploaderItems.isEmpty
-        filesStackView.isHidden = isUploaderFilesEmpty
         var textViewTopOffset = textViewPadding
         
         if !imagesCollectionView.isHidden {

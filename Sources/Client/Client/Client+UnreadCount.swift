@@ -29,7 +29,7 @@ extension Client {
              .notificationMarkRead(_, _, let unreadCount, _),
              .notificationMessageNew(_, _, let unreadCount, _, _):
             updatedUnreadCount = unreadCount
-        case .messageNew(let message, _, let cid, _) where message.parentId == nil && !message.user.isCurrent:
+        case let .messageNew(message, _, cid, _) where message.parentId == nil && !message.user.isCurrent:
             updatedUnreadCount = unreadCount
             updatedUnreadCount.messages += 1
             
@@ -37,6 +37,21 @@ extension Client {
             if let cid = cid, watchingChannelsAtomic[cid]?.first(where: { $0.value?.isUnread ?? false }) == nil {
                 updatedUnreadCount.channels += 1
             }
+        case let .messageDeleted(message, _, cid, _) where message.parentId == nil && !message.user.isCurrent:
+            guard unreadCount.channels > 0, unreadCount.messages > 0 else {
+                return
+            }
+            
+            updatedUnreadCount = unreadCount
+            updatedUnreadCount.messages -= 1
+            
+            // Checks if the number of channels should be increased.
+            if let cid = cid,
+                let watchingChannel = watchingChannelsAtomic[cid]?.first(where: { $0.value != nil })?.value,
+                watchingChannel.unreadCount.messages == 1 {
+                updatedUnreadCount.channels -= 1
+            }
+            
         default:
             return
         }
