@@ -99,6 +99,8 @@ public struct User: Codable {
         return false
     }
     
+    let unreadCount: UnreadCount
+    
     /// Init a user.
     /// - Parameters:
     ///   - id: a user id.
@@ -129,6 +131,7 @@ public struct User: Codable {
         self.isBanned = isBanned
         self.mutedUsers = mutedUsers
         isOnline = false
+        unreadCount = .noUnread
         devices = []
     }
     
@@ -146,12 +149,9 @@ public struct User: Codable {
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
         extraData = decodeUserExtraData(from: decoder)
         
-        if id == Client.shared.user.id,
-            let unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount),
-            let unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount) {
-            let unreadCount = UnreadCount(channels: unreadChannelsCount, messages: unreadMessagesCount)
-            Client.shared.unreadCountAtomic.set(unreadCount)
-        }
+        let unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount) ?? 0
+        let unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount) ?? 0
+        unreadCount = UnreadCount(channels: unreadChannelsCount, messages: unreadMessagesCount)
     }
     
     /// Safely decode user extra data and if it fail try to decode only default properties: name, avatarURL.

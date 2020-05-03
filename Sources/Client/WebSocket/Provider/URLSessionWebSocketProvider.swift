@@ -46,7 +46,7 @@ final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSession
             case .success(let message):
                 switch message {
                 case .string(let string):
-                    self.delegate?.websocketDidReceiveMessage(self, text: string)
+                    self.delegate?.websocketDidReceiveMessage(self, message: string)
                 default:
                     break
                 }

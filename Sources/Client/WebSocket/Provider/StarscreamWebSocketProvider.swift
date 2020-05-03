@@ -59,7 +59,7 @@ extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
     }
     
     func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
-        delegate?.websocketDidReceiveMessage(self, text: text)
+        delegate?.websocketDidReceiveMessage(self, message: text)
     }
     
     func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}

@@ -29,10 +29,12 @@ extension WebSocketProvider {
 protocol WebSocketProviderDelegate: class {
     func websocketDidConnect(_ provider: WebSocketProvider)
     func websocketDidDisconnect(_ provider: WebSocketProvider, error: WebSocketProviderError?)
-    func websocketDidReceiveMessage(_ provider: WebSocketProvider, text: String)
+    func websocketDidReceiveMessage(_ provider: WebSocketProvider, message: String)
 }
 
 struct WebSocketProviderError: Error {
+    static let stopErrorCode = 1000
+    
     let reason: String
     let code: Int
     let providerType: WebSocketProvider.Type

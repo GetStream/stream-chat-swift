@@ -114,7 +114,6 @@ extension WebSocket {
         logger?.log("⏳ Reconnect in \(delay) sec")
         
         webSocketProvider.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
-            self?.connectionStateAtomic.set(.connecting)
             self?.connect()
         }
     }
@@ -227,8 +226,8 @@ extension WebSocket: WebSocketProviderDelegate {
         connectionStateAtomic.set(.connecting)
     }
     
-    func websocketDidReceiveMessage(_ provider: WebSocketProvider, text: String) {
-        guard let event = parseEvent(with: text) else {
+    func websocketDidReceiveMessage(_ provider: WebSocketProvider, message: String) {
+        guard let event = parseEvent(with: message) else {
             return
         }
         
@@ -283,6 +282,7 @@ extension WebSocket: WebSocketProviderDelegate {
         if isStopError(error) {
             logger?.log("💔 Disconnected with Stop code")
             consecutiveFailures = 0
+            connectionState = .disconnected(.websocketDisconnectError(error))
             return
         }
         
@@ -301,11 +301,11 @@ extension WebSocket: WebSocketProviderDelegate {
             return true
         }
         
-        if let eventError = eventError, eventError.code == 1000 {
+        if let eventError = eventError, eventError.code == WebSocketProviderError.stopErrorCode {
             return true
         }
         
-        if error.code == 1000 {
+        if error.code == WebSocketProviderError.stopErrorCode {
             return true
         }
         
