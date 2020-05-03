@@ -64,6 +64,7 @@ extension Client {
             }
             
             if case .connected(let userConnection) = connectionState {
+                self.unreadCountAtomic.set(userConnection.user.unreadCount)
                 self.userAtomic.set(userConnection.user)
                 self.recoverConnection()
                 

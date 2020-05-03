@@ -47,6 +47,8 @@
 		8A2DD9532385565B007775E9 /* MutedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD9522385565B007775E9 /* MutedUser.swift */; };
 		8A2DD95423855690007775E9 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2B02384580700C2F9DE /* Channel.swift */; };
 		8A2DD956238556A7007775E9 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD955238556A7007775E9 /* Member.swift */; };
+		8A2E4F05245C69D40032565F /* WebSocketProviderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2E4F04245C69D40032565F /* WebSocketProviderMock.swift */; };
+		8A2E4F07245DAC210032565F /* WebSocketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2E4F06245DAC210032565F /* WebSocketTests.swift */; };
 		8A2E4F09246016410032565F /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2E4F08246016410032565F /* URL+Extensions.swift */; };
 		8A466E61241A3A4D003C21BA /* Client+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A466E60241A3A4D003C21BA /* Client+Request.swift */; };
 		8A466E63241A3A7D003C21BA /* Client+WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A466E62241A3A7D003C21BA /* Client+WebSocket.swift */; };
@@ -340,6 +342,8 @@
 		8A2DD95023849108007775E9 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8A2DD9522385565B007775E9 /* MutedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUser.swift; sourceTree = "<group>"; };
 		8A2DD955238556A7007775E9 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
+		8A2E4F04245C69D40032565F /* WebSocketProviderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketProviderMock.swift; sourceTree = "<group>"; };
+		8A2E4F06245DAC210032565F /* WebSocketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketTests.swift; sourceTree = "<group>"; };
 		8A2E4F08246016410032565F /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
 		8A466E60241A3A4D003C21BA /* Client+Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Request.swift"; sourceTree = "<group>"; };
@@ -652,6 +656,15 @@
 				79CABB0624630AC600240052 /* AssertEventually.swift */,
 			);
 			path = "Custom Assertions";
+      sourceTree = "<group>";
+		};
+		8A2E4F03245C69AA0032565F /* WebSocket */ = {
+			isa = PBXGroup;
+			children = (
+				8A2E4F04245C69D40032565F /* WebSocketProviderMock.swift */,
+				8A2E4F06245DAC210032565F /* WebSocketTests.swift */,
+			);
+			path = WebSocket;
 			sourceTree = "<group>";
 		};
 		8A5069C023CE23FC009F127A /* Headers */ = {
@@ -735,6 +748,7 @@
 				7900717D244084E200E5246F /* QueryEncodingTests.swift */,
 				791664DE245AC89E0020710B /* Client+DevicesTests.swift */,
 				8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */,
+				8A2E4F03245C69AA0032565F /* WebSocket */,
 			);
 			path = "Unit Tests";
 			sourceTree = "<group>";
@@ -1727,6 +1741,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A2E4F05245C69D40032565F /* WebSocketProviderMock.swift in Sources */,
 				8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */,
 				8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */,
 				79CABAFE2462A4E400240052 /* AtomicTests.swift in Sources */,
@@ -1738,6 +1753,7 @@
 				791664DD245AC78B0020710B /* RequestRecorderURLProtocol.swift in Sources */,
 				7900717F2440850700E5246F /* QueryEncodingTests.swift in Sources */,
 				8AB33A5E240EA19A00777682 /* AttachmentTypeTests.swift in Sources */,
+				8A2E4F07245DAC210032565F /* WebSocketTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
