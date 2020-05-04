@@ -466,15 +466,14 @@ extension ChatViewController {
             do {
                 let pickedImage = try result.get()
                 
-                guard let fileURL = pickedImage.fileURL else {
+                if pickedImage.fileURL == nil && pickedImage.image == nil {
                     ClientLogger.log("📁", "File URL cannot be determined for file named: \(pickedImage.fileName)")
                     return
                 }
                 
-                let fileSizeResource = try fileURL.resourceValues(forKeys: [.fileSizeKey])
-                
-                if let fileSize = fileSizeResource.fileSize,
-                   fileSize >= 20 * 1_048_576 { // 20 MB Upload limit
+                if let resources = try? pickedImage.fileURL?.resourceValues(forKeys: [.fileSizeKey]),
+                    let fileSize = resources.fileSize,
+                    fileSize >= 20 * 1_048_576 { // 20 MB Upload limit
                     self.show(errorMessage: "File size exceeds limit of 20MB")
                     return
                 }
@@ -483,7 +482,7 @@ extension ChatViewController {
                     return
                 }
                 
-                let extraData = presenter.imageAttachmentExtraDataCallback?(fileURL,
+                let extraData = presenter.imageAttachmentExtraDataCallback?(pickedImage.fileURL,
                                                                             image,
                                                                             pickedImage.isVideo,
                                                                             presenter.channel)
