@@ -106,8 +106,10 @@ public final class Client: Uploader {
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     var needsToRecoverConnection = false
-    
-    lazy var urlSession = URLSession(configuration: .default)
+
+    let defaultURLSessionConfiguration: URLSessionConfiguration
+    lazy var urlSession = URLSession(configuration: self.defaultURLSessionConfiguration)
+
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
     
@@ -144,8 +146,11 @@ public final class Client: Uploader {
     
     /// Creates a new instance of the network client.
     ///
-    /// - Parameter config: The configuration object with details of how the new instance should be set up.
-    init(config: Client.Config) {
+    /// - Parameters:
+    ///   - config: The configuration object with details of how the new instance should be set up.
+    ///   - defaultURLSessionConfiguration: The base URLSession configuration `Client` uses for its
+    ///     URL sessions. `Client` is allowed to override the configuration with its own settings.
+    init(config: Client.Config, defaultURLSessionConfiguration: URLSessionConfiguration = .default) {
         self.apiKey = config.apiKey
         self.baseURL = config.baseURL
         self.callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
@@ -153,6 +158,8 @@ public final class Client: Uploader {
         self.database = config.database
         self.logOptions = config.logOptions
         logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
+
+        self.defaultURLSessionConfiguration = defaultURLSessionConfiguration
 
         if !apiKey.isEmpty, logOptions.isEnabled {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Environment.version)")

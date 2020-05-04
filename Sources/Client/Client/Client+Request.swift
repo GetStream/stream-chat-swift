@@ -16,7 +16,7 @@ extension Client {
     func setupURLSession(token: Token = "") -> URLSession {
         let headers = authHeaders(token: token)
         logger?.log(headers: headers)
-        let config = URLSessionConfiguration.default
+        let config = defaultURLSessionConfiguration
         config.waitsForConnectivity = true
         config.httpAdditionalHeaders = headers
         return URLSession(configuration: config, delegate: urlSessionTaskDelegate, delegateQueue: nil)
