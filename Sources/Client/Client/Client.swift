@@ -24,6 +24,14 @@ public final class Client: Uploader {
     """)
     public static var config: Config = .init(apiKey: "_deprecated") {
         didSet {
+            guard backingSharedClient == nil else {
+                ClientLogger.logAssertionFailure(
+                    "`Client.shared` instance was already used. It's not possible to change its configuration."
+                )
+                return
+            }
+
+            configForSharedClient = config
         }
     }
 
@@ -37,8 +45,14 @@ public final class Client: Uploader {
             return client
         }
 
-        _sharedClient = Client(config: configForSharedClient ?? .init(apiKey: "__API_KEY_NOT_CONFIGURED__"))
-        return _sharedClient!
+        ClientLogger.logAssert(
+            configForSharedClient != nil,
+            "The shared instance of the Stream chat client wasn't configured. " +
+            "Create an instance of the `Client.Config` struct and call `Client.configureShared(_:)` to set it up."
+        )
+
+        backingSharedClient = Client(config: configForSharedClient ?? .init(apiKey: "__API_KEY_NOT_CONFIGURED__"))
+        return backingSharedClient!
     }
 
     /// A backing variable for `Client.shared`. We need this to have finer control over its creation.
