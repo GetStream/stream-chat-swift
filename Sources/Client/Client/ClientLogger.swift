@@ -299,7 +299,32 @@ public final class ClientLogger {
     public static func log(_ icon: String, dateTime: String = "", _ message: String) {
         ClientLogger.logger(icon, dateTime, message)
     }
-    
+
+    /// Performs `Swift.assert` and stops program execution if `condition` evaluated to false. In RELEASE builds only
+    /// logs the failure.
+    ///
+    /// - Parameters:
+    ///   - condition: The condition to test.
+    ///   - message: A custom message to log if `condition` is evaluated to false.
+    public static func logAssert(_ condition: Bool,
+                                 _ message: @autoclosure () -> String,
+                                 file: StaticString = #file,
+                                 line: UInt = #line) {
+
+        guard condition == false else { return }
+        let evaluatedMessage = message()
+        Swift.assert(condition, evaluatedMessage, file: file, line: line)
+        ClientLogger.logger("", "", "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
+    }
+
+    /// Triggers `Swift.assertionFailure`. In RELEASE builds only logs the failure.
+    ///
+    /// - Parameter message: A custom message to log.
+    public static func logAssertionFailure(_ message: String, file: StaticString = #file, line: UInt = #line) {
+        Swift.assertionFailure(message, file: file, line: line)
+        ClientLogger.logger("", "", "Assertion failure \(file)[\(line)]: " + message)
+    }
+
     static func showConnectionAlert(_ error: Error, jsonError: ClientErrorResponse?) {
         #if DEBUG
         let jsonError = jsonError ?? ClientErrorResponse(code: 0, message: "<unknown>", statusCode: 0)
