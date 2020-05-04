@@ -19,7 +19,19 @@ final class EmptyWebSocketProvider: WebSocketProvider {
         self.callbackQueue = callbackQueue ?? .global()
     }
     
-    func connect() {}
+    func connect() {
+        let reason = "WebSocket.provider wasn't setup correctly. "
+            + "WebScoket is trying to use EmptyWebSocketProvider."
+        
+        let stopError = WebSocketProviderError(reason: reason,
+                                               code: WebSocketProviderError.stopErrorCode,
+                                               providerType: Self.self,
+                                               providerError: nil)
+        
+        delegate?.websocketDidDisconnect(self, error: stopError)
+    }
+    
     func disconnect() {}
+    
     func sendPing() {}
 }

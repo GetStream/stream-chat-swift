@@ -62,14 +62,17 @@ final class WebSocketTests: XCTestCase {
         let reconnectingExpectation = expectation(description: "WebSocket reconnecting")
         reconnectingExpectation.expectedFulfillmentCount = 2
         
-        let webSocket = WebSocket(mockProvider, options: .stayConnectedInBackground) { event in
+        let webSocket = WebSocket(mockProvider, options: .stayConnectedInBackground, logger: logger) { event in
             guard case .connectionChanged(let state) = event else {
                 return
             }
             
             if case .connected = state {
                 connectedExpectation.fulfill()
-                self.mockProvider.disconnect()
+                self.mockProvider.disconnect(error: .init(reason: "Some internal error or Internet connection",
+                                                          code: 0,
+                                                          providerType: type(of: self.mockProvider),
+                                                          providerError: nil))
             } else if case .reconnecting = state {
                 reconnectingExpectation.fulfill()
             }
@@ -124,5 +127,27 @@ final class WebSocketTests: XCTestCase {
         webSocket.connect()
         wait(for: [shouldntDisconnectWithStopErrorExpectation], timeout: 4)
         XCTAssertTrue(webSocket.isConnected)
+    }
+    
+    func test_webSocket_emptyProvider() {
+        let stopErrorOnConnectExpectation =
+            expectation(description: "WebSocket will disconnect with StopError for EmptyWebSocketProvider")
+        
+        let webSocket = WebSocket()
+        
+        _ = webSocket.subscribe { event in
+            if case .connectionChanged(let state) = event,
+                case .disconnected(let clientError) = state,
+                case .websocketDisconnectError(let websocketDisconnectError) = clientError,
+                let webSocketProviderError = websocketDisconnectError as? WebSocketProviderError,
+                webSocketProviderError.code == WebSocketProviderError.stopErrorCode {
+                stopErrorOnConnectExpectation.fulfill()
+            }
+        }
+        
+        XCTAssertFalse(webSocket.isConnected)
+        webSocket.connect()
+        wait(for: [stopErrorOnConnectExpectation], timeout: 2)
+        XCTAssertFalse(webSocket.isConnected)
     }
 }
