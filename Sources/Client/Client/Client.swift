@@ -18,9 +18,32 @@ public final class Client: Uploader {
     public typealias OnEvent = (Event) -> Void
     
     /// A client config (see `Config`).
-    public static var config = Config(apiKey: "")
-    /// A shared client.
-    public static let shared = Client()
+    @available(*, deprecated, message: """
+    Configuring the shared Client using the static `Client.config` variable has been deprecated. Please create an instance
+    of the `Client.Config` struct and call `Client.configureShared(_:)` to set up the shared instance of Client.
+    """)
+    public static var config: Config = .init(apiKey: "_deprecated") {
+        didSet {
+        }
+    }
+
+    /// The configuration object used for creating `Client.shared`.
+    private static var configForSharedClient: Config?
+
+    /// The shared client.
+    public static var shared: Client {
+        if let client = backingSharedClient {
+            // Return the existing instance
+            return client
+        }
+
+        _sharedClient = Client(config: configForSharedClient ?? .init(apiKey: "__API_KEY_NOT_CONFIGURED__"))
+        return _sharedClient!
+    }
+
+    /// A backing variable for `Client.shared`. We need this to have finer control over its creation.
+    private static var backingSharedClient: Client?
+
     
     /// Stream API key.
     /// - Note: If you will change API key the Client will be disconnected and the current user will be logged out.
