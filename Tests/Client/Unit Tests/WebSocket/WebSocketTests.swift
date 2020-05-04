@@ -11,7 +11,7 @@ import XCTest
 
 final class WebSocketTests: XCTestCase {
     
-    let mockProvider = WebSocketProviderMock(request: URLRequest(url: URL(string: "http://test.com")!))
+    let mockProvider = WebSocketProviderMock(request: URLRequest(url: URL(string: "http://test.com")!), callbackQueue: .main)
     let logger = ClientLogger(icon: "🦄", level: .info)
     
     override static func setUp() {
