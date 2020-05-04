@@ -13,6 +13,8 @@ public struct User: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
         case role
+        case name
+        case avatarURL = "image"
         case isOnline = "online"
         case isBanned = "banned"
         case created = "created_at"
@@ -142,22 +144,35 @@ public struct User: Codable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
-        
-        if let extraData = try? Self.extraDataType.init(from: decoder) {// swiftlint:disable:this explicit_init
-            var extraData = extraData
-            
-            if extraData.avatarURL?.absoluteString.contains("random_svg") ?? false {
-                extraData.avatarURL = nil
-            }
-            
-            self.extraData = extraData
-        }
+        extraData = decodeUserExtraData(from: decoder)
         
         if id == Client.shared.user.id,
             let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount),
             let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) {
             let unreadCount = UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount)
             Client.shared.unreadCountAtomic.set(unreadCount)
+        }
+    }
+    
+    /// Safely decode user extra data and if it fail try to decode only default properties: name, avatarURL.
+    private func decodeUserExtraData(from decoder: Decoder) -> UserExtraDataCodable? {
+        do {
+            var extraData = try Self.extraDataType.init(from: decoder) // swiftlint:disable:this explicit_init
+            extraData.avatarURL = extraData.avatarURL?.removingRandomSVG()
+            return extraData
+            
+        } catch {
+            ClientLogger.log("🐴❌", "User extra data decoding error: \(error)")
+            
+            guard let container = try? decoder.container(keyedBy: CodingKeys.self) else {
+                return nil
+            }
+            
+            // Recovering the default user extra data properties: name, avatarURL.
+            var extraData = UserExtraData()
+            extraData.name = try? container.decodeIfPresent(String.self, forKey: .name)
+            extraData.avatarURL = try? container.decodeIfPresent(URL.self, forKey: .avatarURL)?.removingRandomSVG()
+            return extraData
         }
     }
     
