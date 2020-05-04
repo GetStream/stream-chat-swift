@@ -37,9 +37,10 @@ extension Client {
 
         /// Creates a new config object.
         ///
-        /// - Parameter apiKey: A StreamChat API key for your app. You can find it in your Dashboard on
+        /// - Parameter apiKey: A StreamChat API key for your app. You can find it in the Dashboard on
         ///   https://getstream.io after logging in.
         public init(apiKey: String) {
+            ClientLogger.logAssert(!apiKey.isEmpty, "Empty string is not a valid apiKey.")
             self.apiKey = apiKey
         }
     }
