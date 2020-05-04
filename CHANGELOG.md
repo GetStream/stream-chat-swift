@@ -40,6 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Files over 20MB will correctly show file size warning [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
 
 
+### 🐞 Fixed
+- Show in logs if extra data decoding failed for the `User` or `Channel` [#238](https://github.com/GetStream/stream-chat-swift/issues/238).
+- Recover the default extra data for User and Channel types [#238](https://github.com/GetStream/stream-chat-swift/issues/238).
+
 # [2.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.1)
 _May 01, 2020_
 
