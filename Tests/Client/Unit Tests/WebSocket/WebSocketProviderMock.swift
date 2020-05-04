@@ -12,7 +12,7 @@ import XCTest
 final class WebSocketProviderMock: WebSocketProvider {
     let request: URLRequest
     var isConnected: Bool = false
-    var callbackQueue: DispatchQueue = .main
+    let callbackQueue: DispatchQueue
     weak var delegate: WebSocketProviderDelegate?
     private var connectionId: String?
     
@@ -20,8 +20,9 @@ final class WebSocketProviderMock: WebSocketProvider {
     let timeout = 3
     private var timer: DispatchSourceTimer?
     
-    init(request: URLRequest, callbackQueue: DispatchQueue?) {
+    init(request: URLRequest, callbackQueue: DispatchQueue) {
         self.request = request
+        self.callbackQueue = callbackQueue
     }
     
     func connect() {
