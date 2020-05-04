@@ -51,11 +51,13 @@ final class ClientTests01_Channels: TestCase {
     func test01BigFlow() {
         // MARK: User 1
         
-        let client1 = Client(apiKey: TestCase.apiKey,
-                             baseURL: TestCase.baseURL,
-                             stayConnectedInBackground: false,
-                             callbackQueue: .main,
-                             logOptions: [])
+        let client1 = Client(config: .init(
+            apiKey: TestCase.apiKey,
+            baseURL: TestCase.baseURL,
+            stayConnectedInBackground: false,
+            callbackQueue: .main,
+            logOptions: []
+        ))
         
         StorageHelper.shared.add(client1, key: .client1)
         
