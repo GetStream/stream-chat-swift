@@ -58,6 +58,18 @@ public final class Client: Uploader {
     /// A backing variable for `Client.shared`. We need this to have finer control over its creation.
     private static var backingSharedClient: Client?
 
+    /// Configures the shared instance of `Client`.
+    ///
+    /// - Parameter configuration: The configuration object with details of how the shared instance should be set up.
+    public static func configureShared(_ config: Config) {
+        guard backingSharedClient == nil else {
+            ClientLogger.logAssertionFailure(
+                "`Client.shared` instance was already used. It's not possible to change its configuration."
+            )
+            return
+        }
+        configForSharedClient = config
+    }
     
     /// Stream API key.
     /// - Note: If you will change API key the Client will be disconnected and the current user will be logged out.
