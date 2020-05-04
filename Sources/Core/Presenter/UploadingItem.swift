@@ -72,7 +72,7 @@ public final class UploadingItem: Equatable {
                 fileName: String? = nil,
                 fileType: AttachmentFileType? = nil,
                 fileSize: Int64 = 0,
-                extraData: Codable? = nil) {
+                extraData: Codable? = nil) throws {
         self.channel = channel
         self.url = url
         self.type = type
@@ -97,7 +97,7 @@ public final class UploadingItem: Equatable {
             self.fileType = .jpeg
         }
         
-        encodeData()
+        try encodeData()
     }
     
     /// Init an uploader item with a given uploaded image attachment.
@@ -106,6 +106,7 @@ public final class UploadingItem: Equatable {
     ///     - attachment: an uploaded attachment.
     ///     - previewImage: a preview of the uploaded image.
     ///     - previewImageGifData: a preview of the uploaded gif image data.
+    @available(*, deprecated, message: "Please use `init(channel:url:)` initializer")
     public init(attachment: Attachment, previewImage image: UIImage, previewImageGifData gifData: Data? = nil) {
         channel = nil
         url = attachment.url
@@ -118,12 +119,13 @@ public final class UploadingItem: Equatable {
         self.attachment = attachment
         extraData = nil
     }
-    
+
     /// Init an uploader item with a given uploaded file.
     ///
     /// - Parameters:
     ///   - attachment: an uploaded file attachment.
     ///   - fileName: an uploaded file name.
+    @available(*, deprecated, message: "Please use `init(channel:url:)` initializer")
     public init(attachment: Attachment, fileName: String) {
         channel = nil
         url = attachment.url
@@ -137,18 +139,21 @@ public final class UploadingItem: Equatable {
         extraData = nil
     }
     
-    private func encodeData() {
+    private func encodeData() throws {
         guard type != .file, type != .video else {
             guard let url = url else {
                 error = .emptyBody(description: "Invalid URL: \(self.url?.absoluteString ?? "<unknown>")")
-                return
+                throw error!
             }
             
             do {
                 self.mimeType = fileType.mimeType
                 data = try Data(contentsOf: url)
             } catch {
-                self.error = .unexpectedError(description: error.localizedDescription, error: error)
+                self.error = .unexpectedError(description: "Cannot get data for url \(url): "
+                                                            + error.localizedDescription,
+                                              error: error)
+                throw self.error!
             }
             
             return
@@ -172,7 +177,7 @@ public final class UploadingItem: Equatable {
             
             error = .emptyBody(description: errorDescription)
             data = nil
-            return
+            throw error!
         }
         
         self.mimeType = mimeType

@@ -23,6 +23,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Client.shared` triggers assertion failure when used without configuring [#231](https://github.com/GetStream/stream-chat-swift/issues/231).
 - `Client.Config` triggers assertion failure when created with an empty API key value [#231](https://github.com/GetStream/stream-chat-swift/issues/231).
 - Assigning an empty string to `Client.apiKey` triggers assertion failure [#231](https://github.com/GetStream/stream-chat-swift/issues/231).
+- Changed title of camera upload button from _Upload from a camera_ to _Upload from camera_ [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
+- Deprecated 2 public initializers from `UploadingItem` [#239](https://github.com/GetStream/stream-chat-swift/issues/239):
+  ```swift
+  public init(attachment:previewImage:previewImageGifData:)
+  ```
+  and
+  ```swift
+  public init(attachment:fileName:)
+  ```
+  since they were unused. Please use `init(channel:url:)` initializer. 
+
+### 🐞 Fixed
+- Images taken directly from camera do not fail to upload [#236](https://github.com/GetStream/stream-chat-swift/issues/236)
+- Video uploads are now working, videos are treated as files [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
+- Files over 20MB will correctly show file size warning [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
+
 
 # [2.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.1)
 _May 01, 2020_
