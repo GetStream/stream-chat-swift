@@ -12,7 +12,7 @@ import StreamChatCore
 import Photos.PHPhotoLibrary
 
 extension UploadingItem {
-    convenience init(channel: Channel, pickedImage: PickedImage, extraData: Codable? = nil) {
+    convenience init(channel: Channel, pickedImage: PickedImage, extraData: Codable? = nil) throws {
         let fileName = pickedImage.fileName
         var fileType = AttachmentFileType.generic
         
@@ -27,13 +27,13 @@ extension UploadingItem {
             fileType = AttachmentFileType(ext: ext)
         }
         
-        self.init(channel: channel,
-                  url: pickedImage.fileURL,
-                  type: pickedImage.isVideo ? .video : .image,
-                  image: pickedImage.image,
-                  fileName: fileName,
-                  fileType: fileType,
-                  extraData: extraData)
+        try self.init(channel: channel,
+                      url: pickedImage.fileURL,
+                      type: pickedImage.isVideo ? .video : .image,
+                      image: pickedImage.image,
+                      fileName: fileName,
+                      fileType: fileType,
+                      extraData: extraData)
     }
 }
 
