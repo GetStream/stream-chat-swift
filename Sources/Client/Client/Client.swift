@@ -142,21 +142,18 @@ public final class Client: Uploader {
     /// Weak references to channels by cid.
     let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
     
-    /// Init a network client.
-    /// - Parameters:
-    ///   - apiKey: a Stream Chat API key.
-    ///   - baseURL: a base URL (see `BaseURL`).
-    ///   - stayConnectedInBackground: when the app will go to the background,
-    ///                                start a background task to stay connected for 5 min.
-    ///   - database: a database manager (in development).
-    ///   - callbackQueue: a request callback queue, default nil (some background thread).
-    ///   - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`.
-    init(apiKey: String = Client.config.apiKey,
-         baseURL: BaseURL = Client.config.baseURL,
-         stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
-         database: Database? = Client.config.database,
-         callbackQueue: DispatchQueue? = Client.config.callbackQueue,
-         logOptions: ClientLogger.Options = Client.config.logOptions) {
+    /// Creates a new instance of the network client.
+    ///
+    /// - Parameter config: The configuration object with details of how the new instance should be set up.
+    init(config: Client.Config) {
+        self.apiKey = config.apiKey
+        self.baseURL = config.baseURL
+        self.callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
+        self.stayConnectedInBackground = config.stayConnectedInBackground
+        self.database = config.database
+        self.logOptions = config.logOptions
+        logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
+
         if !apiKey.isEmpty, logOptions.isEnabled {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Environment.version)")
             ClientLogger.logger("🔑", "", apiKey)
@@ -166,15 +163,7 @@ public final class Client: Uploader {
                 ClientLogger.logger("💽", "", "\(database.self)")
             }
         }
-        
-        self.apiKey = apiKey
-        self.baseURL = baseURL
-        self.callbackQueue = callbackQueue ?? .global(qos: .userInitiated)
-        self.stayConnectedInBackground = stayConnectedInBackground
-        self.database = database
-        self.logOptions = logOptions
-        logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
-        
+
         #if DEBUG
         checkLatestVersion()
         #endif
