@@ -73,10 +73,14 @@ final class WebSocketProviderMock: WebSocketProvider {
     }
     
     func disconnect() {
+        disconnect(error: nil)
+    }
+    
+    func disconnect(error: WebSocketProviderError?) {
         isConnected = false
         connectionId = nil
         stopTimer()
-        delegate?.websocketDidDisconnect(self, error: nil)
+        delegate?.websocketDidDisconnect(self, error: error)
     }
     
     func sendPing() {

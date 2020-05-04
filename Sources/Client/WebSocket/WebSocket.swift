@@ -15,13 +15,12 @@ final class WebSocket {
     /// A WebSocket connection callback.
     private let onEvent: (Event) -> Void
     private var onEventObservers = [String: Client.OnEvent]()
-    private var webSocketProvider: WebSocketProvider
+    private var provider: WebSocketProvider
     private let options: WebSocketOptions
     private let logger: ClientLogger?
     private var consecutiveFailures: TimeInterval = 0
     private var shouldReconnect = false
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
-    private let webSocketInitiated: Bool
     private(set) var connectionId: String?
     private(set) var eventError: ClientErrorResponse?
     
@@ -33,32 +32,31 @@ final class WebSocket {
     }
     
     private lazy var handshakeTimer =
-        RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval), queue: webSocketProvider.callbackQueue) { [weak self] in
+        RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval), queue: provider.callbackQueue) { [weak self] in
             self?.logger?.log("🏓➡️", level: .info)
-            self?.webSocketProvider.sendPing()
+            self?.provider.sendPing()
     }
     
     /// Checks if the web socket is connected and `connectionId` is not nil.
-    var isConnected: Bool { connectionId != nil && webSocketProvider.isConnected }
+    var isConnected: Bool { connectionId != nil && provider.isConnected }
     
     init(_ provider: WebSocketProvider,
          options: WebSocketOptions,
          logger: ClientLogger? = nil,
          onEvent: @escaping (Event) -> Void = { _ in }) {
-        self.webSocketProvider = provider
+        self.provider = provider
         self.options = options
         self.logger = logger
         self.onEvent = onEvent
-        webSocketInitiated = true
-        webSocketProvider.delegate = self
+        self.provider.delegate = self
     }
     
     init() {
-        webSocketProvider = EmptyWebSocketProvider(request: URLRequest(url: BaseURL.placeholderURL))
-        webSocketInitiated = false
+        provider = EmptyWebSocketProvider(request: URLRequest(url: BaseURL.placeholderURL))
         options = []
         logger = nil
         onEvent = { _ in }
+        provider.delegate = self
     }
     
     deinit {
@@ -79,26 +77,22 @@ extension WebSocket {
     /// - Skip if it's already connected.
     /// - Skip if it's reconnecting.
     func connect() {
-        guard webSocketInitiated else {
-            return
-        }
-        
         cancelBackgroundWork()
         
         if isConnected || connectionState == .connecting || connectionState == .reconnecting {
             logger?.log("Skip connecting: "
-                + "isConnected = \(webSocketProvider.isConnected), "
+                + "isConnected = \(provider.isConnected), "
                 + "isReconnecting = \(connectionState == .reconnecting), "
                 + "isConnecting = \(connectionState == .connecting)")
             return
         }
         
         logger?.log("Connecting...")
-        logger?.log(webSocketProvider.request)
+        logger?.log(provider.request)
         connectionStateAtomic.set(.connecting)
         shouldReconnect = true
         
-        DispatchQueue.main.async(execute: webSocketProvider.connect)
+        DispatchQueue.main.async(execute: provider.connect)
     }
     
     private func reconnect() {
@@ -113,13 +107,13 @@ extension WebSocket {
         let delay = minDelay + TimeInterval.random(in: 0...(maxDelay - minDelay))
         logger?.log("⏳ Reconnect in \(delay) sec")
         
-        webSocketProvider.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
+        provider.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
             self?.connect()
         }
     }
     
     func disconnectInBackground() {
-        webSocketProvider.callbackQueue.async(execute: disconnectInBackgroundInWebSocketQueue)
+        provider.callbackQueue.async(execute: disconnectInBackgroundInWebSocketQueue)
     }
     
     private func disconnectInBackgroundInWebSocketQueue() {
@@ -153,18 +147,14 @@ extension WebSocket {
     }
     
     func disconnect(reason: String) {
-        guard webSocketInitiated else {
-            return
-        }
-        
         shouldReconnect = false
         consecutiveFailures = 0
         clearStateAfterDisconnect()
         
-        if webSocketProvider.isConnected {
+        if provider.isConnected {
             logger?.log("Disconnecting: \(reason)")
             connectionStateAtomic.set(.disconnecting)
-            webSocketProvider.disconnect()
+            provider.disconnect()
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
             connectionStateAtomic.set(.disconnected(nil))
@@ -186,7 +176,7 @@ extension WebSocket {
     func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
                    callback: @escaping Client.OnEvent) -> Cancellable {
         let subscription = Subscription { [weak self] uuid in
-            self?.webSocketProvider.callbackQueue.async {
+            self?.provider.callbackQueue.async {
                 self?.onEventObservers[uuid] = nil
             }
         }
@@ -197,7 +187,7 @@ extension WebSocket {
             }
         }
         
-        webSocketProvider.callbackQueue.async { [weak self] in
+        provider.callbackQueue.async { [weak self] in
             self?.onEventObservers[subscription.uuid] = handler
             
             // Reply the last connectoin state.
@@ -210,7 +200,7 @@ extension WebSocket {
     }
     
     private func publishEvent(_ event: Event) {
-        webSocketProvider.callbackQueue.async { [weak self] in
+        provider.callbackQueue.async { [weak self] in
             self?.onEvent(event)
             self?.onEventObservers.forEach({ $0.value(event) })
         }

@@ -44,7 +44,7 @@ public final class InternetConnection {
     
     /// Checks if the Internet is available.
     public var isAvailable: Bool {
-        state == .available
+        Environment.isTests || state == .available
     }
     
     private var lastState: State = .unknown

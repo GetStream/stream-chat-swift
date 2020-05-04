@@ -156,7 +156,6 @@
 		8ACC7C80241924B5000750E4 /* ChannelsPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4B241924B5000750E4 /* ChannelsPresenter.swift */; };
 		8ACC7C81241924B5000750E4 /* ChannelsPresenter+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4C241924B5000750E4 /* ChannelsPresenter+Rx.swift */; };
 		8ACC7C84241924B5000750E4 /* URL+Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C50241924B5000750E4 /* URL+Media.swift */; };
-		8ACC7C86241924B5000750E4 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C52241924B5000750E4 /* Tests.swift */; };
 		8ACC7C87241924B5000750E4 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C53241924B5000750E4 /* Date+Extensions.swift */; };
 		8ACC7C88241924B5000750E4 /* RxFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C54241924B5000750E4 /* RxFunctions.swift */; };
 		8ACC7C8B241924B5000750E4 /* InternetConnection+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C59241924B5000750E4 /* InternetConnection+Rx.swift */; };
@@ -454,7 +453,6 @@
 		8ACC7C4E241924B5000750E4 /* Application.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssociatedValue.swift; sourceTree = "<group>"; };
 		8ACC7C50241924B5000750E4 /* URL+Media.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+Media.swift"; sourceTree = "<group>"; };
-		8ACC7C52241924B5000750E4 /* Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		8ACC7C53241924B5000750E4 /* Date+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		8ACC7C54241924B5000750E4 /* RxFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxFunctions.swift; sourceTree = "<group>"; };
 		8ACC7C59241924B5000750E4 /* InternetConnection+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "InternetConnection+Rx.swift"; sourceTree = "<group>"; };
@@ -975,7 +973,6 @@
 				8ACC7C54241924B5000750E4 /* RxFunctions.swift */,
 				8ACC7C50241924B5000750E4 /* URL+Media.swift */,
 				8ACC7C53241924B5000750E4 /* Date+Extensions.swift */,
-				8ACC7C52241924B5000750E4 /* Tests.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1906,7 +1903,6 @@
 				8ACC7C78241924B5000750E4 /* ChannelPresenter+Request.swift in Sources */,
 				8ACC7C9D241924B5000750E4 /* Client+RxUnreadCount.swift in Sources */,
 				8A9ECEF9242A5C3A00206E7D /* UIApplication+Rx.swift in Sources */,
-				8ACC7C86241924B5000750E4 /* Tests.swift in Sources */,
 				8ACC7C9B241924B5000750E4 /* Client+RxDevices.swift in Sources */,
 				8ACC7C7C241924B5000750E4 /* UploadManager.swift in Sources */,
 				8ACC7C8F241924B5000750E4 /* Client+RxMessage.swift in Sources */,
