@@ -30,11 +30,13 @@ class TestCase: XCTestCase {
         isClientReady = true
         ClientLogger.logger = { print($0, $2) }
         
-        Client.config = .init(apiKey: Self.apiKey,
-                              baseURL: Self.baseURL,
-                              stayConnectedInBackground: false,
-                              callbackQueue: .main,
-                              logOptions: [])
+        Client.configureShared(.init(
+            apiKey: Self.apiKey,
+            baseURL: Self.baseURL,
+            stayConnectedInBackground: false,
+            callbackQueue: .main,
+            logOptions: []
+        ))
     }
     
     override static func tearDown() {
