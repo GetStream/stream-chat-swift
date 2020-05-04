@@ -345,7 +345,7 @@ extension ChatViewController {
         }
         
         title = presenter.channel.name
-        let channelAvatar = AvatarView(style: .init(radius: .messageAvatarRadius))
+        let channelAvatar = AvatarView(style: style.avatarViewStyle)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatar)
         let imageURL = presenter.parentMessage == nil ? presenter.channel.imageURL : presenter.parentMessage?.user.avatarURL
         channelAvatar.update(with: imageURL, name: title)
