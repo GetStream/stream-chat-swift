@@ -106,6 +106,7 @@ public final class UploadingItem: Equatable {
     ///     - attachment: an uploaded attachment.
     ///     - previewImage: a preview of the uploaded image.
     ///     - previewImageGifData: a preview of the uploaded gif image data.
+    @available(*, deprecated, message: "Please use `init(channel:url:)` initializer")
     public init(attachment: Attachment, previewImage image: UIImage, previewImageGifData gifData: Data? = nil) {
         channel = nil
         url = attachment.url
@@ -118,12 +119,13 @@ public final class UploadingItem: Equatable {
         self.attachment = attachment
         extraData = nil
     }
-    
+
     /// Init an uploader item with a given uploaded file.
     ///
     /// - Parameters:
     ///   - attachment: an uploaded file attachment.
     ///   - fileName: an uploaded file name.
+    @available(*, deprecated, message: "Please use `init(channel:url:)` initializer")
     public init(attachment: Attachment, fileName: String) {
         channel = nil
         url = attachment.url
