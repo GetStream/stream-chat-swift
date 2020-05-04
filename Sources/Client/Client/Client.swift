@@ -27,7 +27,7 @@ public final class Client: Uploader {
     ///         You have to setup another user after that.
     public var apiKey: String {
         didSet {
-            checkAPIKey()
+            ClientLogger.logAssert(!apiKey.isEmpty, "Empty string is not a valid apiKey.")
             disconnect()
         }
     }
@@ -129,20 +129,10 @@ public final class Client: Uploader {
         #if DEBUG
         checkLatestVersion()
         #endif
-        checkAPIKey()
     }
     
     deinit {
         subscriptionBag.cancel()
-    }
-    
-    private func checkAPIKey() {
-        if apiKey.isEmpty {
-            ClientLogger.logger("❌❌❌", "", "The Stream Chat Client didn't setup properly. "
-                + "You are trying to use it before setting up the API Key. "
-                + "Please use `Client.config = .init(apiKey:) to setup your api key. "
-                + "You can debug this issue by putting a breakpoint in \(#file)\(#line)")
-        }
     }
     
     /// Handle a connection with an application state.
