@@ -10,7 +10,7 @@ import XCTest
 @testable import StreamChatClient
 
 final class QueryEncodingTests: XCTestCase {
-    private let channel = Client(apiKey: "test").channel(type: .messaging, id: "general")
+    private let channel = Client(config: .init(apiKey: "test")).channel(type: .messaging, id: "general")
     private let encoder = JSONEncoder()
     
     private let simpleFilter: Filter = .equal("id", to: 42)

@@ -18,16 +18,65 @@ public final class Client: Uploader {
     public typealias OnEvent = (Event) -> Void
     
     /// A client config (see `Config`).
-    public static var config = Config(apiKey: "")
-    /// A shared client.
-    public static let shared = Client()
+    @available(*, deprecated, message: """
+    Configuring the shared Client using the static `Client.config` variable has been deprecated. Please create an instance
+    of the `Client.Config` struct and call `Client.configureShared(_:)` to set up the shared instance of Client.
+    """)
+    public static var config: Config = .init(apiKey: "_deprecated") {
+        didSet {
+            guard backingSharedClient == nil else {
+                ClientLogger.logAssertionFailure(
+                    "`Client.shared` instance was already used. It's not possible to change its configuration."
+                )
+                return
+            }
+
+            configForSharedClient = config
+        }
+    }
+
+    /// The configuration object used for creating `Client.shared`.
+    private static var configForSharedClient: Config?
+
+    /// The shared client.
+    public static var shared: Client {
+        if let client = backingSharedClient {
+            // Return the existing instance
+            return client
+        }
+
+        ClientLogger.logAssert(
+            configForSharedClient != nil,
+            "The shared instance of the Stream chat client wasn't configured. " +
+            "Create an instance of the `Client.Config` struct and call `Client.configureShared(_:)` to set it up."
+        )
+
+        backingSharedClient = Client(config: configForSharedClient ?? .init(apiKey: "__API_KEY_NOT_CONFIGURED__"))
+        return backingSharedClient!
+    }
+
+    /// A backing variable for `Client.shared`. We need this to have finer control over its creation.
+    private static var backingSharedClient: Client?
+
+    /// Configures the shared instance of `Client`.
+    ///
+    /// - Parameter configuration: The configuration object with details of how the shared instance should be set up.
+    public static func configureShared(_ config: Config) {
+        guard backingSharedClient == nil else {
+            ClientLogger.logAssertionFailure(
+                "`Client.shared` instance was already used. It's not possible to change its configuration."
+            )
+            return
+        }
+        configForSharedClient = config
+    }
     
     /// Stream API key.
     /// - Note: If you will change API key the Client will be disconnected and the current user will be logged out.
     ///         You have to setup another user after that.
     public var apiKey: String {
         didSet {
-            checkAPIKey()
+            ClientLogger.logAssert(!apiKey.isEmpty, "Empty string is not a valid apiKey.")
             disconnect()
         }
     }
@@ -57,8 +106,10 @@ public final class Client: Uploader {
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     var needsToRecoverConnection = false
-    
-    lazy var urlSession = URLSession(configuration: .default)
+
+    let defaultURLSessionConfiguration: URLSessionConfiguration
+    lazy var urlSession = URLSession(configuration: self.defaultURLSessionConfiguration)
+
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
     
@@ -93,21 +144,23 @@ public final class Client: Uploader {
     /// Weak references to channels by cid.
     let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
     
-    /// Init a network client.
+    /// Creates a new instance of the network client.
+    ///
     /// - Parameters:
-    ///   - apiKey: a Stream Chat API key.
-    ///   - baseURL: a base URL (see `BaseURL`).
-    ///   - stayConnectedInBackground: when the app will go to the background,
-    ///                                start a background task to stay connected for 5 min.
-    ///   - database: a database manager (in development).
-    ///   - callbackQueue: a request callback queue, default nil (some background thread).
-    ///   - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`.
-    init(apiKey: String = Client.config.apiKey,
-         baseURL: BaseURL = Client.config.baseURL,
-         stayConnectedInBackground: Bool = Client.config.stayConnectedInBackground,
-         database: Database? = Client.config.database,
-         callbackQueue: DispatchQueue? = Client.config.callbackQueue,
-         logOptions: ClientLogger.Options = Client.config.logOptions) {
+    ///   - config: The configuration object with details of how the new instance should be set up.
+    ///   - defaultURLSessionConfiguration: The base URLSession configuration `Client` uses for its
+    ///     URL sessions. `Client` is allowed to override the configuration with its own settings.
+    init(config: Client.Config, defaultURLSessionConfiguration: URLSessionConfiguration = .default) {
+        self.apiKey = config.apiKey
+        self.baseURL = config.baseURL
+        self.callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
+        self.stayConnectedInBackground = config.stayConnectedInBackground
+        self.database = config.database
+        self.logOptions = config.logOptions
+        logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
+
+        self.defaultURLSessionConfiguration = defaultURLSessionConfiguration
+
         if !apiKey.isEmpty, logOptions.isEnabled {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Environment.version)")
             ClientLogger.logger("🔑", "", apiKey)
@@ -117,32 +170,14 @@ public final class Client: Uploader {
                 ClientLogger.logger("💽", "", "\(database.self)")
             }
         }
-        
-        self.apiKey = apiKey
-        self.baseURL = baseURL
-        self.callbackQueue = callbackQueue ?? .global(qos: .userInitiated)
-        self.stayConnectedInBackground = stayConnectedInBackground
-        self.database = database
-        self.logOptions = logOptions
-        logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
-        
+
         #if DEBUG
         checkLatestVersion()
         #endif
-        checkAPIKey()
     }
     
     deinit {
         subscriptionBag.cancel()
-    }
-    
-    private func checkAPIKey() {
-        if apiKey.isEmpty {
-            ClientLogger.logger("❌❌❌", "", "The Stream Chat Client didn't setup properly. "
-                + "You are trying to use it before setting up the API Key. "
-                + "Please use `Client.config = .init(apiKey:) to setup your api key. "
-                + "You can debug this issue by putting a breakpoint in \(#file)\(#line)")
-        }
     }
     
     /// Handle a connection with an application state.
