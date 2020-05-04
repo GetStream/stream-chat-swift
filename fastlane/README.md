@@ -65,6 +65,11 @@ Tests integration with Cocoapods by building Cocoapods Example
 fastlane test_spm_integration
 ```
 Tests integration with SPM by building SPM Example
+### get_next_issue_number
+```
+fastlane get_next_issue_number
+```
+Get next PR number from github to be used in CHANGELOG
 
 ----
 

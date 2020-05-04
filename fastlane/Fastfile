@@ -176,3 +176,17 @@ lane :test_spm_integration do
     build_for_testing: true
   )
 end
+
+desc "Get next PR number from github to be used in CHANGELOG"
+lane :get_next_issue_number do
+  result = github_api(api_token: ENV["GITHUB_TOKEN"], path: "/repos/GetStream/stream-chat-swift/issues")
+  
+  next_issue_number = result[:json][0]["number"] + 1
+  next_issue_link = "[##{next_issue_number}](https://github.com/GetStream/stream-chat-swift/issues/#{next_issue_number})"
+  
+  clipboard(value: next_issue_link)
+  
+  UI.success "The next PR / Issue will have number: #{next_issue_number}"
+  UI.success "So the next markdown link is: #{next_issue_link}"
+  UI.success "Next markdown link is copied to your clipboard! ⬆️"
+end
