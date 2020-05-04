@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Images taken directly from camera do not fail to upload [#236](https://github.com/GetStream/stream-chat-swift/issues/236)
 - Video uploads are now working, videos are treated as files [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
 - Files over 20MB will correctly show file size warning [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
+- Message cell height will now update after markdown is parsed [#243](https://github.com/GetStream/stream-chat-swift/pull/243)
 
 
 # [2.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.1)
