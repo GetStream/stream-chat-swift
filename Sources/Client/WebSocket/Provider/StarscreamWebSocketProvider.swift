@@ -17,13 +17,10 @@ final class StarscreamWebSocketProvider: WebSocketProvider {
     var callbackQueue: DispatchQueue { webSocket.callbackQueue }
     weak var delegate: WebSocketProviderDelegate?
     
-    init(request: URLRequest, callbackQueue: DispatchQueue?) {
+    init(request: URLRequest, callbackQueue: DispatchQueue) {
         webSocket = Starscream.WebSocket(request: request)
         webSocket.delegate = self
-        
-        if let callbackQueue = callbackQueue {
-            webSocket.callbackQueue = callbackQueue
-        }
+        webSocket.callbackQueue = callbackQueue
     }
     
     func connect() {

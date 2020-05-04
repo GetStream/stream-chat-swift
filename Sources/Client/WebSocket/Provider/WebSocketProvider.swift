@@ -14,16 +14,10 @@ protocol WebSocketProvider {
     var callbackQueue: DispatchQueue { get }
     var delegate: WebSocketProviderDelegate? { get set }
     
-    init(request: URLRequest, callbackQueue: DispatchQueue?)
+    init(request: URLRequest, callbackQueue: DispatchQueue)
     func connect()
     func disconnect()
     func sendPing()
-}
-
-extension WebSocketProvider {
-    init(request: URLRequest, callbackQueue: DispatchQueue? = nil) {
-        self.init(request: request, callbackQueue: callbackQueue)
-    }
 }
 
 protocol WebSocketProviderDelegate: class {

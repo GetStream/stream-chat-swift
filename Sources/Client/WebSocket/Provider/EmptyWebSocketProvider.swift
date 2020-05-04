@@ -14,9 +14,9 @@ final class EmptyWebSocketProvider: WebSocketProvider {
     let callbackQueue: DispatchQueue
     weak var delegate: WebSocketProviderDelegate?
     
-    init(request: URLRequest, callbackQueue: DispatchQueue?) {
+    init(request: URLRequest, callbackQueue: DispatchQueue) {
         self.request = request
-        self.callbackQueue = callbackQueue ?? .global()
+        self.callbackQueue = callbackQueue
     }
     
     func connect() {
