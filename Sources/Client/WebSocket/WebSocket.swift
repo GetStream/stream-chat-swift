@@ -52,7 +52,7 @@ final class WebSocket {
     }
     
     init() {
-        provider = EmptyWebSocketProvider(request: URLRequest(url: BaseURL.placeholderURL))
+        provider = EmptyWebSocketProvider(request: URLRequest(url: BaseURL.placeholderURL), callbackQueue: .main)
         options = []
         logger = nil
         onEvent = { _ in }
