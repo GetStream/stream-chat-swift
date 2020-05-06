@@ -13,12 +13,25 @@ import Foundation
 public final class Atomic<T> {
     /// A didSet callback type.
     public typealias DidSetCallback = (_ value: T?, _ oldValue: T?) -> Void
-    
-    private let queue = DispatchQueue(label: "io.getstream.Chat.Atomic", qos: .userInitiated, attributes: .concurrent)
-    private var value: T?
+
+    private let lock = NSRecursiveLock()
+
+    private var value: T? {
+        didSet {
+            if let callbackQueue = callbackQueue {
+                callbackQueue.async {
+                    self.didSet?(self.value, oldValue)
+                }
+
+            } else {
+                didSet?(value, oldValue)
+            }
+        }
+    }
+
     private var didSet: DidSetCallback?
     private var callbackQueue: DispatchQueue?
-    
+
     /// Init a Atomic.
     ///
     /// - Parameters:
@@ -32,16 +45,15 @@ public final class Atomic<T> {
     
     /// Set a value.
     public func set(_ newValue: T?) {
-        queue.async(flags: .barrier) { [weak self] in
-            self?.updateValue(newValue)
-        }
+        lock.lock()
+        value = newValue
+        lock.unlock()
     }
-    
-    /// Get a value.
+
     public func get() -> T? {
-        var currentValue: T?
-        queue.sync { [weak self] in currentValue = self?.value }
-        return currentValue
+        lock.lock(); defer { lock.unlock() }
+        return value
+
     }
     
     /// Get the value if exists or return a default value.
@@ -54,23 +66,12 @@ public final class Atomic<T> {
     
     /// Update the value safely.
     /// - Parameter changes: a block with changes. It should return a new value.
-    public func update(_ changes: @escaping (T) -> T?) {
-        queue.async(flags: .barrier) { [weak self] in
-            if let self = self, let oldValue = self.value {
-                self.updateValue(changes(oldValue))
-            }
+    public func update(_ changes: (T) -> T?) {
+        lock.lock()
+        if let currentValue = value {
+            value = changes(currentValue)
         }
-    }
-    
-    private func updateValue(_ newValue: T?) {
-        let oldValue = value
-        value = newValue
-        
-        if let callbackQueue = callbackQueue {
-            callbackQueue.async { [weak self] in self?.didSet?(newValue, oldValue) }
-        } else {
-            didSet?(newValue, oldValue)
-        }
+        lock.unlock()
     }
 }
 
@@ -121,9 +122,8 @@ public extension Atomic where T: Collection {
     /// Get a value by key.
     // swiftlint:disable:next syntactic_sugar
     subscript<Key: Hashable, Value>(key: Key) -> Value? where T == Dictionary<Key, Value> {
-        var currentValue: Value?
-        queue.sync { [weak self] in currentValue = self?.value?[key] }
-        return currentValue
+        lock.lock(); defer { lock.unlock() }
+        return value?[key]
     }
 }
 
@@ -136,8 +136,8 @@ public extension Atomic where T == Int {
     ///   - lhs: the current atomic value.
     ///   - rhs: the second value.
     static func += (lhs: Atomic<T>, rhs: T) {
-        if let currentValue = lhs.get() {
-            lhs.set(currentValue + rhs)
+        lhs.update {
+            $0 + rhs
         }
     }
     
@@ -146,8 +146,8 @@ public extension Atomic where T == Int {
     ///   - lhs: the current atomic value.
     ///   - rhs: the second value.
     static func -= (lhs: Atomic<T>, rhs: T) {
-        if let currentValue = lhs.get() {
-            lhs.set(currentValue - rhs)
+        lhs.update {
+            $0 - rhs
         }
     }
 }
