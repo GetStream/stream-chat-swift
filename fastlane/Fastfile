@@ -136,24 +136,22 @@ lane :test_without_building do
 end
 
 desc "Runs integrations tests with backend. These tests make network connections so they're sometimes not reliable, hence we run them up to 3 times in case of failure"
-lane :test_backend_integration do
-  build_for_testing
-  
+lane :test_backend_integration do |options|
   @test_retries = 3
   
-  def run_tests
+  def run_tests(device)
     begin
-      scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, only_testing: ["StreamChatClientIntegrationTests"])
+      scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", clean: true, only_testing: ["StreamChatClientIntegrationTests"], devices: [device])
     rescue
     
       @test_retries -= 1
       if @test_retries > 0
-        run_tests
+        run_tests(device)
       end
     end
   end
   
-  run_tests
+  run_tests(options[:device])
 end
 
 desc "Tests SDK integrations with Carthage, Cocoapods and SPM"
