@@ -45,6 +45,11 @@ Builds the project for testing
 fastlane test_without_building
 ```
 Runs all the tests without building
+### test_backend_integration
+```
+fastlane test_backend_integration
+```
+Runs integrations tests with backend. These tests make network connections so they're sometimes not reliable, hence we run them up to 3 times in case of failure
 ### test_integrations
 ```
 fastlane test_integrations
