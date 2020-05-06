@@ -17,6 +17,7 @@
 		794BDE4A2434BD7400BFBA1F /* NestableCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */; };
 		79A9E4F72449D3AF00599B95 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */; };
 		79A9E4F92449DF2D00599B95 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F82449DF2D00599B95 /* Reachability.swift */; };
+		79CABB0724630AC600240052 /* AssertEventually.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0624630AC600240052 /* AssertEventually.swift */; };
 		79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D50C7624321BDA0052BA03 /* Client+Events.swift */; };
 		79EE393C2453204E0034EBF3 /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; };
 		79EE3942245320610034EBF3 /* ClientTests00.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE6206923CF63F000AB3426 /* ClientTests00.swift */; };
@@ -309,6 +310,7 @@
 		795FCD1B23EB155000990F15 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Gzip.swift"; sourceTree = "<group>"; };
 		79A9E4F82449DF2D00599B95 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		79CABB0624630AC600240052 /* AssertEventually.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertEventually.swift; sourceTree = "<group>"; };
 		79D50C7624321BDA0052BA03 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		79EE39372453204E0034EBF3 /* StreamChatClientIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatClientIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		80B937A42434F5FC003D950E /* Array+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
@@ -637,6 +639,7 @@
 			isa = PBXGroup;
 			children = (
 				791664E1245AF8AF0020710B /* AssertNetworkRequest.swift */,
+				79CABB0624630AC600240052 /* AssertEventually.swift */,
 			);
 			path = "Custom Assertions";
 			sourceTree = "<group>";
@@ -1700,6 +1703,7 @@
 				8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */,
 				8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */,
 				791664E2245AF8AF0020710B /* AssertNetworkRequest.swift in Sources */,
+				79CABB0724630AC600240052 /* AssertEventually.swift in Sources */,
 				79411CD42462DC0A003972E9 /* ClientLoggerTests.swift in Sources */,
 				8AC0D94F23D4BA7D0080B8BC /* FilterTests.swift in Sources */,
 				791664DF245AC89E0020710B /* Client+DevicesTests.swift in Sources */,
