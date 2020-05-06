@@ -14,6 +14,7 @@ _May 08, 2020_
 ### ✅ Added
 - `avatarViewStyle` under `ChatViewStyle` for customizing Navigation Right Bar Button Item avatar [#241](https://github.com/GetStream/stream-chat-swift/issues/241).
 - `logAssert(_:_:)` and `logAssertionFailure(_:)` functions added to `ClientLogger` [#231](https://github.com/GetStream/stream-chat-swift/issues/231).
+- Support build-in WebSockets protocol in iOS 13+ using  `URLSessionWebSocketTask`.
 - `queryChannels` now returns unread count of each channel, unrestricted by number of messages fetched [#247](https://github.com/GetStream/stream-chat-swift/issues/247):
   Example:
   ```swift
