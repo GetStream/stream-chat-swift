@@ -6,8 +6,6 @@
 //  Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-// For customers who will use only iOS 13+ no need to add Starscream framework.
-#if canImport(Starscream)
 import Starscream
 
 final class StarscreamWebSocketProvider: WebSocketProvider {
@@ -61,5 +59,3 @@ extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
     
     func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
 }
-
-#endif

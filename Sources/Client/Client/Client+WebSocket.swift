@@ -11,10 +11,6 @@ import Foundation
 extension Client {
     
     func setupWebSocket(user: User, token: Token) throws -> WebSocket {
-        guard let webSocketProviderType = defaultWebSocketProviderType else {
-            throw ClientError.unexpectedError(description: "WebSocket provider not found", error: nil)
-        }
-        
         let logger = logOptions.logger(icon: "🦄", for: [.webSocketError, .webSocket, .webSocketInfo])
         let jsonParameter = WebSocketPayload(user: user, token: token)
         
@@ -49,7 +45,7 @@ extension Client {
         
         let callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
         let webSocketOptions = stayConnectedInBackground ? WebSocketOptions.stayConnectedInBackground : []
-        let webSocketProvider = webSocketProviderType.init(request: request, callbackQueue: callbackQueue)
+        let webSocketProvider = defaultWebSocketProviderType.init(request: request, callbackQueue: callbackQueue)
         
         return WebSocket(webSocketProvider, options: webSocketOptions, logger: logger) { [unowned self] event in
             guard case .connectionChanged(let connectionState) = event else {
