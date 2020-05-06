@@ -9,7 +9,7 @@
 import XCTest
 @testable import StreamChatClient
 
-final class ClientTests10_ClientLogger: XCTestCase {
+final class ClientLoggerTests: XCTestCase {
     private let teJstUser = User(id: "test")
     private let testUrl = "getstream.io".url!
     private let testFilter = Filter.in("members", ["test-member"])
@@ -34,6 +34,13 @@ final class ClientTests10_ClientLogger: XCTestCase {
         let logger = ClientLogger(icon: "🗣", level: .error)
         return logger
     }()
+    
+    override class func setUp() {
+        super.setUp()
+        
+        // Setup Client since Message initializer accesses User.current
+        Client.configureShared(.init(apiKey: "logger_test_api_key"))
+    }
     
     override func setUp() {
         super.setUp()
