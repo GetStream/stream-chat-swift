@@ -34,7 +34,7 @@ extension Channel {
         }
         
         if message.user.isCurrent {
-            resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created))
+            resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created, unreadMessageCount: 0))
             return
         }
         
@@ -45,7 +45,9 @@ extension Channel {
             updatedUnreadCount.mentionedMessages += 1
         }
         
-        unreadMessageReadAtomic.set(.init(user: User.current, lastReadDate: message.created))
+        unreadMessageReadAtomic.set(.init(user: User.current,
+                                          lastReadDate: message.created,
+                                          unreadMessageCount: updatedUnreadCount.messages))
         unreadCountAtomic.set(updatedUnreadCount)
     }
     
@@ -55,7 +57,7 @@ extension Channel {
         }
         
         if message.user.isCurrent {
-            resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created))
+            resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created, unreadMessageCount: 0))
             return
         }
         
@@ -70,7 +72,9 @@ extension Channel {
             updatedUnreadCount.mentionedMessages -= 1
         }
         
-        unreadMessageReadAtomic.set(.init(user: User.current, lastReadDate: message.created))
+        unreadMessageReadAtomic.set(.init(user: User.current,
+                                          lastReadDate: message.created,
+                                          unreadMessageCount: updatedUnreadCount.messages))
         unreadCountAtomic.set(updatedUnreadCount)
     }
 }

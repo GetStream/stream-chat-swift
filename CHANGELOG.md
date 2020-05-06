@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ✅ Added
 - `avatarViewStyle` under `ChatViewStyle` for customizing Navigation Right Bar Button Item avatar [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
 - `logAssert(_:_:)` and `logAssertionFailure(_:)` functions added to `ClientLogger` [#231](https://github.com/GetStream/stream-chat-swift/issues/231).
+- `queryChannels` now returns unread count of each channel [#247](https://github.com/GetStream/stream-chat-swift/issues/247):
+  Example:
+  ```swift
+  Client.shared.queryChannels(filter: .currentUserInMembers, sort: [Sorting("has_unread", isAscending: false)]) { (result) in
+      for response in result.value! {
+          print("Channel: \(response.channel.name!), unread count: \(response.messageReads.first(where: { $0.user == User.current })!.unreadMessageCount)")
+      }
+  }
+  ```
 
 ### 🔄 Changed
 - Configuring the shared `Client` using the static `Client.config` variable has been deprecated. Please create an instance of the `Client.Config` struct and call `Client.configureShared(_:)` to set up the shared instance of `Client` [#231](https://github.com/GetStream/stream-chat-swift/issues/231).

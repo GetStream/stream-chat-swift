@@ -8,26 +8,31 @@
 
 import Foundation
 
-/// A message read state. User + last read date.
+/// A message read state. User + last read date + unread message count.
 public struct MessageRead: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadDate = "last_read"
+        case unreadMessageCount = "unread_messages"
     }
     
     /// A user (see `User`).
     public let user: User
     /// A last read date by the user.
     public let lastReadDate: Date
+    /// Unread message count for the user.
+    public let unreadMessageCount: Int
     
     /// Init a message read.
     ///
     /// - Parameters:
     ///   - user: a user.
     ///   - lastReadDate: the last read date.
-    public init(user: User, lastReadDate: Date) {
+    ///   - unreadMessages: Unread message count
+    public init(user: User, lastReadDate: Date, unreadMessageCount: Int) {
         self.user = user
         self.lastReadDate = lastReadDate
+        self.unreadMessageCount = unreadMessageCount
     }
     
     public static func == (lhs: MessageRead, rhs: MessageRead) -> Bool {
