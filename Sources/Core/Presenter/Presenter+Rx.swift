@@ -21,7 +21,7 @@ extension Reactive  where Base: Presenter {
     public var connectionErrors: Driver<ViewChanges> {
         associated(to: base, key: &Presenter.rxConnectionErrorsKey) {
             Client.shared.rx.connectionState
-                .map({ connection -> ViewChanges? in
+                .compactMap({ connection -> ViewChanges? in
                     if case .disconnected(let error) = connection, let disconnectError = error {
                         return .error(disconnectError)
                     }
@@ -32,7 +32,6 @@ extension Reactive  where Base: Presenter {
                     
                     return nil
                 })
-                .compactMap { $0 }
                 .asDriver(onErrorJustReturn: .none)
         }
     }

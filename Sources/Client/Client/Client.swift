@@ -103,6 +103,8 @@ public final class Client: Uploader {
     
     /// A web socket client.
     lazy var webSocket = WebSocket()
+    /// The current connection state.
+    public var connectionState: ConnectionState { webSocket.connectionState }
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     var needsToRecoverConnection = false

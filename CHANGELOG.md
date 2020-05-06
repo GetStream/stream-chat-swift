@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### ✅ Added
-- `avatarViewStyle` under `ChatViewStyle` for customizing Navigation Right Bar Button Item avatar [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
+- `avatarViewStyle` under `ChatViewStyle` for customizing Navigation Right Bar Button Item avatar [#241](https://github.com/GetStream/stream-chat-swift/issues/241).
 - `logAssert(_:_:)` and `logAssertionFailure(_:)` functions added to `ClientLogger` [#231](https://github.com/GetStream/stream-chat-swift/issues/231).
 
 ### 🔄 Changed
@@ -39,10 +39,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   since they were unused. Please use `init(channel:url:)` initializer. 
 
 ### 🐞 Fixed
-- Images taken directly from camera do not fail to upload [#236](https://github.com/GetStream/stream-chat-swift/issues/236)
-- Video uploads are now working, videos are treated as files [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
-- Files over 20MB will correctly show file size warning [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
-- Fix last message not set when sending first message to an empty channel [#246](https://github.com/GetStream/stream-chat-swift/pull/246)
+- Fix rx observing for the connection state [#249](https://github.com/GetStream/stream-chat-swift/issues/249).
+- Images taken directly from camera do not fail to upload [#236](https://github.com/GetStream/stream-chat-swift/issues/236).
+- Video uploads are now working, videos are treated as files [#239](https://github.com/GetStream/stream-chat-swift/issues/239).
+- Files over 20MB will correctly show file size warning [#239](https://github.com/GetStream/stream-chat-swift/issues/239).
+- Fix last message not set when sending first message to an empty channel [#246](https://github.com/GetStream/stream-chat-swift/pull/246).
 - Show in logs if extra data decoding failed for the `User` or `Channel` [#238](https://github.com/GetStream/stream-chat-swift/issues/238).
 - Recover the default extra data for User and Channel types [#238](https://github.com/GetStream/stream-chat-swift/issues/238).
 - Crashes on `channel.rx.events` and `channel.rx.unreadCount` [#248](https://github.com/GetStream/stream-chat-swift/issues/248).
