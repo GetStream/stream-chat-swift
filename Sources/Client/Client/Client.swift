@@ -156,7 +156,7 @@ public final class Client: Uploader {
     ///   - defaultWebSocketProviderType: the default WebSocket provider type. `Client` will create it on set user.
     init(config: Client.Config,
          defaultURLSessionConfiguration: URLSessionConfiguration = .default,
-         defaultWebSocketProviderType: WebSocketProvider.Type = WebSocketProviderProxy.self) {
+         defaultWebSocketProviderType: WebSocketProvider.Type = ProxyWebSocketProvider.self) {
         apiKey = config.apiKey
         baseURL = config.baseURL
         callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)

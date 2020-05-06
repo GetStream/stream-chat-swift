@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class WebSocketProviderProxy: WebSocketProvider {
+final class ProxyWebSocketProvider: WebSocketProvider {
     private var provider: WebSocketProvider
     
     var request: URLRequest { provider.request }
