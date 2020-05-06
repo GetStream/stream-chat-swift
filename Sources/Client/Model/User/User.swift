@@ -147,7 +147,7 @@ public struct User: Codable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
-        extraData = decodeUserExtraData(from: decoder)
+        extraData = User.decodeUserExtraData(from: decoder)
         
         let unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount) ?? 0
         let unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount) ?? 0
@@ -155,7 +155,7 @@ public struct User: Codable {
     }
     
     /// Safely decode user extra data and if it fail try to decode only default properties: name, avatarURL.
-    private func decodeUserExtraData(from decoder: Decoder) -> UserExtraDataCodable? {
+    private static func decodeUserExtraData(from decoder: Decoder) -> UserExtraDataCodable? {
         do {
             var extraData = try Self.extraDataType.init(from: decoder) // swiftlint:disable:this explicit_init
             extraData.avatarURL = extraData.avatarURL?.removingRandomSVG()

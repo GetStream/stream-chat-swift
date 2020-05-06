@@ -163,11 +163,11 @@ public final class Channel: Codable {
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
         frozen = try container.decode(Bool.self, forKey: .frozen)
         didLoad = true
-        extraData = decodeChannelExtraData(from: decoder)
+        extraData = Channel.decodeChannelExtraData(from: decoder)
     }
     
     /// Safely decode channel extra data and if it fail try to decode only default properties: name, imageURL.
-    private func decodeChannelExtraData(from decoder: Decoder) -> ChannelExtraDataCodable? {
+    private static func decodeChannelExtraData(from decoder: Decoder) -> ChannelExtraDataCodable? {
         do {
             var extraData = try Self.extraDataType.init(from: decoder) // swiftlint:disable:this explicit_init
             extraData.imageURL = extraData.imageURL?.removingRandomSVG()
