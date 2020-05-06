@@ -156,16 +156,17 @@ public final class Client: Uploader {
     ///   - defaultWebSocketProviderType: the default WebSocket provider type. `Client` will create it on set user.
     init(config: Client.Config,
          defaultURLSessionConfiguration: URLSessionConfiguration = .default,
-         defaultWebSocketProviderType: WebSocketProvider.Type? = nil) {
-        self.apiKey = config.apiKey
-        self.baseURL = config.baseURL
-        self.callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
-        self.stayConnectedInBackground = config.stayConnectedInBackground
-        self.database = config.database
-        self.logOptions = config.logOptions
+         defaultWebSocketProviderType: WebSocketProvider.Type = WebSocketProviderProxy.self) {
+        apiKey = config.apiKey
+        baseURL = config.baseURL
+        callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
+        stayConnectedInBackground = config.stayConnectedInBackground
+        database = config.database
+        logOptions = config.logOptions
         logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
         
         self.defaultURLSessionConfiguration = defaultURLSessionConfiguration
+        self.defaultWebSocketProviderType = defaultWebSocketProviderType
         
         if !apiKey.isEmpty, logOptions.isEnabled {
             ClientLogger.logger("💬", "", "Stream Chat v.\(Environment.version)")
@@ -175,21 +176,6 @@ public final class Client: Uploader {
             if let database = database {
                 ClientLogger.logger("💽", "", "\(database.self)")
             }
-        }
-        
-        // Seetup a default WebSocketProvider type.
-        if let defaultWebSocketProviderType = defaultWebSocketProviderType {
-            self.defaultWebSocketProviderType = defaultWebSocketProviderType
-        } else if #available(iOS 13, *) {
-            // Use iOS build-in WebSocket provider.
-            // Starscream does the same by default.
-            self.defaultWebSocketProviderType = URLSessionWebSocketProvider.self
-        } else if let providerClass = NSClassFromString("StreamChatClient.StarscreamWebSocketProvider"),
-            let starscreamWebSocketProviderClass = providerClass as? WebSocketProvider.Type {
-            // Use Starscream WebSocket provider lazily.
-            self.defaultWebSocketProviderType = starscreamWebSocketProviderClass
-        } else {
-            self.defaultWebSocketProviderType = nil
         }
         
         #if DEBUG
