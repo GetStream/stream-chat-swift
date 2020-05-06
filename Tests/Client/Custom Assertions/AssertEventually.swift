@@ -41,3 +41,30 @@ func AssertEqualEventually<T: Equatable>(_ expression1: @autoclosure () -> T?,
 
     XCTAssertEqual(expression1(), expression2(), file: file, line: line)
 }
+
+
+/// Blocks the current test execution and periodically checks if the expression evaluates to `nil`. Fails if
+/// the expression result is not `nil` within the `timeout` period.
+///
+/// - Parameters:
+///   - expression: The expression to evaluate.
+///   - timeout: The maximum time the function waits for the expression results to equal.
+///
+/// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
+///   any side effects which can affect its result.
+func AssertNilEventually<T>(_ expression: @autoclosure () -> T?,
+                            timeout: TimeInterval = defaultTimeout,
+                            file: StaticString = #file,
+                            line: UInt = #line) {
+
+    let startTimestamp = Date().timeIntervalSince1970
+
+    while Date().timeIntervalSince1970 - startTimestamp < timeout {
+        if expression() == nil {
+            return
+        }
+        _ = XCTWaiter.wait(for: [.init()], timeout: evaluationPeriod)
+    }
+
+    XCTAssertNil(expression(), file: file, line: line)
+}
