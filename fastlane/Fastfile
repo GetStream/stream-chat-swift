@@ -141,7 +141,7 @@ lane :test_backend_integration do |options|
   
   def run_tests(device)
     begin
-      scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", clean: true, only_testing: ["StreamChatClientIntegrationTests"], devices: [device])
+      scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", clean: true, devices: [device])
     rescue
     
       @test_retries -= 1
