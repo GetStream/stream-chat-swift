@@ -1,10 +1,8 @@
 name: Test-Old-iOS-Versions
 
-# TODO: run this nightly
 on:
-  push:
-    branches:
-      - test-integrations
+  schedule:
+    - cron: '0 2 * * *' # run at 2 AM UTC
 
 jobs:
   test-ios-11:
