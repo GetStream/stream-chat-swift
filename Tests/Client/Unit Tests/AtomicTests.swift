@@ -85,10 +85,138 @@ class AtomicTests: XCTestCase {
     }
 }
 
+// MARK: - Stress tests
+
+extension AtomicTests {
+
+    /// Increase `numberOfStressTestCycles` significantly to properly stress-test `Atomic`.
+    var numberOfStressTestCycles: Int { 50 }
+
+    func test_Atomic_underHeavyLoad() {
+        for _ in 0..<100 {
+            test_Atomic_usedAsCounter()
+            test_Atomic_usedWithCollection()
+            test_Atomic_whenSetAndGetCalledSimultaneously()
+            test_Atomic_whenCalledFromMainThred()
+        }
+    }
+
+    func test_Atomic_usedAsCounter() {
+        var atomicValue: Atomic<Int>! = .init(0)
+
+        // Count up to numberOfCycles
+        for _ in 0..<numberOfStressTestCycles {
+            DispatchQueue.random.async {
+                atomicValue += 1
+            }
+        }
+        AssertEqualEventually(atomicValue.get(), numberOfStressTestCycles)
+
+        // Count down to zero
+        for _ in 0..<numberOfStressTestCycles {
+            DispatchQueue.random.async {
+                atomicValue -= 1
+            }
+        }
+        AssertEqualEventually(atomicValue.get(), 0)
+
+        // Check for memory leaks
+        weak var weakValue = atomicValue
+        atomicValue = nil
+
+        AssertNilEventually(weakValue)
+    }
+
+    func test_Atomic_usedWithCollection() {
+        var atomicValue: Atomic<[String: Int]>! = .init([:])
+
+        for idx in 0..<numberOfStressTestCycles {
+            DispatchQueue.random.async {
+                atomicValue.update {
+                    var mutable = $0
+                    mutable["\(idx)"] = idx
+                    return mutable
+                }
+            }
+        }
+
+        AssertEqualEventually(atomicValue.get()?.count, numberOfStressTestCycles)
+
+        // Check for memory leaks
+        weak var weakValue = atomicValue
+        atomicValue = nil
+
+        AssertNilEventually(weakValue)
+    }
+
+    func test_Atomic_whenSetAndGetCalledSimultaneously() {
+
+        var atomicValue: Atomic<[String: Int]>! = .init([:])
+
+        for idx in 0..<numberOfStressTestCycles {
+
+            DispatchQueue.random.async {
+                atomicValue.update {
+                    var mutable = $0
+                    mutable["\(idx)"] = idx
+                    return mutable
+                }
+            }
+
+            for _ in 0...5 {
+                DispatchQueue.random.async {
+                    _ = atomicValue?.get()
+                }
+            }
+        }
+
+        AssertEqualEventually(atomicValue.get()?.count, numberOfStressTestCycles)
+
+        // Check for memory leaks
+        weak var weakValue = atomicValue
+        atomicValue = nil
+
+        AssertNilEventually(weakValue)
+    }
+
+    func test_Atomic_whenCalledFromMainThred() {
+        var value: Atomic<[String: Int]>! = .init([:])
+
+        for idx in 0..<numberOfStressTestCycles {
+            value.update {
+                var mutable = $0
+                mutable["\(idx)"] = idx
+                return mutable
+            }
+
+            value.set(["random": 2020])
+
+            _ = value.get()
+        }
+
+        XCTAssertEqual(value.get(), ["random": 2020])
+
+        // Check for memory leaks
+        weak var weakValue = value
+        value = nil
+        AssertNilEventually(weakValue)
+    }
+}
+
 private extension DispatchQueue {
 
     private static let queueIdKey = DispatchSpecificKey<String>()
     private static let testQueueId = UUID().uuidString
+
+    /// Returns one of the existing global Dispatch queues.
+    static var random: DispatchQueue {
+        let allQoS: [DispatchQoS.QoSClass] = [
+            .userInteractive,
+            .userInitiated,
+            .default
+        ]
+        return DispatchQueue.global(qos: allQoS.randomElement()!)
+    }
 
     /// Creates a queue which can be later identified.
     static var testQueue: DispatchQueue {
