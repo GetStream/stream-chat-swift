@@ -296,8 +296,8 @@ public enum Event: Decodable {
         
         func unreadCount() throws -> UnreadCount {
             let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
-            let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount) ?? 0
-            return UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount)
+            let totalUnreadCount = try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount) ?? 0
+            return UnreadCount(channels: channelsUnreadCount, messages: totalUnreadCount)
         }
         
         switch type {
