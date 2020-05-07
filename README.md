@@ -1,4 +1,4 @@
-# Official iOS SDK for [Stream Chat](https://getstream.io/chat/)
+# Official iOS/macOS SDK for [Stream Chat](https://getstream.io/chat/)
 
 <p align="center">
   <a href="https://getstream.io/tutorials/ios-chat/"><img src="https://i.imgur.com/B7przBT.png" width="60%" /></a>
@@ -48,6 +48,12 @@ You'll typically want to start out using the UI components, and implement your c
 - Swift 5.1
 - CocoaPods 1.7+
 - Carthage 0.33.0+
+
+## Mac Catalyst
+
+Our frameworks are compatible with [Mac Catalyst](https://developer.apple.com/mac-catalyst/), meaning you can create a chat application that works on both iOS and macOS. Read about it [here](link-to-blog-post).
+
+⚠️ Carthage does not support Mac Catalyst yet. ([ref](https://github.com/Carthage/Carthage/issues/2799))
 
 ## Installation
 
@@ -151,12 +157,6 @@ You can directly add dependency in Xcode 11+ using repo url, or in your `Package
 ```swift
 .package(url: "https://github.com/GetStream/stream-chat-swift.git", from: "1.5.5"),
 ```
-
-## Mac Catalyst
-
-Our frameworks are compatible with [Mac Catalyst](https://developer.apple.com/mac-catalyst/), meaning you can create a chat application that works on both iOS and macOS. Read more [here](link-to-blog-post).
-
-⚠️: Carthage does not support Mac Catalyst yet. ([ref](https://github.com/Carthage/Carthage/issues/2799)).
 
 ## Supported features
 
