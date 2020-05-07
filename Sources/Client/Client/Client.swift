@@ -30,34 +30,34 @@ public final class Client: Uploader {
                 )
                 return
             }
-
+            
             configForSharedClient = config
         }
     }
-
+    
     /// The configuration object used for creating `Client.shared`.
     private static var configForSharedClient: Config?
-
+    
     /// The shared client.
     public static var shared: Client {
         if let client = backingSharedClient {
             // Return the existing instance
             return client
         }
-
+        
         ClientLogger.logAssert(
             configForSharedClient != nil,
             "The shared instance of the Stream chat client wasn't configured. " +
             "Create an instance of the `Client.Config` struct and call `Client.configureShared(_:)` to set it up."
         )
-
+        
         backingSharedClient = Client(config: configForSharedClient ?? .init(apiKey: "__API_KEY_NOT_CONFIGURED__"))
         return backingSharedClient!
     }
-
+    
     /// A backing variable for `Client.shared`. We need this to have finer control over its creation.
     private static var backingSharedClient: Client?
-
+    
     /// Configures the shared instance of `Client`.
     ///
     /// - Parameter configuration: The configuration object with details of how the shared instance should be set up.
@@ -102,7 +102,9 @@ public final class Client: Uploader {
     // MARK: WebSocket
     
     /// A web socket client.
-    lazy var webSocket = WebSocket()
+    lazy var webSocket = WebSocket(StarscreamWebSocketProvider(request: URLRequest(url: URL(string: "http://example.com")!),
+                                                               callbackQueue: .main), options: [])
+    
     /// A default WebSocketProvider type.
     let defaultWebSocketProviderType: WebSocketProvider.Type?
     /// The current connection state.
@@ -110,10 +112,10 @@ public final class Client: Uploader {
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     var needsToRecoverConnection = false
-
+    
     let defaultURLSessionConfiguration: URLSessionConfiguration
     lazy var urlSession = URLSession(configuration: self.defaultURLSessionConfiguration)
-
+    
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
     
@@ -156,7 +158,12 @@ public final class Client: Uploader {
     ///   - defaultWebSocketProviderType: the default WebSocket provider type. `Client` will create it on set user.
     init(config: Client.Config,
          defaultURLSessionConfiguration: URLSessionConfiguration = .default,
-         defaultWebSocketProviderType: WebSocketProvider.Type = ProxyWebSocketProvider.self) {
+         defaultWebSocketProviderType: WebSocketProvider.Type = {
+        if #available(iOS 13, *) {
+            return URLSessionWebSocketProvider.self
+        }
+        return StarscreamWebSocketProvider.self
+        }()) {
         apiKey = config.apiKey
         baseURL = config.baseURL
         callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
