@@ -51,14 +51,6 @@ final class WebSocket {
         self.provider.delegate = self
     }
     
-    init() {
-        provider = EmptyWebSocketProvider(request: URLRequest(url: BaseURL.placeholderURL), callbackQueue: .main)
-        options = []
-        logger = nil
-        onEvent = { _ in }
-        provider.delegate = self
-    }
-    
     deinit {
         if isConnected {
             logger?.log("💔 Disconnect on deinit")
