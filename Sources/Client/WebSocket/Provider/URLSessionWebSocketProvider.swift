@@ -46,7 +46,7 @@ final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSession
             switch result {
             case .success(let message):
                 if case .string(let string) = message {
-                    self.callDelegateInCallbackQueue { $1?.websocketDidReceiveMessage($0, message: string) }
+                    self.callDelegateInCallbackQueue { $0?.websocketDidReceiveMessage(string) }
                 }
             case .failure(let error):
                 self.disconnect(with: WebSocketProviderError(reason: error.localizedDescription,
@@ -61,7 +61,7 @@ final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSession
     
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         isConnected = true
-        callDelegateInCallbackQueue { $1?.websocketDidConnect($0) }
+        callDelegateInCallbackQueue { $0?.websocketDidConnect() }
     }
     
     func urlSession(_ session: URLSession,
@@ -82,14 +82,12 @@ final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSession
     
     private func disconnect(with error: WebSocketProviderError?) {
         isConnected = true
-        callDelegateInCallbackQueue { $1?.websocketDidDisconnect($0, error: error) }
+        callDelegateInCallbackQueue { $0?.websocketDidDisconnect(error: error) }
     }
     
-    private func callDelegateInCallbackQueue(execute block: @escaping (WebSocketProvider, WebSocketProviderDelegate?) -> Void) {
+    private func callDelegateInCallbackQueue(execute block: @escaping (WebSocketProviderDelegate?) -> Void) {
         callbackQueue.async { [weak self] in
-            if let self = self {
-                block(self, self.delegate)
-            }
+            block(self?.delegate)
         }
     }
 }

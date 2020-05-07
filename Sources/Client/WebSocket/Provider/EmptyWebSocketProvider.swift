@@ -28,7 +28,7 @@ final class EmptyWebSocketProvider: WebSocketProvider {
                                                providerType: Self.self,
                                                providerError: nil)
         
-        delegate?.websocketDidDisconnect(self, error: stopError)
+        delegate?.websocketDidDisconnect(error: stopError)
     }
     
     func disconnect() {}

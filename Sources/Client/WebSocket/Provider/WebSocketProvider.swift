@@ -21,9 +21,9 @@ protocol WebSocketProvider {
 }
 
 protocol WebSocketProviderDelegate: class {
-    func websocketDidConnect(_ provider: WebSocketProvider)
-    func websocketDidDisconnect(_ provider: WebSocketProvider, error: WebSocketProviderError?)
-    func websocketDidReceiveMessage(_ provider: WebSocketProvider, message: String)
+    func websocketDidConnect()
+    func websocketDidDisconnect(error: WebSocketProviderError?)
+    func websocketDidReceiveMessage(_ message: String)
 }
 
 struct WebSocketProviderError: Error {
