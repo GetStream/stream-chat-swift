@@ -43,11 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Video uploads are now working, videos are treated as files [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
 - Files over 20MB will correctly show file size warning [#239](https://github.com/GetStream/stream-chat-swift/issues/239)
 - Fix last message not set when sending first message to an empty channel [#246](https://github.com/GetStream/stream-chat-swift/pull/246)
-
-
-### 🐞 Fixed
 - Show in logs if extra data decoding failed for the `User` or `Channel` [#238](https://github.com/GetStream/stream-chat-swift/issues/238).
 - Recover the default extra data for User and Channel types [#238](https://github.com/GetStream/stream-chat-swift/issues/238).
+- It's now possible to access `Atomic` value within its own `update { }` block [#251](https://github.com/GetStream/stream-chat-swift/pull/251)
 
 # [2.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.1)
 _May 01, 2020_
