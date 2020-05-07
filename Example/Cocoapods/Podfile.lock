@@ -11,18 +11,18 @@ PODS:
   - RxSwift (5.1.1)
   - SnapKit (5.0.1)
   - Starscream (3.1.1)
-  - StreamChat (2.0.1):
+  - StreamChat (2.1.1):
     - Nuke (~> 8.4)
     - RxGesture (~> 3.0)
     - SnapKit (~> 5.0)
-    - StreamChatCore
+    - StreamChatCore (= 2.1.1)
     - SwiftyGif (~> 5.2.0)
-  - StreamChatClient (2.0.1):
+  - StreamChatClient (2.1.1):
     - Starscream (~> 3.1)
-  - StreamChatCore (2.0.1):
+  - StreamChatCore (2.1.1):
     - RxCocoa (~> 5.1)
     - RxSwift (~> 5.1)
-    - StreamChatClient
+    - StreamChatClient (= 2.1.1)
   - SwiftyGif (5.2.0)
 
 DEPENDENCIES:
@@ -57,9 +57,9 @@ SPEC CHECKSUMS:
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
-  StreamChat: b51631f5cf0e85edd313086880136e581f9800d2
-  StreamChatClient: a53cc44cbb5bfa0ea42f78ca8dae036033906128
-  StreamChatCore: 37ce6d81f92bd893c9e242e4090f3f6a69d1ab00
+  StreamChat: 0866eb9acba6a2f9d551bc4f2fd886416ed34788
+  StreamChatClient: a0de651a2e16e4050a14c50e223869a5c8331560
+  StreamChatCore: c91907045d5b210d87f892d7f4c814519756660a
   SwiftyGif: b85c6b33a9411859d9e1db998b6a8214aea942df
 
 PODFILE CHECKSUM: 51cb07bb6a45534b85ef6b2b61566be3def1f272
