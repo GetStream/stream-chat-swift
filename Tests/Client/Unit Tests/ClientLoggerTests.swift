@@ -9,7 +9,7 @@
 import XCTest
 @testable import StreamChatClient
 
-final class ClientTests10_ClientLogger: XCTestCase {
+final class ClientLoggerTests: XCTestCase {
     private let teJstUser = User(id: "test")
     private let testUrl = "getstream.io".url!
     private let testFilter = Filter.in("members", ["test-member"])
@@ -34,6 +34,13 @@ final class ClientTests10_ClientLogger: XCTestCase {
         let logger = ClientLogger(icon: "🗣", level: .error)
         return logger
     }()
+    
+    override class func setUp() {
+        super.setUp()
+        
+        // Setup Client since Message initializer accesses User.current
+        Client.configureShared(.init(apiKey: "logger_test_api_key"))
+    }
     
     override func setUp() {
         super.setUp()
@@ -167,7 +174,7 @@ final class ClientTests10_ClientLogger: XCTestCase {
     }
     
     func testLogURLResponseWithInfoLevel() {
-        let urlResponse = HTTPURLResponse(url: testUrl, mimeType: nil, expectedContentLength: 1, textEncodingName: nil)
+        let urlResponse = HTTPURLResponse(url: testUrl, statusCode: 200, httpVersion: nil, headerFields: nil)!
         
         infoLogger.log(urlResponse, data: testData)
         
@@ -272,7 +279,7 @@ final class ClientTests10_ClientLogger: XCTestCase {
     }
     
     func testLogURLResponseWithDebugLevel() {
-        let urlResponse = HTTPURLResponse(url: testUrl, mimeType: nil, expectedContentLength: 1, textEncodingName: nil)
+        let urlResponse = HTTPURLResponse(url: testUrl, statusCode: 200, httpVersion: nil, headerFields: nil)!
         
         debugLogger.log(urlResponse, data: testData)
         

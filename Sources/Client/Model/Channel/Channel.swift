@@ -18,6 +18,10 @@ public final class Channel: Codable {
         case cid
         /// A type.
         case type
+        /// A channel name.
+        case name
+        /// An image URL.
+        case imageURL = "image"
         /// A last message date.
         case lastMessageDate = "last_message_at"
         /// A user created by.
@@ -30,10 +34,6 @@ public final class Channel: Codable {
         case config
         /// A frozen flag.
         case frozen
-        /// A name.
-        case name
-        /// A image URL.
-        case imageURL = "image"
         /// Members.
         case members
     }
@@ -155,7 +155,6 @@ public final class Channel: Codable {
         let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         self.members = Set<Member>(members)
         invitedMembers = Set<Member>()
-        extraData = try? Self.extraDataType.init(from: decoder) // swiftlint:disable:this explicit_init
         let config = try container.decode(Config.self, forKey: .config)
         self.config = config
         created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created
@@ -164,6 +163,30 @@ public final class Channel: Codable {
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
         frozen = try container.decode(Bool.self, forKey: .frozen)
         didLoad = true
+        extraData = decodeChannelExtraData(from: decoder)
+    }
+    
+    /// Safely decode channel extra data and if it fail try to decode only default properties: name, imageURL.
+    private func decodeChannelExtraData(from decoder: Decoder) -> ChannelExtraDataCodable? {
+        do {
+            var extraData = try Self.extraDataType.init(from: decoder) // swiftlint:disable:this explicit_init
+            extraData.imageURL = extraData.imageURL?.removingRandomSVG()
+            return extraData
+            
+        } catch {
+            ClientLogger.log("🐴❌", "Channel extra data decoding error: \(error). "
+                + "Trying to recover by only decoding name and imageURL")
+            
+            guard let container = try? decoder.container(keyedBy: DecodingKeys.self) else {
+                return nil
+            }
+            
+            // Recovering the default channel extra data properties: name, imageURL.
+            var extraData = ChannelExtraData()
+            extraData.name = try? container.decodeIfPresent(String.self, forKey: .name)
+            extraData.imageURL = try? container.decodeIfPresent(URL.self, forKey: .imageURL)?.removingRandomSVG()
+            return extraData
+        }
     }
     
     deinit {

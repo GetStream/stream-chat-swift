@@ -13,6 +13,7 @@
 		791664E2245AF8AF0020710B /* AssertNetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664E1245AF8AF0020710B /* AssertNetworkRequest.swift */; };
 		791664E3245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */; };
 		791664E4245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */; };
+		79411CD42462DC0A003972E9 /* ClientLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */; };
 		794BDE4A2434BD7400BFBA1F /* NestableCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */; };
 		79A9E4F72449D3AF00599B95 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */; };
 		79A9E4F92449DF2D00599B95 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F82449DF2D00599B95 /* Reachability.swift */; };
@@ -21,7 +22,6 @@
 		79EE3942245320610034EBF3 /* ClientTests00.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE6206923CF63F000AB3426 /* ClientTests00.swift */; };
 		79EE3943245320650034EBF3 /* ClientTests01+Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1D042523D0FB560099AA7F /* ClientTests01+Channels.swift */; };
 		79EE3944245320690034EBF3 /* ClientTests02+Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC0D94B23D4ABC50080B8BC /* ClientTests02+Users.swift */; };
-		79EE39452453206E0034EBF3 /* ClientTests10+ClientLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFA57262418EB2500FD07EC /* ClientTests10+ClientLogger.swift */; };
 		79EE3946245321820034EBF3 /* TestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE6206C23CF642900AB3426 /* TestCase.swift */; };
 		79EE3947245322620034EBF3 /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		80B937A52434F5FC003D950E /* Array+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B937A42434F5FC003D950E /* Array+Extensions.swift */; };
@@ -45,6 +45,7 @@
 		8A2DD9532385565B007775E9 /* MutedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD9522385565B007775E9 /* MutedUser.swift */; };
 		8A2DD95423855690007775E9 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2B02384580700C2F9DE /* Channel.swift */; };
 		8A2DD956238556A7007775E9 /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2DD955238556A7007775E9 /* Member.swift */; };
+		8A2E4F09246016410032565F /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2E4F08246016410032565F /* URL+Extensions.swift */; };
 		8A466E61241A3A4D003C21BA /* Client+Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A466E60241A3A4D003C21BA /* Client+Request.swift */; };
 		8A466E63241A3A7D003C21BA /* Client+WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A466E62241A3A7D003C21BA /* Client+WebSocket.swift */; };
 		8A466E65241A3AAA003C21BA /* Client+Setup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A466E64241A3AAA003C21BA /* Client+Setup.swift */; };
@@ -331,6 +332,7 @@
 		8A2DD95023849108007775E9 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		8A2DD9522385565B007775E9 /* MutedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUser.swift; sourceTree = "<group>"; };
 		8A2DD955238556A7007775E9 /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
+		8A2E4F08246016410032565F /* URL+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+Extensions.swift"; sourceTree = "<group>"; };
 		8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensionsTests.swift; sourceTree = "<group>"; };
 		8A466E60241A3A4D003C21BA /* Client+Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+Request.swift"; sourceTree = "<group>"; };
 		8A466E62241A3A7D003C21BA /* Client+WebSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Client+WebSocket.swift"; sourceTree = "<group>"; };
@@ -558,7 +560,7 @@
 		8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = "<group>"; };
 		8AE6206923CF63F000AB3426 /* ClientTests00.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTests00.swift; sourceTree = "<group>"; };
 		8AE6206C23CF642900AB3426 /* TestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCase.swift; sourceTree = "<group>"; };
-		8AFA57262418EB2500FD07EC /* ClientTests10+ClientLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ClientTests10+ClientLogger.swift"; sourceTree = "<group>"; };
+		8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientLoggerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -707,6 +709,7 @@
 				8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */,
 				7900717D244084E200E5246F /* QueryEncodingTests.swift */,
 				791664DE245AC89E0020710B /* Client+DevicesTests.swift */,
+				8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */,
 			);
 			path = "Unit Tests";
 			sourceTree = "<group>";
@@ -763,6 +766,7 @@
 				79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */,
 				8ACC7BC1241924AD000750E4 /* Data+Extensions.swift */,
 				8ACC7BB8241924AD000750E4 /* Bundle+Extensions.swift */,
+				8A2E4F08246016410032565F /* URL+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1309,7 +1313,6 @@
 				8AE6206923CF63F000AB3426 /* ClientTests00.swift */,
 				8A1D042523D0FB560099AA7F /* ClientTests01+Channels.swift */,
 				8AC0D94B23D4ABC50080B8BC /* ClientTests02+Users.swift */,
-				8AFA57262418EB2500FD07EC /* ClientTests10+ClientLogger.swift */,
 			);
 			path = "Integration Tests";
 			sourceTree = "<group>";
@@ -1598,7 +1601,6 @@
 			files = (
 				791664E3245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */,
 				79EE3942245320610034EBF3 /* ClientTests00.swift in Sources */,
-				79EE39452453206E0034EBF3 /* ClientTests10+ClientLogger.swift in Sources */,
 				79EE3944245320690034EBF3 /* ClientTests02+Users.swift in Sources */,
 				79EE3943245320650034EBF3 /* ClientTests01+Channels.swift in Sources */,
 				79EE3946245321820034EBF3 /* TestCase.swift in Sources */,
@@ -1653,6 +1655,7 @@
 				8ACC7C36241924AD000750E4 /* ClientLogger.swift in Sources */,
 				8ACC7C0B241924AD000750E4 /* Event.swift in Sources */,
 				8ACC7C33241924AD000750E4 /* ClientError.swift in Sources */,
+				8A2E4F09246016410032565F /* URL+Extensions.swift in Sources */,
 				8ACC7C04241924AD000750E4 /* Functions.swift in Sources */,
 				80B937A52434F5FC003D950E /* Array+Extensions.swift in Sources */,
 				8ACC7C3A241924AD000750E4 /* ClientURLSessionTaskDelegate.swift in Sources */,
@@ -1697,6 +1700,7 @@
 				8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */,
 				8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */,
 				791664E2245AF8AF0020710B /* AssertNetworkRequest.swift in Sources */,
+				79411CD42462DC0A003972E9 /* ClientLoggerTests.swift in Sources */,
 				8AC0D94F23D4BA7D0080B8BC /* FilterTests.swift in Sources */,
 				791664DF245AC89E0020710B /* Client+DevicesTests.swift in Sources */,
 				791664DD245AC78B0020710B /* RequestRecorderURLProtocol.swift in Sources */,
@@ -1906,7 +1910,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1925,7 +1929,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Sources/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

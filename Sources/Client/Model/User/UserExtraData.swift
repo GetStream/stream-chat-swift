@@ -11,9 +11,9 @@ import Foundation
 /// A user extra data protocol for custom user properties.
 /// The `name` and `avatarURL` is a part of user extra data properties.
 public protocol UserExtraDataCodable: Codable {
-    /// A channel name.
+    /// A user name.
     var name: String? { get set }
-    /// A channel image URL.
+    /// A user image URL.
     var avatarURL: URL? { get set }
 }
 
