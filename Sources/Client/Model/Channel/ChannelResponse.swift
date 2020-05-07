@@ -82,9 +82,9 @@ public struct ChannelResponse: Decodable {
         
         if let unreadMessageRead = unreadMessageRead {
             // Backend sends message unread count, use it directly
-            unreadCount.messages = unreadMessageRead.unreadMessageCount
+            unreadCount.messages = unreadMessageRead.unreadMessagesCount
             
-            if unreadMessageRead.unreadMessageCount > 0 {
+            if unreadMessageRead.unreadMessagesCount > 0 {
                 // Calculate mentioned message unread count
                 // This is approximate since it'll be limited for the messages we've fetched
                 for message in messages.reversed() {

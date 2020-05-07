@@ -13,7 +13,7 @@ public struct MessageRead: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadDate = "last_read"
-        case unreadMessageCount = "unread_messages"
+        case unreadMessagesCount = "unread_messages"
     }
     
     /// A user (see `User`).
@@ -21,7 +21,7 @@ public struct MessageRead: Decodable, Hashable {
     /// A last read date by the user.
     public let lastReadDate: Date
     /// Unread message count for the user.
-    public let unreadMessageCount: Int
+    public let unreadMessagesCount: Int
     
     /// Init a message read.
     ///
@@ -29,10 +29,10 @@ public struct MessageRead: Decodable, Hashable {
     ///   - user: a user.
     ///   - lastReadDate: the last read date.
     ///   - unreadMessages: Unread message count
-    public init(user: User, lastReadDate: Date, unreadMessageCount: Int) {
+    public init(user: User, lastReadDate: Date, unreadMessagesCount: Int) {
         self.user = user
         self.lastReadDate = lastReadDate
-        self.unreadMessageCount = unreadMessageCount
+        self.unreadMessagesCount = unreadMessagesCount
     }
     
     public static func == (lhs: MessageRead, rhs: MessageRead) -> Bool {

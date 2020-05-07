@@ -23,8 +23,8 @@ public enum Event: Decodable {
         case channelId = "channel_id"
         case message
         case reaction
-        case channelsUnreadCount = "unread_channels"
-        case messagesUnreadCount = "unread_messages"
+        case unreadChannelsCount = "unread_channels"
+        case unreadMessagesCount = "unread_messages"
         case totalUnreadCount = "total_unread_count"
         case created = "created_at"
         case reason
@@ -295,9 +295,9 @@ public enum Event: Decodable {
         }
         
         func unreadCount() throws -> UnreadCount {
-            let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
+            let unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount) ?? 0
             let totalUnreadCount = try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount) ?? 0
-            return UnreadCount(channels: channelsUnreadCount, messages: totalUnreadCount)
+            return UnreadCount(channels: unreadChannelsCount, messages: totalUnreadCount)
         }
         
         switch type {
@@ -328,8 +328,8 @@ public enum Event: Decodable {
             let watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount) ?? 0
             self = try .messageNew(message(), watcherCount, cid(), type)
         case .messageRead:
-            let unreadMessages = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
-            let messageRead = try MessageRead(user: user(), lastReadDate: created(), unreadMessageCount: unreadMessages)
+            let unreadMessages = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount) ?? 0
+            let messageRead = try MessageRead(user: user(), lastReadDate: created(), unreadMessagesCount: unreadMessages)
             self = try .messageRead(messageRead, cid(), type)
         case .messageDeleted:
             self = try .messageDeleted(message(), optionalUser(), cid(), type)
@@ -385,7 +385,7 @@ public enum Event: Decodable {
         case .notificationMutesUpdated:
             self = try .notificationMutesUpdated(container.decode(User.self, forKey: .me), cid(), type)
         case .notificationMarkRead:
-            let messageRead = try MessageRead(user: .current, lastReadDate: created(), unreadMessageCount: 0)
+            let messageRead = try MessageRead(user: .current, lastReadDate: created(), unreadMessagesCount: 0)
             
             if let channel = try optionalChannel() {
                 self = try .notificationMarkRead(messageRead, channel, unreadCount(), type)
