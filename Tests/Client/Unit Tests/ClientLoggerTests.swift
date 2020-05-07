@@ -174,7 +174,7 @@ final class ClientLoggerTests: XCTestCase {
     }
     
     func testLogURLResponseWithInfoLevel() {
-        let urlResponse = HTTPURLResponse(url: testUrl, mimeType: nil, expectedContentLength: 1, textEncodingName: nil)
+        let urlResponse = HTTPURLResponse(url: testUrl, statusCode: 200, httpVersion: nil, headerFields: nil)!
         
         infoLogger.log(urlResponse, data: testData)
         
@@ -279,7 +279,7 @@ final class ClientLoggerTests: XCTestCase {
     }
     
     func testLogURLResponseWithDebugLevel() {
-        let urlResponse = HTTPURLResponse(url: testUrl, mimeType: nil, expectedContentLength: 1, textEncodingName: nil)
+        let urlResponse = HTTPURLResponse(url: testUrl, statusCode: 200, httpVersion: nil, headerFields: nil)!
         
         debugLogger.log(urlResponse, data: testData)
         

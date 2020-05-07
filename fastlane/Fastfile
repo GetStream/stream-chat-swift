@@ -139,9 +139,11 @@ desc "Runs integrations tests with backend. These tests make network connections
 lane :test_backend_integration do |options|
   @test_retries = 3
   
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", clean: true, build_for_testing: true, devices: [options[:device]])
+  
   def run_tests(device)
     begin
-      scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", clean: true, devices: [device])
+      scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, devices: [device])
     rescue
     
       @test_retries -= 1

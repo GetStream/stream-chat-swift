@@ -30,7 +30,7 @@ jobs:
       run: bundle exec fastlane carthage_bootstrap
     - name: Install iOS 11.4 Simulator
       run: bundle exec xcversion simulators --install='iOS 11.4'
-    - name: Run all backend integration tests
+    - name: Run all tests
       run: bundle exec fastlane test_backend_integration device:"iPhone 7 (11.4)"
 
   test-ios-12:
@@ -58,5 +58,5 @@ jobs:
       run: bundle exec fastlane carthage_bootstrap
     - name: Install iOS 12.4 Simulator
       run: bundle exec xcversion simulators --install='iOS 12.4'
-    - name: Run all backend integration tests
+    - name: Run all tests
       run: bundle exec fastlane test_backend_integration device:"iPhone 7 (12.4)"
