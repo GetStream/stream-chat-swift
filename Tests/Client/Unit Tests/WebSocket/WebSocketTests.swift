@@ -15,10 +15,13 @@ final class WebSocketTests: XCTestCase {
     let logger = ClientLogger(icon: "🦄", level: .info)
     
     override static func setUp() {
+        // Change the default time interval to ping connection for 2 sec.
+        // Mock will use own timer for 3 sec to terminate connection.
         WebSocket.pingTimeInterval = 2
     }
     
     override class func tearDown() {
+        // Restore the default ping time interval.
         WebSocket.pingTimeInterval = 25
     }
     
