@@ -30,7 +30,7 @@ final class WebSocketProviderMock: WebSocketProvider {
             failNextConnectCount -= 1
             
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
-                self.delegate?.websocketDidDisconnect(self, error: nil)
+                self.delegate?.websocketDidDisconnect(error: nil)
             }
             
             return
@@ -39,7 +39,7 @@ final class WebSocketProviderMock: WebSocketProvider {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
             self.isConnected = true
             self.startTimer()
-            self.delegate?.websocketDidConnect(self)
+            self.delegate?.websocketDidConnect()
             
             // Send the first event with the current user.
             let event = """
@@ -81,7 +81,7 @@ final class WebSocketProviderMock: WebSocketProvider {
         isConnected = false
         connectionId = nil
         stopTimer()
-        delegate?.websocketDidDisconnect(self, error: error)
+        delegate?.websocketDidDisconnect(error: error)
     }
     
     func sendPing() {
@@ -98,8 +98,8 @@ final class WebSocketProviderMock: WebSocketProvider {
     }
     
     func sendMessage(_ message: String) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
-            self.delegate?.websocketDidReceiveMessage(self, message: message)
+        DispatchQueue.main.async {
+            self.delegate?.websocketDidReceiveMessage(message)
         }
     }
     
@@ -108,7 +108,7 @@ final class WebSocketProviderMock: WebSocketProvider {
         connectionId = nil
         stopTimer()
         let error = WebSocketProviderError(reason: "stop", code: 1000, providerType: Self.self, providerError: nil)
-        delegate?.websocketDidDisconnect(self, error: error)
+        delegate?.websocketDidDisconnect(error: error)
     }
     
     func startTimer() {

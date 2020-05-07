@@ -211,12 +211,12 @@ extension WebSocket {
 
 extension WebSocket: WebSocketProviderDelegate {
     
-    func websocketDidConnect(_ provider: WebSocketProvider) {
+    func websocketDidConnect() {
         logger?.log("❤️ Connected. Waiting for the current user data and connectionId...")
         connectionStateAtomic.set(.connecting)
     }
     
-    func websocketDidReceiveMessage(_ provider: WebSocketProvider, message: String) {
+    func websocketDidReceiveMessage(_ message: String) {
         guard let event = parseEvent(with: message) else {
             return
         }
@@ -246,7 +246,7 @@ extension WebSocket: WebSocketProviderDelegate {
         }
     }
     
-    func websocketDidDisconnect(_ provider: WebSocketProvider, error: WebSocketProviderError?) {
+    func websocketDidDisconnect(error: WebSocketProviderError?) {
         logger?.log("Parsing WebSocket disconnect... (error: \(error?.localizedDescription ?? "<nil>"))")
         clearStateAfterDisconnect()
         

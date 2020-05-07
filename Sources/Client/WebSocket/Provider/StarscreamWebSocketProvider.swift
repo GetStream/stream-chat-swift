@@ -38,7 +38,7 @@ final class StarscreamWebSocketProvider: WebSocketProvider {
 extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
     
     func websocketDidConnect(socket: Starscream.WebSocketClient) {
-        delegate?.websocketDidConnect(self)
+        delegate?.websocketDidConnect()
     }
     
     func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
@@ -51,11 +51,11 @@ extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
                                            providerError: error)
         }
         
-        delegate?.websocketDidDisconnect(self, error: webSocketProviderError)
+        delegate?.websocketDidDisconnect(error: webSocketProviderError)
     }
     
     func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
-        delegate?.websocketDidReceiveMessage(self, message: text)
+        delegate?.websocketDidReceiveMessage(text)
     }
     
     func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
