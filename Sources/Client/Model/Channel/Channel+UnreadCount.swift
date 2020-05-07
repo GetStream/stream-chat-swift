@@ -14,7 +14,7 @@ extension Channel {
     ///   - event: an event.
     func updateUnreadCount(event: Event) {
         switch event {
-        case .messageNew(let message, _, _, _):
+        case .messageNew(let message, _, _, _), .notificationMessageNew(let message, _, _, _, _):
             updateUnreadCount(newMessage: message)
         case .messageDeleted(let message, _, _, _):
             updateUnreadCount(deletedMessage: message)
