@@ -10,6 +10,8 @@ import UIKit
 
 /// A web socket client.
 final class WebSocket {
+    /// A timeinterval to ping connection to keep it alive.
+    /// It should be `let`, but it uses for tests. Needs to fix tests to avoid this.
     static var pingTimeInterval = 25
     
     /// A WebSocket connection callback.
