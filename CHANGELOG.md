@@ -70,7 +70,6 @@ _May 08, 2020_
 - Crashes on `channel.rx.events` and `channel.rx.unreadCount` [#248](https://github.com/GetStream/stream-chat-swift/issues/248).
 - It's now possible to access `Atomic` value within its own `update { }` block [#251](https://github.com/GetStream/stream-chat-swift/pull/251)
 - Fixed warning in AutoCancellingSubscription [#256](https://github.com/GetStream/stream-chat-swift/issues/256)
-- Message cell height will now update after markdown is parsed [#243](https://github.com/GetStream/stream-chat-swift/pull/243)
 
 # [2.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.1)
 _May 01, 2020_
