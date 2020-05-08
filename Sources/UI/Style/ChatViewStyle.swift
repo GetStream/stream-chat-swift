@@ -54,15 +54,6 @@ public struct ChatViewStyle {
     }
 }
 
-extension ChatViewStyle: Equatable {
-    public static func == (lhs: ChatViewStyle, rhs: ChatViewStyle) -> Bool {
-        lhs.channel == rhs.channel
-            && lhs.composer == rhs.composer
-            && lhs.incomingMessage == rhs.incomingMessage
-            && lhs.outgoingMessage == rhs.outgoingMessage
-    }
-}
-
 /// A chat style visibility type.
 ///
 /// - always: show an element always visible, even if it disabled.

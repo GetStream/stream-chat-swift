@@ -64,18 +64,10 @@ public struct AttachmentFile: Codable {
     }
 }
 
-extension AttachmentFile: Hashable {
-    
+extension AttachmentFile: Equatable {
     public static func == (lhs: AttachmentFile, rhs: AttachmentFile) -> Bool {
         lhs.type == rhs.type
             && lhs.size == rhs.size
             && lhs.mimeType == rhs.mimeType
     }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(type)
-        hasher.combine(size)
-        hasher.combine(mimeType)
-    }
-
 }

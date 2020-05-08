@@ -32,7 +32,7 @@ extension ChannelPresenter {
 }
 
 /// A typing user.
-public struct TypingUser: Hashable {
+public struct TypingUser: Equatable {
     /// A time interval for a users typing timeout.
     public static let timeout: TimeInterval = 30
     
@@ -43,9 +43,5 @@ public struct TypingUser: Hashable {
     
     public static func == (lhs: TypingUser, rhs: TypingUser) -> Bool {
         lhs.user == rhs.user
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(user)
     }
 }

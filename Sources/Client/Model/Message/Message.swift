@@ -220,7 +220,7 @@ public struct Message: Codable {
     }
 }
 
-extension Message: Hashable {
+extension Message: Equatable {
     
     public static func == (lhs: Message, rhs: Message) -> Bool {
         lhs.id == rhs.id
@@ -234,20 +234,6 @@ extension Message: Hashable {
             && lhs.created == rhs.created
             && lhs.updated == rhs.updated
             && lhs.deleted == rhs.deleted
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-        hasher.combine(type)
-        hasher.combine(parentId)
-        hasher.combine(user)
-        hasher.combine(text)
-        hasher.combine(command)
-        hasher.combine(attachments)
-        hasher.combine(showReplyInChannel)
-        hasher.combine(created)
-        hasher.combine(updated)
-        hasher.combine(deleted)
     }
 }
 
