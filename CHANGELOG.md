@@ -61,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Recover the default extra data for User and Channel types [#238](https://github.com/GetStream/stream-chat-swift/issues/238).
 - Crashes on `channel.rx.events` and `channel.rx.unreadCount` [#248](https://github.com/GetStream/stream-chat-swift/issues/248).
 - It's now possible to access `Atomic` value within its own `update { }` block [#251](https://github.com/GetStream/stream-chat-swift/pull/251)
+- Fixed warning in AutoCancellingSubscription [#256](https://github.com/GetStream/stream-chat-swift/issues/256)
 
 # [2.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.1)
 _May 01, 2020_
