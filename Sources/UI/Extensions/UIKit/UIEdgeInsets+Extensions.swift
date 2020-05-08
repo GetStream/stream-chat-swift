@@ -8,7 +8,7 @@
 
 import UIKit
 
-extension UIEdgeInsets {
+extension UIEdgeInsets: Hashable {
     
     /// Create an UIEdgeInsets with equal sides values.
     ///
@@ -23,5 +23,12 @@ extension UIEdgeInsets {
     /// - Returns: a UIEdgeInsets with equal sides.
     public static func all(_ value: CGFloat) -> UIEdgeInsets {
         return UIEdgeInsets(all: value)
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(top)
+        hasher.combine(left)
+        hasher.combine(bottom)
+        hasher.combine(right)
     }
 }

@@ -108,23 +108,6 @@ public struct ChannelResponse: Decodable {
     }
 }
 
-extension ChannelResponse: Hashable {
-    
-    public static func == (lhs: ChannelResponse, rhs: ChannelResponse) -> Bool {
-        lhs.channel.cid == rhs.channel.cid
-            && lhs.channel.members == rhs.channel.members
-            && lhs.messages == rhs.messages
-            && lhs.messageReads == rhs.messageReads
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(channel)
-        hasher.combine(channel.members)
-        hasher.combine(messages)
-        hasher.combine(messageReads)
-    }
-}
-
 /// A response for an updated channel.
 public struct ChannelDeletedResponse: Decodable {
     /// A channel.

@@ -74,6 +74,8 @@
 		8A5069B923CE131B009F127A /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; };
 		8A5211D5238EE7DC004BED65 /* Attachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5211D4238EE7DC004BED65 /* Attachment.swift */; };
 		8A54D9A824728D4400431250 /* Channel+SetupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A54D9A724728D4400431250 /* Channel+SetupTests.swift */; };
+		8A53EFB024658B4C006296FB /* MessageViewStyle+BackgroundImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A53EFAE24658B44006296FB /* MessageViewStyle+BackgroundImage.swift */; };
+		8A53EFB124658B4E006296FB /* UIRectCorner+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A53EFAC24658AD5006296FB /* UIRectCorner+Extensions.swift */; };
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
 		8A65559D243DF2D00023046C /* UserConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A65559C243DF2D00023046C /* UserConnection.swift */; };
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
@@ -381,6 +383,8 @@
 		8A50696A23CDEDA4009F127A /* StreamChatCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChatCore.h; sourceTree = "<group>"; };
 		8A5211D4238EE7DC004BED65 /* Attachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment.swift; sourceTree = "<group>"; };
 		8A54D9A724728D4400431250 /* Channel+SetupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+SetupTests.swift"; sourceTree = "<group>"; };
+		8A53EFAC24658AD5006296FB /* UIRectCorner+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIRectCorner+Extensions.swift"; sourceTree = "<group>"; };
+		8A53EFAE24658B44006296FB /* MessageViewStyle+BackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewStyle+BackgroundImage.swift"; sourceTree = "<group>"; };
 		8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A65559C243DF2D00023046C /* UserConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnection.swift; sourceTree = "<group>"; };
 		8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Tests.swift"; sourceTree = "<group>"; };
@@ -1180,6 +1184,7 @@
 				8ACC7CCE241924BE000750E4 /* ChannelViewStyle.swift */,
 				8ACC7CCC241924BE000750E4 /* ComposerViewStyle.swift */,
 				8ACC7CC9241924BE000750E4 /* MessageViewStyle.swift */,
+				8A53EFAE24658B44006296FB /* MessageViewStyle+BackgroundImage.swift */,
 				8ACC7CD0241924BE000750E4 /* AvatarViewStyle.swift */,
 				8ACC7CC8241924BE000750E4 /* ReactionViewStyle.swift */,
 				8ACC7CCA241924BE000750E4 /* SeparatorStyle.swift */,
@@ -1238,6 +1243,7 @@
 				8ACC7CEB241924BE000750E4 /* CGRect+Extensions.swift */,
 				8ACC7CEC241924BE000750E4 /* CGFloat+Extensions.swift */,
 				8ACC7CED241924BE000750E4 /* Reusable */,
+				8A53EFAC24658AD5006296FB /* UIRectCorner+Extensions.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -1851,6 +1857,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A53EFB124658B4E006296FB /* UIRectCorner+Extensions.swift in Sources */,
 				8ACC7D49241924BE000750E4 /* Bundle+Extensions.swift in Sources */,
 				8ACC7D14241924BE000750E4 /* ComposerView.swift in Sources */,
 				8ACC7D38241924BE000750E4 /* UIImagePickerController+Extensions.swift in Sources */,
@@ -1929,6 +1936,7 @@
 				8ACC7D16241924BE000750E4 /* ChatViewController.swift in Sources */,
 				8ACC7D33241924BE000750E4 /* IndexPath+Extensions.swift in Sources */,
 				8ACC7D53241924BE000750E4 /* ReactionsView.swift in Sources */,
+				8A53EFB024658B4C006296FB /* MessageViewStyle+BackgroundImage.swift in Sources */,
 				8ACC7D23241924BE000750E4 /* ReactionViewStyle.swift in Sources */,
 				8ACC7D0B241924BE000750E4 /* ChatFooterView.swift in Sources */,
 				8ACC7D4B241924BE000750E4 /* String+FileType.swift in Sources */,

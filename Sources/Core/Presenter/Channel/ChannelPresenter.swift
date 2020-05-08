@@ -69,7 +69,7 @@ public final class ChannelPresenter: Presenter {
     public internal(set) var typingUsers: [TypingUser] = []
     var startedTyping = false
     
-    var messageReadsToMessageId: [MessageRead: String] = [:]
+    var messageIdByMessageReadUser: [User: String] = [:]
     /// Check if the channel has unread messages.
     public var isUnread: Bool { channel.readEventsEnabled && channel.unreadCount.messages > 0 }
     

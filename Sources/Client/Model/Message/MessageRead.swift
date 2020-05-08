@@ -9,7 +9,7 @@
 import Foundation
 
 /// A message read state. User + last read date + unread message count.
-public struct MessageRead: Decodable, Hashable {
+public struct MessageRead: Decodable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadDate = "last_read"
@@ -37,9 +37,5 @@ public struct MessageRead: Decodable, Hashable {
     
     public static func == (lhs: MessageRead, rhs: MessageRead) -> Bool {
         lhs.user == rhs.user
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(user)
     }
 }

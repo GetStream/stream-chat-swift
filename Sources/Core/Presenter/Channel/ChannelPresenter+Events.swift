@@ -124,7 +124,8 @@ extension ChannelPresenter {
             var messages: [Message] = []
             
             // Reload old position.
-            if let messageId = messageReadsToMessageId[messageRead], let index = items.lastIndex(whereMessageId: messageId) {
+            if let messageId = messageIdByMessageReadUser[messageRead.user],
+                let index = items.lastIndex(whereMessageId: messageId) {
                 if index == lastOwnMessageIndex {
                     return .none
                 }
@@ -145,7 +146,7 @@ extension ChannelPresenter {
                 items[lastOwnMessageIndex] = .message(lastAddedOwnMessage, readUsers)
                 rows.append(lastOwnMessageIndex)
                 messages.append(lastAddedOwnMessage)
-                messageReadsToMessageId[messageRead] = lastAddedOwnMessage.id
+                messageIdByMessageReadUser[messageRead.user] = lastAddedOwnMessage.id
             }
             
             return .itemsUpdated(rows, messages, items)

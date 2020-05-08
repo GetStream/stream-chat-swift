@@ -43,7 +43,7 @@ public extension KeyedEncodingContainer {
 /// // Another pagination:
 /// let pagination = Pagination.limit(50) + .lessThan("some_id")
 /// ```
-public enum PaginationOption: Encodable, Equatable, Hashable {
+public enum PaginationOption: Encodable, Hashable {
     /// A default channels page size.
     public static let channelsPageSize: Self = .limit(20)
     /// A default channels page sizefor the next page.
@@ -101,7 +101,6 @@ public enum PaginationOption: Encodable, Equatable, Hashable {
     
     /// Parameters for a request.
     var parameters: [String: Any] {
-        
         switch self {
         case .limit(let limit):
             return ["limit": limit]
@@ -139,13 +138,14 @@ public enum PaginationOption: Encodable, Equatable, Hashable {
     
     public static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
-        case (.limit, .limit),
-             (.offset, .offset),
-             (.greaterThan, .greaterThan),
-             (.greaterThanOrEqual, .greaterThanOrEqual),
-             (.lessThan, .lessThan),
-             (.lessThanOrEqual, .lessThanOrEqual):
-            return true
+        case (.limit(let value1), .limit(let value2)),
+             (.offset(let value1), .offset(let value2)):
+            return value1 == value2
+        case (.greaterThan(let value1), .greaterThan(let value2)),
+             (.greaterThanOrEqual(let value1), .greaterThanOrEqual(let value2)),
+             (.lessThan(let value1), .lessThan(let value2)),
+             (.lessThanOrEqual(let value1), .lessThanOrEqual(let value2)):
+            return value1 == value2
         default:
             return false
         }

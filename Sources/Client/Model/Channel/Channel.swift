@@ -222,14 +222,10 @@ public final class Channel: Codable {
     }
 }
 
-extension Channel: Hashable, CustomStringConvertible {
+extension Channel: Equatable, CustomStringConvertible {
     
     public static func == (lhs: Channel, rhs: Channel) -> Bool {
         lhs.cid == rhs.cid
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(cid)
     }
     
     public var description: String {

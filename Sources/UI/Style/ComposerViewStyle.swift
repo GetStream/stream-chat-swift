@@ -108,7 +108,7 @@ extension ComposerViewStyle {
     }
     
     /// A composer style.
-    public struct Style: Hashable {
+    public struct Style: Equatable {
         /// A tint color. Also used as border color.
         public var tintColor: UIColor
         /// A border width.
@@ -121,15 +121,6 @@ extension ComposerViewStyle {
         public init(tintColor: UIColor = .chatGray, borderWidth: CGFloat = 0) {
             self.tintColor = tintColor
             self.borderWidth = borderWidth
-        }
-        
-        public static func == (lhs: Style, rhs: Style) -> Bool {
-            lhs.tintColor == rhs.tintColor && lhs.borderWidth == rhs.borderWidth
-        }
-        
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(tintColor)
-            hasher.combine(borderWidth)
         }
     }
 }

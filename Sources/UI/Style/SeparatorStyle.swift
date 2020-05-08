@@ -9,7 +9,7 @@
 import UIKit
 
 /// A separator style.
-public struct SeparatorStyle: Hashable {
+public struct SeparatorStyle {
     
     public static let none = SeparatorStyle(tableStyle: .none)
     
@@ -29,20 +29,5 @@ public struct SeparatorStyle: Hashable {
         self.color = color
         self.inset = inset
         self.tableStyle = tableStyle
-    }
-    
-    public static func == (lhs: SeparatorStyle, rhs: SeparatorStyle) -> Bool {
-        lhs.color == rhs.color
-            && lhs.inset == rhs.inset
-            && lhs.tableStyle == rhs.tableStyle
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(color)
-        hasher.combine(inset.top)
-        hasher.combine(inset.left)
-        hasher.combine(inset.bottom)
-        hasher.combine(inset.right)
-        hasher.combine(tableStyle)
     }
 }
