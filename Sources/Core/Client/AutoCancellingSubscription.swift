@@ -64,7 +64,7 @@ extension ObservableType {
     }
     
     private func subscribe<T>(to onNext: @escaping Client.Completion<T>) -> Disposable where Element == T {
-        return subscribe(onNext: { (element) in
+        subscribe(onNext: { (element) in
             onNext(.success(element))
         }, onError: { (error) in
             if let clientError = error as? ClientError {
