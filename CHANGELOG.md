@@ -37,6 +37,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   public init(attachment:fileName:)
   ```
   since they were unused. Please use `init(channel:url:)` initializer. 
+- `Atomic.get(default: T) -> T` function was deprecated for non-optional `T` [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
+- `Atomic.get()` no longer returns an optional type if the wrapped type itself is not optional  [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
+- `Atomic.init(_:)` requires the initial value for non-optional `T` [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
+- `Atomic.DidSetCallback` signature changed from `(_ value: T?, _ oldValue: T?) -> Void` to `(_ value: T, _ oldValue: T) -> Void` [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
 
 ### 🐞 Fixed
 - Fix rx observing for the connection state [#249](https://github.com/GetStream/stream-chat-swift/issues/249).
