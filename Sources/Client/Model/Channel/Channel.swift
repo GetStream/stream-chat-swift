@@ -81,7 +81,7 @@ public final class Channel: Codable {
     /// Checks if read events evalable for the current user.
     public var readEventsEnabled: Bool { config.readEventsEnabled && members.contains(Member.current) }
     /// Returns the current unread count.
-    public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get(default: .noUnread) }
+    public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get() }
     
     private(set) lazy var unreadCountAtomic = Atomic<ChannelUnreadCount>(.noUnread, callbackQueue: .main) { [weak self] _, _ in
         if let self = self {
@@ -90,7 +90,7 @@ public final class Channel: Codable {
     }
     
     /// Online watchers in the channel.
-    public var watcherCount: Int { watcherCountAtomic.get(default: 0) }
+    public var watcherCount: Int { watcherCountAtomic.get() }
     
     private(set) lazy var watcherCountAtomic = Atomic(0, callbackQueue: .main) { [weak self] _, _ in
         if let self = self {
@@ -98,7 +98,7 @@ public final class Channel: Codable {
         }
     }
     
-    let unreadMessageReadAtomic = Atomic<MessageRead>()
+    let unreadMessageReadAtomic = Atomic<MessageRead?>(nil)
     /// Unread message state for the current user.
     public var unreadMessageRead: MessageRead? { unreadMessageReadAtomic.get() }
     /// Checks if the current status of the channel is unread.

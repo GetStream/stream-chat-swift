@@ -51,6 +51,24 @@ class AtomicTests: XCTestCase {
         XCTAssertEqual(atomicValue.get(), Helper(elements: [1, 2]))
     }
 
+    func test_Atomic_keyPathHelpersWithOptionalElement() {
+        // Setup
+        struct Helper: Equatable {
+            var elements: [Int]? = []
+        }
+        let atomicValue: Atomic<Helper> = Atomic(Helper())
+
+        // Actions
+        atomicValue.update(\.elements, to: [0])
+        XCTAssertEqual(atomicValue.get(), Helper(elements: [0]))
+
+        atomicValue.elements = [1]
+        XCTAssertEqual(atomicValue.get(), Helper(elements: [1]))
+
+        atomicValue.elements = nil
+        XCTAssertEqual(atomicValue.get(), Helper(elements: nil))
+    }
+    
     func test_Atomic_dictionaryHelpers() {
         let atomicValue = Atomic(["Luke": 1])
         XCTAssertEqual(atomicValue["Luke"], 1)
@@ -61,7 +79,7 @@ class AtomicTests: XCTestCase {
         let atomicValue = Atomic("Luke")
 
         // Action
-        atomicValue.update { (oldValue) -> String? in
+        atomicValue.update { (oldValue) -> String in
             // The current value should be same as `oldValue`
             XCTAssertEqual(atomicValue.get(), oldValue)
 
@@ -82,6 +100,20 @@ class AtomicTests: XCTestCase {
         }
 
         XCTAssertEqual(atomicValue.get(), "Leia")
+    }
+    
+    func test_Atomic_withOptionalType() {
+        let atomicValue: Atomic<String?> = Atomic(nil)
+        XCTAssertEqual(atomicValue.get(), nil)
+        
+        atomicValue.set("Luke")
+        XCTAssertEqual(atomicValue.get(), "Luke")
+        
+        atomicValue.update { (current) -> String? in
+            XCTAssertEqual(atomicValue.get(), "Luke")
+            return nil
+        }
+        XCTAssertEqual(atomicValue.get(), nil)
     }
 }
 
@@ -140,7 +172,7 @@ extension AtomicTests {
             }
         }
 
-        AssertEqualEventually(atomicValue.get()?.count, numberOfStressTestCycles)
+        AssertEqualEventually(atomicValue.get().count, numberOfStressTestCycles)
 
         // Check for memory leaks
         weak var weakValue = atomicValue
@@ -150,7 +182,6 @@ extension AtomicTests {
     }
 
     func test_Atomic_whenSetAndGetCalledSimultaneously() {
-
         var atomicValue: Atomic<[String: Int]>! = .init([:])
 
         for idx in 0..<numberOfStressTestCycles {
@@ -164,13 +195,15 @@ extension AtomicTests {
             }
 
             for _ in 0...5 {
-                DispatchQueue.random.async {
+                // We need to capture the value explicitly. Without this the tests randomly crashes after
+                // `atomicValue` is assigned to `nil`.
+                DispatchQueue.random.async { [atomicValue] in
                     _ = atomicValue?.get()
                 }
             }
         }
 
-        AssertEqualEventually(atomicValue.get()?.count, numberOfStressTestCycles)
+        AssertEqualEventually(atomicValue.get().count, numberOfStressTestCycles)
 
         // Check for memory leaks
         weak var weakValue = atomicValue

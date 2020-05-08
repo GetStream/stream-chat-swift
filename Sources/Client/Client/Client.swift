@@ -121,27 +121,26 @@ public final class Client: Uploader {
     // MARK: User Events
     
     /// The current user.
-    public var user: User { userAtomic.get() ?? .unknown }
+    public var user: User { userAtomic.get() }
     
     var onUserUpdateObservers = [String: OnUpdate<User>]()
     
-    private(set) lazy var userAtomic = Atomic<User>(callbackQueue: eventsHandlingQueue) { [unowned self] newUser, _ in
-        if let user = newUser {
-            self.onUserUpdateObservers.values.forEach({ $0(user) })
-        }
+    private(set) lazy var userAtomic = Atomic<User>(.unknown, callbackQueue: eventsHandlingQueue) { [unowned self] newUser, _ in
+        self.onUserUpdateObservers.values.forEach({ $0(newUser) })
     }
     
     // MARK: Unread Count Events
     
     /// Channels and messages unread counts.
-    public var unreadCount: UnreadCount { unreadCountAtomic.get(default: .noUnread) }
+    public var unreadCount: UnreadCount { unreadCountAtomic.get() }
     var onUnreadCountUpdateObservers = [String: OnUpdate<UnreadCount>]()
     
-    private(set) lazy var unreadCountAtomic = Atomic<UnreadCount>(.noUnread, callbackQueue: eventsHandlingQueue) { [unowned self] in
-        if let unreadCount = $0, unreadCount != $1 {
-            self.onUnreadCountUpdateObservers.values.forEach({ $0(unreadCount) })
+    private(set) lazy var unreadCountAtomic =
+        Atomic<UnreadCount>(.noUnread, callbackQueue: eventsHandlingQueue) { [unowned self] newUnreadCount, oldUnreadCount in
+            if newUnreadCount != oldUnreadCount {
+                self.onUnreadCountUpdateObservers.values.forEach({ $0(newUnreadCount) })
+            }
         }
-    }
     
     /// Weak references to channels by cid.
     let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
@@ -241,7 +240,7 @@ public final class Client: Uploader {
     /// - Parameter channel: a channel.
     /// - Returns: returns true if the client is watching for the channel.
     public func isWatching(channel: Channel) -> Bool {
-        let watchingChannels: [WeakRef<Channel>]? = watchingChannelsAtomic.get(default: [:])[channel.cid]
+        let watchingChannels: [WeakRef<Channel>]? = watchingChannelsAtomic.get()[channel.cid]
         return watchingChannels?.first { $0.value === channel } != nil
     }
 }

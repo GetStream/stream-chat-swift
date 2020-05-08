@@ -26,13 +26,11 @@ final class WebSocket {
     private(set) var connectionId: String?
     private(set) var eventError: ClientErrorResponse?
     
-    var connectionState: ConnectionState { connectionStateAtomic.get(default: .notConnected) }
+    var connectionState: ConnectionState { connectionStateAtomic.get() }
     
     private lazy var connectionStateAtomic =
         Atomic<ConnectionState>(.notConnected, callbackQueue: nil) { [weak self] connectionState, _ in
-            if let connectionState = connectionState {
-                self?.publishEvent(.connectionChanged(connectionState))
-            }
+            self?.publishEvent(.connectionChanged(connectionState))
     }
     
     private lazy var handshakeTimer =

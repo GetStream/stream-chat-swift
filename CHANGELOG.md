@@ -6,9 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.0)
+_May 08, 2020_
+
 ### ✅ Added
 - `avatarViewStyle` under `ChatViewStyle` for customizing Navigation Right Bar Button Item avatar [#241](https://github.com/GetStream/stream-chat-swift/issues/241).
 - `logAssert(_:_:)` and `logAssertionFailure(_:)` functions added to `ClientLogger` [#231](https://github.com/GetStream/stream-chat-swift/issues/231).
+- `queryChannels` now returns unread count of each channel, unrestricted by number of messages fetched [#247](https://github.com/GetStream/stream-chat-swift/issues/247):
+  Example:
+  ```swift
+  Client.shared.queryChannels(filter: .currentUserInMembers, sort: [Sorting("has_unread", isAscending: false)]) { (result) in
+      for response in result.value! {
+          print("Channel \(response.channel.name ?? "nil"), unread messages count: \(response.channel.unreadCount.messages)")
+      }
+  }
+  ```
 
 ### 🔄 Changed
 - Configuring the shared `Client` using the static `Client.config` variable has been deprecated. Please create an instance of the `Client.Config` struct and call `Client.configureShared(_:)` to set up the shared instance of `Client` [#231](https://github.com/GetStream/stream-chat-swift/issues/231).
@@ -37,6 +51,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   public init(attachment:fileName:)
   ```
   since they were unused. Please use `init(channel:url:)` initializer. 
+- `Atomic.get(default: T) -> T` function was deprecated for non-optional `T` [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
+- `Atomic.get()` no longer returns an optional type if the wrapped type itself is not optional  [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
+- `Atomic.init(_:)` requires the initial value for non-optional `T` [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
+- `Atomic.DidSetCallback` signature changed from `(_ value: T?, _ oldValue: T?) -> Void` to `(_ value: T, _ oldValue: T) -> Void` [#241](https://github.com/GetStream/stream-chat-swift/issues/241)
 
 ### 🐞 Fixed
 - Fix rx observing for the connection state [#249](https://github.com/GetStream/stream-chat-swift/issues/249).
@@ -48,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Recover the default extra data for User and Channel types [#238](https://github.com/GetStream/stream-chat-swift/issues/238).
 - Crashes on `channel.rx.events` and `channel.rx.unreadCount` [#248](https://github.com/GetStream/stream-chat-swift/issues/248).
 - It's now possible to access `Atomic` value within its own `update { }` block [#251](https://github.com/GetStream/stream-chat-swift/pull/251)
+- Fixed warning in AutoCancellingSubscription [#256](https://github.com/GetStream/stream-chat-swift/issues/256)
 
 # [2.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.1.1)
 _May 01, 2020_
