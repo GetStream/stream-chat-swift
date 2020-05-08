@@ -533,7 +533,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">config</span><span class="p">:</span> <span class="kt">Client</span><span class="o">.</span><span class="kt"><a href="../Classes/Client/Config.html">Config</a></span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "Configuring the shared Client using the static `Client.config` variable has been deprecated. Please create an instance\nof the `Client.Config` struct and call `Client.configureShared(_:﹚` to set up the shared instance of Client.")</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">config</span><span class="p">:</span> <span class="kt"><a href="../Classes/Client/Config.html">Config</a></span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -553,16 +554,62 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A shared client.</p>
+                        <p>The shared client.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">shared</span><span class="p">:</span> <span class="kt">Client</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">shared</span><span class="p">:</span> <span class="kt">Client</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C0C15configureSharedyyAC6ConfigVFZ"></a>
+                    <a name="//apple_ref/swift/Method/configureShared(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C15configureSharedyyAC6ConfigVFZ">configureShared(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Configures the shared instance of <code>Client</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">configureShared</span><span class="p">(</span><span class="n">_</span> <span class="nv">config</span><span class="p">:</span> <span class="kt"><a href="../Classes/Client/Config.html">Config</a></span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>configuration</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The configuration object with details of how the shared instance should be set up.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -760,6 +807,33 @@
                 </div>
               </div>
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C0C15connectionStateAA010ConnectionE0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/connectionState" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C15connectionStateAA010ConnectionE0Ovp">connectionState</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The current connection state.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">connectionState</span><span class="p">:</span> <span class="kt"><a href="../Enums/ConnectionState.html">ConnectionState</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -3816,7 +3890,14 @@ Creates a <code><a href="../Structs/ChannelQuery.html">ChannelQuery</a></code> w
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>A config for a shread <code><a href="../Classes/Client.html">Client</a></code>.</p>
+                        <p>A configuration object for <code><a href="../Classes/Client.html">Client</a></code>.</p>
+
+<p>To create a new <code>Config</code> object a non-empty API key string has to be provided. After initializing,
+it&rsquo;s possible to change additional parameters:</p>
+<pre class="highlight swift"><code>    <span class="k">var</span> <span class="nv">config</span> <span class="o">=</span> <span class="kt">Client</span><span class="o">.</span><span class="kt">Config</span><span class="p">(</span><span class="nv">apiKey</span><span class="p">:</span> <span class="s">"&lt;API_KEY&gt;"</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">baseURL</span> <span class="o">=</span> <span class="o">.</span><span class="n">dublin</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">logOptions</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">debug</span><span class="p">]</span>
+</code></pre>
 
                         <a href="../Classes/Client/Config.html" class="slightly-smaller">See more</a>
                       </div>
@@ -5639,7 +5720,7 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-01)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-08)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
