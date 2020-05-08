@@ -79,7 +79,7 @@ class AtomicTests: XCTestCase {
         let atomicValue = Atomic("Luke")
 
         // Action
-        atomicValue.update { (oldValue) -> String? in
+        atomicValue.update { (oldValue) -> String in
             // The current value should be same as `oldValue`
             XCTAssertEqual(atomicValue.get(), oldValue)
 
@@ -172,7 +172,7 @@ extension AtomicTests {
             }
         }
 
-        AssertEqualEventually(atomicValue.get()?.count, numberOfStressTestCycles)
+        AssertEqualEventually(atomicValue.get().count, numberOfStressTestCycles)
 
         // Check for memory leaks
         weak var weakValue = atomicValue
@@ -202,7 +202,7 @@ extension AtomicTests {
             }
         }
 
-        AssertEqualEventually(atomicValue.get()?.count, numberOfStressTestCycles)
+        AssertEqualEventually(atomicValue.get().count, numberOfStressTestCycles)
 
         // Check for memory leaks
         weak var weakValue = atomicValue

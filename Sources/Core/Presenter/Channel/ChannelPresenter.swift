@@ -41,18 +41,13 @@ public final class ChannelPresenter: Presenter {
     let channelId: String
     let channelPublishSubject = PublishSubject<Channel>()
     
-    private(set) lazy var channelAtomic = Atomic<Channel>(callbackQueue: .main) { [weak self] channel, oldChannel in
-        if let channel = channel {
-            if let oldChannel = oldChannel {
-                channel.banEnabling = oldChannel.banEnabling
-            }
-            
-            self?.channelPublishSubject.onNext(channel)
-        }
+    private(set) lazy var channelAtomic = Atomic<Channel>(.unused, callbackQueue: .main) { [weak self] channel, oldChannel in
+        channel.banEnabling = oldChannel.banEnabling
+        self?.channelPublishSubject.onNext(channel)
     }
     
     /// A channel (see `Channel`).
-    public var channel: Channel { channelAtomic.get(default: .unused) }
+    public var channel: Channel { channelAtomic.get() }
     /// A parent message for replies.
     public let parentMessage: Message?
     /// Query options.
@@ -61,7 +56,7 @@ public final class ChannelPresenter: Presenter {
     public var editMessage: Message?
     /// Show statuses separators, e.g. Today
     public var showStatuses = true
-    let lastMessageAtomic = Atomic<Message>()
+    let lastMessageAtomic = Atomic<Message?>()
     /// The last parsed message from WebSocket events.
     public var lastMessage: Message? { lastMessageAtomic.get() }
     var lastAddedOwnMessage: Message?
