@@ -9,6 +9,9 @@
 import Foundation
 
 /// A mutable thread safe variable.
+///
+/// - Note: Even though the value guarded by `Atomic` is thread-safe, the `Atomic` class itself is not. Mutating the instance
+/// itself from multiple threads can cause a crash.
 @dynamicMemberLookup
 public final class Atomic<T> {
     /// A didSet callback type.

@@ -182,7 +182,6 @@ extension AtomicTests {
     }
 
     func test_Atomic_whenSetAndGetCalledSimultaneously() {
-
         var atomicValue: Atomic<[String: Int]>! = .init([:])
 
         for idx in 0..<numberOfStressTestCycles {
@@ -196,7 +195,9 @@ extension AtomicTests {
             }
 
             for _ in 0...5 {
-                DispatchQueue.random.async {
+                // We need to capture the value explicitly. Without this the tests randomly crashes after
+                // `atomicValue` is assigned to `nil`.
+                DispatchQueue.random.async { [atomicValue] in
                     _ = atomicValue?.get()
                 }
             }
