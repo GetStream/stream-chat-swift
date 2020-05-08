@@ -51,6 +51,24 @@ class AtomicTests: XCTestCase {
         XCTAssertEqual(atomicValue.get(), Helper(elements: [1, 2]))
     }
 
+    func test_Atomic_keyPathHelpersWithOptionalElement() {
+        // Setup
+        struct Helper: Equatable {
+            var elements: [Int]? = []
+        }
+        let atomicValue: Atomic<Helper> = Atomic(Helper())
+
+        // Actions
+        atomicValue.update(\.elements, to: [0])
+        XCTAssertEqual(atomicValue.get(), Helper(elements: [0]))
+
+        atomicValue.elements = [1]
+        XCTAssertEqual(atomicValue.get(), Helper(elements: [1]))
+
+        atomicValue.elements = nil
+        XCTAssertEqual(atomicValue.get(), Helper(elements: nil))
+    }
+    
     func test_Atomic_dictionaryHelpers() {
         let atomicValue = Atomic(["Luke": 1])
         XCTAssertEqual(atomicValue["Luke"], 1)
@@ -82,6 +100,20 @@ class AtomicTests: XCTestCase {
         }
 
         XCTAssertEqual(atomicValue.get(), "Leia")
+    }
+    
+    func test_Atomic_withOptionalType() {
+        let atomicValue: Atomic<String?> = Atomic(nil)
+        XCTAssertEqual(atomicValue.get(), nil)
+        
+        atomicValue.set("Luke")
+        XCTAssertEqual(atomicValue.get(), "Luke")
+        
+        atomicValue.update { (current) -> String? in
+            XCTAssertEqual(atomicValue.get(), "Luke")
+            return nil
+        }
+        XCTAssertEqual(atomicValue.get(), nil)
     }
 }
 
