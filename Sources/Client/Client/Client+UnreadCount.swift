@@ -83,18 +83,6 @@ extension Client {
             return
         }
         
-        if case .notificationMessageNew(let message, let channel, _, _, _) = event {
-            if let channels = watchingChannelsAtomic[channel.cid] {
-                channels.forEach {
-                    if let watchingChannel = $0.value, watchingChannel.cid == channel.cid {
-                        watchingChannel.updateUnreadCount(newMessage: message)
-                    }
-                }
-            }
-            
-            return
-        }
-        
         guard let eventCid = event.cid, let watchingChannels = watchingChannelsAtomic[eventCid] else {
             return
         }

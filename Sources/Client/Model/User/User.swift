@@ -23,8 +23,8 @@ public struct User: Codable {
         case isInvisible = "invisible"
         case devices
         case mutedUsers = "mutes"
-        case messagesUnreadCount = "unread_count"
-        case channelsUnreadCount = "unread_channels"
+        case unreadMessagesCount = "unread_count"
+        case unreadChannelsCount = "unread_channels"
         case isAnonymous = "anon"
     }
     
@@ -147,9 +147,9 @@ public struct User: Codable {
         extraData = decodeUserExtraData(from: decoder)
         
         if id == Client.shared.user.id,
-            let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount),
-            let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) {
-            let unreadCount = UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount)
+            let unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount),
+            let unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount) {
+            let unreadCount = UnreadCount(channels: unreadChannelsCount, messages: unreadMessagesCount)
             Client.shared.unreadCountAtomic.set(unreadCount)
         }
     }

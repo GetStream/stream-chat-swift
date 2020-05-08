@@ -140,26 +140,29 @@ extension Client {
     }
     
     func subscribeToUnreadCount(for channel: Channel, _ callback: @escaping Completion<ChannelUnreadCount>) -> Cancellable {
-        let subscription = subscribe(forEvents: [.messageNew, .messageRead], cid: channel.cid) { _ in
+        // Check if current user is a member in case Channel is decoded from query
+        if channel.didLoad, !channel.members.contains(Member.current) {
+            logger?.log("⚠️ The current user is not a member of the channel: (\(channel.cid)). "
+                + "They must be a member to get updates for the unread count.")
+            return Subscription.empty
+        }
+        
+        // Check if the channel is being watched by the client.
+        guard isWatching(channel: channel) else {
+            logger?.log("⚠️ You are trying to subscribe for the channel unread count: (\(channel.cid)), "
+                + "but you didn't start watching it. Please make a query with "
+                + "messages pagination: `[.limit(100)]` and query options: `[.watch, .state]`: "
+                + "`channel.query(messagesPagination: [.limit(100)], options: [.watch, .state])`")
+            return Subscription.empty
+        }
+        
+        let subscription = subscribe(forEvents: [.messageNew, .messageRead, .messageDeleted], cid: channel.cid) { _ in
             callback(.success(channel.unreadCount))
         }
         
-        // Check if the channel is watching by the client.
-        guard isWatching(channel: channel) else {
-            logger?.log("⚠️ You are trying to subscribe for a channel unread count: (\(channel.cid)), "
-                + "but you didn't start watching it. Please, make a query first with "
-                + "messages pagination: `[.limit(100)]` and query options: `[.watch, .state]`: "
-                + "`channel.query(messagesPagination: [.limit(100)], options: [.watch, .state])`")
-            
-            return subscription
-        }
-        
-        // Return the current unread count.
-        callback(.success(channel.unreadCount))
-        
-        if channel.didLoad, !channel.members.contains(Member.current) {
-            logger?.log("⚠️ The current user is not a member of the channel: (\(channel.cid)) "
-                + "to get updates for the unread count.")
+        // Return the current unread count immediately
+        eventsHandlingQueue.async {
+            callback(.success(channel.unreadCount))
         }
         
         return subscription
