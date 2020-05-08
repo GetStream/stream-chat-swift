@@ -72,22 +72,10 @@ extension Client {
 extension Client {
     func updateChannelsForWatcherAndUnreadCount(event: Event) {
         if case .notificationMarkAllRead(let messageRead, _) = event {
-            watchingChannelsAtomic.get(default: [:]).forEach {
+            watchingChannelsAtomic.get().forEach {
                 $0.value.forEach {
                     if let channel = $0.value {
                         channel.resetUnreadCount(messageRead: messageRead)
-                    }
-                }
-            }
-            
-            return
-        }
-        
-        if case .notificationMessageNew(let message, let channel, _, _, _) = event {
-            if let channels = watchingChannelsAtomic[channel.cid] {
-                channels.forEach {
-                    if let watchingChannel = $0.value, watchingChannel.cid == channel.cid {
-                        watchingChannel.updateUnreadCount(newMessage: message)
                     }
                 }
             }
@@ -115,7 +103,7 @@ extension Client {
 extension Client {
     // Update unread and watcher counts for all channels with the same cid.
     func refreshWatchingChannels(with channel: Channel) {
-        guard let weakWatchingChannels = watchingChannelsAtomic.get(default: [:])[channel.cid], !weakWatchingChannels.isEmpty else {
+        guard let weakWatchingChannels = watchingChannelsAtomic.get()[channel.cid], !weakWatchingChannels.isEmpty else {
             watchingChannelsAtomic.add(channel, key: channel.cid)
             return
         }

@@ -76,23 +76,25 @@ public struct ChannelResponse: Decodable {
         
         let unreadMessageRead = userUnreadMessageRead()
         channel.unreadMessageReadAtomic.set(unreadMessageRead)
+        
         var unreadCount = ChannelUnreadCount.noUnread
         let currentUser = Client.shared.user
         
         if let unreadMessageRead = unreadMessageRead {
-            for message in messages.reversed() {
-                if message.user.isCurrent {
-                    continue
-                }
-                
-                if message.created > unreadMessageRead.lastReadDate {
-                    unreadCount.messages += 1
-                    
-                    if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
-                        unreadCount.mentionedMessages += 1
-                    }
-                } else {
-                    break
+            // Backend sends message unread count, use it directly
+            unreadCount.messages = unreadMessageRead.unreadMessagesCount
+            
+            if unreadMessageRead.unreadMessagesCount > 0 {
+                // Calculate mentioned message unread count
+                // This is approximate since it'll be limited for the messages we've fetched
+                for message in messages.reversed() where !message.user.isCurrent {
+                   if message.created > unreadMessageRead.lastReadDate {
+                       if message.mentionedUsers.contains(currentUser) {
+                           unreadCount.mentionedMessages += 1
+                       }
+                   } else {
+                       break
+                   }
                 }
             }
         } else {

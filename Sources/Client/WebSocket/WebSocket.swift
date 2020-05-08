@@ -26,8 +26,11 @@ final class WebSocket {
     private(set) var connectionId: String?
     private(set) var eventError: ClientErrorResponse?
     
-    private var connectionState = ConnectionState.notConnected {
-        didSet { publishEvent(.connectionChanged(connectionState)) }
+    var connectionState: ConnectionState { connectionStateAtomic.get() }
+    
+    private lazy var connectionStateAtomic =
+        Atomic<ConnectionState>(.notConnected, callbackQueue: nil) { [weak self] connectionState, _ in
+            self?.publishEvent(.connectionChanged(connectionState))
     }
     
     private lazy var handshakeTimer =
@@ -94,7 +97,7 @@ extension WebSocket {
         
         logger?.log("Connecting...")
         logger?.log(webSocket.request)
-        connectionState = .connecting
+        connectionStateAtomic.set(.connecting)
         shouldReconnect = true
         
         DispatchQueue.main.async(execute: webSocket.connect)
@@ -105,7 +108,7 @@ extension WebSocket {
             return
         }
         
-        connectionState = .reconnecting
+        connectionStateAtomic.set(.reconnecting)
         let maxDelay: TimeInterval = min(500 + consecutiveFailures * 2000, 25000) / 1000
         let minDelay: TimeInterval = min(max(250, (consecutiveFailures - 1) * 2000), 25000) / 1000
         consecutiveFailures += 1
@@ -113,7 +116,7 @@ extension WebSocket {
         logger?.log("⏳ Reconnect in \(delay) sec")
         
         webSocket.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
-            self?.connectionState = .connecting
+            self?.connectionStateAtomic.set(.connecting)
             self?.connect()
         }
     }
@@ -163,11 +166,11 @@ extension WebSocket {
         
         if webSocket.isConnected {
             logger?.log("Disconnecting: \(reason)")
-            connectionState = .disconnecting
+            connectionStateAtomic.set(.disconnecting)
             webSocket.disconnect(forceTimeout: 0)
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
-            connectionState = .disconnected(nil)
+            connectionStateAtomic.set(.disconnected(nil))
         }
     }
     
@@ -223,7 +226,7 @@ extension WebSocket: WebSocketDelegate {
     
     func websocketDidConnect(socket: Starscream.WebSocketClient) {
         logger?.log("❤️ Connected. Waiting for the current user data and connectionId...")
-        connectionState = .connecting
+        connectionStateAtomic.set(.connecting)
     }
     
     func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
@@ -236,7 +239,7 @@ extension WebSocket: WebSocketDelegate {
             logger?.log("🥰 Connected")
             self.connectionId = connectionId
             handshakeTimer.resume()
-            connectionState = .connected(UserConnection(user: user, connectionId: connectionId))
+            connectionStateAtomic.set(.connected(UserConnection(user: user, connectionId: connectionId)))
             return
             
         case let .messageNew(message, _, _, _) where message.user.isMuted:
@@ -264,13 +267,13 @@ extension WebSocket: WebSocketDelegate {
         
         if let eventError = eventError, eventError.code == ClientErrorResponse.tokenExpiredErrorCode {
             logger?.log("Disconnected. 🀄️ Token is expired")
-            connectionState = .disconnected(ClientError.expiredToken)
+            connectionStateAtomic.set(.disconnected(ClientError.expiredToken))
             return
         }
         
         guard let error = error else {
             logger?.log("💔 Disconnected")
-            connectionState = .disconnected(nil)
+            connectionStateAtomic.set(.disconnected(nil))
             
             if shouldReconnect {
                 reconnect()
@@ -290,7 +293,7 @@ extension WebSocket: WebSocketDelegate {
         logger?.log(error, message: "💔😡 Disconnected by error")
         logger?.log(eventError)
         ClientLogger.showConnectionAlert(error, jsonError: eventError)
-        connectionState = .disconnected(.websocketDisconnectError(error))
+        connectionStateAtomic.set(.disconnected(.websocketDisconnectError(error)))
         
         if shouldReconnect {
             reconnect()

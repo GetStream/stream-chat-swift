@@ -21,10 +21,10 @@ public extension Reactive where Base == Channel {
     
     /// Observe all events for this channel.
     var events: Observable<StreamChatClient.Event> {
-        associated(to: base, key: &Channel.rxOnEvent) { [unowned base] in
+        associated(to: base, key: &Channel.rxOnEvent) { [weak base] in
             Observable<StreamChatClient.Event>.create({ observer in
-                let subscription = base.subscribe { observer.onNext($0) }
-                return Disposables.create { subscription.cancel() }
+                let subscription = base?.subscribe { observer.onNext($0) }
+                return Disposables.create { subscription?.cancel() }
             })
                 .share()
         }
@@ -48,8 +48,8 @@ public extension Reactive where Base == Channel {
     
     /// An observable channel unread count.
     var unreadCount: Observable<ChannelUnreadCount> {
-        .create { [unowned base] (observer) -> Disposable in
-            let subscription = base.subscribeToUnreadCount { (result) in
+        Observable<ChannelUnreadCount>.create { [weak base] (observer) -> Disposable in
+            let subscription = base?.subscribeToUnreadCount { result in
                 do {
                     let response = try result.get()
                     observer.onNext(response)
@@ -58,7 +58,7 @@ public extension Reactive where Base == Channel {
                 }
             }
             
-            return Disposables.create { subscription.cancel() }
+            return Disposables.create { subscription?.cancel() }
         }
     }
     

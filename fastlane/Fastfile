@@ -11,12 +11,14 @@ desc "Release a new version"
 lane :release do |options|
   UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
   
-  ensure_git_status_clean
-  
   ensure_git_branch # We can only release on master
+  
+  ensure_git_status_clean
   
   version_number = increment_version_number(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj")
   increment_version_number(version_number: version_number, xcodeproj: "./Example/Carthage/ChatExample.xcodeproj")
+  increment_version_number(version_number: version_number, xcodeproj: "./Example/Cocoapods/ChatExample.xcodeproj")
+  increment_version_number(version_number: version_number, xcodeproj: "./Example/SPM/ChatExample.xcodeproj")
   
   if git_tag_exists(tag: version_number)
     UI.user_error!("Tag for version #{version_number} already exists!")
@@ -48,10 +50,36 @@ lane :release do |options|
                    )
                    
   push_to_git_remote(tags: true)
-                   
-  pod_push(path: "StreamChatClient.podspec", allow_warnings: true, skip_import_validation: true)
-  pod_push(path: "StreamChatCore.podspec", allow_warnings: true, skip_import_validation: true)
-  pod_push(path: "StreamChat.podspec", allow_warnings: true, skip_import_validation: true)
+  
+  # First pod release will not have any problems
+  pod_push(path: "StreamChatClient.podspec", allow_warnings: true)
+  
+  # Others will fail since they depend on trunk to get updated
+  
+  def release_core
+    begin
+      pod_push(path: "StreamChatCore.podspec", allow_warnings: true)
+    rescue
+      puts "pod_push failed. Waiting a minute until retry for trunk to get updated..."
+      sleep(60) # sleep for a minute, wait until trunk gets updates
+      release_core
+    end
+  end
+  
+  def release_ui
+    begin
+      pod_push(path: "StreamChat.podspec", allow_warnings: true)
+    rescue
+      puts "pod_push failed. Waiting a minute until retry for trunk to get updated..."
+      sleep(60) # sleep for a minute, wait until trunk gets updates
+      release_ui
+    end
+  end
+  
+  puts "Sleeping for 2 minutes for trunk to get updated..."
+  sleep(60 * 2)
+  release_core
+  release_ui
   
   slack(
     message: "#{version_number} successfully released!",

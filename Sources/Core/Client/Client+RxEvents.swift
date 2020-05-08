@@ -59,18 +59,19 @@ extension Client {
 
 extension Reactive where Base == Client {
     
+    /// Observe the connection state.
     public var connectionState: Observable<ConnectionState> {
         associated(to: base, key: &Client.rxOnConnect) { [unowned base] in
             base.rx.events
                 .filter({ _ in !base.isExpiredTokenInProgress })
-                .map({
+                .compactMap({
                     if case .connectionChanged(let state) = $0 {
                         return state
                     }
                     
                     return nil
                 })
-                .compactMap { $0 }
+                .startWith(base.connectionState)
                 .distinctUntilChanged()
                 .share(replay: 1)
         }

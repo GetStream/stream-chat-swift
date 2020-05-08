@@ -81,7 +81,8 @@ extension Client {
     private func restoreWatchingChannels() {
         watchingChannelsAtomic.flush()
         
-        guard let keys = watchingChannelsAtomic.get()?.keys, !keys.isEmpty else {
+        let keys = watchingChannelsAtomic.get().keys
+        guard !keys.isEmpty else {
             return
         }
         
