@@ -87,18 +87,14 @@ public struct ChannelResponse: Decodable {
             if unreadMessageRead.unreadMessagesCount > 0 {
                 // Calculate mentioned message unread count
                 // This is approximate since it'll be limited for the messages we've fetched
-                for message in messages.reversed() {
-                    if message.user.isCurrent {
-                        continue
-                    }
-                    
-                    if message.created > unreadMessageRead.lastReadDate {
-                        if message.user != currentUser, message.mentionedUsers.contains(currentUser) {
-                            unreadCount.mentionedMessages += 1
-                        }
-                    } else {
-                        break
-                    }
+                for message in messages.reversed() where !message.user.isCurrent {
+                   if message.created > unreadMessageRead.lastReadDate {
+                       if message.mentionedUsers.contains(currentUser) {
+                           unreadCount.mentionedMessages += 1
+                       }
+                   } else {
+                       break
+                   }
                 }
             }
         } else {

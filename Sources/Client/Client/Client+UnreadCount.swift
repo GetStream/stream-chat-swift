@@ -89,7 +89,7 @@ extension Client {
         
         // Update watching channels for unread count and watcher count.
         watchingChannels.forEach {
-            if let channel = $0.value, channel.cid == eventCid {
+            if let channel = $0.value {
                 channel.updateWatcherCount(event: event)
                 
                 if channel.readEventsEnabled {
