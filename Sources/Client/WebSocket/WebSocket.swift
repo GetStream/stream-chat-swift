@@ -266,7 +266,7 @@ extension WebSocket: WebSocketProviderDelegate {
         if isStopError(error) {
             logger?.log("💔 Disconnected with Stop code")
             consecutiveFailures = 0
-            connectionState = .disconnected(.websocketDisconnectError(error))
+            connectionStateAtomic.set(.disconnected(.websocketDisconnectError(error)))
             return
         }
         

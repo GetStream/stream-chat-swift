@@ -106,7 +106,7 @@ public final class Client: Uploader {
                                                                callbackQueue: .main), options: [])
     
     /// A default WebSocketProvider type.
-    let defaultWebSocketProviderType: WebSocketProvider.Type?
+    let defaultWebSocketProviderType: WebSocketProvider.Type
     /// The current connection state.
     public var connectionState: ConnectionState { webSocket.connectionState }
     /// Check if API key and token are valid and the web socket is connected.
