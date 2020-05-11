@@ -221,7 +221,6 @@ public struct Message: Codable {
 }
 
 extension Message: Equatable {
-    
     public static func == (lhs: Message, rhs: Message) -> Bool {
         lhs.id == rhs.id
             && lhs.type == rhs.type
