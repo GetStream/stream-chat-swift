@@ -11,6 +11,10 @@ import XCTest
 
 class Client_DevicesTests: XCTestCase {
 
+    enum TestError: Error {
+        case mockError(id: UUID = .init())
+    }
+
     var client: Client!
     var testUser: User!
 
@@ -34,6 +38,9 @@ class Client_DevicesTests: XCTestCase {
         MockNetworkURLProtocol.reset()
         super.tearDown()
     }
+
+    // MARK: - getDevice() tests
+
     func test_getDevice_createsRequest() {
         // Action
         client.devices { _ in }
@@ -47,6 +54,36 @@ class Client_DevicesTests: XCTestCase {
             body: nil
         )
     }
+
+    func test_getDevice_handlesSuccess() throws {
+        // Setup
+        let deviceId = "device_id_\(UUID().uuidString)"
+        let timestamp = Date(timeIntervalSince1970: 123456789)
+
+        MockNetworkURLProtocol.mockResponse(endpoint: .devices(testUser), responseBody:
+            ["devices": [ ["id": deviceId, "created_at": ISO8601DateFormatter().string(from: timestamp)] ]]
+        )
+
+        // Action
+        let result = try await { self.client.devices($0) }
+
+        // Assert
+        AssertResultSuccess(result, [Device(deviceId, created: timestamp)])
+        XCTAssertEqual(self.client.user.devices, [Device(deviceId, created: timestamp)])
+    }
+
+    func test_getDevice_handlesError() throws {
+        // Setup
+        let error = TestError.mockError()
+        MockNetworkURLProtocol.mockResponse(endpoint: .devices(testUser), error: error)
+
+        // Action
+        let result = try await { self.client.devices($0) }
+
+        // Assert
+        AssertResultFailure(result, ClientError.requestFailed(error))
+    }
+}
 
     func test_addDeviceWithDeviceID_createsRequest() {
         let testDeviceId = "device_id_\(UUID())"
