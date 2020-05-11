@@ -40,7 +40,6 @@ class Client_DevicesTests: XCTestCase {
     }
 
     // MARK: - getDevice() tests
-
     func test_getDevice_createsRequest() {
         // Action
         client.devices { _ in }
@@ -83,7 +82,8 @@ class Client_DevicesTests: XCTestCase {
         // Assert
         AssertResultFailure(result, ClientError.requestFailed(error))
     }
-}
+
+    // MARK: - addDevice() tests
 
     func test_addDeviceWithDeviceID_createsRequest() {
         let testDeviceId = "device_id_\(UUID())"
@@ -125,6 +125,44 @@ class Client_DevicesTests: XCTestCase {
             ]
         )
     }
+
+    func test_addDeviceWithDeviceID_handlesSuccess() throws {
+        // Setup
+        let deviceId = "device_id_\(UUID().uuidString)"
+
+        MockNetworkURLProtocol.mockResponse(endpoint: .addDevice(deviceId: deviceId, testUser))
+
+        // Action
+        let result = try await { done in
+            self.client.addDevice(deviceId: deviceId) { done($0) }
+        }
+
+        // Assert
+        AssertResultSuccess(result, .empty)
+        XCTAssertTrue(self.client.user.devices.contains(where: { $0.id == deviceId }))
+        XCTAssertTrue(self.client.user.currentDevice?.id == deviceId)
+    }
+
+    func test_addDeviceWithDeviceID_handlesError() throws {
+        // Setup
+        let deviceId = "device_id_\(UUID().uuidString)"
+        let error = TestError.mockError()
+
+        MockNetworkURLProtocol.mockResponse(endpoint: .addDevice(deviceId: deviceId, testUser), error: error)
+
+        // Action
+        let result = try await { done in
+            self.client.addDevice(deviceId: deviceId) { done($0) }
+        }
+
+        AssertResultFailure(result, ClientError.requestFailed(error))
+                
+        AssertAsync {
+            Assert.staysFalse(self.client.user.devices.contains(where: { $0.id == deviceId }));
+            Assert.staysFalse(self.client.user.currentDevice?.id == deviceId)
+        }
+    }
+}
 
     func test_removeDevice_createsRequest() {
         // Setup
