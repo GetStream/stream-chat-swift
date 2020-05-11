@@ -18,9 +18,10 @@ class Client_DevicesTests: XCTestCase {
         super.setUp()
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.protocolClasses?.insert(RequestRecorderURLProtocol.self, at: 0)
+        sessionConfig.protocolClasses?.insert(MockNetworkURLProtocol.self, at: 1)
 
         let clientConfig = Client.Config(apiKey: "test_api_key")
-        // We can create a new `Client` instance unless we use `Client.shared` in tests.
+        // We can create a new `Client` instance because we don't use `Client.shared` in tests.
         client = Client(config: clientConfig, defaultURLSessionConfiguration: sessionConfig)
 
         testUser = User(id: "test_user_\(UUID())")
@@ -30,6 +31,7 @@ class Client_DevicesTests: XCTestCase {
     override func tearDown() {
         // Reset all recorded requests and prepare it for another run
         RequestRecorderURLProtocol.reset()
+        MockNetworkURLProtocol.reset()
         super.tearDown()
     }
     func test_getDevice_createsRequest() {
