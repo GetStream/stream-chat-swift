@@ -162,7 +162,8 @@ class Client_DevicesTests: XCTestCase {
             Assert.staysFalse(self.client.user.currentDevice?.id == deviceId)
         }
     }
-}
+
+    // MARK: - removeDevice() tests
 
     func test_removeDevice_createsRequest() {
         // Setup
@@ -182,5 +183,57 @@ class Client_DevicesTests: XCTestCase {
             ],
             body: nil
         )
+    }
+
+    func test_removeDevice_handlesSuccess() throws {
+        // Setup
+        let device = Device("device_id_\(UUID().uuidString)")
+        var user = client.user
+        user.devices = [device]
+        user.currentDevice = device
+        client.set(user: user, token: "test_token")
+
+        assert(user.devices == [device])
+        assert(user.currentDevice == device)
+
+        MockNetworkURLProtocol.mockResponse(endpoint: .removeDevice(deviceId: device.id, testUser))
+
+        // Action
+        let result = try await { done in
+            self.client.removeDevice(deviceId: device.id) { done($0) }
+        }
+
+        // Assert
+        AssertResultSuccess(result, .empty)
+        XCTAssertTrue(self.client.user.devices.allSatisfy { $0.id != device.id })
+        XCTAssertTrue(self.client.user.currentDevice?.id != device.id)
+    }
+
+    func test_removeDevice_handlesError() throws {
+        // Setup
+        let error = TestError.mockError()
+        let device = Device("device_id_\(UUID().uuidString)")
+        var user = client.user
+        user.devices = [device]
+        user.currentDevice = device
+        client.set(user: user, token: "test_token")
+
+        assert(user.devices == [device])
+        assert(user.currentDevice == device)
+        
+        MockNetworkURLProtocol.mockResponse(endpoint: .removeDevice(deviceId: device.id, testUser), error: error)
+
+        // Action
+        let result = try await { done in
+            self.client.removeDevice(deviceId: device.id) { done($0) }
+        }
+
+        // Assert
+        AssertResultFailure(result, ClientError.requestFailed(error))
+        
+        AssertAsync {
+            Assert.staysTrue(self.client.user.devices.contains(where: { $0.id == device.id }))
+            Assert.staysTrue(self.client.user.currentDevice?.id == device.id)
+        }
     }
 }
