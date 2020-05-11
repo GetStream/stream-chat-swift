@@ -51,7 +51,7 @@ You'll typically want to start out using the UI components, and implement your c
 
 ## Mac Catalyst
 
-Our frameworks are compatible with [Mac Catalyst](https://developer.apple.com/mac-catalyst/), meaning you can create a chat application that works on both iOS and macOS. Read about it [here](link-to-blog-post).
+Our frameworks are compatible with [Mac Catalyst](https://developer.apple.com/mac-catalyst/), meaning you can create a chat application that works on both iOS and macOS. Read about it [here](https://getstream.io/blog/stream-chat-swift-macos-support).
 
 ⚠️ Carthage does not support Mac Catalyst yet. ([ref](https://github.com/Carthage/Carthage/issues/2799))
 
