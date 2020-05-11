@@ -18,19 +18,19 @@ final class ClientLoggerTests: XCTestCase {
     private var logOutput = [String]()
     
     private lazy var infoLogger: ClientLogger = {
-        ClientLogger.logger = { [weak self] _, _, message in self?.logOutput.append(message) }
+        ClientLogger.logger = { [weak self] _, _, _, message in self?.logOutput.append(message) }
         let logger = ClientLogger(icon: "🗣", level: .info)
         return logger
     }()
     
     private lazy var debugLogger: ClientLogger = {
-        ClientLogger.logger = { [weak self] _, _, message in self?.logOutput.append(message) }
+        ClientLogger.logger = { [weak self] _, _, _, message in self?.logOutput.append(message) }
         let logger = ClientLogger(icon: "🗣", level: .debug)
         return logger
     }()
     
     private lazy var errorLogger: ClientLogger = {
-        ClientLogger.logger = { [weak self] _, _, message in self?.logOutput.append(message) }
+        ClientLogger.logger = { [weak self] _, _, _, message in self?.logOutput.append(message) }
         let logger = ClientLogger(icon: "🗣", level: .error)
         return logger
     }()

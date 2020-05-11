@@ -109,7 +109,7 @@ public final class InternetConnection {
     
     func log(_ message: String) {
         if !Client.shared.logOptions.isEmpty {
-            ClientLogger.log("🕸", message)
+            ClientLogger.log("🕸", level: .debug, message)
         }
     }
 }

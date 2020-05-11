@@ -174,7 +174,7 @@ public final class Channel: Codable {
             return extraData
             
         } catch {
-            ClientLogger.log("🐴❌", "Channel extra data decoding error: \(error). "
+            ClientLogger.log("🐴❌", level: .error, "Channel extra data decoding error: \(error). "
                 + "Trying to recover by only decoding name and imageURL")
             
             guard let container = try? decoder.container(keyedBy: DecodingKeys.self) else {

@@ -13,10 +13,14 @@ import UIKit
 public final class ClientLogger {
     
     /// A logger level.
-    public enum Level {
+    public enum Level: String, CustomStringConvertible {
         case error
         case debug
         case info
+        
+        public var description: String {
+            return rawValue.uppercased()
+        }
         
         static func level(_ options: Options) -> Level {
             if options.isError {
@@ -125,18 +129,27 @@ public final class ClientLogger {
         }
     }
     
+    /// Controls whether to display icons in logs
+    /// Only valid when default `ClientLogger.logger` block is used, if you've overridden that, this is not valid.
+    public static var iconEnabled = true
+    
     /// A customizable logger block.
     /// By default error messages will print to the console, but you can customize it to use own logger.
     ///
     /// - Parameters:
     ///     - icon: a small icon string like a tag for messages, e.g. 🦄
     ///     - dateAndTime: a formatted string of date and time, could be empty.
+    ///     - level: Log level
     ///     - message: a message.
-    public static var logger: (_ icon: String, _ dateTime: String, _ message: String) -> Void = {
-        if $1.isEmpty || DateFormatter.log == nil {
-            print($0, $2)
+    public static var logger: (String, String, Level, String) -> Void = { icon, dateTime, level, message in
+        if iconEnabled {
+            print(icon, terminator: " ")
+        }
+        
+        if dateTime.isEmpty {
+            print("[\(Date().log)]", "[\(level)]", message)
         } else {
-            print($0, "[\($1)]", $2)
+            print("[\(dateTime)]", "[\(level)]", message)
         }
     }
     
@@ -188,7 +201,7 @@ public final class ClientLogger {
     public func log(headers: [String: String]?) {
         if let headers = headers, !headers.isEmpty {
             var message = "Request headers:\n"
-            headers.forEach { message += "◾️ \($0) = \($1)\n" }
+            headers.forEach { message += "\t◾️ \($0) = \($1)\n" }
             log(message, level: .info)
         }
     }
@@ -286,7 +299,7 @@ public final class ClientLogger {
     ///   - message: a message.
     public func log(_ message: String, level: Level = .debug) {
         if self.level.isEnabled(with: level) {
-            ClientLogger.log(icon, dateTime: Date().log, message)
+            ClientLogger.log(icon, dateTime: Date().log, level: level, message)
         }
     }
     
@@ -296,8 +309,8 @@ public final class ClientLogger {
     ///   - icon: a string icon, e.g. emoji.
     ///   - dateTime: a date time as a string.
     ///   - message: a message.
-    public static func log(_ icon: String, dateTime: String = "", _ message: String) {
-        ClientLogger.logger(icon, dateTime, message)
+    public static func log(_ icon: String, dateTime: String = "", level: Level = .info, _ message: String) {
+        ClientLogger.logger(icon, dateTime, level, message)
     }
 
     /// Performs `Swift.assert` and stops program execution if `condition` evaluated to false. In RELEASE builds only
@@ -314,7 +327,7 @@ public final class ClientLogger {
         guard condition == false else { return }
         let evaluatedMessage = message()
         Swift.assert(condition, evaluatedMessage, file: file, line: line)
-        ClientLogger.logger("", "", "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
+        ClientLogger.logger("", "", .error, "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
     }
 
     /// Triggers `Swift.assertionFailure`. In RELEASE builds only logs the failure.
@@ -322,7 +335,7 @@ public final class ClientLogger {
     /// - Parameter message: A custom message to log.
     public static func logAssertionFailure(_ message: String, file: StaticString = #file, line: UInt = #line) {
         Swift.assertionFailure(message, file: file, line: line)
-        ClientLogger.logger("", "", "Assertion failure \(file)[\(line)]: " + message)
+        ClientLogger.logger("", "", .error, "Assertion failure \(file)[\(line)]: " + message)
     }
 
     static func showConnectionAlert(_ error: Error, jsonError: ClientErrorResponse?) {
@@ -341,13 +354,13 @@ public final class ClientLogger {
 extension Date {
     /// A string of the date for the `ClientLogger`.
     public var log: String {
-        return DateFormatter.log?.string(from: self) ?? ""
+        return DateFormatter.log.string(from: self)
     }
 }
 
 extension DateFormatter {
     /// A date formatter for `ClientLogger`.
-    public static var log: DateFormatter? = {
+    public static var log: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM HH:mm:ss.SSS"
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
