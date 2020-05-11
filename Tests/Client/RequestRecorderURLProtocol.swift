@@ -34,6 +34,13 @@ class RequestRecorderURLProtocol: URLProtocol {
         return latestRequest
     }
 
+    /// Cleans up existing waiters and recorded requests. We have to explictly reset the state because URLProtocols
+    /// work with static variables.
+    static func reset() {
+        latestRequest = nil
+        latestRequestExpectation = nil
+    }
+
     override class func canInit(with request: URLRequest) -> Bool {
         DispatchQueue.main.async {
             latestRequest = request

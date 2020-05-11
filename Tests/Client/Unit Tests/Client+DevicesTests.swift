@@ -27,6 +27,11 @@ class Client_DevicesTests: XCTestCase {
         client.set(user: testUser, token: "test_token")
     }
 
+    override func tearDown() {
+        // Reset all recorded requests and prepare it for another run
+        RequestRecorderURLProtocol.reset()
+        super.tearDown()
+    }
     func test_getDevice_createsRequest() {
         // Action
         client.devices { _ in }
