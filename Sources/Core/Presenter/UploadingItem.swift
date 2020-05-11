@@ -185,10 +185,12 @@ public final class UploadingItem: Equatable {
     }
     
     public static func == (lhs: UploadingItem, rhs: UploadingItem) -> Bool {
-        lhs.url == rhs.url
+        lhs.channel == rhs.channel
+            && lhs.url == rhs.url
             && lhs.image == rhs.image
             && lhs.fileName == rhs.fileName
             && lhs.fileType == rhs.fileType
+            && lhs.fileSize == rhs.fileSize
             && lhs.type == rhs.type
     }
 }
