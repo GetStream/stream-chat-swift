@@ -131,26 +131,4 @@ final class WebSocketTests: XCTestCase {
         wait(for: [shouldntDisconnectWithStopErrorExpectation], timeout: 4)
         XCTAssertTrue(webSocket.isConnected)
     }
-    
-    func test_webSocket_emptyProvider() {
-        let stopErrorOnConnectExpectation =
-            expectation(description: "WebSocket will disconnect with StopError for EmptyWebSocketProvider")
-        
-        let webSocket = WebSocket()
-        
-        _ = webSocket.subscribe { event in
-            if case .connectionChanged(let state) = event,
-                case .disconnected(let clientError) = state,
-                case .websocketDisconnectError(let websocketDisconnectError) = clientError,
-                let webSocketProviderError = websocketDisconnectError as? WebSocketProviderError,
-                webSocketProviderError.code == WebSocketProviderError.stopErrorCode {
-                stopErrorOnConnectExpectation.fulfill()
-            }
-        }
-        
-        XCTAssertFalse(webSocket.isConnected)
-        webSocket.connect()
-        wait(for: [stopErrorOnConnectExpectation], timeout: 2)
-        XCTAssertFalse(webSocket.isConnected)
-    }
 }
