@@ -14,6 +14,7 @@
 		791664E3245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */; };
 		791664E4245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */; };
 		793612F62461437700944861 /* MockNetworkURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612F52461437700944861 /* MockNetworkURLProtocol.swift */; };
+		793612FE2461684500944861 /* AssertResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FD2461684500944861 /* AssertResult.swift */; };
 		793613002461780400944861 /* Await.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FF2461780400944861 /* Await.swift */; };
 		79411CD42462DC0A003972E9 /* ClientLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */; };
 		794BDE4A2434BD7400BFBA1F /* NestableCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */; };
@@ -315,6 +316,7 @@
 		7920E84E2449C6EF00CCBFBF /* fastlane */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fastlane; sourceTree = "<group>"; };
 		79324B7A2462A08A00B2597E /* AtomicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicTests.swift; sourceTree = "<group>"; };
 		793612F52461437700944861 /* MockNetworkURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkURLProtocol.swift; sourceTree = "<group>"; };
+		793612FD2461684500944861 /* AssertResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertResult.swift; sourceTree = "<group>"; };
 		793612FF2461780400944861 /* Await.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Await.swift; sourceTree = "<group>"; };
 		794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestableCodingKey.swift; sourceTree = "<group>"; };
 		795FCD1B23EB155000990F15 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
@@ -654,6 +656,7 @@
 			children = (
 				791664E1245AF8AF0020710B /* AssertNetworkRequest.swift */,
 				79CABB0624630AC600240052 /* AssertEventually.swift */,
+				793612FD2461684500944861 /* AssertResult.swift */,
 			);
 			path = "Custom Assertions";
 			sourceTree = "<group>";
@@ -1747,6 +1750,7 @@
 				79CABAFE2462A4E400240052 /* AtomicTests.swift in Sources */,
 				791664E2245AF8AF0020710B /* AssertNetworkRequest.swift in Sources */,
 				79CABB0724630AC600240052 /* AssertEventually.swift in Sources */,
+				793612FE2461684500944861 /* AssertResult.swift in Sources */,
 				79411CD42462DC0A003972E9 /* ClientLoggerTests.swift in Sources */,
 				8AC0D94F23D4BA7D0080B8BC /* FilterTests.swift in Sources */,
 				791664DF245AC89E0020710B /* Client+DevicesTests.swift in Sources */,
