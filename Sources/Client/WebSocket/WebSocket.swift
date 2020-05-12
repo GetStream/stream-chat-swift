@@ -10,8 +10,8 @@ import UIKit
 
 /// A web socket client.
 final class WebSocket {
-    /// A timeinterval to ping connection to keep it alive.
-    static var pingTimeInterval: TimeInterval = 25
+    /// The time interval to ping connection to keep it alive.
+    static let pingTimeInterval: TimeInterval = 25
     
     /// A WebSocket connection callback.
     private let onEvent: (Event) -> Void
