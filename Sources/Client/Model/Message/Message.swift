@@ -107,13 +107,23 @@ public struct Message: Codable {
     /// Init a message.
     ///
     /// - Parameters:
-    ///   - id: a message id.
-    ///   - text: a text.
-    ///   - attachments: attachments (see `Attachment`).
-    ///   - extraData: an extra data.
-    ///   - parentId: a parent message id.
-    ///   - mentionedUsers: a list of mentioned users.
-    ///   - showReplyInChannel: a flag to show reply messages in a channel, not in a separate thread.
+    ///   - id: Message id, leave it blank if it's a new message since server generates it
+    ///   - type: Message type. See `MessageType`
+    ///   - parentId: Parent message id if this message is a reply
+    ///   - created: Message created date
+    ///   - updated: Message updated date
+    ///   - deleted: Message deleted date
+    ///   - text: Message body
+    ///   - command: Command associated with message
+    ///   - args: Arguments in message
+    ///   - attachments: Attachments for this message
+    ///   - mentionedUsers: Mentioned users in this message
+    ///   - extraData: ExtraData for this message
+    ///   - latestReactions: Reactions to this message
+    ///   - ownReactions: Current user's reactions to this message
+    ///   - reactionScores: Scores of reactions to this message
+    ///   - replyCount: Reply count
+    ///   - showReplyInChannel: Flag for showing this reply message also in channel.
     public init(id: String = "",
                 type: MessageType = .regular,
                 parentId: String? = nil,
