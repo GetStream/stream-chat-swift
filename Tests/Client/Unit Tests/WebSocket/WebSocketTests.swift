@@ -2,7 +2,6 @@
 //  WebSocketTests.swift
 //  StreamChatClientTests
 //
-//  Created by Alexey Bukhtin on 02/05/2020.
 //  Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
@@ -11,127 +10,141 @@ import XCTest
 
 final class WebSocketTests: XCTestCase {
     
-    let mockProvider = WebSocketProviderMock(request: URLRequest(url: URL(string: "http://test.com")!), callbackQueue: .main)
-    let logger: ClientLogger = {
-        ClientLogger.log = { _, _, _, _ in }
-        return ClientLogger(icon: "🦄", level: .info)
-    }()
+    // The longest time WebSocket waits to reconnect. This is hardcoded in WebSocket.
+    let maxReconnectTimeout: VirtualTime.Seconds = 25
     
-    override static func setUp() {
-        // Change the default time interval to ping connection for 2 sec.
-        // Mock will use own timer for 3 sec to terminate connection.
-        WebSocket.pingTimeInterval = 2
+    var time: VirtualTime!
+    
+    var socketProvider: WebSocketProviderMock!
+    var webSocket: WebSocket!
+    var connectionId: String!
+    var user: User!
+    
+    var emittedEvents: [Event]!
+    
+    override func setUp() {
+        super.setUp()
+        
+        emittedEvents = []
+        
+        time = VirtualTime()
+        VirtualTimeTimer.time = time
+        
+        socketProvider = WebSocketProviderMock()
+        webSocket = WebSocket(socketProvider,
+                              options: [],
+                              timerType: VirtualTimeTimer.self,
+                              onEvent: { self.emittedEvents.append($0) })
+        
+        connectionId = UUID().uuidString
+        user = User(id: "test_user_\(UUID().uuidString)")
     }
     
-    override class func tearDown() {
-        // Restore the default ping time interval.
-        WebSocket.pingTimeInterval = 25
+    func test_connectionFlow() {
+        webSocket.connect()
+        AssertAsync.willBeEqual(self.socketProvider.connectCalledCount, 1)
+        XCTAssertFalse(webSocket.isConnected)
+        
+        socketProvider.simulateConnectionSuccess()
+        socketProvider.simulateMessageReceived(.healthCheckEvent(userId: user.id, connectionId: connectionId))
+        
+        AssertAsync.willBeEqual(self.webSocket.isConnected, true)
+        XCTAssertEqual(webSocket.connectionId, connectionId)
     }
     
-    func test_webSocket_connectWithSubscription() {
-        // Wait for connected event from 2 subscriptions.
-        let connectedExpectation = expectation(description: "WebSocket connected")
-        connectedExpectation.expectedFulfillmentCount = 2
+    func test_reconnectionFlow_withoutStopError() {
+        // Setup (connect)
+        test_connectionFlow()
+        let originalConnectCalledCount = socketProvider.connectCalledCount
         
-        // On force disconnect the WebSocket shouldn't try to reconnect.
-        let shouldntReconnectExpectation = expectation(description: "WebSocket shouldn't reconnect")
-        shouldntReconnectExpectation.isInverted = true
-        
-        let eventsHandler: Client.OnEvent = { event in
-            guard case .connectionChanged(let state) = event else {
-                return
-            }
-            
-            if case .connected = state {
-                connectedExpectation.fulfill()
-            } else if case .reconnecting = state {
-                shouldntReconnectExpectation.fulfill()
-            }
+        // Action (disconnect 10 times)
+        for _ in 0..<10 {
+            socketProvider.simulateDisconnect()
+            time.run(numberOfSeconds: maxReconnectTimeout + 1)
         }
         
-        let webSocket = WebSocket(mockProvider, options: .stayConnectedInBackground, onEvent: eventsHandler)
-        _ = webSocket.subscribe(callback: eventsHandler)
-        
-        XCTAssertFalse(webSocket.isConnected)
-        webSocket.connect()
-        wait(for: [connectedExpectation], timeout: 2)
-        XCTAssertTrue(webSocket.isConnected)
-        webSocket.disconnect(reason: "test")
-        XCTAssertFalse(webSocket.isConnected)
-        wait(for: [shouldntReconnectExpectation], timeout: 1)
+        XCTAssertEqual(socketProvider.connectCalledCount, originalConnectCalledCount + 10)
     }
-    
-    func test_webSocket_reconnection() {
-        // Expect 3 connected events. 2 from reconnection.
-        let connectedExpectation = expectation(description: "WebSocket connected twice")
-        connectedExpectation.expectedFulfillmentCount = 3
-        let reconnectingExpectation = expectation(description: "WebSocket reconnecting")
-        reconnectingExpectation.expectedFulfillmentCount = 2
-        
-        let webSocket = WebSocket(mockProvider, options: .stayConnectedInBackground, logger: logger) { event in
-            guard case .connectionChanged(let state) = event else {
-                return
-            }
-            
-            if case .connected = state {
-                connectedExpectation.fulfill()
-                self.mockProvider.disconnect(error: .init(reason: "Some internal error or Internet connection",
-                                                          code: 0,
-                                                          providerType: type(of: self.mockProvider),
-                                                          providerError: nil))
-            } else if case .reconnecting = state {
-                reconnectingExpectation.fulfill()
-            }
-        }
-        
-        webSocket.connect()
-        wait(for: [connectedExpectation, reconnectingExpectation], timeout: 2)
-    }
-    
-    func test_webSocket_reconnect3times() {
-        // Expect connected event after 3 attempts.
-        let connectedExpectation = expectation(description: "WebSocket connected twice")
-        let reconnectingExpectation = expectation(description: "WebSocket reconnecting")
-        reconnectingExpectation.expectedFulfillmentCount = 3
-        let shouldntConnectExpectation = expectation(description: "WebSocket shouldn't connect after 2 sec")
-        shouldntConnectExpectation.isInverted = true
 
-        let webSocket = WebSocket(mockProvider, options: .stayConnectedInBackground) { event in
-            guard case .connectionChanged(let state) = event else {
-                return
-            }
-            
-            if case .connected = state {
-                connectedExpectation.fulfill()
-                shouldntConnectExpectation.fulfill()
-            } else if case .reconnecting = state {
-                reconnectingExpectation.fulfill()
-            }
-        }
+    func test_reconnectionFlow_withStopError_shouldntReconnect() {
+        // Setup (connect)
+        test_connectionFlow()
+                        
+        let stopError = WebSocketProviderError(reason: "test",
+                                               code: WebSocketProviderError.stopErrorCode,
+                                               providerType: WebSocketProviderMock.self,
+                                               providerError: nil)
         
-        mockProvider.failNextConnectCount = 3
-        webSocket.connect()
-        wait(for: [shouldntConnectExpectation], timeout: 2)
-        wait(for: [connectedExpectation, reconnectingExpectation], timeout: 10)
+        let originalConnectCalledCount = socketProvider.connectCalledCount
+
+        // Action
+        socketProvider.simulateDisconnect(stopError)
+        time.run(numberOfSeconds: maxReconnectTimeout + 1)
+        
+        // Assert
+        AssertAsync {
+            Assert.staysTrue(self.socketProvider.connectCalledCount == originalConnectCalledCount)
+        }
     }
-    
-    func test_webSocket_ping() {
-        // Keep Connection for 4 sec.
-        let shouldntDisconnectWithStopErrorExpectation = expectation(description: "WebSocket shouldn't recieve stop error")
-        shouldntDisconnectWithStopErrorExpectation.isInverted = true
+
+    func test_reconnectionFlow_whenDisconnectedManually_shouldntReconnect() {
+        // Setup (connect)
+        test_connectionFlow()
+        let originalConnectCalledCount = socketProvider.connectCalledCount
+
+        // Action
+        webSocket.disconnect(reason: "Tests")
+        time.run(numberOfSeconds: maxReconnectTimeout + 1)
         
-        let webSocket = WebSocket(mockProvider, options: .stayConnectedInBackground) { event in
-            if case .connectionChanged(let state) = event,
-                case .disconnected(let clientError) = state,
-                case .websocketDisconnectError(let websocketDisconnectError) = clientError,
-                let webSocketProviderError = websocketDisconnectError as? WebSocketProviderError,
-                webSocketProviderError.code == WebSocketProviderError.stopErrorCode {
-                shouldntDisconnectWithStopErrorExpectation.fulfill()
-            }
+        // Assert
+        AssertAsync {
+            Assert.staysTrue(self.socketProvider.connectCalledCount == originalConnectCalledCount)
         }
+    }
+
+    func test_pingIsSentPeriodically() {
+        // Setup (connect)
+        test_connectionFlow()
         
-        webSocket.connect()
-        wait(for: [shouldntDisconnectWithStopErrorExpectation], timeout: 4)
-        XCTAssertTrue(webSocket.isConnected)
+        let pingInterval = WebSocket.pingTimeInterval
+        assert(socketProvider.sendPingCalledCounter == 0)
+        
+        // Action
+        time.run(numberOfSeconds: pingInterval + 1)
+        XCTAssertEqual(socketProvider.sendPingCalledCounter, 1)
+        
+        time.run(numberOfSeconds: 3 * pingInterval)
+        XCTAssertEqual(socketProvider.sendPingCalledCounter, 1 + 3)
+    }
+}
+
+private extension Dictionary {
+    
+    /// Helper function to create a `health.check` event JSON with the given `userId` and `connectId`.
+    static func healthCheckEvent(userId: String, connectionId: String) -> [String: Any] {
+        [
+            "created_at" : "2020-05-02T13:21:03.862065063Z",
+            "me" : [
+                "id" : userId,
+                "banned" : false,
+                "unread_channels" : 0,
+                "mutes" : [],
+                "last_active" : "2020-05-02T13:21:03.849219Z",
+                "created_at" : "2019-06-05T15:01:52.847807Z",
+                "devices" : [],
+                "invisible" : false,
+                "unread_count" : 0,
+                "channel_mutes" : [],
+                "image" : "https://i.imgur.com/EgEPqWZ.jpg",
+                "updated_at" : "2020-05-02T13:21:03.855468Z",
+                "role" : "user",
+                "total_unread_count" : 0,
+                "online" : true,
+                "name" : "steep-moon-9",
+                "test" : 1
+            ],
+            "type" : "health.check",
+            "connection_id" : connectionId
+        ]
     }
 }
