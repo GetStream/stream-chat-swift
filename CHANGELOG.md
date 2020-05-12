@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Logs will now output log level, access it when overriding `ClientLogger.log` block [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
 - By default, logs will not output emoji icons anymore, but all logs will now output date [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
 
+
+### ✅ Added
+  - `silent` property added to messages, see docs in https://getstream.io/chat/docs/silent_messages/?language=swift [#264](https://github.com/GetStream/stream-chat-swift/issues/264)
+
 # [2.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.0)
 _May 08, 2020_
 
