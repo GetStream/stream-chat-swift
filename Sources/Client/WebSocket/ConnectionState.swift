@@ -37,8 +37,11 @@ public enum ConnectionState: Equatable {
         switch (lhs, rhs) {
         case (.notConnected, .notConnected),
              (.connecting, .connecting),
-             (.connected, .connected):
+             (.reconnecting, .reconnecting),
+             (.disconnecting, .disconnecting):
             return true
+        case (.connected(let userConnection1), .connected(let userConnection2)):
+            return userConnection1 == userConnection2
         case (.disconnected(let error1), .disconnected(let error2)):
             return error1?.localizedDescription == error2?.localizedDescription
         default:
