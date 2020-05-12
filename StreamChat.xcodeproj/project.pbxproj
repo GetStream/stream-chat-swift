@@ -30,6 +30,7 @@
 		79CABB0724630AC600240052 /* AssertAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0624630AC600240052 /* AssertAsync.swift */; };
 		79CABB0924644C0700240052 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0824644C0700240052 /* VirtualTime.swift */; };
 		79CABB0B24644C1500240052 /* VirtualTimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0A24644C1500240052 /* VirtualTimeTests.swift */; };
+		79CABB0D246457EE00240052 /* VirtualTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0C246457EE00240052 /* VirtualTimers.swift */; };
 		79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D50C7624321BDA0052BA03 /* Client+Events.swift */; };
 		79EE393C2453204E0034EBF3 /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; };
 		79EE3942245320610034EBF3 /* ClientTests00.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE6206923CF63F000AB3426 /* ClientTests00.swift */; };
@@ -337,6 +338,7 @@
 		79CABB0624630AC600240052 /* AssertAsync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertAsync.swift; sourceTree = "<group>"; };
 		79CABB0824644C0700240052 /* VirtualTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTime.swift; sourceTree = "<group>"; };
 		79CABB0A24644C1500240052 /* VirtualTimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTimeTests.swift; sourceTree = "<group>"; };
+		79CABB0C246457EE00240052 /* VirtualTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTimers.swift; sourceTree = "<group>"; };
 		79D50C7624321BDA0052BA03 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		79EE39372453204E0034EBF3 /* StreamChatClientIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatClientIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		80B937A42434F5FC003D950E /* Array+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
@@ -681,6 +683,7 @@
 			children = (
 				79CABB0824644C0700240052 /* VirtualTime.swift */,
 				79CABB0A24644C1500240052 /* VirtualTimeTests.swift */,
+				79CABB0C246457EE00240052 /* VirtualTimers.swift */,
 			);
 			path = "Virtual Time";
 			sourceTree = "<group>";
@@ -1794,6 +1797,7 @@
 				8AB33A5E240EA19A00777682 /* AttachmentTypeTests.swift in Sources */,
 				79CABB0924644C0700240052 /* VirtualTime.swift in Sources */,
 				8A2E4F07245DAC210032565F /* WebSocketTests.swift in Sources */,
+				79CABB0D246457EE00240052 /* VirtualTimers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
