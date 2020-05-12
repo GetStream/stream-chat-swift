@@ -44,6 +44,7 @@ function_body_length:
 identifier_name:
   excluded: [r, g, b, a, x, y, z, dx, dy, dz, i, j, k, id, op, or, me, at, to, in]
   allowed_symbols: ["_"]
+  validates_start_with_lowercase: false
 
 line_length: 
   warning: 134
