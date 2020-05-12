@@ -98,7 +98,7 @@
 		8ACC7BFE241924AD000750E4 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB6241924AD000750E4 /* Environment.swift */; };
 		8ACC7BFF241924AD000750E4 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB7241924AD000750E4 /* Atomic.swift */; };
 		8ACC7C00241924AD000750E4 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB8241924AD000750E4 /* Bundle+Extensions.swift */; };
-		8ACC7C01241924AD000750E4 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB9241924AD000750E4 /* RepeatingTimer.swift */; };
+		8ACC7C01241924AD000750E4 /* Timers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BB9241924AD000750E4 /* Timers.swift */; };
 		8ACC7C03241924AD000750E4 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBC241924AD000750E4 /* String+Extensions.swift */; };
 		8ACC7C04241924AD000750E4 /* Functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBD241924AD000750E4 /* Functions.swift */; };
 		8ACC7C05241924AD000750E4 /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBE241924AD000750E4 /* Result+Extensions.swift */; };
@@ -396,7 +396,7 @@
 		8ACC7BB6241924AD000750E4 /* Environment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		8ACC7BB7241924AD000750E4 /* Atomic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		8ACC7BB8241924AD000750E4 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
-		8ACC7BB9241924AD000750E4 /* RepeatingTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
+		8ACC7BB9241924AD000750E4 /* Timers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timers.swift; sourceTree = "<group>"; };
 		8ACC7BBB241924AD000750E4 /* Int+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		8ACC7BBC241924AD000750E4 /* String+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		8ACC7BBD241924AD000750E4 /* Functions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Functions.swift; sourceTree = "<group>"; };
@@ -803,7 +803,7 @@
 				8ACC7BB7241924AD000750E4 /* Atomic.swift */,
 				8ACC7BC0241924AD000750E4 /* WeakRef.swift */,
 				8ACC7BB6241924AD000750E4 /* Environment.swift */,
-				8ACC7BB9241924AD000750E4 /* RepeatingTimer.swift */,
+				8ACC7BB9241924AD000750E4 /* Timers.swift */,
 				8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */,
 				794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */,
 			);
@@ -1748,7 +1748,7 @@
 				8ACC7C1E241924AD000750E4 /* ChannelQuery.swift in Sources */,
 				8ACC7C2F241924AD000750E4 /* Client+Message.swift in Sources */,
 				8A2C1EF12451EED700A33E3B /* Uploader.swift in Sources */,
-				8ACC7C01241924AD000750E4 /* RepeatingTimer.swift in Sources */,
+				8ACC7C01241924AD000750E4 /* Timers.swift in Sources */,
 				8ACC7BFF241924AD000750E4 /* Atomic.swift in Sources */,
 				8ACC7C1A241924AD000750E4 /* Member.swift in Sources */,
 			);
