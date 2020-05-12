@@ -131,7 +131,7 @@ public final class ClientLogger {
     
     /// Controls whether to display icons in logs
     /// Only valid when default `ClientLogger.logger` block is used, if you've overridden that, this is not valid.
-    public static var iconEnabled = true
+    public static var iconEnabled = false
     
     /// Controls whether to display date in logs
     /// Only valid when default `ClientLogger.logger` block is used, if you've overridden that, this is not valid.
@@ -147,9 +147,35 @@ public final class ClientLogger {
     /// - Parameters:
     ///     - icon: a small icon string like a tag for messages, e.g. 🦄
     ///     - dateAndTime: a formatted string of date and time, could be empty.
+    ///     - message: a message.
+    @available(*, deprecated, message: """
+    Customizing the logger block with `ClientLogger.logger` is deprecated. Please use `ClientLogger.log` to customize your logging logic.
+    """)
+    public static var logger: (String, String, String) -> Void = { icon, dateTime, message in
+        if iconEnabled {
+            print(icon, terminator: " ")
+        }
+
+        if dateEnabled {
+            if dateTime.isEmpty {
+                print("[\(Date().log)]", terminator: " ")
+            } else {
+                print("[\(dateTime)]", terminator: " ")
+            }
+        }
+
+        print(message)
+    }
+    
+    /// A customizable log block.
+    /// By default error messages will print to the console, but you can customize it to use your own log block.
+    ///
+    /// - Parameters:
+    ///     - icon: a small icon string like a tag for messages, e.g. 🦄
+    ///     - dateAndTime: a formatted string of date and time, could be empty.
     ///     - level: Log level
     ///     - message: a message.
-    public static var logger: (String, String, Level, String) -> Void = { icon, dateTime, level, message in
+    public static var log: (String, String, Level, String) -> Void = { icon, dateTime, level, message in
         if iconEnabled {
             print(icon, terminator: " ")
         }
@@ -326,7 +352,7 @@ public final class ClientLogger {
     ///   - dateTime: a date time as a string.
     ///   - message: a message.
     public static func log(_ icon: String, dateTime: String = "", level: Level = .info, _ message: String) {
-        ClientLogger.logger(icon, dateTime, level, message)
+        ClientLogger.log(icon, dateTime, level, message)
     }
 
     /// Performs `Swift.assert` and stops program execution if `condition` evaluated to false. In RELEASE builds only
@@ -343,7 +369,7 @@ public final class ClientLogger {
         guard condition == false else { return }
         let evaluatedMessage = message()
         Swift.assert(condition, evaluatedMessage, file: file, line: line)
-        ClientLogger.logger("", "", .error, "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
+        ClientLogger.log("", "", .error, "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
     }
 
     /// Triggers `Swift.assertionFailure`. In RELEASE builds only logs the failure.
@@ -351,7 +377,7 @@ public final class ClientLogger {
     /// - Parameter message: A custom message to log.
     public static func logAssertionFailure(_ message: String, file: StaticString = #file, line: UInt = #line) {
         Swift.assertionFailure(message, file: file, line: line)
-        ClientLogger.logger("", "", .error, "Assertion failure \(file)[\(line)]: " + message)
+        ClientLogger.log("", "", .error, "Assertion failure \(file)[\(line)]: " + message)
     }
 
     static func showConnectionAlert(_ error: Error, jsonError: ClientErrorResponse?) {

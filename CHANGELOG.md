@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### ✅ Added
-- Added `ClientLogger.iconEnabled` to control whether emoji icons will be displayed in logs. It'll only be valid when `ClientLogger.logger` block is not customized (overridden) [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
+- Added `ClientLogger.iconEnabled`, `ClientLogger.dateEnabled`, and `ClientLogger.levelEnabled` to control what will be shown in logs.
+  These will only be valid when `ClientLogger.logger` block is not customized (overridden) [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
 
 ### 🔄 Changed
-- Logs will now output log level, access it when overriding `ClientLogger.logger` block [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
-- All logs will now output date by default [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
+- `ClientLogger.logger` is deprecated, please use `ClientLogger.log` block to customize your log output [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
+- Logs will now output log level, access it when overriding `ClientLogger.log` block [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
+- By default, logs will not output emoji icons anymore, but all logs will now output date [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
 
 # [2.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.0)
 _May 08, 2020_

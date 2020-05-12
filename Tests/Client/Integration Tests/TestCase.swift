@@ -28,7 +28,7 @@ class TestCase: XCTestCase {
         }
         
         isClientReady = true
-        ClientLogger.logger = { icon, date, level, message in print(icon, message) }
+        ClientLogger.log = { icon, date, level, message in print(icon, message) }
         
         Client.configureShared(.init(
             apiKey: Self.apiKey,
