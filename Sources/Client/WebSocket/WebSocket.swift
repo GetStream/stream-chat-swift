@@ -11,8 +11,7 @@ import UIKit
 /// A web socket client.
 final class WebSocket {
     /// A timeinterval to ping connection to keep it alive.
-    /// It should be `let`, but it uses for tests. Needs to fix tests to avoid this.
-    static var pingTimeInterval = 25
+    static var pingTimeInterval: TimeInterval = 25
     
     /// A WebSocket connection callback.
     private let onEvent: (Event) -> Void
@@ -34,10 +33,13 @@ final class WebSocket {
     }
     
     private lazy var handshakeTimer =
-        RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval), queue: provider.callbackQueue) { [weak self] in
+        Timer.scheduleRepeating(timeInterval: WebSocket.pingTimeInterval,
+                                queue: provider.callbackQueue) { [weak self] in
             self?.logger?.log("🏓➡️", level: .info)
             self?.provider.sendPing()
-    }
+        }
+    
+    private let Timer: Timer.Type
     
     /// Checks if the web socket is connected and `connectionId` is not nil.
     var isConnected: Bool { connectionId != nil && provider.isConnected }
@@ -45,11 +47,14 @@ final class WebSocket {
     init(_ provider: WebSocketProvider,
          options: WebSocketOptions,
          logger: ClientLogger? = nil,
+         timerType: Timer.Type = DefaultTimer.self,
          onEvent: @escaping (Event) -> Void = { _ in }) {
+        
         self.provider = provider
         self.options = options
         self.logger = logger
         self.onEvent = onEvent
+        self.Timer = timerType
         self.provider.delegate = self
     }
     
@@ -95,13 +100,13 @@ extension WebSocket {
         }
         
         connectionStateAtomic.set(.reconnecting)
-        let maxDelay: TimeInterval = min(500 + consecutiveFailures * 2000, 25000) / 1000
-        let minDelay: TimeInterval = min(max(250, (consecutiveFailures - 1) * 2000), 25000) / 1000
+        let maxDelay: TimeInterval = min(0.5 + consecutiveFailures * 2, 25)
+        let minDelay: TimeInterval = min(max(0.25, (consecutiveFailures - 1) * 2), 25)
         consecutiveFailures += 1
-        let delay = minDelay + TimeInterval.random(in: 0...(maxDelay - minDelay))
+        let delay = TimeInterval.random(in: minDelay...maxDelay)
         logger?.log("⏳ Reconnect in \(delay) sec")
         
-        provider.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
+        Timer.schedule(timeInterval: delay, queue: provider.callbackQueue) { [weak self] in
             self?.connect()
         }
     }
