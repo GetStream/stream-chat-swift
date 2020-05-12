@@ -35,13 +35,6 @@ final class ClientLoggerTests: XCTestCase {
         return logger
     }()
     
-    override class func setUp() {
-        super.setUp()
-        
-        // Setup Client since Message initializer accesses User.current
-        Client.configureShared(.init(apiKey: "logger_test_api_key"))
-    }
-    
     override func setUp() {
         super.setUp()
         
@@ -50,7 +43,7 @@ final class ClientLoggerTests: XCTestCase {
         let testMembers = Set([User.user1.asMember])
         let testMessage = Message(id: "test", type: .reply, text: "test")
         let testReaction = Reaction(type: "angry", messageId: testMessage.id)
-        let testChannel = Client.shared.channel(type: .messaging, id: "test")
+        let testChannel = sharedClient.channel(type: .messaging, id: "test")
         
         allEndpoints = [.guestToken(User.user1),
                         .addDevice(deviceId: "test", User.user1),

@@ -118,6 +118,7 @@ public struct Message: Codable {
     ///   - deleted: Message deleted date
     ///   - text: Message body
     ///   - isSilent: Flag for indicating if this message is silent (does not increase unread count)
+    ///   - user: Owner of the message. Keep in mind that clients can only send messages as logged in user (User.current)
     ///   - command: Command associated with message
     ///   - args: Arguments in message
     ///   - attachments: Attachments for this message
@@ -136,6 +137,7 @@ public struct Message: Codable {
                 deleted: Date? = nil,
                 text: String,
                 silent: Bool = false,
+                user: User = User.current,
                 command: String? = nil,
                 args: String? = nil,
                 attachments: [Attachment] = [],
@@ -146,7 +148,6 @@ public struct Message: Codable {
                 reactionScores: [String: Int] = [:],
                 replyCount: Int = 0,
                 showReplyInChannel: Bool = false) {
-        user = User.current
         self.id = id
         self.type = type
         self.parentId = parentId
@@ -155,6 +156,7 @@ public struct Message: Codable {
         self.deleted = deleted
         self.text = text
         self.isSilent = silent
+        self.user = user
         self.command = command
         self.args = args
         self.attachments = attachments
