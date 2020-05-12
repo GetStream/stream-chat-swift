@@ -133,6 +133,14 @@ public final class ClientLogger {
     /// Only valid when default `ClientLogger.logger` block is used, if you've overridden that, this is not valid.
     public static var iconEnabled = true
     
+    /// Controls whether to display date in logs
+    /// Only valid when default `ClientLogger.logger` block is used, if you've overridden that, this is not valid.
+    public static var dateEnabled = true
+    
+    /// Controls whether to display log level in logs
+    /// Only valid when default `ClientLogger.logger` block is used, if you've overridden that, this is not valid.
+    public static var levelEnabled = true
+    
     /// A customizable logger block.
     /// By default error messages will print to the console, but you can customize it to use own logger.
     ///
@@ -146,11 +154,19 @@ public final class ClientLogger {
             print(icon, terminator: " ")
         }
         
-        if dateTime.isEmpty {
-            print("[\(Date().log)]", "[\(level)]", message)
-        } else {
-            print("[\(dateTime)]", "[\(level)]", message)
+        if dateEnabled {
+            if dateTime.isEmpty {
+                print("[\(Date().log)]", terminator: " ")
+            } else {
+                print("[\(dateTime)]", terminator: " ")
+            }
         }
+        
+        if levelEnabled {
+            print("[\(level)]", terminator: " ")
+        }
+        
+        print(message)
     }
     
     private let icon: String
