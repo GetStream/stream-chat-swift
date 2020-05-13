@@ -338,8 +338,11 @@ extension Client {
             do {
                 let podTrunk = try JSONDecoder().decode(PodTrunk.self, from: data)
                 if let latestVersion = podTrunk.versions.last?.name, latestVersion > Environment.version {
-                    ClientLogger.logger("📢", "", "StreamChat \(latestVersion) is released (you are on \(Environment.version)). "
-                        + "It's recommended to update to the latest version.")
+                    ClientLogger.log("📢",
+                                     "",
+                                     .info,
+                                     "StreamChat \(latestVersion) is released (you are on \(Environment.version)). "
+                                        + "It's recommended to update to the latest version.")
                 }
             } catch {}
         }

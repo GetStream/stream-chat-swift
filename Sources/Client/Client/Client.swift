@@ -176,12 +176,12 @@ public final class Client: Uploader {
         self.defaultWebSocketProviderType = defaultWebSocketProviderType
         
         if !apiKey.isEmpty, logOptions.isEnabled {
-            ClientLogger.logger("💬", "", "Stream Chat v.\(Environment.version)")
-            ClientLogger.logger("🔑", "", apiKey)
-            ClientLogger.logger("🔗", "", baseURL.description)
+            ClientLogger.log("💬", "", .info, "Stream Chat v.\(Environment.version)")
+            ClientLogger.log("🔑", "", .info, apiKey)
+            ClientLogger.log("🔗", "", .info, baseURL.description)
             
             if let database = database {
-                ClientLogger.logger("💽", "", "\(database.self)")
+                ClientLogger.log("💽", "", .info, "\(database.self)")
             }
         }
         

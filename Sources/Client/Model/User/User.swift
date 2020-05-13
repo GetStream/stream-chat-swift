@@ -162,7 +162,7 @@ public struct User: Codable {
             return extraData
             
         } catch {
-            ClientLogger.log("🐴❌", "User extra data decoding error: \(error). "
+            ClientLogger.log("🐴❌", level: .error, "User extra data decoding error: \(error). "
                 + "Trying to recover by only decoding name and imageURL")
             
             guard let container = try? decoder.container(keyedBy: CodingKeys.self) else {

@@ -490,9 +490,9 @@ extension ChatViewController {
             } catch let error as ImagePickerError {
                 self.showImagePickerAlert(for: error)
             } catch let error as ClientError {
-                ClientLogger.log("🌄", "Error when trying to create file for uploading: \(error)")
+                ClientLogger.log("🌄", level: .error, "Error when trying to create file for uploading: \(error)")
             } catch {
-                ClientLogger.log("🌄", "Unknown error: \(error)")
+                ClientLogger.log("🌄", level: .error, "Unknown error: \(error)")
             }
         }
         
@@ -519,7 +519,9 @@ extension ChatViewController {
                             
                             self.composerView.addFileUploaderItem(uploaderItem)
                         } catch {
-                            ClientLogger.log("📁", "Error occurred when trying to add file in url: \(url), error: \(error)")
+                            ClientLogger.log("📁",
+                                             level: .error,
+                                             "Error occurred when trying to add file in url: \(url), error: \(error)")
                         }
                     }
                 }
