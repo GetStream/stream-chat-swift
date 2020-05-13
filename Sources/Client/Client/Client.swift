@@ -114,7 +114,7 @@ public final class Client: Uploader {
     var needsToRecoverConnection = false
     
     let defaultURLSessionConfiguration: URLSessionConfiguration
-    lazy var urlSession = URLSession(configuration: self.defaultURLSessionConfiguration)
+    lazy var urlSession = setupURLSession()
     
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
