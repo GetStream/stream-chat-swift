@@ -91,7 +91,7 @@ extension ChannelPresenter {
                 return
             }
             
-            if parentMessage == nil, message.parentId != nil {
+            if parentMessage == nil, message.parentId != nil, message.showReplyInChannel == false {
                 return
             }
             
