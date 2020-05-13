@@ -25,6 +25,9 @@ public final class ComposerView: UIView {
     public private(set) lazy var textView = setupTextView()
     var textViewTopConstraint: Constraint?
     
+    /// A button to send a reply in the channel.
+    public let alsoSendToChannelButton = UIButton(type: .custom)
+    
     lazy var toolBar = UIToolbar(frame: .zero)
     
     /// An action for a plus button in the images attachments collection view.
@@ -145,7 +148,7 @@ public extension ComposerView {
     /// - Parameters:
     ///   - view: a superview.
     ///   - placeholderText: a placeholder text.
-    func addToSuperview(_ view: UIView) {
+    func addToSuperview(_ view: UIView, showAlsoSendToChannelButton: Bool = false) {
         guard let style = style else {
             return
         }
@@ -249,6 +252,25 @@ public extension ComposerView {
         self.placeholderText = style.placeholderText
         placeholderLabel.textColor = style.placeholderTextColor
         
+        // Send to the channel button.
+        if showAlsoSendToChannelButton {
+            view.addSubview(alsoSendToChannelButton)
+            alsoSendToChannelButton.isHidden = true
+            alsoSendToChannelButton.isSelected = true
+            alsoSendToChannelButton.backgroundColor = style.backgroundColor
+            toggleAlsoSendToChannelButton()
+            
+            alsoSendToChannelButton.snp.makeConstraints { make in
+                make.top.equalTo(snp.bottom)
+                make.left.equalTo(snp.left).offset(style.cornerRadius)
+                make.height.equalTo(40)
+            }
+            
+            alsoSendToChannelButton.rx.tap
+                .subscribe(onNext: { [weak self] in self?.toggleAlsoSendToChannelButton() })
+                .disposed(by: disposeBag)
+        }
+        
         updateToolbarIfNeeded()
         styleState = .normal
     }
@@ -264,6 +286,12 @@ public extension ComposerView {
         filesStackView.removeAllArrangedSubviews()
         updateImagesCollectionView()
         styleState = textView.isFirstResponder ? .active : .normal
+        
+        if alsoSendToChannelButton.superview != nil {
+            alsoSendToChannelButton.isHidden = true
+            alsoSendToChannelButton.isSelected = true
+            toggleAlsoSendToChannelButton()
+        }
     }
     
     /// Update the placeholder and send button visibility.
@@ -323,6 +351,21 @@ public extension ComposerView {
         } else if styleState == .active {
             sendButton.setTitleColor(styleForCurrentState.tintColor, for: .normal)
         }
+    }
+    
+    private func toggleAlsoSendToChannelButton() {
+        alsoSendToChannelButton.isSelected.toggle()
+        
+        let checkFont: UIFont = alsoSendToChannelButton.isSelected ? .systemFont(ofSize: 15) : .systemFont(ofSize: 16)
+        let checkColor: UIColor = alsoSendToChannelButton.isSelected ? .black : .chatGray
+        
+        let title = NSMutableAttributedString(string: alsoSendToChannelButton.isSelected ? "☑︎" : "☐",
+                                              attributes: [.font: checkFont, .foregroundColor: checkColor])
+        
+        title.append(NSAttributedString(string: " Also send to the channel",
+                                        attributes: [.font: UIFont.chatMedium, .foregroundColor: checkColor]))
+        
+        alsoSendToChannelButton.setAttributedTitle(title, for: .normal)
     }
 }
 
