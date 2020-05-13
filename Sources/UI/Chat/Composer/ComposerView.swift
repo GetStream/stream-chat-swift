@@ -261,8 +261,8 @@ public extension ComposerView {
             toggleAlsoSendToChannelButton()
             
             alsoSendToChannelButton.snp.makeConstraints { make in
-                make.top.equalTo(snp.bottom)
-                make.left.equalTo(snp.left).offset(style.cornerRadius)
+                make.top.equalTo(snp.bottom).offset(replyInChannelViewStyle.edgeInsets.top)
+                make.left.equalTo(snp.left).offset(replyInChannelViewStyle.edgeInsets.left)
                 make.height.equalTo(replyInChannelViewStyle.height)
             }
             

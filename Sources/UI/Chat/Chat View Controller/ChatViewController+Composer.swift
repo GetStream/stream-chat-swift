@@ -27,9 +27,13 @@ extension Reactive where Base: ChatViewController {
             if keyboardNotification.isVisible {
                 var alsoSendToChannelButtonHeight: CGFloat = 0
                 
-                if chatViewController.composerView.alsoSendToChannelButton.superview != nil {
+                if chatViewController.composerView.alsoSendToChannelButton.superview != nil,
+                    let replyInChannelViewStyle = chatViewController.composerView.style?.replyInChannelViewStyle {
                     chatViewController.composerView.alsoSendToChannelButton.isHidden = false
-                    alsoSendToChannelButtonHeight = chatViewController.composerView.alsoSendToChannelButton.frame.height
+                    
+                    alsoSendToChannelButtonHeight = replyInChannelViewStyle.height
+                        + replyInChannelViewStyle.edgeInsets.top
+                        + replyInChannelViewStyle.edgeInsets.bottom
                 }
                 
                 bottom = keyboardNotification.height

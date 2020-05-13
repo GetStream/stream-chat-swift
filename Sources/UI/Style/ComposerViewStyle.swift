@@ -74,11 +74,7 @@ public struct ComposerViewStyle: Equatable {
                 height: CGFloat = .composerHeight,
                 edgeInsets: UIEdgeInsets = .all(.messageEdgePadding),
                 sendButtonVisibility: ChatViewStyleVisibility = .whenActive,
-                replyInChannelViewStyle: ReplyInChannelViewStyle? = .init(text: ReplyInChannelViewStyle.defaultText,
-                                                                          font: .chatMedium,
-                                                                          color: .chatGray,
-                                                                          selectedColor: .black,
-                                                                          height: .composerReplyInChannelHeight),
+                replyInChannelViewStyle: ReplyInChannelViewStyle? = .init(color: .chatGray, selectedColor: .black),
                 states: States = [.active: .init(tintColor: .chatLightBlue, borderWidth: 2),
                                   .edit: .init(tintColor: .chatGreen, borderWidth: 2),
                                   .disabled: .init(tintColor: .chatGray, borderWidth: 2)]) {
@@ -140,20 +136,42 @@ extension ComposerViewStyle {
 
 extension ComposerViewStyle {
     public struct ReplyInChannelViewStyle: Equatable {
+        /// A default button text.
         public static let defaultText = "Also send to the channel"
         
+        /// A text for the button.
         public var text: String
+        /// A button font.
         public var font: UIFont
+        /// A default text color.
         public var color: UIColor
+        /// A text color when the checkmark is selected.
         public var selectedColor: UIColor
+        /// A button height.
         public var height: CGFloat
+        /// Edge insets. The button is pinned to the bottom and left part of `ComposerView`.
+        public var edgeInsets: UIEdgeInsets
         
-        public init(text: String, font: UIFont, color: UIColor, selectedColor: UIColor, height: CGFloat) {
+        /// A reply in the channel button style for the `ComposerView`.
+        /// - Parameters:
+        ///   - text: a text for the button.
+        ///   - font: a button font.
+        ///   - color: a default text color.
+        ///   - selectedColor: a text color when the checkmark is selected.
+        ///   - height: a button height.
+        ///   - edgeInsets: edge insets. The button is pinned to the bottom and left part of `ComposerView`.
+        public init(text: String = ReplyInChannelViewStyle.defaultText,
+                    font: UIFont = .chatMedium,
+                    color: UIColor,
+                    selectedColor: UIColor,
+                    height: CGFloat = .composerReplyInChannelHeight,
+                    edgeInsets: UIEdgeInsets = .init(top: 0, left: .composerCornerRadius, bottom: -.messageEdgePadding, right: 0)) {
             self.text = text
             self.font = font
             self.color = color
             self.selectedColor = selectedColor
             self.height = height
+            self.edgeInsets = edgeInsets
         }
     }
 }
