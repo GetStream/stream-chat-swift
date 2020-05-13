@@ -72,9 +72,9 @@ extension WebSocket {
     
     /// Connect to websocket.
     /// - Note:
-    /// - Skip if the Internet is not available.
-    /// - Skip if it's already connected.
-    /// - Skip if it's reconnecting.
+    ///     - Skip if the Internet is not available.
+    ///     - Skip if it's already connected.
+    ///     - Skip if it's reconnecting.
     func connect() {
         cancelBackgroundWork()
         
