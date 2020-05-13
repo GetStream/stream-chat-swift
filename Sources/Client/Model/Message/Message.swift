@@ -28,6 +28,7 @@ public struct Message: Codable {
         case latestReactions = "latest_reactions"
         case ownReactions = "own_reactions"
         case reactionScores = "reaction_scores"
+        case isSilent = "silent"
     }
     
     /// A custom extra data type for messages.
@@ -72,6 +73,8 @@ public struct Message: Codable {
     public private(set) var ownReactions: [Reaction]
     /// A reactions count (see `ReactionCounts`).
     public private(set) var reactionScores: [String: Int]
+    /// Flag for silent messages. Silent messages won't increase the unread count. See https://getstream.io/chat/docs/silent_messages/?language=swift
+    public var isSilent: Bool
     
     /// Check if the message is ephemeral, e.g. Giphy preview.
     public var isEphemeral: Bool { type == .ephemeral }
@@ -107,13 +110,25 @@ public struct Message: Codable {
     /// Init a message.
     ///
     /// - Parameters:
-    ///   - id: a message id.
-    ///   - text: a text.
-    ///   - attachments: attachments (see `Attachment`).
-    ///   - extraData: an extra data.
-    ///   - parentId: a parent message id.
-    ///   - mentionedUsers: a list of mentioned users.
-    ///   - showReplyInChannel: a flag to show reply messages in a channel, not in a separate thread.
+    ///   - id: Message id, leave it blank if it's a new message since server generates it
+    ///   - type: Message type. See `MessageType`
+    ///   - parentId: Parent message id if this message is a reply
+    ///   - created: Message created date
+    ///   - updated: Message updated date
+    ///   - deleted: Message deleted date
+    ///   - text: Message body
+    ///   - isSilent: Flag for indicating if this message is silent (does not increase unread count)
+    ///   - user: Owner of the message. Keep in mind that clients can only send messages as logged in user (User.current)
+    ///   - command: Command associated with message
+    ///   - args: Arguments in message
+    ///   - attachments: Attachments for this message
+    ///   - mentionedUsers: Mentioned users in this message
+    ///   - extraData: ExtraData for this message
+    ///   - latestReactions: Reactions to this message
+    ///   - ownReactions: Current user's reactions to this message
+    ///   - reactionScores: Scores of reactions to this message
+    ///   - replyCount: Reply count
+    ///   - showReplyInChannel: Flag for showing this reply message also in channel.
     public init(id: String = "",
                 type: MessageType = .regular,
                 parentId: String? = nil,
@@ -121,6 +136,8 @@ public struct Message: Codable {
                 updated: Date = .init(),
                 deleted: Date? = nil,
                 text: String,
+                silent: Bool = false,
+                user: User = User.current,
                 command: String? = nil,
                 args: String? = nil,
                 attachments: [Attachment] = [],
@@ -131,7 +148,6 @@ public struct Message: Codable {
                 reactionScores: [String: Int] = [:],
                 replyCount: Int = 0,
                 showReplyInChannel: Bool = false) {
-        user = User.current
         self.id = id
         self.type = type
         self.parentId = parentId
@@ -139,6 +155,8 @@ public struct Message: Codable {
         self.updated = updated
         self.deleted = deleted
         self.text = text
+        self.isSilent = silent
+        self.user = user
         self.command = command
         self.args = args
         self.attachments = attachments
@@ -154,6 +172,7 @@ public struct Message: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(text, forKey: .text)
+        try container.encode(isSilent, forKey: .isSilent)
         extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a message extra data")
         
         if !attachments.isEmpty {
@@ -179,6 +198,7 @@ public struct Message: Codable {
         updated = try container.decode(Date.self, forKey: .updated)
         deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
         text = try container.decode(String.self, forKey: .text).trimmingCharacters(in: .whitespacesAndNewlines)
+        isSilent = try container.decodeIfPresent(Bool.self, forKey: .isSilent) ?? false
         command = try container.decodeIfPresent(String.self, forKey: .command)
         args = try container.decodeIfPresent(String.self, forKey: .args)
         attachments = try container.decode([Attachment].self, forKey: .attachments)
