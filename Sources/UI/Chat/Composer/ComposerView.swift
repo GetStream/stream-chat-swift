@@ -147,7 +147,7 @@ public extension ComposerView {
     ///
     /// - Parameters:
     ///   - view: a superview.
-    ///   - placeholderText: a placeholder text.
+    ///   - showAlsoSendToChannelButton: a flag to show a send reply to a channel button.
     func addToSuperview(_ view: UIView, showAlsoSendToChannelButton: Bool = false) {
         guard let style = style else {
             return
