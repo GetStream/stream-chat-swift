@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `ClientLogger.iconEnabled`, `ClientLogger.dateEnabled`, and `ClientLogger.levelEnabled` to control what will be shown in logs.
   These will only be valid when `ClientLogger.logger` block is not customized (overridden) [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
 - `silent` property added to messages, see docs [here](https://getstream.io/chat/docs/silent_messages/?language=swift) [#264](https://github.com/GetStream/stream-chat-swift/issues/264)
-- A checkmark for a reply in a channel [#241](https://github.com/GetStream/stream-chat-swift/issues/271).
-- A new view style for a reply in a channel `ComposerViewStyle.ReplyInChannelViewStyle`. You can set this style to nil for your `composerViewStyle` to disable this feature  [#241](https://github.com/GetStream/stream-chat-swift/issues/271).
+- Added option to show message replies also in channel, just like Slack [#271](https://github.com/GetStream/stream-chat-swift/issues/271).
+- A new view style for a reply in a channel `ComposerViewStyle.ReplyInChannelViewStyle`. You can set this style to nil for your `composerViewStyle` to disable this feature  [#271](https://github.com/GetStream/stream-chat-swift/issues/271).
 
 ### 🔄 Changed
 - `ClientLogger.logger` is deprecated, please use `ClientLogger.log` block to customize your log output [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
