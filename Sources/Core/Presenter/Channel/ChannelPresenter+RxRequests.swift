@@ -104,10 +104,12 @@ public extension Reactive where Base == ChannelPresenter {
     }
     
     /// Create a message by sending a text.
-    /// - Parameter text: a message text.
+    /// - Parameters:
+    ///   - text: a message text.
+    ///   - showReplyInChannel: show a reply in the channel.
     /// - Returns: an observable `MessageResponse`.
-    func send(text: String) -> Observable<MessageResponse> {
-        base.channel.rx.send(message: base.createMessage(with: text))
+    func send(text: String, showReplyInChannel: Bool = false) -> Observable<MessageResponse> {
+        base.channel.rx.send(message: base.createMessage(with: text, showReplyInChannel: showReplyInChannel))
             .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
     }

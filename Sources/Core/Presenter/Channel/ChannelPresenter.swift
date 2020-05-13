@@ -157,12 +157,13 @@ extension ChannelPresenter {
     /// Create a message by sending a text.
     /// - Parameters:
     ///     - text: a message text
+    ///     - showReplyInChannel: show a reply in the channel.
     ///     - completion: a completion block with `MessageResponse`.
-    public func send(text: String, _ completion: @escaping Client.Completion<MessageResponse>) {
-        rx.send(text: text).bindOnce(to: completion)
+    public func send(text: String, showReplyInChannel: Bool = false, _ completion: @escaping Client.Completion<MessageResponse>) {
+        rx.send(text: text, showReplyInChannel: showReplyInChannel).bindOnce(to: completion)
     }
     
-    func createMessage(with text: String) -> Message {
+    func createMessage(with text: String, showReplyInChannel: Bool) -> Message {
         let messageId = editMessage?.id ?? ""
         
         var attachments = uploadManager.images.isEmpty
@@ -200,7 +201,7 @@ extension ChannelPresenter {
                               attachments: attachments,
                               mentionedUsers: mentionedUsers,
                               extraData: extraData,
-                              showReplyInChannel: false)
+                              showReplyInChannel: showReplyInChannel && parentId != nil)
         
         return messagePreparationCallback?(message) ?? message
     }
