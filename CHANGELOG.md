@@ -8,8 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ✅ Added
 - Added `ClientLogger.iconEnabled`, `ClientLogger.dateEnabled`, and `ClientLogger.levelEnabled` to control what will be shown in logs.
-  These will only be valid when `ClientLogger.log` block is not customized (overridden) [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
+  These will only be valid when `ClientLogger.logger` block is not customized (overridden) [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
 - `silent` property added to messages, see docs [here](https://getstream.io/chat/docs/silent_messages/?language=swift) [#264](https://github.com/GetStream/stream-chat-swift/issues/264)
+- A checkmark for a reply in a channel [#241](https://github.com/GetStream/stream-chat-swift/issues/271).
+- A new view style for a reply in a channel `ComposerViewStyle.ReplyInChannelViewStyle`. You can set this style to nil for your `composerViewStyle` to disable this feature  [#241](https://github.com/GetStream/stream-chat-swift/issues/271).
 
 ### 🔄 Changed
 - `ClientLogger.logger` is deprecated, please use `ClientLogger.log` block to customize your log output [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
@@ -18,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🐞 Fixed
 - `set(user:)` is not required for query (channels, users) unless `presence: true` or `state: true` is specified [#269](https://github.com/GetStream/stream-chat-swift/issues/269)
+- Disabled context menu for deleted messages:  [#241](https://github.com/GetStream/stream-chat-swift/issues/271).
 - Fix crash in iOS12 caused by abstract URLSession instance [#272](https://github.com/GetStream/stream-chat-swift/issues/272)
 - Fix infinite loop when the web socket connection fails (iOS13 only) [#273](https://github.com/GetStream/stream-chat-swift/pull/273).
 
