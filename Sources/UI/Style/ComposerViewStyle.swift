@@ -9,7 +9,7 @@
 import UIKit
 
 /// A composer style.
-public struct ComposerViewStyle {
+public struct ComposerViewStyle: Equatable {
     /// A composer states type.
     ///
     /// For example:
@@ -40,6 +40,9 @@ public struct ComposerViewStyle {
     public var edgeInsets: UIEdgeInsets
     /// A send button visibility.
     public var sendButtonVisibility: ChatViewStyleVisibility
+    /// A reply in the channel view style.
+    /// - Note: Set it to nil to disable this feature.
+    public var replyInChannelViewStyle: ReplyInChannelViewStyle?
     
     /// Composer states.
     ///
@@ -59,6 +62,7 @@ public struct ComposerViewStyle {
     ///   - placeholderTextColor: a placeholder text color.
     ///   - backgroundColor: a background color.
     ///   - cornerRadius: a corner radius.
+    ///   - replyInChannelViewStyle: a reply in the channel view style. Set it to nil to disable this feature.
     ///   - states: composer states (see `States`).
     public init(font: UIFont = .chatRegular,
                 textColor: UIColor = .black,
@@ -70,6 +74,11 @@ public struct ComposerViewStyle {
                 height: CGFloat = .composerHeight,
                 edgeInsets: UIEdgeInsets = .all(.messageEdgePadding),
                 sendButtonVisibility: ChatViewStyleVisibility = .whenActive,
+                replyInChannelViewStyle: ReplyInChannelViewStyle? = .init(text: ReplyInChannelViewStyle.defaultText,
+                                                                          font: .chatMedium,
+                                                                          color: .chatGray,
+                                                                          selectedColor: .black,
+                                                                          height: .composerReplyInChannelHeight),
                 states: States = [.active: .init(tintColor: .chatLightBlue, borderWidth: 2),
                                   .edit: .init(tintColor: .chatGreen, borderWidth: 2),
                                   .disabled: .init(tintColor: .chatGray, borderWidth: 2)]) {
@@ -83,6 +92,7 @@ public struct ComposerViewStyle {
         self.height = height
         self.edgeInsets = edgeInsets
         self.sendButtonVisibility = sendButtonVisibility
+        self.replyInChannelViewStyle = replyInChannelViewStyle
         self.states = states
     }
     
@@ -128,23 +138,22 @@ extension ComposerViewStyle {
     }
 }
 
-extension ComposerViewStyle: Hashable {
-    
-    public static func == (lhs: ComposerViewStyle, rhs: ComposerViewStyle) -> Bool {
-        lhs.font == rhs.font
-            && lhs.textColor == rhs.textColor
-            && lhs.placeholderTextColor == rhs.placeholderTextColor
-            && lhs.backgroundColor == rhs.backgroundColor
-            && lhs.cornerRadius == rhs.cornerRadius
-            && lhs.states == rhs.states
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(font)
-        hasher.combine(textColor)
-        hasher.combine(placeholderTextColor)
-        hasher.combine(backgroundColor)
-        hasher.combine(cornerRadius)
-        hasher.combine(states)
+extension ComposerViewStyle {
+    public struct ReplyInChannelViewStyle: Equatable {
+        public static let defaultText = "Also send to the channel"
+        
+        public var text: String
+        public var font: UIFont
+        public var color: UIColor
+        public var selectedColor: UIColor
+        public var height: CGFloat
+        
+        public init(text: String, font: UIFont, color: UIColor, selectedColor: UIColor, height: CGFloat) {
+            self.text = text
+            self.font = font
+            self.color = color
+            self.selectedColor = selectedColor
+            self.height = height
+        }
     }
 }

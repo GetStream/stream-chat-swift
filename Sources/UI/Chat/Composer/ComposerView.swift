@@ -253,7 +253,7 @@ public extension ComposerView {
         placeholderLabel.textColor = style.placeholderTextColor
         
         // Send to the channel button.
-        if showAlsoSendToChannelButton {
+        if showAlsoSendToChannelButton, let replyInChannelViewStyle = style.replyInChannelViewStyle {
             view.addSubview(alsoSendToChannelButton)
             alsoSendToChannelButton.isHidden = true
             alsoSendToChannelButton.isSelected = true
@@ -263,7 +263,7 @@ public extension ComposerView {
             alsoSendToChannelButton.snp.makeConstraints { make in
                 make.top.equalTo(snp.bottom)
                 make.left.equalTo(snp.left).offset(style.cornerRadius)
-                make.height.equalTo(40)
+                make.height.equalTo(replyInChannelViewStyle.height)
             }
             
             alsoSendToChannelButton.rx.tap
@@ -354,16 +354,23 @@ public extension ComposerView {
     }
     
     private func toggleAlsoSendToChannelButton() {
+        guard let replyInChannelViewStyle = style?.replyInChannelViewStyle, !replyInChannelViewStyle.text.isEmpty else {
+            return
+        }
+        
         alsoSendToChannelButton.isSelected.toggle()
         
-        let checkFont: UIFont = alsoSendToChannelButton.isSelected ? .systemFont(ofSize: 15) : .systemFont(ofSize: 16)
-        let checkColor: UIColor = alsoSendToChannelButton.isSelected ? .black : .chatGray
+        let checkmarkFont: UIFont = alsoSendToChannelButton.isSelected ? .systemFont(ofSize: 15) : .systemFont(ofSize: 16)
+        
+        let textColor = alsoSendToChannelButton.isSelected
+            ? replyInChannelViewStyle.selectedColor
+            : replyInChannelViewStyle.color
         
         let title = NSMutableAttributedString(string: alsoSendToChannelButton.isSelected ? "☑︎" : "☐",
-                                              attributes: [.font: checkFont, .foregroundColor: checkColor])
+                                              attributes: [.font: checkmarkFont, .foregroundColor: textColor])
         
-        title.append(NSAttributedString(string: " Also send to the channel",
-                                        attributes: [.font: UIFont.chatMedium, .foregroundColor: checkColor]))
+        title.append(NSAttributedString(string: " " + replyInChannelViewStyle.text,
+                                        attributes: [.font: replyInChannelViewStyle.font, .foregroundColor: textColor]))
         
         alsoSendToChannelButton.setAttributedTitle(title, for: .normal)
     }
