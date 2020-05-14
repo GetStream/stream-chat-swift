@@ -10,7 +10,7 @@ import XCTest
 @testable import StreamChatClient
 
 final class ClientLoggerTests: XCTestCase {
-    private let teJstUser = User(id: "test")
+    private let testUser = User(id: "test")
     private let testUrl = "getstream.io".url!
     private let testFilter = Filter.in("members", ["test-member"])
     private let testData = "{\"testKey\":\"testValue\"}".data(using: .utf8)!
@@ -41,8 +41,8 @@ final class ClientLoggerTests: XCTestCase {
         logOutput = [String]()
         
         let testMembers = Set([User.user1.asMember])
-        let testMessage = Message(id: "test", type: .reply, text: "test")
-        let testReaction = Reaction(type: "angry", messageId: testMessage.id)
+        let testMessage = Message(id: "test", type: .reply, text: "test", user: testUser)
+        let testReaction = Reaction(type: "angry", messageId: testMessage.id, user: testUser)
         let testChannel = sharedClient.channel(type: .messaging, id: "test")
         
         allEndpoints = [.guestToken(User.user1),

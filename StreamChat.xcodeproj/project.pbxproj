@@ -13,12 +13,12 @@
 		791664E2245AF8AF0020710B /* AssertNetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664E1245AF8AF0020710B /* AssertNetworkRequest.swift */; };
 		791664E3245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */; };
 		791664E4245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */; };
-		793612F62461437700944861 /* MockNetworkURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612F52461437700944861 /* MockNetworkURLProtocol.swift */; };
-		793612FE2461684500944861 /* AssertResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FD2461684500944861 /* AssertResult.swift */; };
-		793613002461780400944861 /* Await.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FF2461780400944861 /* Await.swift */; };
 		79273EB4246AD1E900B0A574 /* Channel_SilentMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB3246AD1E900B0A574 /* Channel_SilentMessageTests.swift */; };
 		79273EB6246AE1EF00B0A574 /* Client_SilentMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB5246AE1EF00B0A574 /* Client_SilentMessageTests.swift */; };
 		79273EBA246AEC9200B0A574 /* SharedClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB9246AEC9200B0A574 /* SharedClient.swift */; };
+		793612F62461437700944861 /* MockNetworkURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612F52461437700944861 /* MockNetworkURLProtocol.swift */; };
+		793612FE2461684500944861 /* AssertResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FD2461684500944861 /* AssertResult.swift */; };
+		793613002461780400944861 /* Await.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FF2461780400944861 /* Await.swift */; };
 		79411CD42462DC0A003972E9 /* ClientLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */; };
 		794BDE4A2434BD7400BFBA1F /* NestableCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */; };
 		79A9E4F72449D3AF00599B95 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */; };
@@ -1279,7 +1279,6 @@
 		8AD5EC8522E9A3E8005CFAC9 = {
 			isa = PBXGroup;
 			children = (
-				79273EB9246AEC9200B0A574 /* SharedClient.swift */,
 				8AD5ECA922E9BA39005CFAC9 /* Sources */,
 				8A559D22230D937C00E66096 /* Tests */,
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
@@ -1354,6 +1353,7 @@
 				791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */,
 				793612F52461437700944861 /* MockNetworkURLProtocol.swift */,
 				793612FF2461780400944861 /* Await.swift */,
+				79273EB9246AEC9200B0A574 /* SharedClient.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
