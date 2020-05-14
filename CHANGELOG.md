@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐞 Fixed
 - `set(user:)` is not required for query (channels, users) unless `presence: true` or `state: true` is specified [#269](https://github.com/GetStream/stream-chat-swift/issues/269)
 - Fix crash in iOS12 caused by abstract URLSession instance [#272](https://github.com/GetStream/stream-chat-swift/issues/272)
+- Fix infinite loop when the web socket connection fails (iOS13 only) [#273](https://github.com/GetStream/stream-chat-swift/pull/273).
 
 # [2.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.0)
 _May 08, 2020_
