@@ -42,10 +42,8 @@ class RequestRecorderURLProtocol: URLProtocol {
     }
 
     override class func canInit(with request: URLRequest) -> Bool {
-        DispatchQueue.main.async {
-            latestRequest = request
-            latestRequestExpectation?.fulfill()
-        }
+        latestRequest = request
+        latestRequestExpectation?.fulfill()
         return false
     }
 
