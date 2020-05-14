@@ -141,6 +141,10 @@ public final class ClientLogger {
     /// Only valid when default `ClientLogger.logger` block is used, if you've overridden that, this is not valid.
     public static var levelEnabled = true
     
+    /// Checks if a user has overridden `logger` block.
+    /// Needed for backwards compatibility.
+    private static var usingLegacyLogger = false
+    
     /// A customizable logger block.
     /// By default error messages will print to the console, but you can customize it to use own logger.
     ///
@@ -152,11 +156,18 @@ public final class ClientLogger {
     Customizing the logger block with `ClientLogger.logger` is deprecated.
     Please use `ClientLogger.log` to customize your logging logic.
     """)
-    public static var logger: (String, String, String) -> Void = { icon, dateTime, message in
+    public static var logger: (String, String, String) -> Void = legacyLogger {
+        didSet {
+            usingLegacyLogger = true
+            legacyLogger = logger
+        }
+    }
+    
+    private static var legacyLogger: (String, String, String) -> Void = { icon, dateTime, message in
         if iconEnabled {
             print(icon, terminator: " ")
         }
-
+        
         if dateEnabled {
             if dateTime.isEmpty {
                 print("[\(Date().log)]", terminator: " ")
@@ -164,7 +175,7 @@ public final class ClientLogger {
                 print("[\(dateTime)]", terminator: " ")
             }
         }
-
+        
         print(message)
     }
     
@@ -353,7 +364,11 @@ public final class ClientLogger {
     ///   - dateTime: a date time as a string.
     ///   - message: a message.
     public static func log(_ icon: String, dateTime: String = "", level: Level = .info, _ message: String) {
-        ClientLogger.log(icon, dateTime, level, message)
+        if usingLegacyLogger {
+            ClientLogger.legacyLogger(icon, dateTime, message)
+        } else {
+            ClientLogger.log(icon, dateTime, level, message)
+        }
     }
 
     /// Performs `Swift.assert` and stops program execution if `condition` evaluated to false. In RELEASE builds only
@@ -370,7 +385,7 @@ public final class ClientLogger {
         guard condition == false else { return }
         let evaluatedMessage = message()
         Swift.assert(condition, evaluatedMessage, file: file, line: line)
-        ClientLogger.log("", "", .error, "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
+        ClientLogger.log("", dateTime: "", level: .error, "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
     }
 
     /// Triggers `Swift.assertionFailure`. In RELEASE builds only logs the failure.
@@ -378,7 +393,7 @@ public final class ClientLogger {
     /// - Parameter message: A custom message to log.
     public static func logAssertionFailure(_ message: String, file: StaticString = #file, line: UInt = #line) {
         Swift.assertionFailure(message, file: file, line: line)
-        ClientLogger.log("", "", .error, "Assertion failure \(file)[\(line)]: " + message)
+        ClientLogger.log("", dateTime: "", level: .error, "Assertion failure \(file)[\(line)]: " + message)
     }
 
     static func showConnectionAlert(_ error: Error, jsonError: ClientErrorResponse?) {
