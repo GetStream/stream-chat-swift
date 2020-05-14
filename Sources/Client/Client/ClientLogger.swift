@@ -149,7 +149,8 @@ public final class ClientLogger {
     ///     - dateAndTime: a formatted string of date and time, could be empty.
     ///     - message: a message.
     @available(*, deprecated, message: """
-    Customizing the logger block with `ClientLogger.logger` is deprecated. Please use `ClientLogger.log` to customize your logging logic.
+    Customizing the logger block with `ClientLogger.logger` is deprecated.
+    Please use `ClientLogger.log` to customize your logging logic.
     """)
     public static var logger: (String, String, String) -> Void = { icon, dateTime, message in
         if iconEnabled {
