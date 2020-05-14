@@ -18,7 +18,7 @@ extension Client {
         logger?.log(headers: headers)
         let config = defaultURLSessionConfiguration
         config.waitsForConnectivity = true
-        config.httpAdditionalHeaders = headers
+        config.httpAdditionalHeaders?.merge(headers, uniquingKeysWith: { (_, new) in new })
         return URLSession(configuration: config, delegate: urlSessionTaskDelegate, delegateQueue: nil)
     }
     
