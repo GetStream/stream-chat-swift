@@ -22,8 +22,7 @@ class Client_SilentMessageTests: XCTestCase {
         
         let channel = client.channel(type: .messaging, id: "test-silent-message")
         
-        var message = Message(text: "test", silent: true)
-        message.user = User(id: "test-sender")
+        let message = Message(text: "test", silent: true, user: User(id: "test-sender"))
         
         let newMessageEvent = Event.messageNew(message, 0, channel.cid, .messageNew)
         
@@ -40,8 +39,7 @@ class Client_SilentMessageTests: XCTestCase {
         
         let channel = client.channel(type: .messaging, id: "test-silent-message")
         
-        var message = Message(text: "test", silent: true, mentionedUsers: [User(id: "test-mention")])
-        message.user = User(id: "test-sender")
+        let message = Message(text: "test", silent: true, user: User(id: "test-sender"), mentionedUsers: [client.user])
         
         let newMessageEvent = Event.messageNew(message, 0, channel.cid, .messageNew)
         
@@ -53,12 +51,13 @@ class Client_SilentMessageTests: XCTestCase {
     }
     
     func test_silentDeletedMessage_doesNotDecreaseUnreadCount() {
-        let client = self.client
+        let client = sharedClient // since `updateUserUnreadCount` touches shared instance
+        
+        client.userAtomic.set(.init(id: "test-mention"))
         
         let channel = client.channel(type: .messaging, id: "test-silent-message")
         
-        var message = Message(text: "test", silent: true, mentionedUsers: [User(id: "test-mention")])
-        message.user = User(id: "test-sender")
+        let message = Message(text: "test", silent: true, user: User(id: "test-sender"), mentionedUsers: [client.user])
         
         let deletedMessageEvent = Event.messageDeleted(message, User(id: "test-sender"), channel.cid, .messageDeleted)
         
