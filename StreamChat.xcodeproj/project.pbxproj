@@ -16,6 +16,9 @@
 		79273EB4246AD1E900B0A574 /* Channel_SilentMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB3246AD1E900B0A574 /* Channel_SilentMessageTests.swift */; };
 		79273EB6246AE1EF00B0A574 /* Client_SilentMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB5246AE1EF00B0A574 /* Client_SilentMessageTests.swift */; };
 		79273EBA246AEC9200B0A574 /* SharedClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB9246AEC9200B0A574 /* SharedClient.swift */; };
+		79273EC2246EB64E00B0A574 /* AssertJSONEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EC1246EB64E00B0A574 /* AssertJSONEqual.swift */; };
+		79273EC3246EB64E00B0A574 /* AssertJSONEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EC1246EB64E00B0A574 /* AssertJSONEqual.swift */; };
+		79273EC4246EB64E00B0A574 /* AssertJSONEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EC1246EB64E00B0A574 /* AssertJSONEqual.swift */; };
 		793612F62461437700944861 /* MockNetworkURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612F52461437700944861 /* MockNetworkURLProtocol.swift */; };
 		793612FE2461684500944861 /* AssertResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FD2461684500944861 /* AssertResult.swift */; };
 		793613002461780400944861 /* Await.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FF2461780400944861 /* Await.swift */; };
@@ -320,6 +323,7 @@
 		79273EB3246AD1E900B0A574 /* Channel_SilentMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel_SilentMessageTests.swift; sourceTree = "<group>"; };
 		79273EB5246AE1EF00B0A574 /* Client_SilentMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client_SilentMessageTests.swift; sourceTree = "<group>"; };
 		79273EB9246AEC9200B0A574 /* SharedClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedClient.swift; sourceTree = "<group>"; };
+		79273EC1246EB64E00B0A574 /* AssertJSONEqual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertJSONEqual.swift; sourceTree = "<group>"; };
 		79324B7A2462A08A00B2597E /* AtomicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicTests.swift; sourceTree = "<group>"; };
 		793612F52461437700944861 /* MockNetworkURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkURLProtocol.swift; sourceTree = "<group>"; };
 		793612FD2461684500944861 /* AssertResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertResult.swift; sourceTree = "<group>"; };
@@ -663,6 +667,7 @@
 				791664E1245AF8AF0020710B /* AssertNetworkRequest.swift */,
 				793612FD2461684500944861 /* AssertResult.swift */,
 				79CABB0624630AC600240052 /* AssertAsync.swift */,
+				79273EC1246EB64E00B0A574 /* AssertJSONEqual.swift */,
 			);
 			path = "Custom Assertions";
 			sourceTree = "<group>";
@@ -1653,6 +1658,7 @@
 			files = (
 				791664E3245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */,
 				79EE3942245320610034EBF3 /* ClientTests00.swift in Sources */,
+				79273EC2246EB64E00B0A574 /* AssertJSONEqual.swift in Sources */,
 				79EE3944245320690034EBF3 /* ClientTests02+Users.swift in Sources */,
 				79EE3943245320650034EBF3 /* ClientTests01+Channels.swift in Sources */,
 				79EE3946245321820034EBF3 /* TestCase.swift in Sources */,
@@ -1756,6 +1762,7 @@
 				8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */,
 				793613002461780400944861 /* Await.swift in Sources */,
 				8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */,
+				79273EC3246EB64E00B0A574 /* AssertJSONEqual.swift in Sources */,
 				79273EBA246AEC9200B0A574 /* SharedClient.swift in Sources */,
 				79CABAFE2462A4E400240052 /* AtomicTests.swift in Sources */,
 				791664E2245AF8AF0020710B /* AssertNetworkRequest.swift in Sources */,
@@ -1778,6 +1785,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79273EC4246EB64E00B0A574 /* AssertJSONEqual.swift in Sources */,
 				8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */,
 				791664E4245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */,
 			);
