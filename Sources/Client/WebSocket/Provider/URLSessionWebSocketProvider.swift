@@ -48,14 +48,14 @@ final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSession
                 if case .string(let string) = message {
                     self.callDelegateInCallbackQueue { $0?.websocketDidReceiveMessage(string) }
                 }
+                self.doRead()
+                
             case .failure(let error):
                 self.disconnect(with: WebSocketProviderError(reason: error.localizedDescription,
                                                              code: (error as NSError).code,
                                                              providerType: URLSessionWebSocketProvider.self,
                                                              providerError: error))
             }
-            
-            self.doRead()
         }
     }
     
