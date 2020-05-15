@@ -11,15 +11,15 @@ import XCTest
 
 class Channel_SilentMessageTests: XCTestCase {
     
-    private static let config = Client.Config(apiKey: "client_silentMessageTests")
-    private let config = Channel_SilentMessageTests.config
-    private var client: Client {
-        Client(config: config)
+    let client = sharedClient
+    
+    override func setUp() {
+        super.setUp()
+        
+        client.unreadCountAtomic.set(.noUnread)
     }
     
     func test_silentMessage_doesNotIncreaseUnreadCount() {
-        let client = self.client
-        
         let channel = client.channel(type: .messaging, id: "test-silent-message")
         
         let message = Message(text: "test", silent: true, user: .init(id: "test-sender"))
@@ -35,8 +35,6 @@ class Channel_SilentMessageTests: XCTestCase {
     }
     
     func test_silentMentionMessage_doesNotIncreaseUnreadCount() {
-        let client = self.client
-        
         client.userAtomic.set(.init(id: "test-mention"))
         
         let channel = client.channel(type: .messaging, id: "test-silent-message")
@@ -55,8 +53,6 @@ class Channel_SilentMessageTests: XCTestCase {
     }
     
     func test_silentDeletedMessage_doesNotDecreaseUnreadCount() {
-        let client = self.client
-        
         let channel = client.channel(type: .messaging, id: "test-silent-message")
         
         let message = Message(text: "test", silent: true, user: .init(id: "test-sender"), mentionedUsers: [User(id: "test-mention")])

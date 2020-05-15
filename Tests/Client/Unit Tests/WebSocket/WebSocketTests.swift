@@ -12,7 +12,10 @@ import XCTest
 final class WebSocketTests: XCTestCase {
     
     let mockProvider = WebSocketProviderMock(request: URLRequest(url: URL(string: "http://test.com")!), callbackQueue: .main)
-    let logger = ClientLogger(icon: "🦄", level: .info)
+    let logger: ClientLogger = {
+        ClientLogger.log = { _, _, _, _ in }
+        return ClientLogger(icon: "🦄", level: .info)
+    }()
     
     override static func setUp() {
         // Change the default time interval to ping connection for 2 sec.
