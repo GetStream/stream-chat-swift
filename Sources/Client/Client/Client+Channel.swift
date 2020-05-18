@@ -43,17 +43,6 @@ public extension Client {
     ///   - type: a channel type.
     ///   - members: a list of members.
     ///   - extraData: a channel extra data.
-    ///
-    /// Example:
-    /// ```
-    /// let anotherUser = User("second")
-    /// anotherUser.name = "John"
-    /// anotherUser.avatarURL = URL(string: "http://example.com/john")!
-    ///
-    /// let channel = client.channel(members: [client.user, anotherUser])
-    /// print(channel.name) // will print "John"
-    /// print(channel.imageURL) // will print "http://example.com/john"
-    /// ```
     func channel(type: ChannelType = .messaging,
                  members: [User],
                  extraData: ChannelExtraDataCodable? = nil) -> Channel {
