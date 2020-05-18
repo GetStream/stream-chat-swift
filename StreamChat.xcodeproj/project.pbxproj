@@ -275,6 +275,8 @@
 		8AD5EDD422E9BB0C005CFAC9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD022E9BB0C005CFAC9 /* RxGesture.framework */; };
 		8AD5EDD522E9BB0C005CFAC9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */; };
 		8AD5EDD622E9BB0C005CFAC9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD222E9BB0C005CFAC9 /* SwiftyGif.framework */; };
+		8ADA1EEB2472C2E500C4FC82 /* ChannelNamingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADA1EEA2472C2E500C4FC82 /* ChannelNamingStrategy.swift */; };
+		8ADA1EED2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADA1EEC2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift */; };
 		8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */; };
 /* End PBXBuildFile section */
@@ -594,6 +596,8 @@
 		8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatCore.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = "<group>"; };
+		8ADA1EEA2472C2E500C4FC82 /* ChannelNamingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNamingStrategy.swift; sourceTree = "<group>"; };
+		8ADA1EEC2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNamingStrategyTests.swift; sourceTree = "<group>"; };
 		8AE6206923CF63F000AB3426 /* ClientTests00.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTests00.swift; sourceTree = "<group>"; };
 		8AE6206C23CF642900AB3426 /* TestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCase.swift; sourceTree = "<group>"; };
 		8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientLoggerTests.swift; sourceTree = "<group>"; };
@@ -776,6 +780,7 @@
 				79273EB5246AE1EF00B0A574 /* Client_SilentMessageTests.swift */,
 				79273EB3246AD1E900B0A574 /* Channel_SilentMessageTests.swift */,
 				8A54D9A724728D4400431250 /* Channel+SetupTests.swift */,
+				8ADA1EEC2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift */,
 				79324B7A2462A08A00B2597E /* AtomicTests.swift */,
 				8AC0D94E23D4BA7D0080B8BC /* FilterTests.swift */,
 				465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */,
@@ -918,6 +923,7 @@
 				8ACC7BE0241924AD000750E4 /* Channel+UnreadCount.swift */,
 				8ACC7BE2241924AD000750E4 /* ChannelResponse.swift */,
 				8ACC7BE3241924AD000750E4 /* Channel+WatcherCount.swift */,
+				8ADA1EEA2472C2E500C4FC82 /* ChannelNamingStrategy.swift */,
 			);
 			path = Channel;
 			sourceTree = "<group>";
@@ -1710,6 +1716,7 @@
 				8A466E61241A3A4D003C21BA /* Client+Request.swift in Sources */,
 				8A0673B42445E0570042CFD3 /* Channel+Config.swift in Sources */,
 				8ACC7C2A241924AD000750E4 /* BanEnabling.swift in Sources */,
+				8ADA1EEB2472C2E500C4FC82 /* ChannelNamingStrategy.swift in Sources */,
 				8ACC7C31241924AD000750E4 /* Client+Devices.swift in Sources */,
 				8ACC7C09241924AD000750E4 /* Database.swift in Sources */,
 				8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */,
@@ -1799,6 +1806,7 @@
 				793612F62461437700944861 /* MockNetworkURLProtocol.swift in Sources */,
 				79273EB6246AE1EF00B0A574 /* Client_SilentMessageTests.swift in Sources */,
 				8AB33A5E240EA19A00777682 /* AttachmentTypeTests.swift in Sources */,
+				8ADA1EED2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift in Sources */,
 				79CABB0924644C0700240052 /* VirtualTime.swift in Sources */,
 				8A2E4F07245DAC210032565F /* WebSocketTests.swift in Sources */,
 				79CABB0D246457EE00240052 /* VirtualTimers.swift in Sources */,
