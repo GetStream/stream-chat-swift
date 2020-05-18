@@ -23,9 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Disabled context menu for deleted messages:  [#241](https://github.com/GetStream/stream-chat-swift/issues/271).
 - Fix crash in iOS12 caused by abstract URLSession instance [#272](https://github.com/GetStream/stream-chat-swift/issues/272)
 - Fix infinite loop when the web socket connection fails (iOS13 only) [#273](https://github.com/GetStream/stream-chat-swift/pull/273).
-- Use user names and avatars for channels 1-by-1 [#275](https://github.com/GetStream/stream-chat-swift/issues/275).
+- Direct message channels (1-by-1 channels) will correctly get their name and avatar image from other user [#275](https://github.com/GetStream/stream-chat-swift/issues/275).
  ```swift
-let anotherUser = User("second")
+ let anotherUser = User(id: "second")
 anotherUser.name = "John"
 anotherUser.avatarURL = URL(string: "http://example.com/john")
 
