@@ -43,20 +43,48 @@ public extension Client {
     ///   - type: a channel type.
     ///   - members: a list of members.
     ///   - extraData: a channel extra data.
+    ///
+    /// Example:
+    /// ```
+    /// let anotherUser = User("second")
+    /// anotherUser.name = "John"
+    /// anotherUser.avatarURL = URL(string: "http://example.com/john")!
+    ///
+    /// let channel = client.channel(members: [client.user, anotherUser])
+    /// print(channel.name) // will print "John"
+    /// print(channel.imageURL) // will print "http://example.com/john"
+    /// ```
     func channel(type: ChannelType = .messaging,
                  members: [User],
                  extraData: ChannelExtraDataCodable? = nil) -> Channel {
-        Channel(type: type,
-                id: "",
-                members: members,
-                invitedMembers: [],
-                extraData: extraData,
-                created: .init(),
-                deleted: nil,
-                createdBy: nil,
-                lastMessageDate: nil,
-                frozen: false,
-                config: .init())
+        var extraData = extraData ?? ChannelExtraData()
+        
+        if extraData.name == nil, members.count > 1, let currentUserIndex = members.firstIndex(of: user) {
+            var otherMembers = members
+            otherMembers.remove(at: currentUserIndex)
+            
+            // Concat usser names by a comma.
+            let names = otherMembers.compactMap({ $0.name })
+            let firstNames = names.prefix(3)
+            extraData.name = firstNames.joined(separator: ", ") + (names.count > 3 ? " and \(names.count - 3) more" : "")
+            
+            if extraData.imageURL == nil {
+                // Set the channel image as the first none empty user avatar.
+                extraData.imageURL = otherMembers.first(where: { $0.avatarURL != nil })?.avatarURL
+            }
+        }
+        
+        return Channel(type: type,
+                       id: "",
+                       members: members,
+                       invitedMembers: [],
+                       extraData: extraData,
+                       created: .init(),
+                       deleted: nil,
+                       createdBy: nil,
+                       lastMessageDate: nil,
+                       frozen: false,
+                       config: .init())
     }
 }
 
