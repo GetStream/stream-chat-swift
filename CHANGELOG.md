@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.2.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.1)
+_May 19, 2020_
+
 ### ✅ Added
 - Added `ClientLogger.iconEnabled`, `ClientLogger.dateEnabled`, and `ClientLogger.levelEnabled` to control what will be shown in logs.
   These will only be valid when `ClientLogger.logger` block is not customized (overridden) [#263](https://github.com/GetStream/stream-chat-swift/issues/263)

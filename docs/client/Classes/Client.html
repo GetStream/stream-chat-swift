@@ -47,6 +47,9 @@
                 <a href="../Classes/Channel/Command.html">– Command</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/Channel/DefaultNamingStrategy.html">– DefaultNamingStrategy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/Client.html">Client</a>
               </li>
               <li class="nav-group-task">
@@ -218,6 +221,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/Database.html">Database</a>
@@ -1132,9 +1138,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient0C0C7channel4type7members9extraDataAA7ChannelCAA0I4TypeO_SayAA4UserVGAA0i5ExtraH7Codable_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/channel(type:members:extraData:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient0C0C7channel4type7members9extraDataAA7ChannelCAA0I4TypeO_SayAA4UserVGAA0i5ExtraH7Codable_pSgtF">channel(type:<wbr>members:<wbr>extraData:<wbr>)</a>
+                    <a name="/s:16StreamChatClient0C0C7channel4type7members9extraData14namingStrategyAA7ChannelCAA0K4TypeO_SayAA4UserVGAA0k5ExtraH7Codable_pSgAA0k6NamingJ0_pSgtF"></a>
+                    <a name="//apple_ref/swift/Method/channel(type:members:extraData:namingStrategy:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C7channel4type7members9extraData14namingStrategyAA7ChannelCAA0K4TypeO_SayAA4UserVGAA0k5ExtraH7Codable_pSgAA0k6NamingJ0_pSgtF">channel(type:<wbr>members:<wbr>extraData:<wbr>namingStrategy:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1156,7 +1162,8 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">channel</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">messaging</span><span class="p">,</span>
              <span class="nv">members</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">],</span>
-             <span class="nv">extraData</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span></code></pre>
+             <span class="nv">extraData</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+             <span class="nv">namingStrategy</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a></span><span class="p">?</span> <span class="o">=</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="o">.</span><span class="kt">DefaultNamingStrategy</span><span class="p">(</span><span class="nv">maxUserNames</span><span class="p">:</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span></code></pre>
 
                         </div>
                       </div>
@@ -1197,6 +1204,19 @@
                               <td>
                                 <div>
                                   <p>a channel extra data.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>namingStrategy</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a naming strategy to generate a name and image for the channel based on members.
+            Only takes effect if <code>extraData</code> is <code>nil</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -5720,7 +5740,7 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-08)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-19)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

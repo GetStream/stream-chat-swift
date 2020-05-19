@@ -47,6 +47,9 @@
                 <a href="../Classes/Channel/Command.html">– Command</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/Channel/DefaultNamingStrategy.html">– DefaultNamingStrategy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/Client.html">Client</a>
               </li>
               <li class="nav-group-task">
@@ -218,6 +221,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/Database.html">Database</a>
@@ -453,7 +459,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Level</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Level</span> <span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
 
                         </div>
                       </div>
@@ -503,6 +509,90 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:16StreamChatClient0C6LoggerC11iconEnabledSbvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/iconEnabled" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C6LoggerC11iconEnabledSbvpZ">iconEnabled</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Controls whether to display icons in logs
+Only valid when default <code><a href="../Classes/ClientLogger.html#/s:16StreamChatClient0C6LoggerC6loggeryySS_S2StcvpZ">ClientLogger.logger</a></code> block is used, if you&rsquo;ve overridden that, this is not valid.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">iconEnabled</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C6LoggerC11dateEnabledSbvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/dateEnabled" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C6LoggerC11dateEnabledSbvpZ">dateEnabled</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Controls whether to display date in logs
+Only valid when default <code><a href="../Classes/ClientLogger.html#/s:16StreamChatClient0C6LoggerC6loggeryySS_S2StcvpZ">ClientLogger.logger</a></code> block is used, if you&rsquo;ve overridden that, this is not valid.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">dateEnabled</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C6LoggerC12levelEnabledSbvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/levelEnabled" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C6LoggerC12levelEnabledSbvpZ">levelEnabled</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Controls whether to display log level in logs
+Only valid when default <code><a href="../Classes/ClientLogger.html#/s:16StreamChatClient0C6LoggerC6loggeryySS_S2StcvpZ">ClientLogger.logger</a></code> block is used, if you&rsquo;ve overridden that, this is not valid.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">levelEnabled</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:16StreamChatClient0C6LoggerC6loggeryySS_S2StcvpZ"></a>
                     <a name="//apple_ref/swift/Variable/logger" class="dashAnchor"></a>
                     <a class="token" href="#/s:16StreamChatClient0C6LoggerC6loggeryySS_S2StcvpZ">logger</a>
@@ -521,7 +611,8 @@ By default error messages will print to the console, but you can customize it to
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">logger</span><span class="p">:</span> <span class="p">(</span><span class="n">_</span> <span class="nv">icon</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">_</span> <span class="nv">dateTime</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">@available(*, deprecated, message: "Customizing the logger block with `ClientLogger.logger` is deprecated.\nPlease use `ClientLogger.log` to customize your logging logic.")</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">logger</span><span class="p">:</span> <span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -550,6 +641,89 @@ By default error messages will print to the console, but you can customize it to
                               <td>
                                 <div>
                                   <p>a formatted string of date and time, could be empty.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C6LoggerC3logyySS_SSAC5LevelOSStcvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/log" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C6LoggerC3logyySS_SSAC5LevelOSStcvpZ">log</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A customizable log block.
+By default error messages will print to the console, but you can customize it to use your own log block.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">log</span><span class="p">:</span> <span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="p">,</span> <span class="kt"><a href="../Classes/ClientLogger/Level.html">Level</a></span><span class="p">,</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>icon</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a small icon string like a tag for messages, e.g. 🦄</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>dateAndTime</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a formatted string of date and time, could be empty.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>level</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Log level</p>
                                 </div>
                               </td>
                             </tr>
@@ -1029,9 +1203,9 @@ By default error messages will print to the console, but you can customize it to
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient0C6LoggerC3log_8dateTime_ySS_S2StFZ"></a>
-                    <a name="//apple_ref/swift/Method/log(_:dateTime:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient0C6LoggerC3log_8dateTime_ySS_S2StFZ">log(_:<wbr>dateTime:<wbr>_:<wbr>)</a>
+                    <a name="/s:16StreamChatClient0C6LoggerC3log_8dateTime5level_ySS_SSAC5LevelOSStFZ"></a>
+                    <a name="//apple_ref/swift/Method/log(_:dateTime:level:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C6LoggerC3log_8dateTime5level_ySS_SSAC5LevelOSStFZ">log(_:<wbr>dateTime:<wbr>level:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1046,7 +1220,7 @@ By default error messages will print to the console, but you can customize it to
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">icon</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">dateTime</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span> <span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="nf">log</span><span class="p">(</span><span class="n">_</span> <span class="nv">icon</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">dateTime</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span> <span class="nv">level</span><span class="p">:</span> <span class="kt"><a href="../Classes/ClientLogger/Level.html">Level</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1209,7 +1383,7 @@ logs the failure.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-08)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-19)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
