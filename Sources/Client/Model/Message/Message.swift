@@ -82,6 +82,8 @@ public struct Message: Codable {
     public var isDeleted: Bool { type == .deleted || deleted != nil }
     /// Check if the message is own message of the current user.
     public var isOwn: Bool { user.isCurrent }
+    /// Check if the message is a reply.
+    public var isReply: Bool { parentId != nil }
     /// Check if the message could be edited.
     public var canEdit: Bool { isOwn && (!text.isBlank || !attachments.isEmpty) }
     /// Check if the message could be deleted.
@@ -179,7 +181,7 @@ public struct Message: Codable {
             try container.encode(attachments, forKey: .attachments)
         }
         
-        if parentId != nil {
+        if isReply {
             try container.encode(parentId, forKey: .parentId)
             try container.encode(showReplyInChannel, forKey: .showReplyInChannel)
         }
