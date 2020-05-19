@@ -37,7 +37,6 @@ class WebSocketProviderMock: WebSocketProvider {
     }
     
     func disconnect() {
-    
     }
     
     func sendPing() {
@@ -57,6 +56,7 @@ class WebSocketProviderMock: WebSocketProvider {
     }
     
     func simulateDisconnect(_ error: WebSocketProviderError? = nil) {
+        isConnected = false
         delegate?.websocketDidDisconnect(error: error)
     }
 }

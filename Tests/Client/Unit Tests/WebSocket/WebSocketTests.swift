@@ -22,6 +22,8 @@ final class WebSocketTests: XCTestCase {
     
     var emittedEvents: [Event]!
     
+    let logger = ClientLogger(icon: "🦄", level: .info)
+    
     override func setUp() {
         super.setUp()
         
