@@ -277,6 +277,7 @@
 		8AD5EDD422E9BB0C005CFAC9 /* RxGesture.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD022E9BB0C005CFAC9 /* RxGesture.framework */; };
 		8AD5EDD522E9BB0C005CFAC9 /* Nuke.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */; };
 		8AD5EDD622E9BB0C005CFAC9 /* SwiftyGif.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDD222E9BB0C005CFAC9 /* SwiftyGif.framework */; };
+		8ADA1EEF2473FD7800C4FC82 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADA1EEE2473FD7800C4FC82 /* EventTests.swift */; };
 		8ADA1EEB2472C2E500C4FC82 /* ChannelNamingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADA1EEA2472C2E500C4FC82 /* ChannelNamingStrategy.swift */; };
 		8ADA1EED2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADA1EEC2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift */; };
 		8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
@@ -600,6 +601,7 @@
 		8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatCore.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = "<group>"; };
+		8ADA1EEE2473FD7800C4FC82 /* EventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
 		8ADA1EEA2472C2E500C4FC82 /* ChannelNamingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNamingStrategy.swift; sourceTree = "<group>"; };
 		8ADA1EEC2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNamingStrategyTests.swift; sourceTree = "<group>"; };
 		8AE6206923CF63F000AB3426 /* ClientTests00.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTests00.swift; sourceTree = "<group>"; };
@@ -792,6 +794,7 @@
 				7900717D244084E200E5246F /* QueryEncodingTests.swift */,
 				791664DE245AC89E0020710B /* Client+DevicesTests.swift */,
 				8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */,
+				8ADA1EEE2473FD7800C4FC82 /* EventTests.swift */,
 				8A2E4F03245C69AA0032565F /* WebSocket */,
 			);
 			path = "Unit Tests";
@@ -1808,6 +1811,7 @@
 				79273EB4246AD1E900B0A574 /* Channel_SilentMessageTests.swift in Sources */,
 				791664DF245AC89E0020710B /* Client+DevicesTests.swift in Sources */,
 				791664DD245AC78B0020710B /* RequestRecorderURLProtocol.swift in Sources */,
+				8ADA1EEF2473FD7800C4FC82 /* EventTests.swift in Sources */,
 				7900717F2440850700E5246F /* QueryEncodingTests.swift in Sources */,
 				793612F62461437700944861 /* MockNetworkURLProtocol.swift in Sources */,
 				79273EB6246AE1EF00B0A574 /* Client_SilentMessageTests.swift in Sources */,
