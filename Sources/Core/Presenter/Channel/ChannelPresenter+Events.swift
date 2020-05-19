@@ -28,7 +28,7 @@ extension ChannelPresenter {
         
         switch event {
         case .typingStart(let user, _, _):
-            guard parentMessage == nil else {
+            if isThread {
                 return .none
             }
             
@@ -46,7 +46,7 @@ extension ChannelPresenter {
             }
             
         case .typingStop(let user, _, _):
-            guard parentMessage == nil else {
+            if isThread {
                 return .none
             }
             

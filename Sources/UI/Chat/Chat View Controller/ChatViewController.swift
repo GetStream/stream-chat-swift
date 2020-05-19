@@ -340,7 +340,7 @@ extension ChatViewController {
             return
         }
         
-        if presenter.parentMessage != nil {
+        if presenter.isThread {
             title = "Thread"
             updateTitleReplyCount()
             return
@@ -349,8 +349,7 @@ extension ChatViewController {
         title = presenter.channel.name
         let channelAvatar = AvatarView(style: style.avatarViewStyle)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatar)
-        let imageURL = presenter.parentMessage == nil ? presenter.channel.imageURL : presenter.parentMessage?.user.avatarURL
-        channelAvatar.update(with: imageURL, name: title)
+        channelAvatar.update(with: presenter.channel.imageURL, name: title)
     }
     
     private func updateTitleReplyCount() {
