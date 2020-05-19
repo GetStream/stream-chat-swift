@@ -29,7 +29,7 @@ extension Channel {
     }
     
     func updateUnreadCount(newMessage message: Message) {
-        guard message.parentId == nil && !message.isSilent else {
+        if message.isReply || message.isSilent {
             return
         }
         
@@ -52,7 +52,7 @@ extension Channel {
     }
     
     private func updateUnreadCount(deletedMessage message: Message) {
-        guard message.parentId == nil && !message.isSilent else {
+        if message.isReply || message.isSilent {
             return
         }
         

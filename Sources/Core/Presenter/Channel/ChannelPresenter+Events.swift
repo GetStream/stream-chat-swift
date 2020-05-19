@@ -183,7 +183,7 @@ extension ChannelPresenter {
     
     private func shouldMessageEventBeHandled(_ message: Message) -> Bool {
         guard let parentMessage = parentMessage else {
-            return message.parentId == nil || message.showReplyInChannel
+            return !message.isReply || message.showReplyInChannel
         }
         
         return message.parentId == parentMessage.id || message.id == parentMessage.id
