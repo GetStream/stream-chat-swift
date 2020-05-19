@@ -45,26 +45,30 @@ final class Channel_SetupTests: XCTestCase {
     }
     
     func test_channelNameAndImage_withEmptyId() {
-        var channel = client.channel(type: .messaging, members: [currentUser])
-        XCTAssertNil(channel.name)
+        let strategy = MockNamingStrategy()
+        
+        var channel = client.channel(type: .messaging, members: [], namingStrategy: strategy)
+        XCTAssertEqual(channel.name, "0")
         XCTAssertNil(channel.imageURL)
         
-        channel = client.channel(type: .messaging, members: [currentUser, user1])
-        XCTAssertEqual(channel.name, user1.name)
+        channel = client.channel(type: .messaging, members: [user1, currentUser], namingStrategy: strategy)
+        XCTAssertEqual(channel.name, "2")
         XCTAssertEqual(channel.imageURL, user1.avatarURL)
-        
-        channel = client.channel(type: .messaging, members: [user1, user2])
-        XCTAssertNil(channel.name)
-        XCTAssertNil(channel.imageURL)
 
         var extraData = ChannelExtraData(name: "test")
-        channel = client.channel(type: .messaging, members: [currentUser, user1], extraData: extraData)
+        channel = client.channel(type: .messaging, members: [currentUser, user1], extraData: extraData, namingStrategy: strategy)
         XCTAssertEqual(channel.name, extraData.name)
         XCTAssertEqual(channel.imageURL, extraData.imageURL)
         
         extraData = ChannelExtraData(imageURL: URL(string: "http://extradata.com"))
-        channel = client.channel(type: .messaging, members: [currentUser, user1], extraData: extraData)
+        channel = client.channel(type: .messaging, members: [currentUser, user1], extraData: extraData, namingStrategy: strategy)
         XCTAssertNil(channel.name)
         XCTAssertEqual(channel.imageURL, extraData.imageURL)
+    }
+}
+
+fileprivate struct MockNamingStrategy: ChannelNamingStrategy {
+    func extraData(for currentUser: User, members: [User]) -> ChannelExtraDataCodable? {
+        ChannelExtraData(name: "\(members.count)", imageURL: members.first?.avatarURL)
     }
 }
