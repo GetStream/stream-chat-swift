@@ -9,7 +9,7 @@
 import Foundation
 
 /// A web socket event.
-public enum Event: Decodable {
+public enum Event: Decodable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case connectionId = "connection_id"
         case type
@@ -407,89 +407,6 @@ public enum Event: Decodable {
             self = try .notificationInviteAccepted(channel(), type)
         case .notificationInviteRejected:
             self = try .notificationInviteRejected(channel(), type)
-        }
-    }
-}
-
-// MARK: - Equatable
-
-extension Event: Equatable {
-    public static func == (lhs: Event, rhs: Event) -> Bool {
-        switch (lhs, rhs) {
-        case (let .connectionChanged(connectionState1), let .connectionChanged(connectionState2)):
-            return connectionState1 == connectionState2
-        case (let .healthCheck(user1, connectionId1), let .healthCheck(user2, connectionId2)):
-            return user1 == user2 && connectionId1 == connectionId2
-        case (.pong, .pong):
-            return true
-            
-        case (let .userPresenceChanged(user1, cid1, _), let .userPresenceChanged(user2, cid2, _)):
-            return user1 == user2 && cid1 == cid2
-        case (let .userUpdated(user1, cid1, _), let .userUpdated(user2, cid2, _)):
-            return user1 == user2 && cid1 == cid2
-        case (let .userBanned(reason1, expiration1, created1, cid1, _), let .userBanned(reason2, expiration2, created2, cid2, _)):
-            return reason1 == reason2 && expiration1 == expiration2 && created1 == created2 && cid1 == cid2
-        case (let .userStartWatching(user1, watcherCount1, cid1, _), let .userStartWatching(user2, watcherCount2, cid2, _)):
-            return user1 == user2 && watcherCount1 == watcherCount2 && cid1 == cid2
-        case (let .userStopWatching(user1, watcherCount1, cid1, _), let .userStopWatching(user2, watcherCount2, cid2, _)):
-            return user1 == user2 && watcherCount1 == watcherCount2 && cid1 == cid2
-            
-        case (let .typingStart(user1, cid1, _), let .typingStart(user2, cid2, _)):
-            return user1 == user2 && cid1 == cid2
-        case (let .typingStop(user1, cid1, _), let .typingStop(user2, cid2, _)):
-            return user1 == user2 && cid1 == cid2
-            
-        case (let .channelUpdated(response1, cid1, _), let .channelUpdated(response2, cid2, _)):
-            return response1 == response2 && cid1 == cid2
-        case (.channelDeleted(let channel1, _), .channelDeleted(let channel2, _)):
-            return channel1 == channel2
-        case (let .channelHidden(hiddenChannelResponse1, cid1, _), let .channelHidden(hiddenChannelResponse2, cid2, _)):
-            return hiddenChannelResponse1 == hiddenChannelResponse2 && cid1 == cid2
-            
-        case (let .messageNew(message1, watcherCount1, cid1, _), let .messageNew(message2, watcherCount2, cid2, _)):
-            return message1 == message2 && watcherCount1 == watcherCount2 && cid1 == cid2
-        case (let .messageUpdated(message1, cid1, _), let .messageUpdated(message2, cid2, _)):
-            return message1 == message2 && cid1 == cid2
-        case (let .messageDeleted(message1, user1, cid1, _), let .messageDeleted(message2, user2, cid2, _)):
-            return message1 == message2 && user1 == user2 && cid1 == cid2
-        case (let .messageRead(messageRead1, cid1, _), let .messageRead(messageRead2, cid2, _)):
-            return messageRead1 == messageRead2 && cid1 == cid2
-            
-        case (let .memberAdded(member1, cid1, _), let .memberAdded(member2, cid2, _)):
-            return member1 == member2 && cid1 == cid2
-        case (let .memberUpdated(member1, cid1, _), let .memberUpdated(member2, cid2, _)):
-            return member1 == member2 && cid1 == cid2
-        case (let .memberRemoved(user1, cid1, _), let .memberRemoved(user2, cid2, _)):
-            return user1 == user2 && cid1 == cid2
-            
-        case (let .reactionNew(reaction1, message1, user1, cid1, _), let .reactionNew(reaction2, message2, user2, cid2, _)):
-            return reaction1 == reaction2 && message1 == message2 && user1 == user2 && cid1 == cid2
-        case (let .reactionUpdated(reaction1, message1, user1, cid1, _), let .reactionUpdated(reaction2, message2, user2, cid2, _)):
-            return reaction1 == reaction2 && message1 == message2 && user1 == user2 && cid1 == cid2
-        case (let .reactionDeleted(reaction1, message1, user1, cid1, _), let .reactionDeleted(reaction2, message2, user2, cid2, _)):
-            return reaction1 == reaction2 && message1 == message2 && user1 == user2 && cid1 == cid2
-            
-        case (let .notificationMessageNew(message1, channel1, unreadCount1, watcherCount1, _),
-              let .notificationMessageNew(message2, channel2, unreadCount2, watcherCount2, _)):
-            return message1 == message2 && channel1 == channel2 && unreadCount1 == unreadCount2 && watcherCount1 == watcherCount2
-        case (let .notificationMarkRead(messageRead1, channel1, unreadCount1, _),
-              let .notificationMarkRead(messageRead2, channel2, unreadCount2, _)):
-            return messageRead1 == messageRead2 && channel1 == channel2 && unreadCount1 == unreadCount2
-        case (let .notificationMarkAllRead(created1, _), let .notificationMarkAllRead(created2, _)):
-            return created1 == created2
-        case (let .notificationMutesUpdated(user1, cid1, _), let .notificationMutesUpdated(user2, cid2, _)):
-            return user1 == user2 && cid1 == cid2
-            
-        case (let .notificationAddedToChannel(channel1, unreadCount1, _),
-              let .notificationAddedToChannel(channel2, unreadCount2, _)):
-            return channel1 == channel2 && unreadCount1 == unreadCount2
-        case (.notificationRemovedFromChannel(let channel1, _), .notificationRemovedFromChannel(let channel2, _)),
-             (.notificationInvited(let channel1, _), .notificationInvited(let channel2, _)),
-             (.notificationInviteAccepted(let channel1, _), .notificationInviteAccepted(let channel2, _)),
-             (.notificationInviteRejected(let channel1, _), .notificationInviteRejected(let channel2, _)):
-            return channel1 == channel2
-        default:
-            return false
         }
     }
 }
