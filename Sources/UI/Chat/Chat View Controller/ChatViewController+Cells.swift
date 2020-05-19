@@ -44,7 +44,7 @@ extension ChatViewController {
                     .disposed(by: cell.disposeBag)
             }
             
-            if presenter.parentMessage == nil, let parentMessageId = message.parentId, message.showReplyInChannel {
+            if !presenter.isThread, let parentMessageId = message.parentId, message.showReplyInChannel {
                 cell.replyInChannelButton.isHidden = false
                 
                 cell.replyInChannelButton.rx.anyGesture(TapControlEvent.default)

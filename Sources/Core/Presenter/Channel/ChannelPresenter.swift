@@ -50,6 +50,8 @@ public final class ChannelPresenter: Presenter {
     public var channel: Channel { channelAtomic.get() }
     /// A parent message for replies.
     public let parentMessage: Message?
+    /// Checks if the presenter is in a thread.
+    public var isThread: Bool { parentMessage != nil }
     /// Query options.
     public let queryOptions: QueryOptions
     /// An edited message.
@@ -78,7 +80,7 @@ public final class ChannelPresenter: Presenter {
     public var ephemeralMessage: Message? { (try? ephemeralSubject.value())?.message }
     
     /// Check if the user can reply (create a thread) to a message.
-    public var canReply: Bool { parentMessage == nil && channel.config.repliesEnabled }
+    public var canReply: Bool { !isThread && channel.config.repliesEnabled }
     
     /// A filter to discard channel events.
     public var eventsFilter: StreamChatClient.Event.Filter?
@@ -170,7 +172,6 @@ extension ChannelPresenter {
             ? uploadManager.files.compactMap({ $0.attachment })
             : uploadManager.images.compactMap({ $0.attachment })
         
-        let parentId = parentMessage?.id
         var extraData: Codable?
         
         if attachments.isEmpty, let editMessage = editMessage, !editMessage.attachments.isEmpty {
@@ -178,7 +179,7 @@ extension ChannelPresenter {
         }
         
         if let messageExtraDataCallback = messageExtraDataCallback {
-            extraData = messageExtraDataCallback(messageId, text, attachments, parentId)
+            extraData = messageExtraDataCallback(messageId, text, attachments, parentMessage?.id)
         }
         
         editMessage = nil
@@ -196,12 +197,12 @@ extension ChannelPresenter {
         }
         
         let message = Message(id: messageId,
-                              parentId: parentId,
+                              parentId: parentMessage?.id,
                               text: text,
                               attachments: attachments,
                               mentionedUsers: mentionedUsers,
                               extraData: extraData,
-                              showReplyInChannel: showReplyInChannel && parentId != nil)
+                              showReplyInChannel: showReplyInChannel && isThread)
         
         return messagePreparationCallback?(message) ?? message
     }

@@ -119,7 +119,7 @@ extension ChatViewController {
         }
         
         composerView.attachmentButton.isHidden = composerAddFileContainerView == nil
-        composerView.addToSuperview(view, showAlsoSendToChannelButton: presenter.parentMessage != nil)
+        composerView.addToSuperview(view, showAlsoSendToChannelButton: presenter.isThread)
         
         if let composerAddFileContainerView = composerAddFileContainerView {
             composerAddFileContainerView.add(to: composerView)
@@ -135,7 +135,7 @@ extension ChatViewController {
         textViewEvents.subscribe(onNext: { [weak self] in self?.dispatchCommands(in: $0) }).disposed(by: disposeBag)
         
         // Send typing events.
-        if presenter.channel.config.typingEventsEnabled, presenter.parentMessage == nil {
+        if presenter.channel.config.typingEventsEnabled, !presenter.isThread {
             Observable.merge([textViewEvents.map { _ in true },
                               textViewEvents.debounce(.seconds(3), scheduler: MainScheduler.instance).map { _ in false }])
                 .distinctUntilChanged()

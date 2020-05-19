@@ -43,9 +43,9 @@ extension Reactive where Base == ChannelPresenter {
                     
                     return Driver.merge(
                         // Messages from requests.
-                        base.parentMessage == nil
-                            ? base.rx.parsedMessagesRequest
-                            : base.rx.parsedRepliesResponse(base.rx.repliesRequest),
+                        base.isThread
+                            ? base.rx.parsedRepliesResponse(base.rx.repliesRequest)
+                            : base.rx.parsedMessagesRequest,
                         // Events from a websocket.
                         base.rx.webSocketEvents,
                         base.rx.ephemeralMessageEvents,
@@ -117,7 +117,7 @@ public extension Reactive where Base == ChannelPresenter {
     /// Send a typing event.
     /// - Parameter isTyping: a user typing action.
     func sendEvent(isTyping: Bool) -> Observable<StreamChatClient.Event> {
-        guard base.parentMessage == nil else {
+        if base.isThread {
             return .empty()
         }
         
