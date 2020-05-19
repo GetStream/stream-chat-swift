@@ -11,37 +11,11 @@ import XCTest
 
 final class ChannelNamingStrategyTests: XCTestCase {
     
-    let currentUser: User = {
-        var user = User(id: "u1")
-        user.name = "Mr First"
-        user.avatarURL = URL(string: "http://first.com")
-        return user
-    }()
-    
-    let user1: User = {
-        var user = User(id: "u2")
-        user.name = "Mr Second"
-        user.avatarURL = URL(string: "http://second.com")
-        return user
-    }()
-    
-    let user2: User = {
-        var user = User(id: "u3")
-        user.name = "Mr Third"
-        return user
-    }()
-    
-    let user3: User = {
-        var user = User(id: "u4")
-        user.name = "Mr Fourth"
-        return user
-    }()
-    
-    let user4: User = {
-        var user = User(id: "u5")
-        user.name = "Mr Fifth"
-        return user
-    }()
+    let currentUser = User(id: "u1", name: "Mr First", avatarURL: URL(string: "http://first.com"))
+    let user1 = User(id: "u2", name: "Mr Second", avatarURL: URL(string: "http://second.com"))
+    let user2 = User(id: "u3", name: "Mr Third")
+    let user3 = User(id: "u4", name: "Mr Fourth")
+    let user4 = User(id: "u5", name: "Mr Fifth")
     
     func test_channelNamingStrategry() {
         let strategy = Channel.DefaultNamingStrategy(maxUserNames: 3)
