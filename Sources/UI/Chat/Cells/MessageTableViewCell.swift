@@ -426,6 +426,11 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         attachmentPreviews.forEach { $0.removeFromSuperview() }
         attachmentPreviews = []
     }
+}
+
+// MARK: - Helpers to make correct cell layout updates
+
+extension MessageTableViewCell {
     
     func lastVisibleViewFromMessageStackView() -> UIView? {
         var visibleViews = messageStackView.arrangedSubviews.filter { $0.isHidden == false }
