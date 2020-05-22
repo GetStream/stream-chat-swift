@@ -23,39 +23,7 @@ public struct ProgressResponse<T: Decodable>: Decodable {
 }
 
 public extension Reactive where Base == Client {
-    
-    func request<T: Decodable>(_ request: @escaping (@escaping Client.Completion<T>) -> Cancellable) -> Observable<T> {
-        .create { observer in
-            let subscription = request { result in
-                if let value = result.value {
-                    observer.onNext(value)
-                    observer.onCompleted()
-                } else if let error = result.error {
-                    observer.onError(error)
-                }
-            }
-            
-            return Disposables.create { subscription.cancel() }
-        }
-    }
-    
-    func progressRequest<T: Decodable>(_ request: @escaping ProgressRequest<T>) -> Observable<ProgressResponse<T>> {
-        .create { observer in
-            let subscription = request({ progress in
-                observer.onNext(.init(progress: progress, value: nil))
-            }, { result in
-                if let value = result.value {
-                    observer.onNext(.init(progress: 1, value: value))
-                    observer.onCompleted()
-                } else if let error = result.error {
-                    observer.onError(error)
-                }
-            })
-            
-            return Disposables.create { subscription.cancel() }
-        }
-    }
-    
+    /// Returns an observable connected event.
     func connected<T: Decodable>(_ rxRequest: Observable<T>) -> Observable<T> {
         base.isConnected ? rxRequest : connected.flatMapLatest { rxRequest }
     }
