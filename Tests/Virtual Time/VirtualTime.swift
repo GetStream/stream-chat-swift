@@ -11,7 +11,7 @@ import XCTest
 /// This class allows simulating time-based events in tests.
 class VirtualTime {
     typealias Seconds = TimeInterval
-
+    
     /// Specifies the number of seconds the execution pauses for after the virtual time is advanced.
     ///
     /// This is needed to give the system time to execute async tasks properly. Typically, you don't need to change this value.
@@ -26,11 +26,11 @@ class VirtualTime {
         case stopped
     }
     var state: State = .stopped
-
+    
     init(initialTime: TimeInterval = 0) {
         self.currentTime = initialTime
     }
-
+    
     /// Simulates running the virtual time.
     ///
     /// - Parameter numberOfSeconds: The number of virtual seconds the time should advance of. If `nil` it runs until
@@ -47,7 +47,7 @@ class VirtualTime {
                 .map { (nextFireTime: $0.nextFireTime(currentTime: currentTime), timer: $0) }
                 .filter { $0.nextFireTime != nil && $0.timer.isActive }
                 .sorted { $0.nextFireTime! < $1.nextFireTime! }
-
+            
             let nextTime = sortedTimers.first?.nextFireTime
             if let nextTime = nextTime, nextTime > currentTime, nextTime <= targetTime {
                 currentTime = nextTime
@@ -97,17 +97,17 @@ extension VirtualTime {
     /// Internal representation of a timer scheduled with `VirtualTime`. Not meant to be used directly.
     class TimerControl {
         private (set) var isActive = true
-
+        
         var repeatingPeriod: TimeInterval
         var scheduledFireTime: TimeInterval
         var callback: (TimerControl) -> Void
-
+        
         init(scheduledFireTime: TimeInterval, repeatingPeriod: TimeInterval, callback: @escaping (TimerControl) -> Void) {
             self.repeatingPeriod = repeatingPeriod
             self.scheduledFireTime = scheduledFireTime
             self.callback = callback
         }
-
+        
         func resume() {
             isActive = true
         }
@@ -115,13 +115,17 @@ extension VirtualTime {
         func suspend() {
             isActive = false
         }
-
+        
+        func cancel() {
+            isActive = false
+        }
+        
         func nextFireTime(currentTime: TimeInterval) -> TimeInterval? {
             // First fire
             if scheduledFireTime > currentTime {
                 return scheduledFireTime
             }
-                        
+            
             // Repeated fire
             if scheduledFireTime <= currentTime && repeatingPeriod > 0 {
                 let elapsedTime = currentTime - scheduledFireTime
