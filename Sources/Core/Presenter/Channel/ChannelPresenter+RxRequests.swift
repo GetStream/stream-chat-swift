@@ -114,26 +114,6 @@ public extension Reactive where Base == ChannelPresenter {
             .observeOn(MainScheduler.instance)
     }
     
-    /// Send a typing event.
-    /// - Parameter isTyping: a user typing action.
-    func sendEvent(isTyping: Bool) -> Observable<StreamChatClient.Event> {
-        if base.isThread {
-            return .empty()
-        }
-        
-        if isTyping {
-            if !base.startedTyping {
-                base.startedTyping = true
-                return base.channel.rx.send(eventType: .typingStart).observeOn(MainScheduler.instance)
-            }
-        } else if base.startedTyping {
-            base.startedTyping = false
-            return base.channel.rx.send(eventType: .typingStop).observeOn(MainScheduler.instance)
-        }
-        
-        return .empty()
-    }
-    
     /// Send Read event if the app is active.
     /// - Returns: an observable completion.
     func markReadIfPossible() -> Observable<StreamChatClient.Event> {
