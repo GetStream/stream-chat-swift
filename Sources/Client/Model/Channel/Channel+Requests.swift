@@ -124,6 +124,8 @@ public extension Channel {
         Client.shared.markRead(channel: self, completion)
     }
     
+    // MARK: - Events
+    
     /// Send an event.
     /// - Parameters:
     ///   - eventType: an event type.
@@ -131,6 +133,37 @@ public extension Channel {
     @discardableResult
     func send(eventType: EventType, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
         Client.shared.send(eventType: eventType, to: self, completion)
+    }
+    
+    /// Send a keystroke event for the current user.
+    /// - Parameter completion: a completion block with `Event`.
+    @discardableResult
+    func keystroke(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
+        currentUserTypingTimerControl?.cancel()
+        
+        currentUserTypingTimerControl = DefaultTimer.schedule(timeInterval: 5, queue: .main) { [weak self] in
+            self?.stopTyping(completion)
+        }
+        
+        guard !isCurrentUserTyping else {
+            return Subscription.empty
+        }
+        
+        isCurrentUserTyping = true
+        
+        return Client.shared.send(eventType: .typingStart, to: self, completion)
+    }
+    
+    /// Send a stop typing event for the current user.
+    /// - Parameter completion: a completion block with `Event`.
+    @discardableResult
+    func stopTyping(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
+        guard isCurrentUserTyping else {
+            return Subscription.empty
+        }
+        
+        isCurrentUserTyping = false
+        return Client.shared.send(eventType: .typingStop, to: self, completion)
     }
     
     // MARK: - Members
