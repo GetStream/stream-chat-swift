@@ -117,6 +117,9 @@ public final class Channel: Codable {
     
     private var subscriptionBag = SubscriptionBag()
     
+    var isCurrentUserTyping = false
+    var currentUserTypingTimerControl: TimerControl?
+    
     /// Checks for the channel data encoding is empty.
     var isEmpty: Bool { extraData == nil && members.isEmpty && invitedMembers.isEmpty }
     
@@ -222,6 +225,8 @@ public final class Channel: Codable {
     }
 }
 
+// MARK: - Equatable
+
 extension Channel: Equatable, CustomStringConvertible {
     
     public static func == (lhs: Channel, rhs: Channel) -> Bool {
@@ -234,7 +239,7 @@ extension Channel: Equatable, CustomStringConvertible {
     }
 }
 
-// MARK: Subscriptions
+// MARK: - Subscriptions
 
 extension Channel {
     
@@ -271,7 +276,7 @@ extension Channel {
     }
 }
 
-// MARK: Channel Extra Data Codable
+// MARK: - Channel Extra Data Codable
 
 extension Channel {
     
