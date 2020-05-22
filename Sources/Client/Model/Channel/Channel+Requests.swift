@@ -141,7 +141,7 @@ public extension Channel {
     func keystroke(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
         currentUserTypingTimerControl?.cancel()
         
-        currentUserTypingTimerControl = DefaultTimer.schedule(timeInterval: 5, queue: .main) { [weak self] in
+        currentUserTypingTimerControl = DefaultTimer.schedule(timeInterval: 15, queue: .main) { [weak self] in
             self?.stopTyping(completion)
         }
         

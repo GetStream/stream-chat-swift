@@ -104,10 +104,22 @@ public extension Reactive where Base == Channel {
         Client.shared.rx.markRead(channel: base)
     }
     
+    // MARK: - Events
+    
     /// Send an event.
     /// - Parameter eventType: an event type.
     func send(eventType: EventType) -> Observable<StreamChatClient.Event> {
         Client.shared.rx.send(eventType: eventType, to: base)
+    }
+    
+    /// Send a keystroke event for the current user.
+    func keystroke() -> Observable<StreamChatClient.Event> {
+        request({ [weak base] in base?.keystroke($0) ?? SubscriptionBag() })
+    }
+    
+    /// Send a keystroke event for the current user.
+    func stopTyping() -> Observable<StreamChatClient.Event> {
+        request({ [weak base] in base?.stopTyping($0) ?? SubscriptionBag() })
     }
     
     // MARK: - Members
