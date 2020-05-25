@@ -40,7 +40,7 @@ public func doAfter<T, E: Error>(_ completion: @escaping ResultCompletion<T, E>,
 public func `do`<T, E: Error>(for completion: @escaping ResultCompletion<T, E>,
                               doBefore: @escaping (T) -> Void = { _ in },
                               doAfter: @escaping (T) -> Void = { _ in }) -> ResultCompletion<T, E> {
-    return { result in
+    { result in
         guard let value = try? result.get() else {
             completion(result)
             return
@@ -49,5 +49,20 @@ public func `do`<T, E: Error>(for completion: @escaping ResultCompletion<T, E>,
         doBefore(value)
         completion(result)
         doAfter(value)
+    }
+}
+
+/// Performs side effect work for a failure result before of the original completion block.
+/// - Parameters:
+///   - completion: an original completion block.
+///   - onError: a side effect with an error will be executed before the original completion block.
+public func onError<T, E: Error>(_ completion: @escaping ResultCompletion<T, E>,
+                                 _ onError: @escaping (E) -> Void) -> ResultCompletion<T, E> {
+    { result in
+        if let error = result.error {
+            onError(error)
+        }
+        
+        completion(result)
     }
 }

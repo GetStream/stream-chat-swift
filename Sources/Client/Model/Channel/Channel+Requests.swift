@@ -136,6 +136,7 @@ public extension Channel {
     }
     
     /// Send a keystroke event for the current user.
+    /// - Note: This method should be called from the main thread.
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
     func keystroke(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
@@ -145,24 +146,36 @@ public extension Channel {
             self?.stopTyping(completion)
         }
         
-        guard !isCurrentUserTyping else {
+        if isCurrentUserTyping {
+            completion(.success(.typingStart(.current, cid, .typingStart)))
             return Subscription.empty
         }
         
         isCurrentUserTyping = true
         
+        let completion = onError(completion) { [weak self] _ in
+            DispatchQueue.main.async { self?.isCurrentUserTyping = false }
+        }
+        
         return Client.shared.send(eventType: .typingStart, to: self, completion)
     }
     
     /// Send a stop typing event for the current user.
+    /// - Note: This method should be called from the main thread.
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
     func stopTyping(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
         guard isCurrentUserTyping else {
+            completion(.success(.typingStop(.current, cid, .typingStop)))
             return Subscription.empty
         }
         
         isCurrentUserTyping = false
+        
+        let completion = onError(completion) { [weak self] _ in
+            DispatchQueue.main.async { self?.isCurrentUserTyping = true }
+        }
+        
         return Client.shared.send(eventType: .typingStop, to: self, completion)
     }
     
