@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### ✅ Added
+- Re-introduced `Filter.none`. It should not be used with queryChannels or search, it's only valid for queryUsers to get all users [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
 
 # [2.2.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.1)
 _May 19, 2020_
