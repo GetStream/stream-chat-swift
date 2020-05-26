@@ -53,6 +53,9 @@ public enum Filter: Encodable, CustomStringConvertible {
     case autocomplete(Key, with: String)
     /// Contains operator
     case contains(Key, Encodable)
+    /// A custom operator. Please make sure to provide a valid operator.
+    /// Example:  `.custom("contains", key: "teams", value: "red")`
+    case custom(String, key: Key, value: Encodable)
     
     // MARK: Combine operators
     
@@ -89,6 +92,8 @@ public enum Filter: Encodable, CustomStringConvertible {
             return "\(key) AUTOCOMPLETE \(object)"
         case let .contains(key, object):
             return "\(key) CONTAINS \(object)"
+        case let .custom(`operator`, key, object):
+            return "\(key) \(`operator`.uppercased()) \(object)"
         case .and(let filters):
             return "(" + filters.map({ $0.description }).joined(separator: ") AND (") + ")"
         case .or(let filters):
@@ -149,6 +154,10 @@ public enum Filter: Encodable, CustomStringConvertible {
         case let .contains(key, object):
             keyOperand = key
             operatorName = "$contains"
+            operand = object
+        case let .custom(`operator`, key, object):
+            keyOperand = key
+            operatorName = "$\(`operator`)"
             operand = object
             
         case .and(let filters):

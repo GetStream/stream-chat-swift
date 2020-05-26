@@ -41,6 +41,12 @@ final class FilterTests: XCTestCase {
         
         filter = .autocomplete("a", with: "b")
         XCTAssertEqual(filter.json, "{\"a\":{\"$autocomplete\":\"b\"}}")
+        
+        filter = .contains("a", "b")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$contains\":\"b\"}}")
+        
+        filter = .custom("myOperator", key: "a", value: "b")
+        XCTAssertEqual(filter.json, "{\"a\":{\"$myOperator\":\"b\"}}")
     }
     
     func testFilter() {

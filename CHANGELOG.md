@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ✅ Added
 - Re-introduced `Filter.none`. It should not be used with queryChannels or search, it's only valid for queryUsers to get all users [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
 - `Filter.contains` operator for all endpoints [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
+- `Filter.custom` to be able to use new operators before our SDK is updated [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
+  Please make sure to provide a valid operator.
+  Example:  `.custom("contains", key: "teams", value: "red")`
 
 # [2.2.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.1)
 _May 19, 2020_
