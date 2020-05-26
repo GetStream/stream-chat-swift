@@ -28,7 +28,7 @@
 --octalgrouping none
 --operatorfunc no-space
 --patternlet inline
---ranges no-space
+--nospaceoperators
 --self init-only
 --selfrequired 
 --semicolons inline
