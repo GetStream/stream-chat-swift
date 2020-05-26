@@ -51,6 +51,8 @@ public enum Filter: Encodable, CustomStringConvertible {
     case query(Key, with: String)
     /// An autocomplete operator.
     case autocomplete(Key, with: String)
+    /// Contains operator
+    case contains(Key, Encodable)
     
     // MARK: Combine operators
     
@@ -84,6 +86,8 @@ public enum Filter: Encodable, CustomStringConvertible {
         case let .query(key, object):
             return "\(key) QUERY \(object)"
         case let .autocomplete(key, object):
+            return "\(key) AUTOCOMPLETE \(object)"
+        case let .contains(key, object):
             return "\(key) CONTAINS \(object)"
         case .and(let filters):
             return "(" + filters.map({ $0.description }).joined(separator: ") AND (") + ")"
@@ -141,6 +145,10 @@ public enum Filter: Encodable, CustomStringConvertible {
         case let .autocomplete(key, object):
             keyOperand = key
             operatorName = "$autocomplete"
+            operand = object
+        case let .contains(key, object):
+            keyOperand = key
+            operatorName = "$contains"
             operand = object
             
         case .and(let filters):
