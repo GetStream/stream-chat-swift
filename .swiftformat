@@ -1,0 +1,42 @@
+# Stream rules
+--header "\n{file}\nCopyright © {year} Stream.io Inc. All rights reserved.\n"
+--enable isEmpty
+--swiftversion 5.2
+
+# Rules inferred from Swift Standard Library: 
+--allman false
+--binarygrouping 4,7
+--closingparen balanced
+--commas inline
+--conflictmarkers reject
+--decimalgrouping none
+--elseposition same-line
+--empty void
+--exponentcase lowercase
+--exponentgrouping disabled
+--fractiongrouping disabled
+--fragment false
+--hexgrouping none
+--hexliteralcase lowercase
+--ifdef outdent
+--importgrouping alphabetized
+--indent 2
+--indentcase false
+--linebreaks lf
+--maxwidth none
+--nospaceoperators 
+--octalgrouping none
+--operatorfunc no-space
+--patternlet inline
+--ranges no-space
+--self init-only
+--selfrequired 
+--semicolons inline
+--stripunusedargs closure-only
+--tabwidth unspecified
+--trailingclosures 
+--trimwhitespace always
+--wraparguments before-first
+--wrapcollections before-first
+--wrapparameters preserve
+--xcodeindentation disabled
