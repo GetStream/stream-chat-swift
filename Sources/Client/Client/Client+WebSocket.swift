@@ -10,8 +10,7 @@ import Foundation
 
 extension Client {
     
-    func setupWebSocket(user: User, token: Token) throws -> WebSocket {
-        let logger = logOptions.logger(icon: "🦄", for: [.webSocketError, .webSocket, .webSocketInfo])
+    func makeWebSocketRequest(user: User, token: Token) throws -> URLRequest {
         let jsonParameter = WebSocketPayload(user: user, token: token)
         
         var urlComponents = URLComponents()
@@ -42,14 +41,7 @@ extension Client {
         
         var request = URLRequest(url: url)
         request.allHTTPHeaderFields = authHeaders(token: token)
-        
-        let callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
-        let webSocketOptions = stayConnectedInBackground ? WebSocketOptions.stayConnectedInBackground : []
-        let webSocketProvider = defaultWebSocketProviderType.init(request: request, callbackQueue: callbackQueue)
-        
-        let webSocket = WebSocket(webSocketProvider, options: webSocketOptions, logger: logger)
-        webSocket.eventDelegate = self
-        return webSocket
+        return request
     }
     
     private func recoverConnection() {

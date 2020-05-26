@@ -37,12 +37,6 @@ final class RootViewController: ViewController {
         splitViewButton.isHidden = UIDevice.current.userInterfaceIdiom == .phone
         setupNotifications()
         navigationController?.navigationBar.prefersLargeTitles = true
-        
-        if User.current.isUnknown {
-            navigationController?.popViewController(animated: true)
-            return
-        }
-        
         title = User.current.name
         
         if let avatarURL = User.current.avatarURL {

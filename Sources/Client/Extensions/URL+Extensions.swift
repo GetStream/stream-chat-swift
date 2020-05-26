@@ -9,6 +9,9 @@
 import Foundation
 
 extension URL {
+    
+    static let placeholder = URL(string: "http://example.com")!
+    
     /// Removes a front-end default SVG image. iOS doesn't support SVG by default.
     func removingRandomSVG() -> URL? {
         absoluteString.contains("random_svg") ? nil : self

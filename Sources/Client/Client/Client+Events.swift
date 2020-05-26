@@ -111,11 +111,8 @@ extension Client {
         
         eventsHandlingQueue.async { [unowned self] in
             self.onUserUpdateObservers[subscription.uuid] = callback
-            
             // Send the current value.
-            if !self.user.isUnknown {
-                callback(self.user)
-            }
+            callback(self.user)
         }
         
         return subscription

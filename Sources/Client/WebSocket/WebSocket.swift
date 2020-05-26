@@ -19,7 +19,7 @@ final class WebSocket {
     weak var eventDelegate: WebSocketEventDelegate?
     
     private var onEventObservers = [String: Client.OnEvent]()
-    private var provider: WebSocketProvider
+    var provider: WebSocketProvider
     private let options: WebSocketOptions
     private let logger: ClientLogger?
     private var consecutiveFailures: TimeInterval = 0
@@ -54,10 +54,10 @@ final class WebSocket {
          logger: ClientLogger? = nil,
          timerType: Timer.Type = DefaultTimer.self) {
         
-        self.provider = provider
         self.options = options
         self.logger = logger
         self.Timer = timerType
+        self.provider = provider
         self.provider.delegate = self
     }
     

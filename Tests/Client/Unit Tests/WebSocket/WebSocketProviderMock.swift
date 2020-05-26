@@ -24,7 +24,7 @@ class WebSocketProviderMock: WebSocketProvider {
     var sendPingCalledCounter = 0
 
     convenience init() {
-        self.init(request: .init(url: URL(string: "test_url")!), callbackQueue: .main)
+        self.init(request: .init(url: .placeholder), callbackQueue: .main)
     }
     
     required init(request: URLRequest, callbackQueue: DispatchQueue) {

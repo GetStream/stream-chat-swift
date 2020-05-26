@@ -10,11 +10,17 @@ import Foundation
 
 @available(iOS 13, *)
 final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSessionDataDelegate, URLSessionWebSocketDelegate {
+    
     private var task: URLSessionWebSocketTask?
-    let request: URLRequest
     var isConnected = false
     let callbackQueue: DispatchQueue
     weak var delegate: WebSocketProviderDelegate?
+    
+    var request: URLRequest {
+        didSet {
+            disconnect()
+        }
+    }
     
     init(request: URLRequest, callbackQueue: DispatchQueue) {
         self.request = request
@@ -31,6 +37,10 @@ final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSession
     func disconnect() {
         isConnected = false
         task?.cancel(with: .abnormalClosure, reason: nil)
+        
+        callbackQueue.async { [weak self] in
+            self?.delegate?.websocketDidDisconnect(error: nil)
+        }
     }
     
     func sendPing() {
