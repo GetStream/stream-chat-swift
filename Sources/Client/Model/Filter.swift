@@ -24,6 +24,11 @@ import Foundation
 public enum Filter: Encodable, CustomStringConvertible {
     public typealias Key = String
     
+    /// No filter.
+    /// Can be used to get all users in queryUsers
+    /// Warning: Should not be used in queryChannels.
+    case none
+    
     // MARK: Operators
     
     /// An equal operator.
@@ -46,6 +51,11 @@ public enum Filter: Encodable, CustomStringConvertible {
     case query(Key, with: String)
     /// An autocomplete operator.
     case autocomplete(Key, with: String)
+    /// Contains operator
+    case contains(Key, Encodable)
+    /// A custom operator. Please make sure to provide a valid operator.
+    /// Example:  `.custom("contains", key: "teams", value: "red")`
+    case custom(String, key: Key, value: Encodable)
     
     // MARK: Combine operators
     
@@ -58,6 +68,8 @@ public enum Filter: Encodable, CustomStringConvertible {
     
     public var description: String {
         switch self {
+        case .none:
+            return ""
         case let .equal(key, object):
             return "\(key) = \(object)"
         case let .notEqual(key, object):
@@ -77,7 +89,11 @@ public enum Filter: Encodable, CustomStringConvertible {
         case let .query(key, object):
             return "\(key) QUERY \(object)"
         case let .autocomplete(key, object):
+            return "\(key) AUTOCOMPLETE \(object)"
+        case let .contains(key, object):
             return "\(key) CONTAINS \(object)"
+        case let .custom(`operator`, key, object):
+            return "\(key) \(`operator`.uppercased()) \(object)"
         case .and(let filters):
             return "(" + filters.map({ $0.description }).joined(separator: ") AND (") + ")"
         case .or(let filters):
@@ -94,6 +110,8 @@ public enum Filter: Encodable, CustomStringConvertible {
         var operands: [Encodable] = []
         
         switch self {
+        case .none:
+            return
         case let .equal(key, object):
             try [key: AnyEncodable(object)].encode(to: encoder)
             return
@@ -132,6 +150,14 @@ public enum Filter: Encodable, CustomStringConvertible {
         case let .autocomplete(key, object):
             keyOperand = key
             operatorName = "$autocomplete"
+            operand = object
+        case let .contains(key, object):
+            keyOperand = key
+            operatorName = "$contains"
+            operand = object
+        case let .custom(`operator`, key, object):
+            keyOperand = key
+            operatorName = "$\(`operator`)"
             operand = object
             
         case .and(let filters):

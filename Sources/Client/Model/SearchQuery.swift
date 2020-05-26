@@ -29,6 +29,11 @@ public struct SearchQuery: Encodable {
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     public init(filter: Filter, query: String, pagination: Pagination = [.channelsPageSize]) {
+        ClientLogger.log("⚠️",
+                         level: .debug,
+                         "search is not guaranteed to return a result when no filter is specified. "
+                            + "Please specify a valid filter. "
+                            + "Break on \(#file) \(#line) to catch this issue.")
         self.filter = filter
         self.query = query
         self.pagination = pagination

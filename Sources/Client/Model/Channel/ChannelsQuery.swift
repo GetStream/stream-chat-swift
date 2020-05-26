@@ -46,6 +46,13 @@ public struct ChannelsQuery: Encodable {
                 pagination: Pagination = [.channelsPageSize],
                 messagesLimit: Pagination = [.messagesPageSize],
                 options: QueryOptions = []) {
+        if case .none = filter {
+            ClientLogger.log("⚠️",
+                             level: .debug,
+                             "queryChannels is not guaranteed to return a list of channels when no filter is specified. "
+                                + "Please specify a valid filter. "
+                                + "Break on \(#file) \(#line) to catch this issue.")
+        }
         self.filter = filter
         self.sort = sort
         self.pagination = pagination
