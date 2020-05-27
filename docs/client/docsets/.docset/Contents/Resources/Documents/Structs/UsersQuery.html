@@ -495,6 +495,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:16StreamChatClient10UsersQueryV10paginationShyAA16PaginationOptionOGvp"></a>
+                    <a name="//apple_ref/swift/Property/pagination" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient10UsersQueryV10paginationShyAA16PaginationOptionOGvp">pagination</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Used for paginating response.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:16StreamChatClient10Paginationa">Pagination</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:16StreamChatClient10UsersQueryV7optionsAA0E7OptionsVvp"></a>
                     <a name="//apple_ref/swift/Property/options" class="dashAnchor"></a>
                     <a class="token" href="#/s:16StreamChatClient10UsersQueryV7optionsAA0E7OptionsVvp">options</a>
@@ -522,9 +549,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient10UsersQueryV6filter4sort7optionsAcA6FilterO_AA7SortingVSgAA0E7OptionsVtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(filter:sort:options:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient10UsersQueryV6filter4sort7optionsAcA6FilterO_AA7SortingVSgAA0E7OptionsVtcfc">init(filter:<wbr>sort:<wbr>options:<wbr>)</a>
+                    <a name="/s:16StreamChatClient10UsersQueryV6filter4sort10pagination7optionsAcA6FilterO_AA7SortingVSgShyAA16PaginationOptionOGAA0E7OptionsVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(filter:sort:pagination:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient10UsersQueryV6filter4sort10pagination7optionsAcA6FilterO_AA7SortingVSgShyAA16PaginationOptionOGAA0E7OptionsVtcfc">init(filter:<wbr>sort:<wbr>pagination:<wbr>options:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -539,7 +566,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">filter</span><span class="p">:</span> <span class="kt"><a href="../Enums/Filter.html">Filter</a></span><span class="p">,</span> <span class="nv">sort</span><span class="p">:</span> <span class="kt"><a href="../Structs/Sorting.html">Sorting</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="p">[])</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">filter</span><span class="p">:</span> <span class="kt"><a href="../Enums/Filter.html">Filter</a></span><span class="p">,</span> <span class="nv">sort</span><span class="p">:</span> <span class="kt"><a href="../Structs/Sorting.html">Sorting</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span> <span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:16StreamChatClient10Paginationa">Pagination</a></span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">usersPageSize</span><span class="p">],</span> <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="p">[])</span></code></pre>
 
                         </div>
                       </div>
@@ -568,6 +595,18 @@
                               <td>
                                 <div>
                                   <p>sort options, e.g. <code>.init(&quot;last_active&quot;, isAscending: false)</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>pagination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Pagination for query. Only supports <code>.limit</code> and <code>.offset</code></p>
                                 </div>
                               </td>
                             </tr>
@@ -620,7 +659,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-19)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-27)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

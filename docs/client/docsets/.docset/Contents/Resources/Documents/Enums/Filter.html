@@ -475,6 +475,35 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient6FilterO4noneyA2CmF"></a>
+                    <a name="//apple_ref/swift/Element/none" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient6FilterO4noneyA2CmF">none</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>No filter.
+Can be used to get all users in queryUsers
+Warning: Should not be used in queryChannels.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="k">none</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -752,6 +781,61 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">autocomplete</span><span class="p">(</span><span class="kt"><a href="../Enums/Filter.html#/s:16StreamChatClient6FilterO3Keya">Key</a></span><span class="p">,</span> <span class="nv">with</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient6FilterO8containsyACSS_SE_ptcACmF"></a>
+                    <a name="//apple_ref/swift/Element/contains(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient6FilterO8containsyACSS_SE_ptcACmF">contains(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Contains operator</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">contains</span><span class="p">(</span><span class="kt"><a href="../Enums/Filter.html#/s:16StreamChatClient6FilterO3Keya">Key</a></span><span class="p">,</span> <span class="kt">Encodable</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient6FilterO6customyACSS_SSSE_ptcACmF"></a>
+                    <a name="//apple_ref/swift/Element/custom(_:key:value:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient6FilterO6customyACSS_SSSE_ptcACmF">custom(_:<wbr>key:<wbr>value:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A custom operator. Please make sure to provide a valid operator.
+Example:  <code>.custom(&quot;contains&quot;, key: &quot;teams&quot;, value: &quot;red&quot;)</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">custom</span><span class="p">(</span><span class="kt">String</span><span class="p">,</span> <span class="nv">key</span><span class="p">:</span> <span class="kt"><a href="../Enums/Filter.html#/s:16StreamChatClient6FilterO3Keya">Key</a></span><span class="p">,</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">Encodable</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1065,7 +1149,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-19)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-27)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

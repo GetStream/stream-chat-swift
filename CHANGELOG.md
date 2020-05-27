@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.2.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.2)
+_May 27, 2020_
+
 ### ✅ Added
 - Re-introduced `Filter.none`. It should not be used with queryChannels or search, it's only valid for queryUsers to get all users [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
 - `Filter.contains` operator for all endpoints [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
