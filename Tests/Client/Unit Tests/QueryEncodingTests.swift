@@ -60,9 +60,10 @@ final class QueryEncodingTests: XCTestCase {
     func testUsersQueryEncoding() {
         let query = { UsersQuery(filter: self.complexFilter,
                                sort: .init("name", isAscending: true),
+                               pagination: self.mediumPagination(),
                                options: .all) }
 
-        let expectedString = #"{"presence":true,"state":true,"watch":true,"sort":{"field":"name","direction":1},"filter_conditions":{"$and":[{"members":{"$in":["john"]}},{"unread_count":0},{"$or":[{"id":{"$gt":42}},{"$and":[{"avatar":{"$ne":"null"}},{"name":{"$autocomplete":"ro"}}]}]}]}}"#
+        let expectedString = #"{"filter_conditions":{"$and":[{"members":{"$in":["john"]}},{"unread_count":0},{"$or":[{"id":{"$gt":42}},{"$and":[{"avatar":{"$ne":"null"}},{"name":{"$autocomplete":"ro"}}]}]}]},"presence":true,"state":true,"offset":20,"watch":true,"limit":10}"#
 
         AssertJSONEqual(Data(expectedString.utf8), try encode(query()))
     }

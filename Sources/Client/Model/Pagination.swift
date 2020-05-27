@@ -44,6 +44,8 @@ public extension KeyedEncodingContainer {
 /// let pagination = Pagination.limit(50) + .lessThan("some_id")
 /// ```
 public enum PaginationOption: Encodable, Hashable {
+    /// Default queryUsers page size
+    public static let usersPageSize: Self = .limit(25)
     /// A default channels page size.
     public static let channelsPageSize: Self = .limit(20)
     /// A default channels page sizefor the next page.

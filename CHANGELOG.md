@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Filter.custom` to be able to use new operators before our SDK is updated [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
   Please make sure to provide a valid operator.
   Example:  `.custom("contains", key: "teams", value: "red")`
+- `queryUsers` now supports `Pagination.limit` and `Pagination.offset` [#288](https://github.com/GetStream/stream-chat-swift/issues/288)
 
 # [2.2.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.1)
 _May 19, 2020_
