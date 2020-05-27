@@ -16,14 +16,16 @@ public extension Client {
     /// - Parameters:
     ///   - filter: a users filter.
     ///   - sort: a sorting.
+    ///   - pagination: Pagination for query. Only supports `.limit` and `.offset`
     ///   - options: a query options.
     ///   - completion: a completion block with `[User]`.
     @discardableResult
     func queryUsers(filter: Filter,
                     sort: Sorting? = nil,
+                    pagination: Pagination = [.usersPageSize],
                     options: QueryOptions = [],
                     _ completion: @escaping Client.Completion<[User]>) -> Cancellable {
-        queryUsers(query: .init(filter: filter, sort: sort, options: options), completion)
+        queryUsers(query: .init(filter: filter, sort: sort, pagination: pagination, options: options), completion)
     }
     
     /// Requests users with a given query (see `UsersQuery`).

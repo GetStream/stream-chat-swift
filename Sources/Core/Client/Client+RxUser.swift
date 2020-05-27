@@ -18,11 +18,13 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - filter: a user filter.
     ///   - sort: a sorting.
+    ///   - pagination: Pagination for query. Only supports `.limit` and `.offset`
     ///   - options: a query options.
     func queryUsers(filter: Filter,
                     sort: Sorting? = nil,
+                    pagination: Pagination = [.usersPageSize],
                     options: QueryOptions = []) -> Observable<[User]> {
-        queryUsers(query: .init(filter: filter, sort: sort, options: options))
+        queryUsers(query: .init(filter: filter, sort: sort, pagination: pagination, options: options))
     }
     
     /// Requests users with a given query (see `UsersQuery`).
