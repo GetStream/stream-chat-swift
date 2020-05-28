@@ -117,8 +117,8 @@ public final class Channel: Codable {
     
     private var subscriptionBag = SubscriptionBag()
     
-    var isCurrentUserTyping = false
-    var currentUserTypingTimerControl: TimerControl?
+    let isCurrentUserTypingAtomic = Atomic<Bool>(false)
+    let currentUserTypingTimerControlAtomic = Atomic<TimerControl?>()
     
     /// Checks for the channel data encoding is empty.
     var isEmpty: Bool { extraData == nil && members.isEmpty && invitedMembers.isEmpty }
