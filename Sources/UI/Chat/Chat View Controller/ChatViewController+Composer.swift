@@ -137,6 +137,7 @@ extension ChatViewController {
         // Send typing events.
         if presenter.isTypingEventsEnabled {
             textViewEvents
+                .filter({ !$0.isEmpty })
                 .flatMapLatest({ [weak self] _ in self?.presenter?.channel.rx.keystroke() ?? .empty() })
                 .subscribe()
                 .disposed(by: disposeBag)
