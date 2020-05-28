@@ -146,17 +146,12 @@ public extension Channel {
             self?.stopTyping(completion)
         })
         
-        if isCurrentUserTypingAtomic.get() {
+        if let lastDate = currentUserTypingLastDateAtomic.get(), lastDate.timeIntervalSinceNow > -20 {
             completion(.success(.typingStart(.current, cid, .typingStart)))
             return Subscription.empty
         }
         
-        isCurrentUserTypingAtomic.set(true)
-        
-        let completion = onError(completion) { [weak self] _ in
-            self?.isCurrentUserTypingAtomic.set(false)
-        }
-        
+        currentUserTypingLastDateAtomic.set(.init())
         return Client.shared.send(eventType: .typingStart, to: self, completion)
     }
     
@@ -165,17 +160,13 @@ public extension Channel {
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
     func stopTyping(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
-        guard isCurrentUserTypingAtomic.get() else {
+        guard currentUserTypingLastDateAtomic.get() != nil else {
             completion(.success(.typingStop(.current, cid, .typingStop)))
             return Subscription.empty
         }
         
         currentUserTypingTimerControlAtomic.get()?.cancel()
-        isCurrentUserTypingAtomic.set(false)
-        
-        let completion = onError(completion) { [weak self] _ in
-            self?.isCurrentUserTypingAtomic.set(true)
-        }
+        currentUserTypingLastDateAtomic.set(nil)
         
         return Client.shared.send(eventType: .typingStop, to: self, completion)
     }

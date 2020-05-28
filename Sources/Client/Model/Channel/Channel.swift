@@ -117,7 +117,7 @@ public final class Channel: Codable {
     
     private var subscriptionBag = SubscriptionBag()
     
-    let isCurrentUserTypingAtomic = Atomic<Bool>(false)
+    let currentUserTypingLastDateAtomic = Atomic<Date?>()
     let currentUserTypingTimerControlAtomic = Atomic<TimerControl?>()
     
     /// Checks for the channel data encoding is empty.

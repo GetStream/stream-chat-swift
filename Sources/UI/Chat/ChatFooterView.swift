@@ -68,6 +68,7 @@ public final class ChatFooterView: UIView {
         timerWorker = nil
     }
     
+    @available(*, deprecated, message: "It doesn't use anymore.")
     public func hide(after timeout: TimeInterval) {
         self.timeout = timeout
         restartHidingTimer()
