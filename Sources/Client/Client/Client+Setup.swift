@@ -162,10 +162,10 @@ extension Client {
         }
         
         if logOptions.isEnabled {
-            ClientLogger.logger(user.isAnonymous ? "👺" : "👤", "", user.isAnonymous ? "Anonymous" : "\(user.name): \(user.id)")
+            ClientLogger.log(user.isAnonymous ? "👺" : "👤", "", .info, user.isAnonymous ? "Anonymous" : "\(user.name): \(user.id)")
             
             if !user.isAnonymous {
-                ClientLogger.logger("🀄️", "", "Token: \(token)")
+                ClientLogger.log("🀄️", "", .info, "Token: \(token)")
             }
         }
         

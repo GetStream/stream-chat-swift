@@ -28,7 +28,7 @@ extension ChannelPresenter {
         }
         
         if InternetConnection.shared.isAvailable, channel.readEventsEnabled, !isNextPage {
-            messageReadsToMessageId = [:]
+            messageIdByMessageReadUser = [:]
         }
         
         let currentCount = items.count
@@ -91,7 +91,7 @@ extension ChannelPresenter {
                 return
             }
             
-            if parentMessage == nil, message.parentId != nil {
+            if !isThread, message.isReply, !message.showReplyInChannel {
                 return
             }
             
@@ -134,7 +134,7 @@ extension ChannelPresenter {
                         if messageRead.user != User.current {
                             if messageRead.lastReadDate > ownMessage.created {
                                 readUsers.append(messageRead.user)
-                                messageReadsToMessageId[messageRead] = ownMessage.id
+                                messageIdByMessageReadUser[messageRead.user] = ownMessage.id
                             } else {
                                 leftMessageReads.append(messageRead)
                             }

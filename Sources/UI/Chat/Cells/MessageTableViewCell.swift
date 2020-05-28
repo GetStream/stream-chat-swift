@@ -102,8 +102,15 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
-    /// A reply button.
+    /// A reply count button.
     public let replyCountButton = UIButton(type: .custom)
+    
+    /// A reply in channel button.
+    public let replyInChannelButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setTitle(" replied to a thread ", for: .normal)
+        return button
+    }()
     
     private(set) var readUsersView: ReadUsersView?
     var readUsersRightConstraint: Constraint?
@@ -113,6 +120,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         let stackView = UIStackView(arrangedSubviews: [messageContainerView,
                                                        infoLabel,
                                                        replyCountButton,
+                                                       replyInChannelButton,
                                                        nameAndDateStackView,
                                                        bottomPaddingView])
         stackView.axis = .vertical
@@ -198,24 +206,10 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         additionalDateLabel.backgroundColor = backgroundColor
         contentView.addSubview(additionalDateLabel)
         
-        // MARK: Reply Count
+        // MARK: Reply Buttons
         
-        replyCountButton.isHidden = true
-        replyCountButton.titleLabel?.font = style.replyFont
-        replyCountButton.titleLabel?.backgroundColor = backgroundColor
-        replyCountButton.setTitleColor(style.replyColor, for: .normal)
-        replyCountButton.backgroundColor = backgroundColor
-        
-        if style.alignment == .left {
-            replyCountButton.setImage(UIImage.Icons.path, for: .normal)
-        } else {
-            replyCountButton.setImage(UIImage.Icons.path.flip(orientation: .upMirrored)?.template, for: .normal)
-            replyCountButton.semanticContentAttribute = .forceRightToLeft
-        }
-        
-        replyCountButton.tintColor = style.borderWidth > 0
-            ? style.borderColor
-            : (style.backgroundColor == style.chatBackgroundColor ? .chatGray : style.backgroundColor)
+        setupReplyButton(replyCountButton)
+        setupReplyButton(replyInChannelButton)
         
         // MARK: Name
         
@@ -348,6 +342,26 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         }
     }
     
+    private func setupReplyButton(_ button: UIButton) {
+        button.isHidden = true
+        button.titleLabel?.font = style.replyFont
+        button.titleLabel?.backgroundColor = backgroundColor
+        button.setTitleColor(style.replyColor, for: .normal)
+        button.setTitleColor(style.infoColor, for: .disabled)
+        button.backgroundColor = backgroundColor
+        
+        if style.alignment == .left {
+            button.setImage(UIImage.Icons.path, for: .normal)
+        } else {
+            button.setImage(UIImage.Icons.path.flip(orientation: .upMirrored)?.template, for: .normal)
+            button.semanticContentAttribute = .forceRightToLeft
+        }
+        
+        button.tintColor = style.borderWidth > 0
+            ? style.borderColor
+            : (style.backgroundColor == style.chatBackgroundColor ? .chatGray : style.backgroundColor)
+    }
+    
     // MARK: Reset
     
     /// Reset views.
@@ -359,6 +373,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         }
         
         replyCountButton.isHidden = true
+        replyInChannelButton.isHidden = true
         nameAndDateStackView.isHidden = true
         nameLabel.text = nil
         dateLabel.text = nil
@@ -411,6 +426,11 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         attachmentPreviews.forEach { $0.removeFromSuperview() }
         attachmentPreviews = []
     }
+}
+
+// MARK: - Helpers to make correct cell layout updates
+
+extension MessageTableViewCell {
     
     func lastVisibleViewFromMessageStackView() -> UIView? {
         var visibleViews = messageStackView.arrangedSubviews.filter { $0.isHidden == false }
@@ -428,6 +448,10 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         }
         
         if visibleViews.last == replyCountButton {
+            visibleViews.removeLast()
+        }
+        
+        if visibleViews.last == replyInChannelButton {
             visibleViews.removeLast()
         }
         

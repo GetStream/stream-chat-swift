@@ -43,9 +43,9 @@ extension Reactive where Base == ChannelPresenter {
                     
                     return Driver.merge(
                         // Messages from requests.
-                        base.parentMessage == nil
-                            ? base.rx.parsedMessagesRequest
-                            : base.rx.parsedRepliesResponse(base.rx.repliesRequest),
+                        base.isThread
+                            ? base.rx.parsedRepliesResponse(base.rx.repliesRequest)
+                            : base.rx.parsedMessagesRequest,
                         // Events from a websocket.
                         base.rx.webSocketEvents,
                         base.rx.ephemeralMessageEvents,
@@ -104,10 +104,12 @@ public extension Reactive where Base == ChannelPresenter {
     }
     
     /// Create a message by sending a text.
-    /// - Parameter text: a message text.
+    /// - Parameters:
+    ///   - text: a message text.
+    ///   - showReplyInChannel: show a reply in the channel.
     /// - Returns: an observable `MessageResponse`.
-    func send(text: String) -> Observable<MessageResponse> {
-        base.channel.rx.send(message: base.createMessage(with: text))
+    func send(text: String, showReplyInChannel: Bool = false) -> Observable<MessageResponse> {
+        base.channel.rx.send(message: base.createMessage(with: text, showReplyInChannel: showReplyInChannel))
             .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
     }
@@ -115,7 +117,7 @@ public extension Reactive where Base == ChannelPresenter {
     /// Send a typing event.
     /// - Parameter isTyping: a user typing action.
     func sendEvent(isTyping: Bool) -> Observable<StreamChatClient.Event> {
-        guard base.parentMessage == nil else {
+        if base.isThread {
             return .empty()
         }
         

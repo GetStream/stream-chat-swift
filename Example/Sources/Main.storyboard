@@ -95,9 +95,9 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uBn-vP-Vku">
-                                        <rect key="frame" x="0.0" y="120" width="280" height="30"/>
+                                        <rect key="frame" x="0.0" y="120" width="343" height="30"/>
                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="15"/>
-                                        <state key="normal" title="Split view of channels and chat for iPad"/>
+                                        <state key="normal" title="Split view of channels and chat for iPad or macOS"/>
                                         <connections>
                                             <segue destination="FA6-rb-JLu" kind="presentation" modalPresentationStyle="fullScreen" id="gPS-K7-ckQ"/>
                                         </connections>

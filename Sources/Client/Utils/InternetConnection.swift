@@ -44,7 +44,7 @@ public final class InternetConnection {
     
     /// Checks if the Internet is available.
     public var isAvailable: Bool {
-        state == .available
+        Environment.isTests || state == .available
     }
     
     private var lastState: State = .unknown
@@ -109,7 +109,7 @@ public final class InternetConnection {
     
     func log(_ message: String) {
         if !Client.shared.logOptions.isEmpty {
-            ClientLogger.log("🕸", message)
+            ClientLogger.log("🕸", level: .debug, message)
         }
     }
 }

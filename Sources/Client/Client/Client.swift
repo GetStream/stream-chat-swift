@@ -30,34 +30,34 @@ public final class Client: Uploader {
                 )
                 return
             }
-
+            
             configForSharedClient = config
         }
     }
-
+    
     /// The configuration object used for creating `Client.shared`.
     private static var configForSharedClient: Config?
-
+    
     /// The shared client.
     public static var shared: Client {
         if let client = backingSharedClient {
             // Return the existing instance
             return client
         }
-
+        
         ClientLogger.logAssert(
             configForSharedClient != nil,
             "The shared instance of the Stream chat client wasn't configured. " +
             "Create an instance of the `Client.Config` struct and call `Client.configureShared(_:)` to set it up."
         )
-
+        
         backingSharedClient = Client(config: configForSharedClient ?? .init(apiKey: "__API_KEY_NOT_CONFIGURED__"))
         return backingSharedClient!
     }
-
+    
     /// A backing variable for `Client.shared`. We need this to have finer control over its creation.
     private static var backingSharedClient: Client?
-
+    
     /// Configures the shared instance of `Client`.
     ///
     /// - Parameter configuration: The configuration object with details of how the shared instance should be set up.
@@ -102,16 +102,20 @@ public final class Client: Uploader {
     // MARK: WebSocket
     
     /// A web socket client.
-    lazy var webSocket = WebSocket()
+    lazy var webSocket = WebSocket(StarscreamWebSocketProvider(request: URLRequest(url: URL(string: "http://example.com")!),
+                                                               callbackQueue: .main), options: [])
+    
+    /// A default WebSocketProvider type.
+    let defaultWebSocketProviderType: WebSocketProvider.Type
     /// The current connection state.
     public var connectionState: ConnectionState { webSocket.connectionState }
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     var needsToRecoverConnection = false
-
+    
     let defaultURLSessionConfiguration: URLSessionConfiguration
-    lazy var urlSession = URLSession(configuration: self.defaultURLSessionConfiguration)
-
+    lazy var urlSession = setupURLSession()
+    
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
     
@@ -121,27 +125,26 @@ public final class Client: Uploader {
     // MARK: User Events
     
     /// The current user.
-    public var user: User { userAtomic.get() ?? .unknown }
+    public var user: User { userAtomic.get() }
     
     var onUserUpdateObservers = [String: OnUpdate<User>]()
     
-    private(set) lazy var userAtomic = Atomic<User>(callbackQueue: eventsHandlingQueue) { [unowned self] newUser, _ in
-        if let user = newUser {
-            self.onUserUpdateObservers.values.forEach({ $0(user) })
-        }
+    private(set) lazy var userAtomic = Atomic<User>(.unknown, callbackQueue: eventsHandlingQueue) { [unowned self] newUser, _ in
+        self.onUserUpdateObservers.values.forEach({ $0(newUser) })
     }
     
     // MARK: Unread Count Events
     
     /// Channels and messages unread counts.
-    public var unreadCount: UnreadCount { unreadCountAtomic.get(default: .noUnread) }
+    public var unreadCount: UnreadCount { unreadCountAtomic.get() }
     var onUnreadCountUpdateObservers = [String: OnUpdate<UnreadCount>]()
     
-    private(set) lazy var unreadCountAtomic = Atomic<UnreadCount>(.noUnread, callbackQueue: eventsHandlingQueue) { [unowned self] in
-        if let unreadCount = $0, unreadCount != $1 {
-            self.onUnreadCountUpdateObservers.values.forEach({ $0(unreadCount) })
+    private(set) lazy var unreadCountAtomic =
+        Atomic<UnreadCount>(.noUnread, callbackQueue: eventsHandlingQueue) { [unowned self] newUnreadCount, oldUnreadCount in
+            if newUnreadCount != oldUnreadCount {
+                self.onUnreadCountUpdateObservers.values.forEach({ $0(newUnreadCount) })
+            }
         }
-    }
     
     /// Weak references to channels by cid.
     let watchingChannelsAtomic = Atomic<[ChannelId: [WeakRef<Channel>]]>([:])
@@ -149,30 +152,39 @@ public final class Client: Uploader {
     /// Creates a new instance of the network client.
     ///
     /// - Parameters:
-    ///   - config: The configuration object with details of how the new instance should be set up.
-    ///   - defaultURLSessionConfiguration: The base URLSession configuration `Client` uses for its
-    ///     URL sessions. `Client` is allowed to override the configuration with its own settings.
-    init(config: Client.Config, defaultURLSessionConfiguration: URLSessionConfiguration = .default) {
-        self.apiKey = config.apiKey
-        self.baseURL = config.baseURL
-        self.callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
-        self.stayConnectedInBackground = config.stayConnectedInBackground
-        self.database = config.database
-        self.logOptions = config.logOptions
+    ///   - config: the configuration object with details of how the new instance should be set up.
+    ///   - defaultURLSessionConfiguration: the base URLSession configuration `Client` uses for its URL sessions.
+    ///                                     `Client` is allowed to override the configuration with its own settings.
+    ///   - defaultWebSocketProviderType: the default WebSocket provider type. `Client` will create it on set user.
+    init(config: Client.Config,
+         defaultURLSessionConfiguration: URLSessionConfiguration = .default,
+         defaultWebSocketProviderType: WebSocketProvider.Type = {
+        if #available(iOS 13, *) {
+            return URLSessionWebSocketProvider.self
+        }
+        return StarscreamWebSocketProvider.self
+        }()) {
+        apiKey = config.apiKey
+        baseURL = config.baseURL
+        callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
+        stayConnectedInBackground = config.stayConnectedInBackground
+        database = config.database
+        logOptions = config.logOptions
         logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
-
+        
         self.defaultURLSessionConfiguration = defaultURLSessionConfiguration
-
+        self.defaultWebSocketProviderType = defaultWebSocketProviderType
+        
         if !apiKey.isEmpty, logOptions.isEnabled {
-            ClientLogger.logger("💬", "", "Stream Chat v.\(Environment.version)")
-            ClientLogger.logger("🔑", "", apiKey)
-            ClientLogger.logger("🔗", "", baseURL.description)
+            ClientLogger.log("💬", "", .info, "Stream Chat v.\(Environment.version)")
+            ClientLogger.log("🔑", "", .info, apiKey)
+            ClientLogger.log("🔗", "", .info, baseURL.description)
             
             if let database = database {
-                ClientLogger.logger("💽", "", "\(database.self)")
+                ClientLogger.log("💽", "", .info, "\(database.self)")
             }
         }
-
+        
         #if DEBUG
         checkLatestVersion()
         #endif
@@ -241,7 +253,7 @@ public final class Client: Uploader {
     /// - Parameter channel: a channel.
     /// - Returns: returns true if the client is watching for the channel.
     public func isWatching(channel: Channel) -> Bool {
-        let watchingChannels: [WeakRef<Channel>]? = watchingChannelsAtomic.get(default: [:])[channel.cid]
+        let watchingChannels: [WeakRef<Channel>]? = watchingChannelsAtomic.get()[channel.cid]
         return watchingChannels?.first { $0.value === channel } != nil
     }
 }

@@ -18,7 +18,8 @@ extension Client {
         logger?.log(headers: headers)
         let config = defaultURLSessionConfiguration
         config.waitsForConnectivity = true
-        config.httpAdditionalHeaders = headers
+        let oldHeaders = config.httpAdditionalHeaders ?? [:]
+        config.httpAdditionalHeaders = oldHeaders.merging(headers, uniquingKeysWith: { (_, new) in new })
         return URLSession(configuration: config, delegate: urlSessionTaskDelegate, delegateQueue: nil)
     }
     
@@ -54,14 +55,15 @@ extension Client {
     @discardableResult
     func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> Cancellable {
         let task = prepareRequest(endpoint: endpoint, completion)
-        task.resume()
-        return Subscription { _  in task.cancel() }
+        task?.resume()
+        return Subscription { _  in task?.cancel() }
     }
     
     /// Send a progress request.
     ///
     /// - Parameters:
     ///   - endpoint: an endpoint (see `Endpoint`).
+    ///   - progress: Progress block to be called on progress.
     ///   - completion: a completion block.
     /// - Returns: an URLSessionTask that can be canncelled.
     @discardableResult
@@ -69,19 +71,21 @@ extension Client {
                                progress: @escaping Progress,
                                completion: @escaping Completion<T>) -> Cancellable {
         let task = prepareRequest(endpoint: endpoint, completion)
-        urlSessionTaskDelegate.addProgessHandler(id: task.taskIdentifier, progress)
-        task.resume()
-        return Subscription { _  in task.cancel() }
+        if let taskIdentifier = task?.taskIdentifier {
+            urlSessionTaskDelegate.addProgessHandler(id: taskIdentifier, progress)
+        }
+        task?.resume()
+        return Subscription { _  in task?.cancel() }
     }
     
-    private func prepareRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask {
+    private func prepareRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask? {
         if let logger = logger {
             logger.log("Request: \(String(describing: endpoint).prefix(100))...", level: .debug)
         }
         
         if isExpiredTokenInProgress {
             addWaitingRequest(endpoint: endpoint, completion)
-            return .empty
+            return nil
         }
         
         do {
@@ -113,7 +117,7 @@ extension Client {
             performInCallbackQueue { completion(.failure(.unexpectedError(description: error.localizedDescription, error: error))) }
         }
         
-        return .empty
+        return nil
     }
     
     private func requestURL(for endpoint: Endpoint, queryItems: [URLQueryItem]) -> Result<URL, ClientError> {
@@ -338,15 +342,14 @@ extension Client {
             do {
                 let podTrunk = try JSONDecoder().decode(PodTrunk.self, from: data)
                 if let latestVersion = podTrunk.versions.last?.name, latestVersion > Environment.version {
-                    ClientLogger.logger("📢", "", "StreamChat \(latestVersion) is released (you are on \(Environment.version)). "
-                        + "It's recommended to update to the latest version.")
+                    ClientLogger.log("📢",
+                                     "",
+                                     .info,
+                                     "StreamChat \(latestVersion) is released (you are on \(Environment.version)). "
+                                        + "It's recommended to update to the latest version.")
                 }
             } catch {}
         }
         versionTask.resume()
     }
-}
-
-extension URLSessionTask {
-    static let empty = URLSessionTask()
 }

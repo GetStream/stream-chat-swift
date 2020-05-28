@@ -28,7 +28,7 @@ extension ChannelPresenter {
         
         switch event {
         case .typingStart(let user, _, _):
-            guard parentMessage == nil else {
+            if isThread {
                 return .none
             }
             
@@ -46,7 +46,7 @@ extension ChannelPresenter {
             }
             
         case .typingStop(let user, _, _):
-            guard parentMessage == nil else {
+            if isThread {
                 return .none
             }
             
@@ -124,7 +124,8 @@ extension ChannelPresenter {
             var messages: [Message] = []
             
             // Reload old position.
-            if let messageId = messageReadsToMessageId[messageRead], let index = items.lastIndex(whereMessageId: messageId) {
+            if let messageId = messageIdByMessageReadUser[messageRead.user],
+                let index = items.lastIndex(whereMessageId: messageId) {
                 if index == lastOwnMessageIndex {
                     return .none
                 }
@@ -145,7 +146,7 @@ extension ChannelPresenter {
                 items[lastOwnMessageIndex] = .message(lastAddedOwnMessage, readUsers)
                 rows.append(lastOwnMessageIndex)
                 messages.append(lastAddedOwnMessage)
-                messageReadsToMessageId[messageRead] = lastAddedOwnMessage.id
+                messageIdByMessageReadUser[messageRead.user] = lastAddedOwnMessage.id
             }
             
             return .itemsUpdated(rows, messages, items)
@@ -183,7 +184,7 @@ extension ChannelPresenter {
     
     private func shouldMessageEventBeHandled(_ message: Message) -> Bool {
         guard let parentMessage = parentMessage else {
-            return message.parentId == nil
+            return !message.isReply || message.showReplyInChannel
         }
         
         return message.parentId == parentMessage.id || message.id == parentMessage.id

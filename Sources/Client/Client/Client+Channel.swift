@@ -43,20 +43,29 @@ public extension Client {
     ///   - type: a channel type.
     ///   - members: a list of members.
     ///   - extraData: a channel extra data.
+    ///   - namingStrategy: a naming strategy to generate a name and image for the channel based on members.
+    ///                     Only takes effect if `extraData` is `nil`.
     func channel(type: ChannelType = .messaging,
                  members: [User],
-                 extraData: ChannelExtraDataCodable? = nil) -> Channel {
-        Channel(type: type,
-                id: "",
-                members: members,
-                invitedMembers: [],
-                extraData: extraData,
-                created: .init(),
-                deleted: nil,
-                createdBy: nil,
-                lastMessageDate: nil,
-                frozen: false,
-                config: .init())
+                 extraData: ChannelExtraDataCodable? = nil,
+                 namingStrategy: ChannelNamingStrategy? = Channel.DefaultNamingStrategy(maxUserNames: 1)) -> Channel {
+        var extraData = extraData
+        
+        if extraData == nil, let namingStrategy = namingStrategy {
+            extraData = namingStrategy.extraData(for: user, members: members)
+        }
+        
+        return Channel(type: type,
+                       id: "",
+                       members: members,
+                       invitedMembers: [],
+                       extraData: extraData,
+                       created: .init(),
+                       deleted: nil,
+                       createdBy: nil,
+                       lastMessageDate: nil,
+                       frozen: false,
+                       config: .init())
     }
 }
 

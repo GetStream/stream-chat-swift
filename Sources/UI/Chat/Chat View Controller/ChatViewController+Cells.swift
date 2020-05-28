@@ -43,9 +43,36 @@ extension ChatViewController {
                     .subscribe(onNext: { [weak self] _ in self?.showReplies(parentMessage: message) })
                     .disposed(by: cell.disposeBag)
             }
+            
+            if !presenter.isThread, let parentMessageId = message.parentId, message.showReplyInChannel {
+                cell.replyInChannelButton.isHidden = false
+                
+                cell.replyInChannelButton.rx.anyGesture(TapControlEvent.default)
+                    // Disable `replyInChannelButton` for the parent message request.
+                    .do(onNext: { [weak cell] _ in cell?.replyInChannelButton.isEnabled = false })
+                    .flatMapLatest({ [weak presenter] _ -> Observable<Message> in
+                        // Find the parent message from loaded items by the channel presenter.
+                        if let parentMessage = presenter?.items.first(where: { $0.message?.id == parentMessageId })?.message {
+                            return .just(parentMessage)
+                        }
+                        
+                        // We should load the parent message by message id.
+                        return Client.shared.rx.message(withId: parentMessageId).map({ $0.message })
+                    })
+                    .observeOn(MainScheduler.instance)
+                    .subscribe(
+                        onNext: { [weak self, weak cell] in
+                            cell?.replyInChannelButton.isEnabled = true
+                            self?.showReplies(parentMessage: $0)
+                        }, onError: { [weak self, weak cell] error in
+                            cell?.replyInChannelButton.isEnabled = true
+                            self?.show(error: error)
+                    })
+                    .disposed(by: cell.disposeBag)
+            }
         }
         
-        var showAvatar = true
+        var showNameAndAvatarIfNeeded = true
         var needsToShowAdditionalDate = false
         let nextRow = indexPath.row + 1
 
@@ -56,12 +83,12 @@ extension ChatViewController {
             }
             
             if needsToShowAdditionalDate, case .userNameAndDate = messageStyle.additionalDateStyle {
-                showAvatar = true
+                showNameAndAvatarIfNeeded = true
             } else {
-                showAvatar = nextMessage.user != message.user
+                showNameAndAvatarIfNeeded = nextMessage.user != message.user
             }
             
-            if !showAvatar {
+            if !showNameAndAvatarIfNeeded {
                 cell.paddingType = .small
             }
         }
@@ -80,7 +107,7 @@ extension ChatViewController {
         
         cell.updateBackground()
         
-        if showAvatar {
+        if showNameAndAvatarIfNeeded {
             cell.update(name: message.user.name, date: message.created)
             
             if messageStyle.avatarViewStyle != nil {
@@ -116,7 +143,7 @@ extension ChatViewController {
         }
         
         // Show additional date, if needed.
-        if !showAvatar,
+        if !showNameAndAvatarIfNeeded,
             (cell.readUsersView?.isHidden ?? true),
             needsToShowAdditionalDate,
             case .messageAndDate = messageStyle.additionalDateStyle {

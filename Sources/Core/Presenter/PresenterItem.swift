@@ -67,12 +67,12 @@ public enum PresenterItem: Equatable {
         switch (lhs, rhs) {
         case let (.loading(inProgress1), .loading(inProgress2)):
             return inProgress1 == inProgress2
+        case let (.status(title1, subtitle1, highlighted1), .status(title2, subtitle2, highlighted2)):
+            return title1 == title2 && subtitle1 == subtitle2 && highlighted1 == highlighted2
         case let (.channelPresenter(channelPresenter1), .channelPresenter(channelPresenter2)):
             return channelPresenter1.channel == channelPresenter2.channel
         case let (.message(message1, usersRead1), .message(message2, usersRead2)):
             return message1 == message2 && usersRead1 == usersRead2
-        case let (.status(title1, subtitle1, highlighted1), .status(title2, subtitle2, highlighted2)):
-            return title1 == title2 && subtitle1 == subtitle2 && highlighted1 == highlighted2
         case (.error, .error):
             return true
         default:

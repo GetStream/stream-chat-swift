@@ -9,7 +9,7 @@
 import Foundation
 
 /// A user connection result.
-public struct UserConnection: Decodable {
+public struct UserConnection: Decodable, Equatable {
     /// An authorized user.
     public let user: User
     /// Channels and messages unread counts.

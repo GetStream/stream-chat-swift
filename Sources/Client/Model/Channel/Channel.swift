@@ -81,7 +81,7 @@ public final class Channel: Codable {
     /// Checks if read events evalable for the current user.
     public var readEventsEnabled: Bool { config.readEventsEnabled && members.contains(Member.current) }
     /// Returns the current unread count.
-    public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get(default: .noUnread) }
+    public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get() }
     
     private(set) lazy var unreadCountAtomic = Atomic<ChannelUnreadCount>(.noUnread, callbackQueue: .main) { [weak self] _, _ in
         if let self = self {
@@ -90,7 +90,7 @@ public final class Channel: Codable {
     }
     
     /// Online watchers in the channel.
-    public var watcherCount: Int { watcherCountAtomic.get(default: 0) }
+    public var watcherCount: Int { watcherCountAtomic.get() }
     
     private(set) lazy var watcherCountAtomic = Atomic(0, callbackQueue: .main) { [weak self] _, _ in
         if let self = self {
@@ -98,7 +98,7 @@ public final class Channel: Codable {
         }
     }
     
-    let unreadMessageReadAtomic = Atomic<MessageRead>()
+    let unreadMessageReadAtomic = Atomic<MessageRead?>(nil)
     /// Unread message state for the current user.
     public var unreadMessageRead: MessageRead? { unreadMessageReadAtomic.get() }
     /// Checks if the current status of the channel is unread.
@@ -163,18 +163,18 @@ public final class Channel: Codable {
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
         frozen = try container.decode(Bool.self, forKey: .frozen)
         didLoad = true
-        extraData = decodeChannelExtraData(from: decoder)
+        extraData = Channel.decodeChannelExtraData(from: decoder)
     }
     
     /// Safely decode channel extra data and if it fail try to decode only default properties: name, imageURL.
-    private func decodeChannelExtraData(from decoder: Decoder) -> ChannelExtraDataCodable? {
+    private static func decodeChannelExtraData(from decoder: Decoder) -> ChannelExtraDataCodable? {
         do {
             var extraData = try Self.extraDataType.init(from: decoder) // swiftlint:disable:this explicit_init
             extraData.imageURL = extraData.imageURL?.removingRandomSVG()
             return extraData
             
         } catch {
-            ClientLogger.log("🐴❌", "Channel extra data decoding error: \(error). "
+            ClientLogger.log("🐴❌", level: .error, "Channel extra data decoding error: \(error). "
                 + "Trying to recover by only decoding name and imageURL")
             
             guard let container = try? decoder.container(keyedBy: DecodingKeys.self) else {
@@ -222,14 +222,10 @@ public final class Channel: Codable {
     }
 }
 
-extension Channel: Hashable, CustomStringConvertible {
+extension Channel: Equatable, CustomStringConvertible {
     
     public static func == (lhs: Channel, rhs: Channel) -> Bool {
         lhs.cid == rhs.cid
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(cid)
     }
     
     public var description: String {

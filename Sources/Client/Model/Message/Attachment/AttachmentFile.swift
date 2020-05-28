@@ -9,7 +9,7 @@
 import Foundation
 
 /// An attachment file description.
-public struct AttachmentFile: Codable {
+public struct AttachmentFile: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case mimeType = "mime_type"
         case size = "file_size"
@@ -62,20 +62,4 @@ public struct AttachmentFile: Codable {
         try container.encode(size, forKey: .size)
         try container.encodeIfPresent(mimeType, forKey: .mimeType)
     }
-}
-
-extension AttachmentFile: Hashable {
-    
-    public static func == (lhs: AttachmentFile, rhs: AttachmentFile) -> Bool {
-        lhs.type == rhs.type
-            && lhs.size == rhs.size
-            && lhs.mimeType == rhs.mimeType
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(type)
-        hasher.combine(size)
-        hasher.combine(mimeType)
-    }
-
 }

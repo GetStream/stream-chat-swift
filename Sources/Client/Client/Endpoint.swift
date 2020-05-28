@@ -333,10 +333,13 @@ extension Endpoint {
     
     var requiresConnectionId: Bool {
         switch self {
-        case .users,
-             .updateUsers,
-             .channels,
-             .channel,
+        case .users(let query):
+            return query.options.contains(.presence) || query.options.contains(.state)
+        case .channels(let query):
+            return query.options.contains(.presence) || query.options.contains(.state)
+        case .channel(let query):
+            return query.options.contains(.presence) || query.options.contains(.state)
+        case .updateUsers,
              .stopWatching:
             return true
         case .guestToken,

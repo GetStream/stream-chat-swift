@@ -60,7 +60,7 @@ public extension Client {
     func removeDevice(deviceId: String, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         let completion = doBefore(completion) { [unowned self] devices in
             self.userAtomic.update { oldUser in
-                if let index = self.user.devices.firstIndex(where: { $0.id == deviceId }) {
+                if let index = oldUser.devices.firstIndex(where: { $0.id == deviceId }) {
                     var currentUser = oldUser
                     let removedDevice = currentUser.devices.remove(at: index)
                     

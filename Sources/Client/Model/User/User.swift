@@ -23,8 +23,8 @@ public struct User: Codable {
         case isInvisible = "invisible"
         case devices
         case mutedUsers = "mutes"
-        case messagesUnreadCount = "unread_count"
-        case channelsUnreadCount = "unread_channels"
+        case unreadMessagesCount = "unread_count"
+        case unreadChannelsCount = "unread_channels"
         case isAnonymous = "anon"
     }
     
@@ -99,6 +99,8 @@ public struct User: Codable {
         return false
     }
     
+    let unreadCount: UnreadCount
+    
     /// Init a user.
     /// - Parameters:
     ///   - id: a user id.
@@ -129,7 +131,14 @@ public struct User: Codable {
         self.isBanned = isBanned
         self.mutedUsers = mutedUsers
         isOnline = false
+        unreadCount = .noUnread
         devices = []
+    }
+    
+    init(id: String, role: Role = .user, name: String, avatarURL: URL? = nil, extraData: UserExtraDataCodable? = nil) {
+        self.init(id: id, role: role, extraData: extraData)
+        self.name = name
+        self.avatarURL = avatarURL
     }
     
     public init(from decoder: Decoder) throws {
@@ -144,25 +153,22 @@ public struct User: Codable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
-        extraData = decodeUserExtraData(from: decoder)
+        extraData = User.decodeUserExtraData(from: decoder)
         
-        if id == Client.shared.user.id,
-            let channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount),
-            let messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) {
-            let unreadCount = UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount)
-            Client.shared.unreadCountAtomic.set(unreadCount)
-        }
+        let unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount) ?? 0
+        let unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount) ?? 0
+        unreadCount = UnreadCount(channels: unreadChannelsCount, messages: unreadMessagesCount)
     }
     
     /// Safely decode user extra data and if it fail try to decode only default properties: name, avatarURL.
-    private func decodeUserExtraData(from decoder: Decoder) -> UserExtraDataCodable? {
+    private static func decodeUserExtraData(from decoder: Decoder) -> UserExtraDataCodable? {
         do {
             var extraData = try Self.extraDataType.init(from: decoder) // swiftlint:disable:this explicit_init
             extraData.avatarURL = extraData.avatarURL?.removingRandomSVG()
             return extraData
             
         } catch {
-            ClientLogger.log("🐴❌", "User extra data decoding error: \(error). "
+            ClientLogger.log("🐴❌", level: .error, "User extra data decoding error: \(error). "
                 + "Trying to recover by only decoding name and imageURL")
             
             guard let container = try? decoder.container(keyedBy: CodingKeys.self) else {

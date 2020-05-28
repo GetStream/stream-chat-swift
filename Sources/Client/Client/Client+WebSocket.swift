@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Starscream
 
 extension Client {
     
@@ -44,7 +43,11 @@ extension Client {
         var request = URLRequest(url: url)
         request.allHTTPHeaderFields = authHeaders(token: token)
         
-        return WebSocket(request, stayConnectedInBackground: stayConnectedInBackground, logger: logger) { [unowned self] event in
+        let callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
+        let webSocketOptions = stayConnectedInBackground ? WebSocketOptions.stayConnectedInBackground : []
+        let webSocketProvider = defaultWebSocketProviderType.init(request: request, callbackQueue: callbackQueue)
+        
+        return WebSocket(webSocketProvider, options: webSocketOptions, logger: logger) { [unowned self] event in
             guard case .connectionChanged(let connectionState) = event else {
                 if case .notificationMutesUpdated(let user, _, _) = event {
                     self.userAtomic.set(user)
@@ -57,6 +60,7 @@ extension Client {
             }
             
             if case .connected(let userConnection) = connectionState {
+                self.unreadCountAtomic.set(userConnection.user.unreadCount)
                 self.userAtomic.set(userConnection.user)
                 self.recoverConnection()
                 
@@ -81,7 +85,8 @@ extension Client {
     private func restoreWatchingChannels() {
         watchingChannelsAtomic.flush()
         
-        guard let keys = watchingChannelsAtomic.get()?.keys, !keys.isEmpty else {
+        let keys = watchingChannelsAtomic.get().keys
+        guard !keys.isEmpty else {
             return
         }
         

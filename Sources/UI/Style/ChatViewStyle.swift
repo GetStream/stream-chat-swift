@@ -54,23 +54,6 @@ public struct ChatViewStyle {
     }
 }
 
-extension ChatViewStyle: Hashable {
-    
-    public static func == (lhs: ChatViewStyle, rhs: ChatViewStyle) -> Bool {
-        lhs.channel == rhs.channel
-            && lhs.composer == rhs.composer
-            && lhs.incomingMessage == rhs.incomingMessage
-            && lhs.outgoingMessage == rhs.outgoingMessage
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(channel)
-        hasher.combine(composer)
-        hasher.combine(incomingMessage)
-        hasher.combine(outgoingMessage)
-    }
-}
-
 /// A chat style visibility type.
 ///
 /// - always: show an element always visible, even if it disabled.

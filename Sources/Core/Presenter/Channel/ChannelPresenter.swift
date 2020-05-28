@@ -41,27 +41,24 @@ public final class ChannelPresenter: Presenter {
     let channelId: String
     let channelPublishSubject = PublishSubject<Channel>()
     
-    private(set) lazy var channelAtomic = Atomic<Channel>(callbackQueue: .main) { [weak self] channel, oldChannel in
-        if let channel = channel {
-            if let oldChannel = oldChannel {
-                channel.banEnabling = oldChannel.banEnabling
-            }
-            
-            self?.channelPublishSubject.onNext(channel)
-        }
+    private(set) lazy var channelAtomic = Atomic<Channel>(.unused, callbackQueue: .main) { [weak self] channel, oldChannel in
+        channel.banEnabling = oldChannel.banEnabling
+        self?.channelPublishSubject.onNext(channel)
     }
     
     /// A channel (see `Channel`).
-    public var channel: Channel { channelAtomic.get(default: .unused) }
+    public var channel: Channel { channelAtomic.get() }
     /// A parent message for replies.
     public let parentMessage: Message?
+    /// Checks if the presenter is in a thread.
+    public var isThread: Bool { parentMessage != nil }
     /// Query options.
     public let queryOptions: QueryOptions
     /// An edited message.
     public var editMessage: Message?
     /// Show statuses separators, e.g. Today
     public var showStatuses = true
-    let lastMessageAtomic = Atomic<Message>()
+    let lastMessageAtomic = Atomic<Message?>()
     /// The last parsed message from WebSocket events.
     public var lastMessage: Message? { lastMessageAtomic.get() }
     var lastAddedOwnMessage: Message?
@@ -72,7 +69,7 @@ public final class ChannelPresenter: Presenter {
     public internal(set) var typingUsers: [TypingUser] = []
     var startedTyping = false
     
-    var messageReadsToMessageId: [MessageRead: String] = [:]
+    var messageIdByMessageReadUser: [User: String] = [:]
     /// Check if the channel has unread messages.
     public var isUnread: Bool { channel.readEventsEnabled && channel.unreadCount.messages > 0 }
     
@@ -83,7 +80,7 @@ public final class ChannelPresenter: Presenter {
     public var ephemeralMessage: Message? { (try? ephemeralSubject.value())?.message }
     
     /// Check if the user can reply (create a thread) to a message.
-    public var canReply: Bool { parentMessage == nil && channel.config.repliesEnabled }
+    public var canReply: Bool { !isThread && channel.config.repliesEnabled }
     
     /// A filter to discard channel events.
     public var eventsFilter: StreamChatClient.Event.Filter?
@@ -162,19 +159,19 @@ extension ChannelPresenter {
     /// Create a message by sending a text.
     /// - Parameters:
     ///     - text: a message text
+    ///     - showReplyInChannel: show a reply in the channel.
     ///     - completion: a completion block with `MessageResponse`.
-    public func send(text: String, _ completion: @escaping Client.Completion<MessageResponse>) {
-        rx.send(text: text).bindOnce(to: completion)
+    public func send(text: String, showReplyInChannel: Bool = false, _ completion: @escaping Client.Completion<MessageResponse>) {
+        rx.send(text: text, showReplyInChannel: showReplyInChannel).bindOnce(to: completion)
     }
     
-    func createMessage(with text: String) -> Message {
+    func createMessage(with text: String, showReplyInChannel: Bool) -> Message {
         let messageId = editMessage?.id ?? ""
         
         var attachments = uploadManager.images.isEmpty
             ? uploadManager.files.compactMap({ $0.attachment })
             : uploadManager.images.compactMap({ $0.attachment })
         
-        let parentId = parentMessage?.id
         var extraData: Codable?
         
         if attachments.isEmpty, let editMessage = editMessage, !editMessage.attachments.isEmpty {
@@ -182,7 +179,7 @@ extension ChannelPresenter {
         }
         
         if let messageExtraDataCallback = messageExtraDataCallback {
-            extraData = messageExtraDataCallback(messageId, text, attachments, parentId)
+            extraData = messageExtraDataCallback(messageId, text, attachments, parentMessage?.id)
         }
         
         editMessage = nil
@@ -200,12 +197,12 @@ extension ChannelPresenter {
         }
         
         let message = Message(id: messageId,
-                              parentId: parentId,
+                              parentId: parentMessage?.id,
                               text: text,
                               attachments: attachments,
                               mentionedUsers: mentionedUsers,
                               extraData: extraData,
-                              showReplyInChannel: false)
+                              showReplyInChannel: showReplyInChannel && isThread)
         
         return messagePreparationCallback?(message) ?? message
     }

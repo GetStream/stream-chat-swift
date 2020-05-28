@@ -12,6 +12,8 @@ import XCTest
 /// and provides the latest network request made.
 class RequestRecorderURLProtocol: URLProtocol {
 
+    static let testSessionHeaderKey = "test_session_id"
+    
     private static var latestRequestExpectation: XCTestExpectation?
     private static var latestRequest: URLRequest?
 
@@ -34,10 +36,26 @@ class RequestRecorderURLProtocol: URLProtocol {
         return latestRequest
     }
 
+    /// If set, records only requests with `testSessionHeaderKey` header value set to this value. If `nil`, records all requests.
+    static var currentSessionId: String?
+    
+    /// Cleans up existing waiters and recorded requests. We have to explictly reset the state because URLProtocols
+    /// work with static variables.
+    static func reset() {
+        currentSessionId = nil
+        latestRequest = nil
+        latestRequestExpectation = nil
+    }
+
     override class func canInit(with request: URLRequest) -> Bool {
-        DispatchQueue.main.async {
-            latestRequest = request
-            latestRequestExpectation?.fulfill()
+        guard let sessionId = currentSessionId else {
+            // No sessionId set, record all requests
+            record(request: request)
+            return false
+        }
+        
+        if sessionId == request.value(forHTTPHeaderField: testSessionHeaderKey) {
+            record(request: request)
         }
         return false
     }
@@ -47,6 +65,11 @@ class RequestRecorderURLProtocol: URLProtocol {
         return request
     }
 
+    private static func record(request: URLRequest) {
+        latestRequest = request
+        latestRequestExpectation?.fulfill()
+    }
+    
     // MARK: Instance methods
 
     override func startLoading() {

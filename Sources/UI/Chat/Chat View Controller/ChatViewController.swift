@@ -289,7 +289,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     ///   - message: a message.
     ///   - locationInView: a tap location in the cell.
     open func showActions(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) {
-        guard let alert = defaultActionSheet(from: cell, for: message, locationInView: locationInView) else {
+        guard !message.isDeleted, let alert = defaultActionSheet(from: cell, for: message, locationInView: locationInView) else {
             return
         }
         
@@ -305,7 +305,9 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     ///   - locationInView: a tap location in the cell.
     @available(iOS 13, *)
     open func createActionsContextMenu(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) -> UIMenu? {
-        defaultActionsContextMenu(from: cell, for: message, locationInView: locationInView)
+        guard !message.isDeleted else { return nil }
+        
+        return defaultActionsContextMenu(from: cell, for: message, locationInView: locationInView)
     }
     
     /// Creates a chat view controller for the message being replied to.
@@ -338,7 +340,7 @@ extension ChatViewController {
             return
         }
         
-        if presenter.parentMessage != nil {
+        if presenter.isThread {
             title = "Thread"
             updateTitleReplyCount()
             return
@@ -347,8 +349,7 @@ extension ChatViewController {
         title = presenter.channel.name
         let channelAvatar = AvatarView(style: style.avatarViewStyle)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatar)
-        let imageURL = presenter.parentMessage == nil ? presenter.channel.imageURL : presenter.parentMessage?.user.avatarURL
-        channelAvatar.update(with: imageURL, name: title)
+        channelAvatar.update(with: presenter.channel.imageURL, name: title)
     }
     
     private func updateTitleReplyCount() {

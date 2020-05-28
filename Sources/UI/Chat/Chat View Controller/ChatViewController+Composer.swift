@@ -25,11 +25,24 @@ extension Reactive where Base: ChatViewController {
             var bottom: CGFloat = 0
             
             if keyboardNotification.isVisible {
+                var alsoSendToChannelButtonHeight: CGFloat = 0
+                
+                if chatViewController.composerView.alsoSendToChannelButton.superview != nil,
+                    let replyInChannelViewStyle = chatViewController.composerView.style?.replyInChannelViewStyle {
+                    chatViewController.composerView.alsoSendToChannelButton.isHidden = false
+                    
+                    alsoSendToChannelButtonHeight = replyInChannelViewStyle.height
+                        + replyInChannelViewStyle.edgeInsets.top
+                        + replyInChannelViewStyle.edgeInsets.bottom
+                }
+                
                 bottom = keyboardNotification.height
                     - chatViewController.composerView.toolBar.frame.height
+                    + alsoSendToChannelButtonHeight
                     - chatViewController.initialSafeAreaBottom
             } else {
                 chatViewController.composerView.textView.resignFirstResponder()
+                chatViewController.composerView.alsoSendToChannelButton.isHidden = true
             }
             
             var contentOffset = CGPoint.zero
@@ -106,7 +119,7 @@ extension ChatViewController {
         }
         
         composerView.attachmentButton.isHidden = composerAddFileContainerView == nil
-        composerView.addToSuperview(view)
+        composerView.addToSuperview(view, showAlsoSendToChannelButton: presenter.isThread)
         
         if let composerAddFileContainerView = composerAddFileContainerView {
             composerAddFileContainerView.add(to: composerView)
@@ -122,7 +135,7 @@ extension ChatViewController {
         textViewEvents.subscribe(onNext: { [weak self] in self?.dispatchCommands(in: $0) }).disposed(by: disposeBag)
         
         // Send typing events.
-        if presenter.channel.config.typingEventsEnabled, presenter.parentMessage == nil {
+        if presenter.channel.config.typingEventsEnabled, !presenter.isThread {
             Observable.merge([textViewEvents.map { _ in true },
                               textViewEvents.debounce(.seconds(3), scheduler: MainScheduler.instance).map { _ in false }])
                 .distinctUntilChanged()
@@ -173,7 +186,7 @@ extension ChatViewController {
         // in case their internet is slow and message isn't sent immediately
         composerView.sendButton.isEnabled = false
         
-        presenter?.rx.send(text: text)
+        presenter?.rx.send(text: text, showReplyInChannel: composerView.alsoSendToChannelButton.isSelected)
             .subscribe(
                 onNext: { [weak self] messageResponse in
                     if messageResponse.message.type == .error {
@@ -490,9 +503,9 @@ extension ChatViewController {
             } catch let error as ImagePickerError {
                 self.showImagePickerAlert(for: error)
             } catch let error as ClientError {
-                ClientLogger.log("🌄", "Error when trying to create file for uploading: \(error)")
+                ClientLogger.log("🌄", level: .error, "Error when trying to create file for uploading: \(error)")
             } catch {
-                ClientLogger.log("🌄", "Unknown error: \(error)")
+                ClientLogger.log("🌄", level: .error, "Unknown error: \(error)")
             }
         }
         
@@ -519,7 +532,9 @@ extension ChatViewController {
                             
                             self.composerView.addFileUploaderItem(uploaderItem)
                         } catch {
-                            ClientLogger.log("📁", "Error occurred when trying to add file in url: \(url), error: \(error)")
+                            ClientLogger.log("📁",
+                                             level: .error,
+                                             "Error occurred when trying to add file in url: \(url), error: \(error)")
                         }
                     }
                 }

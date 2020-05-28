@@ -33,6 +33,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		80216B922464889900BA9F90 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 79EE39372453204E0034EBF3;
+			remoteInfo = StreamChatClientIntegrationTests;
+		};
 		8A0A7E742301AC1E0033E6D9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
@@ -185,6 +192,7 @@
 				8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */,
 				8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */,
 				8A7EE00F238580B900BDB18D /* StreamChatRealm.framework */,
+				80216B932464889900BA9F90 /* StreamChatClientIntegrationTests.xctest */,
 				8A161EE023F3189C0084234B /* StreamChatClientTests.xctest */,
 				8AECE0FD23155FDF00B6CEE0 /* StreamChatCoreTests.xctest */,
 			);
@@ -301,6 +309,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		80216B932464889900BA9F90 /* StreamChatClientIntegrationTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = StreamChatClientIntegrationTests.xctest;
+			remoteRef = 80216B922464889900BA9F90 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;

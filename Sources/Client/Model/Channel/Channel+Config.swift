@@ -124,22 +124,11 @@ public extension Channel {
         /// Args for the command.
         public let args: String
         
-        public init(name: String = "",
-                    description: String = "",
-                    set: String = "",
-                    args: String = "") {
+        public init(name: String = "", description: String = "", set: String = "", args: String = "") {
             self.name = name
             self.description = description
             self.set = set
             self.args = args
-        }
-        
-        public static func == (lhs: Command, rhs: Command) -> Bool {
-            lhs.name == rhs.name
-        }
-        
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(name)
         }
     }
 }

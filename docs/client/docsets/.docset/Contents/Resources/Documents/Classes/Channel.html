@@ -47,6 +47,9 @@
                 <a href="../Classes/Channel/Command.html">– Command</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/Channel/DefaultNamingStrategy.html">– DefaultNamingStrategy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/Client.html">Client</a>
               </li>
               <li class="nav-group-task">
@@ -218,6 +221,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/Database.html">Database</a>
@@ -423,7 +429,7 @@
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">Channel</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Channel</span><span class="p">:</span> <span class="kt">Hashable</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Channel</span><span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
 
                 </div>
               </div>
@@ -3256,32 +3262,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:SH4hash4intoys6HasherVz_tF"></a>
-                    <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:SH4hash4intoys6HasherVz_tF">hash(into:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:s23CustomStringConvertibleP11descriptionSSvp"></a>
                     <a name="//apple_ref/swift/Property/description" class="dashAnchor"></a>
                     <a class="token" href="#/s:s23CustomStringConvertibleP11descriptionSSvp">description</a>
@@ -3464,12 +3444,40 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7ChannelC21DefaultNamingStrategyV"></a>
+                    <a name="//apple_ref/swift/Struct/DefaultNamingStrategy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7ChannelC21DefaultNamingStrategyV">DefaultNamingStrategy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The default implementation for <code><a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a></code>.</p>
+
+                        <a href="../Classes/Channel/DefaultNamingStrategy.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">DefaultNamingStrategy</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-01)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-27)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

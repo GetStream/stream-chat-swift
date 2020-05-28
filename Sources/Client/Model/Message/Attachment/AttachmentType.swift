@@ -9,7 +9,7 @@
 import Foundation
 
 /// An attachment type.
-public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+public enum AttachmentType: RawRepresentable, Codable, Equatable, ExpressibleByStringLiteral {
     /// An attachment type.
     case unknown
     case custom(String)

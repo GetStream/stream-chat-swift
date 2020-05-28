@@ -47,6 +47,9 @@
                 <a href="../Classes/Channel/Command.html">– Command</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/Channel/DefaultNamingStrategy.html">– DefaultNamingStrategy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/Client.html">Client</a>
               </li>
               <li class="nav-group-task">
@@ -218,6 +221,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/Database.html">Database</a>
@@ -423,7 +429,7 @@
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Message</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Message</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Message</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
 
                 </div>
               </div>
@@ -954,6 +960,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:16StreamChatClient7MessageV8isSilentSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isSilent" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV8isSilentSbvp">isSilent</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Flag for silent messages. Silent messages won&rsquo;t increase the unread count. See <a href="https://getstream.io/chat/docs/silent_messages/?language=swift">https://getstream.io/chat/docs/silent_messages/?language=swift</a></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isSilent</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:16StreamChatClient7MessageV11isEphemeralSbvp"></a>
                     <a name="//apple_ref/swift/Property/isEphemeral" class="dashAnchor"></a>
                     <a class="token" href="#/s:16StreamChatClient7MessageV11isEphemeralSbvp">isEphemeral</a>
@@ -1026,6 +1059,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isOwn</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7MessageV7isReplySbvp"></a>
+                    <a name="//apple_ref/swift/Property/isReply" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV7isReplySbvp">isReply</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Check if the message is a reply.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isReply</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1229,9 +1289,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient7MessageV2id4type8parentId7created7updated7deleted4text7command4args11attachments14mentionedUsers9extraData15latestReactions03ownU014reactionScores10replyCount18showReplyInChannelACSS_AA0D4TypeOSSSg10Foundation4DateVA2ZSgSSA2WSayAA10AttachmentVGSayAA4UserVGSe_SEpSgSayAA8ReactionVGA9_SDySSSiGSiSbtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(id:type:parentId:created:updated:deleted:text:command:args:attachments:mentionedUsers:extraData:latestReactions:ownReactions:reactionScores:replyCount:showReplyInChannel:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient7MessageV2id4type8parentId7created7updated7deleted4text7command4args11attachments14mentionedUsers9extraData15latestReactions03ownU014reactionScores10replyCount18showReplyInChannelACSS_AA0D4TypeOSSSg10Foundation4DateVA2ZSgSSA2WSayAA10AttachmentVGSayAA4UserVGSe_SEpSgSayAA8ReactionVGA9_SDySSSiGSiSbtcfc">init(id:<wbr>type:<wbr>parentId:<wbr>created:<wbr>updated:<wbr>deleted:<wbr>text:<wbr>command:<wbr>args:<wbr>attachments:<wbr>mentionedUsers:<wbr>extraData:<wbr>latestReactions:<wbr>ownReactions:<wbr>reactionScores:<wbr>replyCount:<wbr>showReplyInChannel:<wbr>)</a>
+                    <a name="/s:16StreamChatClient7MessageV2id4type8parentId7created7updated7deleted4text6silent4user7command4args11attachments14mentionedUsers9extraData15latestReactions03ownW014reactionScores10replyCount18showReplyInChannelACSS_AA0D4TypeOSSSg10Foundation4DateVA0_A0_SgSSSbAA4UserVA2YSayAA10AttachmentVGSayA3_GSe_SEpSgSayAA8ReactionVGA11_SDySSSiGSiSbtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(id:type:parentId:created:updated:deleted:text:silent:user:command:args:attachments:mentionedUsers:extraData:latestReactions:ownReactions:reactionScores:replyCount:showReplyInChannel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV2id4type8parentId7created7updated7deleted4text6silent4user7command4args11attachments14mentionedUsers9extraData15latestReactions03ownW014reactionScores10replyCount18showReplyInChannelACSS_AA0D4TypeOSSSg10Foundation4DateVA0_A0_SgSSSbAA4UserVA2YSayAA10AttachmentVGSayA3_GSe_SEpSgSayAA8ReactionVGA11_SDySSSiGSiSbtcfc">init(id:<wbr>type:<wbr>parentId:<wbr>created:<wbr>updated:<wbr>deleted:<wbr>text:<wbr>silent:<wbr>user:<wbr>command:<wbr>args:<wbr>attachments:<wbr>mentionedUsers:<wbr>extraData:<wbr>latestReactions:<wbr>ownReactions:<wbr>reactionScores:<wbr>replyCount:<wbr>showReplyInChannel:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1253,6 +1313,8 @@
             <span class="nv">updated</span><span class="p">:</span> <span class="kt">Date</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(),</span>
             <span class="nv">deleted</span><span class="p">:</span> <span class="kt">Date</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">silent</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nv">user</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span> <span class="o">=</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="o">.</span><span class="n">current</span><span class="p">,</span>
             <span class="nv">command</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">args</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">attachments</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Attachment.html">Attachment</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
@@ -1278,43 +1340,19 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a message id.</p>
+                                  <p>Message id, leave it blank if it&rsquo;s a new message since server generates it</p>
                                 </div>
                               </td>
                             </tr>
                             <tr>
                               <td>
                                 <code>
-                                <em>text</em>
+                                <em>type</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>a text.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>attachments</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>attachments (see <code><a href="../Structs/Attachment.html">Attachment</a></code>).</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>extraData</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>an extra data.</p>
+                                  <p>Message type. See <code><a href="../Enums/MessageType.html">MessageType</a></code></p>
                                 </div>
                               </td>
                             </tr>
@@ -1326,7 +1364,115 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a parent message id.</p>
+                                  <p>Parent message id if this message is a reply</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>created</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Message created date</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>updated</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Message updated date</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>deleted</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Message deleted date</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>text</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Message body</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>isSilent</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Flag for indicating if this message is silent (does not increase unread count)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>user</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Owner of the message. Keep in mind that clients can only send messages as logged in user (User.current)</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>command</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Command associated with message</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>args</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Arguments in message</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>attachments</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Attachments for this message</p>
                                 </div>
                               </td>
                             </tr>
@@ -1338,7 +1484,67 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a list of mentioned users.</p>
+                                  <p>Mentioned users in this message</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>extraData</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>ExtraData for this message</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>latestReactions</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Reactions to this message</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>ownReactions</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Current user&rsquo;s reactions to this message</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>reactionScores</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Scores of reactions to this message</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>replyCount</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Reply count</p>
                                 </div>
                               </td>
                             </tr>
@@ -1350,7 +1556,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a flag to show reply messages in a channel, not in a separate thread.</p>
+                                  <p>Flag for showing this reply message also in channel.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1785,32 +1991,6 @@
                     </section>
                   </div>
                 </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:SH4hash4intoys6HasherVz_tF"></a>
-                    <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:SH4hash4intoys6HasherVz_tF">hash(into:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -1995,7 +2175,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-01)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-27)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
