@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- `disableLocalNotifications` added to `Notifications` for disabling local notifications [#290](https://github.com/GetStream/stream-chat-swift/pull/290)
+
 ### 🔄 Changed
 
 # [2.2.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.2)
@@ -18,7 +21,6 @@ _May 27, 2020_
   Please make sure to provide a valid operator.
   Example:  `.custom("contains", key: "teams", value: "red")`
 - `queryUsers` now supports `Pagination.limit` and `Pagination.offset` [#288](https://github.com/GetStream/stream-chat-swift/issues/288)
-- `disableLocalNotifications` added to `Notifications` for disabling local notifications [#290](https://github.com/GetStream/stream-chat-swift/pull/290)
 
 # [2.2.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.1)
 _May 19, 2020_
