@@ -170,6 +170,7 @@ public extension Channel {
             return Subscription.empty
         }
         
+        currentUserTypingTimerControlAtomic.get()?.cancel()
         isCurrentUserTypingAtomic.set(false)
         
         let completion = onError(completion) { [weak self] _ in
