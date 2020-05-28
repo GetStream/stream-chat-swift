@@ -140,21 +140,21 @@ public extension Channel {
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
     func keystroke(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
-        currentUserTypingTimerControl?.cancel()
+        currentUserTypingTimerControlAtomic.get()?.cancel()
         
-        currentUserTypingTimerControl = DefaultTimer.schedule(timeInterval: 15, queue: .main) { [weak self] in
+        currentUserTypingTimerControlAtomic.set(DefaultTimer.schedule(timeInterval: 15, queue: .main) { [weak self] in
             self?.stopTyping(completion)
-        }
+        })
         
-        if isCurrentUserTyping {
+        if isCurrentUserTypingAtomic.get() {
             completion(.success(.typingStart(.current, cid, .typingStart)))
             return Subscription.empty
         }
         
-        isCurrentUserTyping = true
+        isCurrentUserTypingAtomic.set(true)
         
         let completion = onError(completion) { [weak self] _ in
-            DispatchQueue.main.async { self?.isCurrentUserTyping = false }
+            self?.isCurrentUserTypingAtomic.set(false)
         }
         
         return Client.shared.send(eventType: .typingStart, to: self, completion)
@@ -165,15 +165,15 @@ public extension Channel {
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
     func stopTyping(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
-        guard isCurrentUserTyping else {
+        guard isCurrentUserTypingAtomic.get() else {
             completion(.success(.typingStop(.current, cid, .typingStop)))
             return Subscription.empty
         }
         
-        isCurrentUserTyping = false
+        isCurrentUserTypingAtomic.set(false)
         
         let completion = onError(completion) { [weak self] _ in
-            DispatchQueue.main.async { self?.isCurrentUserTyping = true }
+            self?.isCurrentUserTypingAtomic.set(true)
         }
         
         return Client.shared.send(eventType: .typingStop, to: self, completion)
