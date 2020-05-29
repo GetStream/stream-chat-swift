@@ -1,5 +1,5 @@
 //
-//  Client_SilentMessageTests.swift
+//  Client+SilentMessageTests.swift
 //  StreamChatClientTests
 //
 //  Created by Bahadir Oncel on 12.05.2020.

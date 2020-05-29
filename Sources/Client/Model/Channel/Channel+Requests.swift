@@ -140,19 +140,35 @@ public extension Channel {
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
     func keystroke(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
+        keystroke(client: .shared,
+                  timerType: DefaultTimer.self,
+                  stopTypingTimeInterval: 15,
+                  resendTimeInterval: 20, // The timeout for getting `.typingStop` is 30 sec.
+                  completion)
+    }
+    
+    @discardableResult
+    internal func keystroke(client: Client,
+                            timerType: Timer.Type,
+                            stopTypingTimeInterval: TimeInterval,
+                            resendTimeInterval: TimeInterval,
+                            _ completion: @escaping Client.Completion<Event>) -> Cancellable {
         currentUserTypingTimerControlAtomic.get()?.cancel()
         
-        currentUserTypingTimerControlAtomic.set(DefaultTimer.schedule(timeInterval: 15, queue: .main) { [weak self] in
-            self?.stopTyping(completion)
-        })
+        let timerControl = timerType.schedule(timeInterval: stopTypingTimeInterval, queue: .main) { [weak self, unowned client] in
+            self?.stopTyping(client: client, completion)
+        }
         
-        if let lastDate = currentUserTypingLastDateAtomic.get(), lastDate.timeIntervalSinceNow > -20 {
-            completion(.success(.typingStart(.current, cid, .typingStart)))
+        currentUserTypingTimerControlAtomic.set(timerControl)
+        
+        // The user is typing too long, we should resend `.typingStart` event.
+        if let lastDate = currentUserTypingLastDateAtomic.get(), lastDate.timeIntervalSinceNow > -resendTimeInterval {
+            completion(.success(.typingStart(client.user, cid, .typingStart)))
             return Subscription.empty
         }
         
         currentUserTypingLastDateAtomic.set(.init())
-        return Client.shared.send(eventType: .typingStart, to: self, completion)
+        return client.send(eventType: .typingStart, to: self, completion)
     }
     
     /// Send a stop typing event for the current user.
@@ -160,15 +176,20 @@ public extension Channel {
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
     func stopTyping(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
+        stopTyping(client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func stopTyping(client: Client, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
         guard currentUserTypingLastDateAtomic.get() != nil else {
-            completion(.success(.typingStop(.current, cid, .typingStop)))
+            completion(.success(.typingStop(client.user, cid, .typingStop)))
             return Subscription.empty
         }
         
         currentUserTypingTimerControlAtomic.get()?.cancel()
         currentUserTypingLastDateAtomic.set(nil)
         
-        return Client.shared.send(eventType: .typingStop, to: self, completion)
+        return client.send(eventType: .typingStop, to: self, completion)
     }
     
     // MARK: - Members
