@@ -34,34 +34,34 @@ func AssertNetworkRequest(method: Endpoint.Method,
                           timeout: TimeInterval = 0.5,
                           file: StaticString = #file,
                           line: UInt = #line) {
-
+    
     guard let request = RequestRecorderURLProtocol.waitForRequest(timeout: timeout) else {
         XCTFail("Waiting for request timed out. No request was made.", file: file, line: line)
         return
     }
-
+    
     var errorMessage = ""
     defer {
         if !errorMessage.isEmpty {
             XCTFail("AssertNetworkRequest failed:" + errorMessage, file: file, line: line)
         }
     }
-
+    
     // Check method
     if method.rawValue != request.httpMethod {
         errorMessage += "\n  - Incorrect method: expected \"\(method.rawValue)\" got \"\(request.httpMethod ?? "_")\""
     }
-
+    
     guard let url = request.url, let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
         errorMessage += "\n  - Missing URL"
         return
     }
-
+    
     // Check path
     if components.path != path {
         errorMessage += "\n  - Incorrect path: expected \"\(path)\" got \"\(components.path)\""
     }
-
+    
     // Check headers
     let requestHeaders = request.allHTTPHeaderFields ?? [:]
     headers?.forEach { (key, value) in
@@ -69,12 +69,12 @@ func AssertNetworkRequest(method: Endpoint.Method,
             if value != requestHeaderValue {
                 errorMessage += "\n  - Incorrect header value for \"\(key)\": expected \"\(value)\" got \"\(requestHeaderValue)\""
             }
-
+            
         } else {
             errorMessage += "\n  - Missing header value for \"\(key)\""
         }
     }
-
+    
     // Check query parameters
     let items = components.queryItems ?? []
     queryParameters?.forEach { (key, value) in
@@ -82,50 +82,47 @@ func AssertNetworkRequest(method: Endpoint.Method,
             if value != requestValue {
                 errorMessage += "\n  - Incorrect query value for \"\(key)\": expected \"\(value)\" got \"\(requestValue)\""
             }
-
+            
         } else {
             errorMessage += "\n  - Missing query value for \"\(key)\""
         }
     }
-
+    
     // Check the request body
     var requestBodyData: Data?
+    
     if let data = request.httpBody {
         requestBodyData = data
     }
+    
     if let stream = request.httpBodyStream {
         requestBodyData = Data(reading: stream)
     }
-
-    guard let data = requestBodyData else {
+    
+    guard let bodyData = requestBodyData else {
         if body != nil {
             errorMessage += "\n  - Missing request body"
         }
         return
     }
-
-    guard let requestBodyJSON = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-        errorMessage += "\n  - Request body is not a valid JSON"
+    
+    guard let assertingBody = body, let assertingBodyData = try? JSONSerialization.data(withJSONObject: assertingBody) else {
+        if body != nil {
+            errorMessage += "\n  - Asserting body is not a valid JSON object"
+        }
+        
         return
     }
-
-    body?.forEach { (key, value) in
-        if let requestValue = requestBodyJSON[key] {
-            if String(describing: value) != String(describing: requestValue) {
-                errorMessage += "\n  - Incorrect body value for \"\(key)\": expected \"\(value)\" got \"\(requestValue)\""
-            }
-        } else {
-            errorMessage += "\n  - Missing body value for \"\(key)\""
-        }
-    }
+    
+    AssertJSONEqual(assertingBodyData, bodyData)
 }
 
 private extension Array where Element == URLQueryItem {
-  /// Returns the value of the URLQueryItem with the given name. Returns `nil`
-  /// if the query item doesn't exist.
-  subscript(_ name: String) -> String? {
-    first(where: { $0.name == name}).flatMap({ $0.value })
-  }
+    /// Returns the value of the URLQueryItem with the given name. Returns `nil`
+    /// if the query item doesn't exist.
+    subscript(_ name: String) -> String? {
+        first(where: { $0.name == name}).flatMap({ $0.value })
+    }
 }
 
 private extension Data {
@@ -133,7 +130,7 @@ private extension Data {
     init(reading input: InputStream) {
         self.init()
         input.open()
-
+        
         let bufferSize = 1024
         let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
         while input.hasBytesAvailable {
