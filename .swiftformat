@@ -23,7 +23,7 @@
 --indent 2
 --indentcase false
 --linebreaks lf
---maxwidth none
+--maxwidth 132
 --nospaceoperators 
 --octalgrouping none
 --operatorfunc no-space
