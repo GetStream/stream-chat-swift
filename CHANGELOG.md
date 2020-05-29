@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- Send a keystroke event for the current user: `channel.keystroke {}`. You need to call it each time when the current user press a key. The method will automatically send a typing stop event after 15 seconds timeout after a late call of `keystroke()`.
+- Send a stop typing event for the current user: `stopTyping {}`. Usually you no need to call it directly.
+
 ### 🔄 Changed
 
 # [2.2.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.2)
