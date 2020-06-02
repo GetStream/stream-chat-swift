@@ -140,29 +140,24 @@ public extension Channel {
     /// - Parameter completion: a completion block with `Event`.
     @discardableResult
     func keystroke(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
-        keystroke(client: .shared,
-                  timerType: DefaultTimer.self,
-                  stopTypingTimeInterval: 15,
-                  resendTimeInterval: 20, // The timeout for getting `.typingStop` is 30 sec.
-                  completion)
+        keystroke(client: .shared, timerType: DefaultTimer.self, completion)
     }
     
     @discardableResult
     internal func keystroke(client: Client,
                             timerType: Timer.Type,
-                            stopTypingTimeInterval: TimeInterval,
-                            resendTimeInterval: TimeInterval,
                             _ completion: @escaping Client.Completion<Event>) -> Cancellable {
         currentUserTypingTimerControlAtomic.get()?.cancel()
         
-        let timerControl = timerType.schedule(timeInterval: stopTypingTimeInterval, queue: .main) { [weak self, unowned client] in
+        let timerControl = timerType.schedule(timeInterval: 15, queue: .main) { [weak self, unowned client] in
             self?.stopTyping(client: client, completion)
         }
         
         currentUserTypingTimerControlAtomic.set(timerControl)
         
         // The user is typing too long, we should resend `.typingStart` event.
-        if let lastDate = currentUserTypingLastDateAtomic.get(), lastDate.timeIntervalSinceNow > -resendTimeInterval {
+        // The timeout for getting `.typingStop` is 30 sec.
+        if let lastDate = currentUserTypingLastDateAtomic.get(), lastDate.timeIntervalSinceNow > -20 {
             completion(.success(.typingStart(client.user, cid, .typingStart)))
             return Subscription.empty
         }
