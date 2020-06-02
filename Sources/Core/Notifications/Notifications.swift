@@ -35,7 +35,7 @@ public final class Notifications: NSObject {
     /// A callback to open a chat view controller with a given message id and channel id.
     public var onNewMessage: OnNewMessage?
     
-    /// Enablde clearing application icon badge number when app become active.
+    /// Enable clearing application icon badge number when app become active.
     public var clearApplicationIconBadgeNumberOnAppActive = false { // swiftlint:disable:this identifier_name
         didSet {
             if clearApplicationIconBadgeNumberOnAppActive {
@@ -45,6 +45,9 @@ public final class Notifications: NSObject {
             }
         }
     }
+    
+    /// Prevent the display of local notifications.
+    public var disableLocalNotifications: Bool = false
     
     var logger: ClientLogger?
     
@@ -107,7 +110,7 @@ extension Notifications {
     ///   - message: a message.
     ///   - channel: a channel.
     public func showIfNeeded(newMessage message: Message, in channel: Channel) {
-        if message.user.isMuted {
+        if disableLocalNotifications || message.user.isMuted {
             return
         }
         
