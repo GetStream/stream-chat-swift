@@ -12,6 +12,8 @@ import XCTest
 final class Channel_KeystrokeTests: ClientTestCase {
     
     var time: VirtualTime!
+    let maxStopTypingTimeInterval: VirtualTime.Seconds = 15
+    let maxEesendTimeInterval: VirtualTime.Seconds = 20
     
     override func setUp() {
         super.setUp()
@@ -34,31 +36,20 @@ final class Channel_KeystrokeTests: ClientTestCase {
             body: ["event": ["type": "typing.start"]]
         )
         
-        time.run(numberOfSeconds: 1)
+        time.run(numberOfSeconds: 5)
         
         // 2. The second keystroke, the request should be skipped.
         // Reset stop typing timer.
         sendKeystroke(in: channel)
         
-        if RequestRecorderURLProtocol.waitForRequest(timeout: 0.5) != nil {
-            XCTFail("The second request for the keystroke should be skipped inside time interval 2")
-            return
-        }
-        
-        time.run(numberOfSeconds: 1)
-        
-        // 3. The third keystroke, the request should be skipped.
-        // Reset stop typing timer.
-        sendKeystroke(in: channel)
-        
-        if RequestRecorderURLProtocol.waitForRequest(timeout: 0.5) != nil {
+        if RequestRecorderURLProtocol.waitForRequest(timeout: 1) != nil {
             XCTFail("The second request for the keystroke should be skipped inside time interval 2")
             return
         }
         
 //        time.run(numberOfSeconds: 1)
 //
-//        // 4. The fourth keystroke, the request shouldn't be skipped. User is typing too long.
+//        // 3. The fourth keystroke, the request shouldn't be skipped. User is typing too long.
 //        sendKeystroke(in: channel)
 //
 //        // Assert
@@ -70,8 +61,8 @@ final class Channel_KeystrokeTests: ClientTestCase {
 //            body: ["event": ["type": "typing.start"]]
 //        )
         
-        // 5. The stop typing event should be called after timeout 2.
-        time.run(numberOfSeconds: 2)
+        // 4. The stop typing event should be called after timeout 2.
+        time.run(numberOfSeconds: maxStopTypingTimeInterval + 1)
         
         // Assert
         AssertNetworkRequest(
@@ -84,17 +75,14 @@ final class Channel_KeystrokeTests: ClientTestCase {
     }
     
     private func sendKeystroke(in channel: Channel) {
-        channel.keystroke(client: client,
-                          timerType: VirtualTimeTimer.self,
-                          stopTypingTimeInterval: 2,
-                          resendTimeInterval: 3) { _ in }
+        channel.keystroke(client: client, timerType: VirtualTimeTimer.self) { _ in }
     }
     
     func test_channel_stopTyping() throws {
         let channel = client.channel(type: .messaging, id: "test-stop-typing")
         channel.stopTyping(client: client) { _ in }
         
-        if RequestRecorderURLProtocol.waitForRequest(timeout: 0.5) != nil {
+        if RequestRecorderURLProtocol.waitForRequest(timeout: 1) != nil {
             XCTFail("The stop typing event shouldn't be send if keystroke wasn't send")
             return
         }
@@ -121,7 +109,7 @@ final class Channel_KeystrokeTests: ClientTestCase {
         
         channel.stopTyping(client: client) { _ in }
         
-        if RequestRecorderURLProtocol.waitForRequest(timeout: 0.5) != nil {
+        if RequestRecorderURLProtocol.waitForRequest(timeout: 1) != nil {
             XCTFail("The stop typing event shouldn't be send if keystroke wasn't send")
             return
         }
