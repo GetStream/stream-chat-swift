@@ -135,13 +135,10 @@ extension ChatViewController {
         textViewEvents.subscribe(onNext: { [weak self] in self?.dispatchCommands(in: $0) }).disposed(by: disposeBag)
         
         // Send typing events.
-        if presenter.channel.config.typingEventsEnabled, !presenter.isThread {
-            Observable.merge([textViewEvents.map { _ in true },
-                              textViewEvents.debounce(.seconds(3), scheduler: MainScheduler.instance).map { _ in false }])
-                .distinctUntilChanged()
-                .flatMapLatest({ [weak self] isTyping in
-                    self?.presenter?.channel.rx.send(eventType: isTyping ? .typingStart : .typingStop) ?? .empty()
-                })
+        if presenter.isTypingEventsEnabled {
+            textViewEvents
+                .filter({ !$0.isEmpty })
+                .flatMapLatest({ [weak self] _ in self?.presenter?.channel.rx.keystroke() ?? .empty() })
                 .subscribe()
                 .disposed(by: disposeBag)
         }

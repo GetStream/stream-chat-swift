@@ -67,7 +67,9 @@ public final class ChannelPresenter: Presenter {
     
     /// A list of typing users (see `TypingUser`).
     public internal(set) var typingUsers: [TypingUser] = []
-    var startedTyping = false
+    
+    /// Checks if user typing events enabled for the channel.
+    public var isTypingEventsEnabled: Bool { channel.config.typingEventsEnabled && !isThread }
     
     var messageIdByMessageReadUser: [User: String] = [:]
     /// Check if the channel has unread messages.
@@ -205,25 +207,6 @@ extension ChannelPresenter {
                               showReplyInChannel: showReplyInChannel && isThread)
         
         return messagePreparationCallback?(message) ?? message
-    }
-}
-
-// MARK: - Send Event
-
-extension ChannelPresenter {
-    
-    /// Send a typing event.
-    /// - Parameters:
-    ///   - isTyping: a user typing action.
-    ///   - completion: a completion block with `Event`.
-    public func sendEvent(isTyping: Bool, _ completion: @escaping Client.Completion<StreamChatClient.Event>) {
-        rx.sendEvent(isTyping: isTyping).bindOnce(to: completion)
-    }
-    
-    /// Send Read event if the app is active.
-    /// - Returns: an observable completion.
-    public func markReadIfPossible(_ completion: @escaping Client.Completion<StreamChatClient.Event> = { _ in }) {
-        rx.markReadIfPossible().bindOnce(to: completion)
     }
 }
 

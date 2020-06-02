@@ -15,7 +15,9 @@ protocol Timer {
     ///   - timeInterval: The number of seconds after which the timer fires.
     ///   - queue: The queue on which the `onFire` callback is called.
     ///   - onFire: Called when the timer fires.
-    static func schedule(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void)
+    /// - Returns: `TimerControl` where you can cancel the timer.
+    @discardableResult
+    static func schedule(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) -> TimerControl
     
     /// Schedules a new repeating timer.
     ///
@@ -23,13 +25,14 @@ protocol Timer {
     ///   - timeInterval: The number of seconds between timer fires.
     ///   - queue: The queue on which the `onFire` callback is called.
     ///   - onFire: Called when the timer fires.
+    /// - Returns: `RepeatingTimerControl` where you can suspend and resume the timer.
     static func scheduleRepeating(timeInterval: TimeInterval,
                                   queue: DispatchQueue,
-                                  onFire: @escaping () -> Void) -> TimerControl
+                                  onFire: @escaping () -> Void) -> RepeatingTimerControl
 }
 
 /// Allows resuming and suspending of a timer.
-protocol TimerControl {
+protocol RepeatingTimerControl {
     /// Resumes the timer.
     func resume()
     
@@ -37,21 +40,31 @@ protocol TimerControl {
     func suspend()
 }
 
+typealias TimerControl = Cancellable
+
+extension DispatchWorkItem: TimerControl {}
+
 /// Default real-world implementations of timers.
 struct DefaultTimer: Timer {
-    static func schedule(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) {
-        queue.asyncAfter(deadline: .now() + timeInterval, execute: onFire)
+    
+    @discardableResult
+    static func schedule(timeInterval: TimeInterval,
+                         queue: DispatchQueue,
+                         onFire: @escaping () -> Void) -> TimerControl {
+        let worker = DispatchWorkItem(block: onFire)
+        queue.asyncAfter(deadline: .now() + timeInterval, execute: worker)
+        return worker
     }
     
     static func scheduleRepeating(timeInterval: TimeInterval,
                                   queue: DispatchQueue,
-                                  onFire: @escaping () -> Void) -> TimerControl {
+                                  onFire: @escaping () -> Void) -> RepeatingTimerControl {
         
         RepeatingTimer(timeInterval: timeInterval, queue: queue, onFire: onFire)
     }
 }
 
-private class RepeatingTimer: TimerControl {
+private class RepeatingTimer: RepeatingTimerControl {
     private enum State {
         case suspended
         case resumed

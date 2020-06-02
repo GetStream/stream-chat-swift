@@ -261,7 +261,12 @@ public extension Client {
         }
         
         message.mentionedUsers = mentionedUsers
-        return request(endpoint: .sendMessage(message, channel), completion)
+        
+        let completionWithStopTypingEvent = doBefore(completion) { [weak channel] _ in
+            channel?.stopTyping({ _ in })
+        }
+        
+        return request(endpoint: .sendMessage(message, channel), completionWithStopTypingEvent)
     }
     
     /// Send a message action for a given ephemeral message.

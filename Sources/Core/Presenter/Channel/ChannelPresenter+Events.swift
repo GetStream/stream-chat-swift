@@ -28,15 +28,13 @@ extension ChannelPresenter {
         
         switch event {
         case .typingStart(let user, _, _):
-            if isThread {
+            guard isTypingEventsEnabled else {
                 return .none
             }
             
             let shouldUpdate = filterInvalidatedTypingUsers()
             
-            if channel.config.typingEventsEnabled,
-                !user.isCurrent,
-                (typingUsers.isEmpty || !typingUsers.contains(.init(user: user))) {
+            if !user.isCurrent, (typingUsers.isEmpty || !typingUsers.contains(.init(user: user))) {
                 typingUsers.append(.init(user: user))
                 return .footerUpdated
             }
@@ -46,13 +44,13 @@ extension ChannelPresenter {
             }
             
         case .typingStop(let user, _, _):
-            if isThread {
+            guard isTypingEventsEnabled else {
                 return .none
             }
             
             let shouldUpdate = filterInvalidatedTypingUsers()
             
-            if channel.config.typingEventsEnabled, !user.isCurrent, let index = typingUsers.firstIndex(of: .init(user: user)) {
+            if !user.isCurrent, let index = typingUsers.firstIndex(of: .init(user: user)) {
                 typingUsers.remove(at: index)
                 return .footerUpdated
             }
