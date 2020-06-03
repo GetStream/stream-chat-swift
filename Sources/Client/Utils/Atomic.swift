@@ -108,12 +108,8 @@ public extension Atomic {
     
     /// Accesses a sub value by the given keypath.
     subscript<Element>(dynamicMember keyPath: WritableKeyPath<T, Element>) -> Element {
-        get {
-            return get()[keyPath: keyPath]
-        }
-        set {
-            update(keyPath, to: newValue)
-        }
+        get { get()[keyPath: keyPath] }
+        set { update(keyPath, to: newValue) }
     }
 }
 
@@ -144,18 +140,6 @@ extension Atomic {
         }
     }
 }
-// swiftlint:enable syntactic_sugar
-
-// MARK: - Helper for Collection
-
-public extension Atomic where T: Collection {
-    /// Get a value by key.
-    // swiftlint:disable:next syntactic_sugar
-    subscript<Key: Hashable, Value>(key: Key) -> Value? where T == Dictionary<Key, Value> {
-        lock.lock(); defer { lock.unlock() }
-        return value[key]
-    }
-}
 
 // MARK: - Helper Operator
 
@@ -166,9 +150,7 @@ public extension Atomic where T == Int {
     ///   - lhs: the current atomic value.
     ///   - rhs: the second value.
     static func += (lhs: Atomic<T>, rhs: T) {
-        lhs.update {
-            $0 + rhs
-        }
+        lhs.update { $0 + rhs }
     }
     
     /// Subtracts the second value from the first and stores the difference in the left-hand-side variable.
@@ -176,8 +158,6 @@ public extension Atomic where T == Int {
     ///   - lhs: the current atomic value.
     ///   - rhs: the second value.
     static func -= (lhs: Atomic<T>, rhs: T) {
-        lhs.update {
-            $0 - rhs
-        }
+        lhs.update { $0 - rhs }
     }
 }
