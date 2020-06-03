@@ -18,11 +18,13 @@ public extension Client {
     ///   - id: a channel id.
     ///   - members: a list of members.
     ///   - invitedMembers: a list of invited members.
+    ///   - team: The team the channel belongs to.
     ///   - extraData: a channel extra data.
     func channel(type: ChannelType,
                  id: String,
                  members: [User] = [],
                  invitedMembers: [User] = [],
+                 team: String? = nil,
                  extraData: ChannelExtraDataCodable? = nil) -> Channel {
         Channel(type: type,
                 id: id,
@@ -34,6 +36,7 @@ public extension Client {
                 createdBy: nil,
                 lastMessageDate: nil,
                 frozen: false,
+                team: team,
                 config: .init())
     }
     
@@ -42,11 +45,13 @@ public extension Client {
     /// - Parameters:
     ///   - type: a channel type.
     ///   - members: a list of members.
+    ///   - team: The team the channel belongs to.
     ///   - extraData: a channel extra data.
     ///   - namingStrategy: a naming strategy to generate a name and image for the channel based on members.
     ///                     Only takes effect if `extraData` is `nil`.
     func channel(type: ChannelType = .messaging,
                  members: [User],
+                 team: String? = nil,
                  extraData: ChannelExtraDataCodable? = nil,
                  namingStrategy: ChannelNamingStrategy? = Channel.DefaultNamingStrategy(maxUserNames: 1)) -> Channel {
         var extraData = extraData
@@ -65,6 +70,7 @@ public extension Client {
                        createdBy: nil,
                        lastMessageDate: nil,
                        frozen: false,
+                       team: team,
                        config: .init())
     }
 }
