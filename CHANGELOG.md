@@ -7,10 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### ✅ Added
-- Support new regions: Singapore and Sydney.
+- Support new regions: Singapore and Sydney. [#293](https://github.com/GetStream/stream-chat-swift/pull/293)
 - `disableLocalNotifications` added to `Notifications` for disabling local notifications [#290](https://github.com/GetStream/stream-chat-swift/pull/290)
-- Send a keystroke event for the current user: `channel.keystroke {}`. The method will automatically send a typing stop event after 15 seconds after the last call of `keystroke()`.
-- Send a stop typing event for the current user: `stopTyping {}`. Usually, you don't need to call this method directly.
+- Send a keystroke event for the current user: `channel.keystroke {}`. The method will automatically send a typing stop event after 15 seconds after the last call of `keystroke()`. [#281](https://github.com/GetStream/stream-chat-swift/pull/281)
+- Send a stop typing event for the current user: `stopTyping {}`. Usually, you don't need to call this method directly. [#281](https://github.com/GetStream/stream-chat-swift/pull/281)
+- Add support for multi-tenancy. Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info [#295](https://github.com/GetStream/stream-chat-swift/issues/295)
 
 ### 🔄 Changed
 
