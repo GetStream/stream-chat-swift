@@ -78,7 +78,7 @@ public final class Channel: Codable {
     let invitedMembers: Set<Member>
     /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
-    public let team: String?
+    public let team: String
     /// An extra data for the channel.
     public var extraData: ChannelExtraDataCodable?
     /// Check if the channel was deleted.
@@ -138,7 +138,7 @@ public final class Channel: Codable {
                 createdBy: User?,
                 lastMessageDate: Date?,
                 frozen: Bool,
-                team: String? = nil,
+                team: String = "",
                 config: Config) {
         self.type = type
         self.id = id
@@ -172,7 +172,7 @@ public final class Channel: Codable {
         createdBy = try container.decodeIfPresent(User.self, forKey: .createdBy)
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
         frozen = try container.decode(Bool.self, forKey: .frozen)
-        team = try container.decodeIfPresent(String.self, forKey: .team)
+        team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
         didLoad = true
         extraData = Channel.decodeChannelExtraData(from: decoder)
     }

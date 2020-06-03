@@ -24,7 +24,7 @@ public extension Client {
                  id: String,
                  members: [User] = [],
                  invitedMembers: [User] = [],
-                 team: String? = nil,
+                 team: String = "",
                  extraData: ChannelExtraDataCodable? = nil) -> Channel {
         Channel(type: type,
                 id: id,
@@ -51,7 +51,7 @@ public extension Client {
     ///                     Only takes effect if `extraData` is `nil`.
     func channel(type: ChannelType = .messaging,
                  members: [User],
-                 team: String? = nil,
+                 team: String = "",
                  extraData: ChannelExtraDataCodable? = nil,
                  namingStrategy: ChannelNamingStrategy? = Channel.DefaultNamingStrategy(maxUserNames: 1)) -> Channel {
         var extraData = extraData

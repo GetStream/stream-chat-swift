@@ -79,9 +79,9 @@ public struct User: Codable {
     public internal(set) var currentDevice: Device?
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
-    /// Teams the user belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
+    /// Teams the user belongs to. You need to enable multi-tenancy if you want to use this, else it'll be empty.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
-    public let teams: [String]?
+    public let teams: [String]
     /// Check if the user is the current user.
     public var isCurrent: Bool { self == Client.shared.user }
     /// The current user.
@@ -126,7 +126,7 @@ public struct User: Codable {
                 isInvisible: Bool = false,
                 isBanned: Bool = false,
                 mutedUsers: [MutedUser] = [],
-                teams: [String]? = nil) {
+                teams: [String] = []) {
         self.id = id
         self.role = role
         self.extraData = extraData
@@ -160,7 +160,7 @@ public struct User: Codable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
-        teams = try container.decodeIfPresent([String].self, forKey: .teams)
+        teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         extraData = User.decodeUserExtraData(from: decoder)
         
         let unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount) ?? 0
