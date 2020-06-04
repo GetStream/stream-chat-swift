@@ -70,7 +70,7 @@ final class WebSocket {
 
 extension WebSocket {
     
-    /// Connect to websocket.
+    /// Connect to web socket.
     /// - Note:
     ///     - Skip if the Internet is not available.
     ///     - Skip if it's already connected.
@@ -199,7 +199,7 @@ extension WebSocket {
         provider.callbackQueue.async { [weak self] in
             self?.onEventObservers[subscription.uuid] = handler
             
-            // Reply the last connectoin state.
+            // Reply the last connection state.
             if eventTypes.contains(.connectionChanged), let connectionState = self?.connectionState {
                 handler(.connectionChanged(connectionState))
             }
@@ -374,6 +374,6 @@ struct WebSocketOptions: OptionSet {
 
 /// WebSocket Error
 private struct ErrorContainer: Decodable {
-    /// A server error was recieved.
+    /// A server error was received.
     let error: ClientErrorResponse
 }
