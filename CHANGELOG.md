@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `disableLocalNotifications` added to `Notifications` for disabling local notifications [#290](https://github.com/GetStream/stream-chat-swift/pull/290)
 - Send a keystroke event for the current user: `channel.keystroke {}`. The method will automatically send a typing stop event after 15 seconds after the last call of `keystroke()`. [#281](https://github.com/GetStream/stream-chat-swift/pull/281)
 - Send a stop typing event for the current user: `stopTyping {}`. Usually, you don't need to call this method directly. [#281](https://github.com/GetStream/stream-chat-swift/pull/281)
+- Automatically send a `typingStop` event if it's not received in 30 seconds after the latest `typingStart` event [#282](https://github.com/GetStream/stream-chat-swift/issues/282).
 - Add support for multi-tenancy. Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info [#295](https://github.com/GetStream/stream-chat-swift/issues/295)
 
 ### 🔄 Changed

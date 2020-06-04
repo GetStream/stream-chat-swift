@@ -121,6 +121,11 @@ extension Client: WebSocketEventDelegate {
         
         return true
     }
+    
+    func shouldAutomaticallySendTypingStopEvent(for user: User) -> Bool {
+        // Don't clean up current user's typing events
+        self.user != user
+    }
 }
 
 private struct WebSocketPayload: Encodable {
