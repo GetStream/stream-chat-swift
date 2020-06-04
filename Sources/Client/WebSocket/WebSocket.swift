@@ -12,9 +12,9 @@ import UIKit
 final class WebSocket {
     /// The time interval to ping connection to keep it alive.
     static let pingTimeInterval: TimeInterval = 25
+
+    weak var eventDelegate: WebSocketEventDelegate?
     
-    /// A WebSocket connection callback.
-    private let onEvent: (Event) -> Void
     private var onEventObservers = [String: Client.OnEvent]()
     private var provider: WebSocketProvider
     private let options: WebSocketOptions
@@ -47,13 +47,11 @@ final class WebSocket {
     init(_ provider: WebSocketProvider,
          options: WebSocketOptions,
          logger: ClientLogger? = nil,
-         timerType: Timer.Type = DefaultTimer.self,
-         onEvent: @escaping (Event) -> Void = { _ in }) {
+         timerType: Timer.Type = DefaultTimer.self) {
         
         self.provider = provider
         self.options = options
         self.logger = logger
-        self.onEvent = onEvent
         self.Timer = timerType
         self.provider.delegate = self
     }
@@ -210,10 +208,18 @@ extension WebSocket {
     
     private func publishEvent(_ event: Event) {
         provider.callbackQueue.async { [weak self] in
-            self?.onEvent(event)
-            self?.onEventObservers.forEach({ $0.value(event) })
+            if self?.eventDelegate?.shouldPublishEvent(event) ?? true {
+                self?.onEventObservers.forEach { $0.value(event) }
+            }
         }
     }
+}
+
+protocol WebSocketEventDelegate: AnyObject {
+    /// Called after a new event is received.
+    /// - Parameter event: The incoming event.
+    /// - Returns: A boolean value indicating whether WebSocket should publish the event to subscribers.
+    func shouldPublishEvent(_ event: Event) -> Bool
 }
 
 // MARK: - Web Socket Delegate
@@ -230,24 +236,12 @@ extension WebSocket: WebSocketProviderDelegate {
             return
         }
         
-        switch event {
-        case let .healthCheck(user, connectionId):
+        if case let .healthCheck(user, connectionId) = event {
             logger?.log("🥰 Connected")
             self.connectionId = connectionId
             handshakeTimer.resume()
             connectionStateAtomic.set(.connected(UserConnection(user: user, connectionId: connectionId)))
             return
-            
-        case let .messageNew(message, _, _, _) where message.user.isMuted:
-            logger?.log("Skip a message (\(message.id)) from muted user (\(message.user.id)): \(message.textOrArgs)", level: .info)
-            return
-        case let .typingStart(user, _, _), let .typingStop(user, _, _):
-            if user.isMuted {
-                logger?.log("Skip typing events from muted user (\(user.id))", level: .info)
-                return
-            }
-        default:
-            break
         }
         
         if isConnected {
