@@ -12,6 +12,12 @@ import Foundation
 
 public extension Channel {
     
+    /// The number of seconds from the last `typingStart` event until the `typingStop` event is automatically sent.
+    static var startTypingEventTimeout: TimeInterval = 5
+   
+    /// If user is still typing, resend the `typingStart` event after this time interval.
+    static var startTypingResendInterval: TimeInterval = 20
+      
     /// Create a channel.
     /// - Parameter completion: a completion block with `ChannelResponse`.
     @discardableResult
@@ -145,24 +151,27 @@ public extension Channel {
     
     @discardableResult
     internal func keystroke(client: Client,
-                            timerType: Timer.Type,
+                            timerType: Timer.Type = DefaultTimer.self,
                             _ completion: @escaping Client.Completion<Event>) -> Cancellable {
         currentUserTypingTimerControlAtomic.get()?.cancel()
         
-        let timerControl = timerType.schedule(timeInterval: 15, queue: .main) { [weak self, unowned client] in
-            self?.stopTyping(client: client, completion)
-        }
+        let timerControl = timerType
+            .schedule(timeInterval: Self.startTypingEventTimeout, queue: .main) { [weak self, unowned client] in
+                self?.stopTyping(client: client, completion)
+            }
         
         currentUserTypingTimerControlAtomic.set(timerControl)
         
         // The user is typing too long, we should resend `.typingStart` event.
-        // The timeout for getting `.typingStop` is 30 sec.
-        if let lastDate = currentUserTypingLastDateAtomic.get(), lastDate.timeIntervalSinceNow > -20 {
+        if
+            let lastDate = currentUserTypingLastDateAtomic.get(),
+            currentTime().timeIntervalSince(lastDate) < Self.startTypingResendInterval
+        {
             completion(.success(.typingStart(client.user, cid, .typingStart)))
             return Subscription.empty
         }
         
-        currentUserTypingLastDateAtomic.set(.init())
+        currentUserTypingLastDateAtomic.set(currentTime())
         return client.send(eventType: .typingStart, to: self, completion)
     }
     

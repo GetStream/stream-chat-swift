@@ -128,6 +128,9 @@ public final class Channel: Codable {
     /// Checks for the channel data encoding is empty.
     var isEmpty: Bool { extraData == nil && members.isEmpty && invitedMembers.isEmpty }
     
+    /// Returns the current timestamp. Can be replaced in tests with mock time, if needed.
+    var currentTime: () -> Date = { Date() }
+    
     public init(type: ChannelType,
                 id: String,
                 members: [User],

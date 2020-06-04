@@ -11,107 +11,46 @@ import XCTest
 
 final class Channel_KeystrokeTests: ClientTestCase {
     
+    var eventLogger: [EventType]!
     var time: VirtualTime!
-    let maxStopTypingTimeInterval: VirtualTime.Seconds = 15
-    let maxEesendTimeInterval: VirtualTime.Seconds = 20
     
     override func setUp() {
         super.setUp()
         time = VirtualTime()
         VirtualTimeTimer.time = time
+        
+        eventLogger = []
+        client.outgoingEventsTestLogger = { self.eventLogger.append($0) }
     }
     
     func test_channel_keystroke() throws {
+        Channel.startTypingEventTimeout = 5
+        Channel.startTypingResendInterval = 5
+        
+        assert(eventLogger.isEmpty)
         let channel = client.channel(type: .messaging, id: "test-keystroke")
+        channel.currentTime = { Date(timeIntervalSinceReferenceDate: self.time.currentTime) }
         
         // 1. The first keystroke.
         sendKeystroke(in: channel)
-        
-        // Assert
-        AssertNetworkRequest(
-            method: .post,
-            path: "/channels/messaging/test-keystroke/event",
-            headers: ["Content-Type": "application/json"],
-            queryParameters: ["api_key": "test_api_key"],
-            body: ["event": ["type": "typing.start"]]
-        )
-        
-        time.run(numberOfSeconds: 5)
+        XCTAssertEqual(eventLogger, [.typingStart])
         
         // 2. The second keystroke, the request should be skipped.
-        // Reset stop typing timer.
+        time.run(numberOfSeconds: 4)
         sendKeystroke(in: channel)
+        XCTAssertEqual(eventLogger, [.typingStart])
         
-        if RequestRecorderURLProtocol.waitForRequest(timeout: 1) != nil {
-            XCTFail("The second request for the keystroke should be skipped inside time interval 2")
-            return
-        }
-        
-//        time.run(numberOfSeconds: 1)
-//
-//        // 3. The fourth keystroke, the request shouldn't be skipped. User is typing too long.
-//        sendKeystroke(in: channel)
-//
-//        // Assert
-//        AssertNetworkRequest(
-//            method: .post,
-//            path: "/channels/messaging/test-keystroke/event",
-//            headers: ["Content-Type": "application/json"],
-//            queryParameters: ["api_key": "test_api_key"],
-//            body: ["event": ["type": "typing.start"]]
-//        )
-        
-        // 4. The stop typing event should be called after timeout 2.
-        time.run(numberOfSeconds: maxStopTypingTimeInterval + 1)
-        
-        // Assert
-        AssertNetworkRequest(
-            method: .post,
-            path: "/channels/messaging/test-keystroke/event",
-            headers: ["Content-Type": "application/json"],
-            queryParameters: ["api_key": "test_api_key"],
-            body: ["event": ["type": "typing.stop"]]
-        )
+        // 3. The third keystroke, the request shouldn't be skipped. User is typing too long.
+        time.run(numberOfSeconds: 4)
+        sendKeystroke(in: channel)
+        XCTAssertEqual(eventLogger, [.typingStart, .typingStart])
+
+        // 4. User stopped typing, the `typingStop` event should be sent
+        time.run(numberOfSeconds: 6)
+        XCTAssertEqual(eventLogger, [.typingStart, .typingStart, .typingStop])
     }
     
     private func sendKeystroke(in channel: Channel) {
         channel.keystroke(client: client, timerType: VirtualTimeTimer.self) { _ in }
-    }
-    
-    func test_channel_stopTyping() throws {
-        let channel = client.channel(type: .messaging, id: "test-stop-typing")
-        channel.stopTyping(client: client) { _ in }
-        
-        if RequestRecorderURLProtocol.waitForRequest(timeout: 1) != nil {
-            XCTFail("The stop typing event shouldn't be send if keystroke wasn't send")
-            return
-        }
-        
-        sendKeystroke(in: channel)
-        
-        AssertNetworkRequest(
-            method: .post,
-            path: "/channels/messaging/test-stop-typing/event",
-            headers: ["Content-Type": "application/json"],
-            queryParameters: ["api_key": "test_api_key"],
-            body: ["event": ["type": "typing.start"]]
-        )
-        
-        channel.stopTyping(client: client) { _ in }
-
-        AssertNetworkRequest(
-            method: .post,
-            path: "/channels/messaging/test-stop-typing/event",
-            headers: ["Content-Type": "application/json"],
-            queryParameters: ["api_key": "test_api_key"],
-            body: ["event": ["type": "typing.stop"]]
-        )
-        
-        channel.stopTyping(client: client) { _ in }
-        
-        if RequestRecorderURLProtocol.waitForRequest(timeout: 1) != nil {
-            XCTFail("The stop typing event shouldn't be send if keystroke wasn't send")
-            return
-        }
     }
 }
