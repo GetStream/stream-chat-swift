@@ -20,14 +20,10 @@ final class WebSocketTests: XCTestCase {
     var connectionId: String!
     var user: User!
     
-    var emittedEvents: [Event]!
-    
     let logger = ClientLogger(icon: "🦄", level: .info)
     
     override func setUp() {
         super.setUp()
-        
-        emittedEvents = []
         
         time = VirtualTime()
         VirtualTimeTimer.time = time
