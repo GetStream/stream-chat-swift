@@ -13,6 +13,9 @@ final class WebSocket {
     /// The time interval to ping connection to keep it alive.
     static let pingTimeInterval: TimeInterval = 25
 
+    /// The maximum time the incoming `typingStart` event is valid before a `typingStop` event is emitted automatically.
+    static let incomingTypingStartEventTimeout: TimeInterval = 30
+
     weak var eventDelegate: WebSocketEventDelegate?
     
     private var onEventObservers = [String: Client.OnEvent]()
@@ -40,6 +43,8 @@ final class WebSocket {
         }
     
     private let Timer: Timer.Type
+    
+    private var typingEventTimeoutTimerControls: [User: TimerControl] = [:]
     
     /// Checks if the web socket is connected and `connectionId` is not nil.
     var isConnected: Bool { connectionId != nil && provider.isConnected }
@@ -220,6 +225,12 @@ protocol WebSocketEventDelegate: AnyObject {
     /// - Parameter event: The incoming event.
     /// - Returns: A boolean value indicating whether WebSocket should publish the event to subscribers.
     func shouldPublishEvent(_ event: Event) -> Bool
+    
+    /// Called when an incoming `typingStart` event is received.
+    /// - Parameter user: The user causing the event.
+    /// - Returns: A boolean value indicating whether a `typingStop` event should be sent for this user automatically
+    ///   after the `incomingTypingStartEventTimeout` timeout.
+    func shouldAutomaticallySendTypingStopEvent(for user: User) -> Bool
 }
 
 // MARK: - Web Socket Delegate
@@ -245,6 +256,7 @@ extension WebSocket: WebSocketProviderDelegate {
         }
         
         if isConnected {
+            handleTypingEvent(event)
             publishEvent(event)
         }
     }
@@ -353,6 +365,27 @@ extension WebSocket: WebSocketProviderDelegate {
         }
         
         return nil
+    }
+    
+    private func handleTypingEvent(_ event: Event) {
+        switch event {
+        case .typingStop(let user, _, _):
+            typingEventTimeoutTimerControls[user]?.cancel()
+            typingEventTimeoutTimerControls[user] = nil
+            
+        case .typingStart(let user, _, _)
+            where eventDelegate?.shouldAutomaticallySendTypingStopEvent(for: user) ?? false:
+            
+            typingEventTimeoutTimerControls[user]?.cancel()
+            
+            typingEventTimeoutTimerControls[user] = Timer.schedule(
+                timeInterval: Self.incomingTypingStartEventTimeout,
+                queue: provider.callbackQueue
+            ) { [weak self] in
+                self?.publishEvent(.typingStop(user, event.cid, .typingStop))
+            }
+        default: break
+        }
     }
 }
 

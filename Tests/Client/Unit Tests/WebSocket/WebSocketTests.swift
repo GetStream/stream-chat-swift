@@ -113,6 +113,47 @@ final class WebSocketTests: XCTestCase {
         time.run(numberOfSeconds: 3 * pingInterval)
         XCTAssertEqual(socketProvider.sendPingCalledCounter, 1 + 3)
     }
+    
+    func test_typingEvent_stopTyping_afterTimeout() {
+        // Setup (connect)
+        test_connectionFlow()
+        
+        // Set `shouldAutomaticallySendTypingStopEvent` to `true`
+        let delegate = MockDelegate()
+        delegate.shouldAutomaticallySendTypingStopEvent = true
+        webSocket.eventDelegate = delegate
+        
+        // Simulate some user started typing
+        let otherUser = User(id: UUID().uuidString)
+        socketProvider.simulateMessageReceived(.typingStartEvent(userId: otherUser.id))
+        
+        var nextEvent: Event?
+        _ = webSocket.subscribe { nextEvent = $0 }
+
+        // Wait for the timeout and expect a `typingStop` event.
+        time.run(numberOfSeconds: WebSocket.incomingTypingStartEventTimeout + 1)
+        AssertAsync.willBeEqual(nextEvent, .typingStop(otherUser, nil, .typingStop))
+    }
+    
+    func test_typingEvent_stopTyping_notSentWhenDelegateReturnsFalse() {
+        // Setup (connect)
+        test_connectionFlow()
+
+        // Set `shouldAutomaticallySendTypingStopEvent` to `false`
+        let delegate = MockDelegate()
+        delegate.shouldAutomaticallySendTypingStopEvent = false
+        webSocket.eventDelegate = delegate
+
+        // Simulate a user started typing
+        socketProvider.simulateMessageReceived(.typingStartEvent(userId: user.id))
+        
+        var nextEvent: Event?
+        _ = webSocket.subscribe { nextEvent = $0 }
+
+        // Wait for the timeout and expect no `typingStop` event.
+        time.run(numberOfSeconds: WebSocket.incomingTypingStartEventTimeout + 1)
+        AssertAsync.staysTrue(nextEvent != .typingStop(user, nil, .typingStop))
+    }
 }
 
 private extension Dictionary {
@@ -144,4 +185,25 @@ private extension Dictionary {
             "connection_id" : connectionId
         ]
     }
+    
+    static func typingStartEvent(userId: String) -> [String: Any] {
+        [
+            "type": "typing.start",
+            "user": [
+                "id": "\(userId)",
+                "role": "user",
+                "created_at": "2020-05-12T12:42:56.450979Z",
+                "updated_at": "2020-05-12T12:42:56.450979Z",
+                "online": true
+            ]
+        ]
+    }
+}
+
+private class MockDelegate: WebSocketEventDelegate {
+    var shouldPublishEvent: Bool = true
+    var shouldAutomaticallySendTypingStopEvent: Bool = true
+    
+    func shouldPublishEvent(_ event: Event) -> Bool { shouldPublishEvent }
+    func shouldAutomaticallySendTypingStopEvent(for user: User) -> Bool { shouldAutomaticallySendTypingStopEvent }
 }
