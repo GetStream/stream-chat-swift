@@ -46,14 +46,14 @@ public struct User: Codable {
     
     /// An unkown user.
     @available(*, deprecated, message: """
-    We don't use unknown user anymore. By default the current Client user is anonymous (you can check this with `isAnonymous`).
+    Unknown user is not used anymore. By default the current Client user is anonymous (you can check this with `isAnonymous`).
     Anyway you can't connect without `set(user:token)` or `setGuestUser(...)` or `setAnonymousUser(...)`.
     """)
     public static let unknown = User(id: "unknown_\(UUID().uuidString)")
     
     /// Checks if the user is unknown.
     @available(*, deprecated, message: """
-    We don't use unknown user anymore. By default the current Client user is anonymous (you can check this with `isAnonymous`).
+    Unknown user is not used anymore. By default the current Client user is anonymous (you can check this with `isAnonymous`).
     Anyway you can't connect without `set(user:token)` or `setGuestUser(...)` or `setAnonymousUser(...)`.
     """)
     public var isUnknown: Bool { self == User.unknown }

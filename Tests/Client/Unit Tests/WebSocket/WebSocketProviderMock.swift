@@ -8,7 +8,7 @@
 import XCTest
 @testable import StreamChatClient
 
-class WebSocketProviderMock: WebSocketProvider {
+final class WebSocketProviderMock: WebSocketProvider {
     var request: URLRequest
     
     var isConnected: Bool = false
@@ -37,6 +37,8 @@ class WebSocketProviderMock: WebSocketProvider {
     }
     
     func disconnect() {
+        isConnected = false
+        delegate?.websocketDidDisconnect(error: nil)
     }
     
     func sendPing() {

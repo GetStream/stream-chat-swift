@@ -160,7 +160,7 @@ end
 desc "Runs all the tests without building"
 lane :test_without_building do
   # Integration Tests (StreamChatClientIntegrationTests) are disabled since they make HTTP/WS connections
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, only_testing: ["StreamChatClientTests"])
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, skip_testing: ["StreamChatClientIntegrationTests"])
 end
 
 desc "Runs integrations tests with backend. These tests make network connections so they're sometimes not reliable, hence we run them up to 3 times in case of failure"

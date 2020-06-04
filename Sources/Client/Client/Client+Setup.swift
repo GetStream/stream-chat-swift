@@ -179,7 +179,7 @@ extension Client {
         let completion = completion == nil ? nil : { result in DispatchQueue.main.async { completion?(result) } }
         
         do {
-            webSocket.provider.request = try makeWebSocketRequest(user: user, token: token)
+            webSocket.request = try makeWebSocketRequest(user: user, token: token)
             urlSession = makeURLSession(token: token)
             self.token = token
             
