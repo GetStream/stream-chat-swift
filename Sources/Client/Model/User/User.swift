@@ -89,7 +89,7 @@ public struct User: Codable {
     /// Checks if the user can be muted.
     public var canBeMuted: Bool { !isCurrent }
     /// Checks if the user is muted.
-    public var isMuted: Bool { isCurrent ? false : Client.shared.user.mutedUsers.first(where: { $0.user == self }) != nil }
+    public var isMuted: Bool { isCurrent ? false : Client.shared.user.isMuted(user: self) }
     /// Returns the user as a member.
     public var asMember: Member { Member(self) }
     /// Checks if the user is flagged (locally).
@@ -203,6 +203,10 @@ public struct User: Codable {
         if isAnonymous {
             try container.encode(true, forKey: .isAnonymous)
         }
+    }
+    
+    func isMuted(user: User) -> Bool {
+        mutedUsers.contains { $0.user == user }
     }
 }
 
