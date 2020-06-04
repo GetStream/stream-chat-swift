@@ -1,14 +1,12 @@
 //
-//  Await.swift
-//  StreamChatClientTests
-//
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Await.swift
+// Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
 
 enum WaiterError: Error {
-    case waitingForResultTimedOut
+  case waitingForResultTimedOut
 }
 
 /// Allows calling an asynchronous function in the synchronous way in tests.
@@ -32,20 +30,19 @@ func await<T>(timeout: TimeInterval = 0.5,
               file: StaticString = #file,
               line: UInt = #line,
               _ action: @escaping (_ done: @escaping (T) -> Void) -> Void) throws -> T {
+  let expecation = XCTestExpectation(description: "Action completed")
+  var result: T?
+  action {
+    result = $0
+    expecation.fulfill()
+  }
 
-    let expecation = XCTestExpectation(description: "Action completed")
-    var result: T?
-    action {
-        result = $0
-        expecation.fulfill()
-    }
-
-    let waiterResult = XCTWaiter.wait(for: [expecation], timeout: timeout)
-    switch waiterResult {
-    case .completed where result != nil:
-        return result!
-    default:
-        XCTFail("Waiting for the result timed out", file: file, line: line)
-        throw WaiterError.waitingForResultTimedOut
-    }
+  let waiterResult = XCTWaiter.wait(for: [expecation], timeout: timeout)
+  switch waiterResult {
+  case .completed where result != nil:
+    return result!
+  default:
+    XCTFail("Waiting for the result timed out", file: file, line: line)
+    throw WaiterError.waitingForResultTimedOut
+  }
 }

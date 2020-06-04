@@ -1,8 +1,6 @@
 //
-//  AssertResult.swift
-//  StreamChatClientTests
-//
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// AssertResult.swift
+// Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
@@ -16,12 +14,11 @@ func AssertResultSuccess<T: Equatable, E: Error>(_ result: Result<T, E>,
                                                  _ referenceValue: T,
                                                  file: StaticString = #file,
                                                  line: UInt = #line) {
-
-    if case let .success(value) = result {
-        XCTAssertEqual(value, referenceValue, file: file, line: line)
-    } else {
-        XCTFail("Expected .success, got \(result).", file: file, line: line)
-    }
+  if case .success(let value) = result {
+    XCTAssertEqual(value, referenceValue, file: file, line: line)
+  } else {
+    XCTFail("Expected .success, got \(result).", file: file, line: line)
+  }
 }
 
 /// Asserts the provided `Result` object is `.failure(referenceError)`.
@@ -36,12 +33,11 @@ func AssertResultFailure<T: Equatable, E: Error>(_ result: Result<T, E>,
                                                  _ referenceError: Error,
                                                  file: StaticString = #file,
                                                  line: UInt = #line) {
-
-    if case let .failure(error) = result {
-        XCTAssertEqual(String(describing: error), String(describing: referenceError), file: file, line: line)
-    } else {
-        XCTFail("Expected .failure, got \(result).", file: file, line: line)
-    }
+  if case .failure(let error) = result {
+    XCTAssertEqual(String(describing: error), String(describing: referenceError), file: file, line: line)
+  } else {
+    XCTFail("Expected .failure, got \(result).", file: file, line: line)
+  }
 }
 
 /// Asserts the provided `Result` object is `.failure(referenceError)`.
@@ -53,10 +49,9 @@ func AssertResultFailure<T, E: Error & Equatable>(_ result: Result<T, E>,
                                                   _ referenceError: E,
                                                   file: StaticString = #file,
                                                   line: UInt = #line) {
-
-    if case let .failure(error) = result {
-        XCTAssertEqual(error, referenceError, file: file, line: line)
-    } else {
-        XCTFail("Expected .failure, got \(result).", file: file, line: line)
-    }
+  if case .failure(let error) = result {
+    XCTAssertEqual(error, referenceError, file: file, line: line)
+  } else {
+    XCTFail("Expected .failure, got \(result).", file: file, line: line)
+  }
 }
