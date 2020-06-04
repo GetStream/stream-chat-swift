@@ -313,7 +313,11 @@ public extension Client {
     ///   - completion: a completion block with `Event`.
     @discardableResult
     func send(eventType: EventType, to channel: Channel, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
-        request(endpoint: .sendEvent(eventType, channel)) { [unowned self] (result: Result<EventResponse, ClientError>) in
+        #if DEBUG
+        outgoingEventsTestLogger?(eventType)
+        #endif
+        
+        return request(endpoint: .sendEvent(eventType, channel)) { [unowned self] (result: Result<EventResponse, ClientError>) in
             self.logger?.log("🎫 \(eventType.rawValue)")
             completion(result.map(to: \.event))
         }

@@ -133,6 +133,11 @@ public final class Client: Uploader {
         self.onUserUpdateObservers.values.forEach({ $0(newUser) })
     }
     
+    #if DEBUG
+    /// Called when a new outgoing event is about to be sent. Meant to be used only for testing purposes.
+    var outgoingEventsTestLogger: ((EventType) -> Void)?
+    #endif
+    
     // MARK: Unread Count Events
     
     /// Channels and messages unread counts.
