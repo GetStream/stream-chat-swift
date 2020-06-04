@@ -28,6 +28,8 @@
 		79280F4D24852FCA00CDEB89 /* DataChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F4C24852FCA00CDEB89 /* DataChange.swift */; };
 		79280F4F2485308100CDEB89 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F4E2485308100CDEB89 /* Controller.swift */; };
 		79280F542485529500CDEB89 /* ChannelEventsHandler_tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F522485528800CDEB89 /* ChannelEventsHandler_tests.swift */; };
+		79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F6F2487CD2B00CDEB89 /* Atomic.swift */; };
+		79280F732487CD3100CDEB89 /* Atomic_tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F702487CD2B00CDEB89 /* Atomic_tests.swift */; };
 		792A4F1B247FE84900EAF71D /* ChannelQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1A247FE84900EAF71D /* ChannelQueryUpdater.swift */; };
 		792A4F1D247FEA2200EAF71D /* ChannelListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1C247FEA2200EAF71D /* ChannelListController.swift */; };
 		792A4F25247FF01800EAF71D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F24247FF01800EAF71D /* AppDelegate.swift */; };
@@ -422,6 +424,8 @@
 		79280F4C24852FCA00CDEB89 /* DataChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataChange.swift; sourceTree = "<group>"; };
 		79280F4E2485308100CDEB89 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
 		79280F522485528800CDEB89 /* ChannelEventsHandler_tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEventsHandler_tests.swift; sourceTree = "<group>"; };
+		79280F6F2487CD2B00CDEB89 /* Atomic.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
+		79280F702487CD2B00CDEB89 /* Atomic_tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Atomic_tests.swift; sourceTree = "<group>"; };
 		792A4F1A247FE84900EAF71D /* ChannelQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQueryUpdater.swift; sourceTree = "<group>"; };
 		792A4F1C247FEA2200EAF71D /* ChannelListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListController.swift; sourceTree = "<group>"; };
 		792A4F22247FF01800EAF71D /* V3SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = V3SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -931,6 +935,8 @@
 		792A4F3A247FFB7600EAF71D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				79280F6F2487CD2B00CDEB89 /* Atomic.swift */,
+				79280F702487CD2B00CDEB89 /* Atomic_tests.swift */,
 				792A4F3D247FFDE700EAF71D /* Codable+Extensions.swift */,
 				792A4F3E247FFDE700EAF71D /* Data+Gzip.swift */,
 				792A4F3B247FFBB400EAF71D /* Timers.swift */,
@@ -2230,6 +2236,7 @@
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				792A4F5A24812D1A00EAF71D /* UserEndpointReponse.swift in Sources */,
 				792A4F4F2480EA3B00EAF71D /* Endpoint.swift in Sources */,
+				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
 				799C9440247D2FB9001F1104 /* User.swift in Sources */,
 				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
 				792A4F1B247FE84900EAF71D /* ChannelQueryUpdater.swift in Sources */,
@@ -2266,6 +2273,7 @@
 				799C9460247D77D6001F1104 /* DatabaseContainer_Tests.swift in Sources */,
 				799C945C247D59D8001F1104 /* ChatClient_tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
+				79280F732487CD3100CDEB89 /* Atomic_tests.swift in Sources */,
 				79280F542485529500CDEB89 /* ChannelEventsHandler_tests.swift in Sources */,
 				799C9476247D7E94001F1104 /* TemporaryURLs.swift in Sources */,
 				799C9469247D791A001F1104 /* AssertResult.swift in Sources */,
