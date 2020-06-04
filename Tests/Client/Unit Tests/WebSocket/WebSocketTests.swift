@@ -31,8 +31,7 @@ final class WebSocketTests: XCTestCase {
         socketProvider = WebSocketProviderMock()
         webSocket = WebSocket(socketProvider,
                               options: [],
-                              timerType: VirtualTimeTimer.self,
-                              onEvent: { self.emittedEvents.append($0) })
+                              timerType: VirtualTimeTimer.self)
         
         connectionId = UUID().uuidString
         user = User(id: "test_user_\(UUID().uuidString)")
