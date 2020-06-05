@@ -239,3 +239,8 @@ lane :get_next_issue_number do
   UI.success "So the next markdown link is: #{next_issue_link}"
   UI.success "Next markdown link is copied to your clipboard! ⬆️"
 end
+
+desc "Runs tests for v3 scheme"
+lane :test_v3 do
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChatClient_v3", clean: true)
+end
