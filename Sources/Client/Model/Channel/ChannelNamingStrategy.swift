@@ -32,7 +32,7 @@ extension Channel {
         }
         
         public func extraData(for currentUser: User, members: [User]) -> ChannelExtraDataCodable? {
-            guard !currentUser.isUnknown, members.count > 1, let currentUserIndex = members.firstIndex(of: currentUser) else {
+            guard members.count > 1, let currentUserIndex = members.firstIndex(of: currentUser) else {
                 return nil
             }
             

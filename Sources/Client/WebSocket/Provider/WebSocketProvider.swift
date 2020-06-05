@@ -9,7 +9,7 @@
 import Foundation
 
 protocol WebSocketProvider {
-    var request: URLRequest { get }
+    var request: URLRequest { get set }
     var isConnected: Bool { get }
     var callbackQueue: DispatchQueue { get }
     var delegate: WebSocketProviderDelegate? { get set }

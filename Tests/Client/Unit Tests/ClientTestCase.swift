@@ -16,7 +16,9 @@ class ClientTestCase: XCTestCase {
     }
     
     var client: Client!
+    var testSessionId: String!
     var testUser: User!
+    let testToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
     
     override func setUp() {
         super.setUp()
@@ -24,15 +26,17 @@ class ClientTestCase: XCTestCase {
         sessionConfig.protocolClasses?.insert(RequestRecorderURLProtocol.self, at: 0)
         sessionConfig.protocolClasses?.insert(MockNetworkURLProtocol.self, at: 1)
         
-        let testSessionId = UUID().uuidString
-        sessionConfig.httpAdditionalHeaders = [RequestRecorderURLProtocol.testSessionHeaderKey: testSessionId]
+        testSessionId = UUID().uuidString
+        sessionConfig.httpAdditionalHeaders = [RequestRecorderURLProtocol.testSessionHeaderKey: testSessionId!]
         
         let clientConfig = Client.Config(apiKey: "test_api_key")
         // We can create a new `Client` instance because we don't use `Client.shared` in tests.
-        client = Client(config: clientConfig, defaultURLSessionConfiguration: sessionConfig)
+        client = Client(config: clientConfig,
+                        defaultURLSessionConfiguration: sessionConfig,
+                        defaultWebSocketProviderType: WebSocketProviderMock.self)
         
-        testUser = User(id: "test_user_\(UUID())")
-        client.set(user: testUser, token: "test_token")
+        testUser = User(id: "broken-waterfall-5")
+        client.set(user: testUser, token: testToken)
         
         // Prepare the test environment
         RequestRecorderURLProtocol.reset()

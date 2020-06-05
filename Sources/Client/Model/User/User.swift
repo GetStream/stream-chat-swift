@@ -45,13 +45,23 @@ public struct User: Codable {
     public static var extraDataType: UserExtraDataCodable.Type = UserExtraData.self
     
     /// An unkown user.
+    @available(*, deprecated, message: """
+    Unknown user is not used anymore. By default the current Client user is anonymous (you can check this with `isAnonymous`).
+    Anyway you can't connect without `set(user:token)` or `setGuestUser(...)` or `setAnonymousUser(...)`.
+    """)
     public static let unknown = User(id: "unknown_\(UUID().uuidString)")
     
     /// Checks if the user is unknown.
+    @available(*, deprecated, message: """
+    Unknown user is not used anymore. By default the current Client user is anonymous (you can check this with `isAnonymous`).
+    Anyway you can't connect without `set(user:token)` or `setGuestUser(...)` or `setAnonymousUser(...)`.
+    """)
     public var isUnknown: Bool { self == User.unknown }
     
     /// An anonymous user.
     public static let anonymous = User(id: UUID().uuidString, role: .anonymous)
+    /// Checks if the user is anonymous.
+    public var isAnonymous: Bool { role == .anonymous }
     
     static var flaggedUsers = Set<User>()
     
@@ -94,14 +104,6 @@ public struct User: Codable {
     public var asMember: Member { Member(self) }
     /// Checks if the user is flagged (locally).
     public var isFlagged: Bool { User.flaggedUsers.contains(self) }
-    
-    public var isAnonymous: Bool {
-        if case .anonymous = role {
-            return true
-        }
-        
-        return false
-    }
     
     let unreadCount: UnreadCount
     

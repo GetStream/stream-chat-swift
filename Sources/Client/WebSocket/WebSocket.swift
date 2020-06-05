@@ -19,7 +19,7 @@ final class WebSocket {
     weak var eventDelegate: WebSocketEventDelegate?
     
     private var onEventObservers = [String: Client.OnEvent]()
-    private var provider: WebSocketProvider
+    private(set) var provider: WebSocketProvider
     private let options: WebSocketOptions
     private let logger: ClientLogger?
     private var consecutiveFailures: TimeInterval = 0
@@ -27,6 +27,11 @@ final class WebSocket {
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private(set) var connectionId: String?
     private(set) var eventError: ClientErrorResponse?
+    
+    var request: URLRequest {
+        get { provider.request }
+        set { provider.request = newValue }
+    }
     
     var connectionState: ConnectionState { connectionStateAtomic.get() }
     
@@ -54,10 +59,10 @@ final class WebSocket {
          logger: ClientLogger? = nil,
          timerType: Timer.Type = DefaultTimer.self) {
         
-        self.provider = provider
         self.options = options
         self.logger = logger
         self.Timer = timerType
+        self.provider = provider
         self.provider.delegate = self
     }
     

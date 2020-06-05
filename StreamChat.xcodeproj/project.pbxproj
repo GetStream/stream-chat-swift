@@ -149,6 +149,14 @@
 		8A8BB2A52384573400C2F9DE /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A32384573400C2F9DE /* Realm.framework */; };
 		8A8BB2A72384573400C2F9DE /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A8BB2A42384573400C2F9DE /* RealmSwift.framework */; };
 		8A8BB2AE2384577D00C2F9DE /* RealmDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */; };
+		8A9BC2E62487D476004C5E69 /* Client+RxEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9BC2E52487D476004C5E69 /* Client+RxEventsTests.swift */; };
+		8A9BC2E72487D575004C5E69 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0824644C0700240052 /* VirtualTime.swift */; };
+		8A9BC2E82487D587004C5E69 /* WebSocketProviderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2E4F04245C69D40032565F /* WebSocketProviderMock.swift */; };
+		8A9BC2E92487D602004C5E69 /* ClientTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5B6A6324810E660082C023 /* ClientTestCase.swift */; };
+		8A9BC2EA2487D75A004C5E69 /* MockNetworkURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612F52461437700944861 /* MockNetworkURLProtocol.swift */; };
+		8A9BC2EC2487D9F5004C5E69 /* WebSocketEventsMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9BC2EB2487D9F5004C5E69 /* WebSocketEventsMock.swift */; };
+		8A9BC2ED2487D9F5004C5E69 /* WebSocketEventsMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9BC2EB2487D9F5004C5E69 /* WebSocketEventsMock.swift */; };
+		8A9BC2F124894F06004C5E69 /* SharedClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB9246AEC9200B0A574 /* SharedClient.swift */; };
 		8A9D2C7424487E18007BD497 /* ChatViewStyle+Presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9D2C7224487E0E007BD497 /* ChatViewStyle+Presets.swift */; };
 		8A9ECEF6242A573700206E7D /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4E241924B5000750E4 /* Application.swift */; };
 		8A9ECEF7242A57B900206E7D /* AssociatedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */; };
@@ -538,6 +546,8 @@
 		8A8BB2A42384573400C2F9DE /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		8A8BB2AC2384577600C2F9DE /* RealmDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmDatabase.swift; sourceTree = "<group>"; };
 		8A8BB2B02384580700C2F9DE /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
+		8A9BC2E52487D476004C5E69 /* Client+RxEventsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxEventsTests.swift"; sourceTree = "<group>"; };
+		8A9BC2EB2487D9F5004C5E69 /* WebSocketEventsMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketEventsMock.swift; sourceTree = "<group>"; };
 		8A9D2C7224487E0E007BD497 /* ChatViewStyle+Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewStyle+Presets.swift"; sourceTree = "<group>"; };
 		8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Rx.swift"; sourceTree = "<group>"; };
 		8AAE2336245B00480080EB00 /* WebSocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketProvider.swift; sourceTree = "<group>"; };
@@ -1077,6 +1087,7 @@
 			children = (
 				8A2E4F04245C69D40032565F /* WebSocketProviderMock.swift */,
 				8A2E4F06245DAC210032565F /* WebSocketTests.swift */,
+				8A9BC2EB2487D9F5004C5E69 /* WebSocketEventsMock.swift */,
 			);
 			path = WebSocket;
 			sourceTree = "<group>";
@@ -1097,6 +1108,7 @@
 			children = (
 				8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */,
 				8AE6206823CF63C000AB3426 /* Client */,
+				8A9BC2E32487D40E004C5E69 /* Core */,
 				7926FB1624696EFE00EBC9C5 /* Virtual Time */,
 			);
 			path = Tests;
@@ -1140,6 +1152,22 @@
 				8AD5907E23957102005903AC /* Filter.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		8A9BC2E32487D40E004C5E69 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				8A9BC2E42487D40E004C5E69 /* Unit Tests */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		8A9BC2E42487D40E004C5E69 /* Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				8A9BC2E52487D476004C5E69 /* Client+RxEventsTests.swift */,
+			);
+			path = "Unit Tests";
 			sourceTree = "<group>";
 		};
 		8AAE233C245B00D20080EB00 /* Provider */ = {
@@ -2354,6 +2382,7 @@
 				8A2E4F05245C69D40032565F /* WebSocketProviderMock.swift in Sources */,
 				8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */,
 				793613002461780400944861 /* Await.swift in Sources */,
+				8A9BC2EC2487D9F5004C5E69 /* WebSocketEventsMock.swift in Sources */,
 				8A54D9A824728D4400431250 /* Channel+SetupTests.swift in Sources */,
 				79CABB0B24644C1500240052 /* VirtualTimeTests.swift in Sources */,
 				8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */,
@@ -2386,9 +2415,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A9BC2EA2487D75A004C5E69 /* MockNetworkURLProtocol.swift in Sources */,
+				8A9BC2E92487D602004C5E69 /* ClientTestCase.swift in Sources */,
+				8A9BC2E82487D587004C5E69 /* WebSocketProviderMock.swift in Sources */,
+				8A9BC2F124894F06004C5E69 /* SharedClient.swift in Sources */,
+				8A9BC2ED2487D9F5004C5E69 /* WebSocketEventsMock.swift in Sources */,
 				79273EC4246EB64E00B0A574 /* AssertJSONEqual.swift in Sources */,
+				8A9BC2E62487D476004C5E69 /* Client+RxEventsTests.swift in Sources */,
 				8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */,
 				791664E4245AF90A0020710B /* RequestRecorderURLProtocol.swift in Sources */,
+				8A9BC2E72487D575004C5E69 /* VirtualTime.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

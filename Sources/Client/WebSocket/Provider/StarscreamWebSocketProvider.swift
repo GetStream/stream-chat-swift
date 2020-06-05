@@ -11,7 +11,15 @@ import Starscream
 
 final class StarscreamWebSocketProvider: WebSocketProvider {
     private let webSocket: Starscream.WebSocket
-    var request: URLRequest { webSocket.request }
+    
+    var request: URLRequest {
+        get { webSocket.request }
+        set {
+            disconnect()
+            webSocket.request = newValue
+        }
+    }
+    
     var isConnected: Bool { webSocket.isConnected }
     var callbackQueue: DispatchQueue { webSocket.callbackQueue }
     weak var delegate: WebSocketProviderDelegate?
@@ -28,6 +36,10 @@ final class StarscreamWebSocketProvider: WebSocketProvider {
     
     func disconnect() {
         webSocket.disconnect(forceTimeout: 0)
+        
+        callbackQueue.async { [weak self] in
+            self?.delegate?.websocketDidDisconnect(error: nil)
+        }
     }
     
     func sendPing() {

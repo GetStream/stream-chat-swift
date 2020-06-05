@@ -13,7 +13,7 @@ extension Client {
     
     // MARK: URL Session Setup
     
-    func setupURLSession(token: Token = "") -> URLSession {
+    func makeURLSession(token: Token = "") -> URLSession {
         let headers = authHeaders(token: token)
         logger?.log(headers: headers)
         let config = defaultURLSessionConfiguration

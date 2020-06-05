@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for multi-tenancy. Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info [#295](https://github.com/GetStream/stream-chat-swift/issues/295)
 
 ### 🔄 Changed
+- Unknown user is not used anymore. By default the current user is anonymous (you can check this with `isAnonymous`). Anyway you can't connect without `set(user:token:)` or `setGuestUser(user:)` or `setAnonymousUser()` [#284](https://github.com/GetStream/stream-chat-swift/issues/284).
+- You can subscribe to events as soon as the client is configured. This means that your subscriptions will work until the client disconnect (user login/logout) and until you cancel subscriptions [#284](https://github.com/GetStream/stream-chat-swift/issues/284).
+
+### 🐞 Fixed
+- Fixed `rx.connectionState` observation when a user logged out and login again [#284](https://github.com/GetStream/stream-chat-swift/issues/284).
 
 # [2.2.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.2)
 _May 27, 2020_

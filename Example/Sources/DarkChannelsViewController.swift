@@ -35,9 +35,7 @@ final class DarkChannelsViewController: ChannelsViewController {
     }
     
     func setupPresenter() {
-        if !User.current.isUnknown {
-            presenter = ChannelsPresenter(filter: .currentUserInMembers)
-        }
+        presenter = ChannelsPresenter(filter: .currentUserInMembers)
     }
     
     func observeInvites() {
