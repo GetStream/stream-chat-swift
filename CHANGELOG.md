@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.2.3](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.3)
+_June 05, 2020_
+
 ### ✅ Added
 - Support new regions: Singapore and Sydney. [#293](https://github.com/GetStream/stream-chat-swift/pull/293)
 - `disableLocalNotifications` added to `Notifications` for disabling local notifications [#290](https://github.com/GetStream/stream-chat-swift/pull/290)

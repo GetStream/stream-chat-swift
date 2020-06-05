@@ -629,6 +629,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore16ChannelPresenterC21isTypingEventsEnabledSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isTypingEventsEnabled" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC21isTypingEventsEnabledSbvp">isTypingEventsEnabled</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if user typing events enabled for the channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isTypingEventsEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore16ChannelPresenterC8isUnreadSbvp"></a>
                     <a name="//apple_ref/swift/Property/isUnread" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC8isUnreadSbvp">isUnread</a>
@@ -1235,112 +1262,10 @@ It&rsquo;s no needed if you will disconnect when the presenter will be deallocat
                 </li>
               </ul>
             </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Send%20Event"></a>
-                <a name="//apple_ref/swift/Section/Send Event" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Send%20Event"></a>
-                  <h3 class="section-name"><p>Send Event</p>
-</h3>
-                </div>
-              </div>
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore16ChannelPresenterC9sendEvent8isTyping_ySb_ys6ResultOy0aB6Client0G0OAH0K5ErrorOGctF"></a>
-                    <a name="//apple_ref/swift/Method/sendEvent(isTyping:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC9sendEvent8isTyping_ySb_ys6ResultOy0aB6Client0G0OAH0K5ErrorOGctF">sendEvent(isTyping:<wbr>_:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Send a typing event.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendEvent</span><span class="p">(</span><span class="nv">isTyping</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">StreamChatClient</span><span class="o">.</span><span class="kt">Event</span><span class="o">&gt;</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>isTyping</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a user typing action.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completion</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a completion block with <code>Event</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore16ChannelPresenterC18markReadIfPossibleyyys6ResultOy0aB6Client5EventOAG0K5ErrorOGcF"></a>
-                    <a name="//apple_ref/swift/Method/markReadIfPossible(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC18markReadIfPossibleyyys6ResultOy0aB6Client5EventOAG0K5ErrorOGcF">markReadIfPossible(_:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Send Read event if the app is active.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">markReadIfPossible</span><span class="p">(</span><span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">StreamChatClient</span><span class="o">.</span><span class="kt">Event</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span> <span class="p">})</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>an observable completion.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-27)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-06-05)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

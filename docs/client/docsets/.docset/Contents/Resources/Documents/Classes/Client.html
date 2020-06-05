@@ -153,6 +153,9 @@
                 <a href="../Extensions/DateFormatter/Stream.html">– Stream</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Extensions.html#/s:8Dispatch0A8WorkItemC">DispatchWorkItem</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Extensions/JSONDecoder.html">JSONDecoder</a>
               </li>
               <li class="nav-group-task">
@@ -207,6 +210,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Functions.html#/s:16StreamChatClient8doBeforeyys6ResultOyxq_GcyAEc_yxcts5ErrorR_r0_lF">doBefore(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:16StreamChatClient7onErroryys6ResultOyxq_GcyAEc_yq_cts0E0R_r0_lF">onError(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -1040,9 +1046,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient0C0C7channel4type2id7members14invitedMembers9extraDataAA7ChannelCAA0L4TypeO_SSSayAA4UserVGApA0l5ExtraK7Codable_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/channel(type:id:members:invitedMembers:extraData:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient0C0C7channel4type2id7members14invitedMembers9extraDataAA7ChannelCAA0L4TypeO_SSSayAA4UserVGApA0l5ExtraK7Codable_pSgtF">channel(type:<wbr>id:<wbr>members:<wbr>invitedMembers:<wbr>extraData:<wbr>)</a>
+                    <a name="/s:16StreamChatClient0C0C7channel4type2id7members14invitedMembers4team9extraDataAA7ChannelCAA0M4TypeO_SSSayAA4UserVGAQSSAA0m5ExtraL7Codable_pSgtF"></a>
+                    <a name="//apple_ref/swift/Method/channel(type:id:members:invitedMembers:team:extraData:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C7channel4type2id7members14invitedMembers4team9extraDataAA7ChannelCAA0M4TypeO_SSSayAA4UserVGAQSSAA0m5ExtraL7Codable_pSgtF">channel(type:<wbr>id:<wbr>members:<wbr>invitedMembers:<wbr>team:<wbr>extraData:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1061,6 +1067,7 @@
              <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
              <span class="nv">members</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
              <span class="nv">invitedMembers</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+             <span class="nv">team</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
              <span class="nv">extraData</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span></code></pre>
 
                         </div>
@@ -1120,6 +1127,18 @@
                             <tr>
                               <td>
                                 <code>
+                                <em>team</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The team the channel belongs to.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
                                 <em>extraData</em>
                                 </code>
                               </td>
@@ -1138,9 +1157,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient0C0C7channel4type7members9extraData14namingStrategyAA7ChannelCAA0K4TypeO_SayAA4UserVGAA0k5ExtraH7Codable_pSgAA0k6NamingJ0_pSgtF"></a>
-                    <a name="//apple_ref/swift/Method/channel(type:members:extraData:namingStrategy:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient0C0C7channel4type7members9extraData14namingStrategyAA7ChannelCAA0K4TypeO_SayAA4UserVGAA0k5ExtraH7Codable_pSgAA0k6NamingJ0_pSgtF">channel(type:<wbr>members:<wbr>extraData:<wbr>namingStrategy:<wbr>)</a>
+                    <a name="/s:16StreamChatClient0C0C7channel4type7members4team9extraData14namingStrategyAA7ChannelCAA0L4TypeO_SayAA4UserVGSSAA0l5ExtraI7Codable_pSgAA0l6NamingK0_pSgtF"></a>
+                    <a name="//apple_ref/swift/Method/channel(type:members:team:extraData:namingStrategy:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C7channel4type7members4team9extraData14namingStrategyAA7ChannelCAA0L4TypeO_SayAA4UserVGSSAA0l5ExtraI7Codable_pSgAA0l6NamingK0_pSgtF">channel(type:<wbr>members:<wbr>team:<wbr>extraData:<wbr>namingStrategy:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1162,6 +1181,7 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">channel</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChannelType.html">ChannelType</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">messaging</span><span class="p">,</span>
              <span class="nv">members</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">],</span>
+             <span class="nv">team</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
              <span class="nv">extraData</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
              <span class="nv">namingStrategy</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a></span><span class="p">?</span> <span class="o">=</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="o">.</span><span class="kt">DefaultNamingStrategy</span><span class="p">(</span><span class="nv">maxUserNames</span><span class="p">:</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span></code></pre>
 
@@ -1192,6 +1212,18 @@
                               <td>
                                 <div>
                                   <p>a list of members.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>team</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The team the channel belongs to.</p>
                                 </div>
                               </td>
                             </tr>
@@ -5753,7 +5785,7 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-27)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-06-05)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

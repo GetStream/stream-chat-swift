@@ -153,6 +153,9 @@
                 <a href="../Extensions/DateFormatter/Stream.html">– Stream</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Extensions.html#/s:8Dispatch0A8WorkItemC">DispatchWorkItem</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Extensions/JSONDecoder.html">JSONDecoder</a>
               </li>
               <li class="nav-group-task">
@@ -207,6 +210,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Functions.html#/s:16StreamChatClient8doBeforeyys6ResultOyxq_GcyAEc_yxcts5ErrorR_r0_lF">doBefore(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:16StreamChatClient7onErroryys6ResultOyxq_GcyAEc_yq_cts0E0R_r0_lF">onError(_:_:)</a>
               </li>
             </ul>
           </li>
@@ -799,6 +805,34 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:16StreamChatClient7ChannelC4teamSSvp"></a>
+                    <a name="//apple_ref/swift/Property/team" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7ChannelC4teamSSvp">team</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it&rsquo;ll be nil.
+Refer to <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=swift">docs</a> for more info.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">team</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:16StreamChatClient7ChannelC9extraDataAA0d5ExtraF7Codable_pSgvp"></a>
                     <a name="//apple_ref/swift/Property/extraData" class="dashAnchor"></a>
                     <a class="token" href="#/s:16StreamChatClient7ChannelC9extraDataAA0d5ExtraF7Codable_pSgvp">extraData</a>
@@ -1123,9 +1157,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient7ChannelC4type2id7members14invitedMembers9extraData7created7deleted0L2By15lastMessageDate6frozen6configAcA0D4TypeO_SSSayAA4UserVGAsA0d5ExtraK7Codable_pSg10Foundation0Q0VAXSgARSgAYSbAC6ConfigVtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(type:id:members:invitedMembers:extraData:created:deleted:createdBy:lastMessageDate:frozen:config:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient7ChannelC4type2id7members14invitedMembers9extraData7created7deleted0L2By15lastMessageDate6frozen6configAcA0D4TypeO_SSSayAA4UserVGAsA0d5ExtraK7Codable_pSg10Foundation0Q0VAXSgARSgAYSbAC6ConfigVtcfc">init(type:<wbr>id:<wbr>members:<wbr>invitedMembers:<wbr>extraData:<wbr>created:<wbr>deleted:<wbr>createdBy:<wbr>lastMessageDate:<wbr>frozen:<wbr>config:<wbr>)</a>
+                    <a name="/s:16StreamChatClient7ChannelC4type2id7members14invitedMembers9extraData7created7deleted0L2By15lastMessageDate6frozen4team6configAcA0D4TypeO_SSSayAA4UserVGAtA0d5ExtraK7Codable_pSg10Foundation0Q0VAYSgASSgAZSbSSAC6ConfigVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(type:id:members:invitedMembers:extraData:created:deleted:createdBy:lastMessageDate:frozen:team:config:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7ChannelC4type2id7members14invitedMembers9extraData7created7deleted0L2By15lastMessageDate6frozen4team6configAcA0D4TypeO_SSSayAA4UserVGAtA0d5ExtraK7Codable_pSg10Foundation0Q0VAYSgASSgAZSbSSAC6ConfigVtcfc">init(type:<wbr>id:<wbr>members:<wbr>invitedMembers:<wbr>extraData:<wbr>created:<wbr>deleted:<wbr>createdBy:<wbr>lastMessageDate:<wbr>frozen:<wbr>team:<wbr>config:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1149,6 +1183,7 @@
             <span class="nv">createdBy</span><span class="p">:</span> <span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">?,</span>
             <span class="nv">lastMessageDate</span><span class="p">:</span> <span class="kt">Date</span><span class="p">?,</span>
             <span class="nv">frozen</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span>
+            <span class="nv">team</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
             <span class="nv">config</span><span class="p">:</span> <span class="kt"><a href="../Classes/Channel/Config.html">Config</a></span><span class="p">)</span></code></pre>
 
                         </div>
@@ -1363,6 +1398,60 @@
                 </div>
               </div>
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7ChannelC23startTypingEventTimeoutSdvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/startTypingEventTimeout" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7ChannelC23startTypingEventTimeoutSdvpZ">startTypingEventTimeout</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The number of seconds from the last <code>typingStart</code> event until the <code>typingStop</code> event is automatically sent.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="k">var</span> <span class="nv">startTypingEventTimeout</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7ChannelC25startTypingResendIntervalSdvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/startTypingResendInterval" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7ChannelC25startTypingResendIntervalSdvpZ">startTypingResendInterval</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>If user is still typing, resend the <code>typingStart</code> event after this time interval.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">static</span> <span class="k">var</span> <span class="nv">startTypingResendInterval</span><span class="p">:</span> <span class="kt">TimeInterval</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -2046,6 +2135,19 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Events"></a>
+                <a name="//apple_ref/swift/Section/Events" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Events"></a>
+                  <h3 class="section-name"><p>Events</p>
+</h3>
+                </div>
+              </div>
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -2087,6 +2189,110 @@
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a completion block with <code><a href="../Enums/Event.html">Event</a></code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7ChannelC9keystrokeyAA11Cancellable_pys6ResultOyAA5EventOAA0C5ErrorOGcF"></a>
+                    <a name="//apple_ref/swift/Method/keystroke(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7ChannelC9keystrokeyAA11Cancellable_pys6ResultOyAA5EventOAA0C5ErrorOGcF">keystroke(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send a keystroke event for the current user.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    This method should be called from the main thread.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">keystroke</span><span class="p">(</span><span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/Client.html">Client</a></span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a completion block with <code><a href="../Enums/Event.html">Event</a></code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7ChannelC10stopTypingyAA11Cancellable_pys6ResultOyAA5EventOAA0C5ErrorOGcF"></a>
+                    <a name="//apple_ref/swift/Method/stopTyping(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7ChannelC10stopTypingyAA11Cancellable_pys6ResultOyAA5EventOAA0C5ErrorOGcF">stopTyping(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send a stop typing event for the current user.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    This method should be called from the main thread.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">stopTyping</span><span class="p">(</span><span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/Client.html">Client</a></span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt"><a href="../Enums/Event.html">Event</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
                             <tr>
                               <td>
                                 <code>
@@ -3233,6 +3439,19 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Equatable"></a>
+                <a name="//apple_ref/swift/Section/Equatable" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Equatable"></a>
+                  <h3 class="section-name"><p>Equatable</p>
+</h3>
+                </div>
+              </div>
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -3477,7 +3696,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-27)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-06-05)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
