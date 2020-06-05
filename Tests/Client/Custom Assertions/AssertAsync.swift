@@ -313,4 +313,28 @@ extension AssertAsync {
                               line: line)
         }
     }
+    
+    /// Blocks the current test execution and periodically checks that the expression evaluates stays `TRUE` for
+    /// the whole `timeout` period.. Fails if the expression becommes `FALSE` before the end of the `timeout` period.
+    ///
+    /// - Parameters:
+    ///   - expression: The expression to evaluate.
+    ///   - timeout: The maximum time the function waits for the expression results to equal.
+    ///   - message: The message to print when the assertion fails.
+    ///
+    /// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
+    ///   any side effects which can affect its result.
+    static func staysTrue(_ expression: @autoclosure () -> Bool,
+                          timeout: TimeInterval = defaultTimeoutForInversedExpecations,
+                          message: @autoclosure () -> String = "Failed to stay `TRUE`",
+                          file: StaticString = #file,
+                          line: UInt = #line) {
+        _ = withoutActuallyEscaping(expression) { expression in
+            withoutActuallyEscaping(message) { message in
+                AssertAsync {
+                    Assert.staysTrue(expression(), timeout: timeout, message: message(), file: file, line: line)
+                }
+            }
+        }
+    }
 }
