@@ -104,4 +104,22 @@ jobs:
       if: steps.rubygem-cache.outputs.cache-hit != 'true'
       run: bundle install
     - name: Test SPM integration
-      run: bundle exec fastlane test_spm_integration
+      run: bundle exec fastlane test_spm_integration  
+      
+  build-and-test-v3:
+    name: Build and Test v3
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
+    - name: Build v3 target and run all tests
+      run: bundle exec fastlane test_v3

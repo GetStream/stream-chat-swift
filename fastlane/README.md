@@ -75,6 +75,11 @@ Tests integration with SPM by building SPM Example
 fastlane get_next_issue_number
 ```
 Get next PR number from github to be used in CHANGELOG
+### test_v3
+```
+fastlane test_v3
+```
+Runs tests for v3 scheme
 
 ----
 
