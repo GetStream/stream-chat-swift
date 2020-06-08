@@ -271,23 +271,31 @@ extension AssertAsync {
     ///   - message: The message to print when the assertion fails.
     ///
     /// - Warning: ⚠️ Both expressions are evaluated repeatedly during the function execution. The expressions should not have
-    ///   any side effects which can affect their results.
-    static func willBeEqual<T: Equatable>(_ expression1: @autoclosure @escaping () -> T,
-                                          _ expression2: @autoclosure @escaping () -> T,
-                                          timeout: TimeInterval = defaultTimeout,
-                                          message: @autoclosure @escaping () -> String? = nil,
-                                          file: StaticString = #file,
-                                          line: UInt = #line) {
-    
-        AssertAsync {
-            Assert.willBeEqual(expression1(),
-                               expression2(),
-                               timeout: timeout,
-                               message: message(),
-                               file: file,
-                               line: line)
+  ///   any side effects which can affect their results.
+  static func willBeEqual<T: Equatable>(
+    _ expression1: @autoclosure () -> T,
+    _ expression2: @autoclosure () -> T,
+    timeout: TimeInterval = defaultTimeout,
+    message: @autoclosure () -> String? = nil,
+    file: StaticString = #file,
+    line: UInt = #line
+  ) {
+    _ = withoutActuallyEscaping(expression1) { expression1 in
+      withoutActuallyEscaping(expression2) { expression2 in
+        withoutActuallyEscaping(message) { message in
+          AssertAsync {
+            Assert.willBeEqual(
+              expression1(),
+              expression2(),
+              timeout: timeout,
+              message: message(),
+              file: file,
+              line: line)
+          }
         }
+      }
     }
+  }
     
     /// Blocks the current test execution and periodically checks if the expression evaluates to `nil`. Fails if
     /// the expression result is not `nil` within the `timeout` period.
