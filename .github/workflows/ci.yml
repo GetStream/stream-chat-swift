@@ -111,6 +111,12 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Cache Carthage dependencies
+      uses: actions/cache@v1.1.0
+      id: carthage-cache
+      with:
+        path: Carthage
+        key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v1
       id: rubygem-cache
@@ -121,5 +127,7 @@ jobs:
     - name: Install RubyGems
       if: steps.rubygem-cache.outputs.cache-hit != 'true'
       run: bundle install
+    - name: Install Carthage dependencies
+      run: bundle exec fastlane carthage_bootstrap
     - name: Build v3 target and run all tests
       run: bundle exec fastlane test_v3
