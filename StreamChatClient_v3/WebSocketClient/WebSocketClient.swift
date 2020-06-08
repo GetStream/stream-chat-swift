@@ -62,6 +62,13 @@ class WebSocketClient {
   struct Environment {
     var notificationCenter: NotificationCenter = .init()
     var timer: Timer.Type = DefaultTimer.self
+    var engineBuilder: (_ request: URLRequest, _ callbackQueue: DispatchQueue) -> WebSocketEngine = {
+      if #available(iOS 13, *) {
+        return URLSessionWebSocketEngine(request: $0, callbackQueue: $1)
+      } else {
+        return StarscreamWebSocketProvider(request: $0, callbackQueue: $1)
+      }
+    }
   }
 
   init(
@@ -71,7 +78,7 @@ class WebSocketClient {
     environment: Environment = .init()
   ) {
     self.environment = environment
-    self.engine = URLSessionWebSocketEngine(request: urlRequest, callbackQueue: callbackQueue)
+    self.engine = environment.engineBuilder(urlRequest, callbackQueue)
     self.notificationCenter = environment.notificationCenter
     self.eventDecoder = eventDecoder
     engine.delegate = self
