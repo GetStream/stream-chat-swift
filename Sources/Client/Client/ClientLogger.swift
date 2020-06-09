@@ -128,6 +128,10 @@ public final class ClientLogger {
             return intersectedOptions.isEnabled ? ClientLogger(icon: icon, level: .level(intersectedOptions)) : nil
         }
     }
+  
+    /// Controls whether connection error dialogue is shown on WebSocket errors.
+    /// you can check `showConnectionErrorAlert` function to see how the dialogue is being shown.
+    public static var showConnectionErrorAlert = false
     
     /// Controls whether to display icons in logs
     /// Only valid when default `ClientLogger.logger` block is used, if you've overridden that, this is not valid.
@@ -398,6 +402,7 @@ public final class ClientLogger {
 
     static func showConnectionAlert(_ error: Error, jsonError: ClientErrorResponse?) {
         #if DEBUG
+        guard ClientLogger.showConnectionErrorAlert else { return }
         let jsonError = jsonError ?? ClientErrorResponse(code: 0, message: "<unknown>", statusCode: 0)
         let message = "\(jsonError.message)\n\nCode: \(jsonError.code)\nStatus Code: \(jsonError.statusCode)\n\n\(error)"
         DispatchQueue.main.async {
