@@ -154,6 +154,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
             presenter.reload()
         } else {
             refreshTableView(scrollToBottom: true, animated: false)
+            presenter.channel.query(options: presenter.queryOptions) { _ in }
         }
         
         needsToReload = false
