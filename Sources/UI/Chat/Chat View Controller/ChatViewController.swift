@@ -100,9 +100,11 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         return tableView
     }()
     
-    private lazy var bottomThreshold = (style.incomingMessage.avatarViewStyle?.size ?? CGFloat.messageAvatarSize)
+    private lazy var minMessageHeight = 2 * (style.incomingMessage.avatarViewStyle?.size ?? CGFloat.messageAvatarSize)
         + style.incomingMessage.edgeInsets.top
         + style.incomingMessage.edgeInsets.bottom
+    
+    private lazy var bottomThreshold = minMessageHeight
         + style.composer.height
         + style.composer.edgeInsets.top
         + style.composer.edgeInsets.bottom
@@ -402,8 +404,31 @@ extension ChatViewController {
             
         case let .itemsAdded(rows, reloadRow, forceToScroll, items):
             self.items = items
-            let needsToScroll = tableView.bottomContentOffset < bottomThreshold
-            tableView.stayOnScrollOnce = scrollEnabled && needsToScroll && !forceToScroll
+            
+            // A possible effective content height.
+            var effectiveContentHeight = tableView.frame.height // by default force to scroll.
+            
+            // Evaluate the possible effective content height for a signle message.
+            if rows.count == 1 {
+                var minMessageHeight = self.minMessageHeight
+                
+                if case .message(let message, []) = items[rows[0]] {
+                    if message.attachments.count > 1 {
+                        minMessageHeight = tableView.frame.height // always scroll for multiple attachments.
+                    } else if message.attachments.count == 1 {
+                        minMessageHeight += .attachmentPreviewMaxHeight
+                    } else if message.text.count > 70 {
+                        minMessageHeight = tableView.frame.height // always scroll for a "large" text (~> 2 lines).
+                    }
+                }
+                
+                effectiveContentHeight = tableView.contentSize.height
+                    + tableView.adjustedContentInset.top
+                    + tableView.adjustedContentInset.bottom
+                    + minMessageHeight
+            }
+            
+            let needsToScroll = forceToScroll || (scrollEnabled && (effectiveContentHeight >= tableView.frame.height))
             
             if forceToScroll {
                 reactionsView?.dismiss()
@@ -418,7 +443,7 @@ extension ChatViewController {
                     }
                 })
                 
-                if let maxRow = rows.max(), (scrollEnabled && needsToScroll) || forceToScroll {
+                if let maxRow = rows.max(), needsToScroll {
                     tableView.scrollToRowIfPossible(at: maxRow, animated: false)
                 }
             }
