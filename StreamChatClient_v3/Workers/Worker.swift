@@ -39,7 +39,7 @@ class EventHandlerWorker<ExtraData: ExtraDataTypes>: Worker {
   @objc
   private func handleNewEventNotification(_ notification: Notification) {
     guard let event = notification.event else {
-      print("Error: NewEventNotification without an Event.")
+      log.error("Error: NewEventNotification without an Event.")
       return
     }
     handleNewEvent(event: event)

@@ -203,7 +203,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
   }
 
   func websocketDidReceiveMessage(_ message: String) {
-    print(message)
+    log.debug(message)
 
     do {
       let event = try eventDecoder.decode(data: message.data(using: .utf8)!)
@@ -214,8 +214,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
       }
 
     } catch {
-      print(error)
-      print(error)
+      log.error(error)
     }
 
 //        guard let event = parseEvent(with: message) else {

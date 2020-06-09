@@ -154,7 +154,7 @@ public final class Client<ExtraData: ExtraDataTypes> {
       let handledError = ClientError.Unexpect(underlyingError: error)
       let handledError2 = ClientError.Unexpect("Something went wrong...")
       // TODO: Log
-      print("Failed to initalized the local storage with error: \(error). Falling back to the in-memory option.")
+      log.error("Failed to initalized the local storage with error: \(error). Falling back to the in-memory option.")
     }
 
     do {

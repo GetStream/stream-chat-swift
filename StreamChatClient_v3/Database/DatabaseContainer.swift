@@ -84,7 +84,7 @@ extension DatabaseContainer {
       if self.writableContext.hasChanges {
         do {
           try self.writableContext.save()
-          print("Saved")
+          log.debug("Saved")
         } catch {
           fatalError("\(error)")
         }

@@ -30,7 +30,7 @@ extension JSONDecoder {
       }
 
       if dateString.hasPrefix("1970-01-01T00:00:00") {
-        print("⚠️ Invalid ISO8601 date: \(dateString)")
+        log.warning("⚠️ Invalid ISO8601 date: \(dateString)")
         return Date()
       }
 
