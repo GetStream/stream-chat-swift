@@ -42,17 +42,17 @@ extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
   }
 
   func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
-    var webSocketProviderError: WebSocketProviderError?
+    var engineError: WebSocketEngineError?
 
     if let error = error {
-      webSocketProviderError = .init(
+      engineError = .init(
         reason: error.localizedDescription,
         code: (error as? WSError)?.code ?? 0,
-        providerError: error
+        engineError: error
       )
     }
 
-    delegate?.websocketDidDisconnect(error: webSocketProviderError)
+    delegate?.websocketDidDisconnect(error: engineError)
   }
 
   func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {

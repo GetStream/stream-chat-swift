@@ -19,16 +19,16 @@ protocol WebSocketEngine: AnyObject {
 
 protocol WebSocketEngineDelegate: AnyObject {
   func websocketDidConnect()
-  func websocketDidDisconnect(error: WebSocketProviderError?)
+  func websocketDidDisconnect(error: WebSocketEngineError?)
   func websocketDidReceiveMessage(_ message: String)
 }
 
-struct WebSocketProviderError: Error {
+struct WebSocketEngineError: Error {
   static let stopErrorCode = 1000
 
   let reason: String
   let code: Int
-  let providerError: Error?
+  let engineError: Error?
 
   var localizedDescription: String { reason }
 }

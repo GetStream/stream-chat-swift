@@ -246,7 +246,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
 //        }
   }
 
-  func websocketDidDisconnect(error: WebSocketProviderError?) {
+  func websocketDidDisconnect(error: WebSocketEngineError?) {
 //        logger?.log("Parsing WebSocket disconnect... (error: \(error?.localizedDescription ?? "<nil>"))")
 //        clearStateAfterDisconnect()
 //
