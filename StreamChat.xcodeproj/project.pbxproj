@@ -104,6 +104,8 @@
 		79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */; };
 		79A0E9AF2498BFD800E9BD50 /* WebSocketClient_tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AE2498BFD800E9BD50 /* WebSocketClient_tests.swift */; };
 		79A0E9B02498C09900E9BD50 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C750BD2490D0130023F0B7 /* ConnectionState.swift */; };
+		79A0E9B62498C2DD00E9BD50 /* HealthCheckFilterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9B42498C2DD00E9BD50 /* HealthCheckFilterMiddleware.swift */; };
+		79A0E9B72498C2E800E9BD50 /* HealthCheckFilterMiddleware_tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9B32498C2DD00E9BD50 /* HealthCheckFilterMiddleware_tests.swift */; };
 		79A9E4F72449D3AF00599B95 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */; };
 		79A9E4F92449DF2D00599B95 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F82449DF2D00599B95 /* Reachability.swift */; };
 		79BF83EC248F8EDF007611A1 /* LogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF83EB248F8EDF007611A1 /* LogDestination.swift */; };
@@ -539,6 +541,8 @@
 		799C947B247E6051001F1104 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
 		79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatClient.swift; sourceTree = "<group>"; };
 		79A0E9AE2498BFD800E9BD50 /* WebSocketClient_tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketClient_tests.swift; sourceTree = "<group>"; };
+		79A0E9B32498C2DD00E9BD50 /* HealthCheckFilterMiddleware_tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthCheckFilterMiddleware_tests.swift; sourceTree = "<group>"; };
+		79A0E9B42498C2DD00E9BD50 /* HealthCheckFilterMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HealthCheckFilterMiddleware.swift; sourceTree = "<group>"; };
 		79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Gzip.swift"; sourceTree = "<group>"; };
 		79A9E4F82449DF2D00599B95 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		79BF83EB248F8EDF007611A1 /* LogDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LogDestination.swift; path = ../LogDestination.swift; sourceTree = "<group>"; };
@@ -1064,6 +1068,8 @@
 			children = (
 				796610B8248E651800761629 /* EventMiddleware.swift */,
 				796610BA248E687000761629 /* EventMiddleware_tests.swift */,
+				79A0E9B42498C2DD00E9BD50 /* HealthCheckFilterMiddleware.swift */,
+				79A0E9B32498C2DD00E9BD50 /* HealthCheckFilterMiddleware_tests.swift */,
 			);
 			path = EventMiddlewares;
 			sourceTree = "<group>";
@@ -2369,6 +2375,7 @@
 				79C750BB248FC4100023F0B7 /* ServerResponseError.swift in Sources */,
 				799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */,
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
+				79A0E9B62498C2DD00E9BD50 /* HealthCheckFilterMiddleware.swift in Sources */,
 				79BF83F6248F8F97007611A1 /* PrefixLogFormatter.swift in Sources */,
 				792A4F5A24812D1A00EAF71D /* UserEndpointReponse.swift in Sources */,
 				792A4F4F2480EA3B00EAF71D /* Endpoint.swift in Sources */,
@@ -2413,6 +2420,7 @@
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
 				79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */,
 				799C9468247D791A001F1104 /* AssertJSONEqual.swift in Sources */,
+				79A0E9B72498C2E800E9BD50 /* HealthCheckFilterMiddleware_tests.swift in Sources */,
 				799C9460247D77D6001F1104 /* DatabaseContainer_Tests.swift in Sources */,
 				799C945C247D59D8001F1104 /* ChatClient_Tests.swift in Sources */,
 				79280F7D24891B1300CDEB89 /* WebSocketEngine_Tests.swift in Sources */,

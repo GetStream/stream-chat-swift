@@ -127,7 +127,9 @@ public final class Client<ExtraData: ExtraDataTypes> {
     //      let webSocketProvider = defaultWebSocketProviderType.init(request: request, callbackQueue: callbackQueue)
 
     let middlewares: [EventMiddleware] = [
-      ]
+      // TODO: Add more middlewares
+      HealthCheckFilter()
+    ]
 
     return WebSocketClient(
       urlRequest: request,
