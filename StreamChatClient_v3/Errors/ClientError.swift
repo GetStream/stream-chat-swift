@@ -16,9 +16,9 @@ public class ClientError: Error {
 
   public let underlyingError: Error?
 
-  public init(underlyingError: Error? = nil, _ file: StaticString = #file, _ line: UInt = #line) {
+  public init(with error: Error? = nil, _ file: StaticString = #file, _ line: UInt = #line) {
     self.location = .init(file: "\(file)", line: Int(line))
-    self.underlyingError = nil
+    self.underlyingError = error
   }
 }
 
