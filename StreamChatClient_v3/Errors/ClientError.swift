@@ -36,7 +36,8 @@ extension ClientError {
 // This should probably live only in the test target since it's not "true" equatable
 extension ClientError: Equatable {
   public static func ==(lhs: ClientError, rhs: ClientError) -> Bool {
-    lhs.location == rhs.location
+    type(of: lhs) == type(of: rhs)
       && String(describing: lhs.underlyingError) == String(describing: rhs.underlyingError)
+      && String(describing: lhs.localizedDescription) == String(describing: rhs.localizedDescription)
   }
 }
