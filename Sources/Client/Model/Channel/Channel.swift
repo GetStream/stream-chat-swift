@@ -46,6 +46,7 @@ public final class Channel: Codable {
         case imageURL = "image"
         case members
         case invites
+        case team
     }
     
     /// A custom extra data type for channels.
@@ -126,7 +127,7 @@ public final class Channel: Codable {
     let currentUserTypingTimerControlAtomic = Atomic<TimerControl?>()
     
     /// Checks for the channel data encoding is empty.
-    var isEmpty: Bool { extraData == nil && members.isEmpty && invitedMembers.isEmpty }
+    var isEmpty: Bool { extraData == nil && members.isEmpty && invitedMembers.isEmpty && team.isBlank }
     
     /// Returns the current timestamp. Can be replaced in tests with mock time, if needed.
     var currentTime: () -> Date = { Date() }
@@ -210,6 +211,8 @@ public final class Channel: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: EncodingKeys.self)
         extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a channel extra data")
+      
+      try container.encode(team, forKey: .team)
         
         var allMembers = members
         
