@@ -22,7 +22,9 @@ final class StarscreamWebSocketProvider: WebSocketEngine {
   }
 
   func connect() {
-    webSocket.connect()
+    DispatchQueue.main.async {
+      self.webSocket.connect()
+    }
   }
 
   func disconnect() {
