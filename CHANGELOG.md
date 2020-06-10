@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🐞 Fixed
 - `Channel.team` not being correctly encoded for multi-tenant enabled clients [#308](https://github.com/GetStream/stream-chat-swift/issues/308)
+- Channels not loading on ChannelsVC after opening the app from background using `stayConnectedInBackground: false` and no logger [#308](https://github.com/GetStream/stream-chat-swift/issues/308)
 
 # [2.2.3](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.3)
 _June 05, 2020_
