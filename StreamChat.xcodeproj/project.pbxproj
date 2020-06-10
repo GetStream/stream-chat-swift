@@ -102,6 +102,8 @@
 		799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 799C9477247E3DEA001F1104 /* StreamChatModel.xcdatamodeld */; };
 		799C947D247E6114001F1104 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C947B247E6051001F1104 /* TestError.swift */; };
 		79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */; };
+		79A0E9AF2498BFD800E9BD50 /* WebSocketClient_tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AE2498BFD800E9BD50 /* WebSocketClient_tests.swift */; };
+		79A0E9B02498C09900E9BD50 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C750BD2490D0130023F0B7 /* ConnectionState.swift */; };
 		79A9E4F72449D3AF00599B95 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */; };
 		79A9E4F92449DF2D00599B95 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F82449DF2D00599B95 /* Reachability.swift */; };
 		79BF83EC248F8EDF007611A1 /* LogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF83EB248F8EDF007611A1 /* LogDestination.swift */; };
@@ -536,6 +538,7 @@
 		799C9478247E3DEA001F1104 /* StreamChatModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = StreamChatModel.xcdatamodel; sourceTree = "<group>"; };
 		799C947B247E6051001F1104 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
 		79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatClient.swift; sourceTree = "<group>"; };
+		79A0E9AE2498BFD800E9BD50 /* WebSocketClient_tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebSocketClient_tests.swift; sourceTree = "<group>"; };
 		79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Gzip.swift"; sourceTree = "<group>"; };
 		79A9E4F82449DF2D00599B95 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		79BF83EB248F8EDF007611A1 /* LogDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LogDestination.swift; path = ../LogDestination.swift; sourceTree = "<group>"; };
@@ -1095,6 +1098,7 @@
 				79280F402484F4DD00CDEB89 /* Events */,
 				79280F76248917EB00CDEB89 /* Engine */,
 				799C9444247D3DD2001F1104 /* WebSocketClient.swift */,
+				79A0E9AE2498BFD800E9BD50 /* WebSocketClient_tests.swift */,
 				799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */,
 				799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_tests.swift */,
 				797A756324814E7A003CF16D /* WebSocketPayload.swift */,
@@ -2355,6 +2359,7 @@
 				79BF83F4248F8F88007611A1 /* LogFormatter.swift in Sources */,
 				79280F4D24852FCA00CDEB89 /* DataChange.swift in Sources */,
 				79280F4424850B4300CDEB89 /* ChannelEventsHandler.swift in Sources */,
+				79A0E9B02498C09900E9BD50 /* ConnectionState.swift in Sources */,
 				799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */,
 				799C9443247D3DA7001F1104 /* APIClient.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
@@ -2402,6 +2407,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79A0E9AF2498BFD800E9BD50 /* WebSocketClient_tests.swift in Sources */,
 				799C947D247E6114001F1104 /* TestError.swift in Sources */,
 				799C946A247D791A001F1104 /* AssertAsync.swift in Sources */,
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
