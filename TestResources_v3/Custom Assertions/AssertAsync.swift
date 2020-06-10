@@ -6,13 +6,13 @@
 import XCTest
 
 /// The default timeout value used by the `willBe___` family of assertions.
-private let defaultTimeout: TimeInterval = 1
+let defaultTimeout: TimeInterval = 1
 
 /// The default timeout value used by the `stays___` family of assertions.
-private let defaultTimeoutForInversedExpecations: TimeInterval = 0.1
+let defaultTimeoutForInversedExpecations: TimeInterval = 0.1
 
 /// How big is the period between expression evaluations.
-private let evaluationPeriod: TimeInterval = 0.001
+let evaluationPeriod: TimeInterval = 0.001
 
 // MARK: - Assertions
 
