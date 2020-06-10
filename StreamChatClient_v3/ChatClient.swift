@@ -151,7 +151,7 @@ public final class Client<ExtraData: ExtraDataTypes> {
       assertionFailure("The URL provided in ChatClientConfig can't be `nil`.")
 
     } catch {
-      let handledError = ClientError.Unexpect(underlyingError: error)
+      let handledError = ClientError.Unexpect(with: error)
       let handledError2 = ClientError.Unexpect("Something went wrong...")
       // TODO: Log
       log.error("Failed to initalized the local storage with error: \(error). Falling back to the in-memory option.")
