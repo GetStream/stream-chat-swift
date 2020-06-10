@@ -20,4 +20,8 @@ public struct HealthCheck: ConnectionEvent {
     }
     self.connectionId = connectionId
   }
+
+  init(connectionId: String) {
+    self.connectionId = connectionId
+  }
 }

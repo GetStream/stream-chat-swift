@@ -58,7 +58,7 @@ class WebSocketClientMock: WebSocketClient {
     super.init(
       urlRequest: URLRequest(url: URL(string: "test")!),
       eventDecoder: MockDecoder(),
-      callbackQueue: .main
+      eventMiddlewares: []
     )
   }
 }

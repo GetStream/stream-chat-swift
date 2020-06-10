@@ -46,4 +46,12 @@ public enum ConnectionState: Equatable {
     }
     return false
   }
+
+  /// Returns false if the connection state is in the `notConnected` state.
+  public var isActive: Bool {
+    if case .notConnected = self {
+      return false
+    }
+    return true
+  }
 }

@@ -73,8 +73,13 @@ public final class Client<ExtraData: ExtraDataTypes> {
   struct Environment {
     var apiClientBuilder: (_ apiKey: String, _ baseURL: URL, _ sessionConfiguration: URLSessionConfiguration)
       -> APIClient = APIClient.init
-    var webSocketClientBuilder: (_ urlRequest: URLRequest, _ eventDecoder: AnyEventDecoder, _ callbackQueue: DispatchQueue)
-      -> WebSocketClient = { WebSocketClient(urlRequest: $0, eventDecoder: $1, callbackQueue: $2) }
+
+    var webSocketClientBuilder: (
+      _ urlRequest: URLRequest,
+      _ eventDecoder: AnyEventDecoder,
+      _ eventMiddlewares: [EventMiddleware]
+    ) -> WebSocketClient = { WebSocketClient(urlRequest: $0, eventDecoder: $1, eventMiddlewares: $2) }
+
     var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind) throws
       -> DatabaseContainer = { try DatabaseContainer(kind: $0) }
   }
@@ -121,10 +126,13 @@ public final class Client<ExtraData: ExtraDataTypes> {
     //      let webSocketOptions: WebSocketOptions = [] // = stayConnectedInBackground ? WebSocketOptions.stayConnectedInBackground : []
     //      let webSocketProvider = defaultWebSocketProviderType.init(request: request, callbackQueue: callbackQueue)
 
+    let middlewares: [EventMiddleware] = [
+      ]
+
     return WebSocketClient(
       urlRequest: request,
       eventDecoder: EventDecoder<ExtraData>(),
-      callbackQueue: callbackQueue
+      eventMiddlewares: middlewares
     )
   }()
 
@@ -177,8 +185,6 @@ public final class Client<ExtraData: ExtraDataTypes> {
     self.currentUser = currentUser
     self.environment = environment
     self.callbackQueue = callbackQueue
-
-    apiClient.connectionIdProvider = webSocketClient
 
     self.backgroundWorkers = workerBuilders.map { builder in
       builder(self.persistentContainer, self.webSocketClient, self.apiClient)
