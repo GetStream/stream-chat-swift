@@ -48,7 +48,6 @@ extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
       webSocketProviderError = .init(
         reason: error.localizedDescription,
         code: (error as? WSError)?.code ?? 0,
-        providerType: StarscreamWebSocketProvider.self,
         providerError: error
       )
     }

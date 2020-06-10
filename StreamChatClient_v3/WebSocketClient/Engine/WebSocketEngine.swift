@@ -28,7 +28,6 @@ struct WebSocketProviderError: Error {
 
   let reason: String
   let code: Int
-  let providerType: WebSocketEngine.Type
   let providerError: Error?
 
   var localizedDescription: String { reason }

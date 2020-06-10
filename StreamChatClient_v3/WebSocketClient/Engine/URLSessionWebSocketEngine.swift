@@ -51,7 +51,6 @@ final class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionData
         self.disconnect(with: WebSocketProviderError(
           reason: error.localizedDescription,
           code: (error as NSError).code,
-          providerType: URLSessionWebSocketEngine.self,
           providerError: error
         ))
       }
@@ -77,7 +76,6 @@ final class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionData
       error = WebSocketProviderError(
         reason: reasonString,
         code: 0,
-        providerType: URLSessionWebSocketEngine.self,
         providerError: nil
       )
     }
