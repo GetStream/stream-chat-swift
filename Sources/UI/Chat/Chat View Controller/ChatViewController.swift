@@ -376,7 +376,7 @@ extension ChatViewController {
 
 extension ChatViewController {
     
-    private func updateTableView(with changes: ViewChanges) {
+    func updateTableView(with changes: ViewChanges) {
         switch changes {
         case .none, .itemMoved:
             return

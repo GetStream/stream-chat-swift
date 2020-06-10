@@ -28,6 +28,7 @@
 		8A7EE011238580BD00BDB18D /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E772301AC1E0033E6D9 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8A7EE013238580BF00BDB18D /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */; };
 		8A7EE014238580BF00BDB18D /* StreamChatCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A0A7E752301AC1E0033E6D9 /* StreamChatCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		8AB9B8D22491219900CE427A /* FakeChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB9B8D12491219900CE427A /* FakeChatViewController.swift */; };
 		8AD8503D2406B63600C3449D /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A161EDE23F3189C0084234B /* StreamChatClient.framework */; };
 		8AD8503E2406B63600C3449D /* StreamChatClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8A161EDE23F3189C0084234B /* StreamChatClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -89,6 +90,27 @@
 			remoteGlobalIDString = 8A8BB295238452B600C2F9DE;
 			remoteInfo = StreamChatRealm;
 		};
+		8AB9B8DB2491219A00CE427A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 799C941B247D2F80001F1104;
+			remoteInfo = StreamChatClient_v3;
+		};
+		8AB9B8DD2491219A00CE427A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 799C9451247D59B1001F1104;
+			remoteInfo = StreamChatClientTests_v3;
+		};
+		8AB9B8DF2491219A00CE427A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 792A4F22247FF01800EAF71D;
+			remoteInfo = V3SampleApp;
+		};
 		8AECE0FC23155FDF00B6CEE0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */;
@@ -138,6 +160,7 @@
 		8A0A7EA12301AD330033E6D9 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = ../../Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		8A0A7EA32301AD330033E6D9 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = ../../Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
 		8A0A7EA42301AD330033E6D9 /* SwiftyGif.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyGif.framework; path = ../../Carthage/Build/iOS/SwiftyGif.framework; sourceTree = "<group>"; };
+		8AB9B8D12491219900CE427A /* FakeChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeChatViewController.swift; sourceTree = "<group>"; };
 		8AD5EC6D22E88C62005CFAC9 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD5EC7C22E88C63005CFAC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AD5EC8422E88DBC005CFAC9 /* ChatExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChatExample.entitlements; sourceTree = "<group>"; };
@@ -195,6 +218,9 @@
 				80216B932464889900BA9F90 /* StreamChatClientIntegrationTests.xctest */,
 				8A161EE023F3189C0084234B /* StreamChatClientTests.xctest */,
 				8AECE0FD23155FDF00B6CEE0 /* StreamChatCoreTests.xctest */,
+				8AB9B8DC2491219A00CE427A /* StreamChatClient_v3.framework */,
+				8AB9B8DE2491219A00CE427A /* StreamChatClientTests_v3.xctest */,
+				8AB9B8E02491219A00CE427A /* V3SampleApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -225,6 +251,7 @@
 				8A08B17D2395281300C900EB /* RootViewController.swift */,
 				8A08B17C2395281300C900EB /* DarkChannelsViewController.swift */,
 				8A08B1802395281300C900EB /* CustomChatViewController.swift */,
+				8AB9B8D12491219900CE427A /* FakeChatViewController.swift */,
 				8A02F136239A6E2E003FBF34 /* Database.swift */,
 				8A08B17B2395281300C900EB /* Main.storyboard */,
 				8A08B17A2395281300C900EB /* Assets.xcassets */,
@@ -351,6 +378,27 @@
 			remoteRef = 8A7EE00E238580B900BDB18D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		8AB9B8DC2491219A00CE427A /* StreamChatClient_v3.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = StreamChatClient_v3.framework;
+			remoteRef = 8AB9B8DB2491219A00CE427A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8AB9B8DE2491219A00CE427A /* StreamChatClientTests_v3.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = StreamChatClientTests_v3.xctest;
+			remoteRef = 8AB9B8DD2491219A00CE427A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8AB9B8E02491219A00CE427A /* V3SampleApp.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = V3SampleApp.app;
+			remoteRef = 8AB9B8DF2491219A00CE427A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		8AECE0FD23155FDF00B6CEE0 /* StreamChatCoreTests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
@@ -436,6 +484,7 @@
 				8A08B1872395281300C900EB /* AppDelegate.swift in Sources */,
 				8A08B1882395281300C900EB /* CustomChatViewController.swift in Sources */,
 				8A08B1862395281300C900EB /* LoginViewController.swift in Sources */,
+				8AB9B8D22491219900CE427A /* FakeChatViewController.swift in Sources */,
 				8A08B1852395281300C900EB /* RootViewController.swift in Sources */,
 				8A08B1842395281300C900EB /* DarkChannelsViewController.swift in Sources */,
 			);
