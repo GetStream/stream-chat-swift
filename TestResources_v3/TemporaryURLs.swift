@@ -6,6 +6,11 @@
 import Foundation
 
 extension URL {
+  /// Returns a unique random URL
+  static func newUniqueURL() -> URL {
+    URL(string: "temporary_\(UUID().uuidString)")!
+  }
+
   /// Returns a unique URL that can be used for storing a temporary file.
   static func newTemporaryFileURL() -> URL {
     newTemporaryDirectoryURL().appendingPathComponent("temp_file")
