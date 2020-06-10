@@ -18,10 +18,12 @@ func error(domain: String, code: Int = -1, message: @autoclosure () -> String) -
 ///   - expression2: JSON object 2, as Data.
 ///   - file: file the assert is being made
 ///   - line: line the assert is being made.
-func AssertJSONEqual(_ expression1: @autoclosure () throws -> Data,
-                     _ expression2: @autoclosure () throws -> Data,
-                     file: StaticString = #file,
-                     line: UInt = #line) {
+func AssertJSONEqual(
+  _ expression1: @autoclosure () throws -> Data,
+  _ expression2: @autoclosure () throws -> Data,
+  file: StaticString = #file,
+  line: UInt = #line
+) {
   do {
     guard let json1 = try JSONSerialization.jsonObject(with: expression1()) as? [String: Any] else {
       throw error(domain: "AssertJSONEqual", message: "First expression is not a valid json object!")
