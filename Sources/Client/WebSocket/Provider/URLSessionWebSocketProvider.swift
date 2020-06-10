@@ -37,10 +37,6 @@ final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSession
     func disconnect() {
         isConnected = false
         task?.cancel(with: .abnormalClosure, reason: nil)
-        
-        callbackQueue.async { [weak self] in
-            self?.delegate?.websocketDidDisconnect(error: nil)
-        }
     }
     
     func sendPing() {

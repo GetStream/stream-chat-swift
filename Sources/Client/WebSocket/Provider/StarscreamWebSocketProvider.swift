@@ -36,10 +36,6 @@ final class StarscreamWebSocketProvider: WebSocketProvider {
     
     func disconnect() {
         webSocket.disconnect(forceTimeout: 0)
-        
-        callbackQueue.async { [weak self] in
-            self?.delegate?.websocketDidDisconnect(error: nil)
-        }
     }
     
     func sendPing() {
