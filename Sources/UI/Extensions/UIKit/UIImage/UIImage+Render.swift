@@ -108,7 +108,8 @@ extension UIImage {
                                cornerRadius: CGFloat,
                                pointedCornerRadius: CGFloat,
                                corners: UIRectCorner) -> CGPath {
-        let topLeft = rect.origin
+        let halfOfPi = CGFloat.pi / 2
+        let topLeft = CGPoint(x: rect.minX, y: rect.minY)
         let topRight = CGPoint(x: rect.maxX, y: rect.minY)
         let bottomRight = CGPoint(x: rect.maxX, y: rect.maxY)
         let bottomLeft = CGPoint(x: rect.minX, y: rect.maxY)
@@ -119,14 +120,24 @@ extension UIImage {
             lastPoint = CGPoint(x: topRight.x - cornerRadius, y: topRight.y)
             path.move(to: lastPoint)
             lastPoint = CGPoint(x: topRight.x, y: topRight.y + cornerRadius)
-            path.addQuadCurve(to: lastPoint, control: topRight)
+            
+            path.addArc(center: CGPoint(x: rect.maxX - cornerRadius, y: rect.minY + cornerRadius),
+                        radius: cornerRadius,
+                        startAngle: -halfOfPi,
+                        endAngle: 0,
+                        clockwise: false)
         } else {
             lastPoint = CGPoint(x: topRight.x - pointedCornerRadius, y: topRight.y)
             path.move(to: lastPoint)
             
             if pointedCornerRadius > 0 {
                 lastPoint = CGPoint(x: topRight.x, y: topRight.y + pointedCornerRadius)
-                path.addQuadCurve(to: lastPoint, control: topRight)
+                
+                path.addArc(center: CGPoint(x: rect.maxX - pointedCornerRadius, y: rect.minY + pointedCornerRadius),
+                            radius: pointedCornerRadius,
+                            startAngle: -halfOfPi,
+                            endAngle: 0,
+                            clockwise: false)
             }
         }
         
@@ -134,14 +145,24 @@ extension UIImage {
             lastPoint = CGPoint(x: bottomRight.x, y: bottomRight.y - cornerRadius)
             path.addLine(to: lastPoint)
             lastPoint = CGPoint(x: bottomRight.x - cornerRadius, y: bottomRight.y)
-            path.addQuadCurve(to: lastPoint, control: bottomRight)
+            
+            path.addArc(center: CGPoint(x: rect.maxX - cornerRadius, y: rect.maxY - cornerRadius),
+                        radius: cornerRadius,
+                        startAngle: 0,
+                        endAngle: halfOfPi,
+                        clockwise: false)
         } else {
             lastPoint = CGPoint(x: bottomRight.x, y: bottomRight.y - pointedCornerRadius)
             path.addLine(to: lastPoint)
             
             if pointedCornerRadius > 0 {
                 lastPoint = CGPoint(x: bottomRight.x - pointedCornerRadius, y: bottomRight.y)
-                path.addQuadCurve(to: lastPoint, control: bottomRight)
+                
+                path.addArc(center: CGPoint(x: rect.maxX - pointedCornerRadius, y: rect.maxY - pointedCornerRadius),
+                            radius: pointedCornerRadius,
+                            startAngle: 0,
+                            endAngle: halfOfPi,
+                            clockwise: false)
             }
         }
         
@@ -149,14 +170,24 @@ extension UIImage {
             lastPoint = CGPoint(x: bottomLeft.x + cornerRadius, y: bottomLeft.y)
             path.addLine(to: lastPoint)
             lastPoint = CGPoint(x: bottomLeft.x, y: bottomLeft.y - cornerRadius)
-            path.addQuadCurve(to: lastPoint, control: bottomLeft)
+            
+            path.addArc(center: CGPoint(x: rect.minX + cornerRadius, y: rect.maxY - cornerRadius),
+                        radius: cornerRadius,
+                        startAngle: halfOfPi,
+                        endAngle: .pi,
+                        clockwise: false)
         } else {
             lastPoint = CGPoint(x: bottomLeft.x + pointedCornerRadius, y: bottomLeft.y)
             path.addLine(to: lastPoint)
             
             if pointedCornerRadius > 0 {
                 lastPoint = CGPoint(x: bottomLeft.x, y: bottomLeft.y - pointedCornerRadius)
-                path.addQuadCurve(to: lastPoint, control: bottomLeft)
+                
+                path.addArc(center: CGPoint(x: rect.minX + pointedCornerRadius, y: rect.maxY - pointedCornerRadius),
+                            radius: pointedCornerRadius,
+                            startAngle: halfOfPi,
+                            endAngle: .pi,
+                            clockwise: false)
             }
         }
         
@@ -164,14 +195,24 @@ extension UIImage {
             lastPoint = CGPoint(x: topLeft.x, y: topLeft.y + cornerRadius)
             path.addLine(to: lastPoint)
             lastPoint = CGPoint(x: topLeft.x + cornerRadius, y: topLeft.y)
-            path.addQuadCurve(to: lastPoint, control: topLeft)
+            
+            path.addArc(center: CGPoint(x: rect.minX + cornerRadius, y: rect.minY + cornerRadius),
+                        radius: cornerRadius,
+                        startAngle: .pi,
+                        endAngle: -halfOfPi,
+                        clockwise: false)
         } else {
             lastPoint = CGPoint(x: topLeft.x, y: topLeft.y + pointedCornerRadius)
             path.addLine(to: lastPoint)
             
             if pointedCornerRadius > 0 {
                 lastPoint = CGPoint(x: topLeft.x + pointedCornerRadius, y: topLeft.y)
-                path.addQuadCurve(to: lastPoint, control: topLeft)
+                
+                path.addArc(center: CGPoint(x: rect.minX + pointedCornerRadius, y: rect.minY + pointedCornerRadius),
+                            radius: pointedCornerRadius,
+                            startAngle: .pi,
+                            endAngle: -halfOfPi,
+                            clockwise: false)
             }
         }
         
