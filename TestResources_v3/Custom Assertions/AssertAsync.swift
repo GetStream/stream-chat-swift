@@ -47,12 +47,14 @@ extension Assert {
   ///
   /// - Warning: ⚠️ Both expressions are evaluated repeatedly during the function execution. The expressions should not have
   ///   any side effects which can affect their results.
-  static func willBeEqual<T: Equatable>(_ expression1: @autoclosure @escaping () -> T,
-                                        _ expression2: @autoclosure @escaping () -> T,
-                                        timeout: TimeInterval = defaultTimeout,
-                                        message: @autoclosure @escaping () -> String? = nil,
-                                        file: StaticString = #file,
-                                        line: UInt = #line) -> Assertion {
+  static func willBeEqual<T: Equatable>(
+    _ expression1: @autoclosure @escaping () -> T,
+    _ expression2: @autoclosure @escaping () -> T,
+    timeout: TimeInterval = defaultTimeout,
+    message: @autoclosure @escaping () -> String? = nil,
+    file: StaticString = #file,
+    line: UInt = #line
+  ) -> Assertion {
     // We can't use this as the default parameter because of the string interpolation.
     var defaultMessage: String {
       "\"\(String(describing: expression1()))\" not equal to \"\(String(describing: expression2()))\""
@@ -77,11 +79,13 @@ extension Assert {
   ///
   /// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
   ///   any side effects which can affect its result.
-  static func willBeNil<T>(_ expression1: @autoclosure @escaping () -> T?,
-                           timeout: TimeInterval = defaultTimeout,
-                           message: @autoclosure () -> String = "Failed to become `nil`",
-                           file: StaticString = #file,
-                           line: UInt = #line) -> Assertion {
+  static func willBeNil<T>(
+    _ expression1: @autoclosure @escaping () -> T?,
+    timeout: TimeInterval = defaultTimeout,
+    message: @autoclosure () -> String = "Failed to become `nil`",
+    file: StaticString = #file,
+    line: UInt = #line
+  ) -> Assertion {
     willBeTrue(
       expression1() == nil,
       timeout: timeout,
@@ -101,11 +105,13 @@ extension Assert {
   ///
   /// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
   ///   any side effects which can affect its result.
-  static func willBeTrue(_ expression: @autoclosure @escaping () -> Bool,
-                         timeout: TimeInterval = defaultTimeout,
-                         message: @autoclosure @escaping () -> String = "Failed to become `TRUE`",
-                         file: StaticString = #file,
-                         line: UInt = #line) -> Assertion {
+  static func willBeTrue(
+    _ expression: @autoclosure @escaping () -> Bool,
+    timeout: TimeInterval = defaultTimeout,
+    message: @autoclosure @escaping () -> String = "Failed to become `TRUE`",
+    file: StaticString = #file,
+    line: UInt = #line
+  ) -> Assertion {
     Assertion { elapsedTime in
       if elapsedTime < timeout {
         if expression() {
@@ -132,11 +138,13 @@ extension Assert {
   ///
   /// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
   ///   any side effects which can affect its result.
-  static func willBeFalse(_ expression: @autoclosure @escaping () -> Bool,
-                          timeout: TimeInterval = defaultTimeout,
-                          message: @autoclosure @escaping () -> String = "Failed to become `TRUE`",
-                          file: StaticString = #file,
-                          line: UInt = #line) -> Assertion {
+  static func willBeFalse(
+    _ expression: @autoclosure @escaping () -> Bool,
+    timeout: TimeInterval = defaultTimeout,
+    message: @autoclosure @escaping () -> String = "Failed to become `TRUE`",
+    file: StaticString = #file,
+    line: UInt = #line
+  ) -> Assertion {
     willBeTrue(
       !expression(),
       timeout: timeout,
@@ -156,11 +164,13 @@ extension Assert {
   ///
   /// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
   ///   any side effects which can affect its result.
-  static func staysFalse(_ expression: @autoclosure @escaping () -> Bool,
-                         timeout: TimeInterval = defaultTimeoutForInversedExpecations,
-                         message: @autoclosure @escaping () -> String = "Failed to stay `FALSE`",
-                         file: StaticString = #file,
-                         line: UInt = #line) -> Assertion {
+  static func staysFalse(
+    _ expression: @autoclosure @escaping () -> Bool,
+    timeout: TimeInterval = defaultTimeoutForInversedExpecations,
+    message: @autoclosure @escaping () -> String = "Failed to stay `FALSE`",
+    file: StaticString = #file,
+    line: UInt = #line
+  ) -> Assertion {
     staysTrue(!expression(), timeout: timeout, message: message(), file: file, line: line)
   }
 
@@ -174,11 +184,13 @@ extension Assert {
   ///
   /// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
   ///   any side effects which can affect its result.
-  static func staysTrue(_ expression: @autoclosure @escaping () -> Bool,
-                        timeout: TimeInterval = defaultTimeoutForInversedExpecations,
-                        message: @autoclosure @escaping () -> String = "Failed to stay `TRUE`",
-                        file: StaticString = #file,
-                        line: UInt = #line) -> Assertion {
+  static func staysTrue(
+    _ expression: @autoclosure @escaping () -> Bool,
+    timeout: TimeInterval = defaultTimeoutForInversedExpecations,
+    message: @autoclosure @escaping () -> String = "Failed to stay `TRUE`",
+    file: StaticString = #file,
+    line: UInt = #line
+  ) -> Assertion {
     Assertion { elapsedTime in
       if elapsedTime >= timeout {
         // Success
