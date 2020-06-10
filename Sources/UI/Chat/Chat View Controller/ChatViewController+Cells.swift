@@ -75,7 +75,7 @@ extension ChatViewController {
         var showNameAndAvatarIfNeeded = true
         var needsToShowAdditionalDate = false
         let nextRow = indexPath.row + 1
-
+        
         if nextRow < items.count, case .message(let nextMessage, _) = items[nextRow] {
             if messageStyle.showTimeThreshold > 59 {
                 let timeLeft = nextMessage.created.timeIntervalSince1970 - message.created.timeIntervalSince1970
@@ -89,7 +89,7 @@ extension ChatViewController {
             }
             
             if !showNameAndAvatarIfNeeded {
-                cell.paddingType = .small
+                cell.bottomEdgeInsetConstraint?.update(offset: 0)
             }
         }
         
