@@ -12,7 +12,7 @@ import Foundation
 final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSessionDataDelegate, URLSessionWebSocketDelegate {
     
     private var task: URLSessionWebSocketTask?
-    var isConnected = false
+    private(set) var isConnected = false
     let callbackQueue: DispatchQueue
     weak var delegate: WebSocketProviderDelegate?
     
@@ -91,7 +91,7 @@ final class URLSessionWebSocketProvider: NSObject, WebSocketProvider, URLSession
     }
     
     private func disconnect(with error: WebSocketProviderError?) {
-        isConnected = true
+        isConnected = false
         callDelegateInCallbackQueue { $0?.websocketDidDisconnect(error: error) }
     }
     
