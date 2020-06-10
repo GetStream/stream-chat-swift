@@ -48,10 +48,10 @@ final class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionData
         self.doRead()
 
       case .failure(let error):
-        self.disconnect(with: WebSocketProviderError(
+        self.disconnect(with: WebSocketEngineError(
           reason: error.localizedDescription,
           code: (error as NSError).code,
-          providerError: error
+          engineError: error
         ))
       }
     }
@@ -70,20 +70,20 @@ final class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionData
                   webSocketTask: URLSessionWebSocketTask,
                   didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
                   reason: Data?) {
-    var error: WebSocketProviderError?
+    var error: WebSocketEngineError?
 
     if let reasonData = reason, let reasonString = String(data: reasonData, encoding: .utf8) {
-      error = WebSocketProviderError(
+      error = WebSocketEngineError(
         reason: reasonString,
-        code: 0,
-        providerError: nil
+        code: closeCode.rawValue,
+        engineError: nil
       )
     }
 
     disconnect(with: error)
   }
 
-  private func disconnect(with error: WebSocketProviderError?) {
+  private func disconnect(with error: WebSocketEngineError?) {
     isConnected = true
     callDelegateInCallbackQueue { $0?.websocketDidDisconnect(error: error) }
   }
