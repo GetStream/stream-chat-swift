@@ -129,11 +129,9 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     
     var messageStackViewTopConstraint: Constraint?
     
-    // A bottom view with the bottom edge inset.
-    // It's a bottom constraint for `messageStackView` and `avatarView`.
-    let bottomPaddingView = UIView(frame: .zero)
+    // A bottom edge inset constraint for `messageStackView` and `avatarView`.
     var bottomEdgeInsetConstraint: Constraint?
-
+    
     let messageContainerView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
         imageView.isHidden = true
@@ -173,9 +171,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     /// Setup style and layouts.
     /// - Parameter style: a message view style.
     public func setupIfNeeded(style: MessageViewStyle) {
-        guard needsToSetup else {
-            return
-        }
+        guard needsToSetup else { return }
         
         needsToSetup = false
         self.style = style
@@ -183,10 +179,10 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         backgroundColor = style.chatBackgroundColor
         
         // Setup a bottom view with the bottom edge inset.
-        bottomPaddingView.isHidden = true
-        contentView.addSubview(bottomPaddingView)
+        let bottomLayoutGuide = UILayoutGuide()
+        contentView.addLayoutGuide(bottomLayoutGuide)
         
-        bottomPaddingView.snp.makeConstraints {
+        bottomLayoutGuide.snp.makeConstraints {
             bottomEdgeInsetConstraint = $0.height.equalTo(style.edgeInsets.bottom).priority(999).constraint
             $0.bottom.equalToSuperview().priority(999)
             $0.left.right.equalToSuperview()
@@ -226,7 +222,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
             contentView.addSubview(avatarView)
             
             avatarView.snp.makeConstraints { make in
-                make.bottom.equalTo(bottomPaddingView.snp.top).priority(999)
+                make.bottom.equalTo(bottomLayoutGuide.snp.top).priority(999)
                 
                 if style.alignment == .left {
                     make.left.equalToSuperview().offset(style.edgeInsets.left)
@@ -257,7 +253,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
         
         messageStackView.snp.makeConstraints { make in
             messageStackViewTopConstraint = make.top.equalToSuperview().offset(style.spacing.vertical).priority(999).constraint
-            make.bottom.equalTo(bottomPaddingView.snp.top).priority(999)
+            make.bottom.equalTo(bottomLayoutGuide.snp.top).priority(999)
             
             if style.alignment == .left {
                 make.left.equalToSuperview().offset(style.marginWithAvatarOffset).priority(999)
@@ -434,10 +430,6 @@ extension MessageTableViewCell {
         
         if visibleViews.isEmpty {
             return nil
-        }
-        
-        if visibleViews.last == bottomPaddingView {
-            visibleViews.removeLast()
         }
         
         if visibleViews.last == nameAndDateStackView {
