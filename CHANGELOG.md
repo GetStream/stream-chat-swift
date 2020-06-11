@@ -12,10 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐞 Fixed
 - `Channel.team` not being correctly encoded for multi-tenant enabled clients [#308](https://github.com/GetStream/stream-chat-swift/issues/308)
 - Channels not loading on ChannelsVC after opening the app from background using `stayConnectedInBackground: false` and no logger [#308](https://github.com/GetStream/stream-chat-swift/issues/308)
-- Fixed an error with the UI when adding new messages [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
-- Fixed background color for an empty image [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
-- Fixed height rendering for a message [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
-- Fixed rendering of a message bubble curve [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fixed an error in ChatViewController: a new message would scroll the messages up even when there's empty space [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fixed the default background color for a placeholder image or when the image wasn't loaded to make the size of it visible [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fixed height rendering for a message for messages with a single line [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fixed rendering of a message bubble curve more precisely [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
 - Fixed scrolling to the current message when you go to the last page [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
 
 # [2.2.3](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.3)
