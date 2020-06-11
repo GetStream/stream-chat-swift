@@ -4,12 +4,19 @@
 --swiftversion 5.2
 
 # Rules inferred from Swift Standard Library: 
+--enable andOperator
 --allman false
+--enable blankLinesAroundMark
+--enable blankLinesAtEndOfScope
+--enable blankLinesBetweenScopes
 --binarygrouping 4,7
 --closingparen balanced
 --commas inline
+--enable consecutiveBlankLines
+--enable consecutiveSpaces
+--enable duplicateImports
+--ifdef indent
 --conflictmarkers reject
---decimalgrouping none
 --elseposition same-line
 --empty void
 --exponentcase lowercase
@@ -18,25 +25,47 @@
 --fragment false
 --hexgrouping none
 --hexliteralcase lowercase
---ifdef outdent
+--enable leadingDelimiters
 --importgrouping alphabetized
---indent 2
+--indent 4
 --indentcase false
 --linebreaks lf
 --maxwidth 132
---nospaceoperators 
 --octalgrouping none
---operatorfunc no-space
---patternlet inline
 --nospaceoperators
---self init-only
---selfrequired 
+--enable redundantBreak
+--enable redundantExtensionACL
+--enable redundantFileprivate
+--enable redundantGet
+--enable redundantInit
+--enable redundantLet
+--enable redundantLetError
+--enable redundantNilInit
+--enable redundantObjc
+--disable redundantParens # it generates mistakes for e.g. "if (a || b), let x = ... {}"
+--enable redundantPattern
+--enable redundantRawValues
+--enable redundantReturn
 --semicolons inline
 --stripunusedargs closure-only
+--enable spaceAroundBraces
+--enable spaceAroundBrackets
+--enable spaceAroundComments
+--enable spaceAroundGenerics
+--enable spaceAroundParens
+--enable spaceInsideBraces
+--enable spaceInsideBrackets
+--enable spaceInsideComments
+--enable spaceInsideGenerics
+--enable spaceInsideParens
+--specifierorder
+--enable strongifiedSelf
+--enable todos
 --tabwidth unspecified
---trailingclosures 
---trimwhitespace always
---wraparguments before-first
+--trailingclosures
+--trimwhitespace nonblank-lines
+--shortoptionals always
+--wraparguments after-first
 --wrapcollections before-first
 --wrapparameters preserve
 --xcodeindentation disabled
