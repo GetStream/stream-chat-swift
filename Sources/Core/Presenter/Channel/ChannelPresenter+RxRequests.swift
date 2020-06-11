@@ -35,8 +35,8 @@ extension Reactive where Base == ChannelPresenter {
                     })
                     .asDriver(onErrorJustReturn: ())
                 : (base.channel.didLoad // If presenter is initialized with a ChannelResponse, query the channel with given options
-                ? base.channel.rx.query(options: base.queryOptions).map({ _ in return Void() }).asDriver(onErrorJustReturn: ())
-                : Driver.just(())))
+                  ? base.channel.rx.query(options: base.queryOptions).map({ _ in return Void() }).asDriver(onErrorJustReturn: ())
+                  : Driver.just(())))
                 // Merge all view changes from all sources.
                 .flatMapLatest({ [weak base] _ -> Driver<ViewChanges> in
                     guard let base = base else {
