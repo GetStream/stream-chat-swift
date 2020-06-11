@@ -416,7 +416,7 @@ extension ChatViewController {
                         minMessageHeight = tableView.frame.height // always scroll for multiple attachments.
                     } else if message.attachments.count == 1 {
                         minMessageHeight += .attachmentPreviewMaxHeight
-                    } else if message.text.count > 70 {
+                    } else if message.text.count > 60 {
                         minMessageHeight = tableView.frame.height // always scroll for a "large" text (~> 2 lines).
                     }
                 }
