@@ -381,7 +381,6 @@ extension ChatViewController {
         case .none, .itemMoved:
             return
         case let .reloaded(scrollToRow, items):
-            let needsToScroll = !items.isEmpty && ((scrollToRow == (items.count - 1)))
             var isLoading = false
             self.items = items
             
@@ -392,7 +391,7 @@ extension ChatViewController {
             
             tableView.reloadData()
             
-            if scrollToRow >= 0 && (isLoading || (scrollEnabled && needsToScroll)) {
+            if scrollToRow >= 0 && (isLoading || scrollEnabled) {
                 tableView.scrollToRowIfPossible(at: scrollToRow, animated: false)
             }
             
