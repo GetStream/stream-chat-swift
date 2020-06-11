@@ -25,6 +25,7 @@ _June 05, 2020_
 
 ### 🐞 Fixed
 - Fixed `rx.connectionState` observation when a user logged out and login again [#284](https://github.com/GetStream/stream-chat-swift/issues/284).
+- Fixed updates not happening in `ChannelPresenter` initialized with `ChannelResponse` and queryOptions containing `.watch` [#301](https://github.com/GetStream/stream-chat-swift/pull/301)
 
 # [2.2.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.2)
 _May 27, 2020_
