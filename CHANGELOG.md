@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed height rendering for a message for messages with a single line [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
 - Fixed rendering of a message bubble curve more precisely [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
 - Fixed scrolling to the current message when you go to the last page [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fix ChannelsPresenter not respecting filter for new created/added channels [#313](https://github.com/GetStream/stream-chat-swift/issues/313)
 
 # [2.2.3](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.3)
 _June 05, 2020_

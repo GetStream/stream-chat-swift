@@ -69,7 +69,7 @@ private extension Reactive where Base == ChannelsPresenter {
                 
                 return true
             })
-            .map { [weak base] in base?.parse(event: $0) ?? .none }
+            .flatMap { [weak base] in base?.parse(event: $0) ?? Observable.just(.none) }
             .filter { $0 != .none }
             .asClientDriver()
     }
