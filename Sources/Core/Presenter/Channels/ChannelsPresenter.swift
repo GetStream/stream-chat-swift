@@ -126,13 +126,13 @@ extension ChannelsPresenter {
 // MARK: - WebSocket Events Parsing
 
 extension ChannelsPresenter {
-    func parse(event: StreamChatClient.Event) -> ViewChanges {
+    func parse(event: StreamChatClient.Event) -> Observable<ViewChanges> {
         if event.isNotification {
             return parseNotifications(event: event)
         }
         
         guard let cid = event.cid else {
-            return .none
+            return Observable.just(.none)
         }
         
         switch event {
@@ -140,19 +140,19 @@ extension ChannelsPresenter {
             if let index = items.firstIndex(where: channelResponse.channel.cid),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parse(event: event)
-                return .itemsUpdated([index], [], items)
+                return Observable.just(.itemsUpdated([index], [], items))
             }
             
         case .channelDeleted:
             if let index = items.firstIndex(where: cid) {
                 items.remove(at: index)
-                return .itemRemoved(index, items)
+                return Observable.just(.itemRemoved(index, items))
             }
             
         case .channelHidden:
             if let index = items.firstIndex(where: cid) {
                 items.remove(at: index)
-                return .itemRemoved(index, items)
+                return Observable.just(.itemRemoved(index, items))
             }
             
         case .messageNew:
@@ -162,73 +162,81 @@ extension ChannelsPresenter {
             if let index = items.firstIndex(where: cid),
                 let channelPresenter = items[index].channelPresenter {
                 channelPresenter.parse(event: event)
-                return .itemsUpdated([index], [message], items)
+                return Observable.just(.itemsUpdated([index], [message], items))
             }
             
         case .messageRead:
             if let index = items.firstIndex(where: cid) {
-                return .itemsUpdated([index], [], items)
+                return Observable.just(.itemsUpdated([index], [], items))
             }
             
         default:
             break
         }
         
-        return .none
+        return Observable.just(.none)
     }
     
-    private func parseNotifications(event: StreamChatClient.Event) -> ViewChanges {
+    private func parseNotifications(event: StreamChatClient.Event) -> Observable<ViewChanges> {
         switch event {
         case .notificationAddedToChannel(let channel, _, _):
             return parseNewChannel(channel: channel)
         case .notificationMarkAllRead:
-            return .reloaded(0, items)
+            return Observable.just(.reloaded(0, items))
         case .notificationMarkRead(_, let channel, _, _):
             if let index = items.firstIndex(where: channel.cid) {
-                return .itemsUpdated([index], [], items)
+                return Observable.just(.itemsUpdated([index], [], items))
             }
         default:
             break
         }
         
-        return .none
+        return Observable.just(.none)
     }
     
-    private func parseNewMessage(event: StreamChatClient.Event) -> ViewChanges {
+    private func parseNewMessage(event: StreamChatClient.Event) -> Observable<ViewChanges> {
         guard let cid = event.cid,
             let index = items.firstIndex(where: cid),
             let channelPresenter = items.remove(at: index).channelPresenter else {
-                return .none
+                return Observable.just(.none)
         }
         
         channelPresenter.parse(event: event)
         items.insert(.channelPresenter(channelPresenter), at: 0)
         
         if index == 0 {
-            return .itemsUpdated([0], [], items)
+            return Observable.just(.itemsUpdated([0], [], items))
         }
         
-        return .itemMoved(fromRow: index, toRow: 0, items)
+        return Observable.just(.itemMoved(fromRow: index, toRow: 0, items))
     }
     
-    private func parseNewChannel(channel: Channel) -> ViewChanges {
+    private func parseNewChannel(channel: Channel) -> Observable<ViewChanges> {
         guard items.firstIndex(where: channel.cid) == nil else {
-            return .none
+            return Observable.just(.none)
         }
         
-        let channelPresenter = ChannelPresenter(channel: channel, queryOptions: queryOptions)
-        channelPresenter.stopWatchingIfNeeded = stopChannelsWatchingIfNeeded
-        onChannelPresenterSetup?(channelPresenter)
-        // We need to load messages for new channel.
-        loadChannelMessages(channelPresenter)
-        items.insert(.channelPresenter(channelPresenter), at: 0)
-        
-        // Update pagination offset.
-        if next != pageSize {
-            next = [.channelsNextPageSize, .offset((next.offset ?? 0) + 1)]
+        // Query channels with current filter to see if the new channel is valid
+        return Client.shared.rx.queryChannels(filter: filter & .equal("cid", to: channel.cid))
+            .map { [weak self] (channelsResponse) -> ViewChanges in
+                guard let self = self, let channel = channelsResponse.first?.channel else {
+                    return .none
+                }
+                
+                let channelPresenter = ChannelPresenter(channel: channel, queryOptions: self.queryOptions)
+                channelPresenter.stopWatchingIfNeeded = self.stopChannelsWatchingIfNeeded
+                self.onChannelPresenterSetup?(channelPresenter)
+                // We need to load messages for new channel.
+                self.loadChannelMessages(channelPresenter)
+                self.items.insert(.channelPresenter(channelPresenter), at: 0)
+                
+                // Update pagination offset.
+                if self.next != self.pageSize {
+                    self.next = [.channelsNextPageSize, .offset((self.next.offset ?? 0) + 1)]
+                }
+                
+                return .itemsAdded([0], nil, false, self.items)
         }
-        
-        return .itemsAdded([0], nil, false, items)
     }
     
     private func loadChannelMessages(_ channelPresenter: ChannelPresenter) {
