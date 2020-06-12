@@ -44,11 +44,8 @@ extension ChannelPresenter {
             return .none
         }
         
-        if isNextPage {
-            return .reloaded(max(items.count - currentCount - 1, 0), items)
-        }
-        
-        return .reloaded((items.count - 1), items)
+        let scrollToRow = max(items.count - currentCount - 1, 0)
+        return .reloaded(scrollToRow, items)
     }
     
     func parse(replies messages: [Message]) -> ViewChanges {

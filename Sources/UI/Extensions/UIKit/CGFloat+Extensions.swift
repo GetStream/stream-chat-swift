@@ -84,7 +84,7 @@ extension CGFloat {
     /// A message spacing.
     public static let messageSpacing: CGFloat = 3
     /// A message corner radius.
-    public static let messageCornerRadius: CGFloat = 16
+    public static let messageCornerRadius: CGFloat = 14
     /// A message horizontal inset.
     public static let messageHorizontalInset: CGFloat = 10
     /// A message vertical inset.
