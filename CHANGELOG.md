@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.2.4](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.4)
+_June 12, 2020_
+
 ### ✅ Added
 - `ClientLogger.showConnectionErrorAlert` flag to control showing the UI alert for WebSocket errors. It's turned off by default. [#303](https://github.com/GetStream/stream-chat-swift/issues/303)
 
