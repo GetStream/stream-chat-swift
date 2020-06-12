@@ -24,12 +24,7 @@ public final class Client: Uploader {
     """)
     public static var config: Config = .init(apiKey: "_deprecated") {
         didSet {
-            guard backingSharedClient == nil else {
-                ClientLogger.logAssertionFailure(
-                    "`Client.shared` instance was already used. It's not possible to change its configuration."
-                )
-                return
-            }
+            guard shouldSetSharedConfig(for: config) else { return }
             
             configForSharedClient = config
         }
@@ -58,16 +53,34 @@ public final class Client: Uploader {
     /// A backing variable for `Client.shared`. We need this to have finer control over its creation.
     private static var backingSharedClient: Client?
     
+    private static func shouldSetSharedConfig(for config: Config) -> Bool {
+        if backingSharedClient != nil {
+            let errorMessage = "`Client.shared` instance was already used. "
+                + "It's not possible to change its configuration.\n"
+                + "You're either setting `Client.config` or calling `Client.configureShared` multiple times. "
+                + "You should only do this once.\n"
+                + "Break on \(#file):\(#line) to catch this issue."
+            
+            if configForSharedClient != config {
+                // Error
+                ClientLogger.logAssertionFailure(errorMessage)
+            } else {
+                // Warning
+                ClientLogger.log("❌", level: .error, errorMessage)
+            }
+            
+            return false
+        }
+        
+        return true
+    }
+    
     /// Configures the shared instance of `Client`.
     ///
     /// - Parameter configuration: The configuration object with details of how the shared instance should be set up.
     public static func configureShared(_ config: Config) {
-        guard backingSharedClient == nil else {
-            ClientLogger.logAssertionFailure(
-                "`Client.shared` instance was already used. It's not possible to change its configuration."
-            )
-            return
-        }
+        guard shouldSetSharedConfig(for: config) else { return }
+        
         configForSharedClient = config
     }
     

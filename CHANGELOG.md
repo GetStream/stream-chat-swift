@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ✅ Added
 - `ClientLogger.showConnectionErrorAlert` flag to control showing the UI alert for WebSocket errors. It's turned off by default. [#303](https://github.com/GetStream/stream-chat-swift/issues/303)
 
+### 🔄 Changed
+- Calling `Client.configureShared` with the same config more than once does not cause assertion failure. This is still discouraged and should not be done, and will not take affect. Calling it with different configs will still cause assertion failure. [#313](https://github.com/GetStream/stream-chat-swift/issues/313)
+   Note: Changing `apiKey` only is possible via `Client.shared.apiKey`
+
 ### 🐞 Fixed
 - `Channel.team` not being correctly encoded for multi-tenant enabled clients [#308](https://github.com/GetStream/stream-chat-swift/issues/308)
 - Channels not loading on ChannelsVC after opening the app from background using `stayConnectedInBackground: false` and no logger [#308](https://github.com/GetStream/stream-chat-swift/issues/308)

@@ -124,3 +124,14 @@ extension Client.Config {
     }
 
 }
+
+extension Client.Config: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.apiKey == rhs.apiKey
+            && lhs.baseURL == rhs.baseURL
+            && lhs.callbackQueue == rhs.callbackQueue
+            && lhs.database?.user == rhs.database?.user
+            && lhs.logOptions == rhs.logOptions
+            && lhs.stayConnectedInBackground == rhs.stayConnectedInBackground
+    }
+}
