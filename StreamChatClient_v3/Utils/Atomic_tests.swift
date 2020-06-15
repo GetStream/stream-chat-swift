@@ -75,20 +75,25 @@ extension AtomicTests {
   func test_Atomic_whenSetAndGetCalledSimultaneously() {
     var atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
 
+    let readGroup = DispatchGroup()
     for idx in 0 ..< numberOfStressTestCycles {
       DispatchQueue.random.async {
         atomicValue { $0["\(idx)"] = idx }
       }
 
       for _ in 0 ... 5 {
-        var value: [String: Int] { atomicValue.wrappedValue }
+        readGroup.enter()
         DispatchQueue.random.async {
-          _ = value
+          _ = atomicValue.wrappedValue
+          readGroup.leave()
         }
       }
     }
 
     AssertAsync.willBeEqual(atomicValue.wrappedValue.count, numberOfStressTestCycles)
+
+    // Wait until all reading is done to prevent bad access
+    readGroup.wait()
   }
 
   func test_Atomic_whenCalledFromMainThred() {
