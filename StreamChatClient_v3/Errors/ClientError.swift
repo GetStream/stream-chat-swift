@@ -23,7 +23,7 @@ public class ClientError: Error {
 }
 
 extension ClientError {
-  public class Unexpect: ClientError {
+  public class Unexpected: ClientError {
     public private(set) lazy var localizedDescription: String = "Unexpect error: \(String(describing: underlyingError))"
 
     public convenience init(_ description: String, _ file: StaticString = #file, _ line: UInt = #line) {
