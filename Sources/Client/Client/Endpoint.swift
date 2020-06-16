@@ -90,6 +90,8 @@ public enum Endpoint {
     case flagMessage(Message)
     /// Unflag a message.
     case unflagMessage(Message)
+    /// Translate a message
+    case translate(Message, Language)
     
     // MARK: - User Endpoints
     
@@ -137,6 +139,8 @@ extension Endpoint {
             return "messages/\(messageId)"
         case .markAllRead:
             return "channels/read"
+        case let .translate(message, _):
+            return path(to: message.id, "translate")
         case .deleteChannel(let channel),
              .invite(_, let channel),
              .addMembers(_, let channel),
@@ -318,6 +322,9 @@ extension Endpoint {
             
         case .removeMembers(let members, _):
             return ["remove_members": members]
+            
+        case let .translate(_, language):
+            return ["language": language.languageCode]
         }
     }
     
@@ -375,7 +382,8 @@ extension Endpoint {
              .unflagUser,
              .flagMessage,
              .unflagMessage,
-             .ban:
+             .ban,
+             .translate:
             return false
         }
     }
