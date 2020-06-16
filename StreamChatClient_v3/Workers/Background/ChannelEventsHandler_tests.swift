@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatClient_v3
 import XCTest
 
-class ChannelEventsHandlerTests: XCTestCase {
+class ChannelEventsHandler_Tests: XCTestCase {
   var worker: ChannelEventsHandler<DefaultDataTypes>!
 
   var database: DatabaseContainer!
