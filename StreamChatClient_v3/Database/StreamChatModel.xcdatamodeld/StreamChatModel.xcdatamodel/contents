@@ -1,10 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E266" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
+        <attribute name="config" attributeType="Binary"/>
+        <attribute name="createdDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="deletedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
         <attribute name="id" optional="YES" attributeType="String"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="members" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="channels" inverseEntity="UserDTO"/>
+        <attribute name="isFrozen" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lastMessageDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="typeRawValue" optional="YES" attributeType="String"/>
+        <attribute name="updatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdChannels" inverseEntity="UserDTO"/>
+        <relationship name="members" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="channel" inverseEntity="MemberDTO"/>
+        <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TeamDTO" inverseName="channels" inverseEntity="TeamDTO"/>
+        <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="MemberDTO" representedClassName="MemberDTO" syncable="YES">
+        <attribute name="channelRoleRaw" attributeType="String"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="inviteAcceptedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="inviteRejectedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isInvited" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="memberCreatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="memberUpdatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="members" inverseEntity="ChannelDTO"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="members" inverseEntity="UserDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -21,10 +46,29 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="TeamDTO" representedClassName="TeamDTO" syncable="YES">
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <relationship name="channels" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="team" inverseEntity="ChannelDTO"/>
+        <relationship name="users" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="teams" inverseEntity="UserDTO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
     <entity name="UserDTO" representedClassName="UserDTO" syncable="YES">
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
-        <attribute name="id" optional="YES" attributeType="String"/>
-        <relationship name="channels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="members" inverseEntity="ChannelDTO"/>
+        <attribute name="id" attributeType="String"/>
+        <attribute name="isBanned" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isOnline" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lastActivityDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="userCreatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="userRoleRaw" attributeType="String"/>
+        <attribute name="userUpdatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="createdChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="createdBy" inverseEntity="ChannelDTO"/>
+        <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="user" inverseEntity="MemberDTO"/>
+        <relationship name="teams" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TeamDTO" inverseName="users" inverseEntity="TeamDTO"/>
+        <relationship name="watchedChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="watchers" inverseEntity="ChannelDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -32,8 +76,10 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="ChannelDTO" positionX="0" positionY="45" width="128" height="103"/>
+        <element name="ChannelDTO" positionX="0" positionY="45" width="128" height="238"/>
+        <element name="MemberDTO" positionX="0" positionY="63" width="128" height="178"/>
         <element name="MessageDTO" positionX="27" positionY="72" width="128" height="88"/>
-        <element name="UserDTO" positionX="-36" positionY="9" width="128" height="88"/>
+        <element name="TeamDTO" positionX="9" positionY="126" width="128" height="88"/>
+        <element name="UserDTO" positionX="-36" positionY="9" width="128" height="223"/>
     </elements>
 </model>
