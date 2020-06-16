@@ -96,22 +96,16 @@ extension DatabaseContainer {
 extension NSManagedObjectContext: DatabaseSession {}
 
 protocol DatabaseSession {
-    // MARK: -  User model
+    // MARK: -  User
     
-    func saveUser<ExtraUserData: Codable & Hashable>(_ user: UserModel<ExtraUserData>)
-    func saveUser<ExtraUserData: Codable & Hashable>(endpointResponse response: UserEndpointReponse<ExtraUserData>)
-    func loadUser<ExtraUserData: Codable & Hashable>(id: String) -> UserModel<ExtraUserData>?
+    @discardableResult func saveUser<ExtraData: UserExtraData>(payload: UserEndpointPayload<ExtraData>) -> UserDTO
+    func loadUser<ExtraData: UserExtraData>(id: String) -> UserModel<ExtraData>?
     
     // MARK: -  Channel model
     
     func saveChannel<ExtraData: ExtraDataTypes>(_ channel: ChannelModel<ExtraData>)
     func saveChannel<ExtraData: ExtraDataTypes>(endpointResponse response: ChannelEndpointResponse<ExtraData>)
     func loadChannel<ExtraData: ExtraDataTypes>(id: String) -> ChannelModel<ExtraData>?
-}
-
-protocol LoadableEntity {
-    associatedtype DTOEntity
-    init(fromDTO entity: DTOEntity)
 }
 
 // WIP

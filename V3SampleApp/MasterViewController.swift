@@ -73,7 +73,7 @@ class MasterViewController: UITableViewController, ChannelListControllerDelegate
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let object = channelListController.channels[indexPath.row]
-        let users = object.members.compactMap { $0.name }.joined(separator: ", ")
+        let users = object.members.compactMap { $0.name! }.joined(separator: ", ")
         cell.textLabel!.text = users
         return cell
     }

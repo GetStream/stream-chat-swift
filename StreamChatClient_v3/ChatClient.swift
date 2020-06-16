@@ -27,7 +27,7 @@ import Foundation
 /// ```
 ///
 public protocol ExtraDataTypes {
-    associatedtype User: Codable & Hashable = NameAndAvatarUserData
+    associatedtype User: UserExtraData = NameAndAvatarUserData
     associatedtype Message: Codable & Hashable = NoExtraMessageData
     associatedtype Channel: Codable & Hashable = NoExtraChannelData
 }
