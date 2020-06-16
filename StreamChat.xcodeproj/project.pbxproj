@@ -1885,9 +1885,9 @@
 				8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */,
 				7920E84E2449C6EF00CCBFBF /* fastlane */,
 			);
-			indentWidth = 2;
+			indentWidth = 4;
 			sourceTree = "<group>";
-			tabWidth = 2;
+			tabWidth = 4;
 		};
 		8AD5EC9022E9A3E8005CFAC9 /* Products */ = {
 			isa = PBXGroup;
