@@ -6,7 +6,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-final class WebSocketClientTests: XCTestCase {
+final class WebSocketClient_Tests: XCTestCase {
     struct TestEvent: Event, Equatable {
         static let eventRawType = "test_event"
         let id = UUID()

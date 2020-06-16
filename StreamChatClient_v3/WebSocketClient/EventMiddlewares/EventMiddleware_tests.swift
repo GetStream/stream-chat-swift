@@ -6,7 +6,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class EventMiddlewareTests: XCTestCase {
+class EventMiddleware_Tests: XCTestCase {
     /// A test middleware that can be initiated with a closure/
     struct ClosureBasedMiddleware: EventMiddleware {
         let closure: (_ event: Event, _ completion: @escaping (Event?) -> Void) -> Void
