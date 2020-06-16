@@ -82,6 +82,7 @@
 		79877A0A2498E4BC00015F8B /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A022498E4BB00015F8B /* Device.swift */; };
 		79877A0B2498E4BC00015F8B /* MemberModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A032498E4BB00015F8B /* MemberModel.swift */; };
 		79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A042498E4BB00015F8B /* ChannelType.swift */; };
+		79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A052498E4BC00015F8B /* CurrentUser.swift */; };
 		79877A0E2498E4BC00015F8B /* ChannelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A062498E4BC00015F8B /* ChannelModel.swift */; };
 		79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A072498E4BC00015F8B /* ChannelId.swift */; };
 		79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A132498E4EE00015F8B /* ChannelEndpoints.swift */; };
@@ -537,6 +538,7 @@
 		79877A022498E4BB00015F8B /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		79877A032498E4BB00015F8B /* MemberModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberModel.swift; sourceTree = "<group>"; };
 		79877A042498E4BB00015F8B /* ChannelType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelType.swift; sourceTree = "<group>"; };
+		79877A052498E4BC00015F8B /* CurrentUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUser.swift; sourceTree = "<group>"; };
 		79877A062498E4BC00015F8B /* ChannelModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelModel.swift; sourceTree = "<group>"; };
 		79877A072498E4BC00015F8B /* ChannelId.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelId.swift; sourceTree = "<group>"; };
 		79877A132498E4EE00015F8B /* ChannelEndpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints.swift; sourceTree = "<group>"; };
@@ -1203,6 +1205,7 @@
 				79877A072498E4BC00015F8B /* ChannelId.swift */,
 				79877A062498E4BC00015F8B /* ChannelModel.swift */,
 				79877A042498E4BB00015F8B /* ChannelType.swift */,
+				79877A052498E4BC00015F8B /* CurrentUser.swift */,
 				79877A022498E4BB00015F8B /* Device.swift */,
 				79877A032498E4BB00015F8B /* MemberModel.swift */,
 				79877A012498E4BB00015F8B /* UserModel.swift */,
@@ -2494,6 +2497,7 @@
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
 				79BF83F2248F8F60007611A1 /* Logger.swift in Sources */,
 				799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */,
+				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
 				792A4F462480107A00EAF71D /* ChannelQuery.swift in Sources */,
 				799C9447247D50F3001F1104 /* Worker.swift in Sources */,
 				79280F782489181200CDEB89 /* URLSessionWebSocketEngine.swift in Sources */,
