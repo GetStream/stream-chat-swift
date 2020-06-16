@@ -6,7 +6,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class HealthCheckFilterMiddlewareTests: XCTestCase {
+class HealthCheckFilterMiddleware_Tests: XCTestCase {
     /// A test event holding an `Int` value.
     struct IntBasedEvent: Event, Equatable {
         static var eventRawType: String { "test_only" }

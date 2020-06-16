@@ -6,7 +6,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class TypingStartCleanupMiddlewareTests: XCTestCase {
+class TypingStartCleanupMiddleware_Tests: XCTestCase {
     var middleware: TypingStartCleanupMiddleware<DefaultDataTypes>!
     var currentUser: User!
     
