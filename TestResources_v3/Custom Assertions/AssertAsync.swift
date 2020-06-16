@@ -431,7 +431,7 @@ extension AssertAsync {
     static func staysEqual<T: Equatable>(
         _ expression1: @autoclosure () -> T,
         _ expression2: @autoclosure () -> T,
-        timeout: TimeInterval = defaultTimeout,
+        timeout: TimeInterval = defaultTimeoutForInversedExpecations,
         message: @autoclosure () -> String? = nil,
         file: StaticString = #file,
         line: UInt = #line
