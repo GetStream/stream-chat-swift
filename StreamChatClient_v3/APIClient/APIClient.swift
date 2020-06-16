@@ -33,7 +33,7 @@ extension APIClient {
     ///   - endpoint: an endpoint (see `Endpoint`).
     ///   - completion: a completion block.
     /// - Returns: an URLSessionTask that can be canncelled.
-    func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping (Result<T, Error>) -> Void) {
+    func request<T: Decodable>(endpoint: Endpoint<T>, _ completion: @escaping (Result<T, Error>) -> Void) {
         queryItems(for: endpoint) { queryItemsResult in
             guard case let .success(queryItems) = queryItemsResult else { fatalError() }
             do {
@@ -62,7 +62,7 @@ extension APIClient {
         }
     }
     
-    private func requestURL(for endpoint: Endpoint, queryItems: [URLQueryItem]) -> Result<URL, Error> {
+    private func requestURL<T: Decodable>(for endpoint: Endpoint<T>, queryItems: [URLQueryItem]) -> Result<URL, Error> {
         var urlComponents = URLComponents()
         urlComponents.scheme = baseURL.scheme
         urlComponents.host = baseURL.host
@@ -77,7 +77,8 @@ extension APIClient {
         return .success(url)
     }
     
-    private func queryItems(for endpoint: Endpoint, completion: @escaping (Result<[URLQueryItem], Error>) -> Void) {
+    private func queryItems<T: Decodable>(for endpoint: Endpoint<T>,
+                                          completion: @escaping (Result<[URLQueryItem], Error>) -> Void) {
         if apiKey.isEmpty {
             fatalError()
 //           return .failure(.emptyAPIKey)
@@ -137,7 +138,7 @@ extension APIClient {
     })
     }
     
-    private func encodeRequest(for endpoint: Endpoint, url: URL) -> Result<URLRequest, Error> {
+    private func encodeRequest<T: Decodable>(for endpoint: Endpoint<T>, url: URL) -> Result<URLRequest, Error> {
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = endpoint.method.rawValue
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")

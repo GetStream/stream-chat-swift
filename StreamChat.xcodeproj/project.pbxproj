@@ -56,7 +56,6 @@
 		792A4F492480107A00EAF71D /* Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F452480107A00EAF71D /* Sorting.swift */; };
 		792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F4A248010A600EAF71D /* QueryOptions.swift */; };
 		792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F4C248011E500EAF71D /* ChannelListQuery.swift */; };
-		792A4F4F2480EA3B00EAF71D /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F4E2480EA3B00EAF71D /* Endpoint.swift */; };
 		792A4F512480F55800EAF71D /* ChannelListEndpointResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F502480F55800EAF71D /* ChannelListEndpointResponse.swift */; };
 		792A4F532480F5AD00EAF71D /* ChannelEndpointResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F522480F5AD00EAF71D /* ChannelEndpointResponse.swift */; };
 		792A4F56248113D800EAF71D /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F55248113D800EAF71D /* Member.swift */; };
@@ -77,6 +76,7 @@
 		797A756424814E7A003CF16D /* WebSocketPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
 		797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* BundleExtensions.swift */; };
+		79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A172498E4EE00015F8B /* Endpoint.swift */; };
 		799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
 		799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */; };
 		799C941F247D2F80001F1104 /* StreamChatClient_v3.h in Headers */ = {isa = PBXBuildFile; fileRef = 799C941D247D2F80001F1104 /* StreamChatClient_v3.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -497,7 +497,6 @@
 		792A4F452480107A00EAF71D /* Sorting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sorting.swift; sourceTree = "<group>"; };
 		792A4F4A248010A600EAF71D /* QueryOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryOptions.swift; sourceTree = "<group>"; };
 		792A4F4C248011E500EAF71D /* ChannelListQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelListQuery.swift; sourceTree = "<group>"; };
-		792A4F4E2480EA3B00EAF71D /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		792A4F502480F55800EAF71D /* ChannelListEndpointResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListEndpointResponse.swift; sourceTree = "<group>"; };
 		792A4F522480F5AD00EAF71D /* ChannelEndpointResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpointResponse.swift; sourceTree = "<group>"; };
 		792A4F55248113D800EAF71D /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
@@ -517,6 +516,7 @@
 		797A756324814E7A003CF16D /* WebSocketPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
 		797A756724814F0D003CF16D /* BundleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtensions.swift; sourceTree = "<group>"; };
+		79877A172498E4EE00015F8B /* Endpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy.swift; sourceTree = "<group>"; };
 		799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy_Tests.swift; sourceTree = "<group>"; };
 		799C941B247D2F80001F1104 /* StreamChatClient_v3.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatClient_v3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1087,6 +1087,14 @@
 			path = EventMiddlewares;
 			sourceTree = "<group>";
 		};
+		79877A122498E4EE00015F8B /* Endpoints */ = {
+			isa = PBXGroup;
+			children = (
+				79877A172498E4EE00015F8B /* Endpoint.swift */,
+			);
+			path = Endpoints;
+			sourceTree = "<group>";
+		};
 		799C9415247D2F38001F1104 /* StreamChatClient_v3 */ = {
 			isa = PBXGroup;
 			children = (
@@ -1163,7 +1171,7 @@
 			children = (
 				792A4F54248110C900EAF71D /* EndpointReponses */,
 				799C9442247D3DA7001F1104 /* APIClient.swift */,
-				792A4F4E2480EA3B00EAF71D /* Endpoint.swift */,
+				79877A122498E4EE00015F8B /* Endpoints */,
 			);
 			path = APIClient;
 			sourceTree = "<group>";
@@ -2417,13 +2425,13 @@
 				79A0E9B62498C2DD00E9BD50 /* HealthCheckFilterMiddleware.swift in Sources */,
 				79BF83F6248F8F97007611A1 /* PrefixLogFormatter.swift in Sources */,
 				792A4F5A24812D1A00EAF71D /* UserEndpointReponse.swift in Sources */,
-				792A4F4F2480EA3B00EAF71D /* Endpoint.swift in Sources */,
 				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
 				799C9440247D2FB9001F1104 /* User.swift in Sources */,
 				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
 				792A4F1B247FE84900EAF71D /* ChannelQueryUpdater.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				792A4F5824812C2600EAF71D /* MemberEndpointResponse.swift in Sources */,
+				79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */,
 				79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */,
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,
 				799C943C247D2FB9001F1104 /* UserDTO.swift in Sources */,
