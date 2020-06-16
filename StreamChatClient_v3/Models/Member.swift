@@ -10,5 +10,5 @@ import Foundation
 public typealias Member = MemberModel<NameAndAvatarUserData>
 
 public struct MemberModel<ExtraData: Codable & Hashable> {
-  public let user: UserModel<ExtraData>
+    public let user: UserModel<ExtraData>
 }

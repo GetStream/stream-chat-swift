@@ -7,7 +7,7 @@ import Foundation
 
 /// Basic destination for outputting messages to console.
 public class ConsoleLogDestination: BaseLogDestination {
-  open override func write(message: String) {
-    print(message)
-  }
+    override open func write(message: String) {
+        print(message)
+    }
 }

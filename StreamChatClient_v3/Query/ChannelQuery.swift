@@ -7,65 +7,65 @@ import Foundation
 
 /// A channel query.
 public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
-  private enum CodingKeys: String, CodingKey {
-    case data
-    case messages
-    case members
-    case watchers
-  }
-
-  /// A channel.
-  public let channel: ChannelModel<ExtraData>
-  /// A pagination for messages (see `Pagination`).
-  public let messagesPagination: Pagination
-  /// A pagination for members (see `Pagination`). You can use `.limit` and `.offset`.
-  public let membersPagination: Pagination
-  /// A pagination for watchers (see `Pagination`). You can use `.limit` and `.offset`.
-  public let watchersPagination: Pagination
-  /// A query options.
-  public let options: QueryOptions
-
-  /// Init a channel query.
-  /// - Parameters:
-  ///   - channel: a channel.
-  ///   - memebers: members of the channel.
-  ///   - messagesPagination: a pagination for messages.
-  ///   - membersPagination: a pagination for members. You can use `.limit` and `.offset`.
-  ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
-  ///   - options: a query options (see `QueryOptions`).
-  public init(channel: ChannelModel<ExtraData>,
-              messagesPagination: Pagination = [],
-              membersPagination: Pagination = [],
-              watchersPagination: Pagination = [],
-              options: QueryOptions = []) {
-    self.channel = channel
-    self.messagesPagination = messagesPagination
-    self.membersPagination = membersPagination
-    self.watchersPagination = watchersPagination
-    self.options = options
-  }
-
-  public func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    try options.encode(to: encoder)
-
-    // The channel data only needs for creating it.
+    private enum CodingKeys: String, CodingKey {
+        case data
+        case messages
+        case members
+        case watchers
+    }
+    
+    /// A channel.
+    public let channel: ChannelModel<ExtraData>
+    /// A pagination for messages (see `Pagination`).
+    public let messagesPagination: Pagination
+    /// A pagination for members (see `Pagination`). You can use `.limit` and `.offset`.
+    public let membersPagination: Pagination
+    /// A pagination for watchers (see `Pagination`). You can use `.limit` and `.offset`.
+    public let watchersPagination: Pagination
+    /// A query options.
+    public let options: QueryOptions
+    
+    /// Init a channel query.
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - memebers: members of the channel.
+    ///   - messagesPagination: a pagination for messages.
+    ///   - membersPagination: a pagination for members. You can use `.limit` and `.offset`.
+    ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
+    ///   - options: a query options (see `QueryOptions`).
+    public init(channel: ChannelModel<ExtraData>,
+                messagesPagination: Pagination = [],
+                membersPagination: Pagination = [],
+                watchersPagination: Pagination = [],
+                options: QueryOptions = []) {
+        self.channel = channel
+        self.messagesPagination = messagesPagination
+        self.membersPagination = membersPagination
+        self.watchersPagination = watchersPagination
+        self.options = options
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try options.encode(to: encoder)
+        
+        // The channel data only needs for creating it.
 //        if !channel.didLoad, !channel.isEmpty {
 //            try container.encode(channel, forKey: .data)
 //        }
-
-    if !messagesPagination.isEmpty {
-      try container.encode(messagesPagination, forKey: .messages)
+        
+        if !messagesPagination.isEmpty {
+            try container.encode(messagesPagination, forKey: .messages)
+        }
+        
+        if !membersPagination.isEmpty {
+            try container.encode(membersPagination, forKey: .members)
+        }
+        
+        if !watchersPagination.isEmpty {
+            try container.encode(watchersPagination, forKey: .watchers)
+        }
     }
-
-    if !membersPagination.isEmpty {
-      try container.encode(membersPagination, forKey: .members)
-    }
-
-    if !watchersPagination.isEmpty {
-      try container.encode(watchersPagination, forKey: .watchers)
-    }
-  }
 }
 
 ///// An answer for an invite to a channel.

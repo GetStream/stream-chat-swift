@@ -6,7 +6,7 @@
 import Foundation
 
 public struct MessageModel<CustomData: Codable & Hashable> {
-  let id: String
+    let id: String
 }
 
 public typealias Message = MessageModel<NoExtraMessageData>

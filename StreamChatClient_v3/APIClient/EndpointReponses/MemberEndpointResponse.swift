@@ -6,5 +6,5 @@
 import Foundation
 
 struct MemberEndpointResponse<UserExtraData: Codable & Hashable>: Decodable {
-  let user: UserEndpointReponse<UserExtraData>
+    let user: UserEndpointReponse<UserExtraData>
 }

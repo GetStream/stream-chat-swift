@@ -15,35 +15,35 @@ import Foundation
 ///   ```
 ///
 public struct ChatClientConfig {
-  public let apiKey: String
-
-  /// The folder ChatClient uses to store its database files.
-  public var localStorageFolderURL: URL? = {
-    let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-    return urls.first
-  }()
-
-  public var baseURL: BaseURL = .dublin
-
-  public var isLocalStorageEnabled: Bool = true
-
-  public var channel = Channel()
-
-  public init(apiKey: String) {
-    self.apiKey = apiKey
-  }
+    public let apiKey: String
+    
+    /// The folder ChatClient uses to store its database files.
+    public var localStorageFolderURL: URL? = {
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return urls.first
+    }()
+    
+    public var baseURL: BaseURL = .dublin
+    
+    public var isLocalStorageEnabled: Bool = true
+    
+    public var channel = Channel()
+    
+    public init(apiKey: String) {
+        self.apiKey = apiKey
+    }
 }
 
 extension ChatClientConfig {
-  public struct Channel {
-    // example ...
-    public var isReplyInChannelAllowed = true
-
-    /// When `KeystrokeEvent` is sent, the time interval before the `UserTypingStop` event is automatically sent.
-    public var keystrokeEventTimeout: TimeInterval = 5
-  }
-
-  public struct Message {
-    // something
-  }
+    public struct Channel {
+        // example ...
+        public var isReplyInChannelAllowed = true
+        
+        /// When `KeystrokeEvent` is sent, the time interval before the `UserTypingStop` event is automatically sent.
+        public var keystrokeEventTimeout: TimeInterval = 5
+    }
+    
+    public struct Message {
+        // something
+    }
 }

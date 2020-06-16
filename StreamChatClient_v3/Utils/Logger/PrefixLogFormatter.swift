@@ -9,13 +9,13 @@ import Foundation
 /// Useful for emphasizing different leveled messages on console, when used as:
 /// `prefixes: [.info: "𝒊", .debug: "🛠", .error: "❌", .fault: "🚨"]`
 public class PrefixLogFormatter: LogFormatter {
-  private let prefixes: [LogLevel: String]
-
-  public init(prefixes: [LogLevel: String]) {
-    self.prefixes = prefixes
-  }
-
-  public func format(logDetails: LogDetails, message: String) -> String {
-    prefixes[logDetails.level, default: ""] + " " + message
-  }
+    private let prefixes: [LogLevel: String]
+    
+    public init(prefixes: [LogLevel: String]) {
+        self.prefixes = prefixes
+    }
+    
+    public func format(logDetails: LogDetails, message: String) -> String {
+        prefixes[logDetails.level, default: ""] + " " + message
+    }
 }

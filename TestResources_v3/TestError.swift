@@ -7,5 +7,5 @@ import Foundation
 
 /// Uniquely indetifiable error that can be used in tests.
 struct TestError: Error, Equatable {
-  let id = UUID()
+    let id = UUID()
 }

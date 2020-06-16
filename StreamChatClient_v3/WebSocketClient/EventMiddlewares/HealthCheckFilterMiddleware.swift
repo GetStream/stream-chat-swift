@@ -7,11 +7,11 @@ import Foundation
 
 /// Ignores HealthCheck events
 struct HealthCheckFilter: EventMiddleware {
-  func handle(event: Event, completion next: @escaping (Event?) -> Void) {
-    if event is HealthCheck {
-      next(nil)
-    } else {
-      next(event)
+    func handle(event: Event, completion next: @escaping (Event?) -> Void) {
+        if event is HealthCheck {
+            next(nil)
+        } else {
+            next(event)
+        }
     }
-  }
 }
