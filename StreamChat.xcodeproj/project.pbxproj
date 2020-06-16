@@ -73,6 +73,8 @@
 		797A756424814E7A003CF16D /* WebSocketPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
 		797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* BundleExtensions.swift */; };
+		799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
+		799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_tests.swift */; };
 		799C941F247D2F80001F1104 /* StreamChatClient_v3.h in Headers */ = {isa = PBXBuildFile; fileRef = 799C941D247D2F80001F1104 /* StreamChatClient_v3.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		799C9438247D2FB9001F1104 /* ChatClientConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9428247D2FB9001F1104 /* ChatClientConfig.swift */; };
 		799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C942A247D2FB9001F1104 /* ChannelDTO.swift */; };
@@ -500,6 +502,8 @@
 		797A756324814E7A003CF16D /* WebSocketPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
 		797A756724814F0D003CF16D /* BundleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtensions.swift; sourceTree = "<group>"; };
+		799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy.swift; sourceTree = "<group>"; };
+		799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy_tests.swift; sourceTree = "<group>"; };
 		799C941B247D2F80001F1104 /* StreamChatClient_v3.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatClient_v3.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		799C941D247D2F80001F1104 /* StreamChatClient_v3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChatClient_v3.h; sourceTree = "<group>"; };
 		799C941E247D2F80001F1104 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1077,6 +1081,8 @@
 				79280F402484F4DD00CDEB89 /* Events */,
 				79280F76248917EB00CDEB89 /* Engine */,
 				799C9444247D3DD2001F1104 /* WebSocketClient.swift */,
+				799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */,
+				799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_tests.swift */,
 				797A756324814E7A003CF16D /* WebSocketPayload.swift */,
 				79C750BD2490D0130023F0B7 /* ConnectionState.swift */,
 			);
@@ -2341,6 +2347,7 @@
 				799C944C247D5766001F1104 /* ChannelController.swift in Sources */,
 				792A4F3F247FFDE700EAF71D /* Codable+Extensions.swift in Sources */,
 				79C750BB248FC4100023F0B7 /* ServerResponseError.swift in Sources */,
+				799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */,
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				79BF83F6248F8F97007611A1 /* PrefixLogFormatter.swift in Sources */,
 				792A4F5A24812D1A00EAF71D /* UserEndpointReponse.swift in Sources */,
@@ -2390,6 +2397,7 @@
 				79280F7D24891B1300CDEB89 /* WebSocketEngine_Tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
 				79280F732487CD3100CDEB89 /* Atomic_Tests.swift in Sources */,
+				799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_tests.swift in Sources */,
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
 				79280F542485529500CDEB89 /* ChannelEventsHandler_Tests.swift in Sources */,
 				799C9476247D7E94001F1104 /* TemporaryURLs.swift in Sources */,
