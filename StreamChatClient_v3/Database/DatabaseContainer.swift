@@ -102,15 +102,13 @@ protocol DatabaseSession {
     func loadUser<ExtraData: UserExtraData>(id: String) -> UserModel<ExtraData>?
     
     // MARK: -  Member
-    
     @discardableResult func saveMember<ExtraData: UserExtraData>(payload: MemberEndpointPayload<ExtraData>, channelId: ChannelId)
         -> MemberDTO
     func loadMember<ExtraData: UserExtraData>(id: String, channelId: ChannelId) -> MemberModel<ExtraData>?
     
     // MARK: -  Channel model
     
-    func saveChannel<ExtraData: ExtraDataTypes>(_ channel: ChannelModel<ExtraData>)
-    func saveChannel<ExtraData: ExtraDataTypes>(endpointResponse response: ChannelEndpointResponse<ExtraData>)
+    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelEndpointPayload<ExtraData>) -> ChannelDTO
     func loadChannel<ExtraData: ExtraDataTypes>(id: String) -> ChannelModel<ExtraData>?
 }
 

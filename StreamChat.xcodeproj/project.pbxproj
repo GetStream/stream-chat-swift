@@ -81,11 +81,15 @@
 		79877A092498E4BC00015F8B /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A012498E4BB00015F8B /* UserModel.swift */; };
 		79877A0A2498E4BC00015F8B /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A022498E4BB00015F8B /* Device.swift */; };
 		79877A0B2498E4BC00015F8B /* MemberModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A032498E4BB00015F8B /* MemberModel.swift */; };
+		79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A042498E4BB00015F8B /* ChannelType.swift */; };
+		79877A0E2498E4BC00015F8B /* ChannelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A062498E4BC00015F8B /* ChannelModel.swift */; };
+		79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A072498E4BC00015F8B /* ChannelId.swift */; };
 		79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A132498E4EE00015F8B /* ChannelEndpoints.swift */; };
 		79877A192498E4EE00015F8B /* UserEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A142498E4EE00015F8B /* UserEndpoints.swift */; };
 		79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A172498E4EE00015F8B /* Endpoint.swift */; };
 		79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A212498E50D00015F8B /* MemberModelDTO.swift */; };
 		79877A282498E50D00015F8B /* UserModelDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A222498E50D00015F8B /* UserModelDTO.swift */; };
+		79877A292498E51500015F8B /* ChannelDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */; };
 		79877A2A2498E51500015F8B /* MemberModelDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */; };
 		79877A2B2498E51500015F8B /* UserModelDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A202498E50D00015F8B /* UserModelDTO_Tests.swift */; };
 		79877A2C2498E53B00015F8B /* ChannelEndpoints_tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A152498E4EE00015F8B /* ChannelEndpoints_tests.swift */; };
@@ -97,7 +101,6 @@
 		799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C942A247D2FB9001F1104 /* ChannelDTO.swift */; };
 		799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C942D247D2FB9001F1104 /* MessageDTO.swift */; };
 		799C943E247D2FB9001F1104 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9431247D2FB9001F1104 /* Message.swift */; };
-		799C943F247D2FB9001F1104 /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9432247D2FB9001F1104 /* Channel.swift */; };
 		799C9443247D3DA7001F1104 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9442247D3DA7001F1104 /* APIClient.swift */; };
 		799C9445247D3DD2001F1104 /* WebSocketClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9444247D3DD2001F1104 /* WebSocketClient.swift */; };
 		799C9447247D50F3001F1104 /* Worker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9446247D50F3001F1104 /* Worker.swift */; };
@@ -532,12 +535,16 @@
 		79877A012498E4BB00015F8B /* UserModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		79877A022498E4BB00015F8B /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		79877A032498E4BB00015F8B /* MemberModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberModel.swift; sourceTree = "<group>"; };
+		79877A042498E4BB00015F8B /* ChannelType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelType.swift; sourceTree = "<group>"; };
+		79877A062498E4BC00015F8B /* ChannelModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelModel.swift; sourceTree = "<group>"; };
+		79877A072498E4BC00015F8B /* ChannelId.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelId.swift; sourceTree = "<group>"; };
 		79877A132498E4EE00015F8B /* ChannelEndpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints.swift; sourceTree = "<group>"; };
 		79877A142498E4EE00015F8B /* UserEndpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEndpoints.swift; sourceTree = "<group>"; };
 		79877A152498E4EE00015F8B /* ChannelEndpoints_tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints_tests.swift; sourceTree = "<group>"; };
 		79877A162498E4EE00015F8B /* UserEndpoints_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEndpoints_Tests.swift; sourceTree = "<group>"; };
 		79877A172498E4EE00015F8B /* Endpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberModelDTO_Tests.swift; sourceTree = "<group>"; };
+		79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelDTO_Tests.swift; sourceTree = "<group>"; };
 		79877A202498E50D00015F8B /* UserModelDTO_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelDTO_Tests.swift; sourceTree = "<group>"; };
 		79877A212498E50D00015F8B /* MemberModelDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberModelDTO.swift; sourceTree = "<group>"; };
 		79877A222498E50D00015F8B /* UserModelDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelDTO.swift; sourceTree = "<group>"; };
@@ -551,7 +558,6 @@
 		799C942D247D2FB9001F1104 /* MessageDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDTO.swift; sourceTree = "<group>"; };
 		799C942F247D2FB9001F1104 /* ChatClient_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatClient_Tests.swift; sourceTree = "<group>"; };
 		799C9431247D2FB9001F1104 /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		799C9432247D2FB9001F1104 /* Channel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		799C9442247D3DA7001F1104 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		799C9444247D3DD2001F1104 /* WebSocketClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketClient.swift; sourceTree = "<group>"; };
 		799C9446247D50F3001F1104 /* Worker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Worker.swift; sourceTree = "<group>"; };
@@ -1026,12 +1032,13 @@
 		792A4F18247EA97000EAF71D /* DTOs */ = {
 			isa = PBXGroup;
 			children = (
-				799C942A247D2FB9001F1104 /* ChannelDTO.swift */,
 				799C942D247D2FB9001F1104 /* MessageDTO.swift */,
 				79877A222498E50D00015F8B /* UserModelDTO.swift */,
 				79877A202498E50D00015F8B /* UserModelDTO_Tests.swift */,
 				79877A212498E50D00015F8B /* MemberModelDTO.swift */,
 				79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */,
+				799C942A247D2FB9001F1104 /* ChannelDTO.swift */,
+				79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */,
 			);
 			path = DTOs;
 			sourceTree = "<group>";
@@ -1190,11 +1197,13 @@
 		799C9430247D2FB9001F1104 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				79877A072498E4BC00015F8B /* ChannelId.swift */,
+				79877A062498E4BC00015F8B /* ChannelModel.swift */,
+				79877A042498E4BB00015F8B /* ChannelType.swift */,
 				79877A022498E4BB00015F8B /* Device.swift */,
 				79877A032498E4BB00015F8B /* MemberModel.swift */,
 				79877A012498E4BB00015F8B /* UserModel.swift */,
 				799C9431247D2FB9001F1104 /* Message.swift */,
-				799C9432247D2FB9001F1104 /* Channel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2437,7 +2446,6 @@
 				79280F4F2485308100CDEB89 /* Controller.swift in Sources */,
 				792A4F40247FFDE700EAF71D /* Data+Gzip.swift in Sources */,
 				796610B9248E651800761629 /* EventMiddleware.swift in Sources */,
-				799C943F247D2FB9001F1104 /* Channel.swift in Sources */,
 				792A4F472480107A00EAF71D /* Filter.swift in Sources */,
 				792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */,
 				792A4F1D247FEA2200EAF71D /* ChannelListController.swift in Sources */,
@@ -2454,6 +2462,7 @@
 				79A0E9B02498C09900E9BD50 /* ConnectionState.swift in Sources */,
 				799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */,
 				799C9443247D3DA7001F1104 /* APIClient.swift in Sources */,
+				79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				79BF83EC248F8EDF007611A1 /* LogDestination.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberEndpoints.swift in Sources */,
@@ -2477,6 +2486,7 @@
 				79877A282498E50D00015F8B /* UserModelDTO.swift in Sources */,
 				79280F47248515FA00CDEB89 /* ChannelEvents.swift in Sources */,
 				79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */,
+				79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */,
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
 				79BF83F2248F8F60007611A1 /* Logger.swift in Sources */,
 				799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */,
@@ -2488,6 +2498,7 @@
 				79BF83F0248F8F4F007611A1 /* ConsoleLogDestination.swift in Sources */,
 				79280F7A248918FD00CDEB89 /* StarscreamWebSocketEngine.swift in Sources */,
 				79280F3F2484E3BA00CDEB89 /* ClientError.swift in Sources */,
+				79877A0E2498E4BC00015F8B /* ChannelModel.swift in Sources */,
 				79A0E9BB2498C31300E9BD50 /* TypingStartCleanupMiddleware.swift in Sources */,
 				797A756424814E7A003CF16D /* WebSocketPayload.swift in Sources */,
 				79877A0B2498E4BC00015F8B /* MemberModel.swift in Sources */,
@@ -2519,6 +2530,7 @@
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
 				79280F732487CD3100CDEB89 /* Atomic_Tests.swift in Sources */,
 				79877A2C2498E53B00015F8B /* ChannelEndpoints_tests.swift in Sources */,
+				79877A292498E51500015F8B /* ChannelDTO_Tests.swift in Sources */,
 				799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_tests.swift in Sources */,
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
 				79280F542485529500CDEB89 /* ChannelEventsHandler_Tests.swift in Sources */,

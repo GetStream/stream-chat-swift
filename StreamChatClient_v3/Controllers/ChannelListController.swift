@@ -30,7 +30,7 @@ public class ChannelListController<ExtraData: ExtraDataTypes>: Controller, NSFet
         try! fetchResultsController.performFetch()
         fetchResultsController.delegate = self
         
-        channels = fetchResultsController.fetchedObjects!.map(ChannelModel<ExtraData>.init)
+        channels = fetchResultsController.fetchedObjects!.map(ChannelModel<ExtraData>.create)
         delegate?.controllerDidChangeChannels(changes: [])
         
         delegate?.controllerWillStartFetchingRemoteData()
@@ -61,7 +61,7 @@ public class ChannelListController<ExtraData: ExtraDataTypes>: Controller, NSFet
     
     // TODO: this will be private once we remove the `NSObject` requirement
     public func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        channels = fetchResultsController.fetchedObjects!.lazy.map(ChannelModel<ExtraData>.init)
+        channels = fetchResultsController.fetchedObjects!.lazy.map(ChannelModel<ExtraData>.create(fromDTO:))
         delegate?.controllerDidChangeChannels(changes: [])
     }
 }

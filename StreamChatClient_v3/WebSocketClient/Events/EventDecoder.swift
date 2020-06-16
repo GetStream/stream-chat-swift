@@ -55,33 +55,15 @@ extension EventDecoder: AnyEventDecoder {}
 
 /// The DTO object mirroring the JSON representation of the event.
 struct EventResponse<ExtraData: ExtraDataTypes>: Decodable {
-    struct Channel<ExtraData: ExtraDataTypes>: Decodable {
-        let id: String
-        let extraData: ExtraData.Channel?
-        let members: [UserEndpointReponse<ExtraData.User>]
-        
-        private enum CodingKeys: String, CodingKey {
-            case id = "cid"
-            case members
-        }
-        
-        init(from decoder: Decoder) throws {
-            let container = try decoder.container(keyedBy: CodingKeys.self)
-            id = try container.decode(String.self, forKey: .id)
-            extraData = try? ExtraData.Channel(from: decoder)
-            members = try container.decode([MemberEndpointResponse<ExtraData.User>].self, forKey: .members).map { $0.user }
-        }
-    }
-    
     let connectionId: String?
     
-    let channel: Channel<ExtraData>?
+    let channelPayload: ChannelEndpointPayload<ExtraData>?
     
     let eventType: String
     
     private enum CodingKeys: String, CodingKey {
         case connectionId = "connection_id"
-        case channel
+        case channelPayload = "channel"
         case eventType = "type"
     }
 }
