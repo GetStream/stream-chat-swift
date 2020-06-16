@@ -1,0 +1,24 @@
+{
+  "created_at" : "2020-06-05T12:53:09.862721Z",
+  "updated_at" : "2020-06-05T12:53:09.862721Z",
+  "role" : "owner",
+  "user" : {
+    "id" : "broken-waterfall-5",
+    "banned" : false,
+    "unread_channels" : 1,
+    "totalUnreadCount" : 0,
+    "extraData" : {
+      "name" : "Tester"
+    },
+    "last_active" : "2020-06-10T13:24:00.501797Z",
+    "created_at" : "2019-12-12T15:33:46.488935Z",
+    "unreadChannels" : 0,
+    "unread_count" : 2,
+    "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+    "updated_at" : "2020-06-10T14:11:29.946106Z",
+    "role" : "user",
+    "total_unread_count" : 0,
+    "online" : true,
+    "name" : "Broken Waterfall"
+  }
+}
