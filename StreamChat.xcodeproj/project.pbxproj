@@ -1105,10 +1105,10 @@
 				799C941D247D2F80001F1104 /* StreamChatClient_v3.h */,
 				799C941E247D2F80001F1104 /* Info.plist */,
 			);
-			indentWidth = 2;
+			indentWidth = 4;
 			path = StreamChatClient_v3;
 			sourceTree = "<group>";
-			tabWidth = 2;
+			tabWidth = 4;
 		};
 		799C9426247D2FB9001F1104 /* WebSocketClient */ = {
 			isa = PBXGroup;
@@ -1189,8 +1189,10 @@
 				799C9474247D7D41001F1104 /* TemporaryURLs.swift */,
 				799C947B247E6051001F1104 /* TestError.swift */,
 			);
+			indentWidth = 4;
 			path = TestResources_v3;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		799C9463247D7919001F1104 /* Custom Assertions */ = {
 			isa = PBXGroup;
