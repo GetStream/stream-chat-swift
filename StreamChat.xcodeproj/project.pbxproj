@@ -56,11 +56,7 @@
 		792A4F492480107A00EAF71D /* Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F452480107A00EAF71D /* Sorting.swift */; };
 		792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F4A248010A600EAF71D /* QueryOptions.swift */; };
 		792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F4C248011E500EAF71D /* ChannelListQuery.swift */; };
-		792A4F512480F55800EAF71D /* ChannelListEndpointResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F502480F55800EAF71D /* ChannelListEndpointResponse.swift */; };
-		792A4F532480F5AD00EAF71D /* ChannelEndpointResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F522480F5AD00EAF71D /* ChannelEndpointResponse.swift */; };
 		792A4F56248113D800EAF71D /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F55248113D800EAF71D /* Member.swift */; };
-		792A4F5824812C2600EAF71D /* MemberEndpointResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F5724812C2600EAF71D /* MemberEndpointResponse.swift */; };
-		792A4F5A24812D1A00EAF71D /* UserEndpointReponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F5924812D1A00EAF71D /* UserEndpointReponse.swift */; };
 		793612F62461437700944861 /* MockNetworkURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612F52461437700944861 /* MockNetworkURLProtocol.swift */; };
 		793612FE2461684500944861 /* AssertResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FD2461684500944861 /* AssertResult.swift */; };
 		793613002461780400944861 /* Await.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793612FF2461780400944861 /* Await.swift */; };
@@ -497,11 +493,7 @@
 		792A4F452480107A00EAF71D /* Sorting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sorting.swift; sourceTree = "<group>"; };
 		792A4F4A248010A600EAF71D /* QueryOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryOptions.swift; sourceTree = "<group>"; };
 		792A4F4C248011E500EAF71D /* ChannelListQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelListQuery.swift; sourceTree = "<group>"; };
-		792A4F502480F55800EAF71D /* ChannelListEndpointResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListEndpointResponse.swift; sourceTree = "<group>"; };
-		792A4F522480F5AD00EAF71D /* ChannelEndpointResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpointResponse.swift; sourceTree = "<group>"; };
 		792A4F55248113D800EAF71D /* Member.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member.swift; sourceTree = "<group>"; };
-		792A4F5724812C2600EAF71D /* MemberEndpointResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEndpointResponse.swift; sourceTree = "<group>"; };
-		792A4F5924812D1A00EAF71D /* UserEndpointReponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEndpointReponse.swift; sourceTree = "<group>"; };
 		79324B7A2462A08A00B2597E /* AtomicTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AtomicTests.swift; sourceTree = "<group>"; };
 		793612F52461437700944861 /* MockNetworkURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNetworkURLProtocol.swift; sourceTree = "<group>"; };
 		793612FD2461684500944861 /* AssertResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertResult.swift; sourceTree = "<group>"; };
@@ -1054,17 +1046,6 @@
 			path = Query;
 			sourceTree = "<group>";
 		};
-		792A4F54248110C900EAF71D /* EndpointReponses */ = {
-			isa = PBXGroup;
-			children = (
-				792A4F502480F55800EAF71D /* ChannelListEndpointResponse.swift */,
-				792A4F522480F5AD00EAF71D /* ChannelEndpointResponse.swift */,
-				792A4F5724812C2600EAF71D /* MemberEndpointResponse.swift */,
-				792A4F5924812D1A00EAF71D /* UserEndpointReponse.swift */,
-			);
-			path = EndpointReponses;
-			sourceTree = "<group>";
-		};
 		7962958A2481473A0078EB53 /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -1169,7 +1150,6 @@
 		799C9435247D2FB9001F1104 /* APIClient */ = {
 			isa = PBXGroup;
 			children = (
-				792A4F54248110C900EAF71D /* EndpointReponses */,
 				799C9442247D3DA7001F1104 /* APIClient.swift */,
 				79877A122498E4EE00015F8B /* Endpoints */,
 			);
@@ -2424,13 +2404,11 @@
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				79A0E9B62498C2DD00E9BD50 /* HealthCheckFilterMiddleware.swift in Sources */,
 				79BF83F6248F8F97007611A1 /* PrefixLogFormatter.swift in Sources */,
-				792A4F5A24812D1A00EAF71D /* UserEndpointReponse.swift in Sources */,
 				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
 				799C9440247D2FB9001F1104 /* User.swift in Sources */,
 				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
 				792A4F1B247FE84900EAF71D /* ChannelQueryUpdater.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
-				792A4F5824812C2600EAF71D /* MemberEndpointResponse.swift in Sources */,
 				79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */,
 				79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */,
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,
@@ -2448,9 +2426,7 @@
 				792A4F482480107A00EAF71D /* Pagination.swift in Sources */,
 				79BF83F0248F8F4F007611A1 /* ConsoleLogDestination.swift in Sources */,
 				79280F7A248918FD00CDEB89 /* StarscreamWebSocketEngine.swift in Sources */,
-				792A4F532480F5AD00EAF71D /* ChannelEndpointResponse.swift in Sources */,
 				79280F3F2484E3BA00CDEB89 /* ClientError.swift in Sources */,
-				792A4F512480F55800EAF71D /* ChannelListEndpointResponse.swift in Sources */,
 				79A0E9BB2498C31300E9BD50 /* TypingStartCleanupMiddleware.swift in Sources */,
 				797A756424814E7A003CF16D /* WebSocketPayload.swift in Sources */,
 				79A0E9BE2498C33100E9BD50 /* TypingEvents.swift in Sources */,
