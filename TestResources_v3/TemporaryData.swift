@@ -1,5 +1,5 @@
 //
-// TemporaryURLs.swift
+// TemporaryData.swift
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
@@ -7,7 +7,7 @@ import Foundation
 
 extension URL {
     /// Returns a unique random URL
-    static func newUniqueURL() -> URL {
+    static func unique() -> URL {
         URL(string: "temporary_\(UUID().uuidString)")!
     }
     
@@ -24,4 +24,14 @@ extension URL {
         try! FileManager.default.createDirectory(at: newDirURL, withIntermediateDirectories: true, attributes: nil)
         return newDirURL
     }
+}
+
+extension String {
+    /// Returns a new unique string
+    static var unique: String { UUID().uuidString }
+}
+
+extension Date {
+    /// Returns a new random date
+    static var unique: Date { Date(timeIntervalSince1970: .random(in: 1 ... 100_000_000)) }
 }
