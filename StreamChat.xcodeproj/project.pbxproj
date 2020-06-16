@@ -72,7 +72,11 @@
 		797A756424814E7A003CF16D /* WebSocketPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
 		797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* BundleExtensions.swift */; };
+		798779FD2498E47700015F8B /* OtherUser.json in Resources */ = {isa = PBXBuildFile; fileRef = 798779F82498E47700015F8B /* OtherUser.json */; };
+		798779FE2498E47700015F8B /* CurrentUser.json in Resources */ = {isa = PBXBuildFile; fileRef = 798779F92498E47700015F8B /* CurrentUser.json */; };
+		79877A192498E4EE00015F8B /* UserEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A142498E4EE00015F8B /* UserEndpoints.swift */; };
 		79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A172498E4EE00015F8B /* Endpoint.swift */; };
+		79877A2D2498E54400015F8B /* UserEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A162498E4EE00015F8B /* UserEndpoints_Tests.swift */; };
 		799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
 		799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */; };
 		799C941F247D2F80001F1104 /* StreamChatClient_v3.h in Headers */ = {isa = PBXBuildFile; fileRef = 799C941D247D2F80001F1104 /* StreamChatClient_v3.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -508,6 +512,15 @@
 		797A756324814E7A003CF16D /* WebSocketPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
 		797A756724814F0D003CF16D /* BundleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtensions.swift; sourceTree = "<group>"; };
+		798779F62498E47700015F8B /* Member.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Member.json; sourceTree = "<group>"; };
+		798779F82498E47700015F8B /* OtherUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = OtherUser.json; sourceTree = "<group>"; };
+		798779F92498E47700015F8B /* CurrentUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = CurrentUser.json; sourceTree = "<group>"; };
+		79877A012498E4BB00015F8B /* UserModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		79877A022498E4BB00015F8B /* Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		79877A032498E4BB00015F8B /* MemberModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberModel.swift; sourceTree = "<group>"; };
+		79877A132498E4EE00015F8B /* ChannelEndpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints.swift; sourceTree = "<group>"; };
+		79877A142498E4EE00015F8B /* UserEndpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEndpoints.swift; sourceTree = "<group>"; };
+		79877A162498E4EE00015F8B /* UserEndpoints_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserEndpoints_Tests.swift; sourceTree = "<group>"; };
 		79877A172498E4EE00015F8B /* Endpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy.swift; sourceTree = "<group>"; };
 		799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy_Tests.swift; sourceTree = "<group>"; };
@@ -1068,10 +1081,23 @@
 			path = EventMiddlewares;
 			sourceTree = "<group>";
 		};
+		798779F52498E47700015F8B /* MockEnpointResponses */ = {
+			isa = PBXGroup;
+			children = (
+				798779F82498E47700015F8B /* OtherUser.json */,
+				798779F92498E47700015F8B /* CurrentUser.json */,
+			);
+			path = MockEnpointResponses;
+			sourceTree = "<group>";
+		};
 		79877A122498E4EE00015F8B /* Endpoints */ = {
 			isa = PBXGroup;
 			children = (
 				79877A172498E4EE00015F8B /* Endpoint.swift */,
+				79877A142498E4EE00015F8B /* UserEndpoints.swift */,
+				79877A162498E4EE00015F8B /* UserEndpoints_Tests.swift */,
+				793728292498FFD300E13FE5 /* MemberEndpoints.swift */,
+				7937282B249900CB00E13FE5 /* MemberEndpoints_Tests.swift */,
 			);
 			path = Endpoints;
 			sourceTree = "<group>";
@@ -1170,6 +1196,7 @@
 		799C9452247D59B1001F1104 /* TestResources_v3 */ = {
 			isa = PBXGroup;
 			children = (
+				798779F52498E47700015F8B /* MockEnpointResponses */,
 				79280F7E24891C6A00CDEB89 /* Virtual Time */,
 				799C9463247D7919001F1104 /* Custom Assertions */,
 				799C9461247D78E2001F1104 /* Await.swift */,
@@ -2283,6 +2310,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				798779FB2498E47700015F8B /* Member.json in Resources */,
+				798779FD2498E47700015F8B /* OtherUser.json in Resources */,
+				798779FE2498E47700015F8B /* CurrentUser.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2407,6 +2437,7 @@
 				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
 				799C9440247D2FB9001F1104 /* User.swift in Sources */,
 				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
+				79877A192498E4EE00015F8B /* UserEndpoints.swift in Sources */,
 				792A4F1B247FE84900EAF71D /* ChannelQueryUpdater.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */,
@@ -2441,6 +2472,7 @@
 			files = (
 				79A0E9AF2498BFD800E9BD50 /* WebSocketClient_tests.swift in Sources */,
 				799C947D247E6114001F1104 /* TestError.swift in Sources */,
+				79877A2D2498E54400015F8B /* UserEndpoints_Tests.swift in Sources */,
 				799C946A247D791A001F1104 /* AssertAsync.swift in Sources */,
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
 				79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */,
