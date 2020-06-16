@@ -1,12 +1,12 @@
 //
-// Atomic_tests.swift
+// Atomic_Tests.swift
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChatClient_v3
 import XCTest
 
-class AtomicTests: XCTestCase {
+class Atomic_Tests: XCTestCase {
   @Atomic var stringAtomicValue: String?
   @Atomic var intAtomicValue: Int = 0
 
@@ -47,7 +47,7 @@ class AtomicTests: XCTestCase {
 
 // MARK: - Stress tests
 
-extension AtomicTests {
+extension Atomic_Tests {
   /// Increase `numberOfStressTestCycles` significantly to properly stress-test `Atomic`.
   var numberOfStressTestCycles: Int { 50 }
 

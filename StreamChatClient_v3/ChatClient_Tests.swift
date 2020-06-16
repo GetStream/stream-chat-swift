@@ -7,7 +7,7 @@ import CoreData
 @testable import StreamChatClient_v3
 import XCTest
 
-class ChatClientTests: XCTestCase {
+class ChatClient_Tests: XCTestCase {
   var user: User!
   var queue: DispatchQueue!
 
