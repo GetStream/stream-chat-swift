@@ -6,13 +6,13 @@
 import Foundation
 
 extension Bundle {
-  /// A bundle id.
-  var id: String? {
-    infoDictionary?["CFBundleIdentifier"] as? String
-  }
-
-  /// A bundle name.
-  var name: String? {
-    object(forInfoDictionaryKey: kCFBundleNameKey as String) as? String
-  }
+    /// A bundle id.
+    var id: String? {
+        infoDictionary?["CFBundleIdentifier"] as? String
+    }
+    
+    /// A bundle name.
+    var name: String? {
+        object(forInfoDictionaryKey: kCFBundleNameKey as String) as? String
+    }
 }

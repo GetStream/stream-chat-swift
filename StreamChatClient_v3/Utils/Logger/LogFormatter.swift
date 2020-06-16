@@ -6,5 +6,5 @@
 import Foundation
 
 public protocol LogFormatter {
-  func format(logDetails: LogDetails, message: String) -> String
+    func format(logDetails: LogDetails, message: String) -> String
 }

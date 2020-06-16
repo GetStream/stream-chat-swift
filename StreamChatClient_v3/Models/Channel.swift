@@ -6,12 +6,12 @@
 import Foundation
 
 public struct ChannelModel<ExtraData: ExtraDataTypes> {
-  // MARK: - Public
-
-  public let id: String
-  public var extraData: ExtraData.Channel?
-
-  public let members: Set<UserModel<ExtraData.User>>
+    // MARK: - Public
+    
+    public let id: String
+    public var extraData: ExtraData.Channel?
+    
+    public let members: Set<UserModel<ExtraData.User>>
 }
 
 /// A convenience `ChannelModel` typealias with no additional channel data.

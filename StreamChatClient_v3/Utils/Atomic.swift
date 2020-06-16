@@ -25,36 +25,36 @@ import Foundation
 
 @propertyWrapper
 public struct Atomic<T> {
-  public var wrappedValue: T {
-    set {
-      mutate { $0 = newValue }
+    public var wrappedValue: T {
+        set {
+            mutate { $0 = newValue }
+        }
+        
+        mutating get {
+            var currentValue: T!
+            mutate { currentValue = $0 }
+            return currentValue
+        }
     }
-
-    mutating get {
-      var currentValue: T!
-      mutate { currentValue = $0 }
-      return currentValue
+    
+    private let lock = NSRecursiveLock()
+    private var _wrappedValue: T
+    
+    /// Update the value safely.
+    /// - Parameter changes: a block with changes. It should return a new value.
+    public mutating func mutate(_ changes: (_ value: inout T) -> Void) {
+        lock.lock()
+        changes(&_wrappedValue)
+        lock.unlock()
     }
-  }
-
-  private let lock = NSRecursiveLock()
-  private var _wrappedValue: T
-
-  /// Update the value safely.
-  /// - Parameter changes: a block with changes. It should return a new value.
-  public mutating func mutate(_ changes: (_ value: inout T) -> Void) {
-    lock.lock()
-    changes(&_wrappedValue)
-    lock.unlock()
-  }
-
-  /// Update the value safely.
-  /// - Parameter changes: a block with changes. It should return a new value.
-  mutating func callAsFunction(_ changes: (_ value: inout T) -> Void) {
-    mutate(changes)
-  }
-
-  public init(wrappedValue: T) {
-    self._wrappedValue = wrappedValue
-  }
+    
+    /// Update the value safely.
+    /// - Parameter changes: a block with changes. It should return a new value.
+    mutating func callAsFunction(_ changes: (_ value: inout T) -> Void) {
+        mutate(changes)
+    }
+    
+    public init(wrappedValue: T) {
+        _wrappedValue = wrappedValue
+    }
 }
