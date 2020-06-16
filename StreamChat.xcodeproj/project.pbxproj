@@ -100,7 +100,7 @@
 		799C9468247D791A001F1104 /* AssertJSONEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9464247D7919001F1104 /* AssertJSONEqual.swift */; };
 		799C9469247D791A001F1104 /* AssertResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9465247D7919001F1104 /* AssertResult.swift */; };
 		799C946A247D791A001F1104 /* AssertAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9466247D7919001F1104 /* AssertAsync.swift */; };
-		799C9476247D7E94001F1104 /* TemporaryURLs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9474247D7D41001F1104 /* TemporaryURLs.swift */; };
+		799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9474247D7D41001F1104 /* TemporaryData.swift */; };
 		799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 799C9477247E3DEA001F1104 /* StreamChatModel.xcdatamodeld */; };
 		799C947D247E6114001F1104 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C947B247E6051001F1104 /* TestError.swift */; };
 		79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */; };
@@ -543,7 +543,7 @@
 		799C9464247D7919001F1104 /* AssertJSONEqual.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertJSONEqual.swift; sourceTree = "<group>"; };
 		799C9465247D7919001F1104 /* AssertResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertResult.swift; sourceTree = "<group>"; };
 		799C9466247D7919001F1104 /* AssertAsync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertAsync.swift; sourceTree = "<group>"; };
-		799C9474247D7D41001F1104 /* TemporaryURLs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryURLs.swift; sourceTree = "<group>"; };
+		799C9474247D7D41001F1104 /* TemporaryData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryData.swift; sourceTree = "<group>"; };
 		799C9478247E3DEA001F1104 /* StreamChatModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = StreamChatModel.xcdatamodel; sourceTree = "<group>"; };
 		799C947B247E6051001F1104 /* TestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestError.swift; sourceTree = "<group>"; };
 		79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatClient.swift; sourceTree = "<group>"; };
@@ -1186,7 +1186,7 @@
 				799C9463247D7919001F1104 /* Custom Assertions */,
 				799C9461247D78E2001F1104 /* Await.swift */,
 				799C9455247D59B1001F1104 /* Info.plist */,
-				799C9474247D7D41001F1104 /* TemporaryURLs.swift */,
+				799C9474247D7D41001F1104 /* TemporaryData.swift */,
 				799C947B247E6051001F1104 /* TestError.swift */,
 			);
 			indentWidth = 4;
@@ -2470,7 +2470,7 @@
 				799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_tests.swift in Sources */,
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
 				79280F542485529500CDEB89 /* ChannelEventsHandler_Tests.swift in Sources */,
-				799C9476247D7E94001F1104 /* TemporaryURLs.swift in Sources */,
+				799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */,
 				79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_tests.swift in Sources */,
 				796610BB248E687000761629 /* EventMiddleware_tests.swift in Sources */,
 				799C9469247D791A001F1104 /* AssertResult.swift in Sources */,

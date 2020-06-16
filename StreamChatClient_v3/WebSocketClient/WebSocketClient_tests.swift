@@ -34,7 +34,7 @@ final class WebSocketClient_Tests: XCTestCase {
         time = VirtualTime()
         VirtualTimeTimer.time = time
         
-        reuqest = URLRequest(url: URL.newUniqueURL())
+        reuqest = URLRequest(url: URL.unique())
         decoder = EventDecoderMock()
         engine = WebSocketEngineMock()
         backgroundTaskScheduler = MockBackgroundTaskScheduler()
