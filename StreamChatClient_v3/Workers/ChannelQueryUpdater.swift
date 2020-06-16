@@ -16,12 +16,12 @@ class ChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     func update(channelListQuery: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
         apiClient
             .request(endpoint: .channels(query: channelListQuery))
-        { (result: Result<ChannelListEndpointResponse<ExtraData>, Error>) in
+        { (result: Result<ChannelListEndpointPayload<ExtraData>, Error>) in
             switch result {
             case let .success(channelListDTO):
                 self.database.write { session in
                     channelListDTO.channels.forEach {
-                        session.saveChannel(endpointResponse: $0)
+                        session.saveChannel(payload: $0)
                     }
                 }
                 

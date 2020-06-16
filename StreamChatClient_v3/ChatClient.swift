@@ -29,7 +29,7 @@ import Foundation
 public protocol ExtraDataTypes {
     associatedtype User: UserExtraData = NameAndAvatarUserData
     associatedtype Message: Codable & Hashable = NoExtraMessageData
-    associatedtype Channel: Codable & Hashable = NoExtraChannelData
+    associatedtype Channel: ChannelExtraData = NameAndImageExtraData
 }
 
 /// A concrete implementation of `ExtraDataTypes` with the default values.
