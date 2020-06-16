@@ -46,6 +46,8 @@ public enum Event: Decodable, Equatable {
     case userUpdated(User, ChannelId?, EventType)
     /// When a user was banned (when subscribed to the user presence).
     case userBanned(reason: String?, expiration: Date?, created: Date, ChannelId?, EventType)
+    /// When a user was unbanned (when subscribed to the user presence).
+    case userUnbanned(User, ChannelId?, created: Date, EventType)
     /// When a user starts watching a channel (when watching the channel).
     case userStartWatching(User, _ watcherCount: Int, ChannelId?, EventType)
     /// When a user stops watching a channel (when watching the channel).
@@ -132,6 +134,7 @@ public enum Event: Decodable, Equatable {
              .userStartWatching(_, _, _, let type),
              .userStopWatching(_, _, _, let type),
              .userBanned(_, _, _, _, let type),
+             .userUnbanned(_, _, _, let type),
              
              .memberAdded(_, _, let type),
              .memberUpdated(_, _, let type),
@@ -181,6 +184,7 @@ public enum Event: Decodable, Equatable {
              .userStartWatching(_, _, let cid, _),
              .userStopWatching(_, _, let cid, _),
              .userBanned(_, _, _, let cid, _),
+             .userUnbanned(_, let cid, _, _),
              
              .memberAdded(_, let cid, _),
              .memberUpdated(_, let cid, _),
@@ -216,6 +220,7 @@ public enum Event: Decodable, Equatable {
              .userPresenceChanged(let user, _, _),
              .userStartWatching(let user, _, _, _),
              .userStopWatching(let user, _, _, _),
+             .userUnbanned(let user, _, _, _),
              .memberRemoved(let user, _, _),
              .reactionNew(_, _, let user, _, _),
              .reactionUpdated(_, _, let user, _, _),
@@ -358,6 +363,15 @@ public enum Event: Decodable, Equatable {
             let reason = try container.decodeIfPresent(String.self, forKey: .reason)
             let expiration = try container.decodeIfPresent(Date.self, forKey: .expiration)
             self = try .userBanned(reason: reason, expiration: expiration, created: created(), channelId, type)
+        case .userUnbanned:
+            var channelId: ChannelId? = try? cid()
+            
+            if let channelType = try container.decodeIfPresent(ChannelType.self, forKey: .channelType),
+                let id = try container.decodeIfPresent(String.self, forKey: .channelId) {
+                channelId = ChannelId(type: channelType, id: id)
+            }
+            
+            self = try .userUnbanned(user(), channelId, created: created(), type)
             
         // Member
         case .memberAdded:

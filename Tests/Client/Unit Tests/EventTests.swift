@@ -75,6 +75,7 @@ final class EventTests: XCTestCase {
              .userPresenceChanged,
              .userUpdated,
              .userBanned,
+             .userUnbanned,
              .userStartWatching,
              .userStopWatching,
              .typingStart,
