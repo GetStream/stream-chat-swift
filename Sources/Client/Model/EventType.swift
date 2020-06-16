@@ -24,6 +24,8 @@ public enum EventType: String, Codable, CaseIterable {
     case userUpdated = "user.updated"
     /// When a user was banned (when subscribed to the user presence).
     case userBanned = "user.banned"
+    /// When a user was unbanned (when subscribed to the user presence).
+    case userUnbanned = "user.unbanned"
     /// When a user starts watching a channel (when watching the channel).
     case userStartWatching = "user.watching.start"
     /// When a user stops watching a channel (when watching the channel).
