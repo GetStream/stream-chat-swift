@@ -64,4 +64,31 @@ public extension Message {
     func unflag(_ completion: @escaping Client.Completion<FlagMessageResponse>) -> Cancellable {
         Client.shared.unflag(message: self, completion)
     }
+    
+    /// Translate a message
+    /// - Parameters:
+    ///   - language: Destination language.
+    ///   - completion: Completion block to be called with translated message.
+    /// - Returns: Cancellable to control the request.
+    @discardableResult
+    func translate(to language: Language,
+                   _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
+        Client.shared.translate(message: self, to: language, completion)
+    }
+    
+    /// Translate a message
+    /// - Parameters:
+    ///   - locale: Destination locale.
+    ///   - completion: Completion block to be called with translated message.
+    /// - Returns: Cancellable to control the request.
+    @discardableResult
+    func translate(to locale: Locale = .current,
+                   _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
+        guard let language = Language(locale: locale) else {
+            completion(.failure(ClientError.unexpectedError(description: "Unsupported locale", error: nil)))
+            return Subscription.empty
+        }
+        
+        return Client.shared.translate(message: self, to: language, completion)
+    }
 }

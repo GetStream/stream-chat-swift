@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### ✅ Added
+- `Message.translate` for message translations. Please see [docs](https://getstream.io/chat/docs/translation/?language=swift) for more info [#319](https://github.com/GetStream/stream-chat-swift/issues/319)
 
 # [2.2.4](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.4)
 _June 12, 2020_
