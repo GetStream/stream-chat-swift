@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct Endpoint {
+struct Endpoint<ResponseType: Decodable> {
     let path: String
     let method: Method
     let queryItems: [URLQueryItem]
@@ -18,15 +18,5 @@ extension Endpoint {
         case get = "GET"
         case post = "POST"
         case delete = "DELETE"
-    }
-}
-
-extension Endpoint {
-    static func channels(query: ChannelListQuery) -> Endpoint {
-        .init(path: "channels",
-              method: .get,
-              queryItems: [],
-              jsonQueryItems: ["payload": query],
-              body: nil)
     }
 }
