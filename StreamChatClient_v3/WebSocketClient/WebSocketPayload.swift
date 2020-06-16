@@ -13,14 +13,22 @@ struct WebSocketPayload<ExtraData: ExtraDataTypes>: Encodable {
         case serverDeterminesConnectionId = "server_determines_connection_id"
     }
     
-    let userDetails: UserModel<ExtraData.User>
+    let userDetails: UserWebSocketPayload
     let userId: String
     let token: String
     let serverDeterminesConnectionId = true
     
     init(user: UserModel<ExtraData.User>, token: String) {
-        userDetails = user
+        userDetails = UserWebSocketPayload(user: user)
         userId = user.id
         self.token = token
+    }
+}
+
+struct UserWebSocketPayload: Encodable {
+    let id: String
+    
+    init<ExtraData: UserExtraData>(user: UserModel<ExtraData>) {
+        id = user.id
     }
 }
