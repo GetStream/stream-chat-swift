@@ -64,6 +64,7 @@
 		79411CD42462DC0A003972E9 /* ClientLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */; };
 		794BDE4A2434BD7400BFBA1F /* NestableCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */; };
 		7962958C248147430078EB53 /* BaseURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962958B248147430078EB53 /* BaseURL.swift */; };
+		7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3A9249A19EA002A09EC /* Filter_Tests.swift */; };
 		7964F3B6249A314D002A09EC /* PrefixLogFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3B0249A314D002A09EC /* PrefixLogFormatter.swift */; };
 		7964F3B7249A314D002A09EC /* LogFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3B1249A314D002A09EC /* LogFormatter.swift */; };
 		7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3B3249A314D002A09EC /* ConsoleLogDestination.swift */; };
@@ -522,6 +523,7 @@
 		794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestableCodingKey.swift; sourceTree = "<group>"; };
 		795FCD1B23EB155000990F15 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		7962958B248147430078EB53 /* BaseURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
+		7964F3A9249A19EA002A09EC /* Filter_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter_Tests.swift; sourceTree = "<group>"; };
 		7964F3B0249A314D002A09EC /* PrefixLogFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrefixLogFormatter.swift; sourceTree = "<group>"; };
 		7964F3B1249A314D002A09EC /* LogFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogFormatter.swift; sourceTree = "<group>"; };
 		7964F3B3249A314D002A09EC /* ConsoleLogDestination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleLogDestination.swift; sourceTree = "<group>"; };
@@ -1085,6 +1087,7 @@
 				792A4F4A248010A600EAF71D /* QueryOptions.swift */,
 				792A4F422480107A00EAF71D /* ChannelQuery.swift */,
 				792A4F432480107A00EAF71D /* Filter.swift */,
+				7964F3A9249A19EA002A09EC /* Filter_Tests.swift */,
 				792A4F442480107A00EAF71D /* Pagination.swift */,
 				792A4F452480107A00EAF71D /* Sorting.swift */,
 			);
