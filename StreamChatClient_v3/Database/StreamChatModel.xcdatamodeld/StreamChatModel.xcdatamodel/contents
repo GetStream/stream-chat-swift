@@ -12,11 +12,22 @@
         <attribute name="updatedDate" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdChannels" inverseEntity="UserDTO"/>
         <relationship name="members" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="channel" inverseEntity="MemberDTO"/>
+        <relationship name="queries" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelListQueryDTO" inverseName="channels" inverseEntity="ChannelListQueryDTO"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TeamDTO" inverseName="channels" inverseEntity="TeamDTO"/>
         <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ChannelListQueryDTO" representedClassName="ChannelListQueryDTO" syncable="YES">
+        <attribute name="filterHash" attributeType="String"/>
+        <attribute name="filterJSONData" attributeType="Binary"/>
+        <relationship name="channels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="queries" inverseEntity="ChannelDTO"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="filterHash"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
@@ -76,7 +87,8 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="ChannelDTO" positionX="0" positionY="45" width="128" height="238"/>
+        <element name="ChannelDTO" positionX="0" positionY="45" width="128" height="253"/>
+        <element name="ChannelListQueryDTO" positionX="160" positionY="192" width="128" height="88"/>
         <element name="MemberDTO" positionX="0" positionY="63" width="128" height="178"/>
         <element name="MessageDTO" positionX="27" positionY="72" width="128" height="88"/>
         <element name="TeamDTO" positionX="9" positionY="126" width="128" height="88"/>
