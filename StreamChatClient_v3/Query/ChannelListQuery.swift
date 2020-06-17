@@ -28,8 +28,6 @@ public struct ChannelListQuery: Encodable {
     public let messagesLimit: Pagination
     /// Query options.
     public let options: QueryOptions
-    /// An hash id for filter and sorting properties.
-//    public var id: String { "F:\(filter)S:\(sort)".md5 }
     
     /// Init a channels query.
     /// - Parameters:
