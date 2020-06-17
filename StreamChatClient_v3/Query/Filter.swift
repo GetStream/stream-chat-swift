@@ -228,11 +228,15 @@ public extension Filter {
     }
 }
 
-// MARK: - Current User
+// MARK: - Hash
 
-//
-// extension Filter {
-//    public static var currentUserInMembers: Filter {
-//        .in("members", [Client.shared.user.id])
-//    }
-// }
+extension Filter {
+    var filterHash: String {
+        let hash = String(describing: self)
+        if hash.isEmpty {
+            return "empty"
+        } else {
+            return hash
+        }
+    }
+}
