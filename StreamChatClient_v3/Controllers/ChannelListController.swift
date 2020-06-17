@@ -46,7 +46,7 @@ public class ChannelListController<ExtraData: ExtraDataTypes>: Controller, NSFet
     private let viewContext: NSManagedObjectContext
     
     private lazy var fetchResultsController: NSFetchedResultsController<ChannelDTO> = {
-        let request = Channel.channelsFetchRequest(query: self.query)
+        let request = ChannelDTO.channelListFetchRequest(query: self.query)
         return .init(fetchRequest: request,
                      managedObjectContext: viewContext,
                      sectionNameKeyPath: nil,

@@ -86,8 +86,8 @@ extension NSManagedObjectContext {
 
 // To get the data from the DB
 
-extension ChannelModel {
-    static func channelsFetchRequest(query: ChannelListQuery) -> NSFetchRequest<ChannelDTO> {
+extension ChannelDTO {
+    static func channelListFetchRequest(query: ChannelListQuery) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: "ChannelDTO")
         request.sortDescriptors = [.init(key: "id", ascending: true)]
         request.predicate = nil // TODO: Filter -> NSPredicate
