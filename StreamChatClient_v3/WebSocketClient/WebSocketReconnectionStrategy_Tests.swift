@@ -1,5 +1,5 @@
 //
-// WebSocketReconnectionStrategy_tests.swift
+// WebSocketReconnectionStrategy_Tests.swift
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
