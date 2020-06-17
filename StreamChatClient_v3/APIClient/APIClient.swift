@@ -135,7 +135,7 @@ extension APIClient {
             } else {
                 fatalError()
             }
-    })
+        })
     }
     
     private func encodeRequest<T: Decodable>(for endpoint: Endpoint<T>, url: URL) -> Result<URLRequest, Error> {
