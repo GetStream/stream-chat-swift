@@ -89,6 +89,33 @@ class ChannelModelDTO_Tests: XCTestCase {
             //      Assert.willBeEqual(payload.members[0].user.unreadMessagesCount, loadedChannel?.members.first?.unreadMessagesCount)
         }
     }
+    
+    func test_channelWithChannelListQuery_isSavedAndLoaded() {
+        let query = ChannelListQuery(filter: .equal("name", to: "Luke Skywalker") & .less("age", than: 50))
+        
+        // Create two channels
+        let channel1Id: String = .unique
+        let payload1 = dummyPayload(with: channel1Id)
+        
+        let channel2Id: String = .unique
+        let payload2 = dummyPayload(with: channel2Id)
+        
+        // Save the channels to DB, but only channel 1 is associated with the query
+        database.write { session in
+            session.saveChannel(payload: payload1, query: query)
+            session.saveChannel(payload: payload2)
+        }
+        
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+        var loadedChannels: [ChannelDTO] {
+            try! database.viewContext.fetch(fetchRequest)
+        }
+        
+        AssertAsync {
+            Assert.willBeEqual(loadedChannels.count, 1)
+            Assert.willBeEqual(loadedChannels.first?.id, channel1Id)
+        }
+    }
 }
 
 extension ChannelModelDTO_Tests {

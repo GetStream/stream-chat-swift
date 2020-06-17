@@ -98,7 +98,7 @@ extension ChannelDTO {
     static func channelListFetchRequest(query: ChannelListQuery) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: "ChannelDTO")
         request.sortDescriptors = [.init(key: "id", ascending: true)]
-        request.predicate = nil // TODO: Filter -> NSPredicate
+        request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         return request
     }
 }
