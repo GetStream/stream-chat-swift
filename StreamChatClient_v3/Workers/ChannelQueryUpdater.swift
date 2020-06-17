@@ -11,7 +11,7 @@ class ChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///
     /// - Parameters:
     ///   - channelListQuery: The channels query used in the request
-    ///   - completion: Called when the API call is finised. Called with `Error` if the remote update fails.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func update(channelListQuery: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
         apiClient
@@ -21,7 +21,7 @@ class ChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
             case let .success(channelListDTO):
                 self.database.write { session in
                     channelListDTO.channels.forEach {
-                        session.saveChannel(payload: $0)
+                        session.saveChannel(payload: $0, query: channelListQuery)
                     }
                 }
                 
