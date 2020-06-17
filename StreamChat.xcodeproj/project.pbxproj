@@ -64,6 +64,7 @@
 		79411CD42462DC0A003972E9 /* ClientLoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */; };
 		794BDE4A2434BD7400BFBA1F /* NestableCodingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */; };
 		7962958C248147430078EB53 /* BaseURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962958B248147430078EB53 /* BaseURL.swift */; };
+		7964F3A4249A0ACF002A09EC /* ChannelListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */; };
 		7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3A9249A19EA002A09EC /* Filter_Tests.swift */; };
 		7964F3B6249A314D002A09EC /* PrefixLogFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3B0249A314D002A09EC /* PrefixLogFormatter.swift */; };
 		7964F3B7249A314D002A09EC /* LogFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3B1249A314D002A09EC /* LogFormatter.swift */; };
@@ -523,6 +524,7 @@
 		794BDE492434BD7400BFBA1F /* NestableCodingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NestableCodingKey.swift; sourceTree = "<group>"; };
 		795FCD1B23EB155000990F15 /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		7962958B248147430078EB53 /* BaseURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
+		7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryDTO.swift; sourceTree = "<group>"; };
 		7964F3A9249A19EA002A09EC /* Filter_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter_Tests.swift; sourceTree = "<group>"; };
 		7964F3B0249A314D002A09EC /* PrefixLogFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrefixLogFormatter.swift; sourceTree = "<group>"; };
 		7964F3B1249A314D002A09EC /* LogFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogFormatter.swift; sourceTree = "<group>"; };
@@ -1046,6 +1048,7 @@
 				79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */,
 				799C942A247D2FB9001F1104 /* ChannelDTO.swift */,
 				79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */,
+				7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */,
 			);
 			path = DTOs;
 			sourceTree = "<group>";
@@ -2508,6 +2511,7 @@
 				792A4F3C247FFBB400EAF71D /* Timers.swift in Sources */,
 				792A4F482480107A00EAF71D /* Pagination.swift in Sources */,
 				79280F7A248918FD00CDEB89 /* StarscreamWebSocketEngine.swift in Sources */,
+				7964F3A4249A0ACF002A09EC /* ChannelListQueryDTO.swift in Sources */,
 				79280F3F2484E3BA00CDEB89 /* ClientError.swift in Sources */,
 				79877A0E2498E4BC00015F8B /* ChannelModel.swift in Sources */,
 				79A0E9BB2498C31300E9BD50 /* TypingStartCleanupMiddleware.swift in Sources */,
