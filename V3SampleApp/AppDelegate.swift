@@ -23,6 +23,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         LogConfig.formatters = [PrefixLogFormatter(prefixes: [.info: "𝒊", .debug: "🛠", .warning: "⚠️", .error: "🚨"])]
+        
+        LogConfig.showThreadName = false
+        LogConfig.showDate = false
+        LogConfig.showFunctionName = false
+        
+        LogConfig.level = .info
+        
         chatClient.webSocketClient.connect()
         
         return true
@@ -42,4 +49,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
 }
-
