@@ -48,7 +48,10 @@ class ChannelDTO: NSManagedObject {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelEndpointPayload<ExtraData>) -> ChannelDTO {
+    func saveChannel<ExtraData: ExtraDataTypes>(
+        payload: ChannelEndpointPayload<ExtraData>,
+        query: ChannelListQuery?
+    ) -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(id: payload.channel.id, context: self)
         if let extraData = payload.channel.extraData {
             dto.extraData = try? JSONEncoder.default.encode(extraData)
@@ -74,6 +77,11 @@ extension NSManagedObjectContext {
         payload.members.forEach {
             let member: MemberDTO = saveMember(payload: $0, channelId: channelId)
             dto.members.insert(member)
+        }
+        
+        if let query = query {
+            let queryDTO = saveQuery(query: query)
+            queryDTO.channels.insert(dto)
         }
         
         return dto
