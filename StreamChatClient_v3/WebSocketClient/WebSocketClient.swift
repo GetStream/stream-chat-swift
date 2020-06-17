@@ -22,6 +22,9 @@ class WebSocketClient {
     /// The current state the web socket connection.
     @Atomic private(set) var connectionState: ConnectionState = .notConnected() {
         didSet {
+            log.info("Web socket connection state changed: \(connectionState)")
+            connectionStateDelegate?.webSocketClient(self, didUpdateConectionState: connectionState)
+            
             if connectionState.isConnected {
                 pingTimer.resume()
             } else {
@@ -34,6 +37,8 @@ class WebSocketClient {
             }
         }
     }
+    
+    weak var connectionStateDelegate: ConnectionStateDelegate?
     
     /// Web socket connection options
     var options: Options = [.staysConnectedInBackground]
@@ -131,6 +136,10 @@ class WebSocketClient {
             activeBackgroundTask = nil
         }
     }
+}
+
+protocol ConnectionStateDelegate: AnyObject {
+    func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: ConnectionState)
 }
 
 extension WebSocketClient {
