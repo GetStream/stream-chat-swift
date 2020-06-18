@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct LocalizedMessage: Decodable {
+public struct MessageTranslations: Decodable {
     private static let translatedSuffix = "_text"
     
     private struct CodingKeys: CodingKey, Hashable {
@@ -52,7 +52,7 @@ public struct LocalizedMessage: Decodable {
         let unknownKeys = Set(container.allKeys).subtracting(allKnownKeys)
         for key in unknownKeys {
             let keyString = key.stringValue
-            guard let suffixRange = keyString.range(of: LocalizedMessage.translatedSuffix) else {
+            guard let suffixRange = keyString.range(of: MessageTranslations.translatedSuffix) else {
                 ClientLogger.log("❌", level: .error, "Unknown key in `translate` response: \(keyString), cannot decode")
                 continue
             }
