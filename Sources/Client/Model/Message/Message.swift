@@ -77,7 +77,7 @@ public struct Message: Codable {
     /// Flag for silent messages. Silent messages won't increase the unread count. See https://getstream.io/chat/docs/silent_messages/?language=swift
     public var isSilent: Bool
     /// Internationalization and localization for the message. Only available for messages returned via `message.translate()`
-    public var i18n: LocalizedMessage?
+    public var i18n: MessageTranslations?
     
     /// Check if the message is ephemeral, e.g. Giphy preview.
     public var isEphemeral: Bool { type == .ephemeral }
@@ -214,7 +214,7 @@ public struct Message: Codable {
         latestReactions = (try? container.decode([Reaction].self, forKey: .latestReactions)) ?? []
         ownReactions = (try? container.decode([Reaction].self, forKey: .ownReactions)) ?? []
         reactionScores = try container.decodeIfPresent([String: Int].self, forKey: .reactionScores) ?? [:]
-        i18n = try container.decodeIfPresent(LocalizedMessage.self, forKey: .i18n)
+        i18n = try container.decodeIfPresent(MessageTranslations.self, forKey: .i18n)
         extraData = try? Self.extraDataType?.init(from: decoder) // swiftlint:disable:this explicit_init
     }
     
