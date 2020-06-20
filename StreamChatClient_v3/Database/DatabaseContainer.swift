@@ -109,13 +109,13 @@ protocol DatabaseSession {
     
     // MARK: -  Channel model
     
-    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelEndpointPayload<ExtraData>,
+    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>,
                                                                    query: ChannelListQuery?) throws -> ChannelDTO
     func loadChannel<ExtraData: ExtraDataTypes>(id: ChannelId) -> ChannelModel<ExtraData>?
 }
 
 extension DatabaseSession {
-    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelEndpointPayload<ExtraData>) throws
+    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) throws
         -> ChannelDTO {
             try saveChannel(payload: payload, query: nil)
         }

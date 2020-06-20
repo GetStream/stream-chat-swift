@@ -57,7 +57,7 @@ extension EventDecoder: AnyEventDecoder {}
 struct EventResponse<ExtraData: ExtraDataTypes>: Decodable {
     let connectionId: String?
     
-    let channelPayload: ChannelEndpointPayload<ExtraData>?
+    let channelPayload: ChannelPayload<ExtraData>?
     
     let eventType: String
     

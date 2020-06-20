@@ -18,7 +18,7 @@ public struct AddedToChannel<ExtraData: ExtraDataTypes>: ChannelEvent {
         try! ChannelId(cid: channelPayload.channel.cid)
     }
     
-    let channelPayload: ChannelEndpointPayload<ExtraData>
+    let channelPayload: ChannelPayload<ExtraData>
     
     init?(from eventResponse: EventResponse<ExtraData>) throws {
         guard eventResponse.eventType == Self.eventRawType else { return nil }
@@ -28,7 +28,7 @@ public struct AddedToChannel<ExtraData: ExtraDataTypes>: ChannelEvent {
         self.init(channelPayload: channel)
     }
     
-    init(channelPayload: ChannelEndpointPayload<ExtraData>) {
+    init(channelPayload: ChannelPayload<ExtraData>) {
         self.channelPayload = channelPayload
     }
 }
