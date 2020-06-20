@@ -18,7 +18,7 @@ class UserEndpointPayload_Tests: XCTestCase {
     }()
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserEndpointPayload<NameAndAvatarUserData>.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<NameAndAvatarUserData>.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.unreadChannelsCount, 1)
@@ -41,7 +41,7 @@ class UserEndpointPayload_Tests: XCTestCase {
             }
         }
         
-        let payload = try JSONDecoder.default.decode(UserEndpointPayload<TestExtraData>.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<TestExtraData>.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.unreadChannelsCount, 1)
@@ -56,7 +56,7 @@ class UserEndpointPayload_Tests: XCTestCase {
     }
     
     func test_otherUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserEndpointPayload<NameAndAvatarUserData>.self, from: otherUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<NameAndAvatarUserData>.self, from: otherUserJSON)
         XCTAssertEqual(payload.id, "bitter-cloud-0")
         XCTAssertEqual(payload.isBanned, true)
         XCTAssertEqual(payload.isOnline, true)
@@ -71,7 +71,7 @@ class UserEndpointPayload_Tests: XCTestCase {
     }
     
     func test_otherUserJSON_isSerialized_withNoExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserEndpointPayload<NoExtraData>.self, from: otherUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<NoExtraData>.self, from: otherUserJSON)
         XCTAssertEqual(payload.id, "bitter-cloud-0")
         XCTAssertEqual(payload.isBanned, true)
         XCTAssertEqual(payload.isOnline, true)

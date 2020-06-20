@@ -53,7 +53,7 @@ extension UserDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveUser<ExtraUserData: Codable & Hashable>(payload: UserEndpointPayload<ExtraUserData>) throws -> UserDTO {
+    func saveUser<ExtraUserData: Codable & Hashable>(payload: UserPayload<ExtraUserData>) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
         
         dto.isBanned = payload.isBanned

@@ -17,21 +17,21 @@ class UserModelDTO_Tests: XCTestCase {
     func test_userPayload_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         
-        let payload: UserEndpointPayload<NameAndAvatarUserData> = .init(id: userId,
-                                                                        created: .unique,
-                                                                        updated: .unique,
-                                                                        lastActiveDate: .unique,
-                                                                        isOnline: true,
-                                                                        isInvisible: true,
-                                                                        isBanned: true,
-                                                                        roleRawValue: "admin",
-                                                                        extraData: .init(name: "Luke",
-                                                                                         avatarURL: URL(string: UUID().uuidString)),
-                                                                        devices: [],
-                                                                        mutedUsers: [],
-                                                                        unreadChannelsCount: nil,
-                                                                        unreadMessagesCount: nil,
-                                                                        teams: [])
+        let payload: UserPayload<NameAndAvatarUserData> = .init(id: userId,
+                                                                created: .unique,
+                                                                updated: .unique,
+                                                                lastActiveDate: .unique,
+                                                                isOnline: true,
+                                                                isInvisible: true,
+                                                                isBanned: true,
+                                                                roleRawValue: "admin",
+                                                                extraData: .init(name: "Luke",
+                                                                                 avatarURL: URL(string: UUID().uuidString)),
+                                                                devices: [],
+                                                                mutedUsers: [],
+                                                                unreadChannelsCount: nil,
+                                                                unreadMessagesCount: nil,
+                                                                teams: [])
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -59,20 +59,20 @@ class UserModelDTO_Tests: XCTestCase {
     func test_userPayload_withNoExtraData_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         
-        let payload: UserEndpointPayload<NoExtraData> = .init(id: userId,
-                                                              created: .unique,
-                                                              updated: .unique,
-                                                              lastActiveDate: .unique,
-                                                              isOnline: true,
-                                                              isInvisible: true,
-                                                              isBanned: true,
-                                                              roleRawValue: "admin",
-                                                              extraData: .init(),
-                                                              devices: [],
-                                                              mutedUsers: [],
-                                                              unreadChannelsCount: nil,
-                                                              unreadMessagesCount: nil,
-                                                              teams: [])
+        let payload: UserPayload<NoExtraData> = .init(id: userId,
+                                                      created: .unique,
+                                                      updated: .unique,
+                                                      lastActiveDate: .unique,
+                                                      isOnline: true,
+                                                      isInvisible: true,
+                                                      isBanned: true,
+                                                      roleRawValue: "admin",
+                                                      extraData: .init(),
+                                                      devices: [],
+                                                      mutedUsers: [],
+                                                      unreadChannelsCount: nil,
+                                                      unreadMessagesCount: nil,
+                                                      teams: [])
         
         // Asynchronously save the payload to the db
         database.write { session in
