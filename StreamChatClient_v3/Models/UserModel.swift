@@ -7,6 +7,8 @@ import Foundation
 
 public protocol UserExtraData: Codable & Hashable {}
 
+public typealias UserId = String
+
 /// A type representing user in chat.
 ///
 /// ... additional info
@@ -16,7 +18,7 @@ public class UserModel<ExtraData: UserExtraData> {
     // MARK: - Public
     
     /// The id of the user.
-    public let id: String
+    public let id: UserId
     
     /// An indicator whether the user is online.
     public let isOnline: Bool
