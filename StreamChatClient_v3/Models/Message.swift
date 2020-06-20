@@ -5,10 +5,10 @@
 
 import Foundation
 
-public struct MessageModel<CustomData: Codable & Hashable> {
+public struct MessageModel<ExtraData: MessageExtraData> {
     let id: String
 }
 
-public typealias Message = MessageModel<NoExtraMessageData>
+public typealias Message = MessageModel<NoExtraData>
 
-public struct NoExtraMessageData: Codable, Hashable {}
+public protocol MessageExtraData: Codable & Hashable {}

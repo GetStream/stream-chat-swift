@@ -28,7 +28,7 @@ import Foundation
 ///
 public protocol ExtraDataTypes {
     associatedtype User: UserExtraData = NameAndAvatarUserData
-    associatedtype Message: Codable & Hashable = NoExtraMessageData
+    associatedtype Message: MessageExtraData = NoExtraData
     associatedtype Channel: ChannelExtraData = NameAndImageExtraData
 }
 
