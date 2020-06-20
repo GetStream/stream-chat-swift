@@ -12,7 +12,7 @@ class ChannelDTO: NSManagedObject {
     
     @NSManaged var id: String
     @NSManaged var typeRawValue: String
-    @NSManaged var extraData: Data?
+    @NSManaged var extraData: Data
     @NSManaged var config: Data
     
     @NSManaged var createdDate: Date
@@ -51,14 +51,11 @@ extension NSManagedObjectContext {
     func saveChannel<ExtraData: ExtraDataTypes>(
         payload: ChannelEndpointPayload<ExtraData>,
         query: ChannelListQuery?
-    ) -> ChannelDTO {
+    ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(id: payload.channel.id, context: self)
-        if let extraData = payload.channel.extraData {
-            dto.extraData = try? JSONEncoder.default.encode(extraData)
-        }
-        
+        dto.extraData = try JSONEncoder.default.encode(payload.channel.extraData)
         dto.typeRawValue = payload.channel.typeRawValue
-        dto.config = try! JSONEncoder().encode(payload.channel.config)
+        dto.config = try JSONEncoder().encode(payload.channel.config)
         dto.createdDate = payload.channel.created
         dto.deletedDate = payload.channel.deleted
         dto.updatedDate = payload.channel.updated
@@ -66,16 +63,16 @@ extension NSManagedObjectContext {
         
         dto.isFrozen = payload.channel.isFrozen
         
-        let creatorDTO: UserDTO? = payload.channel.createdBy.map { saveUser(payload: $0) }
-        if let creatorDTO = creatorDTO {
+        if let createdByPayload = payload.channel.createdBy {
+            let creatorDTO = try saveUser(payload: createdByPayload)
             dto.createdBy = creatorDTO
         }
         
         // TODO: Team
         
         let channelId = ChannelId(type: ChannelType(rawValue: payload.channel.typeRawValue), id: payload.channel.id)
-        payload.members.forEach {
-            let member: MemberDTO = saveMember(payload: $0, channelId: channelId)
+        try payload.members.forEach {
+            let member: MemberDTO = try saveMember(payload: $0, channelId: channelId)
             dto.members.insert(member)
         }
         
@@ -108,7 +105,10 @@ extension ChannelModel {
     static func create(fromDTO dto: ChannelDTO) -> ChannelModel {
         let members = dto.members.map { MemberModel<ExtraData.User>.create(fromDTO: $0) }
         
-        let extraData = dto.extraData.flatMap { try? JSONDecoder.default.decode(ExtraData.Channel.self, from: $0) }
+        // It's safe to use `try!` here, because the extra data payload comes from the DB, so we know it must
+        // be a valid JSON payload, otherwise it wouldn't be possible to save it there.
+        let extraData = try! JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
+        
         let channelType = ChannelType(rawValue: dto.typeRawValue)
         
         return ChannelModel(type: ChannelType(rawValue: dto.typeRawValue),

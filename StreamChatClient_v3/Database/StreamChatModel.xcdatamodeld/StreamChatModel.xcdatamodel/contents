@@ -4,7 +4,7 @@
         <attribute name="config" attributeType="Binary"/>
         <attribute name="createdDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="extraData" optional="YES" attributeType="Binary"/>
+        <attribute name="extraData" attributeType="Binary"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="isFrozen" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastMessageDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

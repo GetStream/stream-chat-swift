@@ -20,8 +20,12 @@ class ChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
             switch result {
             case let .success(channelListDTO):
                 self.database.write { session in
-                    channelListDTO.channels.forEach {
-                        session.saveChannel(payload: $0, query: channelListQuery)
+                    do {
+                        try channelListDTO.channels.forEach {
+                            try session.saveChannel(payload: $0, query: channelListQuery)
+                        }
+                    } catch {
+                        log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
                     }
                 }
                 
