@@ -10,7 +10,7 @@ import Foundation
 class UserDTO: NSManagedObject {
     static let entityName: String = "UserDTO"
     
-    @NSManaged var extraData: Data?
+    @NSManaged var extraData: Data
     @NSManaged var id: String
     @NSManaged var isBanned: Bool
     @NSManaged var isOnline: Bool
@@ -53,7 +53,7 @@ extension UserDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveUser<ExtraUserData: Codable & Hashable>(payload: UserEndpointPayload<ExtraUserData>) -> UserDTO {
+    func saveUser<ExtraUserData: Codable & Hashable>(payload: UserEndpointPayload<ExtraUserData>) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
         
         dto.isBanned = payload.isBanned
@@ -65,9 +65,8 @@ extension NSManagedObjectContext {
         
         // TODO: TEAMS
         
-        if let extraData = payload.extraData {
-            dto.extraData = try? JSONEncoder.default.encode(extraData)
-        }
+        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        
         return dto
     }
     
@@ -79,7 +78,13 @@ extension NSManagedObjectContext {
 
 extension UserModel {
     static func create(fromDTO dto: UserDTO) -> UserModel {
-        let extraData = dto.extraData.flatMap { try? JSONDecoder.default.decode(ExtraData.self, from: $0) }
+        let extraData: ExtraData
+        do {
+            extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.extraData)
+        } catch {
+            fatalError("Failed decoding saved extra data with error: \(error). This should never happen because"
+                + "the extra data must be a valid JSON to be saved.")
+        }
         
         return UserModel(id: dto.id,
                          isOnline: dto.isOnline,

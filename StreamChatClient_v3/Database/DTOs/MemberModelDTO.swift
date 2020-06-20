@@ -60,11 +60,11 @@ extension NSManagedObjectContext {
     func saveMember<ExtraUserData: Codable & Hashable>(
         payload: MemberEndpointPayload<ExtraUserData>,
         channelId: ChannelId
-    ) -> MemberDTO {
+    ) throws -> MemberDTO {
         let dto = MemberDTO.loadOrCreate(id: payload.user.id, channelId: channelId, context: self)
         
         // Save user-part of member first
-        dto.user = saveUser(payload: payload.user)
+        dto.user = try saveUser(payload: payload.user)
         
         // Save member specific data
         dto.channelRoleRaw = payload.roleRawValue
@@ -82,7 +82,13 @@ extension NSManagedObjectContext {
 
 extension MemberModel {
     static func create(fromDTO dto: MemberDTO) -> MemberModel {
-        let extraData = dto.user.extraData.flatMap { try? JSONDecoder.default.decode(ExtraData.self, from: $0) }
+        let extraData: ExtraData
+        do {
+            extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.user.extraData)
+        } catch {
+            fatalError("Failed decoding saved extra data with error: \(error). This should never happen because"
+                + "the extra data must be a valid JSON to be saved.")
+        }
         
         return MemberModel(id: dto.user.id,
                            isOnline: dto.user.isOnline,

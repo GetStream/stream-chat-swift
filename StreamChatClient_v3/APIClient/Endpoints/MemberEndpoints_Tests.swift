@@ -26,8 +26,8 @@ class MemberEndpointPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.user.created, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.user.lastActiveDate, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.user.updated, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.user.extraData?.name, "Broken Waterfall")
-        XCTAssertEqual(payload.user.extraData?.avatarURL,
+        XCTAssertEqual(payload.user.extraData.name, "Broken Waterfall")
+        XCTAssertEqual(payload.user.extraData.avatarURL,
                        URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!)
         XCTAssertEqual(payload.user.roleRawValue, "user")
         XCTAssertEqual(payload.user.isOnline, true)

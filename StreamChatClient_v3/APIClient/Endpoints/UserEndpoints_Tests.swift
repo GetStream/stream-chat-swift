@@ -26,8 +26,8 @@ class UserEndpointPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.created, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.lastActiveDate, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updated, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.extraData?.name, "Broken Waterfall")
-        XCTAssertEqual(payload.extraData?.avatarURL,
+        XCTAssertEqual(payload.extraData.name, "Broken Waterfall")
+        XCTAssertEqual(payload.extraData.avatarURL,
                        URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!)
         XCTAssertEqual(payload.roleRawValue, "user")
         XCTAssertEqual(payload.isOnline, true)
@@ -52,7 +52,7 @@ class UserEndpointPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.roleRawValue, "user")
         XCTAssertEqual(payload.isOnline, true)
         
-        XCTAssertEqual(payload.extraData?.secretNote, "Anaking is Vader!")
+        XCTAssertEqual(payload.extraData.secretNote, "Anaking is Vader!")
     }
     
     func test_otherUserJSON_isSerialized_withDefaultExtraData() throws {
@@ -60,12 +60,24 @@ class UserEndpointPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.id, "bitter-cloud-0")
         XCTAssertEqual(payload.isBanned, true)
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.extraData?.name, "Bitter cloud")
+        XCTAssertEqual(payload.extraData.name, "Bitter cloud")
         XCTAssertEqual(payload.created, "2020-06-09T18:33:04.070518Z".toDate())
         XCTAssertEqual(payload.lastActiveDate, "2020-06-09T18:33:04.075114Z".toDate())
         XCTAssertEqual(payload.updated, "2020-06-09T18:33:04.078929Z".toDate())
-        XCTAssertEqual(payload.extraData?.avatarURL,
+        XCTAssertEqual(payload.extraData.avatarURL,
                        URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!)
+        XCTAssertEqual(payload.roleRawValue, "guest")
+        XCTAssertEqual(payload.isOnline, true)
+    }
+    
+    func test_otherUserJSON_isSerialized_withNoExtraData() throws {
+        let payload = try JSONDecoder.default.decode(UserEndpointPayload<NoExtraData>.self, from: otherUserJSON)
+        XCTAssertEqual(payload.id, "bitter-cloud-0")
+        XCTAssertEqual(payload.isBanned, true)
+        XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.created, "2020-06-09T18:33:04.070518Z".toDate())
+        XCTAssertEqual(payload.lastActiveDate, "2020-06-09T18:33:04.075114Z".toDate())
+        XCTAssertEqual(payload.updated, "2020-06-09T18:33:04.078929Z".toDate())
         XCTAssertEqual(payload.roleRawValue, "guest")
         XCTAssertEqual(payload.isOnline, true)
     }

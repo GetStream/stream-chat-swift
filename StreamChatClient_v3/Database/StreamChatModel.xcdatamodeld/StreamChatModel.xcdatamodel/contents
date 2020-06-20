@@ -68,7 +68,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="UserDTO" representedClassName="UserDTO" syncable="YES">
-        <attribute name="extraData" optional="YES" attributeType="Binary"/>
+        <attribute name="extraData" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isBanned" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isOnline" attributeType="Boolean" usesScalarValueType="YES"/>
