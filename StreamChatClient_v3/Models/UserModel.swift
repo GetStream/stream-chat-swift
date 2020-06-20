@@ -113,6 +113,14 @@ public struct NameAndAvatarUserData: UserExtraData {
         self.name = name
         self.avatarURL = avatarURL
     }
+    
+    public init(from decoder: Decoder) throws {
+        // Unfortunatelly, the built-in URL decoder fails, if the string is empty. We need to
+        // provide custom decoding to handle URL? as expected.
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        avatarURL = try container.decodeIfPresent(String.self, forKey: .avatarURL).flatMap(URL.init(string:))
+    }
 }
 
 /// Convenience `UserModel` typealias with `NameAndAvatarData`.
