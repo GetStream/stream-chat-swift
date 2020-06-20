@@ -98,7 +98,7 @@ extension NSManagedObjectContext: DatabaseSession {}
 protocol DatabaseSession {
     // MARK: -  User
     
-    @discardableResult func saveUser<ExtraData: UserExtraData>(payload: UserEndpointPayload<ExtraData>) -> UserDTO
+    @discardableResult func saveUser<ExtraData: UserExtraData>(payload: UserEndpointPayload<ExtraData>) throws -> UserDTO
     func loadUser<ExtraData: UserExtraData>(id: String) -> UserModel<ExtraData>?
     
     // MARK: -  Member

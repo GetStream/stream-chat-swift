@@ -42,7 +42,7 @@ struct UserEndpointPayload<ExtraData: UserExtraData>: Codable {
     /// A user role.
     public let roleRawValue: String
     /// An extra data for the user.
-    public let extraData: ExtraData?
+    public let extraData: ExtraData
     /// A list of devices.
     public let devices: [Device]
     /// Muted users.
@@ -66,7 +66,7 @@ struct UserEndpointPayload<ExtraData: UserExtraData>: Codable {
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser<ExtraData>].self, forKey: .mutedUsers) ?? []
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
-        extraData = try? ExtraData(from: decoder)
+        extraData = try ExtraData(from: decoder)
         
         unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
@@ -74,7 +74,7 @@ struct UserEndpointPayload<ExtraData: UserExtraData>: Codable {
     
     internal init(
         id: String, created: Date, updated: Date, lastActiveDate: Date?, isOnline: Bool, isInvisible: Bool, isBanned: Bool,
-        roleRawValue: String, extraData: ExtraData?, devices: [Device], mutedUsers: [MutedUser<ExtraData>],
+        roleRawValue: String, extraData: ExtraData, devices: [Device], mutedUsers: [MutedUser<ExtraData>],
         unreadChannelsCount: Int?,
         unreadMessagesCount: Int?, teams: [String]
     ) {
