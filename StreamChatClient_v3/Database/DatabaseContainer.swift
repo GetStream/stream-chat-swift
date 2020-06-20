@@ -104,20 +104,21 @@ protocol DatabaseSession {
     // MARK: -  Member
     
     @discardableResult func saveMember<ExtraData: UserExtraData>(payload: MemberEndpointPayload<ExtraData>, channelId: ChannelId)
-        -> MemberDTO
+        throws -> MemberDTO
     func loadMember<ExtraData: UserExtraData>(id: String, channelId: ChannelId) -> MemberModel<ExtraData>?
     
     // MARK: -  Channel model
     
     @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelEndpointPayload<ExtraData>,
-                                                                   query: ChannelListQuery?) -> ChannelDTO
+                                                                   query: ChannelListQuery?) throws -> ChannelDTO
     func loadChannel<ExtraData: ExtraDataTypes>(id: String) -> ChannelModel<ExtraData>?
 }
 
 extension DatabaseSession {
-    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelEndpointPayload<ExtraData>) -> ChannelDTO {
-        saveChannel(payload: payload, query: nil)
-    }
+    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelEndpointPayload<ExtraData>) throws
+        -> ChannelDTO {
+            try saveChannel(payload: payload, query: nil)
+        }
 }
 
 // WIP

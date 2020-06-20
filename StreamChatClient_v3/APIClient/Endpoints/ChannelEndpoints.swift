@@ -62,7 +62,7 @@ struct ChannelEndpointPayload<ExtraData: ExtraDataTypes>: Decodable {
 struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     let cid: String
     
-    let extraData: ExtraData.Channel?
+    let extraData: ExtraData.Channel
     
     /// A channel type.
     public let typeRawValue: String
@@ -143,9 +143,10 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
         team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
-        extraData = try? ExtraData.Channel(from: decoder)
         memberCount = try container.decode(Int.self, forKey: .memberCount)
         updated = try container.decode(Date.self, forKey: .updated)
+        
+        extraData = try ExtraData.Channel(from: decoder)
     }
     
     // MARK: - For testing
@@ -153,7 +154,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     internal init(
         id: String,
         cid: String,
-        extraData: ExtraData.Channel?,
+        extraData: ExtraData.Channel,
         typeRawValue: String,
         lastMessageDate: Date?,
         created: Date,

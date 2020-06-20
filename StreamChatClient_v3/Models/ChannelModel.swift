@@ -60,7 +60,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     /// Checks if the channel is watching by the client.
     public let isWatched: Bool
     
-    public let extraData: ExtraData.Channel?
+    public let extraData: ExtraData.Channel
     
     // MARK: - Internal
     
@@ -69,10 +69,6 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     
     /// A list of users to invite in the channel.
     let invitedMembers: Set<MemberModel<ExtraData.User>> // TODO: Why is this not public?
-    
-    internal init(id: String, extraData: ExtraData?, members: Set<UserModel<ExtraData.User>>) {
-        self.init(type: .unknown, id: ChannelId(type: .unknown, id: id))
-    }
     
     internal init(
         type: ChannelType,
@@ -92,7 +88,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         unreadMessageRead: MessageRead<ExtraData.User>? = nil,
         banEnabling: BanEnabling = .disabled,
         isWatched: Bool = false,
-        extraData: ExtraData.Channel? = nil,
+        extraData: ExtraData.Channel,
         invitedMembers: Set<MemberModel<ExtraData.User>> = []
     ) {
         self.type = type
@@ -146,8 +142,8 @@ public struct NameAndImageExtraData: ChannelExtraData {
         case imageURL = "image"
     }
     
-    public var name: String?
-    public var imageURL: URL?
+    public let name: String?
+    public let imageURL: URL?
     
     public init(name: String? = nil, imageURL: URL? = nil) {
         self.name = name
