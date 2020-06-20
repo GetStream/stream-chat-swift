@@ -159,8 +159,6 @@ public struct NameAndImageExtraData: ChannelExtraData {
 public protocol AnyChannel {}
 extension ChannelModel: AnyChannel {}
 
-public struct NoExtraChannelData: Codable, Hashable {}
-
 /// An unread counts for a channel.
 public struct ChannelUnreadCount: Decodable, Equatable {
     public static let noUnread = ChannelUnreadCount(messages: 0, mentionedMessages: 0)
