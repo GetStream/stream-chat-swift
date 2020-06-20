@@ -149,6 +149,14 @@ public struct NameAndImageExtraData: ChannelExtraData {
         self.name = name
         self.imageURL = imageURL
     }
+    
+    public init(from decoder: Decoder) throws {
+        // Unfortunatelly, the built-in URL decoder fails, if the string is empty. We need to
+        // provide custom decoding to handle URL? as expected.
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
+    }
 }
 
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.
