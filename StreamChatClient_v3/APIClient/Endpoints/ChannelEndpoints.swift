@@ -7,7 +7,7 @@ import Foundation
 
 extension Endpoint {
     static func channels<ExtraData: ExtraDataTypes>(query: ChannelListQuery)
-        -> Endpoint<ChannelListEndpointPayload<ExtraData>> {
+        -> Endpoint<ChannelListPayload<ExtraData>> {
         .init(path: "channels",
               method: .get,
               queryItems: [],
@@ -16,7 +16,7 @@ extension Endpoint {
     }
 }
 
-struct ChannelListEndpointPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct ChannelListPayload<ExtraData: ExtraDataTypes>: Decodable {
     /// A list of channels response (see `ChannelQuery`).
     let channels: [ChannelPayload<ExtraData>]
 }
