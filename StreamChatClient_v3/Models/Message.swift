@@ -5,8 +5,10 @@
 
 import Foundation
 
+public typealias MessageId = String
+
 public struct MessageModel<ExtraData: MessageExtraData> {
-    let id: String
+    let id: MessageId
 }
 
 public typealias Message = MessageModel<NoExtraData>
