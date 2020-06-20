@@ -13,7 +13,7 @@ class MemberEndpointPayload_Tests: XCTestCase {
     }()
     
     func test_memberJSON_isSerialized() throws {
-        let payload = try JSONDecoder.default.decode(MemberEndpointPayload<NameAndAvatarUserData>.self, from: memberJSON)
+        let payload = try JSONDecoder.default.decode(MemberPayload<NameAndAvatarUserData>.self, from: memberJSON)
         
         XCTAssertEqual(payload.roleRawValue, "owner")
         XCTAssertEqual(payload.created, "2020-06-05T12:53:09.862721Z".toDate())
