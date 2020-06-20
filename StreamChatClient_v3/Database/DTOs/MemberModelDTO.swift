@@ -58,7 +58,7 @@ extension MemberDTO {
 
 extension NSManagedObjectContext {
     func saveMember<ExtraUserData: Codable & Hashable>(
-        payload: MemberEndpointPayload<ExtraUserData>,
+        payload: MemberPayload<ExtraUserData>,
         channelId: ChannelId
     ) throws -> MemberDTO {
         let dto = MemberDTO.loadOrCreate(id: payload.user.id, channelId: channelId, context: self)

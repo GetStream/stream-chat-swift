@@ -26,7 +26,7 @@ struct ChannelEndpointPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     let watcherCount: Int
     
-    let members: [MemberEndpointPayload<ExtraData.User>]
+    let members: [MemberPayload<ExtraData.User>]
     
     // TODO:
     /*
@@ -47,12 +47,12 @@ struct ChannelEndpointPayload<ExtraData: ExtraDataTypes>: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
         watcherCount = try container.decode(Int.self, forKey: .watcherCount)
-        members = try container.decode([MemberEndpointPayload<ExtraData.User>].self, forKey: .members)
+        members = try container.decode([MemberPayload<ExtraData.User>].self, forKey: .members)
     }
     
     // MARK: - For testing
     
-    init(channel: ChannelDetailPayload<ExtraData>, watcherCount: Int, members: [MemberEndpointPayload<ExtraData.User>]) {
+    init(channel: ChannelDetailPayload<ExtraData>, watcherCount: Int, members: [MemberPayload<ExtraData.User>]) {
         self.channel = channel
         self.watcherCount = watcherCount
         self.members = members
@@ -87,7 +87,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     let memberCount: Int
     
     /// A list of users to invite in the channel.
-    let invitedMembers: [MemberEndpointPayload<ExtraData.User>] = [] // TODO?
+    let invitedMembers: [MemberPayload<ExtraData.User>] = [] // TODO?
     
     /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.

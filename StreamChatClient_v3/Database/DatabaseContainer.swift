@@ -103,7 +103,7 @@ protocol DatabaseSession {
     
     // MARK: -  Member
     
-    @discardableResult func saveMember<ExtraData: UserExtraData>(payload: MemberEndpointPayload<ExtraData>, channelId: ChannelId)
+    @discardableResult func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId)
         throws -> MemberDTO
     func loadMember<ExtraData: UserExtraData>(id: UserId, channelId: ChannelId) -> MemberModel<ExtraData>?
     

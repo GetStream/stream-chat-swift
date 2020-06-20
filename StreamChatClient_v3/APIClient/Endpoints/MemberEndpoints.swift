@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct MemberEndpointPayload<ExtraData: UserExtraData>: Decodable {
+struct MemberPayload<ExtraData: UserExtraData>: Decodable {
     let roleRawValue: String
     let created: Date
     let updated: Date

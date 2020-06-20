@@ -19,26 +19,26 @@ class MemberModelDTO_Tests: XCTestCase {
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
         let userPayload: UserPayload<NameAndAvatarUserData> = .init(id: userId,
-                                                                            created: .init(timeIntervalSince1970: 1000),
-                                                                            updated: .init(timeIntervalSince1970: 2000),
-                                                                            lastActiveDate: .init(timeIntervalSince1970: 3000),
-                                                                            isOnline: true,
-                                                                            isInvisible: true,
-                                                                            isBanned: true,
-                                                                            roleRawValue: "admin",
-                                                                            extraData: .init(name: "Luke",
-                                                                                             avatarURL: URL(string: UUID()
-                                                                                                 .uuidString)),
-                                                                            devices: [],
-                                                                            mutedUsers: [],
-                                                                            unreadChannelsCount: nil,
-                                                                            unreadMessagesCount: nil,
-                                                                            teams: [])
+                                                                    created: .init(timeIntervalSince1970: 1000),
+                                                                    updated: .init(timeIntervalSince1970: 2000),
+                                                                    lastActiveDate: .init(timeIntervalSince1970: 3000),
+                                                                    isOnline: true,
+                                                                    isInvisible: true,
+                                                                    isBanned: true,
+                                                                    roleRawValue: "admin",
+                                                                    extraData: .init(name: "Luke",
+                                                                                     avatarURL: URL(string: UUID()
+                                                                                         .uuidString)),
+                                                                    devices: [],
+                                                                    mutedUsers: [],
+                                                                    unreadChannelsCount: nil,
+                                                                    unreadMessagesCount: nil,
+                                                                    teams: [])
         
-        let payload: MemberEndpointPayload<NameAndAvatarUserData> = .init(roleRawValue: "moderator",
-                                                                          created: .init(timeIntervalSince1970: 4000),
-                                                                          updated: .init(timeIntervalSince1970: 5000),
-                                                                          user: userPayload)
+        let payload: MemberPayload<NameAndAvatarUserData> = .init(roleRawValue: "moderator",
+                                                                  created: .init(timeIntervalSince1970: 4000),
+                                                                  updated: .init(timeIntervalSince1970: 5000),
+                                                                  user: userPayload)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -73,24 +73,24 @@ class MemberModelDTO_Tests: XCTestCase {
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
         let userPayload: UserPayload<NoExtraData> = .init(id: userId,
-                                                                  created: .init(timeIntervalSince1970: 1000),
-                                                                  updated: .init(timeIntervalSince1970: 2000),
-                                                                  lastActiveDate: .init(timeIntervalSince1970: 3000),
-                                                                  isOnline: true,
-                                                                  isInvisible: true,
-                                                                  isBanned: true,
-                                                                  roleRawValue: "admin",
-                                                                  extraData: .init(),
-                                                                  devices: [],
-                                                                  mutedUsers: [],
-                                                                  unreadChannelsCount: nil,
-                                                                  unreadMessagesCount: nil,
-                                                                  teams: [])
+                                                          created: .init(timeIntervalSince1970: 1000),
+                                                          updated: .init(timeIntervalSince1970: 2000),
+                                                          lastActiveDate: .init(timeIntervalSince1970: 3000),
+                                                          isOnline: true,
+                                                          isInvisible: true,
+                                                          isBanned: true,
+                                                          roleRawValue: "admin",
+                                                          extraData: .init(),
+                                                          devices: [],
+                                                          mutedUsers: [],
+                                                          unreadChannelsCount: nil,
+                                                          unreadMessagesCount: nil,
+                                                          teams: [])
         
-        let payload: MemberEndpointPayload<NoExtraData> = .init(roleRawValue: "moderator",
-                                                                created: .init(timeIntervalSince1970: 4000),
-                                                                updated: .init(timeIntervalSince1970: 5000),
-                                                                user: userPayload)
+        let payload: MemberPayload<NoExtraData> = .init(roleRawValue: "moderator",
+                                                        created: .init(timeIntervalSince1970: 4000),
+                                                        updated: .init(timeIntervalSince1970: 5000),
+                                                        user: userPayload)
         
         // Asynchronously save the payload to the db
         database.write { session in
