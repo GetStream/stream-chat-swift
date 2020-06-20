@@ -26,7 +26,7 @@ class MemberDTO: NSManagedObject {
     @NSManaged var user: UserDTO
     
     private static func createId(userId: String, channeldId: ChannelId) -> String {
-        channeldId.id + userId
+        channeldId.rawValue + userId
     }
 }
 

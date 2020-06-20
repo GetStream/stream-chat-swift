@@ -15,7 +15,7 @@ class ChannelModelDTO_Tests: XCTestCase {
     }
     
     func test_channelPayload_isStoredAndLoadedFromDB() {
-        let channelId = UUID().uuidString
+        let channelId: ChannelId = .unique
         
         let payload = dummyPayload(with: channelId)
         
@@ -31,8 +31,7 @@ class ChannelModelDTO_Tests: XCTestCase {
         
         AssertAsync {
             // Channel details
-            Assert.willBeEqual(ChannelId(type: ChannelType(rawValue: payload.channel.typeRawValue), id: channelId),
-                               loadedChannel?.id)
+            Assert.willBeEqual(channelId, loadedChannel?.cid)
             
             Assert.willBeEqual(payload.channel.extraData, loadedChannel?.extraData)
             Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel?.type.rawValue)
@@ -94,10 +93,10 @@ class ChannelModelDTO_Tests: XCTestCase {
         let query = ChannelListQuery(filter: .equal("name", to: "Luke Skywalker") & .less("age", than: 50))
         
         // Create two channels
-        let channel1Id: String = .unique
+        let channel1Id: ChannelId = .unique
         let payload1 = dummyPayload(with: channel1Id)
         
-        let channel2Id: String = .unique
+        let channel2Id: ChannelId = .unique
         let payload2 = dummyPayload(with: channel2Id)
         
         // Save the channels to DB, but only channel 1 is associated with the query
@@ -113,12 +112,12 @@ class ChannelModelDTO_Tests: XCTestCase {
         
         AssertAsync {
             Assert.willBeEqual(loadedChannels.count, 1)
-            Assert.willBeEqual(loadedChannels.first?.id, channel1Id)
+            Assert.willBeEqual(loadedChannels.first?.cid, channel1Id.rawValue)
         }
     }
     
     func test_channelPayload_withNoExtraData_isStoredAndLoadedFromDB() {
-        let channelId = UUID().uuidString
+        let channelId: ChannelId = .unique
         
         let payload = dummyPayloadWithNoExtraData(with: channelId)
         
@@ -134,8 +133,7 @@ class ChannelModelDTO_Tests: XCTestCase {
         
         AssertAsync {
             // Channel details
-            Assert.willBeEqual(ChannelId(type: ChannelType(rawValue: payload.channel.typeRawValue), id: channelId),
-                               loadedChannel?.id)
+            Assert.willBeEqual(channelId, loadedChannel?.cid)
             
             Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel?.type.rawValue)
             Assert.willBeEqual(payload.channel.lastMessageDate, loadedChannel?.lastMessageDate)
@@ -192,7 +190,7 @@ class ChannelModelDTO_Tests: XCTestCase {
 }
 
 extension ChannelModelDTO_Tests {
-    private func dummyPayload(with channelId: String) -> ChannelEndpointPayload<DefaultDataTypes> {
+    private func dummyPayload(with channelId: ChannelId) -> ChannelEndpointPayload<DefaultDataTypes> {
         let creator: UserEndpointPayload<NameAndAvatarUserData> = .init(id: .unique,
                                                                         created: .unique,
                                                                         updated: .unique,
@@ -229,12 +227,11 @@ extension ChannelModelDTO_Tests {
                                                                                      unreadMessagesCount: nil,
                                                                                      teams: []))
         
-        let payload: ChannelEndpointPayload<DefaultDataTypes> = .init(channel: .init(id: channelId,
-                                                                                     cid: .unique,
+        let payload: ChannelEndpointPayload<DefaultDataTypes> = .init(channel: .init(cid: channelId.description,
                                                                                      extraData: .init(name: "Luke's channel",
                                                                                                       imageURL: URL(string: UUID()
                                                                                                           .uuidString)),
-                                                                                     typeRawValue: "messaging",
+                                                                                     typeRawValue: channelId.type.rawValue,
                                                                                      lastMessageDate: .unique,
                                                                                      created: .unique,
                                                                                      deleted: .unique,
@@ -274,7 +271,7 @@ extension ChannelModelDTO_Tests {
         typealias User = NoExtraData
     }
     
-    private func dummyPayloadWithNoExtraData(with channelId: String) -> ChannelEndpointPayload<NoExtraDataTypes> {
+    private func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelEndpointPayload<NoExtraDataTypes> {
         let creator: UserEndpointPayload<NoExtraData> = .init(id: .unique,
                                                               created: .unique,
                                                               updated: .unique,
@@ -308,10 +305,9 @@ extension ChannelModelDTO_Tests {
                                                                            unreadMessagesCount: nil,
                                                                            teams: []))
         
-        let payload: ChannelEndpointPayload<NoExtraDataTypes> = .init(channel: .init(id: channelId,
-                                                                                     cid: .unique,
+        let payload: ChannelEndpointPayload<NoExtraDataTypes> = .init(channel: .init(cid: channelId.description,
                                                                                      extraData: .init(),
-                                                                                     typeRawValue: "messaging",
+                                                                                     typeRawValue: channelId.type.rawValue,
                                                                                      lastMessageDate: .unique,
                                                                                      created: .unique,
                                                                                      deleted: .unique,

@@ -6,7 +6,7 @@
 import Foundation
 
 /// A channel type and id.
-public struct ChannelId: Codable, Hashable, CustomStringConvertible {
+public struct ChannelId: Hashable, CustomStringConvertible {
     private static let any = "*"
     private static let separator: Character = ":"
     
@@ -14,49 +14,43 @@ public struct ChannelId: Codable, Hashable, CustomStringConvertible {
         case decoding(String)
     }
     
-    /// A channel type of the event.
-    public let type: ChannelType
-    /// A channel id of the event.
-    public let id: String
+    let rawValue: String
     
     /// Init a ChannelId.
     /// - Parameter type: a channel type.
     /// - Parameter id: a channel id.
     public init(type: ChannelType, id: String) {
-        self.type = type
-        self.id = id
+        rawValue = type.rawValue + "\(Self.separator)" + id
     }
     
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let cid = try container.decode(String.self)
-        
+    init(cid: String) throws {
         if cid == ChannelId.any {
-            type = .unknown
-            id = ChannelId.any
-            return
+            self.init(type: .unknown, id: Self.any)
         }
         
         if cid.contains(ChannelId.separator) {
             let channelPair = cid.split(separator: ChannelId.separator)
-            type = ChannelType(rawValue: String(channelPair[0]))
-            id = String(channelPair[1])
+            let type = ChannelType(rawValue: String(channelPair[0]))
+            let id = String(channelPair[1])
+            self.init(type: type, id: id)
         } else {
             throw ChannelId.Error.decoding(cid)
         }
     }
     
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        
-        if id == ChannelId.any {
-            try container.encode(ChannelId.any)
-        } else {
-            try container.encode("\(type.rawValue):\(id)")
-        }
+    public var description: String { rawValue }
+}
+
+public extension ChannelId {
+    /// The type of the channel the id belongs to.
+    var type: ChannelType {
+        let channelPair = rawValue.split(separator: ChannelId.separator)
+        return ChannelType(rawValue: String(channelPair[0]))
     }
     
-    public var description: String {
-        "\(type)\(ChannelId.separator)\(id)"
+    /// The id of the channel without the encoded type information.
+    var id: String {
+        let channelPair = rawValue.split(separator: ChannelId.separator)
+        return String(channelPair[1])
     }
 }

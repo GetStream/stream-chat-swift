@@ -1156,11 +1156,11 @@
 			isa = PBXGroup;
 			children = (
 				79877A172498E4EE00015F8B /* Endpoint.swift */,
-				79877A132498E4EE00015F8B /* ChannelEndpoints.swift */,
 				79877A142498E4EE00015F8B /* UserEndpoints.swift */,
 				79877A162498E4EE00015F8B /* UserEndpoints_Tests.swift */,
 				793728292498FFD300E13FE5 /* MemberEndpoints.swift */,
 				7937282B249900CB00E13FE5 /* MemberEndpoints_Tests.swift */,
+				79877A132498E4EE00015F8B /* ChannelEndpoints.swift */,
 				79877A152498E4EE00015F8B /* ChannelEndpoints_Tests.swift */,
 			);
 			path = Endpoints;

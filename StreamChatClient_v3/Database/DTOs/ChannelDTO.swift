@@ -10,7 +10,7 @@ import Foundation
 class ChannelDTO: NSManagedObject {
     static let entityName = "ChannelDTO"
     
-    @NSManaged var id: String
+    @NSManaged var cid: String
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
     @NSManaged var config: Data
@@ -28,19 +28,19 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var team: TeamDTO?
     @NSManaged var members: Set<MemberDTO>
     
-    static func load(id: String, context: NSManagedObjectContext) -> ChannelDTO? {
+    static func load(cid: String, context: NSManagedObjectContext) -> ChannelDTO? {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
-        request.predicate = NSPredicate(format: "id == %@", id)
+        request.predicate = NSPredicate(format: "cid == %@", cid)
         return try? context.fetch(request).first
     }
     
-    static func loadOrCreate(id: String, context: NSManagedObjectContext) -> ChannelDTO {
-        if let existing = Self.load(id: id, context: context) {
+    static func loadOrCreate(cid: String, context: NSManagedObjectContext) -> ChannelDTO {
+        if let existing = Self.load(cid: cid, context: context) {
             return existing
         }
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelDTO
-        new.id = id
+        new.cid = cid
         return new
     }
 }
@@ -52,7 +52,7 @@ extension NSManagedObjectContext {
         payload: ChannelEndpointPayload<ExtraData>,
         query: ChannelListQuery?
     ) throws -> ChannelDTO {
-        let dto = ChannelDTO.loadOrCreate(id: payload.channel.id, context: self)
+        let dto = ChannelDTO.loadOrCreate(cid: payload.channel.cid, context: self)
         dto.extraData = try JSONEncoder.default.encode(payload.channel.extraData)
         dto.typeRawValue = payload.channel.typeRawValue
         dto.config = try JSONEncoder().encode(payload.channel.config)
@@ -70,7 +70,8 @@ extension NSManagedObjectContext {
         
         // TODO: Team
         
-        let channelId = ChannelId(type: ChannelType(rawValue: payload.channel.typeRawValue), id: payload.channel.id)
+        let channelId = try ChannelId(cid: payload.channel.cid)
+        
         try payload.members.forEach {
             let member: MemberDTO = try saveMember(payload: $0, channelId: channelId)
             dto.members.insert(member)
@@ -84,8 +85,8 @@ extension NSManagedObjectContext {
         return dto
     }
     
-    func loadChannel<ExtraData: ExtraDataTypes>(id: String) -> ChannelModel<ExtraData>? {
-        ChannelDTO.load(id: id, context: self).map { ChannelModel.create(fromDTO: $0) }
+    func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>? {
+        ChannelDTO.load(cid: cid, context: self).map { ChannelModel.create(fromDTO: $0) }
     }
 }
 
@@ -94,7 +95,7 @@ extension NSManagedObjectContext {
 extension ChannelDTO {
     static func channelListFetchRequest(query: ChannelListQuery) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: "ChannelDTO")
-        request.sortDescriptors = [.init(key: "id", ascending: true)]
+        request.sortDescriptors = [.init(key: "cid", ascending: true)] // TODO: sorting from query
         request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         return request
     }
@@ -108,11 +109,9 @@ extension ChannelModel {
         // It's safe to use `try!` here, because the extra data payload comes from the DB, so we know it must
         // be a valid JSON payload, otherwise it wouldn't be possible to save it there.
         let extraData = try! JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
+        let id = try! ChannelId(cid: dto.cid)
         
-        let channelType = ChannelType(rawValue: dto.typeRawValue)
-        
-        return ChannelModel(type: ChannelType(rawValue: dto.typeRawValue),
-                            id: ChannelId(type: channelType, id: dto.id),
+        return ChannelModel(id: id,
                             lastMessageDate: dto.lastMessageDate,
                             created: dto.createdDate,
                             updated: dto.updatedDate,

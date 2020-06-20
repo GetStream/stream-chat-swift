@@ -66,8 +66,6 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     /// A channel type.
     public let typeRawValue: String
-    /// A channel id.
-    public let id: String
     
     /// The last message date.
     public let lastMessageDate: Date?
@@ -97,8 +95,6 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     /// Coding keys for the decoding.
     public enum DecodingKeys: String, CodingKey {
-        /// An channel id.
-        case id
         /// A combination of channel id and type.
         case cid
         /// A type.
@@ -133,7 +129,6 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: DecodingKeys.self)
         typeRawValue = try container.decode(String.self, forKey: .typeRawValue)
-        id = try container.decode(String.self, forKey: .id)
         cid = try container.decode(String.self, forKey: .cid)
         let config = try container.decode(ChannelConfig.self, forKey: .config)
         self.config = config
@@ -152,7 +147,6 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     // MARK: - For testing
     
     internal init(
-        id: String,
         cid: String,
         extraData: ExtraData.Channel,
         typeRawValue: String,
@@ -169,7 +163,6 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.cid = cid
         self.extraData = extraData
         self.typeRawValue = typeRawValue
-        self.id = id
         self.lastMessageDate = lastMessageDate
         self.created = created
         self.deleted = deleted

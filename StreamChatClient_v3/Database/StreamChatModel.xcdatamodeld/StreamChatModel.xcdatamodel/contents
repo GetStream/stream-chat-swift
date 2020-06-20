@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E266" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
+        <attribute name="cid" attributeType="String"/>
         <attribute name="config" attributeType="Binary"/>
         <attribute name="createdDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" attributeType="Binary"/>
-        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="isFrozen" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastMessageDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="typeRawValue" optional="YES" attributeType="String"/>
@@ -17,7 +17,7 @@
         <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
-                <constraint value="id"/>
+                <constraint value="cid"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>

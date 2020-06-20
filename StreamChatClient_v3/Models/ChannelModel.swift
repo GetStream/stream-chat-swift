@@ -8,11 +8,8 @@ import Foundation
 public struct ChannelModel<ExtraData: ExtraDataTypes> {
     // MARK: - Public
     
-    /// A channel type.
-    public let type: ChannelType
-    
     /// A channel type + id.
-    public let id: ChannelId
+    public let cid: ChannelId
     
     /// The date of the last message in the channel.
     public let lastMessageDate: Date?
@@ -71,7 +68,6 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     let invitedMembers: Set<MemberModel<ExtraData.User>> // TODO: Why is this not public?
     
     internal init(
-        type: ChannelType,
         id: ChannelId,
         lastMessageDate: Date? = nil,
         created: Date = .init(),
@@ -91,8 +87,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         extraData: ExtraData.Channel,
         invitedMembers: Set<MemberModel<ExtraData.User>> = []
     ) {
-        self.type = type
-        self.id = id
+        cid = id
         self.lastMessageDate = lastMessageDate
         self.created = created
         self.updated = updated
@@ -114,6 +109,9 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
 }
 
 extension ChannelModel {
+    /// A channel type.
+    public var type: ChannelType { cid.type }
+    
     /// Check if the channel was deleted.
     public var isDeleted: Bool { deleted != nil }
     
@@ -121,7 +119,7 @@ extension ChannelModel {
     public var readEventsEnabled: Bool { /* config.readEventsEnabled && members.contains(Member.current) */ fatalError() }
     
     /// Checks if the channel is direct message type between 2 users.
-    public var isDirectMessage: Bool { id.id.hasPrefix("!members") && members.count == 2 }
+    public var isDirectMessage: Bool { cid.id.hasPrefix("!members") && members.count == 2 }
     
     /// Checks if the current status of the channel is unread.
     public var isUnread: Bool { unreadCount.messages > 0 }
