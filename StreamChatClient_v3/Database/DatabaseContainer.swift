@@ -99,13 +99,13 @@ protocol DatabaseSession {
     // MARK: -  User
     
     @discardableResult func saveUser<ExtraData: UserExtraData>(payload: UserEndpointPayload<ExtraData>) throws -> UserDTO
-    func loadUser<ExtraData: UserExtraData>(id: String) -> UserModel<ExtraData>?
+    func loadUser<ExtraData: UserExtraData>(id: UserId) -> UserModel<ExtraData>?
     
     // MARK: -  Member
     
     @discardableResult func saveMember<ExtraData: UserExtraData>(payload: MemberEndpointPayload<ExtraData>, channelId: ChannelId)
         throws -> MemberDTO
-    func loadMember<ExtraData: UserExtraData>(id: String, channelId: ChannelId) -> MemberModel<ExtraData>?
+    func loadMember<ExtraData: UserExtraData>(id: UserId, channelId: ChannelId) -> MemberModel<ExtraData>?
     
     // MARK: -  Channel model
     
