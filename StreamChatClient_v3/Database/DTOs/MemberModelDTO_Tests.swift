@@ -18,7 +18,7 @@ class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
-        let userPayload: UserEndpointPayload<NameAndAvatarUserData> = .init(id: userId,
+        let userPayload: UserPayload<NameAndAvatarUserData> = .init(id: userId,
                                                                             created: .init(timeIntervalSince1970: 1000),
                                                                             updated: .init(timeIntervalSince1970: 2000),
                                                                             lastActiveDate: .init(timeIntervalSince1970: 3000),
@@ -72,7 +72,7 @@ class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
-        let userPayload: UserEndpointPayload<NoExtraData> = .init(id: userId,
+        let userPayload: UserPayload<NoExtraData> = .init(id: userId,
                                                                   created: .init(timeIntervalSince1970: 1000),
                                                                   updated: .init(timeIntervalSince1970: 2000),
                                                                   lastActiveDate: .init(timeIntervalSince1970: 3000),

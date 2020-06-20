@@ -191,21 +191,21 @@ class ChannelModelDTO_Tests: XCTestCase {
 
 extension ChannelModelDTO_Tests {
     private func dummyPayload(with channelId: ChannelId) -> ChannelEndpointPayload<DefaultDataTypes> {
-        let creator: UserEndpointPayload<NameAndAvatarUserData> = .init(id: .unique,
-                                                                        created: .unique,
-                                                                        updated: .unique,
-                                                                        lastActiveDate: .unique,
-                                                                        isOnline: true,
-                                                                        isInvisible: true,
-                                                                        isBanned: true,
-                                                                        roleRawValue: "user",
-                                                                        extraData: .init(name: "Luke",
-                                                                                         avatarURL: URL(string: UUID().uuidString)),
-                                                                        devices: [],
-                                                                        mutedUsers: [],
-                                                                        unreadChannelsCount: nil,
-                                                                        unreadMessagesCount: nil,
-                                                                        teams: [])
+        let creator: UserPayload<NameAndAvatarUserData> = .init(id: .unique,
+                                                                created: .unique,
+                                                                updated: .unique,
+                                                                lastActiveDate: .unique,
+                                                                isOnline: true,
+                                                                isInvisible: true,
+                                                                isBanned: true,
+                                                                roleRawValue: "user",
+                                                                extraData: .init(name: "Luke",
+                                                                                 avatarURL: URL(string: UUID().uuidString)),
+                                                                devices: [],
+                                                                mutedUsers: [],
+                                                                unreadChannelsCount: nil,
+                                                                unreadMessagesCount: nil,
+                                                                teams: [])
         
         let member: MemberEndpointPayload<NameAndAvatarUserData> = .init(roleRawValue: "moderator",
                                                                          created: .unique,
@@ -272,20 +272,20 @@ extension ChannelModelDTO_Tests {
     }
     
     private func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelEndpointPayload<NoExtraDataTypes> {
-        let creator: UserEndpointPayload<NoExtraData> = .init(id: .unique,
-                                                              created: .unique,
-                                                              updated: .unique,
-                                                              lastActiveDate: .unique,
-                                                              isOnline: true,
-                                                              isInvisible: true,
-                                                              isBanned: true,
-                                                              roleRawValue: "user",
-                                                              extraData: .init(),
-                                                              devices: [],
-                                                              mutedUsers: [],
-                                                              unreadChannelsCount: nil,
-                                                              unreadMessagesCount: nil,
-                                                              teams: [])
+        let creator: UserPayload<NoExtraData> = .init(id: .unique,
+                                                      created: .unique,
+                                                      updated: .unique,
+                                                      lastActiveDate: .unique,
+                                                      isOnline: true,
+                                                      isInvisible: true,
+                                                      isBanned: true,
+                                                      roleRawValue: "user",
+                                                      extraData: .init(),
+                                                      devices: [],
+                                                      mutedUsers: [],
+                                                      unreadChannelsCount: nil,
+                                                      unreadMessagesCount: nil,
+                                                      teams: [])
         
         let member: MemberEndpointPayload<NoExtraData> = .init(roleRawValue: "moderator",
                                                                created: .unique,

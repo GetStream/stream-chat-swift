@@ -5,7 +5,7 @@
 
 import Foundation
 
-struct UserEndpointPayload<ExtraData: UserExtraData>: Codable {
+struct UserPayload<ExtraData: UserExtraData>: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
         case role
@@ -128,7 +128,7 @@ struct MutedUser<ExtraData: UserExtraData>: Decodable {
     }
     
     /// A muted user.
-    public let user: UserEndpointPayload<ExtraData>
+    public let user: UserPayload<ExtraData>
     /// A created date.
     public let created: Date
     /// A updated date.
@@ -139,7 +139,7 @@ struct MutedUser<ExtraData: UserExtraData>: Decodable {
     ///   - user: a user.
     ///   - created: a created date.
     ///   - updated: an updated date.
-    init(user: UserEndpointPayload<ExtraData>, created: Date, updated: Date) {
+    init(user: UserPayload<ExtraData>, created: Date, updated: Date) {
         self.user = user
         self.created = created
         self.updated = updated
@@ -156,5 +156,5 @@ struct MutedUsersResponse<ExtraData: UserExtraData>: Decodable {
     /// A muted user.
     public let mutedUser: MutedUser<ExtraData>
     /// The current user.
-    public let currentUser: UserEndpointPayload<ExtraData>
+    public let currentUser: UserPayload<ExtraData>
 }

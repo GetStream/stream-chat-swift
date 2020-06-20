@@ -78,7 +78,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     public let updated: Date
     
     /// A creator of the channel.
-    public let createdBy: UserEndpointPayload<ExtraData.User>?
+    public let createdBy: UserPayload<ExtraData.User>?
     /// A config.
     public let config: ChannelConfig
     /// Checks if the channel is frozen.
@@ -134,7 +134,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.config = config
         created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created
         deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
-        createdBy = try container.decodeIfPresent(UserEndpointPayload<ExtraData.User>.self, forKey: .createdBy)
+        createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
         team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
@@ -154,7 +154,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         created: Date,
         deleted: Date?,
         updated: Date,
-        createdBy: UserEndpointPayload<ExtraData.User>?,
+        createdBy: UserPayload<ExtraData.User>?,
         config: ChannelConfig,
         isFrozen: Bool,
         memberCount: Int,
