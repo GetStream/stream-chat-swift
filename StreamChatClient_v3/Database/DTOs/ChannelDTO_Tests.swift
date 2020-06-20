@@ -190,7 +190,7 @@ class ChannelModelDTO_Tests: XCTestCase {
 }
 
 extension ChannelModelDTO_Tests {
-    private func dummyPayload(with channelId: ChannelId) -> ChannelEndpointPayload<DefaultDataTypes> {
+    private func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
         let creator: UserPayload<NameAndAvatarUserData> = .init(id: .unique,
                                                                 created: .unique,
                                                                 updated: .unique,
@@ -227,40 +227,40 @@ extension ChannelModelDTO_Tests {
                                                                              unreadMessagesCount: nil,
                                                                              teams: []))
         
-        let payload: ChannelEndpointPayload<DefaultDataTypes> = .init(channel: .init(cid: channelId.description,
-                                                                                     extraData: .init(name: "Luke's channel",
-                                                                                                      imageURL: URL(string: UUID()
-                                                                                                          .uuidString)),
-                                                                                     typeRawValue: channelId.type.rawValue,
-                                                                                     lastMessageDate: .unique,
-                                                                                     created: .unique,
-                                                                                     deleted: .unique,
-                                                                                     updated: .unique,
-                                                                                     createdBy: creator,
-                                                                                     config: .init(reactionsEnabled: true,
-                                                                                                   typingEventsEnabled: true,
-                                                                                                   readEventsEnabled: true,
-                                                                                                   connectEventsEnabled: true,
-                                                                                                   uploadsEnabled: true,
-                                                                                                   repliesEnabled: true,
-                                                                                                   searchEnabled: true,
-                                                                                                   mutesEnabled: true,
-                                                                                                   urlEnrichmentEnabled: true,
-                                                                                                   messageRetention: "1000",
-                                                                                                   maxMessageLength: 100,
-                                                                                                   commands: [
-                                                                                                       .init(name: "test",
-                                                                                                             description: "test commant",
-                                                                                                             set: "test",
-                                                                                                             args: "test")
-                                                                                                   ],
-                                                                                                   created: .unique,
-                                                                                                   updated: .unique),
-                                                                                     isFrozen: true,
-                                                                                     memberCount: 100,
-                                                                                     team: ""),
-                                                                      watcherCount: 10,
-                                                                      members: [member])
+        let payload: ChannelPayload<DefaultDataTypes> = .init(channel: .init(cid: channelId.description,
+                                                                             extraData: .init(name: "Luke's channel",
+                                                                                              imageURL: URL(string: UUID()
+                                                                                                  .uuidString)),
+                                                                             typeRawValue: channelId.type.rawValue,
+                                                                             lastMessageDate: .unique,
+                                                                             created: .unique,
+                                                                             deleted: .unique,
+                                                                             updated: .unique,
+                                                                             createdBy: creator,
+                                                                             config: .init(reactionsEnabled: true,
+                                                                                           typingEventsEnabled: true,
+                                                                                           readEventsEnabled: true,
+                                                                                           connectEventsEnabled: true,
+                                                                                           uploadsEnabled: true,
+                                                                                           repliesEnabled: true,
+                                                                                           searchEnabled: true,
+                                                                                           mutesEnabled: true,
+                                                                                           urlEnrichmentEnabled: true,
+                                                                                           messageRetention: "1000",
+                                                                                           maxMessageLength: 100,
+                                                                                           commands: [
+                                                                                               .init(name: "test",
+                                                                                                     description: "test commant",
+                                                                                                     set: "test",
+                                                                                                     args: "test")
+                                                                                           ],
+                                                                                           created: .unique,
+                                                                                           updated: .unique),
+                                                                             isFrozen: true,
+                                                                             memberCount: 100,
+                                                                             team: ""),
+                                                              watcherCount: 10,
+                                                              members: [member])
         
         return payload
     }
@@ -271,7 +271,7 @@ extension ChannelModelDTO_Tests {
         typealias User = NoExtraData
     }
     
-    private func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelEndpointPayload<NoExtraDataTypes> {
+    private func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
         let creator: UserPayload<NoExtraData> = .init(id: .unique,
                                                       created: .unique,
                                                       updated: .unique,
@@ -305,38 +305,38 @@ extension ChannelModelDTO_Tests {
                                                                    unreadMessagesCount: nil,
                                                                    teams: []))
         
-        let payload: ChannelEndpointPayload<NoExtraDataTypes> = .init(channel: .init(cid: channelId.description,
-                                                                                     extraData: .init(),
-                                                                                     typeRawValue: channelId.type.rawValue,
-                                                                                     lastMessageDate: .unique,
-                                                                                     created: .unique,
-                                                                                     deleted: .unique,
-                                                                                     updated: .unique,
-                                                                                     createdBy: creator,
-                                                                                     config: .init(reactionsEnabled: true,
-                                                                                                   typingEventsEnabled: true,
-                                                                                                   readEventsEnabled: true,
-                                                                                                   connectEventsEnabled: true,
-                                                                                                   uploadsEnabled: true,
-                                                                                                   repliesEnabled: true,
-                                                                                                   searchEnabled: true,
-                                                                                                   mutesEnabled: true,
-                                                                                                   urlEnrichmentEnabled: true,
-                                                                                                   messageRetention: "1000",
-                                                                                                   maxMessageLength: 100,
-                                                                                                   commands: [
-                                                                                                       .init(name: "test",
-                                                                                                             description: "test commant",
-                                                                                                             set: "test",
-                                                                                                             args: "test")
-                                                                                                   ],
-                                                                                                   created: .unique,
-                                                                                                   updated: .unique),
-                                                                                     isFrozen: true,
-                                                                                     memberCount: 100,
-                                                                                     team: ""),
-                                                                      watcherCount: 10,
-                                                                      members: [member])
+        let payload: ChannelPayload<NoExtraDataTypes> = .init(channel: .init(cid: channelId.description,
+                                                                             extraData: .init(),
+                                                                             typeRawValue: channelId.type.rawValue,
+                                                                             lastMessageDate: .unique,
+                                                                             created: .unique,
+                                                                             deleted: .unique,
+                                                                             updated: .unique,
+                                                                             createdBy: creator,
+                                                                             config: .init(reactionsEnabled: true,
+                                                                                           typingEventsEnabled: true,
+                                                                                           readEventsEnabled: true,
+                                                                                           connectEventsEnabled: true,
+                                                                                           uploadsEnabled: true,
+                                                                                           repliesEnabled: true,
+                                                                                           searchEnabled: true,
+                                                                                           mutesEnabled: true,
+                                                                                           urlEnrichmentEnabled: true,
+                                                                                           messageRetention: "1000",
+                                                                                           maxMessageLength: 100,
+                                                                                           commands: [
+                                                                                               .init(name: "test",
+                                                                                                     description: "test commant",
+                                                                                                     set: "test",
+                                                                                                     args: "test")
+                                                                                           ],
+                                                                                           created: .unique,
+                                                                                           updated: .unique),
+                                                                             isFrozen: true,
+                                                                             memberCount: 100,
+                                                                             team: ""),
+                                                              watcherCount: 10,
+                                                              members: [member])
         
         return payload
     }

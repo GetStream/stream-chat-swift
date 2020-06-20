@@ -49,7 +49,7 @@ class ChannelDTO: NSManagedObject {
 
 extension NSManagedObjectContext {
     func saveChannel<ExtraData: ExtraDataTypes>(
-        payload: ChannelEndpointPayload<ExtraData>,
+        payload: ChannelPayload<ExtraData>,
         query: ChannelListQuery?
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.channel.cid, context: self)

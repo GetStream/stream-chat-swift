@@ -18,10 +18,10 @@ extension Endpoint {
 
 struct ChannelListEndpointPayload<ExtraData: ExtraDataTypes>: Decodable {
     /// A list of channels response (see `ChannelQuery`).
-    let channels: [ChannelEndpointPayload<ExtraData>]
+    let channels: [ChannelPayload<ExtraData>]
 }
 
-struct ChannelEndpointPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     let channel: ChannelDetailPayload<ExtraData>
     
     let watcherCount: Int

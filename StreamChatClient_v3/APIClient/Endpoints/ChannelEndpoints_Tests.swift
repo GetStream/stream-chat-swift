@@ -25,7 +25,7 @@ class ChannelEndpointPayloadTests: XCTestCase {
     }()
     
     func test_channelJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(ChannelEndpointPayload<DefaultDataTypes>.self, from: channelJSON)
+        let payload = try JSONDecoder.default.decode(ChannelPayload<DefaultDataTypes>.self, from: channelJSON)
         
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.members.count, 4)
@@ -69,7 +69,7 @@ class ChannelEndpointPayloadTests: XCTestCase {
             typealias User = NoExtraData
         }
         
-        let payload = try JSONDecoder.default.decode(ChannelEndpointPayload<NoExtraDataTypes>.self, from: channelJSON)
+        let payload = try JSONDecoder.default.decode(ChannelPayload<NoExtraDataTypes>.self, from: channelJSON)
         
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.members.count, 4)
