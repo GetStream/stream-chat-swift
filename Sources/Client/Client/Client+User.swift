@@ -15,6 +15,22 @@ public extension Client {
     /// Requests users with given parameters. Creates a `UsersQuery` and call the `queryUsers` with it.
     /// - Parameters:
     ///   - filter: a users filter.
+    ///   - sorting: sorting options array.
+    ///   - pagination: Pagination for query. Only supports `.limit` and `.offset`
+    ///   - options: a query options.
+    ///   - completion: a completion block with `[User]`.
+    @discardableResult
+    func queryUsers(filter: Filter,
+                    sorting: [Sorting],
+                    pagination: Pagination = [.usersPageSize],
+                    options: QueryOptions = [],
+                    _ completion: @escaping Client.Completion<[User]>) -> Cancellable {
+        queryUsers(query: .init(filter: filter, sorting: sorting, pagination: pagination, options: options), completion)
+    }
+    
+    /// Requests users with given parameters. Creates a `UsersQuery` and call the `queryUsers` with it.
+    /// - Parameters:
+    ///   - filter: a users filter.
     ///   - sort: a sorting.
     ///   - pagination: Pagination for query. Only supports `.limit` and `.offset`
     ///   - options: a query options.
@@ -25,7 +41,11 @@ public extension Client {
                     pagination: Pagination = [.usersPageSize],
                     options: QueryOptions = [],
                     _ completion: @escaping Client.Completion<[User]>) -> Cancellable {
-        queryUsers(query: .init(filter: filter, sort: sort, pagination: pagination, options: options), completion)
+        if let sort = sort {
+            return queryUsers(query: .init(filter: filter, sorting: [sort], pagination: pagination, options: options), completion)
+        } else {
+            return queryUsers(query: .init(filter: filter, sorting: [], pagination: pagination, options: options), completion)
+        }
     }
     
     /// Requests users with a given query (see `UsersQuery`).
