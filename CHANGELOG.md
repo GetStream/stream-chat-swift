@@ -6,12 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ⚠️ Deprecated
+- `UsersQuery.sort` property is deprecated, please use `UsersQuery.sorting` [#328](https://github.com/GetStream/stream-chat-swift/issues/328)
+
 ### ✅ Added
 - `Message.translate` for message translations. Please see [docs](https://getstream.io/chat/docs/translation/?language=swift) for more info [#319](https://github.com/GetStream/stream-chat-swift/issues/319)
 - `user.unbanned` event added [#319](https://github.com/GetStream/stream-chat-swift/issues/319)
 - `PinStyle` for `ComposerViewStyle` with options [#329](https://github.com/GetStream/stream-chat-swift/issues/329):
   - `.floating` - shows `ComposerView` over messages (by default).
   - `.solid` - shows messages above `ComposerView` with a `ComposerViewStyle` top edge inset.
+- `queryUsers` with multiple sorting options support [#328](https://github.com/GetStream/stream-chat-swift/issues/328)
+  Signature: `queryUsers(filter:sorting:pagination:options:completion)`
+
+### 🐞 Fixed
+- `queryUsers`  and `UsersQuery` now respect `sorting` parameter [#328](https://github.com/GetStream/stream-chat-swift/issues/328)
 
 # [2.2.4](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.4)
 _June 12, 2020_
