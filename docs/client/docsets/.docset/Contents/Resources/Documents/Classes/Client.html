@@ -124,6 +124,9 @@
                 <a href="../Enums/InviteAnswer.html">InviteAnswer</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/Language.html">Language</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/MessageType.html">MessageType</a>
               </li>
               <li class="nav-group-task">
@@ -352,6 +355,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/MessageResponse.html">MessageResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTranslations.html">MessageTranslations</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs.html#/s:16StreamChatClient16MessagesResponseV">MessagesResponse</a>
@@ -4930,6 +4936,83 @@ it&rsquo;s possible to change additional parameters:</p>
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C0C9translate7message2to_AA11Cancellable_pAA7MessageV_AA8LanguageOys6ResultOyAA0H8ResponseVAA0C5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/translate(message:to:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C9translate7message2to_AA11Cancellable_pAA7MessageV_AA8LanguageOys6ResultOyAA0H8ResponseVAA0C5ErrorOGctF">translate(message:<wbr>to:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Translate a message</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">translate</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt"><a href="../Structs/Message.html">Message</a></span><span class="p">,</span>
+               <span class="n">to</span> <span class="nv">language</span><span class="p">:</span> <span class="kt"><a href="../Enums/Language.html">Language</a></span><span class="p">,</span>
+               <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt"><a href="../Classes/Client.html#/s:16StreamChatClient0C0C10Completiona">Completion</a></span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Message to be translated. It&rsquo;s required that message has a valid id.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>language</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Destination language.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Completion block to be called with translated message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Cancellable to control the request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -5242,6 +5325,105 @@ Then you send it to the client to complete the setup with a callback function fr
                 </div>
               </div>
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C0C10queryUsers6filter7sorting10pagination7options_AA11Cancellable_pAA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGAA12QueryOptionsVys6ResultOySayAA4UserVGAA0C5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/queryUsers(filter:sorting:pagination:options:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C10queryUsers6filter7sorting10pagination7options_AA11Cancellable_pAA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGAA12QueryOptionsVys6ResultOySayAA4UserVGAA0C5ErrorOGctF">queryUsers(filter:<wbr>sorting:<wbr>pagination:<wbr>options:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Requests users with given parameters. Creates a <code><a href="../Structs/UsersQuery.html">UsersQuery</a></code> and call the <code>queryUsers</code> with it.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">queryUsers</span><span class="p">(</span><span class="nv">filter</span><span class="p">:</span> <span class="kt"><a href="../Enums/Filter.html">Filter</a></span><span class="p">,</span>
+                <span class="nv">sorting</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Sorting.html">Sorting</a></span><span class="p">],</span>
+                <span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:16StreamChatClient10Paginationa">Pagination</a></span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">usersPageSize</span><span class="p">],</span>
+                <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="p">[],</span>
+                <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt"><a href="../Classes/Client.html#/s:16StreamChatClient0C0C10Completiona">Completion</a></span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/User.html">User</a></span><span class="p">]</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>filter</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a users filter.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sorting</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>sorting options array.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>pagination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Pagination for query. Only supports <code>.limit</code> and <code>.offset</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a query options.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a completion block with <code>[User]</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -5786,7 +5968,7 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-06-12)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-06-24)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

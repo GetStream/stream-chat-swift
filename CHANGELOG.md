@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.2.5](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.5)
+_June 24, 2020_
+
 ### ⚠️ Deprecated
 - `UsersQuery.sort` property is deprecated, please use `UsersQuery.sorting` [#328](https://github.com/GetStream/stream-chat-swift/issues/328)
 

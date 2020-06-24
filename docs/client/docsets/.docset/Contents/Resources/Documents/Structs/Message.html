@@ -124,6 +124,9 @@
                 <a href="../Enums/InviteAnswer.html">InviteAnswer</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/Language.html">Language</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/MessageType.html">MessageType</a>
               </li>
               <li class="nav-group-task">
@@ -352,6 +355,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Structs/MessageResponse.html">MessageResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MessageTranslations.html">MessageTranslations</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Structs.html#/s:16StreamChatClient16MessagesResponseV">MessagesResponse</a>
@@ -984,6 +990,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isSilent</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7MessageV4i18nAA0D12TranslationsVSgvp"></a>
+                    <a name="//apple_ref/swift/Property/i18n" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV4i18nAA0D12TranslationsVSgvp">i18n</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Internationalization and localization for the message. Only available for messages returned via <code>message.translate()</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">i18n</span><span class="p">:</span> <span class="kt"><a href="../Structs/MessageTranslations.html">MessageTranslations</a></span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -1971,6 +2004,377 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Translations"></a>
+                <a name="//apple_ref/swift/Section/Translations" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Translations"></a>
+                  <h3 class="section-name"><p>Translations</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7MessageV10translated2toSSSg10Foundation6LocaleV_tF"></a>
+                    <a name="//apple_ref/swift/Method/translated(to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV10translated2toSSSg10Foundation6LocaleV_tF">translated(to:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Get the message text translated in language
+Please call <code>translate</code> if this returns <code>nil</code> to get the message translated.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">translated</span><span class="p">(</span><span class="n">to</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">Locale</span> <span class="o">=</span> <span class="o">.</span><span class="n">current</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>locale</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Destination locale. Defaults to <code>.current</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The translation if it exists, or nil. Please call <code>translate</code> if this returns <code>nil</code> to get the message translated.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7MessageV10translated2toSSSgAA8LanguageO_tF"></a>
+                    <a name="//apple_ref/swift/Method/translated(to:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV10translated2toSSSgAA8LanguageO_tF">translated(to:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Get the message text translated in language
+Please call <code>translate</code> if this returns <code>nil</code> to get the message translated.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">translated</span><span class="p">(</span><span class="n">to</span> <span class="nv">language</span><span class="p">:</span> <span class="kt"><a href="../Enums/Language.html">Language</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>language</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Destination language.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The translation if it exists, or nil. Please call <code>translate</code> if this returns <code>nil</code> to get the message translated.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7MessageV9translate2to_AA11Cancellable_pAA8LanguageO_ys6ResultOySSAA0C5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/translate(to:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV9translate2to_AA11Cancellable_pAA8LanguageO_ys6ResultOySSAA0C5ErrorOGctF">translate(to:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Translate a message</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">translate</span><span class="p">(</span><span class="n">to</span> <span class="nv">language</span><span class="p">:</span> <span class="kt"><a href="../Enums/Language.html">Language</a></span><span class="p">,</span>
+               <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/Client.html">Client</a></span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>language</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Destination language.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Completion block to be called with translated message text.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Cancellable to control the request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7MessageV9translate2to_AA11Cancellable_p10Foundation6LocaleV_ys6ResultOySSAA0C5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/translate(to:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV9translate2to_AA11Cancellable_p10Foundation6LocaleV_ys6ResultOySSAA0C5ErrorOGctF">translate(to:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Translate a message</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">translate</span><span class="p">(</span><span class="n">to</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">Locale</span> <span class="o">=</span> <span class="o">.</span><span class="n">current</span><span class="p">,</span>
+               <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/Client.html">Client</a></span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>locale</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Destination locale. Defaults to <code>.current</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Completion block to be called with translated message text.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Cancellable to control the request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7MessageV9translate2to_AA11Cancellable_pAA8LanguageO_ys6ResultOyAA0D8ResponseVAA0C5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/translate(to:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV9translate2to_AA11Cancellable_pAA8LanguageO_ys6ResultOyAA0D8ResponseVAA0C5ErrorOGctF">translate(to:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Translate a message</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">translate</span><span class="p">(</span><span class="n">to</span> <span class="nv">language</span><span class="p">:</span> <span class="kt"><a href="../Enums/Language.html">Language</a></span><span class="p">,</span>
+               <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/Client.html">Client</a></span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>language</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Destination language.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Completion block to be called with translated message response.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Cancellable to control the request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7MessageV9translate2to_AA11Cancellable_p10Foundation6LocaleV_ys6ResultOyAA0D8ResponseVAA0C5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/translate(to:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7MessageV9translate2to_AA11Cancellable_p10Foundation6LocaleV_ys6ResultOyAA0D8ResponseVAA0C5ErrorOGctF">translate(to:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Translate a message</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">translate</span><span class="p">(</span><span class="n">to</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">Locale</span> <span class="o">=</span> <span class="o">.</span><span class="n">current</span><span class="p">,</span>
+               <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Classes/Client.html">Client</a></span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MessageResponse.html">MessageResponse</a></span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>locale</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Destination locale. Defaults to <code>.current</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Completion block to be called with translated message response.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Cancellable to control the request.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -2181,7 +2585,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-06-12)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-06-24)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
