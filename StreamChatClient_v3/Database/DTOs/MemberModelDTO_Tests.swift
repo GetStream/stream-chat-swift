@@ -18,7 +18,7 @@ class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
-        let userPayload: UserPayload<NameAndAvatarUserData> = .init(id: userId,
+        let userPayload: UserPayload<NameAndImageExtraData> = .init(id: userId,
                                                                     created: .init(timeIntervalSince1970: 1000),
                                                                     updated: .init(timeIntervalSince1970: 2000),
                                                                     lastActiveDate: .init(timeIntervalSince1970: 3000),
@@ -27,7 +27,7 @@ class MemberModelDTO_Tests: XCTestCase {
                                                                     isBanned: true,
                                                                     roleRawValue: "admin",
                                                                     extraData: .init(name: "Luke",
-                                                                                     avatarURL: URL(string: UUID()
+                                                                                     imageURL: URL(string: UUID()
                                                                                          .uuidString)),
                                                                     devices: [],
                                                                     mutedUsers: [],
@@ -35,7 +35,7 @@ class MemberModelDTO_Tests: XCTestCase {
                                                                     unreadMessagesCount: nil,
                                                                     teams: [])
         
-        let payload: MemberPayload<NameAndAvatarUserData> = .init(roleRawValue: "moderator",
+        let payload: MemberPayload<NameAndImageExtraData> = .init(roleRawValue: "moderator",
                                                                   created: .init(timeIntervalSince1970: 4000),
                                                                   updated: .init(timeIntervalSince1970: 5000),
                                                                   user: userPayload)
@@ -46,7 +46,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         // Load the member from the db and check it's the same member
-        var loadedMember: MemberModel<NameAndAvatarUserData>? {
+        var loadedMember: MemberModel<NameAndImageExtraData>? {
             database.viewContext.loadMember(id: userId, channelId: channelId)
         }
         
@@ -98,7 +98,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         // Load the member from the db and check it's the same member
-        var loadedMember: MemberModel<NameAndAvatarUserData>? {
+        var loadedMember: MemberModel<NameAndImageExtraData>? {
             database.viewContext.loadMember(id: userId, channelId: channelId)
         }
         

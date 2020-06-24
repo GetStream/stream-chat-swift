@@ -17,7 +17,7 @@ class UserModelDTO_Tests: XCTestCase {
     func test_userPayload_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<NameAndAvatarUserData> = .init(id: userId,
+        let payload: UserPayload<NameAndImageExtraData> = .init(id: userId,
                                                                 created: .unique,
                                                                 updated: .unique,
                                                                 lastActiveDate: .unique,
@@ -26,7 +26,7 @@ class UserModelDTO_Tests: XCTestCase {
                                                                 isBanned: true,
                                                                 roleRawValue: "admin",
                                                                 extraData: .init(name: "Luke",
-                                                                                 avatarURL: URL(string: UUID().uuidString)),
+                                                                                 imageURL: URL(string: UUID().uuidString)),
                                                                 devices: [],
                                                                 mutedUsers: [],
                                                                 unreadChannelsCount: nil,
@@ -39,7 +39,7 @@ class UserModelDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUser: UserModel<NameAndAvatarUserData>? {
+        var loadedUser: UserModel<NameAndImageExtraData>? {
             database.viewContext.loadUser(id: userId)
         }
         
@@ -80,7 +80,7 @@ class UserModelDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUser: UserModel<NameAndAvatarUserData>? {
+        var loadedUser: UserModel<NameAndImageExtraData>? {
             database.viewContext.loadUser(id: userId)
         }
         

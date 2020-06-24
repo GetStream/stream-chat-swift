@@ -191,7 +191,7 @@ class ChannelModelDTO_Tests: XCTestCase {
 
 extension ChannelModelDTO_Tests {
     private func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
-        let creator: UserPayload<NameAndAvatarUserData> = .init(id: .unique,
+        let creator: UserPayload<NameAndImageExtraData> = .init(id: .unique,
                                                                 created: .unique,
                                                                 updated: .unique,
                                                                 lastActiveDate: .unique,
@@ -200,14 +200,14 @@ extension ChannelModelDTO_Tests {
                                                                 isBanned: true,
                                                                 roleRawValue: "user",
                                                                 extraData: .init(name: "Luke",
-                                                                                 avatarURL: URL(string: UUID().uuidString)),
+                                                                                 imageURL: URL(string: UUID().uuidString)),
                                                                 devices: [],
                                                                 mutedUsers: [],
                                                                 unreadChannelsCount: nil,
                                                                 unreadMessagesCount: nil,
                                                                 teams: [])
         
-        let member: MemberPayload<NameAndAvatarUserData> = .init(roleRawValue: "moderator",
+        let member: MemberPayload<NameAndImageExtraData> = .init(roleRawValue: "moderator",
                                                                  created: .unique,
                                                                  updated: .unique,
                                                                  user: .init(id: .unique,
@@ -219,7 +219,7 @@ extension ChannelModelDTO_Tests {
                                                                              isBanned: true,
                                                                              roleRawValue: "admin",
                                                                              extraData: .init(name: "Luke",
-                                                                                              avatarURL: URL(string: UUID()
+                                                                                              imageURL: URL(string: UUID()
                                                                                                   .uuidString)),
                                                                              devices: [],
                                                                              mutedUsers: [],

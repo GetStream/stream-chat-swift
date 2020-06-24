@@ -133,30 +133,6 @@ public typealias Channel = ChannelModel<DefaultDataTypes>
 
 public protocol ChannelExtraData: Codable & Hashable {}
 
-/// The default channel extra data type with `name` and `imageURL` properties.
-public struct NameAndImageExtraData: ChannelExtraData {
-    private enum CodingKeys: String, CodingKey {
-        case name
-        case imageURL = "image"
-    }
-    
-    public let name: String?
-    public let imageURL: URL?
-    
-    public init(name: String? = nil, imageURL: URL? = nil) {
-        self.name = name
-        self.imageURL = imageURL
-    }
-    
-    public init(from decoder: Decoder) throws {
-        // Unfortunatelly, the built-in URL decoder fails, if the string is empty. We need to
-        // provide custom decoding to handle URL? as expected.
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
-    }
-}
-
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.
 public protocol AnyChannel {}
 extension ChannelModel: AnyChannel {}

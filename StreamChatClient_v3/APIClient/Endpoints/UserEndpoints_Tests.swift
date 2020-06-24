@@ -18,7 +18,7 @@ class UserEndpointPayload_Tests: XCTestCase {
     }()
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload<NameAndAvatarUserData>.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<NameAndImageExtraData>.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.unreadChannelsCount, 1)
@@ -27,7 +27,7 @@ class UserEndpointPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.lastActiveDate, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updated, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.extraData.name, "Broken Waterfall")
-        XCTAssertEqual(payload.extraData.avatarURL,
+        XCTAssertEqual(payload.extraData.imageURL,
                        URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!)
         XCTAssertEqual(payload.roleRawValue, "user")
         XCTAssertEqual(payload.isOnline, true)
@@ -56,7 +56,7 @@ class UserEndpointPayload_Tests: XCTestCase {
     }
     
     func test_otherUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload<NameAndAvatarUserData>.self, from: otherUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<NameAndImageExtraData>.self, from: otherUserJSON)
         XCTAssertEqual(payload.id, "bitter-cloud-0")
         XCTAssertEqual(payload.isBanned, true)
         XCTAssertEqual(payload.isOnline, true)
@@ -64,7 +64,7 @@ class UserEndpointPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.created, "2020-06-09T18:33:04.070518Z".toDate())
         XCTAssertEqual(payload.lastActiveDate, "2020-06-09T18:33:04.075114Z".toDate())
         XCTAssertEqual(payload.updated, "2020-06-09T18:33:04.078929Z".toDate())
-        XCTAssertEqual(payload.extraData.avatarURL,
+        XCTAssertEqual(payload.extraData.imageURL,
                        URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!)
         XCTAssertEqual(payload.roleRawValue, "guest")
         XCTAssertEqual(payload.isOnline, true)
