@@ -63,6 +63,6 @@ class WebSocketClientMock: WebSocketClient {
 
 class APIClientMock: APIClient {
     init() {
-        super.init(apiKey: "", baseURL: URL(string: "test")!, sessionConfiguration: .default)
+        super.init(apiKey: APIKey("test_app"), baseURL: URL(string: "test")!, sessionConfiguration: .default)
     }
 }

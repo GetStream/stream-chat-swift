@@ -10,7 +10,7 @@ import UIKit
 @testable import StreamChatClient_v3
 
 let chatClient: ChatClient = {
-    var config = ChatClientConfig(apiKey: "qk4nn7rpcn75")
+    var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
     config.isLocalStorageEnabled = false
     
     let user = User(id: "broken-waterfall-5", name: "Tester", avatarURL: nil)
