@@ -146,6 +146,9 @@
 		79CABB0B24644C1500240052 /* VirtualTimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0A24644C1500240052 /* VirtualTimeTests.swift */; };
 		79CABB0D246457EE00240052 /* VirtualTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0C246457EE00240052 /* VirtualTimers.swift */; };
 		79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D50C7624321BDA0052BA03 /* Client+Events.swift */; };
+		79DDF819249CE38B002F4412 /* MockNetworkURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF816249CE38B002F4412 /* MockNetworkURLProtocol.swift */; };
+		79DDF81A249CE38B002F4412 /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */; };
+		79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */; };
 		79EE393C2453204E0034EBF3 /* StreamChatClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A50694F23CDEA31009F127A /* StreamChatClient.framework */; };
 		79EE3942245320610034EBF3 /* ClientTests00.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE6206923CF63F000AB3426 /* ClientTests00.swift */; };
 		79EE3943245320650034EBF3 /* ClientTests01+Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1D042523D0FB560099AA7F /* ClientTests01+Channels.swift */; };
@@ -608,6 +611,9 @@
 		79CABB0A24644C1500240052 /* VirtualTimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTimeTests.swift; sourceTree = "<group>"; };
 		79CABB0C246457EE00240052 /* VirtualTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTimers.swift; sourceTree = "<group>"; };
 		79D50C7624321BDA0052BA03 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
+		79DDF816249CE38B002F4412 /* MockNetworkURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockNetworkURLProtocol.swift; sourceTree = "<group>"; };
+		79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestRecorderURLProtocol.swift; sourceTree = "<group>"; };
+		79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertNetworkRequest.swift; sourceTree = "<group>"; };
 		79EE39372453204E0034EBF3 /* StreamChatClientIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatClientIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		80B937A42434F5FC003D950E /* Array+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Extensions.swift"; sourceTree = "<group>"; };
 		8A0673B32445E0570042CFD3 /* Channel+Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Config.swift"; sourceTree = "<group>"; };
@@ -1268,6 +1274,7 @@
 		799C9452247D59B1001F1104 /* TestResources_v3 */ = {
 			isa = PBXGroup;
 			children = (
+				79DDF815249CE38B002F4412 /* Mock Network */,
 				798779F52498E47700015F8B /* MockEnpointResponses */,
 				79280F7E24891C6A00CDEB89 /* Virtual Time */,
 				799C9463247D7919001F1104 /* Custom Assertions */,
@@ -1300,6 +1307,16 @@
 				79BF83F1248F8F60007611A1 /* Logger.swift */,
 			);
 			path = Logger;
+			sourceTree = "<group>";
+		};
+		79DDF815249CE38B002F4412 /* Mock Network */ = {
+			isa = PBXGroup;
+			children = (
+				79DDF816249CE38B002F4412 /* MockNetworkURLProtocol.swift */,
+				79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */,
+				79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */,
+			);
+			path = "Mock Network";
 			sourceTree = "<group>";
 		};
 		8A2E4F03245C69AA0032565F /* WebSocket */ = {
@@ -2538,6 +2555,8 @@
 			files = (
 				79A0E9AF2498BFD800E9BD50 /* WebSocketClient_Tests.swift in Sources */,
 				7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */,
+				79DDF819249CE38B002F4412 /* MockNetworkURLProtocol.swift in Sources */,
+				79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */,
 				79877A2A2498E51500015F8B /* MemberModelDTO_Tests.swift in Sources */,
 				799C947D247E6114001F1104 /* TestError.swift in Sources */,
 				79877A2D2498E54400015F8B /* UserEndpoints_Tests.swift in Sources */,
@@ -2562,6 +2581,7 @@
 				79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_Tests.swift in Sources */,
 				796610BB248E687000761629 /* EventMiddleware_Tests.swift in Sources */,
 				799C9469247D791A001F1104 /* AssertResult.swift in Sources */,
+				79DDF81A249CE38B002F4412 /* RequestRecorderURLProtocol.swift in Sources */,
 				79280F8224891C6A00CDEB89 /* VirtualTimer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
