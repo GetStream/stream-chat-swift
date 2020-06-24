@@ -26,7 +26,7 @@ class ChannelModelDTO_Tests: XCTestCase {
         
         // Load the channel from the db and check the fields are correct
         var loadedChannel: ChannelModel<DefaultDataTypes>? {
-            database.viewContext.loadChannel(id: channelId)
+            database.viewContext.loadChannel(cid: channelId)
         }
         
         AssertAsync {
@@ -128,7 +128,7 @@ class ChannelModelDTO_Tests: XCTestCase {
         
         // Load the channel from the db and check the fields are correct
         var loadedChannel: ChannelModel<DefaultDataTypes>? {
-            database.viewContext.loadChannel(id: channelId)
+            database.viewContext.loadChannel(cid: channelId)
         }
         
         AssertAsync {
@@ -227,7 +227,7 @@ extension ChannelModelDTO_Tests {
                                                                              unreadMessagesCount: nil,
                                                                              teams: []))
         
-        let payload: ChannelPayload<DefaultDataTypes> = .init(channel: .init(cid: channelId.description,
+        let payload: ChannelPayload<DefaultDataTypes> = .init(channel: .init(cid: channelId,
                                                                              extraData: .init(name: "Luke's channel",
                                                                                               imageURL: URL(string: UUID()
                                                                                                   .uuidString)),
@@ -305,7 +305,7 @@ extension ChannelModelDTO_Tests {
                                                                    unreadMessagesCount: nil,
                                                                    teams: []))
         
-        let payload: ChannelPayload<NoExtraDataTypes> = .init(channel: .init(cid: channelId.description,
+        let payload: ChannelPayload<NoExtraDataTypes> = .init(channel: .init(cid: channelId,
                                                                              extraData: .init(),
                                                                              typeRawValue: channelId.type.rawValue,
                                                                              lastMessageDate: .unique,

@@ -31,7 +31,7 @@ class ChannelEndpointPayloadTests: XCTestCase {
         XCTAssertEqual(payload.members.count, 4)
         
         let channel = payload.channel
-        XCTAssertEqual(channel.cid, "messaging:general")
+        XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))
         XCTAssertEqual(channel.created, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertNotNil(channel.createdBy)
         XCTAssertEqual(channel.typeRawValue, "messaging")
@@ -75,7 +75,7 @@ class ChannelEndpointPayloadTests: XCTestCase {
         XCTAssertEqual(payload.members.count, 4)
         
         let channel = payload.channel
-        XCTAssertEqual(channel.cid, "messaging:general")
+        XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))
         XCTAssertEqual(channel.created, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertNotNil(channel.createdBy)
         XCTAssertEqual(channel.typeRawValue, "messaging")
