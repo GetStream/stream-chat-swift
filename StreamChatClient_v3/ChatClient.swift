@@ -69,8 +69,8 @@ public final class Client<ExtraData: ExtraDataTypes> {
     // MARK: - Internal
     
     struct Environment {
-        var apiClientBuilder: (_ apiKey: String, _ baseURL: URL, _ sessionConfiguration: URLSessionConfiguration)
-            -> APIClient = APIClient.init
+        var apiClientBuilder: (_ apiKey: APIKey, _ baseURL: URL, _ sessionConfiguration: URLSessionConfiguration)
+            -> APIClient = { APIClient(apiKey: $0, baseURL: $1, sessionConfiguration: $2) }
         
         var webSocketClientBuilder: (
             _ urlRequest: URLRequest,
@@ -85,9 +85,13 @@ public final class Client<ExtraData: ExtraDataTypes> {
     private var backgroundWorkers: [Worker]!
     
     private(set) lazy var apiClient: APIClient = {
-        let apiClient = self.environment.apiClientBuilder(self.config.apiKey, self.baseURL.baseURL, self.urlSessionConfiguration)
-        apiClient.connectionIdProvider = self
+        let apiClient = self.environment
+            .apiClientBuilder(self.config.apiKey, self.baseURL.baseURL, self.urlSessionConfiguration)
+        
+        self.webSocketClient.connectionStateDelegate = apiClient
+        
         return apiClient
+        
     }()
     
     private(set) lazy var webSocketClient: WebSocketClient = {
@@ -135,7 +139,6 @@ public final class Client<ExtraData: ExtraDataTypes> {
         let wsClient = WebSocketClient(urlRequest: request,
                                        eventDecoder: EventDecoder<ExtraData>(),
                                        eventMiddlewares: middlewares)
-        wsClient.connectionStateDelegate = self
         return wsClient
     }()
     
@@ -191,10 +194,6 @@ public final class Client<ExtraData: ExtraDataTypes> {
             builder(self.persistentContainer, self.webSocketClient, self.apiClient)
         }
     }
-    
-    // TEMP
-    /// An array of requests waiting for the connection id
-    @Atomic private var connectionIdWaiters: [(String?) -> Void] = []
 }
 
 // MARK: ========= TEMPORARY!
@@ -240,20 +239,5 @@ extension ClientError {
     // An example of a simple error
     public class MissingLocalStorageURL: ClientError {
         public let localizedDescription: String = "The URL provided in ChatClientConfig is `nil`."
-    }
-}
-
-extension Client: ConnectionIdProvider {
-    func requestConnectionId(completion: @escaping (String?) -> Void) {
-        connectionIdWaiters.append(completion)
-    }
-}
-
-extension Client: ConnectionStateDelegate {
-    func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: ConnectionState) {
-        if case let .connected(connectionId) = state {
-            connectionIdWaiters.forEach { $0(connectionId) }
-            connectionIdWaiters.removeAll()
-        }
     }
 }
