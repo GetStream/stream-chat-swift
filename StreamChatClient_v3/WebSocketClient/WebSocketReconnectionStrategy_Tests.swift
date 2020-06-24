@@ -54,13 +54,13 @@ final class DefaultReconnectionStrategy_Tests: XCTestCase {
     func test_returnsNilForInvalidTokenErrors() {
         let invalidTokenErrorCodes = [40, 41, 42, 43]
         invalidTokenErrorCodes.forEach { invalidTokenErrorCode in
-            let error = ServerResponseError(code: invalidTokenErrorCode, message: "", statusCode: 0)
+            let error = ErrorPayload(code: invalidTokenErrorCode, message: "", statusCode: 0)
             let delay = strategy.reconnectionDelay(forConnectionError: error)
             XCTAssertNil(delay)
         }
         
         // Check other error codes return a non-nil delay
-        let error = ServerResponseError(code: 66, message: "", statusCode: 0)
+        let error = ErrorPayload(code: 66, message: "", statusCode: 0)
         let delay = strategy.reconnectionDelay(forConnectionError: error)
         XCTAssertNotNil(delay)
     }
