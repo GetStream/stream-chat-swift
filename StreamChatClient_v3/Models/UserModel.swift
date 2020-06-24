@@ -101,32 +101,8 @@ public enum UserRole: String, Codable, Hashable {
     case anonymous
 }
 
-/// The default user extra data type with `name` and `avatarURL` properties.
-public struct NameAndAvatarUserData: UserExtraData {
-    private enum CodingKeys: String, CodingKey {
-        case name
-        case avatarURL = "image"
-    }
-    
-    public var name: String?
-    public var avatarURL: URL?
-    
-    public init(name: String? = nil, avatarURL: URL? = nil) {
-        self.name = name
-        self.avatarURL = avatarURL
-    }
-    
-    public init(from decoder: Decoder) throws {
-        // Unfortunatelly, the built-in URL decoder fails, if the string is empty. We need to
-        // provide custom decoding to handle URL? as expected.
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        avatarURL = try container.decodeIfPresent(String.self, forKey: .avatarURL).flatMap(URL.init(string:))
-    }
-}
-
-/// Convenience `UserModel` typealias with `NameAndAvatarData`.
-public typealias User = UserModel<NameAndAvatarUserData>
+/// Convenience `UserModel` typealias with `NameAndImageExtraData`.
+public typealias User = UserModel<NameAndImageExtraData>
 
 public extension User {
     /// Creates a new `User` object.
@@ -134,9 +110,9 @@ public extension User {
     /// - Parameters:
     ///   - id: The id of the user
     ///   - name: The name of the user
-    ///   - avatarURL: The URL of the user's avatar
+    ///   - imageURL: The URL of the user's avatar
     ///
-    convenience init(id: String, name: String?, avatarURL: URL?) {
-        self.init(id: id, extraData: NameAndAvatarUserData(name: name, avatarURL: avatarURL))
+    convenience init(id: String, name: String?, imageURL: URL?) {
+        self.init(id: id, extraData: NameAndImageExtraData(name: name, imageURL: imageURL))
     }
 }

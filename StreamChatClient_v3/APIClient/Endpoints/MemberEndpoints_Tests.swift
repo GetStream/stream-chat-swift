@@ -13,7 +13,7 @@ class MemberEndpointPayload_Tests: XCTestCase {
     }()
     
     func test_memberJSON_isSerialized() throws {
-        let payload = try JSONDecoder.default.decode(MemberPayload<NameAndAvatarUserData>.self, from: memberJSON)
+        let payload = try JSONDecoder.default.decode(MemberPayload<NameAndImageExtraData>.self, from: memberJSON)
         
         XCTAssertEqual(payload.roleRawValue, "owner")
         XCTAssertEqual(payload.created, "2020-06-05T12:53:09.862721Z".toDate())
@@ -27,7 +27,7 @@ class MemberEndpointPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.user.lastActiveDate, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.user.updated, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.user.extraData.name, "Broken Waterfall")
-        XCTAssertEqual(payload.user.extraData.avatarURL,
+        XCTAssertEqual(payload.user.extraData.imageURL,
                        URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!)
         XCTAssertEqual(payload.user.roleRawValue, "user")
         XCTAssertEqual(payload.user.isOnline, true)

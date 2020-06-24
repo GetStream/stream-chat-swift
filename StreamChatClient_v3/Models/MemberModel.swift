@@ -5,7 +5,7 @@
 
 import Foundation
 
-public typealias Member = MemberModel<NameAndAvatarUserData>
+public typealias Member = MemberModel<NameAndImageExtraData>
 
 public class MemberModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     // MARK: - Public
