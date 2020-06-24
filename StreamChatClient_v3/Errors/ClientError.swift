@@ -22,6 +22,15 @@ public class ClientError: Error {
     }
 }
 
+public class CustomMessageError: ClientError {
+    public let localizedDescription: String
+    
+    init(_ message: String, _ file: StaticString = #file, _ line: UInt = #line) {
+        localizedDescription = message
+        super.init(file, line)
+    }
+}
+
 extension ClientError {
     public class Unexpected: ClientError {
         public private(set) lazy var localizedDescription: String = "Unexpect error: \(String(describing: underlyingError))"
@@ -31,6 +40,8 @@ extension ClientError {
             localizedDescription = description
         }
     }
+    
+    public class Unknown: CustomMessageError {}
 }
 
 // This should probably live only in the test target since it's not "true" equatable
