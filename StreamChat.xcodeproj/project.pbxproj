@@ -73,6 +73,8 @@
 		7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3B3249A314D002A09EC /* ConsoleLogDestination.swift */; };
 		7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3B4249A314D002A09EC /* BaseLogDestination.swift */; };
 		7964F3BA249A314D002A09EC /* LogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3B5249A314D002A09EC /* LogDestination.swift */; };
+		7964F3BC249A5E60002A09EC /* RequestEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3BB249A5E60002A09EC /* RequestEncoder.swift */; };
+		7964F3BE249A5E6E002A09EC /* RequestEncoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3BD249A5E6E002A09EC /* RequestEncoder_Tests.swift */; };
 		796610B4248E518D00761629 /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; };
 		796610B5248E518D00761629 /* Starscream.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		796610B9248E651800761629 /* EventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796610B8248E651800761629 /* EventMiddleware.swift */; };
@@ -538,6 +540,8 @@
 		7964F3B3249A314D002A09EC /* ConsoleLogDestination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConsoleLogDestination.swift; sourceTree = "<group>"; };
 		7964F3B4249A314D002A09EC /* BaseLogDestination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseLogDestination.swift; sourceTree = "<group>"; };
 		7964F3B5249A314D002A09EC /* LogDestination.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogDestination.swift; sourceTree = "<group>"; };
+		7964F3BB249A5E60002A09EC /* RequestEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestEncoder.swift; sourceTree = "<group>"; };
+		7964F3BD249A5E6E002A09EC /* RequestEncoder_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestEncoder_Tests.swift; sourceTree = "<group>"; };
 		796610B8248E651800761629 /* EventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMiddleware.swift; sourceTree = "<group>"; };
 		796610BA248E687000761629 /* EventMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMiddleware_Tests.swift; sourceTree = "<group>"; };
 		7972C10E2497BD38001514AF /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
@@ -1255,6 +1259,8 @@
 			isa = PBXGroup;
 			children = (
 				799C9442247D3DA7001F1104 /* APIClient.swift */,
+				7964F3BB249A5E60002A09EC /* RequestEncoder.swift */,
+				7964F3BD249A5E6E002A09EC /* RequestEncoder_Tests.swift */,
 				79877A122498E4EE00015F8B /* Endpoints */,
 			);
 			path = APIClient;
@@ -2510,6 +2516,7 @@
 				79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */,
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				79A0E9B62498C2DD00E9BD50 /* HealthCheckFilterMiddleware.swift in Sources */,
+				7964F3BC249A5E60002A09EC /* RequestEncoder.swift in Sources */,
 				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
 				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
 				79877A192498E4EE00015F8B /* UserEndpoints.swift in Sources */,
@@ -2572,6 +2579,7 @@
 				79280F7D24891B1300CDEB89 /* WebSocketEngine_Tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
 				79280F732487CD3100CDEB89 /* Atomic_Tests.swift in Sources */,
+				7964F3BE249A5E6E002A09EC /* RequestEncoder_Tests.swift in Sources */,
 				79877A2C2498E53B00015F8B /* ChannelEndpoints_Tests.swift in Sources */,
 				79877A292498E51500015F8B /* ChannelDTO_Tests.swift in Sources */,
 				799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */,
