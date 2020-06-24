@@ -7,16 +7,14 @@ import Foundation
 
 struct Endpoint<ResponseType: Decodable> {
     let path: String
-    let method: Method
-    let queryItems: [URLQueryItem]
-    let jsonQueryItems: [String: Encodable]? // This applies only for GET requests, can we maybe reuse `body` for that?
-    let body: Data?
+    let method: EndpointMethod
+    let queryItems: Encodable?
+    let requiresConnectionId: Bool
+    let body: Encodable?
 }
 
-extension Endpoint {
-    enum Method: String {
-        case get = "GET"
-        case post = "POST"
-        case delete = "DELETE"
-    }
+enum EndpointMethod: String {
+    case get = "GET"
+    case post = "POST"
+    case delete = "DELETE"
 }
