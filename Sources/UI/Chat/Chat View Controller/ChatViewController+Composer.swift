@@ -74,9 +74,19 @@ extension Reactive where Base: ChatViewController {
                     } else {
                         chatViewController.keyboardIsVisible = false
                     }
-                    
-                    chatViewController.view.layoutIfNeeded()
                 }
+                
+                chatViewController.tableView.setNeedsLayout()
+                chatViewController.view.layoutIfNeeded()
+            }
+            
+            // Update the table view bottom constraint for the `.solid` `ComposerView` `PinStyle`.
+            if chatViewController.style.composer.pinStyle == .solid {
+                let tableViewBottomConstraint = keyboardNotification.isVisible
+                    ? keyboardNotification.height
+                    : chatViewController.tableViewBottomInset
+                
+                chatViewController.tableViewBottomConstraint?.update(offset: -tableViewBottomConstraint)
             }
             
             if let animation = keyboardNotification.animation {

@@ -85,13 +85,27 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         tableView.separatorStyle = .none
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.showsHorizontalScrollIndicator = false
         tableView.registerMessageCell(style: style.incomingMessage)
         tableView.registerMessageCell(style: style.outgoingMessage)
         tableView.register(cellType: StatusTableViewCell.self)
-        let bottomInset = style.composer.height + style.composer.edgeInsets.top + style.composer.edgeInsets.bottom
-        tableView.contentInset = UIEdgeInsets(top: style.incomingMessage.edgeInsets.top, left: 0, bottom: bottomInset, right: 0)
         view.insertSubview(tableView, at: 0)
-        tableView.makeEdgesEqualToSuperview()
+        
+        if style.composer.pinStyle == .solid {
+            tableView.contentInset = UIEdgeInsets(top: style.incomingMessage.edgeInsets.top, left: 0, bottom: 0, right: 0)
+            
+            tableView.snp.makeConstraints { make in
+                make.left.top.right.equalToSuperview()
+                tableViewBottomConstraint = make.bottom.equalToSuperview().offset(-tableViewBottomInset).constraint
+            }
+        } else {
+            tableView.contentInset = UIEdgeInsets(top: style.incomingMessage.edgeInsets.top,
+                                                  left: 0,
+                                                  bottom: tableViewBottomInset,
+                                                  right: 0)
+            
+            tableView.makeEdgesEqualToSuperview()
+        }
         
         let footerView = ChatFooterView(frame: CGRect(width: 0, height: .chatFooterHeight))
         footerView.backgroundColor = tableView.backgroundColor
@@ -99,6 +113,13 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         
         return tableView
     }()
+    
+    var tableViewBottomConstraint: Constraint?
+    
+    var tableViewBottomInset: CGFloat {
+        let bottomInset = style.composer.height + style.composer.edgeInsets.top + style.composer.edgeInsets.bottom
+        return style.composer.pinStyle == .solid ? bottomInset + .safeAreaBottom : bottomInset
+    }
     
     private lazy var minMessageHeight = 2 * (style.incomingMessage.avatarViewStyle?.size ?? CGFloat.messageAvatarSize)
         + style.incomingMessage.edgeInsets.top

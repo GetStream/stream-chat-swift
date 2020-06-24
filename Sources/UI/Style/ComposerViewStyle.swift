@@ -44,6 +44,9 @@ public struct ComposerViewStyle: Equatable {
     /// - Note: Set it to nil to disable this feature.
     public var replyInChannelViewStyle: ReplyInChannelViewStyle?
     
+    /// A pin style to setup `ComposerView` presentation over messages.
+    public var pinStyle: PinStyle
+    
     /// Composer states.
     ///
     /// For example:
@@ -75,6 +78,7 @@ public struct ComposerViewStyle: Equatable {
                 edgeInsets: UIEdgeInsets = .all(.messageEdgePadding),
                 sendButtonVisibility: ChatViewStyleVisibility = .whenActive,
                 replyInChannelViewStyle: ReplyInChannelViewStyle? = .init(color: .chatGray, selectedColor: .black),
+                pinStyle: PinStyle = .floating,
                 states: States = [.active: .init(tintColor: .chatLightBlue, borderWidth: 2),
                                   .edit: .init(tintColor: .chatGreen, borderWidth: 2),
                                   .disabled: .init(tintColor: .chatGray, borderWidth: 2)]) {
@@ -89,6 +93,7 @@ public struct ComposerViewStyle: Equatable {
         self.edgeInsets = edgeInsets
         self.sendButtonVisibility = sendButtonVisibility
         self.replyInChannelViewStyle = replyInChannelViewStyle
+        self.pinStyle = pinStyle
         self.states = states
     }
     
@@ -122,6 +127,14 @@ extension ComposerViewStyle {
             self.tintColor = tintColor
             self.borderWidth = borderWidth
         }
+    }
+    
+    /// A pin style to setup `ComposerView` presentation over messages.
+    public enum PinStyle {
+        /// Shows `ComposerView` over messages. It's by default.
+        case floating
+        /// Shows messages above `ComposerView` with a `ComposerViewStyle` top edge inset.
+        case solid
     }
 }
 
