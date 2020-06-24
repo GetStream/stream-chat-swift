@@ -97,7 +97,7 @@ public final class Client<ExtraData: ExtraDataTypes> {
         urlComponents.scheme = baseURL.wsURL.scheme
         urlComponents.host = baseURL.wsURL.host
         urlComponents.path = baseURL.wsURL.path.appending("connect")
-        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: config.apiKey)]
+        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: config.apiKey.apiKeyString)]
         
 //      if user.isAnonymous {
 //          urlComponents.queryItems?.append(URLQueryItem(name: "stream-auth-type", value: "anonymous"))
