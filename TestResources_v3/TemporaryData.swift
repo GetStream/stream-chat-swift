@@ -9,7 +9,7 @@ import StreamChatClient_v3
 extension URL {
     /// Returns a unique random URL
     static func unique() -> URL {
-        URL(string: "temporary_\(UUID().uuidString)")!
+        URL(string: "test://temporary_\(UUID().uuidString)")!
     }
     
     /// Returns a unique URL that can be used for storing a temporary file.
