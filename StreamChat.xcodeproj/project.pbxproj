@@ -150,6 +150,7 @@
 		79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D50C7624321BDA0052BA03 /* Client+Events.swift */; };
 		79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF80D249CB920002F4412 /* RequestDecoder.swift */; };
 		79DDF810249CB92E002F4412 /* RequestDecoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF80F249CB92E002F4412 /* RequestDecoder_Tests.swift */; };
+		79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF811249CD5AC002F4412 /* APIClient_Tests.swift */; };
 		79DDF819249CE38B002F4412 /* MockNetworkURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF816249CE38B002F4412 /* MockNetworkURLProtocol.swift */; };
 		79DDF81A249CE38B002F4412 /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */; };
 		79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */; };
@@ -619,6 +620,7 @@
 		79D50C7624321BDA0052BA03 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		79DDF80D249CB920002F4412 /* RequestDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoder.swift; sourceTree = "<group>"; };
 		79DDF80F249CB92E002F4412 /* RequestDecoder_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoder_Tests.swift; sourceTree = "<group>"; };
+		79DDF811249CD5AC002F4412 /* APIClient_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient_Tests.swift; sourceTree = "<group>"; };
 		79DDF816249CE38B002F4412 /* MockNetworkURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockNetworkURLProtocol.swift; sourceTree = "<group>"; };
 		79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestRecorderURLProtocol.swift; sourceTree = "<group>"; };
 		79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertNetworkRequest.swift; sourceTree = "<group>"; };
@@ -1263,6 +1265,7 @@
 			isa = PBXGroup;
 			children = (
 				799C9442247D3DA7001F1104 /* APIClient.swift */,
+				79DDF811249CD5AC002F4412 /* APIClient_Tests.swift */,
 				7964F3BB249A5E60002A09EC /* RequestEncoder.swift */,
 				7964F3BD249A5E6E002A09EC /* RequestEncoder_Tests.swift */,
 				79DDF80D249CB920002F4412 /* RequestDecoder.swift */,
@@ -2584,6 +2587,7 @@
 				799C9460247D77D6001F1104 /* DatabaseContainer_Tests.swift in Sources */,
 				799C945C247D59D8001F1104 /* ChatClient_Tests.swift in Sources */,
 				79280F7D24891B1300CDEB89 /* WebSocketEngine_Tests.swift in Sources */,
+				79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
 				79280F732487CD3100CDEB89 /* Atomic_Tests.swift in Sources */,
 				7964F3BE249A5E6E002A09EC /* RequestEncoder_Tests.swift in Sources */,

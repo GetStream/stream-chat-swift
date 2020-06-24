@@ -5,160 +5,112 @@
 
 import Foundation
 
+/// An object allowing making request to Stream Chat servers.
 class APIClient {
-    let session: URLSession
+    /// An object encapsulating all dependencies of `APIClient`.
+    struct Environment {
+        var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
+        var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
+    }
+    
+    /// The base URL for all requests.
     let baseURL: URL
-    let apiKey: String
     
-    // Must be weak??
-    weak var connectionIdProvider: ConnectionIdProvider?
+    /// The app specific API key.
+    let apiKey: APIKey
     
-    init(apiKey: String, baseURL: URL, sessionConfiguration: URLSessionConfiguration) {
+    /// The URL session used for all requests.
+    let session: URLSession
+    
+    /// `APIClient` uses this object to encode `Endpoint` objects into `URLRequest`s.
+    private(set) lazy var encoder: RequestEncoder = {
+        var encoder = self.environment.requestEncoderBuilder(baseURL, apiKey)
+        encoder.connectionIdProviderDelegate = self
+        return encoder
+    }()
+    
+    /// `APIClient` uses this object to decode the results of network requests.
+    private(set) lazy var decoder: RequestDecoder = self.environment.requestDecoderBuilder()
+    
+    private let environment: Environment
+    
+    /// The current connection id
+    @Atomic private var connectionId: String?
+    
+    /// An array of requests waiting for the connection id
+    @Atomic private var connectionIdWaiters: [(String?) -> Void] = []
+    
+    /// Creates a new `APIClient`.
+    ///
+    /// - Parameters:
+    ///   - apiKey: The app specific API key.
+    ///   - baseURL: The base URL used for all outgoing requests.
+    ///   - sessionConfiguration: The session configuration `APIClient` uses to create its `URLSession`.
+    ///   - environment: An object specifying `APIClient` dependencies.
+    init(apiKey: APIKey, baseURL: URL, sessionConfiguration: URLSessionConfiguration, environment: Environment = .init()) {
         self.apiKey = apiKey
         self.baseURL = baseURL
         session = URLSession(configuration: sessionConfiguration)
+        self.environment = environment
     }
-}
-
-protocol ConnectionIdProvider: AnyObject {
-    func requestConnectionId(completion: @escaping (_ connectionId: String?) -> Void)
-}
-
-extension APIClient {
-    // MARK: - Request
     
-    /// Send a request.
+    deinit {
+        connectionIdWaiters.forEach { $0(nil) }
+        connectionIdWaiters.removeAll()
+    }
+    
+    /// Performs a network request.
     ///
     /// - Parameters:
-    ///   - endpoint: an endpoint (see `Endpoint`).
-    ///   - completion: a completion block.
-    /// - Returns: an URLSessionTask that can be canncelled.
-    func request<T: Decodable>(endpoint: Endpoint<T>, _ completion: @escaping (Result<T, Error>) -> Void) {
-        queryItems(for: endpoint) { queryItemsResult in
-            guard case let .success(queryItems) = queryItemsResult else { fatalError() }
+    ///   - endpoint: The `Endpoint` used to create the network request.
+    ///   - completion: Called when the networking request is finished.
+    func request<Response: Decodable>(endpoint: Endpoint<Response>, completion: @escaping (Result<Response, Error>) -> Void) {
+        encoder.encodeRequest(for: endpoint) { [unowned self] (requestResult) in
+            let urlRequest: URLRequest
             do {
-                let url = try self.requestURL(for: endpoint, queryItems: queryItems).get()
-                let urlRequest = try self.encodeRequest(for: endpoint, url: url).get()
-                
-                let task = self.session.dataTask(with: urlRequest) { data, _, error in
-                    if let error = error {
-                        completion(.failure(error))
-                        return
-                    }
-                    
-                    do {
-                        let decoded = try JSONDecoder.default.decode(T.self, from: data!)
-                        completion(.success(decoded))
-                    } catch {
-                        completion(.failure(error))
-                    }
-                }
-                
-                task.resume()
-                
+                urlRequest = try requestResult.get()
             } catch {
-                fatalError()
+                log.error(error)
+                completion(.failure(error))
+                return
             }
-        }
-    }
-    
-    private func requestURL<T: Decodable>(for endpoint: Endpoint<T>, queryItems: [URLQueryItem]) -> Result<URL, Error> {
-        var urlComponents = URLComponents()
-        urlComponents.scheme = baseURL.scheme
-        urlComponents.host = baseURL.host
-        urlComponents.path = baseURL.path
-        urlComponents.queryItems = queryItems
-        
-        guard let url = urlComponents.url?.appendingPathComponent(endpoint.path) else {
-            fatalError()
-//           return .failure(.invalidURL("For \(urlComponents) with appending path \(endpoint.path)"))
-        }
-        
-        return .success(url)
-    }
-    
-    private func queryItems<T: Decodable>(for endpoint: Endpoint<T>,
-                                          completion: @escaping (Result<[URLQueryItem], Error>) -> Void) {
-        if apiKey.isEmpty {
-            fatalError()
-//           return .failure(.emptyAPIKey)
-        }
-        
-        var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
-        
-        queryItems.append(contentsOf: endpoint.queryItems)
-        
-        if let endpointQueryItems = endpoint.jsonQueryItems {
-            endpointQueryItems.forEach { (key: String, value: Encodable) in
-                do {
-                    let data = try JSONEncoder.default.encode(AnyEncodable(value))
-                    
-                    if let json = String(data: data, encoding: .utf8) {
-                        queryItems.append(URLQueryItem(name: key, value: json))
-                    }
-                } catch {
-                    fatalError()
-//                   logger?.log(error, message: "Encode jsonQueryItems")
-                }
-            }
-        }
-        
-//       if let endpointQueryItem = endpoint.queryItem {
-//           if let data = try? JSONEncoder.default.encode(AnyEncodable(endpointQueryItem)),
-//               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-//               json.forEach { key, value in
-//                   if let stringValue = value as? String {
-//                       queryItems.append(URLQueryItem(name: key, value: stringValue))
-//                   } else if let intValue = value as? Int {
-//                       queryItems.append(URLQueryItem(name: key, value: String(intValue)))
-//                   } else if let floatValue = value as? Float {
-//                       queryItems.append(URLQueryItem(name: key, value: String(floatValue)))
-//                   } else if let doubleValue = value as? Double {
-//                       queryItems.append(URLQueryItem(name: key, value: String(doubleValue)))
-//                   } else if let value = value as? CustomStringConvertible {
-//                       queryItems.append(URLQueryItem(name: key, value: value.description))
-//                   }
-//               }
-//           }
-//       }
-        
-        //       if let connectionId = webSocket.connectionId {
-        //           queryItems.append(URLQueryItem(name: "connection_id", value: connectionId))
-        //       } else if endpoint.requiresConnectionId {
-        //           return .failure(.emptyConnectionId)
-        //       }
-        
-        connectionIdProvider?.requestConnectionId(completion: { connectionId in
-            if let connectionId = connectionId {
-                queryItems.append(URLQueryItem(name: "connection_id", value: connectionId))
-                completion(.success(queryItems))
-            } else {
-                fatalError()
-            }
-        })
-    }
-    
-    private func encodeRequest<T: Decodable>(for endpoint: Endpoint<T>, url: URL) -> Result<URLRequest, Error> {
-        var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = endpoint.method.rawValue
-        urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        if let body = endpoint.body {
-            let encodable = AnyEncodable(body)
             
-            do {
-                if let httpBody = try? JSONEncoder.defaultGzip.encode(encodable) {
-                    urlRequest.httpBody = httpBody
-                    urlRequest.addValue("gzip", forHTTPHeaderField: "Content-Encoding")
-                } else {
-                    urlRequest.httpBody = try JSONEncoder.default.encode(encodable)
+            let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
+                do {
+                    let decodedResponse: Response = try decoder.decodeRequestResponse(data: data, response: response,
+                                                                                      error: error)
+                    completion(.success(decodedResponse))
+                } catch {
+                    completion(.failure(error))
                 }
-            } catch {
-                fatalError()
-//               return .failure(.encodingFailure(error, object: body))
             }
+            
+            task.resume()
         }
-        
-        return .success(urlRequest)
+    }
+}
+
+/// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
+/// its `RequestEncoder`.
+extension APIClient: ConnectionStateDelegate {
+    func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: ConnectionState) {
+        if case let .connected(connectionId) = state {
+            self.connectionId = connectionId
+            connectionIdWaiters.forEach { $0(connectionId) }
+            connectionIdWaiters.removeAll()
+        } else {
+            connectionId = nil
+        }
+    }
+}
+
+/// `APIClient` provides connection id to the `RequestEncoder` it uses.
+extension APIClient: ConnectionIdProviderDelegate {
+    func provideConnectionId(completion: @escaping (String?) -> Void) {
+        if let connectionId = connectionId {
+            completion(connectionId)
+        } else {
+            connectionIdWaiters.append(completion)
+        }
     }
 }
