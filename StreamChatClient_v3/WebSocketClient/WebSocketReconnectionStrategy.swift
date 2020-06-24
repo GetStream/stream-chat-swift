@@ -34,8 +34,8 @@ class DefaultReconnectionStrategy: WebSocketClientReconnectionStrategy {
         }
         
         if
-            let serverInitiatedError = error as? ServerResponseError,
-            ServerResponseError.tokenInvadlidErrorCodes ~= serverInitiatedError.code {
+            let serverInitiatedError = error as? ErrorPayload,
+            ErrorPayload.tokenInvadlidErrorCodes ~= serverInitiatedError.code {
             // Don't reconnect on invalid token errors
             return nil
         }

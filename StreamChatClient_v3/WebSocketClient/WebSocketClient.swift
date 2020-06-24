@@ -282,7 +282,7 @@ extension ClientError {
 /// WebSocket Error
 struct WebSocketErrorContainer: Decodable {
     /// A server error was received.
-    let error: ServerResponseError
+    let error: ErrorPayload
 }
 
 /// Used for starting and ending background tasks. `UIApplication` which conforms to `BackgroundTaskScheduler` automatically.
