@@ -29,7 +29,7 @@ enum WaiterError: Error {
 func await<T>(timeout: TimeInterval = 0.5,
               file: StaticString = #file,
               line: UInt = #line,
-              _ action: @escaping (_ done: @escaping (T) -> Void) -> Void) throws -> T {
+              _ action: (_ done: @escaping (T) -> Void) -> Void) throws -> T {
     let expecation = XCTestExpectation(description: "Action completed")
     var result: T?
     action {
