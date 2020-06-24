@@ -10,9 +10,9 @@ extension Endpoint {
         -> Endpoint<ChannelListPayload<ExtraData>> {
         .init(path: "channels",
               method: .get,
-              queryItems: [],
-              jsonQueryItems: ["payload": query],
-              body: nil)
+              queryItems: nil,
+              requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
+              body: ["payload": query])
     }
 }
 
