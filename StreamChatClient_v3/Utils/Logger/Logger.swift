@@ -197,7 +197,7 @@ public class Logger {
     ///   - condition: The condition to test.
     ///   - message: A custom message to log if `condition` is evaluated to false.
     public func assert(_ condition: @autoclosure () -> Bool,
-                       message: @autoclosure () -> Any,
+                       _ message: @autoclosure () -> Any,
                        functionName: StaticString = #function,
                        fileName: StaticString = #file,
                        lineNumber: UInt = #line) {
