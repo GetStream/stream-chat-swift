@@ -28,19 +28,19 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var team: TeamDTO?
     @NSManaged var members: Set<MemberDTO>
     
-    static func load(cid: String, context: NSManagedObjectContext) -> ChannelDTO? {
+    static func load(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO? {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
-        request.predicate = NSPredicate(format: "cid == %@", cid)
+        request.predicate = NSPredicate(format: "cid == %@", cid.rawValue)
         return try? context.fetch(request).first
     }
     
-    static func loadOrCreate(cid: String, context: NSManagedObjectContext) -> ChannelDTO {
+    static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
         if let existing = Self.load(cid: cid, context: context) {
             return existing
         }
         
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelDTO
-        new.cid = cid
+        new.cid = cid.rawValue
         return new
     }
 }
@@ -70,10 +70,8 @@ extension NSManagedObjectContext {
         
         // TODO: Team
         
-        let channelId = try ChannelId(cid: payload.channel.cid)
-        
         try payload.members.forEach {
-            let member: MemberDTO = try saveMember(payload: $0, channelId: channelId)
+            let member: MemberDTO = try saveMember(payload: $0, channelId: payload.channel.cid)
             dto.members.insert(member)
         }
         

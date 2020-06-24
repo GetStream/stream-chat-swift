@@ -111,7 +111,7 @@ protocol DatabaseSession {
     
     @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>,
                                                                    query: ChannelListQuery?) throws -> ChannelDTO
-    func loadChannel<ExtraData: ExtraDataTypes>(id: ChannelId) -> ChannelModel<ExtraData>?
+    func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>?
 }
 
 extension DatabaseSession {

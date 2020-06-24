@@ -15,7 +15,7 @@ public struct AddedToChannel<ExtraData: ExtraDataTypes>: ChannelEvent {
     public static var eventRawType: String { "notification.added_to_channel" }
     
     public var channelId: ChannelId {
-        try! ChannelId(cid: channelPayload.channel.cid)
+        channelPayload.channel.cid
     }
     
     let channelPayload: ChannelPayload<ExtraData>

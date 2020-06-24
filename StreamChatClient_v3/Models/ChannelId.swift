@@ -54,3 +54,20 @@ public extension ChannelId {
         return String(channelPair[1])
     }
 }
+
+extension ChannelId: Codable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let cid = try container.decode(String.self)
+        self = try ChannelId(cid: cid)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        if id == ChannelId.any {
+            try container.encode(ChannelId.any)
+        } else {
+            try container.encode(rawValue)
+        }
+    }
+}
