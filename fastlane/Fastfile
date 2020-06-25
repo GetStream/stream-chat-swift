@@ -45,8 +45,7 @@ lane :release do |options|
                      api_token: ENV["GITHUB_TOKEN"],
                      name: version_number,
                      tag_name: version_number,
-                     description: changes,
-                     is_draft: true
+                     description: changes
                    )
                    
   push_to_git_remote(tags: true)
@@ -83,6 +82,9 @@ lane :release do |options|
   
   slack(
     message: "#{version_number} successfully released!",
+    payload: {
+      "Changelog" => changes,
+    },
     default_payloads: [:git_author],
   )
   
