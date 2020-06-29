@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E266" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19F101" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
         <attribute name="cid" attributeType="String"/>
         <attribute name="config" attributeType="Binary"/>
         <attribute name="createdDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="defaultSortingDate" attributeType="Date" usesScalarValueType="NO" spotlightIndexingEnabled="YES"/>
         <attribute name="deletedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" attributeType="Binary"/>
         <attribute name="isFrozen" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -15,6 +16,9 @@
         <relationship name="queries" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelListQueryDTO" inverseName="channels" inverseEntity="ChannelListQueryDTO"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TeamDTO" inverseName="channels" inverseEntity="TeamDTO"/>
         <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
+        <fetchIndex name="defaultSortingIndex">
+            <fetchIndexElement property="defaultSortingDate" type="Binary" order="ascending"/>
+        </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="cid"/>
@@ -87,11 +91,11 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="ChannelDTO" positionX="0" positionY="45" width="128" height="253"/>
-        <element name="ChannelListQueryDTO" positionX="160" positionY="192" width="128" height="88"/>
-        <element name="MemberDTO" positionX="0" positionY="63" width="128" height="178"/>
-        <element name="MessageDTO" positionX="27" positionY="72" width="128" height="88"/>
-        <element name="TeamDTO" positionX="9" positionY="126" width="128" height="88"/>
-        <element name="UserDTO" positionX="-36" positionY="9" width="128" height="223"/>
+        <element name="ChannelDTO" positionX="-230.30859375" positionY="-91.43359375" width="128" height="268"/>
+        <element name="ChannelListQueryDTO" positionX="-417.38671875" positionY="43.65234375" width="128" height="88"/>
+        <element name="MemberDTO" positionX="-35.39453125" positionY="-123.73046875" width="128" height="178"/>
+        <element name="MessageDTO" positionX="-232.53515625" positionY="321.80078125" width="128" height="88"/>
+        <element name="TeamDTO" positionX="-49.29296875" positionY="180.734375" width="128" height="88"/>
+        <element name="UserDTO" positionX="157.83984375" positionY="-76.19921875" width="128" height="223"/>
     </elements>
 </model>
