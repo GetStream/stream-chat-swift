@@ -19,6 +19,15 @@
         <fetchIndex name="defaultSortingIndex">
             <fetchIndexElement property="defaultSortingDate" type="Binary" order="ascending"/>
         </fetchIndex>
+        <fetchIndex name="cid">
+            <fetchIndexElement property="cid" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="lastMessageDate">
+            <fetchIndexElement property="lastMessageDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="createdDate">
+            <fetchIndexElement property="createdDate" type="Binary" order="ascending"/>
+        </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="cid"/>
@@ -29,6 +38,9 @@
         <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" attributeType="Binary"/>
         <relationship name="channels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="queries" inverseEntity="ChannelDTO"/>
+        <fetchIndex name="filterHash">
+            <fetchIndexElement property="filterHash" type="Binary" order="ascending"/>
+        </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="filterHash"/>
@@ -45,6 +57,9 @@
         <attribute name="memberUpdatedDate" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="members" inverseEntity="ChannelDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="members" inverseEntity="UserDTO"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -55,6 +70,9 @@
         <attribute name="additionalStateRaw" optional="YES" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="text" optional="YES" attributeType="String"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -65,6 +83,9 @@
         <attribute name="id" attributeType="String"/>
         <relationship name="channels" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="team" inverseEntity="ChannelDTO"/>
         <relationship name="users" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="teams" inverseEntity="UserDTO"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -84,6 +105,9 @@
         <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="user" inverseEntity="MemberDTO"/>
         <relationship name="teams" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TeamDTO" inverseName="users" inverseEntity="TeamDTO"/>
         <relationship name="watchedChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="watchers" inverseEntity="ChannelDTO"/>
+        <fetchIndex name="id">
+            <fetchIndexElement property="id" type="Binary" order="ascending"/>
+        </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
