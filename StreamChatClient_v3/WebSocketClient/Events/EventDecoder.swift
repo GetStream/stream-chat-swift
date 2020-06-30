@@ -8,13 +8,13 @@ import Foundation
 /// A lightweight object for decoding incoming events.
 struct EventDecoder<ExtraData: ExtraDataTypes> {
     /// All supported event types by this decoder.
-    let eventParsers: [(EventResponse<ExtraData>) throws -> Event?] = [
+    let eventParsers: [(EventPayload<ExtraData>) throws -> Event?] = [
         HealthCheck.init,
         AddedToChannel.init
     ]
     
     func decode(data: Data) throws -> Event {
-        let response = try JSONDecoder.default.decode(EventResponse<ExtraData>.self, from: data)
+        let response = try JSONDecoder.default.decode(EventPayload<ExtraData>.self, from: data)
         
         for parser in eventParsers {
             if let decoded = try parser(response) {
@@ -54,7 +54,7 @@ protocol AnyEventDecoder {
 extension EventDecoder: AnyEventDecoder {}
 
 /// The DTO object mirroring the JSON representation of the event.
-struct EventResponse<ExtraData: ExtraDataTypes>: Decodable {
+struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let connectionId: String?
     
     let channelPayload: ChannelPayload<ExtraData>?
