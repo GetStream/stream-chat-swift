@@ -20,7 +20,7 @@ public struct AddedToChannel<ExtraData: ExtraDataTypes>: ChannelEvent {
     
     let channelPayload: ChannelPayload<ExtraData>
     
-    init?(from eventResponse: EventResponse<ExtraData>) throws {
+    init?(from eventResponse: EventPayload<ExtraData>) throws {
         guard eventResponse.eventType == Self.eventRawType else { return nil }
         guard let channel = eventResponse.channelPayload else {
             throw ClientError.EventDecodingError("`channel` field can't be `nil` for the RemovedFromChannel event.")
