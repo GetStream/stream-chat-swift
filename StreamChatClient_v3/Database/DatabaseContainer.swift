@@ -73,9 +73,7 @@ class DatabaseContainer: NSPersistentContainer {
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
     }
-}
-
-extension DatabaseContainer {
+    
     /// Use this method to safely mutate the content of the database.
     ///
     /// - Parameter actions: A block that performs the actual mutation.
