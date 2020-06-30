@@ -204,7 +204,8 @@ extension WebSocketClient: WebSocketEngineDelegate {
     
     func websocketDidReceiveMessage(_ message: String) {
         do {
-            let event = try eventDecoder.decode(data: message.data(using: .utf8)!)
+            let messageData = Data(message.utf8)
+            let event = try eventDecoder.decode(data: messageData)
             
             if let event = event as? HealthCheck {
                 if connectionState.isConnected == false {
