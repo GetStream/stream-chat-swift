@@ -10,10 +10,6 @@ public struct ChannelId: Hashable, CustomStringConvertible {
     private static let any = "*"
     private static let separator: Character = ":"
     
-    enum Error: Swift.Error {
-        case decoding(String)
-    }
-    
     let rawValue: String
     
     /// Init a ChannelId.
@@ -34,7 +30,7 @@ public struct ChannelId: Hashable, CustomStringConvertible {
             let id = String(channelPair[1])
             self.init(type: type, id: id)
         } else {
-            throw ChannelId.Error.decoding(cid)
+            throw ClientError.InvalidChannelId("The channel id has invalid format and can't be decoded: \(cid)")
         }
     }
     
@@ -70,4 +66,8 @@ extension ChannelId: Codable {
             try container.encode(rawValue)
         }
     }
+}
+
+extension ClientError {
+    public class InvalidChannelId: CustomMessageError {}
 }
