@@ -31,3 +31,10 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         case cid
     }
 }
+
+/// An internal protocol marking the Events carrying the payload. This payload can be then used for additional work,
+/// i.e. for storing the data to the database.
+protocol EventWithPayload: Event {
+    /// Type-erased event payload. Cast it to `EventPayload<ExtraData>` when you need to use it.
+    var payload: Any { get }
+}
