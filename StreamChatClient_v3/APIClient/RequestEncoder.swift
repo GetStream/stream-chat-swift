@@ -29,6 +29,27 @@ protocol RequestEncoder {
     init(baseURL: URL, apiKey: APIKey)
 }
 
+extension RequestEncoder {
+    /// Synchronously creates a new `URLRequest` with the data from the `Endpoint`. It also adds all required data
+    /// like an api key, etc.
+    ///
+    /// - Warning: ⚠️ This method shouldn't be called for endpoints with `requiresConnectionId == true` because they
+    /// require an async call to obtain `connectionId`. Use the asynchronous variant of this function instead.
+    ///
+    /// - Parameter endpoint: The `Endpoint` to be encoded.
+    func encodeRequest<ResponsePayload: Decodable>(for endpoint: Endpoint<ResponsePayload>) throws -> URLRequest {
+        log.assert(!endpoint.requiresConnectionId,
+                   "Use the asynchronous version of `encodeRequest` for endpoints with `requiresConnectionId` set to `true.`")
+        
+        var result: Result<URLRequest, Error>?
+        encodeRequest(for: endpoint) { result = $0 }
+        
+        log.assert(result != nil, "`encodeRequest` with `requiresConnectionId == false` should return immediatelly.")
+        
+        return try result!.get()
+    }
+}
+
 /// The default implementation of `RequestEncoder`.
 struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
