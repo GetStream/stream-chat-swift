@@ -9,10 +9,10 @@ import CoreData
 
 @objc(TeamDTO)
 class TeamDTO: NSManagedObject {
-    @NSManaged fileprivate var id: String
+    @NSManaged var id: String
     
     // MARK: - Relationships
     
-    @NSManaged fileprivate var channels: Set<ChannelDTO>
-    @NSManaged fileprivate var users: Set<UserDTO>
+    @NSManaged var channels: Set<ChannelDTO>
+    @NSManaged var users: Set<UserDTO>
 }
