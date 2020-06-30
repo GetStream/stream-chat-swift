@@ -51,7 +51,7 @@ class WebSocketClient {
     
     /// The web socket engine used to make the actual WS connection
     private lazy var engine: WebSocketEngine = {
-        let engine = self.environment.engineBuilder(self.urlRequest, self.engineQueue)
+        let engine = self.environment.engineBuilder(self.urlRequest, self.sessionConfiguration, self.engineQueue)
         engine.delegate = self
         return engine
     }()
@@ -72,6 +72,9 @@ class WebSocketClient {
     /// The request used to establish web socket connection
     private let urlRequest: URLRequest
     
+    /// The session config used for the web socket engine
+    private let sessionConfiguration: URLSessionConfiguration
+    
     /// An object describing reconnection behavior after the web socket is disconnected.
     private var reconnectionStrategy: WebSocketClientReconnectionStrategy
     
@@ -87,6 +90,7 @@ class WebSocketClient {
     
     init(
         urlRequest: URLRequest,
+        sessionConfiguration: URLSessionConfiguration,
         eventDecoder: AnyEventDecoder,
         eventMiddlewares: [EventMiddleware],
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
@@ -94,6 +98,7 @@ class WebSocketClient {
     ) {
         self.environment = environment
         self.urlRequest = urlRequest
+        self.sessionConfiguration = sessionConfiguration
         middlewares = eventMiddlewares
         self.reconnectionStrategy = reconnectionStrategy
         self.eventDecoder = eventDecoder
@@ -149,13 +154,14 @@ extension WebSocketClient {
         
         var notificationCenterBuilder: () -> NotificationCenter = NotificationCenter.init
         
-        var engineBuilder: (_ request: URLRequest, _ callbackQueue: DispatchQueue) -> WebSocketEngine = {
-            if #available(iOS 13, *) {
-                return URLSessionWebSocketEngine(request: $0, callbackQueue: $1)
-            } else {
-                return StarscreamWebSocketProvider(request: $0, callbackQueue: $1)
+        var engineBuilder: (_ request: URLRequest, _ sessionConfiguration: URLSessionConfiguration, _ callbackQueue: DispatchQueue)
+            -> WebSocketEngine = {
+                if #available(iOS 13, *) {
+                    return URLSessionWebSocketEngine(request: $0, sessionConfiguration: $1, callbackQueue: $2)
+                } else {
+                    return StarscreamWebSocketProvider(request: $0, sessionConfiguration: $1, callbackQueue: $2)
+                }
             }
-        }
         
         var backgroundTaskScheduler: BackgroundTaskScheduler = UIApplication.shared
     }

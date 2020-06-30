@@ -43,12 +43,13 @@ final class WebSocketClient_Tests: XCTestCase {
         reconnectionStrategy = MockReconnectionStrategy()
         
         var environment = WebSocketClient.Environment()
-        environment.engineBuilder = { _, _ in self.engine }
+        environment.engineBuilder = { _, _, _ in self.engine }
         environment.notificationCenterBuilder = { self.eventNotificationCenter }
         environment.timer = VirtualTimeTimer.self
         environment.backgroundTaskScheduler = backgroundTaskScheduler
         
         webSocketClient = WebSocketClient(urlRequest: reuqest,
+                                          sessionConfiguration: .default,
                                           eventDecoder: decoder,
                                           eventMiddlewares: [],
                                           reconnectionStrategy: reconnectionStrategy,

@@ -11,7 +11,7 @@ protocol WebSocketEngine: AnyObject {
     var callbackQueue: DispatchQueue { get }
     var delegate: WebSocketEngineDelegate? { get set }
     
-    init(request: URLRequest, callbackQueue: DispatchQueue)
+    init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue)
     func connect()
     func disconnect()
     func sendPing()
