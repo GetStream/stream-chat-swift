@@ -15,7 +15,20 @@ import Foundation
         var callbackQueue: DispatchQueue { webSocket.callbackQueue }
         weak var delegate: WebSocketEngineDelegate?
         
-        init(request: URLRequest, callbackQueue: DispatchQueue) {
+        init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
+            // Starscream doesn't support taking session configuration as a parameter se we need to copy
+            // the headers manually.
+            let requestHeaders = request.allHTTPHeaderFields ?? [:]
+            let sessionHeaders = sessionConfiguration.httpAdditionalHeaders as? [String: String] ?? [:]
+            
+            let allHeaders = requestHeaders.merging(sessionHeaders, uniquingKeysWith: { fromRequest, _ in
+                // In case of duplicity, use the request header value
+                fromRequest
+            })
+            
+            var request = request
+            request.allHTTPHeaderFields = allHeaders
+            
             webSocket = Starscream.WebSocket(request: request)
             webSocket.delegate = self
             webSocket.callbackQueue = callbackQueue

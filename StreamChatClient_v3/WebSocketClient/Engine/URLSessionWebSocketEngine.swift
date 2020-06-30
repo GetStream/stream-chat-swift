@@ -9,17 +9,19 @@ import Foundation
 final class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelegate, URLSessionWebSocketDelegate {
     private var task: URLSessionWebSocketTask?
     let request: URLRequest
+    let sessionConfiguration: URLSessionConfiguration
     var isConnected = false
     let callbackQueue: DispatchQueue
     weak var delegate: WebSocketEngineDelegate?
     
-    init(request: URLRequest, callbackQueue: DispatchQueue) {
+    init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
         self.request = request
+        self.sessionConfiguration = sessionConfiguration
         self.callbackQueue = callbackQueue
     }
     
     func connect() {
-        let session = URLSession(configuration: URLSessionConfiguration.default, delegate: self, delegateQueue: nil)
+        let session = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: nil)
         task = session.webSocketTask(with: request)
         doRead()
         task?.resume()

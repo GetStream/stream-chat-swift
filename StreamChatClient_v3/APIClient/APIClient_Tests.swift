@@ -302,6 +302,7 @@ struct AnyEndpoint: Equatable {
 
 private class TestWebSocketClient: WebSocketClient {
     init() {
-        super.init(urlRequest: .init(url: .unique()), eventDecoder: EventDecoder<DefaultDataTypes>(), eventMiddlewares: [])
+        super.init(urlRequest: .init(url: .unique()), sessionConfiguration: .default,
+                   eventDecoder: EventDecoder<DefaultDataTypes>(), eventMiddlewares: [])
     }
 }

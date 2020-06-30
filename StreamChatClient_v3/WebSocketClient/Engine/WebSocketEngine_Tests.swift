@@ -8,6 +8,7 @@ import Foundation
 
 class WebSocketEngineMock: WebSocketEngine {
     var request: URLRequest
+    var sessionConfiguration: URLSessionConfiguration
     var isConnected: Bool = false
     var callbackQueue: DispatchQueue
     weak var delegate: WebSocketEngineDelegate?
@@ -22,11 +23,12 @@ class WebSocketEngineMock: WebSocketEngine {
     var sendPing_calledCount = 0
     
     convenience init() {
-        self.init(request: .init(url: URL(string: "test_url")!), callbackQueue: .main)
+        self.init(request: .init(url: URL(string: "test_url")!), sessionConfiguration: .default, callbackQueue: .main)
     }
     
-    required init(request: URLRequest, callbackQueue: DispatchQueue) {
+    required init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
         self.request = request
+        self.sessionConfiguration = sessionConfiguration
         self.callbackQueue = callbackQueue
     }
     
