@@ -32,7 +32,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="MemberDTO" representedClassName="MemberDTO" syncable="YES">
-        <attribute name="channelRoleRaw" attributeType="String"/>
+        <attribute name="channelRoleRaw" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="inviteAcceptedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="inviteRejectedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
