@@ -34,5 +34,13 @@ extension DatabaseSession {
     @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) throws
         -> ChannelDTO {
             try saveChannel(payload: payload, query: nil)
+        }
+    
+    // MARK: -  Event
+    
+    func saveEvent<ExtraData: ExtraDataTypes>(payload: EventPayload<ExtraData>) throws {
+        if let channelDetailPayload = payload.channel {
+            try saveChannel(payload: channelDetailPayload, query: nil)
+        }
     }
 }
