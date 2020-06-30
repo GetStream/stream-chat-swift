@@ -21,7 +21,7 @@ public struct ChannelListQuery: Encodable {
     /// A filter for the query (see `Filter`).
     public let filter: Filter
     /// A sorting for the query (see `Sorting`).
-    public let sort: [Sorting]
+    public let sort: [Sorting<ChannelListSortingKey>]
     /// A pagination.
     public let pagination: Pagination
     /// A number of messages inside each channel.
@@ -37,7 +37,7 @@ public struct ChannelListQuery: Encodable {
     ///   - messagesLimit: a messages pagination for the each channel.
     ///   - options: a query options (see `QueryOptions`).
     public init(filter: Filter,
-                sort: [Sorting] = [],
+                sort: [Sorting<ChannelListSortingKey>] = [],
                 pagination: Pagination = [.channelsPageSize],
                 messagesLimit: Pagination = [.messagesPageSize],
                 options: QueryOptions = []) {
