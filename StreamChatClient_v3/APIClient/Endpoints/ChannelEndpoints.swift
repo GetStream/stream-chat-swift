@@ -84,6 +84,8 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     /// Checks if the channel is frozen.
     public let isFrozen: Bool
     
+    let members: [MemberPayload<ExtraData.User>]?
+    
     let memberCount: Int
     
     /// A list of users to invite in the channel.
@@ -141,6 +143,8 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         memberCount = try container.decode(Int.self, forKey: .memberCount)
         updated = try container.decode(Date.self, forKey: .updated)
         
+        members = try container.decodeIfPresent([MemberPayload<ExtraData.User>].self, forKey: .members)
+        
         extraData = try ExtraData.Channel(from: decoder)
     }
     
@@ -158,7 +162,8 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         config: ChannelConfig,
         isFrozen: Bool,
         memberCount: Int,
-        team: String
+        team: String,
+        members: [MemberPayload<ExtraData.User>]?
     ) {
         self.cid = cid
         self.extraData = extraData
@@ -172,6 +177,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.isFrozen = isFrozen
         self.memberCount = memberCount
         self.team = team
+        self.members = members
     }
 }
 
