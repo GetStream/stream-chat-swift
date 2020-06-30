@@ -18,3 +18,6 @@ enum EndpointMethod: String {
     case post = "POST"
     case delete = "DELETE"
 }
+
+/// A type representing empty response of an Endpoint.
+public struct EmptyResponse: Decodable {}
