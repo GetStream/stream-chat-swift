@@ -13,7 +13,7 @@ let chatClient: ChatClient = {
     var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
     config.isLocalStorageEnabled = false
     
-    let user = User(id: "broken-waterfall-5", name: "Tester", avatarURL: nil)
+    let user = User(id: "broken-waterfall-5", name: "Tester", imageURL: nil)
     return ChatClient(currentUser: user, config: config)
 }()
 
