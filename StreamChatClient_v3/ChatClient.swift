@@ -133,6 +133,7 @@ public final class Client<ExtraData: ExtraDataTypes> {
         
         let middlewares: [EventMiddleware] = [
             // TODO: Add more middlewares
+            EventDataProcessorMiddleware<ExtraData>(database: self.persistentContainer),
             HealthCheckFilter()
         ]
         
