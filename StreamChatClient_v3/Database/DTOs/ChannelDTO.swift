@@ -48,36 +48,48 @@ class ChannelDTO: NSManagedObject {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func saveChannel<ExtraData: ExtraDataTypes>(
-        payload: ChannelPayload<ExtraData>,
-        query: ChannelListQuery?
-    ) throws -> ChannelDTO {
-        let dto = ChannelDTO.loadOrCreate(cid: payload.channel.cid, context: self)
-        dto.extraData = try JSONEncoder.default.encode(payload.channel.extraData)
-        dto.typeRawValue = payload.channel.typeRawValue
-        dto.config = try JSONEncoder().encode(payload.channel.config)
-        dto.createdDate = payload.channel.created
-        dto.deletedDate = payload.channel.deleted
-        dto.updatedDate = payload.channel.updated
-        dto.lastMessageDate = payload.channel.lastMessageDate
+    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelDetailPayload<ExtraData>,
+                                                query: ChannelListQuery?) throws -> ChannelDTO {
+        let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
         
-        dto.isFrozen = payload.channel.isFrozen
+        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        dto.typeRawValue = payload.typeRawValue
+        dto.config = try JSONEncoder().encode(payload.config)
+        dto.createdDate = payload.created
+        dto.deletedDate = payload.deleted
+        dto.updatedDate = payload.updated
+        dto.lastMessageDate = payload.lastMessageDate
         
-        if let createdByPayload = payload.channel.createdBy {
+        dto.isFrozen = payload.isFrozen
+        
+        if let createdByPayload = payload.createdBy {
             let creatorDTO = try saveUser(payload: createdByPayload)
             dto.createdBy = creatorDTO
         }
         
         // TODO: Team
         
-        try payload.members.forEach {
-            let member: MemberDTO = try saveMember(payload: $0, channelId: payload.channel.cid)
+        try payload.members?.forEach { memberPayload in
+            let member: MemberDTO = try saveMember(payload: memberPayload, channelId: payload.cid)
             dto.members.insert(member)
         }
         
         if let query = query {
             let queryDTO = saveQuery(query: query)
             queryDTO.channels.insert(dto)
+        }
+        
+        return dto
+    }
+    
+    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>,
+                                                query: ChannelListQuery?) throws -> ChannelDTO {
+        let dto = try saveChannel(payload: payload.channel, query: query)
+        
+        // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
+        try payload.members.forEach {
+            let member: MemberDTO = try saveMember(payload: $0, channelId: payload.channel.cid)
+            dto.members.insert(member)
         }
         
         return dto

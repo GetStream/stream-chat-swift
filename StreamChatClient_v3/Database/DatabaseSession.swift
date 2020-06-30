@@ -23,6 +23,10 @@ protocol DatabaseSession {
     
     @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>,
                                                                    query: ChannelListQuery?) throws -> ChannelDTO
+    
+    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelDetailPayload<ExtraData>,
+                                                                   query: ChannelListQuery?) throws -> ChannelDTO
+    
     func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>?
 }
 
