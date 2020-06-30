@@ -6,7 +6,7 @@
 import Foundation
 
 struct MemberPayload<ExtraData: UserExtraData>: Decodable {
-    let roleRawValue: String
+    let roleRawValue: String?
     let created: Date
     let updated: Date
     

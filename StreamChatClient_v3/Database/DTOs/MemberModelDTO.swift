@@ -13,7 +13,8 @@ class MemberDTO: NSManagedObject {
     // user' id and the channel the member belongs to.
     @NSManaged fileprivate var id: String
     
-    @NSManaged var channelRoleRaw: String
+    // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
+    @NSManaged var channelRoleRaw: String?
     @NSManaged var memberCreatedDate: Date
     @NSManaged var memberUpdatedDate: Date
     
@@ -67,7 +68,10 @@ extension NSManagedObjectContext {
         dto.user = try saveUser(payload: payload.user)
         
         // Save member specific data
-        dto.channelRoleRaw = payload.roleRawValue
+        if let role = payload.roleRawValue {
+            dto.channelRoleRaw = role
+        }
+        
         dto.memberCreatedDate = payload.created
         dto.memberUpdatedDate = payload.updated
         
@@ -90,6 +94,8 @@ extension MemberModel {
                 + "the extra data must be a valid JSON to be saved.")
         }
         
+        let role = dto.channelRoleRaw.flatMap { ChannelRole(rawValue: $0) } ?? .member
+        
         return MemberModel(id: dto.user.id,
                            isOnline: dto.user.isOnline,
                            isBanned: dto.user.isBanned,
@@ -98,7 +104,7 @@ extension MemberModel {
                            userUpdatedDate: dto.user.userUpdatedDate,
                            lastActiveDate: dto.user.lastActivityDate,
                            extraData: extraData,
-                           channelRole: ChannelRole(rawValue: dto.channelRoleRaw)!,
+                           channelRole: role,
                            memberCreatedDate: dto.memberCreatedDate,
                            memberUpdatedDate: dto.memberUpdatedDate,
                            isInvited: false,
