@@ -52,18 +52,3 @@ protocol AnyEventDecoder {
 }
 
 extension EventDecoder: AnyEventDecoder {}
-
-/// The DTO object mirroring the JSON representation of the event.
-struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
-    let connectionId: String?
-    
-    let channelPayload: ChannelPayload<ExtraData>?
-    
-    let eventType: String
-    
-    private enum CodingKeys: String, CodingKey {
-        case connectionId = "connection_id"
-        case channelPayload = "channel"
-        case eventType = "type"
-    }
-}
