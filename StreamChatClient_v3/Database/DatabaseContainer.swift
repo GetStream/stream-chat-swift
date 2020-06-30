@@ -77,17 +77,36 @@ class DatabaseContainer: NSPersistentContainer {
 
 extension DatabaseContainer {
     /// Use this method to safely mutate the content of the database.
-    func write(_ actions: @escaping (DatabaseSession) -> Void) {
+    ///
+    /// - Parameter actions: A block that performs the actual mutation.
+    func write(_ actions: @escaping (DatabaseSession) throws -> Void) {
+        write(actions, completion: { _ in })
+    }
+    
+    // This 👆 overload shouldn't be needed, but when a default parameter for completion 👇 is used,
+    // the compiler gets confused and incorrectly evaluates `write { /* changes */ }`.
+    
+    /// Use this method to safely mutate the content of the database.
+    ///
+    /// - Parameters:
+    ///   - actions: A block that performs the actual mutation.
+    ///   - completion: Called when the changes are saved to the DB. If the changes can't be saved, called with an error.
+    func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         writableContext.perform {
-            actions(self.writableContext)
-            
-            if self.writableContext.hasChanges {
-                do {
+            log.debug("Starting a database session.")
+            do {
+                try actions(self.writableContext)
+                
+                if self.writableContext.hasChanges {
                     try self.writableContext.save()
-                    log.debug("Saved")
-                } catch {
-                    fatalError("\(error)")
                 }
+                
+                log.debug("Database session succesfully saved.")
+                completion(nil)
+                
+            } catch {
+                log.error("Failed to save data to DB. Error: \(error)")
+                completion(error)
             }
         }
     }
