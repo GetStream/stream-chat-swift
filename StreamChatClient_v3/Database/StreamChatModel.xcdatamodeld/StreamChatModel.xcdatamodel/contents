@@ -58,7 +58,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="TeamDTO" representedClassName="TeamDTO" syncable="YES">
-        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="String"/>
         <relationship name="channels" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="team" inverseEntity="ChannelDTO"/>
         <relationship name="users" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="teams" inverseEntity="UserDTO"/>
         <uniquenessConstraints>
