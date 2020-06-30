@@ -42,107 +42,79 @@ public typealias ChatClient = Client<DefaultDataTypes>
 ///
 /// If you don't need to specify your custom extra data types for `User`, `Channel`, or `Message`, use the convenient non-generic
 /// typealias `ChatClient` which specifies the default extra data types.
-///
-public final class Client<ExtraData: ExtraDataTypes> {
-    // MARK: - Public
-    
-    public let currentUser: UserModel<ExtraData.User>
-    
-    public let config: ChatClientConfig
-    
-    public let callbackQueue: DispatchQueue
-    
-    public convenience init(currentUser: UserModel<ExtraData.User>, config: ChatClientConfig, callbackQueue: DispatchQueue? = nil) {
-        // All production workers
-        let workerBuilders: [WorkerBuilder] = [
-            MessageSender.init,
-            ChannelEventsHandler<ExtraData>.init
-        ]
-        
-        self.init(currentUser: currentUser,
-                  config: config,
-                  workerBuilders: workerBuilders,
-                  callbackQueue: callbackQueue ?? DispatchQueue(label: "io.getstream.chat.core.mainCallbackQueue"),
-                  environment: .init())
-    }
-    
-    // MARK: - Internal
-    
+public class Client<ExtraData: ExtraDataTypes> {
+    /// An object containing all dependencies of `Client`
     struct Environment {
-        var apiClientBuilder: (_ apiKey: APIKey, _ baseURL: URL, _ sessionConfiguration: URLSessionConfiguration)
-            -> APIClient = { APIClient(apiKey: $0, baseURL: $1, sessionConfiguration: $2) }
+        var apiClientBuilder: (
+            _ apiKey: APIKey,
+            _ baseURL: URL,
+            _ sessionConfiguration: URLSessionConfiguration
+        ) -> APIClient = { APIClient(apiKey: $0, baseURL: $1, sessionConfiguration: $2) }
         
         var webSocketClientBuilder: (
             _ urlRequest: URLRequest,
+            _ sessionConfiguration: URLSessionConfiguration,
             _ eventDecoder: AnyEventDecoder,
             _ eventMiddlewares: [EventMiddleware]
-        ) -> WebSocketClient = { WebSocketClient(urlRequest: $0, eventDecoder: $1, eventMiddlewares: $2) }
+        ) -> WebSocketClient = { WebSocketClient(urlRequest: $0, sessionConfiguration: $1, eventDecoder: $2, eventMiddlewares: $3) }
         
         var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind) throws
             -> DatabaseContainer = { try DatabaseContainer(kind: $0) }
     }
     
-    private var backgroundWorkers: [Worker]!
+    /// The currently logged-in user.
+    public let currentUser: UserModel<ExtraData.User>
     
+    /// The config object of the `Client` instance. This can't be mutated and can only be set when initializing a `Client` instance.
+    public let config: ChatClientConfig
+    
+    /// A `Worker` represents a single atomic piece of functionality.`Client` initializes a set of background workers that keep
+    /// observing the current state of the system and perform work if needed (i.e. when a new message pending sent appears in the
+    /// database, a worker tries to send it.)
+    private(set) var backgroundWorkers: [Worker]!
+    
+    /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     private(set) lazy var apiClient: APIClient = {
         let apiClient = self.environment
-            .apiClientBuilder(self.config.apiKey, self.baseURL.baseURL, self.urlSessionConfiguration)
-        
+            .apiClientBuilder(self.config.apiKey, config.baseURL.restAPIBaseURL, self.urlSessionConfiguration)
         self.webSocketClient.connectionStateDelegate = apiClient
-        
         return apiClient
-        
     }()
     
+    /// The `WebSocketClient` instance `Client` uses to communicate with Stream WS servers.
     private(set) lazy var webSocketClient: WebSocketClient = {
-        let jsonParameter = WebSocketPayload<ExtraData>(user: self.currentUser, token: token)
-        
-        var urlComponents = URLComponents()
-        urlComponents.scheme = baseURL.wsURL.scheme
-        urlComponents.host = baseURL.wsURL.host
-        urlComponents.path = baseURL.wsURL.path.appending("connect")
-        urlComponents.queryItems = [URLQueryItem(name: "api_key", value: config.apiKey.apiKeyString)]
-        
-//      if user.isAnonymous {
-//          urlComponents.queryItems?.append(URLQueryItem(name: "stream-auth-type", value: "anonymous"))
-//      } else {
-        urlComponents.queryItems?.append(URLQueryItem(name: "authorization", value: token))
-        urlComponents.queryItems?.append(URLQueryItem(name: "stream-auth-type", value: "jwt"))
-        //      }
-        
-        let jsonData = try! JSONEncoder.default.encode(jsonParameter)
-        
-        if let jsonString = String(data: jsonData, encoding: .utf8) {
-            urlComponents.queryItems?.append(URLQueryItem(name: "json", value: jsonString))
-        } else {
-            //          logger?.log("❌ Can't create a JSON parameter string from the json: \(jsonParameter)", level: .error)
-        }
-        
-        guard let url = urlComponents.url else {
-            fatalError()
-            //          logger?.log("❌ Bad URL: \(urlComponents)", level: .error)
-            //          throw ClientError.invalidURL(urlComponents.description)
-        }
-        
-        var request = URLRequest(url: url)
-        request.allHTTPHeaderFields = authHeaders(token: token)
-        
-        //      let callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
-        //      let webSocketOptions: WebSocketOptions = [] // = stayConnectedInBackground ? WebSocketOptions.stayConnectedInBackground : []
-        //      let webSocketProvider = defaultWebSocketProviderType.init(request: request, callbackQueue: callbackQueue)
-        
+        // Set up event middlewares
         let middlewares: [EventMiddleware] = [
             // TODO: Add more middlewares
             EventDataProcessorMiddleware<ExtraData>(database: self.persistentContainer),
             HealthCheckFilter()
         ]
         
-        let wsClient = WebSocketClient(urlRequest: request,
-                                       eventDecoder: EventDecoder<ExtraData>(),
-                                       eventMiddlewares: middlewares)
-        return wsClient
+        // Create a connection request
+        let socketPayload = WebSocketPayload<ExtraData>(user: self.currentUser, token: token)
+        let webSocketEndpoint = Endpoint<EmptyResponse>(path: "connect",
+                                                        method: .get,
+                                                        queryItems: nil,
+                                                        requiresConnectionId: false,
+                                                        body: ["json": socketPayload])
+        
+        let requestEncoder = DefaultRequestEncoder(baseURL: config.baseURL.webSocketBaseURL, apiKey: config.apiKey)
+        
+        do {
+            let request = try requestEncoder.encodeRequest(for: webSocketEndpoint)
+            
+            let wsClient = environment.webSocketClientBuilder(request,
+                                                              urlSessionConfiguration,
+                                                              EventDecoder<ExtraData>(),
+                                                              middlewares)
+            return wsClient
+            
+        } catch {
+            fatalError("Failed to initialize WebSocketClient with error: \(error)")
+        }
     }()
     
+    /// The `DatabaseContainer` instance `Client` uses to store and cache data.
     private(set) lazy var persistentContainer: DatabaseContainer = {
         do {
             if config.isLocalStorageEnabled {
@@ -158,15 +130,10 @@ public final class Client<ExtraData: ExtraDataTypes> {
                 return try environment.databaseContainerBuilder(.onDisk(databaseFileURL: dbFileURL))
             }
             
-            // Example error handling:
-            
         } catch let error as ClientError.MissingLocalStorageURL {
-            assertionFailure("The URL provided in ChatClientConfig can't be `nil`.")
+            log.assert(false, "The URL provided in ChatClientConfig can't be `nil`.")
             
         } catch {
-            let handledError = ClientError.Unexpected(with: error)
-            let handledError2 = ClientError.Unexpected("Something went wrong...")
-            // TODO: Log
             log.error("Failed to initalized the local storage with error: \(error). Falling back to the in-memory option.")
         }
         
@@ -177,49 +144,28 @@ public final class Client<ExtraData: ExtraDataTypes> {
         }
     }()
     
+    /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
     
-    init(
-        currentUser: UserModel<ExtraData.User>,
-        config: ChatClientConfig,
-        workerBuilders: [WorkerBuilder],
-        callbackQueue: DispatchQueue,
-        environment: Environment
-    ) {
-        self.config = config
-        self.currentUser = currentUser
-        self.environment = environment
-        self.callbackQueue = callbackQueue
-        
-        backgroundWorkers = workerBuilders.map { builder in
-            builder(self.persistentContainer, self.webSocketClient, self.apiClient)
-        }
-    }
-}
-
-// MARK: ========= TEMPORARY!
-
-extension Client {
-    var baseURL: BaseURL { .dublin }
-    var token: String {
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
-    }
-    
-    var urlSessionConfiguration: URLSessionConfiguration {
-        let headers = authHeaders(token: token)
+    /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
+    /// required header auth parameters to make a successful request.
+    private var urlSessionConfiguration: URLSessionConfiguration {
         let config = URLSessionConfiguration.default
         config.waitsForConnectivity = true
-        config.httpAdditionalHeaders = headers
+        config.httpAdditionalHeaders = authSessionHeaders
         return config
     }
     
-    func authHeaders(token: String) -> [String: String] {
+    /// Stream-specific request auth headers.
+    private var authSessionHeaders: [String: String] {
         var headers = [
             "X-Stream-Client": "stream-chat-swift-client-\(SystemEnvironment.version)",
             "X-Stream-Device": SystemEnvironment.deviceModelName,
             "X-Stream-OS": SystemEnvironment.systemName,
             "X-Stream-App-Environment": SystemEnvironment.name
         ]
+        
+        // TODO: CIS-164
         
         //      if token.isBlank || user.isAnonymous {
         //          headers["Stream-Auth-Type"] = "anonymous"
@@ -233,6 +179,53 @@ extension Client {
         }
         
         return headers
+    }
+    
+    /// Creates a new instance of Stream Chat `Client`.
+    ///
+    /// - Parameters:
+    ///   - currentUser: The user instance representing the current user of the chat.
+    ///   - config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
+    public convenience init(currentUser: UserModel<ExtraData.User>, config: ChatClientConfig) {
+        // All production workers
+        let workerBuilders: [WorkerBuilder] = [
+            MessageSender.init,
+            ChannelEventsHandler<ExtraData>.init
+        ]
+        
+        self.init(currentUser: currentUser,
+                  config: config,
+                  workerBuilders: workerBuilders,
+                  environment: .init())
+    }
+    
+    /// Creates a new instance of Stream Chat `Client`.
+    ///
+    /// - Parameters:
+    ///   - currentUser: The user instance representing the current user of the chat.
+    ///   - config: The config object for the `Client`.
+    ///   - workerBuilders: An array of worker builders the `Client` instance will instantiate and run in the background
+    ///   for the whole duration of its lifetime.
+    ///   - environment: An object with all external dependencies the new `Client` instance should use.
+    init(currentUser: UserModel<ExtraData.User>,
+         config: ChatClientConfig,
+         workerBuilders: [WorkerBuilder],
+         environment: Environment) {
+        self.config = config
+        self.currentUser = currentUser
+        self.environment = environment
+        
+        backgroundWorkers = workerBuilders.map { builder in
+            builder(self.persistentContainer, self.webSocketClient, self.apiClient)
+        }
+    }
+}
+
+// MARK: ========= TEMPORARY!
+
+extension Client {
+    var token: String {
+        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
     }
 }
 
