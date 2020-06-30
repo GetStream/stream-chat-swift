@@ -21,7 +21,7 @@ class HealthCheckFilterMiddleware_Tests: XCTestCase {
     }
     
     func test_healthCheackEvent_isFiltered() throws {
-        let event = HealthCheck(connectionId: UUID().uuidString)
+        let event = HealthCheck(connectionId: .unique)
         let result = try await { self.middleware.handle(event: event, completion: $0) }
         XCTAssertNil(result)
     }
@@ -30,5 +30,12 @@ class HealthCheckFilterMiddleware_Tests: XCTestCase {
         let event = IntBasedEvent(value: .random(in: 0 ... 100))
         let result = try await { self.middleware.handle(event: event, completion: $0) }
         XCTAssertEqual(result as? IntBasedEvent, event)
+    }
+}
+
+extension HealthCheck {
+    init(connectionId: String) {
+        try! self.init(from: EventPayload<DefaultDataTypes>(eventType: HealthCheck.eventRawType, connectionId: connectionId,
+                                                            channel: nil, currentUser: nil, cid: nil))!
     }
 }

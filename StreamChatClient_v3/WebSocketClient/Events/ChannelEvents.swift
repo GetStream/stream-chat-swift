@@ -6,29 +6,30 @@
 import Foundation
 
 public protocol ChannelEvent: Event {
-    associatedtype ExtraData: ExtraDataTypes
-    
-    var channelId: ChannelId { get }
+    var cid: ChannelId { get }
 }
 
-public struct AddedToChannel<ExtraData: ExtraDataTypes>: ChannelEvent {
+public struct AddedToChannel<ExtraData: ExtraDataTypes>: ChannelEvent, EventWithPayload {
     public static var eventRawType: String { "notification.added_to_channel" }
     
-    public var channelId: ChannelId {
-        channelPayload.channel.cid
-    }
+    public let cid: ChannelId
+    let payload: Any
     
-    let channelPayload: ChannelPayload<ExtraData>
-    
-    init?(from eventResponse: EventPayload<ExtraData>) throws {
-        guard eventResponse.eventType == Self.eventRawType else { return nil }
-        guard let channel = eventResponse.channelPayload else {
-            throw ClientError.EventDecodingError("`channel` field can't be `nil` for the RemovedFromChannel event.")
+    init?(from eventPayload: EventPayload<ExtraData>) throws {
+        guard eventPayload.eventType == Self.eventRawType else { return nil }
+        guard eventPayload.channel != nil else {
+            throw ClientError.EventDecodingError("`channel` field can't be `nil` for the `AddedToChannel` event.")
         }
-        self.init(channelPayload: channel)
+        
+        guard let cid = eventPayload.cid else {
+            throw ClientError.EventDecodingError("`cid` field can't be `nil` for the `AddedToChannel` event.")
+        }
+        
+        self.init(cid: cid, eventPayload: eventPayload)
     }
     
-    init(channelPayload: ChannelPayload<ExtraData>) {
-        self.channelPayload = channelPayload
+    init(cid: ChannelId, eventPayload: EventPayload<ExtraData>) {
+        self.cid = cid
+        payload = eventPayload as Any
     }
 }
