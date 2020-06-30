@@ -12,10 +12,10 @@ public struct BaseURL: CustomStringConvertible {
     
     static let placeholderURL = URL(string: "https://getstream.io")!
     
-    public let baseURL: URL
-    public let wsURL: URL
+    public let restAPIBaseURL: URL
+    public let webSocketBaseURL: URL
     
-    public var description: String { baseURL.absoluteString }
+    public var description: String { restAPIBaseURL.absoluteString }
     
     /// Create a base URL from an URL string.
     ///
@@ -39,7 +39,7 @@ public struct BaseURL: CustomStringConvertible {
         }
         
         urlString = urlString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        baseURL = URL(string: "https://\(urlString)/")!
-        wsURL = URL(string: "wss://\(urlString)/")!
+        restAPIBaseURL = URL(string: "https://\(urlString)/")!
+        webSocketBaseURL = URL(string: "wss://\(urlString)/")!
     }
 }
