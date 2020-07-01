@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🔄 Changed
 
 ### 🐞 Fixed
-- Fix increasing username label font size (`MessageViewStyle.nameFont`) in message cell causing cut off [#333](https://github.com/GetStream/stream-chat-swift/issues/333)
+- Increasing username label font size (`MessageViewStyle.nameFont`) in message cell caused cut off [#333](https://github.com/GetStream/stream-chat-swift/issues/333)
 
 # [2.2.5](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.5)
 _June 24, 2020_
