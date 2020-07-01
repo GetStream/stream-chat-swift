@@ -6,7 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- `ChatViewController.preferredEmojiOrder` to specify order of emojis in reaction view [#337](https://github.com/GetStream/stream-chat-swift/pull/337)
+
 ### 🔄 Changed
+
+### 🐞 Fixed
+- Emojis in reaction view not displayed consistent order [#332](https://github.com/GetStream/stream-chat-swift/issues/332)
 
 # [2.2.5](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.5)
 _June 24, 2020_
