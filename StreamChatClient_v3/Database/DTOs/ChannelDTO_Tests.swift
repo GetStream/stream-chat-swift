@@ -274,8 +274,8 @@ class ChannelModelDTO_Tests: XCTestCase {
     }
 }
 
-extension ChannelModelDTO_Tests {
-    private func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
+extension XCTestCase {
+    func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
         let lukeExtraData = NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString))
         
         let creator: UserPayload<NameAndImageExtraData> =
@@ -346,7 +346,8 @@ extension ChannelModelDTO_Tests {
                                                updated: .unique),
                                  isFrozen: true,
                                  memberCount: 100,
-                                 team: ""),
+                                 team: "",
+                                 members: nil),
                   watcherCount: 10,
                   members: [member])
         
@@ -359,7 +360,7 @@ extension ChannelModelDTO_Tests {
         typealias User = NoExtraData
     }
     
-    private func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
+    func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
         let creator: UserPayload<NoExtraData> =
             .init(id: .unique,
                   created: .unique,
@@ -425,7 +426,8 @@ extension ChannelModelDTO_Tests {
                                                updated: .unique),
                                  isFrozen: true,
                                  memberCount: 100,
-                                 team: ""),
+                                 team: "",
+                                 members: nil),
                   watcherCount: 10,
                   members: [member])
         
