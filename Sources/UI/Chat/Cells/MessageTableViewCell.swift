@@ -59,6 +59,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
                 height = max(height, avatarViewStyle.radius - self.style.spacing.vertical)
             }
             
+            height = max(height, style.nameFont.lineHeight)
             $0.height.equalTo(height).priority(999)
         }
         
