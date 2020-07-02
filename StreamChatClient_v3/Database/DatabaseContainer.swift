@@ -73,52 +73,41 @@ class DatabaseContainer: NSPersistentContainer {
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
     }
-}
-
-extension DatabaseContainer {
+    
     /// Use this method to safely mutate the content of the database.
-    func write(_ actions: @escaping (DatabaseSession) -> Void) {
+    ///
+    /// - Parameter actions: A block that performs the actual mutation.
+    func write(_ actions: @escaping (DatabaseSession) throws -> Void) {
+        write(actions, completion: { _ in })
+    }
+    
+    // This 👆 overload shouldn't be needed, but when a default parameter for completion 👇 is used,
+    // the compiler gets confused and incorrectly evaluates `write { /* changes */ }`.
+    
+    /// Use this method to safely mutate the content of the database.
+    ///
+    /// - Parameters:
+    ///   - actions: A block that performs the actual mutation.
+    ///   - completion: Called when the changes are saved to the DB. If the changes can't be saved, called with an error.
+    func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
         writableContext.perform {
-            actions(self.writableContext)
-            
-            if self.writableContext.hasChanges {
-                do {
+            log.debug("Starting a database session.")
+            do {
+                try actions(self.writableContext)
+                
+                if self.writableContext.hasChanges {
                     try self.writableContext.save()
-                    log.debug("Saved")
-                } catch {
-                    fatalError("\(error)")
                 }
+                
+                log.debug("Database session succesfully saved.")
+                completion(nil)
+                
+            } catch {
+                log.error("Failed to save data to DB. Error: \(error)")
+                completion(error)
             }
         }
     }
-}
-
-extension NSManagedObjectContext: DatabaseSession {}
-
-protocol DatabaseSession {
-    // MARK: -  User
-    
-    @discardableResult func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO
-    func loadUser<ExtraData: UserExtraData>(id: UserId) -> UserModel<ExtraData>?
-    
-    // MARK: -  Member
-    
-    @discardableResult func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId)
-        throws -> MemberDTO
-    func loadMember<ExtraData: UserExtraData>(id: UserId, channelId: ChannelId) -> MemberModel<ExtraData>?
-    
-    // MARK: -  Channel model
-    
-    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>,
-                                                                   query: ChannelListQuery?) throws -> ChannelDTO
-    func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>?
-}
-
-extension DatabaseSession {
-    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) throws
-        -> ChannelDTO {
-            try saveChannel(payload: payload, query: nil)
-        }
 }
 
 // WIP

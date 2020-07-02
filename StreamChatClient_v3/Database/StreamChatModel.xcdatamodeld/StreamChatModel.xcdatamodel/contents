@@ -32,7 +32,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="MemberDTO" representedClassName="MemberDTO" syncable="YES">
-        <attribute name="channelRoleRaw" attributeType="String"/>
+        <attribute name="channelRoleRaw" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="inviteAcceptedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="inviteRejectedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -58,7 +58,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="TeamDTO" representedClassName="TeamDTO" syncable="YES">
-        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="id" attributeType="String"/>
         <relationship name="channels" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="team" inverseEntity="ChannelDTO"/>
         <relationship name="users" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="teams" inverseEntity="UserDTO"/>
         <uniquenessConstraints>
