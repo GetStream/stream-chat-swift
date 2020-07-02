@@ -1,5 +1,5 @@
 # Stream rules
---header "\n{file}\nCopyright © {year} Stream.io Inc. All rights reserved.\n"
+--header "\nCopyright © {year} Stream.io Inc. All rights reserved.\n"
 --enable isEmpty
 --swiftversion 5.2
 
