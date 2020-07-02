@@ -116,6 +116,91 @@ class ChannelModelDTO_Tests: XCTestCase {
         }
     }
     
+    func test_channelListQuery_withSorting() {
+        // Create two channels queries with different sortings.
+        let filter = Filter.equal("some", to: String.unique)
+        let queryWithDefaultSorting = ChannelListQuery(filter: filter)
+        let queryWithCIDSorting = ChannelListQuery(filter: filter, sort: [.init(key: .cid, isAscending: true)])
+        
+        // Create dummy channels payloads with ids: a, b, c, d.
+        let payload1 = dummyPayload(with: try! .init(cid: "a:a"))
+        let payload2 = dummyPayload(with: try! .init(cid: "a:b"))
+        let payload3 = dummyPayload(with: try! .init(cid: "a:c"))
+        let payload4 = dummyPayload(with: try! .init(cid: "a:d"))
+        
+        // Get `lastMessageDate` and `created` dates from generated dummy channels and sort the for the default sorting.
+        let createdAndLastMessageDates = [payload1, payload2, payload3, payload4]
+            .map { $0.channel.lastMessageDate ?? $0.channel.created }
+            .sorted(by: { $0 > $1 })
+        
+        // Save the channels to DB. It doesn't matter which query we use because the filter for both of them is the same.
+        database.write { session in
+            try! session.saveChannel(payload: payload1, query: queryWithDefaultSorting)
+            try! session.saveChannel(payload: payload2, query: queryWithDefaultSorting)
+            try! session.saveChannel(payload: payload3, query: queryWithDefaultSorting)
+            try! session.saveChannel(payload: payload4, query: queryWithDefaultSorting)
+        }
+        
+        // A fetch request with a default sorting.
+        let fetchRequestWithDefaultSorting = ChannelDTO.channelListFetchRequest(query: queryWithDefaultSorting)
+        // A fetch request with a sorting by `cid`.
+        let fetchRequestWithCIDSorting = ChannelDTO.channelListFetchRequest(query: queryWithCIDSorting)
+        
+        var channelsWithDefaultSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithDefaultSorting) }
+        var channelsWithCIDSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithCIDSorting) }
+        
+        AssertAsync {
+            // Check the default sorting.
+            Assert.willBeEqual(channelsWithDefaultSorting.count, 4)
+            Assert.willBeEqual(channelsWithDefaultSorting.map { $0.lastMessageDate ?? $0.createdDate }, createdAndLastMessageDates)
+            
+            // Check the sorting by `cid`.
+            Assert.willBeEqual(channelsWithCIDSorting.count, 4)
+            Assert.willBeEqual(channelsWithCIDSorting.map { $0.cid }, ["a:a", "a:b", "a:c", "a:d"])
+        }
+    }
+    
+    /// `ChannelListSortingKey` test for sort descriptor and encoded value.
+    func test_channelListSortingKey() {
+        var channelListSortingKey = ChannelListSortingKey.default
+        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "updated_at")
+        XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
+                       NSSortDescriptor(key: "defaultSortingDate", ascending: true))
+        XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: false),
+                       NSSortDescriptor(key: "defaultSortingDate", ascending: false))
+        XCTAssertEqual(ChannelListSortingKey.defaultSortDescriptor, NSSortDescriptor(key: "defaultSortingDate", ascending: false))
+        
+        channelListSortingKey = .cid
+        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "cid")
+        XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true), NSSortDescriptor(key: "cid", ascending: true))
+        
+        channelListSortingKey = .type
+        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "type")
+        XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
+                       NSSortDescriptor(key: "typeRawValue", ascending: true))
+        
+        channelListSortingKey = .createdDate
+        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "created_at")
+        XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
+                       NSSortDescriptor(key: "createdDate", ascending: true))
+        
+        channelListSortingKey = .deletedDate
+        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "deleted_at")
+        XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
+                       NSSortDescriptor(key: "deletedDate", ascending: true))
+        
+        channelListSortingKey = .lastMessageDate
+        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "last_message_at")
+        XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
+                       NSSortDescriptor(key: "lastMessageDate", ascending: true))
+    }
+    
+    private func encodedChannelListSortingKey(_ sortingKey: ChannelListSortingKey) -> String {
+        let encodedData = try! JSONEncoder.stream.encode(sortingKey)
+        return String(data: encodedData, encoding: .utf8)!
+            .trimmingCharacters(in: .init(charactersIn: "\""))
+    }
+    
     func test_channelPayload_withNoExtraData_isStoredAndLoadedFromDB() {
         let channelId: ChannelId = .unique
         
@@ -191,77 +276,80 @@ class ChannelModelDTO_Tests: XCTestCase {
 
 extension XCTestCase {
     func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
-        let creator: UserPayload<NameAndImageExtraData> = .init(id: .unique,
-                                                                created: .unique,
-                                                                updated: .unique,
-                                                                lastActiveDate: .unique,
-                                                                isOnline: true,
-                                                                isInvisible: true,
-                                                                isBanned: true,
-                                                                roleRawValue: "user",
-                                                                extraData: .init(name: "Luke",
-                                                                                 imageURL: URL(string: UUID().uuidString)),
-                                                                devices: [],
-                                                                mutedUsers: [],
-                                                                unreadChannelsCount: nil,
-                                                                unreadMessagesCount: nil,
-                                                                teams: [])
+        let lukeExtraData = NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString))
         
-        let member: MemberPayload<NameAndImageExtraData> = .init(roleRawValue: "moderator",
-                                                                 created: .unique,
-                                                                 updated: .unique,
-                                                                 user: .init(id: .unique,
-                                                                             created: .unique,
-                                                                             updated: .unique,
-                                                                             lastActiveDate: .unique,
-                                                                             isOnline: true,
-                                                                             isInvisible: true,
-                                                                             isBanned: true,
-                                                                             roleRawValue: "admin",
-                                                                             extraData: .init(name: "Luke",
-                                                                                              imageURL: URL(string: UUID()
-                                                                                                  .uuidString)),
-                                                                             devices: [],
-                                                                             mutedUsers: [],
-                                                                             unreadChannelsCount: nil,
-                                                                             unreadMessagesCount: nil,
-                                                                             teams: []))
+        let creator: UserPayload<NameAndImageExtraData> =
+            .init(id: .unique,
+                  created: .unique,
+                  updated: .unique,
+                  lastActiveDate: .unique,
+                  isOnline: true,
+                  isInvisible: true,
+                  isBanned: true,
+                  roleRawValue: "user",
+                  extraData: lukeExtraData,
+                  devices: [],
+                  mutedUsers: [],
+                  unreadChannelsCount: nil,
+                  unreadMessagesCount: nil,
+                  teams: [])
         
-        let payload: ChannelPayload<DefaultDataTypes> = .init(channel: .init(cid: channelId,
-                                                                             extraData: .init(name: "Luke's channel",
-                                                                                              imageURL: URL(string: UUID()
-                                                                                                  .uuidString)),
-                                                                             typeRawValue: channelId.type.rawValue,
-                                                                             lastMessageDate: .unique,
-                                                                             created: .unique,
-                                                                             deleted: .unique,
-                                                                             updated: .unique,
-                                                                             createdBy: creator,
-                                                                             config: .init(reactionsEnabled: true,
-                                                                                           typingEventsEnabled: true,
-                                                                                           readEventsEnabled: true,
-                                                                                           connectEventsEnabled: true,
-                                                                                           uploadsEnabled: true,
-                                                                                           repliesEnabled: true,
-                                                                                           searchEnabled: true,
-                                                                                           mutesEnabled: true,
-                                                                                           urlEnrichmentEnabled: true,
-                                                                                           messageRetention: "1000",
-                                                                                           maxMessageLength: 100,
-                                                                                           commands: [
-                                                                                               .init(name: "test",
-                                                                                                     description: "test commant",
-                                                                                                     set: "test",
-                                                                                                     args: "test")
-                                                                                           ],
-                                                                                           created: .unique,
-                                                                                           updated: .unique),
-                                                                             isFrozen: true,
-                                                                             memberCount: 100,
-                                                                             team: "",
-                                                                             members: nil),
-                                                              watcherCount: 10,
-                                                              members: [member])
+        let member: MemberPayload<NameAndImageExtraData> =
+            .init(roleRawValue: "moderator",
+                  created: .unique,
+                  updated: .unique,
+                  user: .init(id: .unique,
+                              created: .unique,
+                              updated: .unique,
+                              lastActiveDate: .unique,
+                              isOnline: true,
+                              isInvisible: true,
+                              isBanned: true,
+                              roleRawValue: "admin",
+                              extraData: lukeExtraData,
+                              devices: [],
+                              mutedUsers: [],
+                              unreadChannelsCount: nil,
+                              unreadMessagesCount: nil,
+                              teams: []))
+        
+        let channelCreatedDate = Date.unique
+        let lastMessageDate: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000 ... 900_000)) : nil
+        
+        let payload: ChannelPayload<DefaultDataTypes> =
+            .init(channel: .init(cid: channelId,
+                                 extraData: .init(name: "Luke's channel", imageURL: URL(string: UUID().uuidString)),
+                                 typeRawValue: channelId.type.rawValue,
+                                 lastMessageDate: lastMessageDate,
+                                 created: channelCreatedDate,
+                                 deleted: .unique,
+                                 updated: .unique,
+                                 createdBy: creator,
+                                 config: .init(reactionsEnabled: true,
+                                               typingEventsEnabled: true,
+                                               readEventsEnabled: true,
+                                               connectEventsEnabled: true,
+                                               uploadsEnabled: true,
+                                               repliesEnabled: true,
+                                               searchEnabled: true,
+                                               mutesEnabled: true,
+                                               urlEnrichmentEnabled: true,
+                                               messageRetention: "1000",
+                                               maxMessageLength: 100,
+                                               commands: [
+                                                   .init(name: "test",
+                                                         description: "test commant",
+                                                         set: "test",
+                                                         args: "test")
+                                               ],
+                                               created: .unique,
+                                               updated: .unique),
+                                 isFrozen: true,
+                                 memberCount: 100,
+                                 team: "",
+                                 members: nil),
+                  watcherCount: 10,
+                  members: [member])
         
         return payload
     }
@@ -273,72 +361,75 @@ extension XCTestCase {
     }
     
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
-        let creator: UserPayload<NoExtraData> = .init(id: .unique,
-                                                      created: .unique,
-                                                      updated: .unique,
-                                                      lastActiveDate: .unique,
-                                                      isOnline: true,
-                                                      isInvisible: true,
-                                                      isBanned: true,
-                                                      roleRawValue: "user",
-                                                      extraData: .init(),
-                                                      devices: [],
-                                                      mutedUsers: [],
-                                                      unreadChannelsCount: nil,
-                                                      unreadMessagesCount: nil,
-                                                      teams: [])
+        let creator: UserPayload<NoExtraData> =
+            .init(id: .unique,
+                  created: .unique,
+                  updated: .unique,
+                  lastActiveDate: .unique,
+                  isOnline: true,
+                  isInvisible: true,
+                  isBanned: true,
+                  roleRawValue: "user",
+                  extraData: .init(),
+                  devices: [],
+                  mutedUsers: [],
+                  unreadChannelsCount: nil,
+                  unreadMessagesCount: nil,
+                  teams: [])
         
-        let member: MemberPayload<NoExtraData> = .init(roleRawValue: "moderator",
-                                                       created: .unique,
-                                                       updated: .unique,
-                                                       user: .init(id: .unique,
-                                                                   created: .unique,
-                                                                   updated: .unique,
-                                                                   lastActiveDate: .unique,
-                                                                   isOnline: true,
-                                                                   isInvisible: true,
-                                                                   isBanned: true,
-                                                                   roleRawValue: "admin",
-                                                                   extraData: .init(),
-                                                                   devices: [],
-                                                                   mutedUsers: [],
-                                                                   unreadChannelsCount: nil,
-                                                                   unreadMessagesCount: nil,
-                                                                   teams: []))
+        let member: MemberPayload<NoExtraData> =
+            .init(roleRawValue: "moderator",
+                  created: .unique,
+                  updated: .unique,
+                  user: .init(id: .unique,
+                              created: .unique,
+                              updated: .unique,
+                              lastActiveDate: .unique,
+                              isOnline: true,
+                              isInvisible: true,
+                              isBanned: true,
+                              roleRawValue: "admin",
+                              extraData: .init(),
+                              devices: [],
+                              mutedUsers: [],
+                              unreadChannelsCount: nil,
+                              unreadMessagesCount: nil,
+                              teams: []))
         
-        let payload: ChannelPayload<NoExtraDataTypes> = .init(channel: .init(cid: channelId,
-                                                                             extraData: .init(),
-                                                                             typeRawValue: channelId.type.rawValue,
-                                                                             lastMessageDate: .unique,
-                                                                             created: .unique,
-                                                                             deleted: .unique,
-                                                                             updated: .unique,
-                                                                             createdBy: creator,
-                                                                             config: .init(reactionsEnabled: true,
-                                                                                           typingEventsEnabled: true,
-                                                                                           readEventsEnabled: true,
-                                                                                           connectEventsEnabled: true,
-                                                                                           uploadsEnabled: true,
-                                                                                           repliesEnabled: true,
-                                                                                           searchEnabled: true,
-                                                                                           mutesEnabled: true,
-                                                                                           urlEnrichmentEnabled: true,
-                                                                                           messageRetention: "1000",
-                                                                                           maxMessageLength: 100,
-                                                                                           commands: [
-                                                                                               .init(name: "test",
-                                                                                                     description: "test commant",
-                                                                                                     set: "test",
-                                                                                                     args: "test")
-                                                                                           ],
-                                                                                           created: .unique,
-                                                                                           updated: .unique),
-                                                                             isFrozen: true,
-                                                                             memberCount: 100,
-                                                                             team: "",
-                                                                             members: nil),
-                                                              watcherCount: 10,
-                                                              members: [member])
+        let payload: ChannelPayload<NoExtraDataTypes> =
+            .init(channel: .init(cid: channelId,
+                                 extraData: .init(),
+                                 typeRawValue: channelId.type.rawValue,
+                                 lastMessageDate: .unique,
+                                 created: .unique,
+                                 deleted: .unique,
+                                 updated: .unique,
+                                 createdBy: creator,
+                                 config: .init(reactionsEnabled: true,
+                                               typingEventsEnabled: true,
+                                               readEventsEnabled: true,
+                                               connectEventsEnabled: true,
+                                               uploadsEnabled: true,
+                                               repliesEnabled: true,
+                                               searchEnabled: true,
+                                               mutesEnabled: true,
+                                               urlEnrichmentEnabled: true,
+                                               messageRetention: "1000",
+                                               maxMessageLength: 100,
+                                               commands: [
+                                                   .init(name: "test",
+                                                         description: "test commant",
+                                                         set: "test",
+                                                         args: "test")
+                                               ],
+                                               created: .unique,
+                                               updated: .unique),
+                                 isFrozen: true,
+                                 memberCount: 100,
+                                 team: "",
+                                 members: nil),
+                  watcherCount: 10,
+                  members: [member])
         
         return payload
     }

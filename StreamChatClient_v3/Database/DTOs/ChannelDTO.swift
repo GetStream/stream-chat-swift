@@ -17,6 +17,7 @@ class ChannelDTO: NSManagedObject {
     
     @NSManaged var createdDate: Date
     @NSManaged var deletedDate: Date?
+    @NSManaged var defaultSortingDate: Date
     @NSManaged var updatedDate: Date
     @NSManaged var lastMessageDate: Date?
     
@@ -51,13 +52,13 @@ extension NSManagedObjectContext {
     func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelDetailPayload<ExtraData>,
                                                 query: ChannelListQuery?) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
-        
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
         dto.config = try JSONEncoder().encode(payload.config)
         dto.createdDate = payload.created
         dto.deletedDate = payload.deleted
         dto.updatedDate = payload.updated
+        dto.defaultSortingDate = payload.lastMessageDate ?? payload.created
         dto.lastMessageDate = payload.lastMessageDate
         
         dto.isFrozen = payload.isFrozen
@@ -105,7 +106,11 @@ extension NSManagedObjectContext {
 extension ChannelDTO {
     static func channelListFetchRequest(query: ChannelListQuery) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: "ChannelDTO")
-        request.sortDescriptors = [.init(key: "cid", ascending: true)] // TODO: sorting from query
+        
+        // Fetch results controller requires at least one sorting descriptor.
+        let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
+        
         request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         return request
     }
