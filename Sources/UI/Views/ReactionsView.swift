@@ -36,7 +36,7 @@ final class ReactionsView: UIView {
         return view
     }()
     
-    func show(emojiReactionTypes: EmojiReactionTypes, at point: CGPoint, for message: Message, completion: @escaping Completion) {
+    func show(emojiReactionTypes: EmojiReactionTypes, at point: CGPoint, for message: Message, with preferredEmojiOrder: [String], completion: @escaping Completion) {
         addSubview(reactionsView)
         self.emojiReactionTypes = emojiReactionTypes
         reactionScores = message.reactionScores
@@ -59,7 +59,7 @@ final class ReactionsView: UIView {
         reactionsView.transform = .init(scaleX: 0.5, y: 0.5)
         alpha = 0
         
-        emojiReactionTypes.forEach { (reactionType, emoji) in
+        emojiReactionTypes.sorted(with: preferredEmojiOrder).forEach { (reactionType, emoji) in
             let users = message.latestReactions.filter({ $0.type == reactionType }).compactMap({ $0.user })
             let reaction: Reaction
             let score = message.reactionScores[reactionType] ?? 0

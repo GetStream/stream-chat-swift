@@ -42,6 +42,12 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         ["like": ("👍", 1), "love": ("❤️", 1), "haha": ("😂", 1), "wow": ("😲", 1), "sad": ("😔", 1), "angry": ("😠", 1)]
     }
     
+    /// A preferred order to display the emojis in the reaction view
+    public lazy var preferredEmojiOrder = defaultPreferredEmojiOrder
+    
+    /// A default preferred order to display the emojis in the reaction view
+    open var defaultPreferredEmojiOrder: [String] { ["👍", "❤️", "😂", "😲", "😔", "😠"] }
+    
     /// A dispose bag for rx subscriptions.
     public let disposeBag = DisposeBag()
     /// A list of table view items, e.g. messages.
