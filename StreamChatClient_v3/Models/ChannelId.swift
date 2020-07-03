@@ -22,6 +22,7 @@ public struct ChannelId: Hashable, CustomStringConvertible {
     init(cid: String) throws {
         if cid == ChannelId.any {
             self.init(type: .unknown, id: Self.any)
+            return
         }
         
         if cid.contains(ChannelId.separator) {
