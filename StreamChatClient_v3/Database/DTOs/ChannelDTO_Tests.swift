@@ -340,7 +340,8 @@ extension XCTestCase {
                                  team: "",
                                  members: nil),
                   watcherCount: 10,
-                  members: [member])
+                  members: [member],
+                  messages: [])
         
         return payload
     }
@@ -412,7 +413,8 @@ extension XCTestCase {
                                  team: "",
                                  members: nil),
                   watcherCount: 10,
-                  members: [member])
+                  members: [member],
+                  messages: [])
         
         return payload
     }

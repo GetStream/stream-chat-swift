@@ -14,7 +14,8 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     }
     
     /// A channel.
-    public let channel: ChannelModel<ExtraData>
+    public let channel: ChannelModel<ExtraData>?
+    public let cid: ChannelId
     /// A pagination for messages (see `Pagination`).
     public let messagesPagination: Pagination
     /// A pagination for members (see `Pagination`). You can use `.limit` and `.offset`.
@@ -38,6 +39,20 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
                 watchersPagination: Pagination = [],
                 options: QueryOptions = []) {
         self.channel = channel
+        cid = channel.cid
+        self.messagesPagination = messagesPagination
+        self.membersPagination = membersPagination
+        self.watchersPagination = watchersPagination
+        self.options = options
+    }
+    
+    public init(channelId: ChannelId,
+                messagesPagination: Pagination = [],
+                membersPagination: Pagination = [],
+                watchersPagination: Pagination = [],
+                options: QueryOptions = []) {
+        channel = nil
+        cid = channelId
         self.messagesPagination = messagesPagination
         self.membersPagination = membersPagination
         self.watchersPagination = watchersPagination
