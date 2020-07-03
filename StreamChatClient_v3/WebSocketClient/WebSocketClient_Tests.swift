@@ -175,7 +175,7 @@ final class WebSocketClient_Tests: XCTestCase {
         AssertAsync {
             Assert.willBeEqual(self.reconnectionStrategy.reconnectionDelay_calledWithError as? WebSocketEngineError, testError)
             Assert.willBeEqual(self.webSocketClient.connectionState,
-                               .waitingForReconnect(error: ClientError.WebSocketError(with: testError)))
+                               .waitingForReconnect(error: ClientError.WebSocket(with: testError)))
         }
         
         // Simulate 10 seconds passed and check `connect` is not called yet

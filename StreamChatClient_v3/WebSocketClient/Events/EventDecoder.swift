@@ -28,21 +28,17 @@ struct EventDecoder<ExtraData: ExtraDataTypes> {
 
 extension ClientError {
     public class UnsupportedEventType: ClientError {
-        public let localizedDescription = "The incoming event type is not supported. Ignoring."
+        override public var localizedDescription: String { "The incoming event type is not supported. Ignoring." }
     }
     
-    public class EventDecodingError: ClientError {
-        init(_ message: String, _ file: StaticString = #file, _ line: UInt = #line) {
-            localizedDescription = message
-            super.init(file, line)
+    public class EventDecoding: ClientError {
+        override init(_ message: String, _ file: StaticString = #file, _ line: UInt = #line) {
+            super.init(message, file, line)
         }
         
         init(missingValue: String, eventType: String, _ file: StaticString = #file, _ line: UInt = #line) {
-            localizedDescription = "`\(missingValue)` can't be `nil` for the `\(eventType)` event."
-            super.init(file, line)
+            super.init("`\(missingValue)` can't be `nil` for the `\(eventType)` event.", file, line)
         }
-        
-        let localizedDescription: String
     }
 }
 

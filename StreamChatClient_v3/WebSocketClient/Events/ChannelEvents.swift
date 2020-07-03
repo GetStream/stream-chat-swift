@@ -18,11 +18,11 @@ public struct AddedToChannel<ExtraData: ExtraDataTypes>: ChannelEvent, EventWith
     init?(from eventPayload: EventPayload<ExtraData>) throws {
         guard eventPayload.eventType == Self.eventRawType else { return nil }
         guard eventPayload.channel != nil else {
-            throw ClientError.EventDecodingError("`channel` field can't be `nil` for the `AddedToChannel` event.")
+            throw ClientError.EventDecoding("`channel` field can't be `nil` for the `AddedToChannel` event.")
         }
         
         guard let cid = eventPayload.cid else {
-            throw ClientError.EventDecodingError("`cid` field can't be `nil` for the `AddedToChannel` event.")
+            throw ClientError.EventDecoding("`cid` field can't be `nil` for the `AddedToChannel` event.")
         }
         
         self.init(cid: cid, eventPayload: eventPayload)

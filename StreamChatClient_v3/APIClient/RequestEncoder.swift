@@ -176,9 +176,9 @@ protocol ConnectionIdProviderDelegate: AnyObject {
 }
 
 extension ClientError {
-    class InvalidURL: CustomMessageError {}
-    class InvalidJSON: CustomMessageError {}
-    class MissingConnectionId: CustomMessageError {}
+    class InvalidURL: ClientError {}
+    class InvalidJSON: ClientError {}
+    class MissingConnectionId: ClientError {}
 }
 
 /// A helper extension allowing to create `URLQueryItems` using a dictionary literal like:

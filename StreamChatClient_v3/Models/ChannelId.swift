@@ -70,5 +70,5 @@ extension ChannelId: Codable {
 }
 
 extension ClientError {
-    public class InvalidChannelId: CustomMessageError {}
+    public class InvalidChannelId: ClientError {}
 }
