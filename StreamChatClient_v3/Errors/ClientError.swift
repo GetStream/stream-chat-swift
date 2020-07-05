@@ -5,7 +5,8 @@
 
 import Foundation
 
-public class ClientError: Error {
+/// A Client error.
+public class ClientError: Error, CustomStringConvertible {
     public struct Location: Equatable {
         public let file: String
         public let line: Int
@@ -14,34 +15,48 @@ public class ClientError: Error {
     /// The file and line number which emitted the error.
     public let location: Location?
     
+    private var message: String?
+    
+    /// An underlying error.
     public let underlyingError: Error?
     
-    public init(with error: Error? = nil, _ file: StaticString = #file, _ line: UInt = #line) {
-        location = .init(file: "\(file)", line: Int(line))
-        underlyingError = error
-    }
-}
-
-public class CustomMessageError: ClientError {
-    public let localizedDescription: String
+    var errorDescription: String? { underlyingError.map(String.init(describing:)) }
     
-    init(_ message: String, _ file: StaticString = #file, _ line: UInt = #line) {
-        localizedDescription = message
-        super.init(file, line)
+    /// Retrieve the localized description for this error.
+    public var localizedDescription: String { message ?? errorDescription ?? "" }
+    
+    public private(set) lazy var description = "Error \(type(of: self)) in \(location?.file ?? ""):\(location?.line ?? 0)"
+        + (localizedDescription.isEmpty ? "" : " -> ")
+        + localizedDescription
+    
+    /// A client error based on an external general error.
+    /// - Parameters:
+    ///   - error: an external error.
+    ///   - file: a file name source of an error.
+    ///   - line: a line source of an error.
+    public init(with error: Error? = nil, _ file: StaticString = #file, _ line: UInt = #line) {
+        underlyingError = error
+        location = .init(file: "\(file)", line: Int(line))
+    }
+    
+    /// An error based on a message.
+    /// - Parameters:
+    ///   - message: an error message.
+    ///   - file: a file name source of an error.
+    ///   - line: a line source of an error.
+    public init(_ message: String, _ file: StaticString = #file, _ line: UInt = #line) {
+        self.message = message
+        location = .init(file: "\(file)", line: Int(line))
+        underlyingError = nil
     }
 }
 
 extension ClientError {
-    public class Unexpected: ClientError {
-        public private(set) lazy var localizedDescription: String = "Unexpect error: \(String(describing: underlyingError))"
-        
-        public convenience init(_ description: String, _ file: StaticString = #file, _ line: UInt = #line) {
-            self.init(file, line)
-            localizedDescription = description
-        }
-    }
+    /// An unexpected error.
+    public class Unexpected: ClientError {}
     
-    public class Unknown: CustomMessageError {}
+    /// An unknown error.
+    public class Unknown: ClientError {}
 }
 
 // This should probably live only in the test target since it's not "true" equatable

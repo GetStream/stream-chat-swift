@@ -16,7 +16,7 @@ public struct HealthCheck: ConnectionEvent {
     init?<ExtraData: ExtraDataTypes>(from eventResponse: EventPayload<ExtraData>) throws {
         guard eventResponse.eventType == Self.eventRawType else { return nil }
         guard let connectionId = eventResponse.connectionId else {
-            throw ClientError.EventDecodingError(missingValue: "connectionId", eventType: "HealthCheck")
+            throw ClientError.EventDecoding(missingValue: "connectionId", eventType: "HealthCheck")
         }
         self.connectionId = connectionId
     }

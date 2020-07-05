@@ -239,6 +239,6 @@ extension Client {
 extension ClientError {
     // An example of a simple error
     public class MissingLocalStorageURL: ClientError {
-        public let localizedDescription: String = "The URL provided in ChatClientConfig is `nil`."
+        override public var localizedDescription: String { "The URL provided in ChatClientConfig is `nil`." }
     }
 }

@@ -79,6 +79,6 @@ struct DefaultRequestDecoder: RequestDecoder {
 extension ClientError {
     class ExpiredToken: ClientError {}
     class ResponseBodyEmpty: ClientError {
-        var localizedDescription = "Response body is empty."
+        override var localizedDescription: String { "Response body is empty." }
     }
 }

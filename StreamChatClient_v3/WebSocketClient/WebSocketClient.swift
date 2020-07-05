@@ -224,7 +224,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
             let webSocketError = message
                 .data(using: .utf8)
                 .map { try? JSONDecoder.default.decode(WebSocketErrorContainer.self, from: $0) }
-                .map { ClientError.WebSocketError(with: $0?.error) }
+                .map { ClientError.WebSocket(with: $0?.error) }
             
             if let webSocketError = webSocketError {
                 // If there is an error from the server, the connection is about to be disconnected
@@ -245,7 +245,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
         }
         
         if shouldReconnect, let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) {
-            let clientError = disconnectionError.map { ClientError.WebSocketError(with: $0) }
+            let clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
             connectionState = .waitingForReconnect(error: clientError)
             
             reconnectionTimer = environment.timer
@@ -254,7 +254,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
                 }
             
         } else {
-            connectionState = .notConnected(error: disconnectionError.map { ClientError.WebSocketError(with: $0) })
+            connectionState = .notConnected(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
         }
     }
 }
@@ -277,7 +277,7 @@ extension Notification {
 }
 
 extension ClientError {
-    public class WebSocketError: ClientError {}
+    public class WebSocket: ClientError {}
 }
 
 /// WebSocket Error
