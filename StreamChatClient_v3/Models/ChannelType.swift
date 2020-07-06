@@ -29,7 +29,7 @@ public enum ChannelType: Codable, Hashable, ExpressibleByStringLiteral {
     /// Init a channel type with a string raw value.
     /// - Parameter rawValue: a string raw value of a channel type.
     public init(rawValue: String) {
-        if rawValue.isEmpty || rawValue.contains(" ") {
+        if rawValue.isEmpty || rawValue.contains(" ") || rawValue == "unknown" {
             self = .unknown
             return
         }

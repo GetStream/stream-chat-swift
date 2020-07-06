@@ -207,6 +207,7 @@
 		8A559D26230D937C00E66096 /* StreamChatCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EC9F22E9B355005CFAC9 /* StreamChatCore.framework */; };
 		8A5B6A6124810C6B0082C023 /* Channel+KeystrokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5B6A6024810C6B0082C023 /* Channel+KeystrokeTests.swift */; };
 		8A5B6A6424810E660082C023 /* ClientTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5B6A6324810E660082C023 /* ClientTestCase.swift */; };
+		8A5D3EF924AF749200E2FE35 /* ChannelId_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5D3EF824AF749200E2FE35 /* ChannelId_Tests.swift */; };
 		8A65559D243DF2D00023046C /* UserConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A65559C243DF2D00023046C /* UserConnection.swift */; };
 		8A6F69D2230ECCD300B8CC1F /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		8A7C58EE243DE9740062487E /* EventType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A7C58ED243DE9740062487E /* EventType.swift */; };
@@ -679,6 +680,7 @@
 		8A559D21230D937B00E66096 /* StreamChatCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A5B6A6024810C6B0082C023 /* Channel+KeystrokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+KeystrokeTests.swift"; sourceTree = "<group>"; };
 		8A5B6A6324810E660082C023 /* ClientTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTestCase.swift; sourceTree = "<group>"; };
+		8A5D3EF824AF749200E2FE35 /* ChannelId_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelId_Tests.swift; sourceTree = "<group>"; };
 		8A65559C243DF2D00023046C /* UserConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnection.swift; sourceTree = "<group>"; };
 		8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Tests.swift"; sourceTree = "<group>"; };
 		8A7C58ED243DE9740062487E /* EventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventType.swift; sourceTree = "<group>"; };
@@ -1267,6 +1269,7 @@
 			isa = PBXGroup;
 			children = (
 				79877A072498E4BC00015F8B /* ChannelId.swift */,
+				8A5D3EF824AF749200E2FE35 /* ChannelId_Tests.swift */,
 				79877A062498E4BC00015F8B /* ChannelModel.swift */,
 				79877A042498E4BB00015F8B /* ChannelType.swift */,
 				79877A052498E4BC00015F8B /* CurrentUser.swift */,
@@ -2585,6 +2588,7 @@
 				799C9468247D791A001F1104 /* AssertJSONEqual.swift in Sources */,
 				79A0E9B72498C2E800E9BD50 /* HealthCheckFilterMiddleware_Tests.swift in Sources */,
 				799C9460247D77D6001F1104 /* DatabaseContainer_Tests.swift in Sources */,
+				8A5D3EF924AF749200E2FE35 /* ChannelId_Tests.swift in Sources */,
 				799C945C247D59D8001F1104 /* ChatClient_Tests.swift in Sources */,
 				79280F7D24891B1300CDEB89 /* WebSocketEngine_Tests.swift in Sources */,
 				79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */,
