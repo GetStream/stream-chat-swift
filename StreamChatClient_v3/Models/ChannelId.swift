@@ -12,11 +12,13 @@ public struct ChannelId: Hashable, CustomStringConvertible {
     
     let rawValue: String
     
+    public var isAny: Bool { rawValue == ChannelType.unknown.rawValue + String(Self.separator) + Self.any }
+    
     /// Init a ChannelId.
     /// - Parameter type: a channel type.
     /// - Parameter id: a channel id.
     public init(type: ChannelType, id: String) {
-        rawValue = type.rawValue + "\(Self.separator)" + id
+        rawValue = type.rawValue + "\(Self.separator)" + (id.isEmpty ? ChannelId.any : id)
     }
     
     init(cid: String) throws {
@@ -41,12 +43,20 @@ public struct ChannelId: Hashable, CustomStringConvertible {
 public extension ChannelId {
     /// The type of the channel the id belongs to.
     var type: ChannelType {
+        guard rawValue.contains(ChannelId.separator) else {
+            return .unknown
+        }
+        
         let channelPair = rawValue.split(separator: ChannelId.separator)
         return ChannelType(rawValue: String(channelPair[0]))
     }
     
     /// The id of the channel without the encoded type information.
     var id: String {
+        guard rawValue.contains(ChannelId.separator) else {
+            return ChannelId.any
+        }
+        
         let channelPair = rawValue.split(separator: ChannelId.separator)
         return String(channelPair[1])
     }
@@ -61,11 +71,7 @@ extension ChannelId: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        if id == ChannelId.any {
-            try container.encode(ChannelId.any)
-        } else {
-            try container.encode(rawValue)
-        }
+        try container.encode(id == ChannelId.any ? ChannelId.any : rawValue)
     }
 }
 
