@@ -436,12 +436,25 @@ public extension Client {
         let userBan = UserBan(user: user, channel: channel, timeoutInMinutes: timeoutInMinutes, reason: reason)
         
         let completion = doBefore(completion) { [weak channel] _ in
-            if timeoutInMinutes == nil {
-                channel?.bannedUsers.append(user)
-            }
+            channel?.bannedUsers.append(user)
         }
         
         return request(endpoint: .ban(userBan), completion)
+    }
+    
+    @discardableResult
+    func unban(user: User,
+               in channel: Channel,
+               _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+        let userBan = UserBan(user: user, channel: channel)
+        
+        let completion = doBefore(completion) { [weak channel] _ in
+            if let index = channel?.bannedUsers.firstIndex(of: user) {
+                channel?.bannedUsers.remove(at: index)
+            }
+        }
+        
+        return request(endpoint: .unban(userBan), completion)
     }
     
     // MARK: - Invite Requests

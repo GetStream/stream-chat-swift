@@ -254,6 +254,14 @@ public extension Reactive where Base == Client {
         }))
     }
     
+    /// Unban a user.
+    /// - Parameter user: a user.
+    func unban(user: User, in channel: Channel) -> Observable<EmptyData> {
+        connected(request({ [unowned base] completion in
+            base.unban(user: user, in: channel, completion)
+        }))
+    }
+    
     // MARK: - Invite Requests
     
     /// Invite a member to the channel.
