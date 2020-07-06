@@ -125,13 +125,20 @@ extension ChatViewController {
             }
             
             if messageActions.contains(.banUser),
-                presenter.channel.banEnabling.isEnabled(for: presenter.channel),
-                !presenter.channel.isBanned(message.user) {
-                alert.addAction(.init(title: "Ban", style: .destructive, handler: { [weak self] _ in
-                    if let channel = self?.presenter?.channel {
-                        self?.ban(user: message.user, channel: channel)
-                    }
-                }))
+                presenter.channel.banEnabling.isEnabled(for: presenter.channel) {
+                if presenter.channel.isBanned(message.user) {
+                    alert.addAction(.init(title: "Unban", style: .destructive, handler: { [weak self] _ in
+                        if let channel = self?.presenter?.channel {
+                            self?.unban(user: message.user, channel: channel)
+                        }
+                    }))
+                } else {
+                    alert.addAction(.init(title: "Ban", style: .destructive, handler: { [weak self] _ in
+                        if let channel = self?.presenter?.channel {
+                            self?.ban(user: message.user, channel: channel)
+                        }
+                    }))
+                }
             }
         }
         
@@ -297,6 +304,17 @@ extension ChatViewController {
             })
             .disposed(by: disposeBag)
     }
+    
+    private func unban(user: User, channel: Channel) {
+        channel.rx.unban(user: user)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                if let backgroundColor = self?.view.backgroundColor {
+                    self?.showBanner("🙋‍♀️ Unban: \(user.name)", backgroundColor: backgroundColor)
+                }
+            })
+            .disposed(by: disposeBag)
+    }
 }
 
 // MARK: - Context Menu
@@ -403,16 +421,23 @@ extension ChatViewController {
                 }
             }
             
-            if messageActions.contains(.banUser),
-                presenter.channel.banEnabling.isEnabled(for: presenter.channel),
-                !presenter.channel.isBanned(message.user) {
-                actions.append(UIAction(title: "Ban",
-                                        image: UIImage(systemName: "exclamationmark.octagon"),
-                                        attributes: [.destructive]) { [weak self] _ in
-                                            if let channel = self?.presenter?.channel {
-                                                self?.ban(user: message.user, channel: channel)
-                                            }
-                })
+            if messageActions.contains(.banUser), presenter.channel.banEnabling.isEnabled(for: presenter.channel) {
+                if presenter.channel.isBanned(message.user) {
+                    actions.append(UIAction(title: "Unban",
+                                            image: UIImage(systemName: "checkmark.square")) { [weak self] _ in
+                                                if let channel = self?.presenter?.channel {
+                                                    self?.unban(user: message.user, channel: channel)
+                                                }
+                    })
+                } else {
+                    actions.append(UIAction(title: "Ban",
+                                            image: UIImage(systemName: "exclamationmark.octagon"),
+                                            attributes: [.destructive]) { [weak self] _ in
+                                                if let channel = self?.presenter?.channel {
+                                                    self?.ban(user: message.user, channel: channel)
+                                                }
+                    })
+                }
             }
         }
         

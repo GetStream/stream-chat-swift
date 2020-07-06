@@ -8,8 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ✅ Added
 - `ChatViewController.preferredEmojiOrder` to specify order of emojis in reaction view [#337](https://github.com/GetStream/stream-chat-swift/pull/337)
-
-### 🔄 Changed
+- Unban a user API:
+  - `client.unban(user:User in channel: Channel, _ completion:)` [#344](https://github.com/GetStream/stream-chat-swift/pull/344)
+  - `client.rx.unban(user:User in channel: Channel)` [#344](https://github.com/GetStream/stream-chat-swift/pull/344)
+  - `channel.unban(user:User, _ completion:)` [#344](https://github.com/GetStream/stream-chat-swift/pull/344)
+  - `channel.rx.unban(user:User)` [#344](https://github.com/GetStream/stream-chat-swift/pull/344)
 
 ### 🐞 Fixed
 - Increasing username label font size (`MessageViewStyle.nameFont`) in message cell caused cut off [#333](https://github.com/GetStream/stream-chat-swift/issues/333)

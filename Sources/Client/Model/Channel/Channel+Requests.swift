@@ -285,6 +285,15 @@ public extension Channel {
         Client.shared.ban(user: user, in: self, timeoutInMinutes: timeoutInMinutes, reason: reason, completion)
     }
     
+    /// Unban a user.
+    /// - Parameters:
+    ///   - user: a user.
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func unban(user: User, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+        Client.shared.unban(user: user, in: self, completion)
+    }
+    
     // MARK: - Invite Requests
     
     /// Invite a member to the channel.

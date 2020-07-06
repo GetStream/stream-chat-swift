@@ -182,6 +182,12 @@ public extension Reactive where Base == Channel {
         Client.shared.rx.ban(user: user, in: base, timeoutInMinutes: timeoutInMinutes, reason: reason)
     }
     
+    /// Unban a user.
+    /// - Parameter user: a user.
+    func unban(user: User) -> Observable<EmptyData> {
+        Client.shared.rx.unban(user: user, in: base)
+    }
+    
     // MARK: - Invite Requests
     
     /// Invite a member to the channel.

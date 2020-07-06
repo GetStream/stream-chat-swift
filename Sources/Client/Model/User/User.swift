@@ -288,7 +288,7 @@ public struct UserBan: Encodable {
     let timeoutInMinutes: Int?
     let reason: String?
     
-    init(user: User, channel: Channel, timeoutInMinutes: Int?, reason: String?) {
+    init(user: User, channel: Channel, timeoutInMinutes: Int? = nil, reason: String? = nil) {
         userId = user.id
         channelType = channel.type
         channelId = channel.id

@@ -212,7 +212,7 @@ public final class Channel: Codable {
         var container = encoder.container(keyedBy: EncodingKeys.self)
         extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a channel extra data")
       
-      try container.encode(team, forKey: .team)
+        try container.encode(team, forKey: .team)
         
         var allMembers = members
         
