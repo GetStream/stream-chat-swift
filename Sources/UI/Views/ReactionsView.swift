@@ -36,7 +36,11 @@ final class ReactionsView: UIView {
         return view
     }()
     
-    func show(emojiReactionTypes: EmojiReactionTypes, at point: CGPoint, for message: Message, with preferredEmojiOrder: [String], completion: @escaping Completion) {
+    func show(emojiReactionTypes: EmojiReactionTypes,
+              at point: CGPoint,
+              for message: Message,
+              with preferredEmojiOrder: [String],
+              completion: @escaping Completion) {
         addSubview(reactionsView)
         self.emojiReactionTypes = emojiReactionTypes
         reactionScores = message.reactionScores

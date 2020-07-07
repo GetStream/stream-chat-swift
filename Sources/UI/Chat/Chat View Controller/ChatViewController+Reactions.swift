@@ -18,15 +18,15 @@ public typealias EmojiReactionTypes = [String: EmojiReaction]
 extension EmojiReactionTypes {
     func sorted(with preferredEmojiOrder: [String]) -> [Element] {
         sorted(by: {
-            let lhsIndex = preferredEmojiOrder.index(of: $0.value.emoji)
-            let rhsIndex = preferredEmojiOrder.index(of: $1.value.emoji)
+            let lhsIndex = preferredEmojiOrder.firstIndex(of: $0.value.emoji)
+            let rhsIndex = preferredEmojiOrder.firstIndex(of: $1.value.emoji)
             
             switch (lhsIndex, rhsIndex) {
             case (.some(let lhs), .some(let rhs)):
                 return lhs < rhs
-            case (.some(let lhs), .none):
+            case (.some, .none):
                 return true
-            case (.none, .some(let rhs)):
+            case (.none, .some):
                 return false
             case (.none, .none):
                 return $0.value.emoji < $1.value.emoji
@@ -80,7 +80,10 @@ extension ChatViewController {
         let convertedOrigin = tableView.convert(cell.frame, to: view).origin
         let position = CGPoint(x: convertedOrigin.x + locationInView.x, y: convertedOrigin.y + locationInView.y)
         
-        reactionsView.show(emojiReactionTypes: emojiReactionTypes, at: position, for: message, with: preferredEmojiOrder) { [weak self] type, score in
+        reactionsView.show(emojiReactionTypes: emojiReactionTypes,
+                           at: position,
+                           for: message,
+                           with: preferredEmojiOrder) { [weak self] type, score in
             guard let self = self,
                 let emojiReactionsType = self.emojiReactionTypes[type],
                 let presenter = self.presenter,
