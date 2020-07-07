@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.2.6](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.6)
+_July 07, 2020_
+
 ### ✅ Added
 - `ChatViewController.preferredEmojiOrder` to specify order of emojis in reaction view [#337](https://github.com/GetStream/stream-chat-swift/pull/337)
 - Unban a user API:
