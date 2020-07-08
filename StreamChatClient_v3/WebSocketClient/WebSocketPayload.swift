@@ -4,30 +4,44 @@
 
 import Foundation
 
-struct WebSocketPayload<ExtraData: ExtraDataTypes>: Encodable {
+struct WebSocketPayload<ExtraData: UserExtraData>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case userId = "user_id"
         case userDetails = "user_details"
-        case token = "user_token"
         case serverDeterminesConnectionId = "server_determines_connection_id"
     }
     
-    let userDetails: UserWebSocketPayload
-    let userId: String
-    let token: String
+    let userDetails: UserWebSocketPayload<ExtraData>
+    let userId: UserId
+    
     let serverDeterminesConnectionId = true
     
-    init(user: UserModel<ExtraData.User>, token: String) {
-        userDetails = UserWebSocketPayload(user: user)
-        userId = user.id
-        self.token = token
+    init(userId: UserId, userRole: UserRole? = nil, extraData: ExtraData? = nil) {
+        userDetails = UserWebSocketPayload(id: userId, userRole: userRole, extraData: extraData)
+        self.userId = userId
     }
 }
 
-struct UserWebSocketPayload: Encodable {
+struct UserWebSocketPayload<ExtraData: UserExtraData>: Encodable {
+    let userRoleRaw: String?
+    let extraData: ExtraData?
     let id: String
     
-    init<ExtraData: UserExtraData>(user: UserModel<ExtraData>) {
-        id = user.id
+    init(id: UserId, userRole: UserRole? = nil, extraData: ExtraData? = nil) {
+        self.id = id
+        userRoleRaw = userRole?.rawValue
+        self.extraData = extraData
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case id
+        case userRoleRaw = "role"
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(userRoleRaw, forKey: .userRoleRaw)
+        try container.encode(id, forKey: .id)
+        try extraData?.encode(to: encoder)
     }
 }
