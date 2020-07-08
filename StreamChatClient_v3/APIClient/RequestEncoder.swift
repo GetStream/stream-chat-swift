@@ -9,7 +9,7 @@ protocol RequestEncoder {
     /// A delegate the encoder uses for obtaining the current `connectionId`.
     ///
     /// Trying to encode an `Endpoint` with the `requiresConnectionId` set to `true` without setting the delegate
-    var connectionIdProviderDelegate: ConnectionIdProviderDelegate? { get set }
+    var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate? { get set }
     
     /// Asynchronously creates a new `URLRequest` with the data from the `Endpoint`. It also adds all required data
     /// like an api key, etc.
@@ -54,7 +54,7 @@ struct DefaultRequestEncoder: RequestEncoder {
     let baseURL: URL
     let apiKey: APIKey
     
-    weak var connectionIdProviderDelegate: ConnectionIdProviderDelegate?
+    weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     
     func encodeRequest<ResponsePayload: Decodable>(for endpoint: Endpoint<ResponsePayload>,
                                                    completion: @escaping (Result<URLRequest, Error>) -> Void) {
@@ -76,16 +76,26 @@ struct DefaultRequestEncoder: RequestEncoder {
             
             try encodeRequestBody(request: &request, endpoint: endpoint)
             
+            // Add Stream auth headers
+            var headers = request.allHTTPHeaderFields ?? [:]
+            if let token = connectionDetailsProviderDelegate?.provideToken() {
+                headers["Stream-Auth-Type"] = "jwt"
+                headers["Authorization"] = token
+            } else {
+                headers["Stream-Auth-Type"] = "anonymous"
+            }
+            request.allHTTPHeaderFields = headers
+            
         } catch {
             completion(.failure(error))
             return
         }
         
         if endpoint.requiresConnectionId {
-            log.assert(connectionIdProviderDelegate != nil,
-                       "The endpoind requiers `connectionId` but `connectionIdProviderDelegate` is not set.")
+            log.assert(connectionDetailsProviderDelegate != nil,
+                       "The endpoind requiers `connectionId` but `connectionDetailsProviderDelegate` is not set.")
             
-            connectionIdProviderDelegate?.provideConnectionId { (connectionId) in
+            connectionDetailsProviderDelegate?.provideConnectionId { (connectionId) in
                 guard let connectionId = connectionId else {
                     completion(.failure(ClientError.MissingConnectionId("Failed to get `connectionId`, request can't be created.")))
                     return
@@ -191,8 +201,9 @@ private extension URL {
     }
 }
 
-protocol ConnectionIdProviderDelegate: AnyObject {
+protocol ConnectionDetailsProviderDelegate: AnyObject {
     func provideConnectionId(completion: @escaping (_ connectionId: ConnectionId?) -> Void)
+    func provideToken() -> Token?
 }
 
 extension ClientError {
