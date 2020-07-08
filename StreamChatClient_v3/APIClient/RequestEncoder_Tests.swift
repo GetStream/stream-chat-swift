@@ -9,7 +9,7 @@ class RequestEncoder_Tests: XCTestCase {
     var encoder: RequestEncoder!
     var baseURL: URL!
     var apiKey: APIKey!
-    fileprivate var connectionIdProvider: TestConnectionIdProviderDelegate!
+    fileprivate var connectionDetailsProvider: TestConnectionDetailsProviderDelegate!
     
     override func setUp() {
         super.setUp()
@@ -18,8 +18,8 @@ class RequestEncoder_Tests: XCTestCase {
         baseURL = .unique()
         encoder = DefaultRequestEncoder(baseURL: baseURL, apiKey: apiKey)
         
-        connectionIdProvider = TestConnectionIdProviderDelegate()
-        encoder.connectionIdProviderDelegate = connectionIdProvider
+        connectionDetailsProvider = TestConnectionDetailsProviderDelegate()
+        encoder.connectionDetailsProviderDelegate = connectionDetailsProvider
     }
     
     func test_requiredQueryItems() throws {
@@ -38,6 +38,35 @@ class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(urlComponents.queryItems?["api_key"], apiKey.apiKeyString)
     }
     
+    func test_requiredAuthHeaders() throws {
+        // Prepare a new endpoint
+        let endpoint = Endpoint<Data>(path: .unique,
+                                      method: .get,
+                                      queryItems: nil,
+                                      requiresConnectionId: false,
+                                      body: nil)
+        
+        // Simulate provided token
+        let token = Token.unique
+        connectionDetailsProvider.token = token
+        
+        // Encode the request and wait for the result
+        var request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        
+        // Check the auth headers are present
+        XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "jwt")
+        XCTAssertEqual(request.allHTTPHeaderFields?["Authorization"], token)
+        
+        // Simulate no token is provided
+        connectionDetailsProvider.token = nil
+        
+        // Encode the request and wait for the result
+        request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        
+        // Check the auth headers
+        XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "anonymous")
+    }
+    
     func test_endpointRequiringConectionId() throws {
         // Prepare an endpoint that requires connection id
         let endpoint = Endpoint<Data>(path: .unique,
@@ -48,7 +77,7 @@ class RequestEncoder_Tests: XCTestCase {
         
         // Set a new connection id
         let connectionId = String.unique
-        connectionIdProvider.connectionId = connectionId
+        connectionDetailsProvider.connectionId = connectionId
         
         // Encode the request and wait for the result
         let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -149,7 +178,9 @@ class RequestEncoder_Tests: XCTestCase {
     }
 }
 
-class TestConnectionIdProviderDelegate: ConnectionIdProviderDelegate {
+class TestConnectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate {
+    var token: Token?
+    
     var connectionId: ConnectionId?
     var connectionWaiters: [(ConnectionId?) -> Void] = []
     
@@ -159,6 +190,8 @@ class TestConnectionIdProviderDelegate: ConnectionIdProviderDelegate {
             completion(connectionId)
         }
     }
+    
+    func provideToken() -> Token? { token }
 }
 
 private struct TestUser: Codable, Equatable {
