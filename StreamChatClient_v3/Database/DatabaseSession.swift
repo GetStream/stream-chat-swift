@@ -9,6 +9,10 @@ extension NSManagedObjectContext: DatabaseSession {}
 protocol DatabaseSession {
     // MARK: -  User
     
+    @discardableResult func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws
+        -> CurrentUserDTO
+    func loadCurrentUser<ExtraData: UserExtraData>() -> CurrentUserModel<ExtraData>?
+    
     @discardableResult func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO
     func loadUser<ExtraData: UserExtraData>(id: UserId) -> UserModel<ExtraData>?
     
@@ -40,6 +44,10 @@ extension DatabaseSession {
     func saveEvent<ExtraData: ExtraDataTypes>(payload: EventPayload<ExtraData>) throws {
         if let channelDetailPayload = payload.channel {
             try saveChannel(payload: channelDetailPayload, query: nil)
+        }
+        
+        if let currentUserPayload = payload.currentUser {
+            try saveCurrentUser(payload: currentUserPayload)
         }
     }
 }
