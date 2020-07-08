@@ -8,7 +8,7 @@ import Foundation
 ///
 /// The default configuration can be changed the following way:
 ///   ```
-///     var config = ChatClient.Config()
+///     var config = ChatClientConfig()
 ///     config.isLocalStorageEnabled = false
 ///     config.channel.keystrokeEventTimeout = 15
 ///   ```
@@ -27,6 +27,11 @@ public struct ChatClientConfig {
     public var isLocalStorageEnabled: Bool = true
     
     public var channel = Channel()
+    
+    /// You can optionally provide your custom `TokenProvider` here and it will be called every time a new current user is set.
+    /// If you're using self-expiring tokens, setting the provider is mandatory to ensure the tokens can get automatically
+    /// refreshed.
+    public var tokenProvider: TokenProvider?
     
     public init(apiKey: APIKey) {
         self.apiKey = apiKey
