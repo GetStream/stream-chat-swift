@@ -287,10 +287,6 @@ extension XCTestCase {
                   isBanned: true,
                   roleRawValue: "user",
                   extraData: lukeExtraData,
-                  devices: [],
-                  mutedUsers: [],
-                  unreadChannelsCount: nil,
-                  unreadMessagesCount: nil,
                   teams: [])
         
         let member: MemberPayload<NameAndImageExtraData> =
@@ -306,10 +302,6 @@ extension XCTestCase {
                               isBanned: true,
                               roleRawValue: "admin",
                               extraData: lukeExtraData,
-                              devices: [],
-                              mutedUsers: [],
-                              unreadChannelsCount: nil,
-                              unreadMessagesCount: nil,
                               teams: []))
         
         let channelCreatedDate = Date.unique
@@ -370,10 +362,6 @@ extension XCTestCase {
                   isBanned: true,
                   roleRawValue: "user",
                   extraData: .init(),
-                  devices: [],
-                  mutedUsers: [],
-                  unreadChannelsCount: nil,
-                  unreadMessagesCount: nil,
                   teams: [])
         
         let member: MemberPayload<NoExtraData> =
@@ -389,10 +377,6 @@ extension XCTestCase {
                               isBanned: true,
                               roleRawValue: "admin",
                               extraData: .init(),
-                              devices: [],
-                              mutedUsers: [],
-                              unreadChannelsCount: nil,
-                              unreadMessagesCount: nil,
                               teams: []))
         
         let payload: ChannelPayload<NoExtraDataTypes> =

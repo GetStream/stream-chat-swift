@@ -28,10 +28,6 @@ class MemberModelDTO_Tests: XCTestCase {
                                                                     extraData: .init(name: "Luke",
                                                                                      imageURL: URL(string: UUID()
                                                                                          .uuidString)),
-                                                                    devices: [],
-                                                                    mutedUsers: [],
-                                                                    unreadChannelsCount: nil,
-                                                                    unreadMessagesCount: nil,
                                                                     teams: [])
         
         let payload: MemberPayload<NameAndImageExtraData> = .init(roleRawValue: "moderator",
@@ -61,9 +57,6 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.roleRawValue, loadedMember?.channelRole.rawValue)
             Assert.willBeEqual(payload.created, loadedMember?.memberCreatedDate)
             Assert.willBeEqual(payload.updated, loadedMember?.memberUpdatedDate)
-//      Assert.willBeEqual(payload.user.isInvited, loadedMember?.isInvited)
-//      Assert.willBeEqual(payload.user.inviteAcceptedDate, loadedMember?.inviteAcceptedDate)
-//      Assert.willBeEqual(payload.user.inviteRejectedDate, loadedMember?.inviteRejectedDate)
         }
     }
     
@@ -80,10 +73,6 @@ class MemberModelDTO_Tests: XCTestCase {
                                                           isBanned: true,
                                                           roleRawValue: "admin",
                                                           extraData: .init(),
-                                                          devices: [],
-                                                          mutedUsers: [],
-                                                          unreadChannelsCount: nil,
-                                                          unreadMessagesCount: nil,
                                                           teams: [])
         
         let payload: MemberPayload<NoExtraData> = .init(roleRawValue: "moderator",
@@ -112,9 +101,6 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.roleRawValue, loadedMember?.channelRole.rawValue)
             Assert.willBeEqual(payload.created, loadedMember?.memberCreatedDate)
             Assert.willBeEqual(payload.updated, loadedMember?.memberUpdatedDate)
-            //      Assert.willBeEqual(payload.user.isInvited, loadedMember?.isInvited)
-            //      Assert.willBeEqual(payload.user.inviteAcceptedDate, loadedMember?.inviteAcceptedDate)
-            //      Assert.willBeEqual(payload.user.inviteRejectedDate, loadedMember?.inviteRejectedDate)
         }
     }
 }

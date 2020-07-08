@@ -18,7 +18,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     let channel: ChannelDetailPayload<ExtraData>?
     
-    let currentUser: UserPayload<ExtraData.User>? // TODO: Create CurrentUserPayload?
+    let currentUser: CurrentUserPayload<ExtraData.User>?
     
     let cid: ChannelId?
     

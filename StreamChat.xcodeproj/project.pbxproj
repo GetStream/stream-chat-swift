@@ -144,6 +144,7 @@
 		79A0E9BE2498C33100E9BD50 /* TypingEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9BD2498C33100E9BD50 /* TypingEvents.swift */; };
 		79A9E4F72449D3AF00599B95 /* Data+Gzip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */; };
 		79A9E4F92449DF2D00599B95 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A9E4F82449DF2D00599B95 /* Reachability.swift */; };
+		79BA19F324B3386B00E11FC2 /* CurrentUserDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */; };
 		79BF83F2248F8F60007611A1 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79BF83F1248F8F60007611A1 /* Logger.swift */; };
 		79C750BB248FC4100023F0B7 /* ErrorPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C750BA248FC4100023F0B7 /* ErrorPayload.swift */; };
 		79CABAFE2462A4E400240052 /* AtomicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79324B7A2462A08A00B2597E /* AtomicTests.swift */; };
@@ -151,6 +152,7 @@
 		79CABB0924644C0700240052 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0824644C0700240052 /* VirtualTime.swift */; };
 		79CABB0B24644C1500240052 /* VirtualTimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0A24644C1500240052 /* VirtualTimeTests.swift */; };
 		79CABB0D246457EE00240052 /* VirtualTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CABB0C246457EE00240052 /* VirtualTimers.swift */; };
+		79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */; };
 		79D50C7724321BDA0052BA03 /* Client+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D50C7624321BDA0052BA03 /* Client+Events.swift */; };
 		79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF80D249CB920002F4412 /* RequestDecoder.swift */; };
 		79DDF810249CB92E002F4412 /* RequestDecoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF80F249CB92E002F4412 /* RequestDecoder_Tests.swift */; };
@@ -619,6 +621,7 @@
 		79A0E9BD2498C33100E9BD50 /* TypingEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingEvents.swift; sourceTree = "<group>"; };
 		79A9E4F62449D3AF00599B95 /* Data+Gzip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+Gzip.swift"; sourceTree = "<group>"; };
 		79A9E4F82449DF2D00599B95 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserDTO_Tests.swift; sourceTree = "<group>"; };
 		79BF83F1248F8F60007611A1 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		79C750BA248FC4100023F0B7 /* ErrorPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorPayload.swift; sourceTree = "<group>"; };
 		79C750BD2490D0130023F0B7 /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
@@ -626,6 +629,7 @@
 		79CABB0824644C0700240052 /* VirtualTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTime.swift; sourceTree = "<group>"; };
 		79CABB0A24644C1500240052 /* VirtualTimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTimeTests.swift; sourceTree = "<group>"; };
 		79CABB0C246457EE00240052 /* VirtualTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualTimers.swift; sourceTree = "<group>"; };
+		79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserDTO.swift; sourceTree = "<group>"; };
 		79D50C7624321BDA0052BA03 /* Client+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+Events.swift"; sourceTree = "<group>"; };
 		79DDF80D249CB920002F4412 /* RequestDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoder.swift; sourceTree = "<group>"; };
 		79DDF80F249CB92E002F4412 /* RequestDecoder_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoder_Tests.swift; sourceTree = "<group>"; };
@@ -1075,6 +1079,8 @@
 				79877A1F2498E50D00015F8B /* TeamDTO.swift */,
 				79877A222498E50D00015F8B /* UserModelDTO.swift */,
 				79877A202498E50D00015F8B /* UserModelDTO_Tests.swift */,
+				79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */,
+				79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */,
 				79877A212498E50D00015F8B /* MemberModelDTO.swift */,
 				79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */,
 				799C942A247D2FB9001F1104 /* ChannelDTO.swift */,
@@ -2522,6 +2528,7 @@
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				7964F3BC249A5E60002A09EC /* RequestEncoder.swift in Sources */,
 				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
+				79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */,
 				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
 				79877A192498E4EE00015F8B /* UserEndpoints.swift in Sources */,
 				792A4F1B247FE84900EAF71D /* ChannelQueryUpdater.swift in Sources */,
@@ -2582,6 +2589,7 @@
 				799C9460247D77D6001F1104 /* DatabaseContainer_Tests.swift in Sources */,
 				8A5D3EF924AF749200E2FE35 /* ChannelId_Tests.swift in Sources */,
 				799C945C247D59D8001F1104 /* ChatClient_Tests.swift in Sources */,
+				79BA19F324B3386B00E11FC2 /* CurrentUserDTO_Tests.swift in Sources */,
 				79280F7D24891B1300CDEB89 /* WebSocketEngine_Tests.swift in Sources */,
 				79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
