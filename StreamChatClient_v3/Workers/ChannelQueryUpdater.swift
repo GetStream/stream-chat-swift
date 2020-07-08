@@ -13,12 +13,12 @@ class ChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func update(channelListQuery: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
-        apiClient
+        apiClient?
             .request(endpoint: .channels(query: channelListQuery))
         { (result: Result<ChannelListPayload<ExtraData>, Error>) in
             switch result {
             case let .success(channelListDTO):
-                self.database.write { session in
+                self.database?.write { session in
                     do {
                         try channelListDTO.channels.forEach {
                             try session.saveChannel(payload: $0, query: channelListQuery)

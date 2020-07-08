@@ -13,9 +13,9 @@ typealias WorkerBuilder = (
 
 // This is a super-class instead of protocol because we need to be sure, `unowned` is used for socket client and api client
 class Worker: NSObject { // TODO: remove NSObject
-    unowned let database: DatabaseContainer
-    unowned let webSocketClient: WebSocketClient
-    unowned let apiClient: APIClient
+    weak var database: DatabaseContainer?
+    weak var webSocketClient: WebSocketClient?
+    weak var apiClient: APIClient?
     
     init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
         self.database = database
