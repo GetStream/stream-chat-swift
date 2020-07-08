@@ -26,10 +26,6 @@ class UserModelDTO_Tests: XCTestCase {
                                                                 roleRawValue: "admin",
                                                                 extraData: .init(name: "Luke",
                                                                                  imageURL: URL(string: UUID().uuidString)),
-                                                                devices: [],
-                                                                mutedUsers: [],
-                                                                unreadChannelsCount: nil,
-                                                                unreadMessagesCount: nil,
                                                                 teams: [])
         
         // Asynchronously save the payload to the db
@@ -67,10 +63,6 @@ class UserModelDTO_Tests: XCTestCase {
                                                       isBanned: true,
                                                       roleRawValue: "admin",
                                                       extraData: .init(),
-                                                      devices: [],
-                                                      mutedUsers: [],
-                                                      unreadChannelsCount: nil,
-                                                      unreadMessagesCount: nil,
                                                       teams: [])
         
         // Asynchronously save the payload to the db

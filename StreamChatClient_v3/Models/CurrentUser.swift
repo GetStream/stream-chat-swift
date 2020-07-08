@@ -6,7 +6,7 @@ import Foundation
 
 // TODO: Finish implementation
 
-public class CurrentUser<ExtraData: UserExtraData>: UserModel<ExtraData> {
+public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     // MARK: - Public
     
     /// A list of devices.
