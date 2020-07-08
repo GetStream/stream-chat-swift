@@ -45,14 +45,26 @@ class WebSocketClient {
     /// Event middlewares used to pre-process incoming events before they are published
     var middlewares: [EventMiddleware]
     
+    /// The endpoint used for creating a web socket connection.
+    ///
+    /// Changing this value doesn't automatically update the existing connection. You need to manually call `disconnect`
+    /// and `connect` to make a new connection to the updated endpoint.
+    var endpoint: Endpoint<EmptyResponse> {
+        didSet {
+            engineNeedsToBeRecreated = true
+        }
+    }
+    
     /// The decoder used to decode incoming events
     private let eventDecoder: AnyEventDecoder
     
     /// The web socket engine used to make the actual WS connection
-    private lazy var engine: WebSocketEngine = {
-        let engine = self.environment.engineBuilder(self.urlRequest, self.sessionConfiguration, self.engineQueue)
-        engine.delegate = self
-        return engine
+    lazy var engine: WebSocketEngine = {
+        do {
+            return try engineBuilder()
+        } catch {
+            fatalError("Failed to create WebSocketEngine with error: \(error)")
+        }
     }()
     
     /// The timer used for scheduling `ping` calls
@@ -68,8 +80,7 @@ class WebSocketClient {
     /// The queue on which web socket engine methods are called
     private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .default)
     
-    /// The request used to establish web socket connection
-    private let urlRequest: URLRequest
+    private let requestEncoder: RequestEncoder
     
     /// The session config used for the web socket engine
     private let sessionConfiguration: URLSessionConfiguration
@@ -87,16 +98,25 @@ class WebSocketClient {
     /// An object containing external dependencies of `WebSocketClient`
     private let environment: Environment
     
-    init(
-        urlRequest: URLRequest,
-        sessionConfiguration: URLSessionConfiguration,
-        eventDecoder: AnyEventDecoder,
-        eventMiddlewares: [EventMiddleware],
-        reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
-        environment: Environment = .init()
-    ) {
+    private func engineBuilder() throws -> WebSocketEngine {
+        let request = try requestEncoder.encodeRequest(for: endpoint)
+        let engine = environment.engineBuilder(request, sessionConfiguration, engineQueue)
+        engine.delegate = self
+        return engine
+    }
+    
+    @Atomic private var engineNeedsToBeRecreated = false
+    
+    init(connectEndpoint: Endpoint<EmptyResponse>,
+         sessionConfiguration: URLSessionConfiguration,
+         requestEncoder: RequestEncoder,
+         eventDecoder: AnyEventDecoder,
+         eventMiddlewares: [EventMiddleware],
+         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
+         environment: Environment = .init()) {
         self.environment = environment
-        self.urlRequest = urlRequest
+        endpoint = connectEndpoint
+        self.requestEncoder = requestEncoder
         self.sessionConfiguration = sessionConfiguration
         middlewares = eventMiddlewares
         self.reconnectionStrategy = reconnectionStrategy
@@ -178,6 +198,17 @@ extension WebSocketClient {
         default: break
         }
         
+        // Engine needs to be recreated if the connection endpoint has changed. For example, when a new user is
+        // logged in, or when an auth token is refreshed.
+        if engineNeedsToBeRecreated {
+            engineNeedsToBeRecreated = false
+            do {
+                engine = try engineBuilder()
+            } catch {
+                fatalError("Failed to create WebSocketEngine with error: \(error)")
+            }
+        }
+        
         // Cancel the reconnection timer if exists
         reconnectionTimer?.cancel()
         
@@ -212,17 +243,21 @@ extension WebSocketClient: WebSocketEngineDelegate {
             let messageData = Data(message.utf8)
             let event = try eventDecoder.decode(data: messageData)
             
-            if let event = event as? HealthCheck {
-                if connectionState.isConnected == false {
-                    connectionState = .connected(connectionId: event.connectionId)
-                    reconnectionStrategy.sucessfullyConnected()
+            middlewares.process(event: event) { [weak self] event in
+                guard let self = self, let event = event else { return }
+                
+                if let event = event as? HealthCheck {
+                    if self.connectionState.isConnected == false {
+                        self.connectionState = .connected(connectionId: event.connectionId)
+                        self.reconnectionStrategy.sucessfullyConnected()
+                    }
+                } else {
+                    self.notificationCenter.post(Notification(newEventReceived: event, sender: self))
                 }
             }
             
-            middlewares.process(event: event) { [weak self] event in
-                guard let self = self, let event = event else { return }
-                self.notificationCenter.post(Notification(newEventReceived: event, sender: self))
-            }
+        } catch is ClientError.UnsupportedEventType {
+            log.info("Skipping unsupported event type with payload: \(message)")
             
         } catch {
             // Check if the message contains an error object from the server
