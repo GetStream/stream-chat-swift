@@ -240,7 +240,7 @@ public extension Client {
     ///   - channel: a channel.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func send(message: Message, to channel: Channel, _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
+    func send(message: Message, to channel: Channel, parseMentionedUsers: Bool = true, _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         let completion = doAfter(completion) { [unowned self] response in
             if response.message.isBan, !self.user.isBanned {
                 self.userAtomic.isBanned = true
@@ -254,19 +254,22 @@ public extension Client {
         
         // Add mentiond users
         var message = message
-        var mentionedUsers = [User]()
         
-        if !message.text.isEmpty, message.text.contains("@"), !channel.members.isEmpty {
-            let text = message.text.lowercased()
+        if parseMentionedUsers {
+            var mentionedUsers = [User]()
             
-            channel.members.forEach { member in
-                if text.contains("@\(member.user.name.lowercased())") {
-                    mentionedUsers.append(member.user)
+            if !message.text.isEmpty, message.text.contains("@"), !channel.members.isEmpty {
+                let text = message.text.lowercased()
+                
+                channel.members.forEach { member in
+                    if text.contains("@\(member.user.name.lowercased())") {
+                        mentionedUsers.append(member.user)
+                    }
                 }
             }
+            
+            message.mentionedUsers = mentionedUsers
         }
-        
-        message.mentionedUsers = mentionedUsers
         
         let completionWithStopTypingEvent = doBefore(completion) { [weak channel] _ in
             channel?.stopTyping({ _ in })
