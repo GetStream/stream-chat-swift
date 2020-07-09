@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- `parseMentionedUsers: Bool = true` parameter in `Client.send(message: ...)`. Setting to false allows custom mention parsing logic. [#338](https://github.com/GetStream/stream-chat-swift/issues/338)
+
 ### 🔄 Changed
 
 # [2.2.6](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.6)
