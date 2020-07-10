@@ -50,7 +50,7 @@ public class Client<ExtraData: ExtraDataTypes> {
     /// Returns `nil` if the user is not fully logged-in yet. Always wait for the `setUser` completion block before
     /// accessing this value.
     public var currentUser: CurrentUserModel<ExtraData.User>? {
-        guard let user: CurrentUserModel<ExtraData.User> = persistentContainer.viewContext.loadCurrentUser() else {
+        guard let user: CurrentUserModel<ExtraData.User> = databaseContainer.viewContext.loadCurrentUser() else {
             log.error("You're trying to access the current user but the connection is not fully estabilshed. " +
                 "Wait for the completion block to be called before accessing the current user data.")
             return nil
@@ -99,7 +99,7 @@ public class Client<ExtraData: ExtraDataTypes> {
     }()
     
     /// The `DatabaseContainer` instance `Client` uses to store and cache data.
-    private(set) lazy var persistentContainer: DatabaseContainer = {
+    private(set) lazy var databaseContainer: DatabaseContainer = {
         do {
             if config.isLocalStorageEnabled {
                 guard let storeURL = config.localStorageFolderURL else {
@@ -195,7 +195,7 @@ public class Client<ExtraData: ExtraDataTypes> {
         self.environment = environment
         
         backgroundWorkers = workerBuilders.map { builder in
-            builder(self.persistentContainer, self.webSocketClient, self.apiClient)
+            builder(self.databaseContainer, self.webSocketClient, self.apiClient)
         }
     }
     
@@ -354,7 +354,7 @@ public class Client<ExtraData: ExtraDataTypes> {
         webSocketClient.middlewares = webSocketEventMiddlewares()
         
         // Reset all existing data
-        persistentContainer.flush(force: true) { completion($0) }
+        databaseContainer.flush(force: true) { completion($0) }
     }
     
     private func webSocketConnectEndpoint(userId: UserId, role: UserRole = .user,
@@ -372,7 +372,7 @@ public class Client<ExtraData: ExtraDataTypes> {
     
     private func webSocketEventMiddlewares() -> [EventMiddleware] {
         // TODO: Add more middlewares
-        [EventDataProcessorMiddleware<ExtraData>(database: persistentContainer)]
+        [EventDataProcessorMiddleware<ExtraData>(database: databaseContainer)]
     }
 }
 
