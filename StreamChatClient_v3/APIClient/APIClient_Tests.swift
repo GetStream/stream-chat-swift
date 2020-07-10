@@ -180,7 +180,7 @@ class TestRequestEncoder: RequestEncoder {
     
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     
-    var encodeRequest: Result<URLRequest, Error>?
+    var encodeRequest: Result<URLRequest, Error>? = .success(URLRequest(url: .unique()))
     var encodeRequest_endpoint: AnyEndpoint?
     var encodeRequest_completion: ((Result<URLRequest, Error>) -> Void)?
     
