@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct WebSocketPayload<ExtraData: UserExtraData>: Encodable {
+struct WebSocketConnectPayload<ExtraData: UserExtraData>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case userId = "user_id"
         case userDetails = "user_details"
