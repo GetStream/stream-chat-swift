@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- Message search with filter for messages [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+  - `Client.search(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+  - `SearchQuery.init(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- `Filter.exists(Key, Bool)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+
 ### 🔄 Changed
 
 # [2.2.6](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.6)
