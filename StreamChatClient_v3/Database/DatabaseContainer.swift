@@ -107,6 +107,32 @@ class DatabaseContainer: NSPersistentContainer {
             }
         }
     }
+    
+    /// Removes all data from the local storage.
+    ///
+    /// - Warning: ⚠️ This is a non-recoverable operation. All data will be lost after calling this method.
+    ///
+    /// - Parameters:
+    ///   - force: If sets to `false`, the method fails if there are unsynced data in to local storage, for example
+    /// messages pedning sent. You can use this option to warn a user about potential data loss.
+    ///   - completion: Called when the operation is completed. If the error is present, the operation failed.
+    func removeAllData(force: Bool, completion: ((Error?) -> Void)? = nil) {
+        if !force {
+            fatalError("Non-force flush is not implemented.")
+        }
+        
+        write({ session in
+            let session = session as! NSManagedObjectContext
+            
+            try self.managedObjectModel.entities.forEach { entityDescription in
+                guard let entityName = entityDescription.name else { return }
+                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
+                let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                try session.execute(deleteRequest)
+            }
+            
+        }, completion: { completion?($0) })
+    }
 }
 
 // WIP
