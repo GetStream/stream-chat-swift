@@ -28,7 +28,7 @@ public struct SearchQuery: Encodable {
     
     /// A message search query.
     /// - Parameters:
-    ///   - filter: a filter for channels, e.g. `"members", .in(["john"])`
+    ///   - filter: a filter for channels, e.g. `.in("members", ["john"])`
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     public init(filter: Filter, query: String, pagination: Pagination = [.channelsPageSize]) {
@@ -37,7 +37,7 @@ public struct SearchQuery: Encodable {
     
     /// A message search query.
     /// - Parameters:
-    ///   - filter: a filter for channels, e.g. `"members", .in(["john"])`
+    ///   - filter: a filter for channels, e.g. `.in("members", ["john"])`
     ///   - messageFilter: a filter for messages, e.g. `.exists("attachments", true)`
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     public init(filter: Filter, messageFilter: Filter, pagination: Pagination = [.channelsPageSize]) {

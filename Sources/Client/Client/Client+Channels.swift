@@ -14,7 +14,7 @@ public extension Client {
     
     /// A message search. Creates a `SearchQuery` with given parameters and call `search` with it.
     /// - Parameters:
-    ///   - filter: a filter for channels, e.g. `"members".in(["john"])`
+    ///   - filter: a filter for channels, e.g. `.in("members", ["john"])`
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     ///   - completion: a completion block with `[Message]`.
@@ -28,7 +28,7 @@ public extension Client {
     
     /// A message search. Creates a `SearchQuery` with given parameters and call `search` with it.
     /// - Parameters:
-    ///   - filter: a filter for channels, e.g. `"members", .in(["john"])`
+    ///   - filter: a filter for channels, e.g. `.in("members", ["john"])`
     ///   - messageFilter: a filter for messages, e.g. `.exists("attachments", true)`
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     ///   - completion: a completion block with `[Message]`.
