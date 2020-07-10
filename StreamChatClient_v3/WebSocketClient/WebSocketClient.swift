@@ -125,6 +125,49 @@ class WebSocketClient {
         startListeningForAppStateUpdates()
     }
     
+    /// Connects the web connect.
+    ///
+    /// Calling this method has no effect is the web socket is already connected, or is in the connecting phase.
+    func connect() {
+        switch connectionState {
+        // Calling connect in the following states has no effect
+        case .connecting, .waitingForConnectionId, .connected(connectionId: _):
+            return
+        default: break
+        }
+        
+        // Engine needs to be recreated if the connection endpoint has changed. For example, when a new user is
+        // logged in, or when an auth token is refreshed.
+        if engineNeedsToBeRecreated {
+            engineNeedsToBeRecreated = false
+            do {
+                engine = try engineBuilder()
+            } catch {
+                fatalError("Failed to create WebSocketEngine with error: \(error)")
+            }
+        }
+        
+        // Cancel the reconnection timer if exists
+        reconnectionTimer?.cancel()
+        
+        connectionState = .connecting
+        
+        engineQueue.async {
+            self.engine.connect()
+        }
+    }
+    
+    /// Disconnects the web socket.
+    ///
+    /// Calling this function has no effect, if the connection is in an inactive state.
+    /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
+    func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
+        connectionState = .disconnecting(source: source)
+        engineQueue.async {
+            self.engine.disconnect()
+        }
+    }
+    
     private func startListeningForAppStateUpdates() {
         NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidEnterBackground),
                                                name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -183,51 +226,6 @@ extension WebSocketClient {
             }
         
         var backgroundTaskScheduler: BackgroundTaskScheduler = UIApplication.shared
-    }
-}
-
-extension WebSocketClient {
-    /// Connects the web connect.
-    ///
-    /// Calling this method has no effect is the web socket is already connected, or is in the connecting phase.
-    func connect() {
-        switch connectionState {
-        // Calling connect in the following states has no effect
-        case .connecting, .waitingForConnectionId, .connected(connectionId: _):
-            return
-        default: break
-        }
-        
-        // Engine needs to be recreated if the connection endpoint has changed. For example, when a new user is
-        // logged in, or when an auth token is refreshed.
-        if engineNeedsToBeRecreated {
-            engineNeedsToBeRecreated = false
-            do {
-                engine = try engineBuilder()
-            } catch {
-                fatalError("Failed to create WebSocketEngine with error: \(error)")
-            }
-        }
-        
-        // Cancel the reconnection timer if exists
-        reconnectionTimer?.cancel()
-        
-        connectionState = .connecting
-        
-        engineQueue.async {
-            self.engine.connect()
-        }
-    }
-    
-    /// Disconnects the web socket.
-    ///
-    /// Calling this function has no effect, if the connection is in an inactive state.
-    /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
-    func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
-        connectionState = .disconnecting(source: source)
-        engineQueue.async {
-            self.engine.disconnect()
-        }
     }
 }
 
