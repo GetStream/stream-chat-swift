@@ -12,9 +12,7 @@ import UIKit
 let chatClient: ChatClient = {
     var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
     config.isLocalStorageEnabled = false
-    
-    let user = User(id: "broken-waterfall-5", name: "Tester", imageURL: nil)
-    return ChatClient(currentUser: user, config: config)
+    return ChatClient(config: config)
 }()
 
 @UIApplicationMain
@@ -32,8 +30,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         LogConfig.level = .info
         
-        chatClient.webSocketClient.connect()
+        let token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
+//
+        chatClient.setUser(userId: "broken-waterfall-5", token: token) { (error) in
+            print(chatClient.currentUser?.name)
+        }
 
+//        chatClient.setAnonymousUser { (error) in
+//            print("connected")
+//        }
         if #available(iOS 11, *) {
             self.window = UIWindow()
             window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
