@@ -27,11 +27,18 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var createdBy: UserDTO
     @NSManaged var team: TeamDTO?
     @NSManaged var members: Set<MemberDTO>
+    @NSManaged var messages: Set<MessageDTO>
+    
+    static func fetchRequest(for cid: ChannelId) -> NSFetchRequest<ChannelDTO> {
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedDate, ascending: false)]
+        request.predicate = NSPredicate(format: "cid == %@", cid.rawValue)
+        return request
+    }
     
     static func load(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO? {
-        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
-        request.predicate = NSPredicate(format: "cid == %@", cid.rawValue)
-        return try? context.fetch(request).first
+        let request = fetchRequest(for: cid)
+        return try! context.fetch(request).first
     }
     
     static func loadOrCreate(cid: ChannelId, context: NSManagedObjectContext) -> ChannelDTO {
@@ -86,6 +93,8 @@ extension NSManagedObjectContext {
                                                 query: ChannelListQuery?) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
         
+        try payload.messages.forEach { _ = try saveMessage(payload: $0, for: payload.channel.cid) }
+        
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
         try payload.members.forEach {
             let member: MemberDTO = try saveMember(payload: $0, channelId: payload.channel.cid)
@@ -96,7 +105,7 @@ extension NSManagedObjectContext {
     }
     
     func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>? {
-        ChannelDTO.load(cid: cid, context: self).map { ChannelModel.create(fromDTO: $0) }
+        ChannelDTO.load(cid: cid, context: self).map(ChannelModel.create(fromDTO:))
     }
 }
 
@@ -125,7 +134,11 @@ extension ChannelModel {
         let extraData = try! JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
         let id = try! ChannelId(cid: dto.cid)
         
-        return ChannelModel(id: id,
+        // TODO: make messagesLimit a param
+        let latestMessages = MessageDTO.load(for: dto.cid, limit: 25, context: dto.managedObjectContext!)
+            .map(MessageModel<ExtraData>.init(fromDTO:))
+        
+        return ChannelModel(cid: id,
                             lastMessageDate: dto.lastMessageDate,
                             created: dto.createdDate,
                             updated: dto.updatedDate,
@@ -142,6 +155,7 @@ extension ChannelModel {
                             banEnabling: .disabled,
                             isWatched: true,
                             extraData: extraData,
-                            invitedMembers: [])
+                            invitedMembers: [],
+                            latestMessages: latestMessages)
     }
 }
