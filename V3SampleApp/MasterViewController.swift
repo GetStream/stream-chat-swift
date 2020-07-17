@@ -49,14 +49,14 @@ class MasterViewController: UITableViewController, ChannelListControllerDelegate
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
-//            if let indexPath = tableView.indexPathForSelectedRow {
-//                let object = objects[indexPath.row] as! NSDate
-//                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-//                controller.detailItem = object
-//                controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-//                controller.navigationItem.leftItemsSupplementBackButton = true
-//                detailViewController = controller
-//            }
+            if let indexPath = tableView.indexPathForSelectedRow {
+                let channel = channelListController.channels[indexPath.row]
+                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+                controller.channelId = channel.cid
+                controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
+                controller.navigationItem.leftItemsSupplementBackButton = true
+                detailViewController = controller
+            }
         }
     }
 
@@ -73,8 +73,7 @@ class MasterViewController: UITableViewController, ChannelListControllerDelegate
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let object = channelListController.channels[indexPath.row]
-        let users = object.members.compactMap { $0.name! }.joined(separator: ", ")
-        cell.textLabel!.text = users
+        cell.textLabel?.text = object.extraData.name ?? object.cid.description
         return cell
     }
 

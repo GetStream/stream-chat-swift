@@ -22,7 +22,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        LogConfig.formatters = [PrefixLogFormatter(prefixes: [.info: "𝒊", .debug: "🛠", .warning: "⚠️", .error: "🚨"])]
+        LogConfig.formatters = [PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])]
         
         LogConfig.showThreadName = false
         LogConfig.showDate = false
@@ -39,11 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        chatClient.setAnonymousUser { (error) in
 //            print("connected")
 //        }
-        if #available(iOS 11, *) {
-            self.window = UIWindow()
-            window?.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
-            window?.makeKeyAndVisible()
-        }
         
         return true
     }
