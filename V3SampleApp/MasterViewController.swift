@@ -8,19 +8,33 @@
 
 import UIKit
 import StreamChatClient_v3
+import Combine
 
 class MasterViewController: UITableViewController {
 
     lazy var channelListController: ChannelListController = chatClient
         .channelListController(query: ChannelListQuery(filter: .in("members", ["broken-waterfall-5"]), options: [.watch]))
-    
+
+    @available(iOS 13 ,*)
+    lazy var channelListControllerPublishers: ChannelListController.Publishers = chatClient
+        .channelListControllerPublishers(query: ChannelListQuery(filter: .in("members", ["broken-waterfall-5"]), options: [.watch]))
+
     var detailViewController: DetailViewController? = nil
 
+    @available(iOS 13, *)
+    lazy var cancellables: Set<AnyCancellable> = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        channelListController.delegate = self
-        channelListController.startUpdating()
+        if #available(iOS 13, *) {
+            channelListControllerPublishers.channelChangesPublisher.sink { [unowned self] changes in
+                self.animateChanges(changes: changes)
+            }.store(in: &cancellables)
+        } else {
+            channelListController.delegate = self
+            channelListController.startUpdating()
+        }
         
         // Do any additional setup after loading the view.
         navigationItem.leftBarButtonItem = editButtonItem
@@ -59,18 +73,27 @@ class MasterViewController: UITableViewController {
 
     // MARK: - Table View
 
+    var channels: [Channel] {
+        if #available(iOS 13, *) {
+            return channelListControllerPublishers.channels
+        } else {
+            return channelListController.channels
+        }
+    }
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return channelListController.channels.count
+        return channels.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let object = channelListController.channels[indexPath.row]
-        cell.textLabel?.text = object.extraData.name ?? object.cid.description
+        let object = channels[indexPath.row]
+        let users = object.members.compactMap { $0.name! }.joined(separator: ", ")
+        cell.textLabel!.text = users
         return cell
     }
 
@@ -81,20 +104,17 @@ class MasterViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
     }
-}
-
-extension MasterViewController: ChannelListControllerDelegate {
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [Change<Channel>]) {
-        // Animate changes
+    
+    func animateChanges(changes: [Change<Channel>]) {
         
         /*
          TODO: It could be nice to provide this boilerplate as an extension of UITableView. Something like:
          
-            tableView.apply(changes: changes)
+         tableView.apply(changes: changes)
          
          and similarly for:
          
-            collectionView.apply(changes: changes)
+         collectionView.apply(changes: changes)
          */
         
         tableView.beginUpdates()
@@ -113,5 +133,12 @@ extension MasterViewController: ChannelListControllerDelegate {
         }
         
         tableView.endUpdates()
+    }
+}
+
+extension MasterViewController: ChannelListControllerDelegate {
+    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [Change<Channel>]) {
+        // Animate changes
+        animateChanges(changes: changes)
     }
 }
