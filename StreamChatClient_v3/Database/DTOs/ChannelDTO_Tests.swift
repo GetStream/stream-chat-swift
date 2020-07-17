@@ -339,10 +339,6 @@ extension XCTestCase {
                      isBanned: true,
                      roleRawValue: "user",
                      extraData: lukeExtraData,
-                     devices: [],
-                     mutedUsers: [],
-                     unreadChannelsCount: nil,
-                     unreadMessagesCount: nil,
                      teams: [])
     }
     
@@ -428,10 +424,6 @@ extension XCTestCase {
               isBanned: true,
               roleRawValue: "user",
               extraData: NoExtraData(),
-              devices: [],
-              mutedUsers: [],
-              unreadChannelsCount: nil,
-              unreadMessagesCount: nil,
               teams: [])
     }
     

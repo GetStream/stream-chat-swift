@@ -7,7 +7,7 @@ import Foundation
 public typealias MessageId = String
 
 public struct MessageModel<ExtraData: ExtraDataTypes> {
-    public let id: String
+    public let id: MessageId
     public let text: String
     public let type: MessageType
     public let command: String?
@@ -22,7 +22,7 @@ public struct MessageModel<ExtraData: ExtraDataTypes> {
     public let isSilent: Bool
     public let reactionScores: [String: Int]
     
-    public let user: UserModel<ExtraData.User>
+    public let author: UserModel<ExtraData.User>
     public let mentionedUsers: Set<UserModel<ExtraData.User>>
 }
 
