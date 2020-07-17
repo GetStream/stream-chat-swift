@@ -31,6 +31,11 @@ protocol DatabaseSession {
                                                                    query: ChannelListQuery?) throws -> ChannelDTO
     
     func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>?
+    
+    // MARK: - Message
+    
+    @discardableResult func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload<ExtraData>, for cid: ChannelId) throws
+        -> MessageDTO
 }
 
 extension DatabaseSession {

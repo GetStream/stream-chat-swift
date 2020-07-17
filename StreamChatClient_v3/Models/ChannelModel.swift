@@ -56,6 +56,8 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     /// Checks if the channel is watching by the client.
     public let isWatched: Bool
     
+    public let latestMessages: [MessageModel<ExtraData>]
+    
     public let extraData: ExtraData.Channel
     
     // MARK: - Internal
@@ -67,7 +69,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     let invitedMembers: Set<MemberModel<ExtraData.User>> // TODO: Why is this not public?
     
     internal init(
-        id: ChannelId,
+        cid: ChannelId,
         lastMessageDate: Date? = nil,
         created: Date = .init(),
         updated: Date = .init(),
@@ -84,9 +86,10 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         banEnabling: BanEnabling = .disabled,
         isWatched: Bool = false,
         extraData: ExtraData.Channel,
-        invitedMembers: Set<MemberModel<ExtraData.User>> = []
+        invitedMembers: Set<MemberModel<ExtraData.User>> = [],
+        latestMessages: [MessageModel<ExtraData>] = []
     ) {
-        cid = id
+        self.cid = cid
         self.lastMessageDate = lastMessageDate
         self.created = created
         self.updated = updated
@@ -104,6 +107,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         self.isWatched = isWatched
         self.extraData = extraData
         self.invitedMembers = invitedMembers
+        self.latestMessages = latestMessages
     }
 }
 
