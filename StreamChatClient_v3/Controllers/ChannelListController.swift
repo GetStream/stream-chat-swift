@@ -105,6 +105,8 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
             return
         }
         
+        state = .active
+        
         channels = fetchedResultsController.fetchedObjects!.lazy.map(ChannelModel<ExtraData>.create)
         
         delegateCallback {

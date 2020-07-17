@@ -64,6 +64,12 @@ class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(controller.channels.map { $0.cid }, [cidMatchingQuery])
     }
     
+    func test_startUpdating_changeControllerState() throws {
+        XCTAssertEqual(controller.state, .idle)
+        controller.startUpdating()
+        XCTAssertEqual(controller.state, .active)
+    }
+    
     func test_startUpdating_callsChannelQueryUpdater() {
         // Simulate `startUpdating` calls and catch the completion
         var completionCalled = false
