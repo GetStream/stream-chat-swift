@@ -39,6 +39,8 @@
 		792921C924C056F400116BBB /* ChannelListController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C824C056F400116BBB /* ChannelListController_Tests.swift */; };
 		792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921CA24C077B400116BBB /* TestDispatchQueue.swift */; };
 		792921CD24C07A9000116BBB /* QueueAwareDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921CC24C07A9000116BBB /* QueueAwareDelegate.swift */; };
+		792921CF24C08D2F00116BBB /* ChannelListControllerPublishers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921CE24C08D2F00116BBB /* ChannelListControllerPublishers.swift */; };
+		792921D124C1DAB200116BBB /* ChannelListControllerPublishers_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921D024C1DAB200116BBB /* ChannelListControllerPublishers_Tests.swift */; };
 		792A4F1B247FE84900EAF71D /* ChannelListQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1A247FE84900EAF71D /* ChannelListQueryUpdater.swift */; };
 		792A4F1D247FEA2200EAF71D /* ChannelListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1C247FEA2200EAF71D /* ChannelListController.swift */; };
 		792A4F25247FF01800EAF71D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F24247FF01800EAF71D /* AppDelegate.swift */; };
@@ -522,6 +524,8 @@
 		792921C824C056F400116BBB /* ChannelListController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListController_Tests.swift; sourceTree = "<group>"; };
 		792921CA24C077B400116BBB /* TestDispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDispatchQueue.swift; sourceTree = "<group>"; };
 		792921CC24C07A9000116BBB /* QueueAwareDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueAwareDelegate.swift; sourceTree = "<group>"; };
+		792921CE24C08D2F00116BBB /* ChannelListControllerPublishers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListControllerPublishers.swift; sourceTree = "<group>"; };
+		792921D024C1DAB200116BBB /* ChannelListControllerPublishers_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListControllerPublishers_Tests.swift; sourceTree = "<group>"; };
 		792A4F1A247FE84900EAF71D /* ChannelListQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryUpdater.swift; sourceTree = "<group>"; };
 		792A4F1C247FEA2200EAF71D /* ChannelListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListController.swift; sourceTree = "<group>"; };
 		792A4F22247FF01800EAF71D /* V3SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = V3SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1334,6 +1338,8 @@
 				799C944B247D5766001F1104 /* ChannelController.swift */,
 				792A4F1C247FEA2200EAF71D /* ChannelListController.swift */,
 				792921C824C056F400116BBB /* ChannelListController_Tests.swift */,
+				792921CE24C08D2F00116BBB /* ChannelListControllerPublishers.swift */,
+				792921D024C1DAB200116BBB /* ChannelListControllerPublishers_Tests.swift */,
 				79E2B83F24CAC8D60024752F /* ChangeAggregator.swift */,
 				793C14DB24BF2A0800B8BFB7 /* ChangeAggregator_Tests.swift */,
 			);
@@ -2532,6 +2538,7 @@
 				79280F4F2485308100CDEB89 /* Controller.swift in Sources */,
 				79877A252498E50D00015F8B /* TeamDTO.swift in Sources */,
 				7964F3B7249A314D002A09EC /* LogFormatter.swift in Sources */,
+				792921CF24C08D2F00116BBB /* ChannelListControllerPublishers.swift in Sources */,
 				792A4F40247FFDE700EAF71D /* Data+Gzip.swift in Sources */,
 				79E2B84024CAC8D60024752F /* ChangeAggregator.swift in Sources */,
 				796610B9248E651800761629 /* EventMiddleware.swift in Sources */,
@@ -2644,6 +2651,7 @@
 				799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */,
 				79682C5024C061B20071578E /* ChannelListPayload_Tests.swift in Sources */,
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
+				792921D124C1DAB200116BBB /* ChannelListControllerPublishers_Tests.swift in Sources */,
 				799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */,
 				792921C724C047DD00116BBB /* APIClient_Mock.swift in Sources */,
 				79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_Tests.swift in Sources */,
