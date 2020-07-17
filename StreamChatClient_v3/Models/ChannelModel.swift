@@ -56,6 +56,8 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     /// Checks if the channel is watching by the client.
     public let isWatched: Bool
     
+    // TODO: refactor comment and add latestMessages limit mention
+    /// Latest messages present on the channel.
     public let latestMessages: [MessageModel<ExtraData>]
     
     public let extraData: ExtraData.Channel
