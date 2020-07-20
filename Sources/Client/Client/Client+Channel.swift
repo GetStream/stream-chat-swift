@@ -238,6 +238,7 @@ public extension Client {
     /// - Parameters:
     ///   - message: a message.
     ///   - channel: a channel.
+    ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
     func send(message: Message, to channel: Channel, parseMentionedUsers: Bool = true, _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {

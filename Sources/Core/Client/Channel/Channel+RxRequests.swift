@@ -86,9 +86,11 @@ public extension Reactive where Base == Channel {
     // MARK: - Message
     
     /// Send a new message or update with a given `message.id`.
-    /// - Parameter message: a message.
-    func send(message: Message) -> Observable<MessageResponse> {
-        Client.shared.rx.send(message: message, to: base)
+    /// - Parameters:
+    ///   - message: a message.
+    ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
+    func send(message: Message, parseMentionedUsers: Bool = true) -> Observable<MessageResponse> {
+        Client.shared.rx.send(message: message, to: base, parseMentionedUsers: parseMentionedUsers)
     }
     
     /// Send a message action for a given ephemeral message.

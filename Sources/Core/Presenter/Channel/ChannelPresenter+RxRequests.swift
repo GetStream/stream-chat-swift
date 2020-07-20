@@ -109,9 +109,11 @@ public extension Reactive where Base == ChannelPresenter {
     /// - Parameters:
     ///   - text: a message text.
     ///   - showReplyInChannel: show a reply in the channel.
+    ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
     /// - Returns: an observable `MessageResponse`.
-    func send(text: String, showReplyInChannel: Bool = false) -> Observable<MessageResponse> {
-        base.channel.rx.send(message: base.createMessage(with: text, showReplyInChannel: showReplyInChannel))
+    func send(text: String, showReplyInChannel: Bool = false, parseMentionedUsers: Bool = true) -> Observable<MessageResponse> {
+        let message = base.createMessage(with: text, showReplyInChannel: showReplyInChannel)
+        return base.channel.rx.send(message: message, parseMentionedUsers: parseMentionedUsers)
             .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
     }
