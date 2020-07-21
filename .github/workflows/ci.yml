@@ -22,7 +22,7 @@ jobs:
       id: carthage-cache
       with:
         path: Carthage
-        key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
+        key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v1
       id: rubygem-cache
@@ -70,7 +70,7 @@ jobs:
       id: carthage-cache
       with:
         path: Carthage
-        key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
+        key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v1
       id: rubygem-cache
@@ -130,7 +130,7 @@ jobs:
       id: carthage-cache
       with:
         path: Carthage
-        key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
+        key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v1
       id: rubygem-cache
