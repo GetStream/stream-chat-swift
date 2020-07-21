@@ -106,8 +106,8 @@ jobs:
     - name: Test SPM integration
       run: bundle exec fastlane test_spm_integration  
       
-  build-and-test-v3:
-    name: Build and Test v3
+  build-and-test-v3-debug:
+    name: Run v3 Tests (Debug)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -129,5 +129,31 @@ jobs:
       run: bundle install
     - name: Install Carthage dependencies
       run: bundle exec fastlane carthage_bootstrap
-    - name: Build v3 target and run all tests
+    - name: Run v3 Tests (Debug)
       run: bundle exec fastlane test_v3
+
+  build-and-test-v3-release:
+    name: Run v3 Tests (Release)
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Carthage dependencies
+      uses: actions/cache@v1.1.0
+      id: carthage-cache
+      with:
+        path: Carthage
+        key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
+    - name: Install Carthage dependencies
+      run: bundle exec fastlane carthage_bootstrap
+    - name: Run v3 Tests (Release)
+      run: bundle exec fastlane test_v3_release
