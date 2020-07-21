@@ -39,8 +39,6 @@ jobs:
       run: bundle exec fastlane build_for_testing
     - name: Run all tests
       run: bundle exec fastlane test_without_building
-    # - name: Post Codecov report
-    #   run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
   run-danger:
     name: Run Danger
@@ -147,6 +145,8 @@ jobs:
       run: bundle exec fastlane carthage_bootstrap
     - name: Run v3 Tests (Debug)
       run: bundle exec fastlane test_v3
+    - name: Post Codecov report
+      run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
 
   build-and-test-v3-release:
     name: Run v3 Tests (Release)
