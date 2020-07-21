@@ -244,10 +244,24 @@ end
 
 desc "Runs tests for v3 in Debug config"
 lane :test_v3 do
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChatClient_v3", clean: true, code_coverage: true)
+  scan(
+    project: "StreamChat.xcodeproj", 
+    scheme: "StreamChatClient_v3", 
+    testplan: "StreamChatClient_v3",
+    configuration: "Debug",
+    clean: true, 
+    code_coverage: true
+    )
 end
 
 desc "Runs tests for v3 in Release config"
 lane :test_v3_release do
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChatClient_v3", clean: true, configuration: "ReleaseTests")
+  scan(
+    project: "StreamChat.xcodeproj", 
+    scheme: "StreamChatClient_v3", 
+    testplan: "StreamChatClient_v3",
+    configuration: "ReleaseTests",
+    clean: true, 
+    code_coverage: true
+  )
 end
