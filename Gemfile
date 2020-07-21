@@ -8,6 +8,7 @@ gem "fastlane"
 gem "cocoapods"
 gem "danger"
 gem "danger-swiftlint"	
+gem "danger-commit_lint"
 gem "jazzy"
 gem "xcode-install"
 
