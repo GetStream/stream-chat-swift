@@ -13,7 +13,7 @@ on:
 
 jobs:
   build-and-test:
-    name: Build and Test
+    name: Build and Test v2
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
