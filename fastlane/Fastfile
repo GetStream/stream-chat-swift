@@ -244,5 +244,5 @@ end
 
 desc "Runs tests for v3 scheme"
 lane :test_v3 do
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChatClient_v3", clean: true)
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChatClient_v3", clean: true, code_coverage: true)
 end
