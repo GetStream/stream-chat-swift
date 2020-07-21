@@ -242,7 +242,12 @@ lane :get_next_issue_number do
   UI.success "Next markdown link is copied to your clipboard! ⬆️"
 end
 
-desc "Runs tests for v3 scheme"
+desc "Runs tests for v3 in Debug config"
 lane :test_v3 do
   scan(project: "StreamChat.xcodeproj", scheme: "StreamChatClient_v3", clean: true)
+end
+
+desc "Runs tests for v3 in Release config"
+lane :test_v3_release do
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChatClient_v3", clean: true, configuration: "ReleaseTests")
 end
