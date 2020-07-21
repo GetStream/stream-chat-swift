@@ -92,6 +92,10 @@ GEM
       no_proxy_fix
       octokit (~> 4.7)
       terminal-table (~> 1)
+    danger-commit_lint (0.0.7)
+      danger-plugin-api (~> 1.0)
+    danger-plugin-api (1.0.0)
+      danger (> 2.0)
     danger-swiftlint (0.24.2)
       danger
       rake (> 10)
@@ -301,6 +305,7 @@ PLATFORMS
 DEPENDENCIES
   cocoapods
   danger
+  danger-commit_lint
   danger-swiftlint
   fastlane
   fastlane-plugin-firebase_app_distribution
@@ -308,4 +313,4 @@ DEPENDENCIES
   xcode-install
 
 BUNDLED WITH
-   2.0.2
+   2.1.4
