@@ -1,6 +1,9 @@
 fastlane_version "2.68.0"
 default_platform :ios
 
+# The number of times the stress test suite is ran
+stress_tests_cycles = 25
+
 before_all do
   if is_ci
     setup_ci()
@@ -264,4 +267,23 @@ lane :test_v3_release do
     clean: true, 
     code_coverage: true
   )
+end
+
+desc "Runs stress tests for v3"
+lane :stress_test_v3 do
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "StreamChatClient_v3",
+    clean: true,
+    build_for_testing: true
+  )
+
+  stress_tests_cycles.times {
+    scan(
+      project: "StreamChat.xcodeproj", 
+      scheme: "StreamChatClient_v3", 
+      test_without_building: true,
+      testplan: "StreamChatClientStress_v3"
+    )      
+  }
 end
