@@ -253,7 +253,6 @@ lane :test_v3 do
     testplan: "StreamChatClient_v3",
     configuration: "Debug",
     clean: true, 
-    code_coverage: true
     )
 end
 
@@ -264,8 +263,7 @@ lane :test_v3_release do
     scheme: "StreamChatClient_v3", 
     testplan: "StreamChatClient_v3",
     configuration: "ReleaseTests",
-    clean: true, 
-    code_coverage: true
+    clean: true,
   )
 end
 
