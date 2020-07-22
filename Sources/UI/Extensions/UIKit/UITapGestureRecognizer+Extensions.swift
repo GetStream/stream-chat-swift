@@ -20,11 +20,13 @@ extension UITapGestureRecognizer {
             return false
         }
         
+        let attributedTextWithFont = NSAttributedString(string: attributedText.string,
+                                                        attributes: [.font: label.font ?? UIFont.smallSystemFontSize])
         // Create instances of NSLayoutManager, NSTextContainer and NSTextStorage.
         let layoutManager = NSLayoutManager()
         let textContainer = NSTextContainer(size: .zero)
-        let textStorage = NSTextStorage(attributedString: attributedText)
-        
+        let textStorage = NSTextStorage(attributedString: attributedTextWithFont)
+
         // Configure layoutManager and textStorage
         layoutManager.addTextContainer(textContainer)
         textStorage.addLayoutManager(layoutManager)
