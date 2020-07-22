@@ -24,7 +24,7 @@ jobs:
         path: Carthage
         key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
@@ -46,7 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Cache RubyGems
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         id: rubygem-cache
         with:
           path: vendor/bundle
@@ -72,7 +72,7 @@ jobs:
         path: Carthage
         key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
@@ -90,7 +90,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
@@ -108,7 +108,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
@@ -132,7 +132,7 @@ jobs:
         path: Carthage
         key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
@@ -154,13 +154,13 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Cache Carthage dependencies
-      uses: actions/cache@v1.1.0
+      uses: actions/cache@v2
       id: carthage-cache
       with:
         path: Carthage
-        key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
+        key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
