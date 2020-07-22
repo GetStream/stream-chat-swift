@@ -193,7 +193,9 @@ extension ChatViewController {
         // in case their internet is slow and message isn't sent immediately
         composerView.sendButton.isEnabled = false
         
-        presenter?.rx.send(text: text, showReplyInChannel: composerView.alsoSendToChannelButton.isSelected)
+        presenter?.rx.send(text: text,
+                           showReplyInChannel: composerView.alsoSendToChannelButton.isSelected,
+                           parseMentionedUsers: parseMentionedUsersOnSend)
             .subscribe(
                 onNext: { [weak self] messageResponse in
                     if messageResponse.message.type == .error {
