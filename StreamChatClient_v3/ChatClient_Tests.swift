@@ -498,10 +498,10 @@ extension ChatClient_Tests {
         }
         
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
-        XCTAssertEqual(headers["X-Stream-Client"], "stream-chat-swift-client-\(SystemEnvironment.version)")
-        XCTAssertEqual(headers["X-Stream-Device"], SystemEnvironment.deviceModelName)
-        XCTAssertEqual(headers["X-Stream-OS"], SystemEnvironment.systemName)
-        XCTAssertEqual(headers["X-Stream-App-Environment"], SystemEnvironment.name)
+        XCTAssertEqual(headers["X-Stream-Client"], "stream-chat-swift-client-\(SystemEnvironment.version)"
+            + "|\(SystemEnvironment.deviceModelName)"
+            + "|\(SystemEnvironment.systemName)"
+            + "|\(SystemEnvironment.name)")
     }
 }
 

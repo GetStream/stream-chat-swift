@@ -147,20 +147,12 @@ public class Client<ExtraData: ExtraDataTypes> {
     }
     
     /// Stream-specific request headers.
-    private var sessionHeaders: [String: String] {
-        var headers = [
-            "X-Stream-Client": "stream-chat-swift-client-\(SystemEnvironment.version)",
-            "X-Stream-Device": SystemEnvironment.deviceModelName,
-            "X-Stream-OS": SystemEnvironment.systemName,
-            "X-Stream-App-Environment": SystemEnvironment.name
-        ]
-        
-        if let bundleId = Bundle.main.id {
-            headers["X-Stream-BundleId"] = bundleId
-        }
-        
-        return headers
-    }
+    private let sessionHeaders: [String: String] = [
+        "X-Stream-Client": "stream-chat-swift-client-\(SystemEnvironment.version)"
+            + "|\(SystemEnvironment.deviceModelName)" // Device
+            + "|\(SystemEnvironment.systemName)" // OS version
+            + "|\(SystemEnvironment.name)" // Environment name: development X production
+    ]
     
     /// The current connection id
     @Atomic private var connectionId: String?
