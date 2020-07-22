@@ -48,6 +48,9 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     /// A default preferred order to display the emojis in the reaction view
     open var defaultPreferredEmojiOrder: [String] { ["👍", "❤️", "😂", "😲", "😔", "😠"] }
     
+    /// Whether to automatically parse mentions into the `message.mentionedUsers` property on send. Defaults to `true`.
+    open var parseMentionedUsersOnSend = true
+    
     /// A dispose bag for rx subscriptions.
     public let disposeBag = DisposeBag()
     /// A list of table view items, e.g. messages.

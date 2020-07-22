@@ -162,9 +162,10 @@ extension ChannelPresenter {
     /// - Parameters:
     ///     - text: a message text
     ///     - showReplyInChannel: show a reply in the channel.
+    ///     - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
     ///     - completion: a completion block with `MessageResponse`.
-    public func send(text: String, showReplyInChannel: Bool = false, _ completion: @escaping Client.Completion<MessageResponse>) {
-        rx.send(text: text, showReplyInChannel: showReplyInChannel).bindOnce(to: completion)
+    public func send(text: String, showReplyInChannel: Bool = false, parseMentionedUsers: Bool = true, _ completion: @escaping Client.Completion<MessageResponse>) {
+        rx.send(text: text, showReplyInChannel: showReplyInChannel, parseMentionedUsers: parseMentionedUsers).bindOnce(to: completion)
     }
     
     func createMessage(with text: String, showReplyInChannel: Bool) -> Message {
