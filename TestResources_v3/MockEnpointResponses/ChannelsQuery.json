@@ -4929,7 +4929,6 @@
           "html" : "<p>Hey<\/p>\n"
         }
       ],
-      "watcher_count" : 2,
       "channel" : {
         "last_message_at" : "2020-06-08T11:52:36.594465Z",
         "created_by" : {
