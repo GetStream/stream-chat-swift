@@ -2548,7 +2548,6 @@
 				797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */,
 				799C9438247D2FB9001F1104 /* ChatClientConfig.swift in Sources */,
 				7964F3B6249A314D002A09EC /* PrefixLogFormatter.swift in Sources */,
-				79280F4424850B4300CDEB89 /* ChannelEventsHandler.swift in Sources */,
 				79A0E9B02498C09900E9BD50 /* ConnectionState.swift in Sources */,
 				799C9439247D2FB9001F1104 /* ChannelDTO.swift in Sources */,
 				799C9443247D3DA7001F1104 /* APIClient.swift in Sources */,
