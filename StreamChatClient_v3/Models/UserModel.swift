@@ -9,9 +9,6 @@ public protocol UserExtraData: Codable & Hashable {}
 public typealias UserId = String
 
 /// A type representing user in chat.
-///
-/// ... additional info
-///
 @dynamicMemberLookup
 public class UserModel<ExtraData: UserExtraData> {
     // MARK: - Public
@@ -49,17 +46,15 @@ public class UserModel<ExtraData: UserExtraData> {
     
     // MARK: - Internal
     
-    init(
-        id: String,
-        isOnline: Bool = false,
-        isBanned: Bool = false,
-        userRole: UserRole = .user,
-        createdDate: Date = .init(),
-        updatedDate: Date = .init(),
-        lastActiveDate: Date? = nil,
-        teams: [String] = [],
-        extraData: ExtraData? = nil
-    ) {
+    init(id: UserId,
+         isOnline: Bool = false,
+         isBanned: Bool = false,
+         userRole: UserRole = .user,
+         createdDate: Date = .init(),
+         updatedDate: Date = .init(),
+         lastActiveDate: Date? = nil,
+         teams: [String] = [],
+         extraData: ExtraData? = nil) {
         self.id = id
         self.isOnline = isOnline
         self.isBanned = isBanned

@@ -57,18 +57,15 @@ extension MemberDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveMember<ExtraUserData: Codable & Hashable>(
-        payload: MemberPayload<ExtraUserData>,
-        channelId: ChannelId
-    ) throws -> MemberDTO {
+    func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId) throws -> MemberDTO {
         let dto = MemberDTO.loadOrCreate(id: payload.user.id, channelId: channelId, context: self)
         
         // Save user-part of member first
         dto.user = try saveUser(payload: payload.user)
         
         // Save member specific data
-        if let role = payload.roleRawValue {
-            dto.channelRoleRaw = role
+        if let role = payload.role {
+            dto.channelRoleRaw = role.rawValue
         }
         
         dto.memberCreatedDate = payload.created
@@ -93,7 +90,7 @@ extension MemberModel {
                 + "the extra data must be a valid JSON to be saved.")
         }
         
-        let role = dto.channelRoleRaw.flatMap { ChannelRole(rawValue: $0) } ?? .member
+        let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         
         return MemberModel(id: dto.user.id,
                            isOnline: dto.user.isOnline,
@@ -103,7 +100,7 @@ extension MemberModel {
                            userUpdatedDate: dto.user.userUpdatedDate,
                            lastActiveDate: dto.user.lastActivityDate,
                            extraData: extraData,
-                           channelRole: role,
+                           memberRole: role,
                            memberCreatedDate: dto.memberCreatedDate,
                            memberUpdatedDate: dto.memberUpdatedDate,
                            isInvited: false,

@@ -69,7 +69,7 @@ extension NSManagedObjectContext {
         return dto
     }
     
-    func loadUser<ExtraData: UserExtraData>(id: String) -> UserModel<ExtraData>? {
+    func loadUser<ExtraData: UserExtraData>(id: UserId) -> UserModel<ExtraData>? {
         guard let dto = UserDTO.load(id: id, context: self) else { return nil }
         return .create(fromDTO: dto)
     }

@@ -30,10 +30,10 @@ class MemberModelDTO_Tests: XCTestCase {
                                                                                          .uuidString)),
                                                                     teams: [])
         
-        let payload: MemberPayload<NameAndImageExtraData> = .init(roleRawValue: "moderator",
+        let payload: MemberPayload<NameAndImageExtraData> = .init(user: userPayload,
+                                                                  role: .moderator,
                                                                   created: .init(timeIntervalSince1970: 4000),
-                                                                  updated: .init(timeIntervalSince1970: 5000),
-                                                                  user: userPayload)
+                                                                  updated: .init(timeIntervalSince1970: 5000))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -54,7 +54,7 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.updated, loadedMember?.userUpdatedDate)
             Assert.willBeEqual(payload.user.lastActiveDate, loadedMember?.lastActiveDate)
             Assert.willBeEqual(payload.user.extraData, loadedMember?.extraData)
-            Assert.willBeEqual(payload.roleRawValue, loadedMember?.channelRole.rawValue)
+            Assert.willBeEqual(payload.role, loadedMember?.memberRole)
             Assert.willBeEqual(payload.created, loadedMember?.memberCreatedDate)
             Assert.willBeEqual(payload.updated, loadedMember?.memberUpdatedDate)
         }
@@ -75,10 +75,10 @@ class MemberModelDTO_Tests: XCTestCase {
                                                           extraData: .init(),
                                                           teams: [])
         
-        let payload: MemberPayload<NoExtraData> = .init(roleRawValue: "moderator",
+        let payload: MemberPayload<NoExtraData> = .init(user: userPayload,
+                                                        role: .moderator,
                                                         created: .init(timeIntervalSince1970: 4000),
-                                                        updated: .init(timeIntervalSince1970: 5000),
-                                                        user: userPayload)
+                                                        updated: .init(timeIntervalSince1970: 5000))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -98,7 +98,7 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.created, loadedMember?.userCreatedDate)
             Assert.willBeEqual(payload.user.updated, loadedMember?.userUpdatedDate)
             Assert.willBeEqual(payload.user.lastActiveDate, loadedMember?.lastActiveDate)
-            Assert.willBeEqual(payload.roleRawValue, loadedMember?.channelRole.rawValue)
+            Assert.willBeEqual(payload.role, loadedMember?.memberRole)
             Assert.willBeEqual(payload.created, loadedMember?.memberCreatedDate)
             Assert.willBeEqual(payload.updated, loadedMember?.memberUpdatedDate)
         }

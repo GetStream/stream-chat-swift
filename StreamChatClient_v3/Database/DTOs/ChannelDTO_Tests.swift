@@ -67,7 +67,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.createdBy!.teams, loadedChannel?.createdBy?.teams)
             
             // Members
-            Assert.willBeEqual(payload.members[0].roleRawValue, loadedChannel?.members.first?.channelRole.rawValue)
+            Assert.willBeEqual(payload.members[0].role, loadedChannel?.members.first?.memberRole)
             Assert.willBeEqual(payload.members[0].created, loadedChannel?.members.first?.memberCreatedDate)
             Assert.willBeEqual(payload.members[0].updated, loadedChannel?.members.first?.memberUpdatedDate)
             
@@ -279,7 +279,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.createdBy!.teams, loadedChannel?.createdBy?.teams)
             
             // Members
-            Assert.willBeEqual(payload.members[0].roleRawValue, loadedChannel?.members.first?.channelRole.rawValue)
+            Assert.willBeEqual(payload.members[0].role, loadedChannel?.members.first?.memberRole)
             Assert.willBeEqual(payload.members[0].created, loadedChannel?.members.first?.memberCreatedDate)
             Assert.willBeEqual(payload.members[0].updated, loadedChannel?.members.first?.memberUpdatedDate)
             
@@ -353,9 +353,9 @@ extension XCTestCase {
         
         let member: MemberPayload<NameAndImageExtraData> =
             .init(roleRawValue: "moderator",
-                  created: .unique,
-                  updated: .unique,
-                  user: .init(id: .unique,
+        
+        let member: MemberPayload<NameAndImageExtraData> =
+            .init(user: .init(id: .unique,
                               created: .unique,
                               updated: .unique,
                               lastActiveDate: .unique,
@@ -400,7 +400,7 @@ extension XCTestCase {
                                  isFrozen: true,
                                  memberCount: 100,
                                  team: "",
-                                 members: nil),
+                                 members: [member]),
                   watcherCount: 10,
                   members: [member],
                   messages: [dummyMessage])
@@ -435,10 +435,7 @@ extension XCTestCase {
     
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
         let member: MemberPayload<NoExtraData> =
-            .init(roleRawValue: "moderator",
-                  created: .unique,
-                  updated: .unique,
-                  user: .init(id: .unique,
+            .init(user: .init(id: .unique,
                               created: .unique,
                               updated: .unique,
                               lastActiveDate: .unique,

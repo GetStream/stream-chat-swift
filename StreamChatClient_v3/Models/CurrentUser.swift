@@ -31,7 +31,7 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     public let mutedUsers: Set<UserModel<ExtraData>>
     
     /// The counts of unread channels and messages.
-    public let unreadCounts: UnreadCounts
+    public let unreadCount: UnreadCount
     
     public init(
         id: String,
@@ -45,12 +45,12 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
         devices: [Device] = [],
         currentDevice: Device? = nil,
         mutedUsers: Set<UserModel<ExtraData>> = [],
-        unreadCounts: UnreadCounts = .noUnread
+        unreadCount: UnreadCount = .noUnread
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
         self.mutedUsers = mutedUsers
-        self.unreadCounts = unreadCounts
+        self.unreadCount = unreadCount
         
         super.init(id: id,
                    isOnline: isOnline,
@@ -64,12 +64,12 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
 }
 
 /// Unread counts of a user.
-public struct UnreadCounts: Decodable, Equatable {
-    public static let noUnread = UnreadCounts(unreadChannels: 0, unreadMessages: 0)
+public struct UnreadCount: Decodable, Equatable {
+    public static let noUnread = UnreadCount(channels: 0, messages: 0)
     
     /// The number of unread channels
-    public internal(set) var unreadChannels: Int
+    public internal(set) var channels: Int
     
     /// The number of unread messagess accross all channels.
-    public internal(set) var unreadMessages: Int
+    public internal(set) var messages: Int
 }
