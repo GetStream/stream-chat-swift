@@ -1,0 +1,24 @@
+{
+    "channel_id" : "general",
+    "channel_type" : "messaging",
+    "user" : {
+        "id" : "steep-moon-9",
+        "banned" : false,
+        "unread_channels" : 3,
+        "totalUnreadCount" : 0,
+        "last_active" : "2020-07-17T13:49:51.603704Z",
+        "created_at" : "2019-12-12T15:34:00.762372Z",
+        "invisible" : false,
+        "unreadChannels" : 0,
+        "unread_count" : 21,
+        "image" : "https:\/\/api.adorable.io\/avatars\/285\/steep-moon-9.png",
+        "updated_at" : "2020-07-17T13:49:51.603704Z",
+        "role" : "user",
+        "total_unread_count" : 21,
+        "online" : true,
+        "name" : "steep-moon-9"
+    },
+    "created_at" : "2020-07-17T13:55:56.253358328Z",
+    "type" : "message.read",
+    "cid" : "messaging:general"
+}
