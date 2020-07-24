@@ -77,7 +77,7 @@ extension NSManagedObjectContext {
         // TODO: Team
         
         try payload.members?.forEach { memberPayload in
-            let member: MemberDTO = try saveMember(payload: memberPayload, channelId: payload.cid)
+            let member = try saveMember(payload: memberPayload, channelId: payload.cid)
             dto.members.insert(member)
         }
         
@@ -97,7 +97,7 @@ extension NSManagedObjectContext {
         
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
         try payload.members.forEach {
-            let member: MemberDTO = try saveMember(payload: $0, channelId: payload.channel.cid)
+            let member = try saveMember(payload: $0, channelId: payload.channel.cid)
             dto.members.insert(member)
         }
         
@@ -132,7 +132,7 @@ extension ChannelModel {
         // It's safe to use `try!` here, because the extra data payload comes from the DB, so we know it must
         // be a valid JSON payload, otherwise it wouldn't be possible to save it there.
         let extraData = try! JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
-        let id = try! ChannelId(cid: dto.cid)
+        let cid = try! ChannelId(cid: dto.cid)
         
         // TODO: make messagesLimit a param
         let latestMessages = MessageDTO.load(for: dto.cid, limit: 25, context: dto.managedObjectContext!)
