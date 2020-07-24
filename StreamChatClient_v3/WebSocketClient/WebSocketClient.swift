@@ -241,7 +241,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
             middlewares.process(event: event) { [weak self] event in
                 guard let self = self, let event = event else { return }
                 
-                if let event = event as? HealthCheck {
+                if let event = event as? HealthCheckEvent {
                     if self.connectionState.isConnected == false {
                         self.connectionState = .connected(connectionId: event.connectionId)
                     }

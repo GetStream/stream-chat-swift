@@ -17,16 +17,15 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         
         let payload: CurrentUserPayload<NameAndImageExtraData> = .init(id: userId,
+                                                                       role: .admin,
                                                                        created: .unique,
                                                                        updated: .unique,
                                                                        lastActiveDate: .unique,
                                                                        isOnline: true,
                                                                        isInvisible: true,
                                                                        isBanned: true,
-                                                                       roleRawValue: "admin",
                                                                        extraData: .init(name: "Luke",
                                                                                         imageURL: URL(string: UUID().uuidString)),
-                                                                       teams: [],
                                                                        devices: [],
                                                                        mutedUsers: [],
                                                                        unreadChannelsCount: 5,
@@ -46,7 +45,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.id, loadedCurrentUser?.id)
             Assert.willBeEqual(payload.isOnline, loadedCurrentUser?.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedCurrentUser?.isBanned)
-            Assert.willBeEqual(payload.roleRawValue, loadedCurrentUser?.userRole.rawValue)
+            Assert.willBeEqual(payload.role, loadedCurrentUser?.userRole)
             Assert.willBeEqual(payload.created, loadedCurrentUser?.userCreatedDate)
             Assert.willBeEqual(payload.updated, loadedCurrentUser?.userUpdatedDate)
             Assert.willBeEqual(payload.lastActiveDate, loadedCurrentUser?.lastActiveDate)
@@ -59,17 +58,14 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         
         let payload: CurrentUserPayload<NoExtraData> = .init(id: userId,
+                                                             role: .admin,
                                                              created: .unique,
                                                              updated: .unique,
                                                              lastActiveDate: .unique,
                                                              isOnline: true,
                                                              isInvisible: true,
                                                              isBanned: true,
-                                                             roleRawValue: "admin",
                                                              extraData: .init(),
-                                                             teams: [],
-                                                             devices: [],
-                                                             mutedUsers: [],
                                                              unreadChannelsCount: 5,
                                                              unreadMessagesCount: 10)
         
@@ -87,7 +83,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.id, loadedCurrentUser?.id)
             Assert.willBeEqual(payload.isOnline, loadedCurrentUser?.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedCurrentUser?.isBanned)
-            Assert.willBeEqual(payload.roleRawValue, loadedCurrentUser?.userRole.rawValue)
+            Assert.willBeEqual(payload.role, loadedCurrentUser?.userRole)
             Assert.willBeEqual(payload.created, loadedCurrentUser?.userCreatedDate)
             Assert.willBeEqual(payload.updated, loadedCurrentUser?.userUpdatedDate)
             Assert.willBeEqual(payload.lastActiveDate, loadedCurrentUser?.lastActiveDate)

@@ -18,17 +18,16 @@ class MemberModelDTO_Tests: XCTestCase {
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
         let userPayload: UserPayload<NameAndImageExtraData> = .init(id: userId,
+                                                                    role: .admin,
                                                                     created: .init(timeIntervalSince1970: 1000),
                                                                     updated: .init(timeIntervalSince1970: 2000),
                                                                     lastActiveDate: .init(timeIntervalSince1970: 3000),
                                                                     isOnline: true,
                                                                     isInvisible: true,
                                                                     isBanned: true,
-                                                                    roleRawValue: "admin",
                                                                     extraData: .init(name: "Luke",
                                                                                      imageURL: URL(string: UUID()
-                                                                                         .uuidString)),
-                                                                    teams: [])
+                                                                                         .uuidString)))
         
         let payload: MemberPayload<NameAndImageExtraData> = .init(user: userPayload,
                                                                   role: .moderator,
@@ -49,7 +48,7 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.id, loadedMember?.id)
             Assert.willBeEqual(payload.user.isOnline, loadedMember?.isOnline)
             Assert.willBeEqual(payload.user.isBanned, loadedMember?.isBanned)
-            Assert.willBeEqual(payload.user.roleRawValue, loadedMember?.userRole.rawValue)
+            Assert.willBeEqual(payload.user.role, loadedMember?.userRole)
             Assert.willBeEqual(payload.user.created, loadedMember?.userCreatedDate)
             Assert.willBeEqual(payload.user.updated, loadedMember?.userUpdatedDate)
             Assert.willBeEqual(payload.user.lastActiveDate, loadedMember?.lastActiveDate)
@@ -65,15 +64,14 @@ class MemberModelDTO_Tests: XCTestCase {
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
         let userPayload: UserPayload<NoExtraData> = .init(id: userId,
+                                                          role: .admin,
                                                           created: .init(timeIntervalSince1970: 1000),
                                                           updated: .init(timeIntervalSince1970: 2000),
                                                           lastActiveDate: .init(timeIntervalSince1970: 3000),
                                                           isOnline: true,
                                                           isInvisible: true,
                                                           isBanned: true,
-                                                          roleRawValue: "admin",
-                                                          extraData: .init(),
-                                                          teams: [])
+                                                          extraData: .init())
         
         let payload: MemberPayload<NoExtraData> = .init(user: userPayload,
                                                         role: .moderator,
@@ -94,7 +92,7 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.id, loadedMember?.id)
             Assert.willBeEqual(payload.user.isOnline, loadedMember?.isOnline)
             Assert.willBeEqual(payload.user.isBanned, loadedMember?.isBanned)
-            Assert.willBeEqual(payload.user.roleRawValue, loadedMember?.userRole.rawValue)
+            Assert.willBeEqual(payload.user.role, loadedMember?.userRole)
             Assert.willBeEqual(payload.user.created, loadedMember?.userCreatedDate)
             Assert.willBeEqual(payload.user.updated, loadedMember?.userUpdatedDate)
             Assert.willBeEqual(payload.user.lastActiveDate, loadedMember?.lastActiveDate)

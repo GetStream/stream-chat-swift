@@ -17,16 +17,15 @@ class UserModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         
         let payload: UserPayload<NameAndImageExtraData> = .init(id: userId,
+                                                                role: .admin,
                                                                 created: .unique,
                                                                 updated: .unique,
                                                                 lastActiveDate: .unique,
                                                                 isOnline: true,
                                                                 isInvisible: true,
                                                                 isBanned: true,
-                                                                roleRawValue: "admin",
                                                                 extraData: .init(name: "Luke",
-                                                                                 imageURL: URL(string: UUID().uuidString)),
-                                                                teams: [])
+                                                                                 imageURL: URL(string: UUID().uuidString)))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -42,7 +41,7 @@ class UserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.id, loadedUser?.id)
             Assert.willBeEqual(payload.isOnline, loadedUser?.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedUser?.isBanned)
-            Assert.willBeEqual(payload.roleRawValue, loadedUser?.userRole.rawValue)
+            Assert.willBeEqual(payload.role, loadedUser?.userRole)
             Assert.willBeEqual(payload.created, loadedUser?.userCreatedDate)
             Assert.willBeEqual(payload.updated, loadedUser?.userUpdatedDate)
             Assert.willBeEqual(payload.lastActiveDate, loadedUser?.lastActiveDate)
@@ -55,15 +54,14 @@ class UserModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         
         let payload: UserPayload<NoExtraData> = .init(id: userId,
+                                                      role: .admin,
                                                       created: .unique,
                                                       updated: .unique,
                                                       lastActiveDate: .unique,
                                                       isOnline: true,
                                                       isInvisible: true,
                                                       isBanned: true,
-                                                      roleRawValue: "admin",
-                                                      extraData: .init(),
-                                                      teams: [])
+                                                      extraData: .init())
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -79,7 +77,7 @@ class UserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.id, loadedUser?.id)
             Assert.willBeEqual(payload.isOnline, loadedUser?.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedUser?.isBanned)
-            Assert.willBeEqual(payload.roleRawValue, loadedUser?.userRole.rawValue)
+            Assert.willBeEqual(payload.role, loadedUser?.userRole)
             Assert.willBeEqual(payload.created, loadedUser?.userCreatedDate)
             Assert.willBeEqual(payload.updated, loadedUser?.userUpdatedDate)
             Assert.willBeEqual(payload.lastActiveDate, loadedUser?.lastActiveDate)

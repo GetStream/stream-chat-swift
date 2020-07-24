@@ -16,7 +16,7 @@ public struct NotificationMessageNewEvent<ExtraData: ExtraDataTypes>: EventWithM
         userId = try response.value(at: \.message?.user.id)
         cid = try response.value(at: \.channel?.cid)
         messageId = try response.value(at: \.message?.id)
-        createdAt = try response.value(at: \.message?.createdAt)
+        createdAt = try response.value(at: \.message?.created)
         unreadCount = response.unreadCount
         payload = response
     }

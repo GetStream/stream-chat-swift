@@ -6,22 +6,6 @@ import Foundation
 
 // MARK: - Temporary
 
-struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case user
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case deletedAt = "deleted_at"
-    }
-    
-    let id: MessageId
-    let user: UserPayload<ExtraData.User>
-    let createdAt: Date
-    let updatedAt: Date
-    let deletedAt: Date?
-}
-
 public typealias ReactionType = String
 
 struct ReactionPayload: Decodable {
@@ -55,7 +39,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         case reaction
         case watcherCount = "watcher_count"
         case unreadChannelsCount = "unread_channels"
-        case totalUnreadCount = "total_unread_count"
+        case unreadMessagesCount = "total_unread_count"
         case createdAt = "created_at"
         case isChannelHistoryCleared = "clear_history"
         case banReason = "reason"
@@ -65,7 +49,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let eventType: EventType
     let connectionId: String?
     let cid: ChannelId?
-    let currentUser: UserPayload<ExtraData.User>? // TODO: Create CurrentUserPayload?
+    let currentUser: CurrentUserPayload<ExtraData.User>? // TODO: Create CurrentUserPayload?
     let user: UserPayload<ExtraData.User>?
     let createdBy: UserPayload<ExtraData.User>?
     let memberContainer: MemberContainerPayload<ExtraData.User>?
@@ -74,15 +58,15 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let reaction: ReactionPayload?
     let watcherCount: Int?
     let unreadChannelsCount: Int?
-    let totalUnreadCount: Int?
+    let unreadMessagesCount: Int?
     let createdAt: Date?
     let isChannelHistoryCleared: Bool?
     let banReason: String?
     let banExpiredAt: Date?
     
     var unreadCount: UnreadCount {
-        if let unreadChannelsCount = unreadChannelsCount, let totalUnreadCount = totalUnreadCount {
-            return .init(channels: unreadChannelsCount, messages: totalUnreadCount)
+        if let channels = unreadChannelsCount, let messages = unreadMessagesCount {
+            return .init(channels: channels, messages: messages)
         }
         
         return .noUnread
@@ -91,7 +75,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     init(eventType: EventType,
          connectionId: String? = nil,
          cid: ChannelId? = nil,
-         currentUser: UserPayload<ExtraData.User>? = nil,
+         currentUser: CurrentUserPayload<ExtraData.User>? = nil,
          user: UserPayload<ExtraData.User>? = nil,
          createdBy: UserPayload<ExtraData.User>? = nil,
          memberContainer: MemberContainerPayload<ExtraData.User>? = nil,
@@ -100,7 +84,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
          reaction: ReactionPayload? = nil,
          watcherCount: Int? = nil,
          unreadChannelsCount: Int? = nil,
-         totalUnreadCount: Int? = nil,
+         unreadMessagesCount: Int? = nil,
          createdAt: Date? = nil,
          isChannelHistoryCleared: Bool? = nil,
          banReason: String? = nil,
@@ -117,7 +101,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.reaction = reaction
         self.watcherCount = watcherCount
         self.unreadChannelsCount = unreadChannelsCount
-        self.totalUnreadCount = totalUnreadCount
+        self.unreadMessagesCount = unreadMessagesCount
         self.createdAt = createdAt
         self.isChannelHistoryCleared = isChannelHistoryCleared
         self.banReason = banReason

@@ -19,7 +19,7 @@ class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.extraData.name, "Broken Waterfall")
         XCTAssertEqual(payload.extraData.imageURL,
                        URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!)
-        XCTAssertEqual(payload.roleRawValue, "user")
+        XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
     }
     
@@ -37,7 +37,7 @@ class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.created, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.lastActiveDate, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updated, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.roleRawValue, "user")
+        XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
         
         XCTAssertEqual(payload.extraData.secretNote, "Anaking is Vader!")
@@ -54,7 +54,7 @@ class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.updated, "2020-06-09T18:33:04.078929Z".toDate())
         XCTAssertEqual(payload.extraData.imageURL,
                        URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!)
-        XCTAssertEqual(payload.roleRawValue, "guest")
+        XCTAssertEqual(payload.role, .guest)
         XCTAssertEqual(payload.isOnline, true)
     }
     
@@ -66,7 +66,7 @@ class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.created, "2020-06-09T18:33:04.070518Z".toDate())
         XCTAssertEqual(payload.lastActiveDate, "2020-06-09T18:33:04.075114Z".toDate())
         XCTAssertEqual(payload.updated, "2020-06-09T18:33:04.078929Z".toDate())
-        XCTAssertEqual(payload.roleRawValue, "guest")
+        XCTAssertEqual(payload.role, .guest)
         XCTAssertEqual(payload.isOnline, true)
     }
 }
