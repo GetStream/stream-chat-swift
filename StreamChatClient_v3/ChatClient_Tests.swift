@@ -592,16 +592,5 @@ class WebSocketClientMock: WebSocketClient {
     }
 }
 
-class APIClientMock: APIClient {
-    var init_sessionConfiguration: URLSessionConfiguration
-    var init_requestEncoder: RequestEncoder
-    var init_requestDecoder: RequestDecoder
-    
-    override init(sessionConfiguration: URLSessionConfiguration, requestEncoder: RequestEncoder, requestDecoder: RequestDecoder) {
-        init_sessionConfiguration = sessionConfiguration
-        init_requestEncoder = requestEncoder
-        init_requestDecoder = requestDecoder
-        
-        super.init(sessionConfiguration: sessionConfiguration, requestEncoder: requestEncoder, requestDecoder: requestDecoder)
     }
 }
