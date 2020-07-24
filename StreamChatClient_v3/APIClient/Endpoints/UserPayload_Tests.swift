@@ -5,16 +5,9 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class UserEndpointPayload_Tests: XCTestCase {
-    let currentUserJSON: Data = {
-        let url = Bundle(for: UserEndpointPayload_Tests.self).url(forResource: "CurrentUser", withExtension: "json")!
-        return try! Data(contentsOf: url)
-    }()
-    
-    let otherUserJSON: Data = {
-        let url = Bundle(for: UserEndpointPayload_Tests.self).url(forResource: "OtherUser", withExtension: "json")!
-        return try! Data(contentsOf: url)
-    }()
+class UserPayload_Tests: XCTestCase {
+    let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser")
+    let otherUserJSON = XCTestCase.mockData(fromFile: "OtherUser")
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(UserPayload<NameAndImageExtraData>.self, from: currentUserJSON)
