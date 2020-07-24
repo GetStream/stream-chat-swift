@@ -36,6 +36,7 @@
 		79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F8024891C6A00CDEB89 /* VirtualTime_Tests.swift */; };
 		79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F8124891C6A00CDEB89 /* VirtualTime.swift */; };
 		792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921CA24C077B400116BBB /* TestDispatchQueue.swift */; };
+		792921CD24C07A9000116BBB /* QueueAwareDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921CC24C07A9000116BBB /* QueueAwareDelegate.swift */; };
 		792A4F1B247FE84900EAF71D /* ChannelQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1A247FE84900EAF71D /* ChannelQueryUpdater.swift */; };
 		792A4F1D247FEA2200EAF71D /* ChannelListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1C247FEA2200EAF71D /* ChannelListController.swift */; };
 		792A4F25247FF01800EAF71D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F24247FF01800EAF71D /* AppDelegate.swift */; };
@@ -514,6 +515,7 @@
 		79280F8024891C6A00CDEB89 /* VirtualTime_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTime_Tests.swift; sourceTree = "<group>"; };
 		79280F8124891C6A00CDEB89 /* VirtualTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTime.swift; sourceTree = "<group>"; };
 		792921CA24C077B400116BBB /* TestDispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDispatchQueue.swift; sourceTree = "<group>"; };
+		792921CC24C07A9000116BBB /* QueueAwareDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueAwareDelegate.swift; sourceTree = "<group>"; };
 		792A4F1A247FE84900EAF71D /* ChannelQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQueryUpdater.swift; sourceTree = "<group>"; };
 		792A4F1C247FEA2200EAF71D /* ChannelListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListController.swift; sourceTree = "<group>"; };
 		792A4F22247FF01800EAF71D /* V3SampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = V3SampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1337,6 +1339,7 @@
 				799C9474247D7D41001F1104 /* TemporaryData.swift */,
 				799C947B247E6051001F1104 /* TestError.swift */,
 				792921CA24C077B400116BBB /* TestDispatchQueue.swift */,
+				792921CC24C07A9000116BBB /* QueueAwareDelegate.swift */,
 			);
 			indentWidth = 4;
 			path = TestResources_v3;
@@ -2614,6 +2617,7 @@
 				799C945C247D59D8001F1104 /* ChatClient_Tests.swift in Sources */,
 				79BA19F324B3386B00E11FC2 /* CurrentUserDTO_Tests.swift in Sources */,
 				79280F7D24891B1300CDEB89 /* WebSocketEngine_Tests.swift in Sources */,
+				792921CD24C07A9000116BBB /* QueueAwareDelegate.swift in Sources */,
 				79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
 				79280F732487CD3100CDEB89 /* Atomic_Tests.swift in Sources */,
