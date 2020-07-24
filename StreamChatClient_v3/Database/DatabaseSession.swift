@@ -9,26 +9,29 @@ extension NSManagedObjectContext: DatabaseSession {}
 protocol DatabaseSession {
     // MARK: -  User
     
-    @discardableResult func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws
-        -> CurrentUserDTO
+    @discardableResult
+    func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO
     func loadCurrentUser<ExtraData: UserExtraData>() -> CurrentUserModel<ExtraData>?
     
-    @discardableResult func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO
+    @discardableResult
+    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO
     func loadUser<ExtraData: UserExtraData>(id: UserId) -> UserModel<ExtraData>?
     
     // MARK: -  Member
     
-    @discardableResult func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId)
-        throws -> MemberDTO
+    @discardableResult
+    func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId) throws -> MemberDTO
+    
     func loadMember<ExtraData: UserExtraData>(id: UserId, channelId: ChannelId) -> MemberModel<ExtraData>?
     
-    // MARK: -  Channel model
+    // MARK: -  Channel
     
-    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>,
-                                                                   query: ChannelListQuery?) throws -> ChannelDTO
+    @discardableResult
+    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>, query: ChannelListQuery?) throws -> ChannelDTO
     
-    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelDetailPayload<ExtraData>,
-                                                                   query: ChannelListQuery?) throws -> ChannelDTO
+    @discardableResult
+    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelDetailPayload<ExtraData>,
+                                                query: ChannelListQuery?) throws -> ChannelDTO
     
     func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>?
     
@@ -39,14 +42,25 @@ protocol DatabaseSession {
 }
 
 extension DatabaseSession {
-    @discardableResult func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) throws
-        -> ChannelDTO {
-            try saveChannel(payload: payload, query: nil)
-        }
+    @discardableResult
+    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) throws -> ChannelDTO {
+        try saveChannel(payload: payload, query: nil)
+    }
     
     // MARK: -  Event
     
     func saveEvent<ExtraData: ExtraDataTypes>(payload: EventPayload<ExtraData>) throws {
+        // Save a user data.
+        if let userPayload = payload.user {
+            try saveUser(payload: userPayload)
+        }
+        
+        // Save a member data.
+        if let cid = payload.cid, let memberPayload = payload.memberContainer?.member {
+            try saveMember(payload: memberPayload, channelId: cid)
+        }
+        
+        // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
             try saveChannel(payload: channelDetailPayload, query: nil)
         }
