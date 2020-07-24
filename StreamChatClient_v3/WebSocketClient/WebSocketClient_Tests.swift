@@ -5,9 +5,8 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-final class WebSocketClient_Tests: XCTestCase {
+class WebSocketClient_Tests: XCTestCase {
     struct TestEvent: Event, Equatable {
-        static let eventRawType = "test_event"
         let id = UUID()
     }
     
@@ -98,7 +97,7 @@ final class WebSocketClient_Tests: XCTestCase {
         AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
         
         // Simulate a health check event is received and the connection state is updated
-        decoder.decodedEvent = HealthCheck(connectionId: connectionId)
+        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
         engine.simulateMessageReceived()
         
         AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
@@ -171,7 +170,7 @@ final class WebSocketClient_Tests: XCTestCase {
         AssertAsync.staysTrue(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
         
         // Simulate a health check event
-        decoder.decodedEvent = HealthCheck(connectionId: connectionId)
+        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
         engine.simulateMessageReceived()
         
         // `sucessfullyConnected` should be called now
@@ -471,7 +470,7 @@ private class EventDecoderMock: AnyEventDecoder {
     var decode_calledWithData: Data?
     var decodedEvent: Event!
     
-    func decode(data: Data) throws -> Event {
+    func decode(from data: Data) throws -> Event {
         decode_calledWithData = data
         return decodedEvent
     }
