@@ -36,6 +36,7 @@
 		79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F8124891C6A00CDEB89 /* VirtualTime.swift */; };
 		792921C524C0479700116BBB /* ChannelListQueryUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C424C0479700116BBB /* ChannelListQueryUpdater_Tests.swift */; };
 		792921C724C047DD00116BBB /* APIClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C624C047DD00116BBB /* APIClient_Mock.swift */; };
+		792921C924C056F400116BBB /* ChannelListController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C824C056F400116BBB /* ChannelListController_Tests.swift */; };
 		792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921CA24C077B400116BBB /* TestDispatchQueue.swift */; };
 		792921CD24C07A9000116BBB /* QueueAwareDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921CC24C07A9000116BBB /* QueueAwareDelegate.swift */; };
 		792A4F1B247FE84900EAF71D /* ChannelListQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1A247FE84900EAF71D /* ChannelListQueryUpdater.swift */; };
@@ -518,6 +519,7 @@
 		79280F8124891C6A00CDEB89 /* VirtualTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTime.swift; sourceTree = "<group>"; };
 		792921C424C0479700116BBB /* ChannelListQueryUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryUpdater_Tests.swift; sourceTree = "<group>"; };
 		792921C624C047DD00116BBB /* APIClient_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient_Mock.swift; sourceTree = "<group>"; };
+		792921C824C056F400116BBB /* ChannelListController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListController_Tests.swift; sourceTree = "<group>"; };
 		792921CA24C077B400116BBB /* TestDispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDispatchQueue.swift; sourceTree = "<group>"; };
 		792921CC24C07A9000116BBB /* QueueAwareDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueAwareDelegate.swift; sourceTree = "<group>"; };
 		792A4F1A247FE84900EAF71D /* ChannelListQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryUpdater.swift; sourceTree = "<group>"; };
@@ -2625,6 +2627,7 @@
 				79877A2B2498E51500015F8B /* UserModelDTO_Tests.swift in Sources */,
 				792921C524C0479700116BBB /* ChannelListQueryUpdater_Tests.swift in Sources */,
 				79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */,
+				792921C924C056F400116BBB /* ChannelListController_Tests.swift in Sources */,
 				799C9468247D791A001F1104 /* AssertJSONEqual.swift in Sources */,
 				799C9460247D77D6001F1104 /* DatabaseContainer_Tests.swift in Sources */,
 				8A5D3EF924AF749200E2FE35 /* ChannelId_Tests.swift in Sources */,
