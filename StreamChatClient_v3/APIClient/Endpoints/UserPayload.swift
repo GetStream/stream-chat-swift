@@ -16,12 +16,13 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         case updated = "updated_at"
         case lastActiveDate = "last_active"
         case isInvisible = "invisible"
-        case isAnonymous = "anon"
         case teams
     }
     
     /// A user id.
     let id: String
+    /// A user role.
+    let role: UserRole
     /// A created date.
     let created: Date
     /// An updated date.
@@ -34,17 +35,37 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     let isInvisible: Bool
     /// An indicator if a user was banned.
     let isBanned: Bool
-    /// A user role.
-    let roleRawValue: String
+    /// A list of teams of the user.
+    let teams: [String]
     /// An extra data for the user.
     let extraData: ExtraData
     
-    let teams: [String]
+    init(id: String,
+         role: UserRole,
+         created: Date,
+         updated: Date,
+         lastActiveDate: Date?,
+         isOnline: Bool,
+         isInvisible: Bool,
+         isBanned: Bool,
+         teams: [String],
+         extraData: ExtraData) {
+        self.id = id
+        self.role = role
+        self.created = created
+        self.updated = updated
+        self.lastActiveDate = lastActiveDate
+        self.isOnline = isOnline
+        self.isInvisible = isInvisible
+        self.isBanned = isBanned
+        self.teams = teams
+        self.extraData = extraData
+    }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        roleRawValue = try container.decode(String.self, forKey: .role)
+        role = try container.decode(UserRole.self, forKey: .role)
         created = try container.decode(Date.self, forKey: .created)
         updated = try container.decode(Date.self, forKey: .updated)
         lastActiveDate = try container.decodeIfPresent(Date.self, forKey: .lastActiveDate)
@@ -54,45 +75,15 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         extraData = try ExtraData(from: decoder)
     }
-    
-    init(
-        id: String, created: Date, updated: Date, lastActiveDate: Date?, isOnline: Bool, isInvisible: Bool, isBanned: Bool,
-        roleRawValue: String, extraData: ExtraData, teams: [String]
-    ) {
-        self.id = id
-        self.created = created
-        self.updated = updated
-        self.lastActiveDate = lastActiveDate
-        self.isOnline = isOnline
-        self.isInvisible = isInvisible
-        self.isBanned = isBanned
-        self.roleRawValue = roleRawValue
-        self.extraData = extraData
-        self.teams = teams
-    }
 }
 
 // TODO: Muted user
 
 class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
-    internal init(
-        id: String, created: Date, updated: Date, lastActiveDate: Date?, isOnline: Bool, isInvisible: Bool, isBanned: Bool,
-        roleRawValue: String, extraData: ExtraData, teams: [String], devices: [Device], mutedUsers: [MutedUser<ExtraData>],
-        unreadChannelsCount: Int?, unreadMessagesCount: Int?
-    ) {
-        self.devices = devices
-        self.mutedUsers = mutedUsers
-        self.unreadChannelsCount = unreadChannelsCount
-        self.unreadMessagesCount = unreadMessagesCount
-        
-        super.init(id: id, created: created, updated: updated, lastActiveDate: lastActiveDate, isOnline: isOnline,
-                   isInvisible: isInvisible, isBanned: isBanned, roleRawValue: roleRawValue, extraData: extraData, teams: teams)
-    }
-    
     private enum CodingKeys: String, CodingKey {
         case mutedUsers = "mutes"
-        case unreadMessagesCount = "unread_count"
-        case unreadChannelsCount = "unread_channels"
+        case channelsUnreadCount = "unread_channels"
+        case messagesUnreadCount = "total_unread_count"
         case isAnonymous = "anon"
         case devices
     }
@@ -102,15 +93,48 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     /// Muted users.
     public let mutedUsers: [MutedUser<ExtraData>]
     
-    public let unreadChannelsCount: Int?
-    public let unreadMessagesCount: Int?
+    public let channelsUnreadCount: Int
+    public let messagesUnreadCount: Int
+    public var unreadCount: UnreadCount { UnreadCount(channels: channelsUnreadCount, messages: messagesUnreadCount) }
+    
+    init(id: String,
+         role: UserRole,
+         created: Date,
+         updated: Date,
+         lastActiveDate: Date?,
+         isOnline: Bool,
+         isInvisible: Bool,
+         isBanned: Bool,
+         teams: [String],
+         extraData: ExtraData,
+         devices: [Device],
+         mutedUsers: [MutedUser<ExtraData>],
+         channelsUnreadCount: Int?,
+         messagesUnreadCount: Int?) {
+        self.devices = devices
+        self.mutedUsers = mutedUsers
+        self.channelsUnreadCount = channelsUnreadCount
+        self.messagesUnreadCount = messagesUnreadCount
+        self.teams = teams
+        
+        super.init(id: id,
+                   created: created,
+                   updated: updated,
+                   lastActiveDate: lastActiveDate,
+                   isOnline: isOnline,
+                   isInvisible: isInvisible,
+                   isBanned: isBanned,
+                   roleRawValue: roleRawValue,
+                   extraData: extraData,
+                   teams: teams)
+    }
     
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser<ExtraData>].self, forKey: .mutedUsers) ?? []
-        unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount)
-        unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
+        channelsUnreadCount = try container.decodeIfPresent(Int.self, forKey: .channelsUnreadCount) ?? 0
+        messagesUnreadCount = try container.decodeIfPresent(Int.self, forKey: .messagesUnreadCount) ?? 0
         
         try super.init(from: decoder)
     }

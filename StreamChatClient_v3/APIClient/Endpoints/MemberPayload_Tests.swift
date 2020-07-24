@@ -5,19 +5,17 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class MemberEndpointPayload_Tests: XCTestCase {
-    let memberJSON: Data = {
-        let url = Bundle(for: MemberEndpointPayload_Tests.self).url(forResource: "Member", withExtension: "json")!
-        return try! Data(contentsOf: url)
-    }()
+class MemberPayload_Tests: XCTestCase {
+    let memberJSON = XCTestCase.mockData(fromFile: "Member")
     
     func test_memberJSON_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(MemberPayload<NameAndImageExtraData>.self, from: memberJSON)
         
-        XCTAssertEqual(payload.roleRawValue, "owner")
+        XCTAssertEqual(payload.role, .owner)
         XCTAssertEqual(payload.created, "2020-06-05T12:53:09.862721Z".toDate())
         XCTAssertEqual(payload.updated, "2020-06-05T12:53:09.862721Z".toDate())
         
+        XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertEqual(payload.user.isBanned, false)
         XCTAssertEqual(payload.user.created, "2019-12-12T15:33:46.488935Z".toDate())
