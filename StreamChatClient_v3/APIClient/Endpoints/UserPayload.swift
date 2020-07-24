@@ -42,17 +42,6 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     /// An extra data for the user.
     let extraData: ExtraData
     
-    let unreadChannelsCount: Int?
-    let unreadMessagesCount: Int?
-    
-    var unreadCount: UnreadCount {
-        if let channels = unreadChannelsCount, let messages = unreadMessagesCount {
-            return .init(channels: channels, messages: messages)
-        }
-        
-        return .noUnread
-    }
-    
     init(id: String,
          role: UserRole,
          created: Date,
@@ -62,9 +51,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
          isInvisible: Bool,
          isBanned: Bool,
          teams: [String] = [],
-         extraData: ExtraData,
-         unreadChannelsCount: Int? = nil,
-         unreadMessagesCount: Int? = nil) {
+         extraData: ExtraData) {
         self.id = id
         self.role = role
         self.created = created
@@ -75,8 +62,6 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         self.isBanned = isBanned
         self.teams = teams
         self.extraData = extraData
-        self.unreadChannelsCount = unreadChannelsCount
-        self.unreadMessagesCount = unreadMessagesCount
     }
     
     required init(from decoder: Decoder) throws {
@@ -91,9 +76,6 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         extraData = try ExtraData(from: decoder)
-        
-        unreadChannelsCount = try container.decodeIfPresent(Int.self, forKey: .unreadChannelsCount)
-        unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
     }
 }
 
@@ -122,9 +104,7 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
          teams: [String] = [],
          extraData: ExtraData,
          devices: [Device] = [],
-         mutedUsers: [MutedUser<ExtraData>] = [],
-         unreadChannelsCount: Int? = nil,
-         unreadMessagesCount: Int? = nil) {
+         mutedUsers: [MutedUser<ExtraData>] = []) {
         self.devices = devices
         self.mutedUsers = mutedUsers
         
@@ -137,9 +117,7 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
                    isInvisible: isInvisible,
                    isBanned: isBanned,
                    teams: teams,
-                   extraData: extraData,
-                   unreadChannelsCount: unreadChannelsCount,
-                   unreadMessagesCount: unreadMessagesCount)
+                   extraData: extraData)
     }
     
     required init(from decoder: Decoder) throws {

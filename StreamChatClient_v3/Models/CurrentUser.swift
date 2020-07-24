@@ -33,20 +33,18 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     /// The counts of unread channels and messages.
     public let unreadCount: UnreadCount
     
-    public init(
-        id: String,
-        isOnline: Bool = false,
-        isBanned: Bool = false,
-        userRole: UserRole = .user,
-        createdDate: Date = .init(),
-        updatedDate: Date = .init(),
-        lastActiveDate: Date? = nil,
-        extraData: ExtraData? = nil,
-        devices: [Device] = [],
-        currentDevice: Device? = nil,
-        mutedUsers: Set<UserModel<ExtraData>> = [],
-        unreadCount: UnreadCount = .noUnread
-    ) {
+    public init(id: String,
+                isOnline: Bool = false,
+                isBanned: Bool = false,
+                userRole: UserRole = .user,
+                createdDate: Date = .init(),
+                updatedDate: Date = .init(),
+                lastActiveDate: Date? = nil,
+                extraData: ExtraData? = nil,
+                devices: [Device] = [],
+                currentDevice: Device? = nil,
+                mutedUsers: Set<UserModel<ExtraData>> = [],
+                unreadCount: UnreadCount = .noUnread) {
         self.devices = devices
         self.currentDevice = currentDevice
         self.mutedUsers = mutedUsers
@@ -61,15 +59,4 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
                    lastActiveDate: lastActiveDate,
                    extraData: extraData)
     }
-}
-
-/// Unread counts of a user.
-public struct UnreadCount: Decodable, Equatable {
-    public static let noUnread = UnreadCount(channels: 0, messages: 0)
-    
-    /// The number of unread channels
-    public internal(set) var channels: Int
-    
-    /// The number of unread messagess accross all channels.
-    public internal(set) var messages: Int
 }

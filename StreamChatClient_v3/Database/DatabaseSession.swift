@@ -66,7 +66,12 @@ extension DatabaseSession {
         }
         
         if let currentUserPayload = payload.currentUser {
-            try saveCurrentUser(payload: currentUserPayload)
+            let currentUserDTO = try saveCurrentUser(payload: currentUserPayload)
+            
+            if let unreadCount = payload.unreadCount {
+                currentUserDTO.unreadChannelsCount = Int16(unreadCount.channels)
+                currentUserDTO.unreadMessagesCount = Int16(unreadCount.messages)
+            }
         }
     }
 }
