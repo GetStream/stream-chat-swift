@@ -20,7 +20,7 @@ public struct MessageNewEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
         messageId = try response.value(at: \.message?.id)
         createdAt = try response.value(at: \.message?.created)
         watcherCount = try response.value(at: \.watcherCount)
-        unreadCount = response.unreadCount
+        unreadCount = try response.value(at: \.unreadCount)
         payload = response
     }
 }
@@ -71,7 +71,7 @@ public struct MessageReadEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload,
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         readAt = try response.value(at: \.createdAt)
-        unreadCount = try response.value(at: \.user?.unreadCount)
+        unreadCount = try response.value(at: \.unreadCount)
         payload = response
     }
 }

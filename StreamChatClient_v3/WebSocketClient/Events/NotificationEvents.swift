@@ -17,7 +17,7 @@ public struct NotificationMessageNewEvent<ExtraData: ExtraDataTypes>: EventWithM
         cid = try response.value(at: \.channel?.cid)
         messageId = try response.value(at: \.message?.id)
         createdAt = try response.value(at: \.message?.created)
-        unreadCount = response.unreadCount
+        unreadCount = try response.value(at: \.unreadCount)
         payload = response
     }
 }
@@ -45,7 +45,7 @@ public struct NotificationMarkReadEvent<ExtraData: ExtraDataTypes>: EventWithUse
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.channel?.cid)
         readAt = try response.value(at: \.createdAt)
-        unreadCount = response.unreadCount
+        unreadCount = try response.value(at: \.unreadCount)
         payload = response
     }
 }
@@ -67,7 +67,8 @@ public struct NotificationAddedToChannelEvent<ExtraData: ExtraDataTypes>: EventW
     
     init(from response: EventPayload<ExtraData>) throws {
         let cid = try response.value(at: \.channel?.cid)
-        self.init(cid: cid, unreadCount: response.unreadCount, eventPayload: response)
+        let unreadCount = try response.value(at: \.unreadCount)
+        self.init(cid: cid, unreadCount: unreadCount, eventPayload: response)
     }
     
     init(cid: ChannelId, unreadCount: UnreadCount, eventPayload: EventPayload<ExtraData>) {

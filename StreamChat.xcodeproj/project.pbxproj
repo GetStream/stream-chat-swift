@@ -274,6 +274,7 @@
 		8A9ECEF9242A5C3A00206E7D /* UIApplication+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */; };
 		8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD0241924AD000750E4 /* Reaction.swift */; };
 		8AA8F13E2420FFE0008FD89C /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBB241924AD000750E4 /* Int+Extensions.swift */; };
+		8AAB1C6624CB39F2009B783F /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAB1C6524CB39F2009B783F /* UnreadCount.swift */; };
 		8AAE2337245B00480080EB00 /* WebSocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAE2336245B00480080EB00 /* WebSocketProvider.swift */; };
 		8AAE2339245B00B20080EB00 /* URLSessionWebSocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAE2338245B00B20080EB00 /* URLSessionWebSocketProvider.swift */; };
 		8AAE233B245B00CF0080EB00 /* StarscreamWebSocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAE233A245B00CF0080EB00 /* StarscreamWebSocketProvider.swift */; };
@@ -697,7 +698,6 @@
 		79DDF816249CE38B002F4412 /* MockNetworkURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockNetworkURLProtocol.swift; sourceTree = "<group>"; };
 		79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestRecorderURLProtocol.swift; sourceTree = "<group>"; };
 		79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertNetworkRequest.swift; sourceTree = "<group>"; };
-		79E2B83A24CAC6C90024752F /* ChangeAggregator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeAggregator.swift; sourceTree = "<group>"; };
 		79E2B83F24CAC8D60024752F /* ChangeAggregator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangeAggregator.swift; sourceTree = "<group>"; };
 		79EE39372453204E0034EBF3 /* StreamChatClientIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatClientIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		79FC85E624ACCBC500A665ED /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
@@ -795,6 +795,7 @@
 		8A9BC2EB2487D9F5004C5E69 /* WebSocketEventsMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketEventsMock.swift; sourceTree = "<group>"; };
 		8A9D2C7224487E0E007BD497 /* ChatViewStyle+Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewStyle+Presets.swift"; sourceTree = "<group>"; };
 		8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Rx.swift"; sourceTree = "<group>"; };
+		8AAB1C6524CB39F2009B783F /* UnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCount.swift; sourceTree = "<group>"; };
 		8AAE2336245B00480080EB00 /* WebSocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketProvider.swift; sourceTree = "<group>"; };
 		8AAE2338245B00B20080EB00 /* URLSessionWebSocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionWebSocketProvider.swift; sourceTree = "<group>"; };
 		8AAE233A245B00CF0080EB00 /* StarscreamWebSocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarscreamWebSocketProvider.swift; sourceTree = "<group>"; };
@@ -1416,6 +1417,7 @@
 				799C9431247D2FB9001F1104 /* Message.swift */,
 				794927EC249E0BE2009D7EB7 /* ExtraData.swift */,
 				8A62706F24BF456B0040BFD6 /* MessageRead.swift */,
+				8AAB1C6524CB39F2009B783F /* UnreadCount.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -2797,7 +2799,7 @@
 				79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */,
 				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
 				79877A192498E4EE00015F8B /* UserPayload.swift in Sources */,
-				792A4F1B247FE84900EAF71D /* ChannelQueryUpdater.swift in Sources */,
+				792A4F1B247FE84900EAF71D /* ChannelListQueryUpdater.swift in Sources */,
 				792A4F1B247FE84900EAF71D /* ChannelListQueryUpdater.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */,
@@ -2806,6 +2808,7 @@
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,
 				79280F422484F4EC00CDEB89 /* Event.swift in Sources */,
 				79682C4A24BF37C80071578E /* MessagePayload.swift in Sources */,
+				8AAB1C6624CB39F2009B783F /* UnreadCount.swift in Sources */,
 				79877A282498E50D00015F8B /* UserModelDTO.swift in Sources */,
 				79280F47248515FA00CDEB89 /* ChannelEvents.swift in Sources */,
 				79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */,
@@ -2886,7 +2889,7 @@
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
 				799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */,
 				792921C724C047DD00116BBB /* APIClient_Mock.swift in Sources */,
-				794927F2249E3DE8009D7EB7 /* Event_Tests.swift in Sources */,
+				794927F2249E3DE8009D7EB7 /* EventPayload_Tests.swift in Sources */,
 				79A0E9BC2498C31A00E9BD50 /* UserTypingStartCleanupMiddleware_Tests.swift in Sources */,
 				794927F2249E3DE8009D7EB7 /* EventPayload_Tests.swift in Sources */,
 				796610BB248E687000761629 /* EventMiddleware_Tests.swift in Sources */,

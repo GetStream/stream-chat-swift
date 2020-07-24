@@ -38,8 +38,6 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         case message
         case reaction
         case watcherCount = "watcher_count"
-        case unreadChannelsCount = "unread_channels"
-        case unreadMessagesCount = "total_unread_count"
         case createdAt = "created_at"
         case isChannelHistoryCleared = "clear_history"
         case banReason = "reason"
@@ -49,7 +47,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let eventType: EventType
     let connectionId: String?
     let cid: ChannelId?
-    let currentUser: CurrentUserPayload<ExtraData.User>? // TODO: Create CurrentUserPayload?
+    let currentUser: CurrentUserPayload<ExtraData.User>?
     let user: UserPayload<ExtraData.User>?
     let createdBy: UserPayload<ExtraData.User>?
     let memberContainer: MemberContainerPayload<ExtraData.User>?
@@ -57,20 +55,11 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let message: MessagePayload<ExtraData>?
     let reaction: ReactionPayload?
     let watcherCount: Int?
-    let unreadChannelsCount: Int?
-    let unreadMessagesCount: Int?
+    let unreadCount: UnreadCount?
     let createdAt: Date?
     let isChannelHistoryCleared: Bool?
     let banReason: String?
     let banExpiredAt: Date?
-    
-    var unreadCount: UnreadCount {
-        if let channels = unreadChannelsCount, let messages = unreadMessagesCount {
-            return .init(channels: channels, messages: messages)
-        }
-        
-        return .noUnread
-    }
     
     init(eventType: EventType,
          connectionId: String? = nil,
@@ -83,8 +72,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
          message: MessagePayload<ExtraData>? = nil,
          reaction: ReactionPayload? = nil,
          watcherCount: Int? = nil,
-         unreadChannelsCount: Int? = nil,
-         unreadMessagesCount: Int? = nil,
+         unreadCount: UnreadCount? = nil,
          createdAt: Date? = nil,
          isChannelHistoryCleared: Bool? = nil,
          banReason: String? = nil,
@@ -100,12 +88,31 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.message = message
         self.reaction = reaction
         self.watcherCount = watcherCount
-        self.unreadChannelsCount = unreadChannelsCount
-        self.unreadMessagesCount = unreadMessagesCount
+        self.unreadCount = unreadCount
         self.createdAt = createdAt
         self.isChannelHistoryCleared = isChannelHistoryCleared
         self.banReason = banReason
         self.banExpiredAt = banExpiredAt
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        eventType = try container.decode(EventType.self, forKey: .eventType)
+        connectionId = try container.decodeIfPresent(String.self, forKey: .connectionId)
+        cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
+        currentUser = try container.decodeIfPresent(CurrentUserPayload<ExtraData.User>.self, forKey: .currentUser)
+        user = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .user)
+        createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
+        memberContainer = try container.decodeIfPresent(MemberContainerPayload<ExtraData.User>.self, forKey: .memberContainer)
+        channel = try container.decodeIfPresent(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
+        message = try container.decodeIfPresent(MessagePayload<ExtraData>.self, forKey: .message)
+        reaction = try container.decodeIfPresent(ReactionPayload.self, forKey: .reaction)
+        watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
+        unreadCount = try? UnreadCount(from: decoder)
+        createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
+        isChannelHistoryCleared = try container.decodeIfPresent(Bool.self, forKey: .isChannelHistoryCleared)
+        banReason = try container.decodeIfPresent(String.self, forKey: .banReason)
+        banExpiredAt = try container.decodeIfPresent(Date.self, forKey: .banExpiredAt)
     }
     
     func event() throws -> Event {

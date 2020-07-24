@@ -15,6 +15,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
     
     func test_currentUserPayload_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
+        let extraData = NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString))
         
         let payload: CurrentUserPayload<NameAndImageExtraData> = .init(id: userId,
                                                                        role: .admin,
@@ -24,12 +25,9 @@ class CurrentUserModelDTO_Tests: XCTestCase {
                                                                        isOnline: true,
                                                                        isInvisible: true,
                                                                        isBanned: true,
-                                                                       extraData: .init(name: "Luke",
-                                                                                        imageURL: URL(string: UUID().uuidString)),
+                                                                       extraData: extraData,
                                                                        devices: [],
-                                                                       mutedUsers: [],
-                                                                       unreadChannelsCount: 5,
-                                                                       unreadMessagesCount: 10)
+                                                                       mutedUsers: [])
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -65,9 +63,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
                                                              isOnline: true,
                                                              isInvisible: true,
                                                              isBanned: true,
-                                                             extraData: .init(),
-                                                             unreadChannelsCount: 5,
-                                                             unreadMessagesCount: 10)
+                                                             extraData: .init())
         
         // Asynchronously save the payload to the db
         database.write { session in
