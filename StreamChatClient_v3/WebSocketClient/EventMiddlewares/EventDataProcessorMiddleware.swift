@@ -26,14 +26,14 @@ struct EventDataProcessorMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware 
         
         database.write({ (session) in
             try session.saveEvent(payload: payload)
+            log.debug("Event data saved to db: \(payload)")
+            
         }, completion: { (error) in
             if let error = error {
                 log.error("Failed saving incoming `Event` data to DB. Error: \(error)")
                 completion(nil)
                 return
             }
-            
-            log.debug("Event data saved to db: \(payload)")
             completion(event)
         })
     }

@@ -5,7 +5,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class ChannelModelDTO_Tests: XCTestCase {
+class ChannelDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
     
     override func setUp() {
@@ -85,6 +85,33 @@ class ChannelModelDTO_Tests: XCTestCase {
             //      Assert.willBeEqual(payload.members[0].user.mutedUsers, loadedChannel?.members.first?.mutedUsers)
             //      Assert.willBeEqual(payload.members[0].user.unreadChannelsCount, loadedChannel?.members.first?.unreadChannelsCount)
             //      Assert.willBeEqual(payload.members[0].user.unreadMessagesCount, loadedChannel?.members.first?.unreadMessagesCount)
+            
+            // Messages
+            Assert.willBeEqual(payload.messages[0].id, loadedChannel?.latestMessages.first?.id)
+            Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel?.latestMessages.first?.type.rawValue)
+            Assert.willBeEqual(payload.messages[0].text, loadedChannel?.latestMessages.first?.text)
+            Assert.willBeEqual(payload.messages[0].updated, loadedChannel?.latestMessages.first?.updatedDate)
+            Assert.willBeEqual(payload.messages[0].created, loadedChannel?.latestMessages.first?.createdDate)
+            Assert.willBeEqual(payload.messages[0].deleted, loadedChannel?.latestMessages.first?.deletedDate)
+            Assert.willBeEqual(payload.messages[0].args, loadedChannel?.latestMessages.first?.args)
+            Assert.willBeEqual(payload.messages[0].command, loadedChannel?.latestMessages.first?.command)
+            Assert.willBeEqual(payload.messages[0].extraData, loadedChannel?.latestMessages.first?.extraData)
+            Assert.willBeEqual(payload.messages[0].isSilent, loadedChannel?.latestMessages.first?.isSilent)
+            Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel?.latestMessages.first?.mentionedUsers.count)
+            Assert.willBeEqual(payload.messages[0].parentId, loadedChannel?.latestMessages.first?.parentId)
+            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel?.latestMessages.first?.reactionScores)
+            Assert.willBeEqual(Int32(payload.messages[0].replyCount), loadedChannel?.latestMessages.first?.replyCount)
+            
+            // Message user
+            Assert.willBeEqual(payload.messages[0].user.id, loadedChannel?.latestMessages.first?.author.id)
+            Assert.willBeEqual(payload.messages[0].user.created, loadedChannel?.latestMessages.first?.author.userCreatedDate)
+            Assert.willBeEqual(payload.messages[0].user.updated, loadedChannel?.latestMessages.first?.author.userUpdatedDate)
+            Assert.willBeEqual(payload.messages[0].user.lastActiveDate, loadedChannel?.latestMessages.first?.author.lastActiveDate)
+            Assert.willBeEqual(payload.messages[0].user.isOnline, loadedChannel?.latestMessages.first?.author.isOnline)
+            Assert.willBeEqual(payload.messages[0].user.isBanned, loadedChannel?.latestMessages.first?.author.isBanned)
+            Assert.willBeEqual(payload.messages[0].user.roleRawValue, loadedChannel?.latestMessages.first?.author.userRole.rawValue)
+            Assert.willBeEqual(payload.messages[0].user.extraData, loadedChannel?.latestMessages.first?.author.extraData)
+            Assert.willBeEqual(payload.messages[0].user.teams, loadedChannel?.latestMessages.first?.author.teams)
         }
     }
     
@@ -269,29 +296,60 @@ class ChannelModelDTO_Tests: XCTestCase {
             //      Assert.willBeEqual(payload.members[0].user.mutedUsers, loadedChannel?.members.first?.mutedUsers)
             //      Assert.willBeEqual(payload.members[0].user.unreadChannelsCount, loadedChannel?.members.first?.unreadChannelsCount)
             //      Assert.willBeEqual(payload.members[0].user.unreadMessagesCount, loadedChannel?.members.first?.unreadMessagesCount)
+            
+            // Messages
+            Assert.willBeEqual(payload.messages[0].id, loadedChannel?.latestMessages.first?.id)
+            Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel?.latestMessages.first?.type.rawValue)
+            Assert.willBeEqual(payload.messages[0].text, loadedChannel?.latestMessages.first?.text)
+            Assert.willBeEqual(payload.messages[0].updated, loadedChannel?.latestMessages.first?.updatedDate)
+            Assert.willBeEqual(payload.messages[0].created, loadedChannel?.latestMessages.first?.createdDate)
+            Assert.willBeEqual(payload.messages[0].deleted, loadedChannel?.latestMessages.first?.deletedDate)
+            Assert.willBeEqual(payload.messages[0].args, loadedChannel?.latestMessages.first?.args)
+            Assert.willBeEqual(payload.messages[0].command, loadedChannel?.latestMessages.first?.command)
+            Assert.willBeEqual(payload.messages[0].extraData, loadedChannel?.latestMessages.first?.extraData)
+            Assert.willBeEqual(payload.messages[0].isSilent, loadedChannel?.latestMessages.first?.isSilent)
+            Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel?.latestMessages.first?.mentionedUsers.count)
+            Assert.willBeEqual(payload.messages[0].parentId, loadedChannel?.latestMessages.first?.parentId)
+            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel?.latestMessages.first?.reactionScores)
+            Assert.willBeEqual(Int32(payload.messages[0].replyCount), loadedChannel?.latestMessages.first?.replyCount)
+            
+            // Message user
+            Assert.willBeEqual(payload.messages[0].user.id, loadedChannel?.latestMessages.first?.author.id)
+            Assert.willBeEqual(payload.messages[0].user.created, loadedChannel?.latestMessages.first?.author.userCreatedDate)
+            Assert.willBeEqual(payload.messages[0].user.updated, loadedChannel?.latestMessages.first?.author.userUpdatedDate)
+            Assert.willBeEqual(payload.messages[0].user.lastActiveDate, loadedChannel?.latestMessages.first?.author.lastActiveDate)
+            Assert.willBeEqual(payload.messages[0].user.isOnline, loadedChannel?.latestMessages.first?.author.isOnline)
+            Assert.willBeEqual(payload.messages[0].user.isBanned, loadedChannel?.latestMessages.first?.author.isBanned)
+            Assert.willBeEqual(payload.messages[0].user.roleRawValue, loadedChannel?.latestMessages.first?.author.userRole.rawValue)
+            Assert.willBeEqual(payload.messages[0].user.teams, loadedChannel?.latestMessages.first?.author.teams)
         }
     }
 }
 
 extension XCTestCase {
-    func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
+    var dummyUser: UserPayload<NameAndImageExtraData> {
         let lukeExtraData = NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString))
         
-        let creator: UserPayload<NameAndImageExtraData> =
-            .init(id: .unique,
-                  created: .unique,
-                  updated: .unique,
-                  lastActiveDate: .unique,
-                  isOnline: true,
-                  isInvisible: true,
-                  isBanned: true,
-                  roleRawValue: "user",
-                  extraData: lukeExtraData,
-                  devices: [],
-                  mutedUsers: [],
-                  unreadChannelsCount: nil,
-                  unreadMessagesCount: nil,
-                  teams: [])
+        return .init(id: .unique,
+                     created: .unique,
+                     updated: .unique,
+                     lastActiveDate: .unique,
+                     isOnline: true,
+                     isInvisible: true,
+                     isBanned: true,
+                     roleRawValue: "user",
+                     extraData: lukeExtraData,
+                     teams: [])
+    }
+    
+    var dummyMessage: MessagePayload<DefaultDataTypes> {
+        MessagePayload(id: .unique, type: .regular, user: dummyUser, created: .unique, updated: .unique, deleted: nil,
+                       text: .unique, command: nil, args: nil, parentId: nil, showReplyInChannel: false, mentionedUsers: [],
+                       replyCount: 0, extraData: NoExtraData(), reactionScores: ["like": 1], isSilent: false)
+    }
+    
+    func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
+        let lukeExtraData = NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString))
         
         let member: MemberPayload<NameAndImageExtraData> =
             .init(roleRawValue: "moderator",
@@ -306,10 +364,6 @@ extension XCTestCase {
                               isBanned: true,
                               roleRawValue: "admin",
                               extraData: lukeExtraData,
-                              devices: [],
-                              mutedUsers: [],
-                              unreadChannelsCount: nil,
-                              unreadMessagesCount: nil,
                               teams: []))
         
         let channelCreatedDate = Date.unique
@@ -323,7 +377,7 @@ extension XCTestCase {
                                  created: channelCreatedDate,
                                  deleted: .unique,
                                  updated: .unique,
-                                 createdBy: creator,
+                                 createdBy: dummyUser,
                                  config: .init(reactionsEnabled: true,
                                                typingEventsEnabled: true,
                                                readEventsEnabled: true,
@@ -348,7 +402,8 @@ extension XCTestCase {
                                  team: "",
                                  members: nil),
                   watcherCount: 10,
-                  members: [member])
+                  members: [member],
+                  messages: [dummyMessage])
         
         return payload
     }
@@ -359,23 +414,26 @@ extension XCTestCase {
         typealias User = NoExtraData
     }
     
+    var dummyUserWithNoExtraData: UserPayload<NoExtraData> {
+        .init(id: .unique,
+              created: .unique,
+              updated: .unique,
+              lastActiveDate: .unique,
+              isOnline: true,
+              isInvisible: true,
+              isBanned: true,
+              roleRawValue: "user",
+              extraData: NoExtraData(),
+              teams: [])
+    }
+    
+    var dummyMessageWithNoExtraData: MessagePayload<NoExtraDataTypes> {
+        MessagePayload(id: .unique, type: .regular, user: dummyUserWithNoExtraData, created: .unique, updated: .unique,
+                       deleted: nil, text: .unique, command: nil, args: nil, parentId: nil, showReplyInChannel: false,
+                       mentionedUsers: [], replyCount: 0, extraData: NoExtraData(), reactionScores: [:], isSilent: false)
+    }
+    
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
-        let creator: UserPayload<NoExtraData> =
-            .init(id: .unique,
-                  created: .unique,
-                  updated: .unique,
-                  lastActiveDate: .unique,
-                  isOnline: true,
-                  isInvisible: true,
-                  isBanned: true,
-                  roleRawValue: "user",
-                  extraData: .init(),
-                  devices: [],
-                  mutedUsers: [],
-                  unreadChannelsCount: nil,
-                  unreadMessagesCount: nil,
-                  teams: [])
-        
         let member: MemberPayload<NoExtraData> =
             .init(roleRawValue: "moderator",
                   created: .unique,
@@ -389,10 +447,6 @@ extension XCTestCase {
                               isBanned: true,
                               roleRawValue: "admin",
                               extraData: .init(),
-                              devices: [],
-                              mutedUsers: [],
-                              unreadChannelsCount: nil,
-                              unreadMessagesCount: nil,
                               teams: []))
         
         let payload: ChannelPayload<NoExtraDataTypes> =
@@ -403,7 +457,7 @@ extension XCTestCase {
                                  created: .unique,
                                  deleted: .unique,
                                  updated: .unique,
-                                 createdBy: creator,
+                                 createdBy: dummyUserWithNoExtraData,
                                  config: .init(reactionsEnabled: true,
                                                typingEventsEnabled: true,
                                                readEventsEnabled: true,
@@ -428,7 +482,8 @@ extension XCTestCase {
                                  team: "",
                                  members: nil),
                   watcherCount: 10,
-                  members: [member])
+                  members: [member],
+                  messages: [dummyMessageWithNoExtraData])
         
         return payload
     }

@@ -14,14 +14,11 @@ class APIClient_Tests: XCTestCase {
     
     var uniqeHeaderValue: String!
     
-    var encoder: TestRequestEncoder { apiClient.encoder as! TestRequestEncoder }
-    var decoder: TestRequestDecoder { apiClient.decoder as! TestRequestDecoder }
+    var encoder: TestRequestEncoder!
+    var decoder: TestRequestDecoder!
     
     override func setUp() {
         super.setUp()
-        
-        let environment = APIClient.Environment(requestEncoderBuilder: TestRequestEncoder.init,
-                                                requestDecoderBuilder: TestRequestDecoder.init)
         
         apiKey = APIKey(.unique)
         baseURL = .unique()
@@ -35,8 +32,10 @@ class APIClient_Tests: XCTestCase {
         uniqeHeaderValue = .unique
         sessionConfiguration.httpAdditionalHeaders?["unique_value"] = uniqeHeaderValue
         
-        apiClient = APIClient(apiKey: apiKey, baseURL: baseURL, sessionConfiguration: sessionConfiguration,
-                              environment: environment)
+        encoder = TestRequestEncoder(baseURL: baseURL, apiKey: apiKey)
+        decoder = TestRequestDecoder()
+        
+        apiClient = APIClient(sessionConfiguration: sessionConfiguration, requestEncoder: encoder, requestDecoder: decoder)
     }
     
     override func tearDown() {
@@ -49,52 +48,10 @@ class APIClient_Tests: XCTestCase {
     }
     
     func test_isInitializedWithCorrectValues() {
-        XCTAssertEqual(apiClient.baseURL, baseURL)
-        XCTAssertEqual(apiClient.apiKey, apiKey)
+        XCTAssert(apiClient.encoder as AnyObject === encoder)
+        XCTAssert(apiClient.decoder as AnyObject === decoder)
         XCTAssertEqual(apiClient.session.configuration, sessionConfiguration)
     }
-    
-    // MARK: - Connection Id handling
-    
-    func test_providesConnectionIdForEncoder() {
-        // Simulate WS client updated connection id
-        let connectionId1: ConnectionId = .unique
-        apiClient.webSocketClient(TestWebSocketClient(), didUpdateConectionState: .connected(connectionId: connectionId1))
-        
-        // Simulate encoder requested a connection id and check it's the correct one
-        var providedConnectionId1: ConnectionId?
-        encoder.connectionIdProviderDelegate?.provideConnectionId { providedConnectionId1 = $0 }
-        XCTAssertEqual(providedConnectionId1, connectionId1)
-        
-        // Simulate WS client is disconnecting
-        apiClient.webSocketClient(TestWebSocketClient(), didUpdateConectionState: .disconnecting(source: .userInitiated))
-        
-        // Request a connection id again
-        var providedConnectionId2: ConnectionId?
-        encoder.connectionIdProviderDelegate?.provideConnectionId { providedConnectionId2 = $0 }
-        
-        // No connection id should be returned
-        XCTAssertNil(providedConnectionId2)
-        
-        // Simulate WS reconnected and check the provided id is correct
-        let connectionId2: ConnectionId = .unique
-        apiClient.webSocketClient(TestWebSocketClient(), didUpdateConectionState: .connected(connectionId: connectionId2))
-        XCTAssertEqual(providedConnectionId2, connectionId2)
-    }
-    
-    func test_waitingRequestsAreFailed_whenAPIClientIsDeallocated() {
-        // Simulate encoder requested connection id
-        var providedConnectionId1: ConnectionId? = "some_value_that's_not_nil"
-        encoder.connectionIdProviderDelegate?.provideConnectionId { providedConnectionId1 = $0 }
-        
-        // Simulate `APIClient` is deallocated
-        apiClient = nil
-        
-        // Check the callback is called with `nil`
-        XCTAssertNil(providedConnectionId1)
-    }
-    
-    // MARK: - Request encoding / decoding
     
     func test_requestEncoderIsCalledWithEndpoint() {
         // Setup mock encoder response (it's not actually used, we just need to return something)
@@ -221,9 +178,9 @@ class TestRequestEncoder: RequestEncoder {
     let init_baseURL: URL
     let init_apiKey: APIKey
     
-    weak var connectionIdProviderDelegate: ConnectionIdProviderDelegate?
+    weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     
-    var encodeRequest: Result<URLRequest, Error>?
+    var encodeRequest: Result<URLRequest, Error>? = .success(URLRequest(url: .unique()))
     var encodeRequest_endpoint: AnyEndpoint?
     var encodeRequest_completion: ((Result<URLRequest, Error>) -> Void)?
     
@@ -301,7 +258,11 @@ struct AnyEndpoint: Equatable {
 
 private class TestWebSocketClient: WebSocketClient {
     init() {
-        super.init(urlRequest: .init(url: .unique()), sessionConfiguration: .default,
-                   eventDecoder: EventDecoder<DefaultDataTypes>(), eventMiddlewares: [])
+        super.init(connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
+                   sessionConfiguration: .default,
+                   requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
+                   eventDecoder: EventDecoder<DefaultDataTypes>(),
+                   eventMiddlewares: [],
+                   reconnectionStrategy: DefaultReconnectionStrategy())
     }
 }

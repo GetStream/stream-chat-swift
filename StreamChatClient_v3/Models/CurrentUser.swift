@@ -4,9 +4,21 @@
 
 import Foundation
 
-// TODO: Finish implementation
+extension UserId {
+    /// The prefix used for anonymous user ids
+    private static let anonymousIdPrefix = "## ANONYMOUS ##"
+    
+    /// Creates a new anonymous User id.
+    static var anonymous: UserId {
+        anonymousIdPrefix + " " + UUID().uuidString
+    }
+    
+    var isAnonymousUser: Bool {
+        hasPrefix(Self.anonymousIdPrefix)
+    }
+}
 
-public class CurrentUser<ExtraData: UserExtraData>: UserModel<ExtraData> {
+public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     // MARK: - Public
     
     /// A list of devices.

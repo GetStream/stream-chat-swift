@@ -87,9 +87,9 @@ extension Client {
     /// - Returns: A new instance of `ChannelController`.
     ///
     public func channelListController(query: ChannelListQuery) -> ChannelListController<ExtraData> {
-        let worker = ChannelQueryUpdater<ExtraData>(database: persistentContainer,
+        let worker = ChannelQueryUpdater<ExtraData>(database: databaseContainer,
                                                     webSocketClient: webSocketClient,
                                                     apiClient: apiClient)
-        return .init(query: query, viewContext: persistentContainer.viewContext, worker: worker)
+        return .init(query: query, viewContext: databaseContainer.viewContext, worker: worker)
     }
 }

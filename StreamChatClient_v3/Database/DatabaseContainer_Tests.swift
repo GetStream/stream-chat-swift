@@ -45,4 +45,29 @@ class DatabaseContainer_Tests: XCTestCase {
         // Assert the completion was called with an error
         XCTAssertNotNil(errorCompletion)
     }
+    
+    func test_removingAllData() throws {
+        let container = try DatabaseContainer(kind: .inMemory)
+        
+        // Add some random objects and for completion block
+        let error = try await {
+            container.write({ session in
+                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+            },
+                            completion: $0)
+        }
+        XCTAssertNil(error)
+        
+        // Delete the data
+        _ = try await { container.removeAllData(force: true, completion: $0) }
+        
+        // Assert the DB is empty by trying to fetch all possible entities
+        try container.managedObjectModel.entities.forEach { entityDescription in
+            let fetchRequrest = NSFetchRequest<NSManagedObject>(entityName: entityDescription.name!)
+            let fetchedObjects = try container.viewContext.fetch(fetchRequrest)
+            XCTAssertTrue(fetchedObjects.isEmpty)
+        }
+    }
 }

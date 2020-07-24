@@ -17,7 +17,7 @@ class ChannelListPayload_Tests: XCTestCase {
     }
 }
 
-class ChannelEndpointPayloadTests: XCTestCase {
+class ChannelPayload_Tests: XCTestCase {
     let channelJSON: Data = {
         let url = Bundle(for: ChannelListPayload_Tests.self).url(forResource: "Channel", withExtension: "json")!
         return try! Data(contentsOf: url)
@@ -28,6 +28,24 @@ class ChannelEndpointPayloadTests: XCTestCase {
         
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.members.count, 4)
+        
+        XCTAssertEqual(payload.messages.count, 25)
+        let firstMessage = payload.messages.first(where: { $0.id == "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9" })!
+        
+        XCTAssertEqual(firstMessage.type, MessageType.regular)
+        XCTAssertEqual(firstMessage.user.id, "broken-waterfall-5")
+        XCTAssertEqual(firstMessage.created, "2020-06-09T08:10:40.800912Z".toDate())
+        XCTAssertEqual(firstMessage.updated, "2020-06-09T08:10:40.800912Z".toDate())
+        XCTAssertNil(firstMessage.deleted)
+        XCTAssertEqual(firstMessage.text, "sadfadf")
+        XCTAssertNil(firstMessage.command)
+        XCTAssertNil(firstMessage.args)
+        XCTAssertNil(firstMessage.parentId)
+        XCTAssertFalse(firstMessage.showReplyInChannel)
+        XCTAssert(firstMessage.mentionedUsers.isEmpty)
+        XCTAssert(firstMessage.reactionScores.isEmpty)
+        XCTAssertEqual(firstMessage.replyCount, 0)
+        XCTAssertFalse(firstMessage.isSilent)
         
         let channel = payload.channel
         XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))

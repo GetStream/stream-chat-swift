@@ -20,8 +20,6 @@ class MemberEndpointPayload_Tests: XCTestCase {
         
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertEqual(payload.user.isBanned, false)
-        XCTAssertEqual(payload.user.unreadChannelsCount, 1)
-        XCTAssertEqual(payload.user.unreadMessagesCount, 2)
         XCTAssertEqual(payload.user.created, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.user.lastActiveDate, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.user.updated, "2020-06-10T14:11:29.946106Z".toDate())
