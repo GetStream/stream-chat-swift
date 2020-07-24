@@ -9,18 +9,18 @@
 import UIKit
 import StreamChatClient_v3
 
-class MasterViewController: UITableViewController, ChannelListControllerDelegate {
+class MasterViewController: UITableViewController {
 
-    lazy var channelListController = chatClient
+    lazy var channelListController: ChannelListController = chatClient
         .channelListController(query: ChannelListQuery(filter: .in("members", ["broken-waterfall-5"]), options: [.watch]))
     
     var detailViewController: DetailViewController? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        channelListController.startUpdating()
+
         channelListController.delegate = self
+        channelListController.startUpdating()
         
         // Do any additional setup after loading the view.
         navigationItem.leftBarButtonItem = editButtonItem
@@ -40,9 +40,6 @@ class MasterViewController: UITableViewController, ChannelListControllerDelegate
 
     @objc
     func insertNewObject(_ sender: Any) {
-//        objects.insert(NSDate(), at: 0)
-//        let indexPath = IndexPath(row: 0, section: 0)
-//        tableView.insertRows(at: [indexPath], with: .automatic)
     }
 
     // MARK: - Segues
@@ -83,17 +80,38 @@ class MasterViewController: UITableViewController, ChannelListControllerDelegate
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-//        if editingStyle == .delete {
-//            objects.remove(at: indexPath.row)
-//            tableView.deleteRows(at: [indexPath], with: .fade)
-//        } else if editingStyle == .insert {
-//            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-//        }
-    }
-
-    func controllerDidChangeChannels(changes: [Change<AnyChannel>]) {
-//        _ = changes as! Change<Channel> how to do this?
-        tableView.reloadData()
     }
 }
 
+extension MasterViewController: ChannelListControllerDelegate {
+    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [Change<Channel>]) {
+        // Animate changes
+        
+        /*
+         TODO: It could be nice to provide this boilerplate as an extension of UITableView. Something like:
+         
+            tableView.apply(changes: changes)
+         
+         and similarly for:
+         
+            collectionView.apply(changes: changes)
+         */
+        
+        tableView.beginUpdates()
+        
+        for change in changes {
+            switch change {
+            case .insert(_, index: let index):
+                tableView.insertRows(at: [index], with: .automatic)
+            case .move(_, fromIndex: let fromIndex, toIndex: let toIndex):
+                tableView.moveRow(at: fromIndex, to: toIndex)
+            case .update(_, index: let index):
+                tableView.reloadRows(at: [index], with: .automatic)
+            case .remove(_, index: let index):
+                tableView.deleteRows(at: [index], with: .automatic)
+            }
+        }
+        
+        tableView.endUpdates()
+    }
+}
