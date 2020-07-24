@@ -213,7 +213,7 @@ extension Assert {
     static func staysEqual<T: Equatable>(
         _ expression1: @autoclosure @escaping () -> T,
         _ expression2: @autoclosure @escaping () -> T,
-        timeout: TimeInterval = defaultTimeout,
+        timeout: TimeInterval = defaultTimeoutForInversedExpecations,
         message: @autoclosure @escaping () -> String? = nil,
         file: StaticString = #file,
         line: UInt = #line
