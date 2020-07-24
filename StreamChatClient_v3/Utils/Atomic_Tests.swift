@@ -109,9 +109,6 @@ extension Atomic_Tests {
 }
 
 private extension DispatchQueue {
-    private static let queueIdKey = DispatchSpecificKey<String>()
-    private static let testQueueId = UUID().uuidString
-    
     /// Returns one of the existing global Dispatch queues.
     static var random: DispatchQueue {
         let allQoS: [DispatchQoS.QoSClass] = [
@@ -120,17 +117,5 @@ private extension DispatchQueue {
             .default
         ]
         return DispatchQueue.global(qos: allQoS.randomElement()!)
-    }
-    
-    /// Creates a queue which can be later identified.
-    static var testQueue: DispatchQueue {
-        let queue = DispatchQueue(label: "Test queue")
-        queue.setSpecific(key: Self.queueIdKey, value: testQueueId)
-        return queue
-    }
-    
-    /// Checks if the current queue is the queue created by `DispatchQueue.testQueue`.
-    static var isTestQueue: Bool {
-        DispatchQueue.getSpecific(key: queueIdKey) == testQueueId
     }
 }
