@@ -25,3 +25,17 @@ public extension ControllerRemoteActivityDelegate {
     /// The controller did finished fetching the remote data. If the request failed, the error is reported.
     func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?) {}
 }
+
+/// A helper protocol allowing calling delegate on a given dispatch queue.
+protocol DelegateCallbable {
+    associatedtype Delegate
+    var anyDelegate: Delegate { get }
+}
+
+extension DelegateCallbable where Self: Controller {
+    func delegateCallback(_ callback: @escaping (Delegate) -> Void) {
+        callbackQueue.async {
+            callback(self.anyDelegate)
+        }
+    }
+}
