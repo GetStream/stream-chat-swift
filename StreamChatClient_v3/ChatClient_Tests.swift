@@ -592,5 +592,12 @@ class WebSocketClientMock: WebSocketClient {
     }
 }
 
+extension WebSocketClientMock {
+    convenience init() {
+        self.init(connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
+                  sessionConfiguration: .default,
+                  requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
+                  eventDecoder: EventDecoder<DefaultDataTypes>(),
+                  eventMiddlewares: [])
     }
 }
