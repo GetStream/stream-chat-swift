@@ -17,7 +17,6 @@ class EventMiddleware_Tests: XCTestCase {
     
     /// A test event holding an `Int` value.
     struct IntBasedEvent: Event, Equatable {
-        static var eventRawType: String { "test_only" }
         let value: Int
     }
     

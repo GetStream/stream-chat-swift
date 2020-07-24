@@ -18,14 +18,16 @@ class EventDataProcessorMiddlewaree_Tests: XCTestCase {
     func test_eventWithPayload_isSavedToDB() throws {
         // Prepare an Event with a payload with channel data
         struct TestEvent: Event, EventWithPayload {
-            static var eventRawType: String { "test event with payload" }
             let payload: Any
         }
         
         let channelId: ChannelId = .unique
         let channelPayload = dummyPayload(with: channelId)
-        let eventPayload = EventPayload(eventType: "test_event", connectionId: .unique, channel: channelPayload.channel,
-                                        currentUser: nil, cid: channelPayload.channel.cid)
+        
+        let eventPayload = EventPayload(eventType: .notificationAddedToChannel,
+                                        connectionId: .unique,
+                                        cid: channelPayload.channel.cid,
+                                        channel: channelPayload.channel)
         
         let testEvent = TestEvent(payload: eventPayload)
         
@@ -43,13 +45,11 @@ class EventDataProcessorMiddlewaree_Tests: XCTestCase {
     func test_eventWithInvalidPayload_isNotForwarded() throws {
         // Prepare an Event with an invalid payload data
         struct TestEvent: Event, EventWithPayload {
-            static var eventRawType: String { "test event with payload" }
             let payload: Any
         }
         
         // This is not really used, we just need to have something to create the event with
-        let somePayload = EventPayload<DefaultDataTypes>(eventType: "test_event", connectionId: nil, channel: nil,
-                                                         currentUser: nil, cid: nil)
+        let somePayload = EventPayload<DefaultDataTypes>(eventType: .healthCheck)
         
         let testEvent = TestEvent(payload: somePayload)
         
@@ -65,9 +65,7 @@ class EventDataProcessorMiddlewaree_Tests: XCTestCase {
     
     func test_eventWithoutPayload_isForwarded() throws {
         // Prepare an Event without a payload
-        struct TestEvent: Event {
-            static var eventRawType: String { "test event without payload" }
-        }
+        struct TestEvent: Event {}
         
         let testEvent = TestEvent()
         
