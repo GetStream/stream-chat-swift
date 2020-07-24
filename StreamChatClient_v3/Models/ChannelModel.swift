@@ -142,6 +142,12 @@ public protocol ChannelExtraData: Codable & Hashable {}
 public protocol AnyChannel {}
 extension ChannelModel: AnyChannel {}
 
+extension ChannelModel: Equatable {
+    public static func == (lhs: ChannelModel<ExtraData>, rhs: ChannelModel<ExtraData>) -> Bool {
+        lhs.cid == rhs.cid
+    }
+}
+
 /// An unread counts for a channel.
 public struct ChannelUnreadCount: Decodable, Equatable {
     public static let noUnread = ChannelUnreadCount(messages: 0, mentionedMessages: 0)
