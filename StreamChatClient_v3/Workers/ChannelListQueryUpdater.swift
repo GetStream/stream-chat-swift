@@ -5,7 +5,7 @@
 import CoreData
 
 /// Makes a channels query call to the backend and updates the local storage with the results.
-class ChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
+class ChannelListQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// Makes a channels query call to the backend and updates the local storage with the results.
     ///
     /// - Parameters:
@@ -17,19 +17,23 @@ class ChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
             .request(endpoint: .channels(query: channelListQuery))
         { (result: Result<ChannelListPayload<ExtraData>, Error>) in
             switch result {
-            case let .success(channelListDTO):
+            case let .success(channelListPayload):
                 self.database.write { session in
                     do {
-                        try channelListDTO.channels.forEach {
+                        try channelListPayload.channels.forEach {
                             try session.saveChannel(payload: $0, query: channelListQuery)
                         }
+                        
+                        completion?(nil)
+                        
                     } catch {
                         log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
+                        completion?(error)
                     }
                 }
                 
             case let .failure(error):
-                fatalError("\(error)")
+                completion?(error)
             }
         }
     }
