@@ -9,7 +9,7 @@ import Foundation
 ///
 ///  ... you can do this and that
 ///
-public class ChannelController<ExtraData: ExtraDataTypes>: Controller, NSFetchedResultsControllerDelegate {
+public class ChannelController<ExtraData: ExtraDataTypes>: Controller {
     public let channelId: ChannelId
     public weak var delegate: ChannelControllerDelegate?
     
@@ -18,7 +18,26 @@ public class ChannelController<ExtraData: ExtraDataTypes>: Controller, NSFetched
     
     private lazy var fetchResultsController: NSFetchedResultsController<ChannelDTO> = {
         let request = ChannelDTO.fetchRequest(for: channelId)
-        return .init(fetchRequest: request, managedObjectContext: viewContext, sectionNameKeyPath: nil, cacheName: nil)
+        let frc = NSFetchedResultsController(fetchRequest: request,
+                                             managedObjectContext: viewContext,
+                                             sectionNameKeyPath: nil,
+                                             cacheName: nil)
+        frc.delegate = self.changeAggregator
+        return frc
+    }()
+    
+    /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
+    private(set) lazy var changeAggregator: ChangeAggregator<ChannelDTO, ChannelModel<ExtraData>> = {
+        let aggregator: ChangeAggregator<ChannelDTO, ChannelModel<ExtraData>> = .init(itemCreator: ChannelModel<ExtraData>.create)
+        
+        aggregator.onChange = { [unowned self] (_: [Change<ChannelModel<ExtraData>>]) in
+            guard let channel = self.fetchResultsController.fetchedObjects?.first
+                .map(ChannelModel<ExtraData>.create(fromDTO:)) else { return }
+            
+            self.delegate?.channelController(self, didUpdateChannel: channel)
+        }
+        
+        return aggregator
     }()
     
     init(channelId: ChannelId, worker: ChannelUpdater<ExtraData>, viewContext: NSManagedObjectContext) {
@@ -28,7 +47,6 @@ public class ChannelController<ExtraData: ExtraDataTypes>: Controller, NSFetched
     }
     
     public func startUpdating() {
-        fetchResultsController.delegate = self
         try! fetchResultsController.performFetch()
         
         guard let channel = fetchResultsController.fetchedObjects?.first
