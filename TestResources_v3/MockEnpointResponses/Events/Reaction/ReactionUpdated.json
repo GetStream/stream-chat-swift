@@ -1,0 +1,130 @@
+{
+    "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "extraData" : {
+            "name" : "Tester"
+        },
+        "totalUnreadCount" : 0,
+        "unread_channels" : 0,
+        "last_active" : "2020-07-20T17:09:15.118479Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "invisible" : false,
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/api.adorable.io\/avatars\/285\/broken-waterfall-5.png",
+        "updated_at" : "2020-07-20T17:09:15.118479Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "broken-waterfall-5"
+    },
+    "channel_type" : "messaging",
+    "channel_id" : "general",
+    "reaction" : {
+        "score" : 2,
+        "message_id" : "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779",
+        "created_at" : "2020-07-20T17:09:56.702079Z",
+        "user_id" : "broken-waterfall-5",
+        "type" : "like",
+        "updated_at" : "2020-07-20T17:09:56.702079Z",
+        "user" : {
+            "id" : "broken-waterfall-5",
+            "banned" : false,
+            "unread_channels" : 0,
+            "totalUnreadCount" : 0,
+            "extraData" : {
+                "name" : "Tester"
+            },
+            "last_active" : "2020-07-20T17:09:15.118479Z",
+            "created_at" : "2019-12-12T15:33:46.488935Z",
+            "invisible" : false,
+            "unreadChannels" : 0,
+            "unread_count" : 0,
+            "image" : "https:\/\/api.adorable.io\/avatars\/285\/broken-waterfall-5.png",
+            "updated_at" : "2020-07-20T17:09:15.118479Z",
+            "role" : "user",
+            "total_unread_count" : 0,
+            "online" : true,
+            "name" : "broken-waterfall-5"
+        }
+    },
+    "created_at" : "2020-07-20T17:09:56.717804443Z",
+    "message" : {
+        "id" : "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779",
+        "reaction_counts" : {
+            "like" : 1
+        },
+        "silent" : false,
+        "created_at" : "2020-07-20T13:51:23.939343Z",
+        "reaction_scores" : {
+            "like" : 1
+        },
+        "type" : "regular",
+        "latest_reactions" : [
+            {
+                "score" : 1,
+                "message_id" : "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779",
+                "created_at" : "2020-07-20T17:09:56.702079Z",
+                "user_id" : "broken-waterfall-5",
+                "type" : "like",
+                "updated_at" : "2020-07-20T17:09:56.702079Z",
+                "user" : {
+                    "id" : "broken-waterfall-5",
+                    "banned" : false,
+                    "unread_channels" : 0,
+                    "totalUnreadCount" : 0,
+                    "extraData" : {
+                        "name" : "Tester"
+                    },
+                    "last_active" : "2020-07-20T17:09:15.118479Z",
+                    "created_at" : "2019-12-12T15:33:46.488935Z",
+                    "invisible" : false,
+                    "unreadChannels" : 0,
+                    "unread_count" : 0,
+                    "image" : "https:\/\/api.adorable.io\/avatars\/285\/broken-waterfall-5.png",
+                    "updated_at" : "2020-07-20T17:09:15.118479Z",
+                    "role" : "user",
+                    "total_unread_count" : 0,
+                    "online" : true,
+                    "name" : "broken-waterfall-5"
+                }
+            }
+        ],
+        "text" : "One",
+        "attachments" : [
+            
+        ],
+        "own_reactions" : [
+            
+        ],
+        "updated_at" : "2020-07-20T17:09:56.704362Z",
+        "reply_count" : 0,
+        "user" : {
+            "id" : "broken-waterfall-5",
+            "banned" : false,
+            "unread_channels" : 0,
+            "extraData" : {
+                "name" : "Tester"
+            },
+            "totalUnreadCount" : 0,
+            "last_active" : "2020-07-20T17:09:15.118479Z",
+            "created_at" : "2019-12-12T15:33:46.488935Z",
+            "invisible" : false,
+            "unreadChannels" : 0,
+            "unread_count" : 0,
+            "image" : "https:\/\/api.adorable.io\/avatars\/285\/broken-waterfall-5.png",
+            "updated_at" : "2020-07-20T17:09:15.118479Z",
+            "role" : "user",
+            "total_unread_count" : 0,
+            "online" : true,
+            "name" : "broken-waterfall-5"
+        },
+        "mentioned_users" : [
+            
+        ],
+        "html" : "<p>One<\/p>\n"
+    },
+    "type" : "reaction.updated",
+    "cid" : "messaging:general"
+}
