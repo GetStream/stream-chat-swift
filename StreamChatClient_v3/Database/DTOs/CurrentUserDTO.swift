@@ -39,8 +39,8 @@ extension CurrentUserDTO {
 extension NSManagedObjectContext {
     func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
+        dto.unreadChannelsCount = Int16(payload.unreadChannelsCount ?? 0)
         dto.unreadMessagesCount = Int16(payload.unreadMessagesCount ?? 0)
-        dto.unreadMessagesCount = Int16(payload.unreadChannelsCount ?? 0)
         
         dto.mutedUsers = [] // TODO:
         dto.user = try saveUser(payload: payload)
@@ -83,7 +83,7 @@ extension CurrentUserModel {
                                 devices: [],
                                 currentDevice: nil,
                                 mutedUsers: Set(mutedUsers),
-                                unreadCounts: UnreadCounts(unreadChannels: Int(dto.unreadChannelsCount),
-                                                           unreadMessages: Int(dto.unreadMessagesCount)))
+                                unreadCount: UnreadCount(channels: Int(dto.unreadChannelsCount),
+                                                         messages: Int(dto.unreadMessagesCount)))
     }
 }

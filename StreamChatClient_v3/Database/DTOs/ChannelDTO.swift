@@ -138,7 +138,7 @@ extension ChannelModel {
         let latestMessages = MessageDTO.load(for: dto.cid, limit: 25, context: dto.managedObjectContext!)
             .map(MessageModel<ExtraData>.init(fromDTO:))
         
-        return ChannelModel(cid: id,
+        return ChannelModel(cid: cid,
                             lastMessageDate: dto.lastMessageDate,
                             created: dto.createdDate,
                             updated: dto.updatedDate,

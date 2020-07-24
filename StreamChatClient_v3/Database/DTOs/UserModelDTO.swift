@@ -59,7 +59,7 @@ extension NSManagedObjectContext {
         dto.isOnline = payload.isOnline
         dto.lastActivityDate = payload.lastActiveDate
         dto.userCreatedDate = payload.created
-        dto.userRoleRaw = payload.roleRawValue
+        dto.userRoleRaw = payload.role.rawValue
         dto.userUpdatedDate = payload.updated
         
         // TODO: TEAMS
