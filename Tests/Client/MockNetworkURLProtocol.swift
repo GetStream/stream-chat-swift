@@ -133,17 +133,13 @@ extension MockNetworkURLProtocol {
 private struct PathAndMethod: Hashable {
     let scheme: String?
     let host: String?
-    let port: Int?
     let path: String
-    let queryItems: [String: String?]
     let method: String
     
     init(url: URL, method: String) {
         scheme = url.scheme
         host = url.host
-        port = url.port
         path = url.path
-        queryItems = url.queryItems
         self.method = method
     }
 }
@@ -157,17 +153,5 @@ private extension String {
     /// Removes all leading `/` from the string.
     var normalizedPath: String {
         String(drop(while: { $0 == "/" }))
-    }
-}
-
-private extension URL {
-    /// Returns a dictionary containing all URL query items
-    /// - the key is the query item name
-    /// - the value is the query item value
-    var queryItems: [String: String?] {
-        let queryItemsList = URLComponents(string: absoluteString)?
-            .queryItems?
-            .map { ($0.name, $0.value) }
-        return Dictionary(uniqueKeysWithValues: queryItemsList ?? [])
     }
 }
