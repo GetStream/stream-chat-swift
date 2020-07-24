@@ -16,9 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `SearchQuery.init(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
 - `Filter.exists(Key, Bool)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
 
-### 🔄 Changed
-
 ### 🐞 Fixed
+- `ChannelPresenter.lastMessage` not updated on message edited or deleted [#351](https://github.com/GetStream/stream-chat-swift/issues/351)
 - Link tap in messages sometimes not detected or detected in wrong place [#350](https://github.com/GetStream/stream-chat-swift/issues/350)
 - Device object sometimes failing to decode on API calls [#266](https://github.com/GetStream/stream-chat-swift/issues/266)
 
