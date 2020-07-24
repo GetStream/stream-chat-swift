@@ -236,7 +236,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
     func websocketDidReceiveMessage(_ message: String) {
         do {
             let messageData = Data(message.utf8)
-            let event = try eventDecoder.decode(data: messageData)
+            let event = try eventDecoder.decode(from: messageData)
             
             middlewares.process(event: event) { [weak self] event in
                 guard let self = self, let event = event else { return }

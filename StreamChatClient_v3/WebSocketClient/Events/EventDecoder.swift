@@ -6,44 +6,27 @@ import Foundation
 
 /// A lightweight object for decoding incoming events.
 struct EventDecoder<ExtraData: ExtraDataTypes> {
-    /// All supported event types by this decoder.
-    let eventParsers: [(EventPayload<ExtraData>) throws -> Event?] = [
-        HealthCheck.init,
-        AddedToChannel.init
-    ]
-    
-    func decode(data: Data) throws -> Event {
+    func decode(from data: Data) throws -> Event {
         let response = try JSONDecoder.default.decode(EventPayload<ExtraData>.self, from: data)
-        
-        for parser in eventParsers {
-            if let decoded = try parser(response) {
-                return decoded
-            }
-        }
-        
-        throw ClientError.UnsupportedEventType()
+        return try response.event()
     }
 }
 
 extension ClientError {
-    public class UnsupportedEventType: ClientError {
-        override public var localizedDescription: String { "The incoming event type is not supported. Ignoring." }
-    }
-    
     public class EventDecoding: ClientError {
         override init(_ message: String, _ file: StaticString = #file, _ line: UInt = #line) {
             super.init(message, file, line)
         }
         
-        init(missingValue: String, eventType: String, _ file: StaticString = #file, _ line: UInt = #line) {
-            super.init("`\(missingValue)` can't be `nil` for the `\(eventType)` event.", file, line)
+        init<T>(missingValue: String, for type: T.Type, _ file: StaticString = #file, _ line: UInt = #line) {
+            super.init("`\(missingValue)` field can't be `nil` for the `\(type)` event.", file, line)
         }
     }
 }
 
 /// A type-erased wrapper protocol for `EventDecoder`.
 protocol AnyEventDecoder {
-    func decode(data: Data) throws -> Event
+    func decode(from: Data) throws -> Event
 }
 
 extension EventDecoder: AnyEventDecoder {}
