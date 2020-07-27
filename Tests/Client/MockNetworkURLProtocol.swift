@@ -33,7 +33,7 @@ class MockNetworkURLProtocol: URLProtocol {
         configuration.httpAdditionalHeaders = existingHeaders
     }
     
-    @Atomic private static var responses: [PathAndMethod: MockResponse] = [:]
+    private static var responses: Atomic<[PathAndMethod: MockResponse]> = .init([:])
     
     /// If set, the mock protocol responds to requests with `testSessionHeaderKey` header value set to this value. If `nil`,
     /// all requests are ignored.
@@ -42,7 +42,7 @@ class MockNetworkURLProtocol: URLProtocol {
     /// Cleans up all existing mock responses and current test session id.
     static func reset() {
         Self.currentSessionId = nil
-        Self.responses.removeAll()
+        Self.responses.set([:])
     }
     
     override class func canInit(with request: URLRequest) -> Bool {
@@ -53,7 +53,7 @@ class MockNetworkURLProtocol: URLProtocol {
         else { return false }
         
         let key = PathAndMethod(url: url, method: method)
-        return responses.keys.contains(key)
+        return responses.get().keys.contains(key)
     }
     
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
@@ -90,7 +90,11 @@ class MockNetworkURLProtocol: URLProtocol {
         client?.urlProtocolDidFinishLoading(self)
         
         // Clean up
-        Self.responses.removeValue(forKey: .init(url: url, method: method))
+        Self.responses.update {
+            var result = $0
+            result.removeValue(forKey: .init(url: url, method: method))
+            return result
+        }
     }
     
     override func stopLoading() {
