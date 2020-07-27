@@ -29,3 +29,13 @@ public struct MessageModel<ExtraData: ExtraDataTypes> {
 public typealias Message = MessageModel<DefaultDataTypes>
 
 public protocol MessageExtraData: Codable & Hashable {}
+
+extension MessageModel: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
