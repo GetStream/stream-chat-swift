@@ -17,8 +17,8 @@ public struct MessageModel<ExtraData: ExtraDataTypes> {
     public let args: String?
     public let parentId: String?
     public let showReplyInChannel: Bool
-    public let extraData: ExtraData.Message?
     public let replyCount: Int
+    public let extraData: ExtraData.Message
     public let isSilent: Bool
     public let reactionScores: [String: Int]
     
