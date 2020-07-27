@@ -16,6 +16,18 @@ public protocol ChannelNamingStrategy {
     ///   - currentUser: the current user.
     ///   - members: members of the channel.
     func extraData(for currentUser: User, members: [User]) -> ChannelExtraDataCodable?
+    
+    /// Returns a channel name based on the current user and members.
+    /// - Parameters:
+    ///   - currentUser: the current user.
+    ///   - members: members of the channel.
+    func name(for currentUser: User, members: [User]) -> String?
+    
+    /// Returns a channel image based on the current user and members.
+    /// - Parameters:
+    ///   - currentUser: the current user.
+    ///   - members: members of the channel.
+    func imageURL(for currentUser: User, members: [User]) -> URL?
 }
 
 extension Channel {
@@ -32,18 +44,24 @@ extension Channel {
         }
         
         public func extraData(for currentUser: User, members: [User]) -> ChannelExtraDataCodable? {
-            guard members.count > 1, let currentUserIndex = members.firstIndex(of: currentUser) else {
-                return nil
-            }
-            
-            var otherMembers = members
-            otherMembers.remove(at: currentUserIndex)
+            let membersExcludingCurrentUser = otherMembers(for: currentUser, allMembers: members)
             
             var extraData = ChannelExtraData()
-            extraData.name = name(from: otherMembers)
-            extraData.imageURL = imageURL(from: otherMembers)
+            extraData.name = name(from: membersExcludingCurrentUser)
+            extraData.imageURL = imageURL(from: membersExcludingCurrentUser)
             
             return extraData
+        }
+        
+        /// Generate names like this: "John", "John, Michael" or "John, Michael, Scott and 3 more".
+        public func name(for currentUser: User, members: [User]) -> String? {
+            let membersExcludingCurrentUser = otherMembers(for: currentUser, allMembers: members)
+            return name(from: membersExcludingCurrentUser)
+        }
+        
+        public func imageURL(for currentUser: User, members: [User]) -> URL? {
+            let membersExcludingCurrentUser = otherMembers(for: currentUser, allMembers: members)
+            return imageURL(from: membersExcludingCurrentUser)
         }
         
         /// Generate names like this: "John", "John, Michael" or "John, Michael, Scott and 3 more".
@@ -66,7 +84,17 @@ extension Channel {
         }
         
         private func imageURL(from otherMembers: [User]) -> URL? {
-            otherMembers.count == 1 ? otherMembers.first?.avatarURL : nil
+            otherMembers.first?.avatarURL
+        }
+        
+        private func otherMembers(for currentUser: User, allMembers: [User]) -> [User] {
+            guard allMembers.count > 1, let currentUserIndex = allMembers.firstIndex(of: currentUser) else {
+                return allMembers
+            }
+            
+            var otherMembers = allMembers
+            otherMembers.remove(at: currentUserIndex)
+            return otherMembers.sorted(by: { $0.id < $1.id })
         }
     }
 }

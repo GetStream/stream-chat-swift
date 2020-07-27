@@ -31,15 +31,15 @@ final class Channel_SetupTests: XCTestCase {
         XCTAssertNil(channel.name)
         XCTAssertNil(channel.imageURL)
         
-        channel = client.channel(type: .messaging, id: channelId, members: [currentUser])
+        channel = client.channel(type: .messaging, id: channelId, members: [currentUser], namingStrategy: nil)
         XCTAssertNil(channel.name)
         XCTAssertNil(channel.imageURL)
         
-        channel = client.channel(type: .messaging, id: channelId, members: [currentUser, user2])
+        channel = client.channel(type: .messaging, id: channelId, members: [currentUser, user2], namingStrategy: nil)
         XCTAssertNil(channel.name)
         XCTAssertNil(channel.imageURL)
         
-        channel = client.channel(type: .messaging, id: channelId, members: [currentUser, user2, user3])
+        channel = client.channel(type: .messaging, id: channelId, members: [currentUser, user2, user3], namingStrategy: nil)
         XCTAssertNil(channel.name)
         XCTAssertNil(channel.imageURL)
     }
@@ -58,17 +58,25 @@ final class Channel_SetupTests: XCTestCase {
         var extraData = ChannelExtraData(name: "test")
         channel = client.channel(type: .messaging, members: [currentUser, user1], extraData: extraData, namingStrategy: strategy)
         XCTAssertEqual(channel.name, extraData.name)
-        XCTAssertEqual(channel.imageURL, extraData.imageURL)
+        XCTAssertEqual(channel.imageURL, user1.avatarURL)
         
         extraData = ChannelExtraData(imageURL: URL(string: "http://extradata.com"))
         channel = client.channel(type: .messaging, members: [currentUser, user1], extraData: extraData, namingStrategy: strategy)
-        XCTAssertNil(channel.name)
+        XCTAssertEqual(channel.name, "2")
         XCTAssertEqual(channel.imageURL, extraData.imageURL)
     }
 }
 
 fileprivate struct MockNamingStrategy: ChannelNamingStrategy {
+    func name(for currentUser: User, members: [User]) -> String? {
+        "\(members.count)"
+    }
+    
+    func imageURL(for currentUser: User, members: [User]) -> URL? {
+        members.first(where: { $0.id != currentUser.id })?.avatarURL
+    }
+    
     func extraData(for currentUser: User, members: [User]) -> ChannelExtraDataCodable? {
-        ChannelExtraData(name: "\(members.count)", imageURL: members.first?.avatarURL)
+        ChannelExtraData(name: name(for: currentUser, members: members), imageURL: imageURL(for: currentUser, members: members))
     }
 }

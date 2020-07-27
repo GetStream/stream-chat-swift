@@ -19,13 +19,16 @@ public extension Client {
     ///   - members: a list of members.
     ///   - invitedMembers: a list of invited members.
     ///   - team: The team the channel belongs to.
+    ///   - namingStrategy: a naming strategy to generate a name and image for the channel based on members.
+    ///                     Only takes effect if `extraData` is `nil`.
     ///   - extraData: a channel extra data.
     func channel(type: ChannelType,
                  id: String,
                  members: [User] = [],
                  invitedMembers: [User] = [],
                  team: String = "",
-                 extraData: ChannelExtraDataCodable? = nil) -> Channel {
+                 extraData: ChannelExtraDataCodable? = nil,
+                 namingStrategy: ChannelNamingStrategy? = Channel.DefaultNamingStrategy(maxUserNames: 1)) -> Channel {
         Channel(type: type,
                 id: id,
                 members: members,
@@ -37,6 +40,7 @@ public extension Client {
                 lastMessageDate: nil,
                 frozen: false,
                 team: team,
+                namingStrategy: namingStrategy,
                 config: .init())
     }
     
@@ -54,24 +58,19 @@ public extension Client {
                  team: String = "",
                  extraData: ChannelExtraDataCodable? = nil,
                  namingStrategy: ChannelNamingStrategy? = Channel.DefaultNamingStrategy(maxUserNames: 1)) -> Channel {
-        var extraData = extraData
-        
-        if extraData == nil, let namingStrategy = namingStrategy {
-            extraData = namingStrategy.extraData(for: user, members: members)
-        }
-        
-        return Channel(type: type,
-                       id: "",
-                       members: members,
-                       invitedMembers: [],
-                       extraData: extraData,
-                       created: .init(),
-                       deleted: nil,
-                       createdBy: nil,
-                       lastMessageDate: nil,
-                       frozen: false,
-                       team: team,
-                       config: .init())
+        Channel(type: type,
+                id: "",
+                members: members,
+                invitedMembers: [],
+                extraData: extraData,
+                created: .init(),
+                deleted: nil,
+                createdBy: nil,
+                lastMessageDate: nil,
+                frozen: false,
+                team: team,
+                namingStrategy: namingStrategy,
+                config: .init())
     }
 }
 

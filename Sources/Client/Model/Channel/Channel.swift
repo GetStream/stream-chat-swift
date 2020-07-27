@@ -120,8 +120,12 @@ public final class Channel: Codable {
     public let didLoad: Bool
     /// Checks if the channel is watching by the client.
     public var isWatched: Bool { Client.shared.isWatching(channel: self) }
+    /// Naming strategy to generate a name and image for the channel based on members.
+    /// Only takes effect when `extraData` is `nil`.
+    public var namingStrategy: ChannelNamingStrategy? = DefaultNamingStrategy(maxUserNames: 1)
     
     private var subscriptionBag = SubscriptionBag()
+    private lazy var nameAndImageForCurrentUser = ChannelExtraData(name: extraData?.name, imageURL: extraData?.imageURL)
     
     let currentUserTypingLastDateAtomic = Atomic<Date?>()
     let currentUserTypingTimerControlAtomic = Atomic<TimerControl?>()
@@ -143,6 +147,7 @@ public final class Channel: Codable {
                 lastMessageDate: Date?,
                 frozen: Bool,
                 team: String = "",
+                namingStrategy: ChannelNamingStrategy? = DefaultNamingStrategy(maxUserNames: 1),
                 config: Config) {
         self.type = type
         self.id = id
@@ -156,6 +161,7 @@ public final class Channel: Codable {
         self.lastMessageDate = lastMessageDate
         self.frozen = frozen
         self.team = team
+        self.namingStrategy = namingStrategy
         self.config = config
         didLoad = false
     }
@@ -297,11 +303,17 @@ extension Channel {
     /// A channel name.
     public var name: String? {
         get {
-            extraData?.name
+            if nameAndImageForCurrentUser.name == nil, let namingStrategy = namingStrategy {
+                // Save generated name to nameAndImageForCurrentUser since there isn't any
+                nameAndImageForCurrentUser.name = namingStrategy.name(for: User.current,
+                                                                      members: members.map(\.user))
+            }
+            return nameAndImageForCurrentUser.name
         }
         set {
             var object: ChannelExtraDataCodable = extraData ?? ChannelExtraData()
             object.name = newValue
+            nameAndImageForCurrentUser.name = newValue
             extraData = object
         }
     }
@@ -309,11 +321,17 @@ extension Channel {
     /// An image of the channel.
     public var imageURL: URL? {
         get {
-            extraData?.imageURL
+            if nameAndImageForCurrentUser.imageURL == nil, let namingStrategy = namingStrategy {
+                // Save generated imageURL to nameAndImageForCurrentUser since there isn't any
+                nameAndImageForCurrentUser.imageURL = namingStrategy.imageURL(for: User.current,
+                                                                              members: members.map(\.user))
+            }
+            return nameAndImageForCurrentUser.imageURL
         }
         set {
             var object: ChannelExtraDataCodable = extraData ?? ChannelExtraData()
             object.imageURL = newValue
+            nameAndImageForCurrentUser.imageURL = newValue
             extraData = object
         }
     }
