@@ -93,7 +93,6 @@ extension Client {
             ? encodeRequestForUpload(for: endpoint, url: url).get()
             : encodeRequest(for: endpoint, url: url).get()
     }
-
     
     private func prepareRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask? {
         if let logger = logger {
