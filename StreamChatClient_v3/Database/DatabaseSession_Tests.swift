@@ -53,4 +53,69 @@ class DatabaseSession_Tests: XCTestCase {
             AssertAsync.willBeEqual(loadedMember?.id, member.user.id)
         }
     }
+    
+    func test_messageData_isSavedToDatabase() throws {
+        // Prepare an Event payload with a message data
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+        
+        let channelPayload: ChannelDetailPayload<DefaultDataTypes> = dummyPayload(with: channelId).channel
+        
+        let userPayload: UserPayload<NameAndImageExtraData> = .init(id: .unique,
+                                                                    role: .admin,
+                                                                    created: .unique,
+                                                                    updated: .unique,
+                                                                    lastActiveDate: .unique,
+                                                                    isOnline: true,
+                                                                    isInvisible: true,
+                                                                    isBanned: true,
+                                                                    extraData: .init(name: "Anakin",
+                                                                                     imageURL: URL(string: UUID().uuidString)))
+        
+        let messagePayload = MessagePayload<DefaultDataTypes>(id: messageId,
+                                                              type: .regular,
+                                                              user: userPayload,
+                                                              created: .unique,
+                                                              updated: .unique,
+                                                              text: "No, I am your father 🤯",
+                                                              showReplyInChannel: false,
+                                                              mentionedUsers: [],
+                                                              replyCount: 0,
+                                                              extraData: .init(),
+                                                              reactionScores: [:],
+                                                              isSilent: false)
+        
+        let eventPayload: EventPayload<DefaultDataTypes> = .init(eventType: .messageNew,
+                                                                 connectionId: .unique,
+                                                                 cid: channelId,
+                                                                 currentUser: nil,
+                                                                 user: nil,
+                                                                 createdBy: nil,
+                                                                 memberContainer: nil,
+                                                                 channel: channelPayload,
+                                                                 message: messagePayload,
+                                                                 reaction: nil,
+                                                                 watcherCount: nil,
+                                                                 unreadCount: nil,
+                                                                 createdAt: nil,
+                                                                 isChannelHistoryCleared: false,
+                                                                 banReason: nil,
+                                                                 banExpiredAt: nil)
+        
+        // Save the event payload to DB
+        database.write { session in
+            try session.saveEvent(payload: eventPayload)
+        }
+        
+        // Try to load the saved message from DB
+        var loadedMessage: MessageModel<DefaultDataTypes>? {
+            database.viewContext.loadMessage(id: messageId)
+        }
+        AssertAsync.willBeTrue(loadedMessage != nil)
+        
+        // Verify the channel has the message
+        let loadedChannel: ChannelModel<DefaultDataTypes> = try XCTUnwrap(database.viewContext.loadChannel(cid: channelId))
+        let message = try XCTUnwrap(loadedMessage)
+        XCTAssert(loadedChannel.latestMessages.contains(message))
+    }
 }
