@@ -73,5 +73,14 @@ extension DatabaseSession {
                 currentUserDTO.unreadMessagesCount = Int16(unreadCount.messages)
             }
         }
+        
+        // Save message data (must be always done after the channel data!)
+        if let message = payload.message {
+            if let cid = payload.cid {
+                try saveMessage(payload: message, for: cid)
+            } else {
+                log.error("Message payload \(message) can't be saved because `cid` is missing. Ignoring.")
+            }
+        }
     }
 }
