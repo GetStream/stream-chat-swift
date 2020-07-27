@@ -81,6 +81,20 @@ extension Client {
         return Subscription { _  in task?.cancel() }
     }
     
+    /// Synchronously creates a new `URLRequest` with the data from the `Endpoint`. It also adds all required data
+    /// like an api key, etc.
+    /// - Parameter endpoint: The `Endpoint` to be encoded.
+    /// - Returns: a URLRequest for the given endpoint
+    func encodeRequest(for endpoint: Endpoint) throws -> URLRequest {
+        let queryItems = try self.queryItems(for: endpoint).get()
+        let url = try requestURL(for: endpoint, queryItems: queryItems).get()
+        
+        return try endpoint.isUploading
+            ? encodeRequestForUpload(for: endpoint, url: url).get()
+            : encodeRequest(for: endpoint, url: url).get()
+    }
+
+    
     private func prepareRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask? {
         if let logger = logger {
             logger.log("Request: \(String(describing: endpoint).prefix(100))...", level: .debug)
@@ -93,12 +107,7 @@ extension Client {
         
         do {
             let task: URLSessionDataTask
-            let queryItems = try self.queryItems(for: endpoint).get()
-            let url = try requestURL(for: endpoint, queryItems: queryItems).get()
-            
-            let urlRequest = try endpoint.isUploading
-                ? encodeRequestForUpload(for: endpoint, url: url).get()
-                : encodeRequest(for: endpoint, url: url).get()
+            let urlRequest = try self.encodeRequest(for: endpoint)
             
             task = urlSession.dataTask(with: urlRequest) { [unowned self] in
                 // Parse the response.
