@@ -127,10 +127,22 @@ extension MockNetworkURLProtocol {
     }
 }
 
-/// Used for using the combination of `path` and `httpMethod` as a dictionary key.
+/// Used for using the combination of significat parts of the URL passed as parameter and `httpMethod` as a dictionary key.
+/// - Warning: ⚠️ Significant parts of the URL are used as keys instead of a URL because two URL's can be semantically identical but syntactially different
+/// Example: https//a.b.c/d?e=f&g=h and https//a.b.c/d?g=h&e=f
 private struct PathAndMethod: Hashable {
-    let url: URL
+    let scheme: String?
+    let host: String?
+    let path: String
     let method: String
+    
+    init(url: URL, method: String) {
+        scheme = url.scheme
+        host = url.host
+        path = url.path
+        self.method = method
+    }
+
 }
 
 private struct MockResponse {
