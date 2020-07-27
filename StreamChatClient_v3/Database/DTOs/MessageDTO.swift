@@ -98,7 +98,7 @@ extension MessageModel {
         args = dto.args
         parentId = dto.parentId
         showReplyInChannel = dto.showReplyInChannel
-        replyCount = dto.replyCount
+        replyCount = Int(dto.replyCount)
         extraData = try! JSONDecoder.default.decode(ExtraData.Message.self, from: dto.extraData)
         isSilent = dto.isSilent
         reactionScores = dto.reactionScores
