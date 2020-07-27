@@ -84,6 +84,11 @@ extension NSManagedObjectContext {
         
         return dto
     }
+    
+    func loadMessage<ExtraData: ExtraDataTypes>(id: MessageId) -> MessageModel<ExtraData>? {
+        guard let dto = MessageDTO.load(id: id, context: self) else { return nil }
+        return .init(fromDTO: dto)
+    }
 }
 
 extension MessageModel {
