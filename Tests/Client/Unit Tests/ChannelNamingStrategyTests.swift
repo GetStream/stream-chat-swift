@@ -22,46 +22,43 @@ final class ChannelNamingStrategyTests: XCTestCase {
         
         var extraData = ChannelExtraData(name: user1.name, imageURL: user1.avatarURL)
         var strategyExtraData = strategy.extraData(for: currentUser, members: [user1, currentUser])
-        compareExtraData(lhs: extraData, rhs: strategyExtraData)
+        XCTAssertEqual(extraData.name, strategyExtraData?.name)
+        XCTAssertEqual(extraData.imageURL, strategyExtraData?.imageURL)
         
         extraData = ChannelExtraData(name: [user1.name, user2.name].joined(separator: ", "))
         strategyExtraData = strategy.extraData(for: currentUser, members: [user1, currentUser, user2])
-        compareExtraData(lhs: extraData, rhs: strategyExtraData)
+        XCTAssertEqual(extraData.name, strategyExtraData?.name)
         
         extraData = ChannelExtraData(name: [user1.name, user2.name, user3.name].joined(separator: ", ") + " and 1 more")
         strategyExtraData = strategy.extraData(for: currentUser, members: [user1, user2, user3, currentUser, user4])
-        compareExtraData(lhs: extraData, rhs: strategyExtraData)
+        XCTAssertEqual(extraData.name, strategyExtraData?.name)
     }
     
     func test_channelNamingStrategry_edgeCases() {
         var strategy = Channel.DefaultNamingStrategy(maxUserNames: -1)
         var extraData = ChannelExtraData(name: "1 member", imageURL: user1.avatarURL)
         var strategyExtraData = strategy.extraData(for: currentUser, members: [user1, currentUser])
-        compareExtraData(lhs: extraData, rhs: strategyExtraData)
+        XCTAssertEqual(extraData.name, strategyExtraData?.name)
+        XCTAssertEqual(extraData.imageURL, strategyExtraData?.imageURL)
         
         strategy = Channel.DefaultNamingStrategy(maxUserNames: 0)
         extraData = ChannelExtraData(name: "3 members")
         strategyExtraData = strategy.extraData(for: currentUser, members: [user1, user2, currentUser, user3])
-        compareExtraData(lhs: extraData, rhs: strategyExtraData)
+        XCTAssertEqual(extraData.name, strategyExtraData?.name)
 
         strategy = Channel.DefaultNamingStrategy(maxUserNames: 1)
         extraData = ChannelExtraData(name: user1.name + " and 1 more")
         strategyExtraData = strategy.extraData(for: currentUser, members: [user1, currentUser, user2])
-        compareExtraData(lhs: extraData, rhs: strategyExtraData)
+        XCTAssertEqual(extraData.name, strategyExtraData?.name)
         
         strategy = Channel.DefaultNamingStrategy(maxUserNames: 2)
         extraData = ChannelExtraData(name: user1.name + ", " + user2.name)
         strategyExtraData = strategy.extraData(for: currentUser, members: [currentUser, user1, user2])
-        compareExtraData(lhs: extraData, rhs: strategyExtraData)
+        XCTAssertEqual(extraData.name, strategyExtraData?.name)
         
         strategy = Channel.DefaultNamingStrategy(maxUserNames: 2)
         extraData = ChannelExtraData(name: user1.name + ", " + user2.name + " and 2 more")
         strategyExtraData = strategy.extraData(for: currentUser, members: [user1, currentUser, user2, user3, user4])
-        compareExtraData(lhs: extraData, rhs: strategyExtraData)
-    }
-    
-    private func compareExtraData(lhs: ChannelExtraDataCodable?, rhs: ChannelExtraDataCodable?) {
-        XCTAssertEqual(lhs?.name, rhs?.name)
-        XCTAssertEqual(lhs?.imageURL, rhs?.imageURL)
+        XCTAssertEqual(extraData.name, strategyExtraData?.name)
     }
 }

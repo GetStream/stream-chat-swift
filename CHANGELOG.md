@@ -19,12 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Client.search(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
   - `SearchQuery.init(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
 - `Filter.exists(Key, Bool)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- Channels created without explicit name/image will get default names generated for them, using their members' names [#366](https://github.com/GetStream/stream-chat-swift/issues/366)
 
 ### 🐞 Fixed
 - Reintroduce Hashable conformances removed in 2.2.1 [#368](https://github.com/GetStream/stream-chat-swift/pull/368)
 - `ChannelPresenter.lastMessage` not updated on message edited or deleted [#351](https://github.com/GetStream/stream-chat-swift/issues/351)
 - Link tap in messages sometimes not detected or detected in wrong place [#350](https://github.com/GetStream/stream-chat-swift/issues/350)
 - Device object sometimes failing to decode on API calls [#266](https://github.com/GetStream/stream-chat-swift/issues/266)
+- Direct message channel (created without explicit id, using `Client.shared.channel(type:members:)`) are named correctly [#366](https://github.com/GetStream/stream-chat-swift/issues/366)
 - Flagging current user's (own) messages are now allowed [#369](https://github.com/GetStream/stream-chat-swift/issues/369)
 
 # [2.2.6](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.6)

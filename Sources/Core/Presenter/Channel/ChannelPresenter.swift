@@ -42,7 +42,10 @@ public final class ChannelPresenter: Presenter {
     let channelPublishSubject = PublishSubject<Channel>()
     
     private(set) lazy var channelAtomic = Atomic<Channel>(.unused, callbackQueue: .main) { [weak self] channel, oldChannel in
-        channel.banEnabling = oldChannel.banEnabling
+        if oldChannel.cid != Channel.unused.cid {
+            channel.namingStrategy = oldChannel.namingStrategy
+            channel.banEnabling = oldChannel.banEnabling
+        }
         self?.channelPublishSubject.onNext(channel)
     }
     
@@ -164,7 +167,10 @@ extension ChannelPresenter {
     ///     - showReplyInChannel: show a reply in the channel.
     ///     - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
     ///     - completion: a completion block with `MessageResponse`.
-    public func send(text: String, showReplyInChannel: Bool = false, parseMentionedUsers: Bool = true, _ completion: @escaping Client.Completion<MessageResponse>) {
+    public func send(text: String,
+                     showReplyInChannel: Bool = false,
+                     parseMentionedUsers: Bool = true,
+                     _ completion: @escaping Client.Completion<MessageResponse>) {
         rx.send(text: text, showReplyInChannel: showReplyInChannel, parseMentionedUsers: parseMentionedUsers).bindOnce(to: completion)
     }
     
