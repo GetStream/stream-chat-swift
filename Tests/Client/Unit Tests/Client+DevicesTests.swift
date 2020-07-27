@@ -30,9 +30,12 @@ import XCTest
 //        let deviceId = "device_id_\(UUID().uuidString)"
 //        let timestamp = Date(timeIntervalSince1970: 123456789)
 //
-//        MockNetworkURLProtocol.mockResponse(endpoint: .devices(testUser), responseBody:
+//        let request = try client.encodeRequest(for: .devices(testUser))
+//        let response = try JSONEncoder.stream.encode(
 //            ["devices": [ ["id": deviceId, "created_at": ISO8601DateFormatter().string(from: timestamp)] ]]
 //        )
+//        MockNetworkURLProtocol.mockResponse(request: request, responseBody: response)
+//
 //
 //        // Action
 //        let result = try await { self.client.devices($0) }
@@ -44,9 +47,10 @@ import XCTest
 //
 //    func test_getDevice_handlesError() throws {
 //        // Setup
+//        let request = try client.encodeRequest(for: .devices(testUser))
 //        let error = TestError.mockError()
-//        MockNetworkURLProtocol.mockResponse(endpoint: .devices(testUser), error: error)
-//
+//        MockNetworkURLProtocol.mockResponse(request: request, error: error)
+//        
 //        // Action
 //        let result = try await { self.client.devices($0) }
 //
@@ -101,7 +105,9 @@ import XCTest
 //        // Setup
 //        let deviceId = "device_id_\(UUID().uuidString)"
 //
-//        MockNetworkURLProtocol.mockResponse(endpoint: .addDevice(deviceId: deviceId, testUser))
+//        let request = try client.encodeRequest(for: .addDevice(deviceId: deviceId, testUser))
+//        let response = try JSONEncoder.stream.encode([String: String]())
+//        MockNetworkURLProtocol.mockResponse(request: request, responseBody: response)
 //
 //        // Action
 //        let result = try await { done in
@@ -117,9 +123,9 @@ import XCTest
 //    func test_addDeviceWithDeviceID_handlesError() throws {
 //        // Setup
 //        let deviceId = "device_id_\(UUID().uuidString)"
+//        let request = try client.encodeRequest(for: .addDevice(deviceId: deviceId, testUser))
 //        let error = TestError.mockError()
-//
-//        MockNetworkURLProtocol.mockResponse(endpoint: .addDevice(deviceId: deviceId, testUser), error: error)
+//        MockNetworkURLProtocol.mockResponse(request: request, error: error)
 //
 //        // Action
 //        let result = try await { done in
@@ -167,7 +173,9 @@ import XCTest
 //        assert(user.devices == [device])
 //        assert(user.currentDevice == device)
 //
-//        MockNetworkURLProtocol.mockResponse(endpoint: .removeDevice(deviceId: device.id, testUser))
+//        let request = try client.encodeRequest(for: .removeDevice(deviceId: device.id, testUser))
+//        let response = try JSONEncoder.stream.encode([String: String]())
+//        MockNetworkURLProtocol.mockResponse(request: request, responseBody: response)
 //
 //        // Action
 //        let result = try await { done in
@@ -192,7 +200,8 @@ import XCTest
 //        assert(user.devices == [device])
 //        assert(user.currentDevice == device)
 //        
-//        MockNetworkURLProtocol.mockResponse(endpoint: .removeDevice(deviceId: device.id, testUser), error: error)
+//        let request = try client.encodeRequest(for: .removeDevice(deviceId: device.id, testUser))
+//        MockNetworkURLProtocol.mockResponse(request: request, error: error)
 //
 //        // Action
 //        let result = try await { done in
