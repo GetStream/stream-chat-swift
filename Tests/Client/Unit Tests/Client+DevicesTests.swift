@@ -9,7 +9,7 @@ import XCTest
 @testable import StreamChatClient
 
 //class Client_DevicesTests: ClientTestCase {
-//    
+//
 //    // MARK: - getDevice() tests
 //    func test_getDevice_createsRequest() {
 //        // Action
@@ -36,7 +36,6 @@ import XCTest
 //        )
 //        MockNetworkURLProtocol.mockResponse(request: request, responseBody: response)
 //
-//
 //        // Action
 //        let result = try await { self.client.devices($0) }
 //
@@ -50,7 +49,7 @@ import XCTest
 //        let request = try client.encodeRequest(for: .devices(testUser))
 //        let error = TestError.mockError()
 //        MockNetworkURLProtocol.mockResponse(request: request, error: error)
-//        
+//
 //        // Action
 //        let result = try await { self.client.devices($0) }
 //
@@ -133,7 +132,7 @@ import XCTest
 //        }
 //
 //        AssertResultFailure(result, ClientError.requestFailed(error))
-//                
+//
 //        AssertAsync {
 //            Assert.staysFalse(self.client.user.devices.contains(where: { $0.id == deviceId }));
 //            Assert.staysFalse(self.client.user.currentDevice?.id == deviceId)
@@ -199,7 +198,7 @@ import XCTest
 //
 //        assert(user.devices == [device])
 //        assert(user.currentDevice == device)
-//        
+//
 //        let request = try client.encodeRequest(for: .removeDevice(deviceId: device.id, testUser))
 //        MockNetworkURLProtocol.mockResponse(request: request, error: error)
 //
@@ -210,7 +209,7 @@ import XCTest
 //
 //        // Assert
 //        AssertResultFailure(result, ClientError.requestFailed(error))
-//        
+//
 //        AssertAsync {
 //            Assert.staysTrue(self.client.user.devices.contains(where: { $0.id == device.id }))
 //            Assert.staysTrue(self.client.user.currentDevice?.id == device.id)

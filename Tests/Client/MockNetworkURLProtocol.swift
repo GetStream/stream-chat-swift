@@ -142,7 +142,6 @@ private struct PathAndMethod: Hashable {
         path = url.path
         self.method = method
     }
-
 }
 
 private struct MockResponse {
