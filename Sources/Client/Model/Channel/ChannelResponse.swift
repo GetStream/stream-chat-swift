@@ -9,7 +9,7 @@
 import Foundation
 
 /// A channel response.
-public struct ChannelResponse: Decodable {
+public struct ChannelResponse: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case channel
         case messages

@@ -9,7 +9,7 @@
 import UIKit
 
 /// A channel view style.
-public struct ChannelViewStyle {
+public struct ChannelViewStyle: Hashable {
     /// A background color.
     public var backgroundColor: UIColor
     /// A separator style.

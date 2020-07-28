@@ -176,7 +176,7 @@ public struct Attachment: Codable {
     }
 }
 
-extension Attachment: Equatable {
+extension Attachment: Hashable {
     public static func == (lhs: Attachment, rhs: Attachment) -> Bool {
         lhs.title == rhs.title
             && lhs.author == rhs.author
@@ -185,6 +185,16 @@ extension Attachment: Equatable {
             && lhs.url == rhs.url
             && lhs.imageURL == rhs.imageURL
             && lhs.file == rhs.file
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(title)
+        hasher.combine(author)
+        hasher.combine(text)
+        hasher.combine(type)
+        hasher.combine(url)
+        hasher.combine(imageURL)
+        hasher.combine(file)
     }
 }
 
