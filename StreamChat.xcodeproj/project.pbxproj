@@ -117,6 +117,7 @@
 		79877A2A2498E51500015F8B /* MemberModelDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */; };
 		79877A2B2498E51500015F8B /* UserModelDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A202498E50D00015F8B /* UserModelDTO_Tests.swift */; };
 		79877A2D2498E54400015F8B /* UserPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A162498E4EE00015F8B /* UserPayload_Tests.swift */; };
+		7988F6B124D010890004219B /* TestRunnerEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988F6B024D010890004219B /* TestRunnerEnvironment.swift */; };
 		7990503224CEEAA600689CDC /* MessageDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */; };
 		799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
 		799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */; };
@@ -649,6 +650,7 @@
 		79877A202498E50D00015F8B /* UserModelDTO_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelDTO_Tests.swift; sourceTree = "<group>"; };
 		79877A212498E50D00015F8B /* MemberModelDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberModelDTO.swift; sourceTree = "<group>"; };
 		79877A222498E50D00015F8B /* UserModelDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModelDTO.swift; sourceTree = "<group>"; };
+		7988F6B024D010890004219B /* TestRunnerEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRunnerEnvironment.swift; sourceTree = "<group>"; };
 		7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDTO_Tests.swift; sourceTree = "<group>"; };
 		799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy.swift; sourceTree = "<group>"; };
 		799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy_Tests.swift; sourceTree = "<group>"; };
@@ -1467,6 +1469,7 @@
 				792921CC24C07A9000116BBB /* QueueAwareDelegate.swift */,
 				8A62705D24BE2CD70040BFD6 /* XCTestCase+MockJSON.swift */,
 				8A62706924BF02D80040BFD6 /* XCTAssertEqual+Difference.swift */,
+				7988F6B024D010890004219B /* TestRunnerEnvironment.swift */,
 			);
 			indentWidth = 4;
 			path = TestResources_v3;
@@ -2892,6 +2895,7 @@
 				792921C724C047DD00116BBB /* APIClient_Mock.swift in Sources */,
 				79A0E9BC2498C31A00E9BD50 /* UserTypingStartCleanupMiddleware_Tests.swift in Sources */,
 				796610BB248E687000761629 /* EventMiddleware_Tests.swift in Sources */,
+				7988F6B124D010890004219B /* TestRunnerEnvironment.swift in Sources */,
 				799C9469247D791A001F1104 /* AssertResult.swift in Sources */,
 				8AC9CBD424C7351D006E236C /* ReactionEvents_Tests.swift in Sources */,
 				79DDF81A249CE38B002F4412 /* RequestRecorderURLProtocol.swift in Sources */,
