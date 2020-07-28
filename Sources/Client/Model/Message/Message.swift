@@ -317,3 +317,10 @@ public struct FlagMessageResponse: Decodable {
     /// A updated date.
     public let updated: Date
 }
+
+// MARK: - Hashable
+extension Message: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}

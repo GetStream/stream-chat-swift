@@ -397,3 +397,10 @@ public struct HiddenChannelResponse: Decodable, Equatable {
     /// An event created date.
     public let created: Date
 }
+
+// MARK: - Hashable
+extension Channel: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(cid)
+    }
+}

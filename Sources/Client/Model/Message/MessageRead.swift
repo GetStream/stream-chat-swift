@@ -9,7 +9,7 @@
 import Foundation
 
 /// A message read state. User + last read date + unread message count.
-public struct MessageRead: Decodable, Equatable {
+public struct MessageRead: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadDate = "last_read"

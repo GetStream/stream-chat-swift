@@ -9,7 +9,7 @@
 import UIKit
 
 /// A composer style.
-public struct ComposerViewStyle: Equatable {
+public struct ComposerViewStyle: Hashable {
     /// A composer states type.
     ///
     /// For example:
@@ -113,7 +113,7 @@ extension ComposerViewStyle {
     }
     
     /// A composer style.
-    public struct Style: Equatable {
+    public struct Style: Hashable {
         /// A tint color. Also used as border color.
         public var tintColor: UIColor
         /// A border width.
@@ -139,7 +139,7 @@ extension ComposerViewStyle {
 }
 
 extension ComposerViewStyle {
-    public struct ReplyInChannelViewStyle: Equatable {
+    public struct ReplyInChannelViewStyle: Hashable {
         /// A default button text.
         public static let defaultText = "Also send to the channel"
         

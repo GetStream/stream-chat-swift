@@ -9,7 +9,7 @@
 import UIKit
 
 /// A separator style.
-public struct SeparatorStyle {
+public struct SeparatorStyle: Hashable {
     
     public static let none = SeparatorStyle(tableStyle: .none)
     

@@ -9,7 +9,7 @@
 import Foundation
 
 /// An attachment file description.
-public struct AttachmentFile: Codable, Equatable {
+public struct AttachmentFile: Codable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case mimeType = "mime_type"
         case size = "file_size"
