@@ -11,6 +11,7 @@ gem "danger-swiftlint"
 gem "danger-commit_lint"
 gem "jazzy"
 gem "xcode-install"
+gem "json"
 
 plugins_path = File.join(File.dirname(__FILE__), 'fastlane', 'Pluginfile')
 eval_gemfile(plugins_path) if File.exist?(plugins_path)

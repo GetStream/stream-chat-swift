@@ -1,6 +1,8 @@
 fastlane_version "2.68.0"
 default_platform :ios
 
+require 'json'
+
 # The number of times the stress test suite is ran
 stress_tests_cycles = 25
 
@@ -245,8 +247,21 @@ lane :get_next_issue_number do
   UI.success "Next markdown link is copied to your clipboard! ⬆️"
 end
 
+# Adds "CI=TRUE" environment variable to the provided test plan file
+def setCIEnvironmentVariable(testPlanFile)
+  file = File.read(testPlanFile)
+  data_hash = JSON.parse(file)
+  data_hash['defaultOptions']['environmentVariableEntries'] = [{"key"=>"CI", "value"=>"TRUE"}]
+  File.write(testPlanFile, JSON.pretty_generate(data_hash))
+
+  puts "✅ `CI=TRUE` ENV variable added to " + testPlanFile
+end
+
 desc "Runs tests for v3 in Debug config"
 lane :test_v3 do
+
+  setCIEnvironmentVariable("../StreamChatClient_v3.xctestplan")
+
   scan(
     project: "StreamChat.xcodeproj", 
     scheme: "StreamChatClient_v3", 
@@ -258,6 +273,9 @@ end
 
 desc "Runs tests for v3 in Release config"
 lane :test_v3_release do
+
+  setCIEnvironmentVariable("../StreamChatClient_v3.xctestplan")
+
   scan(
     project: "StreamChat.xcodeproj", 
     scheme: "StreamChatClient_v3", 
@@ -275,6 +293,8 @@ lane :stress_test_v3 do
     clean: true,
     build_for_testing: true
   )
+
+  setCIEnvironmentVariable("../StreamChatClientStress_v3.xctestplan")
 
   stress_tests_cycles.times {
     scan(

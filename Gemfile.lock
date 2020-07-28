@@ -310,6 +310,7 @@ DEPENDENCIES
   fastlane
   fastlane-plugin-firebase_app_distribution
   jazzy
+  json
   xcode-install
 
 BUNDLED WITH
