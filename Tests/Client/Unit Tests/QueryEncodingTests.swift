@@ -52,7 +52,17 @@ final class QueryEncodingTests: XCTestCase {
                                   query: "hello",
                                   pagination: self.mediumPagination()) }
 
-        let expectedString = #"{"limit":10,"query":"hello","offset":20,"filter_conditions":{"$and":[{"members":{"$in":["john"]}},{"id":{"$autocomplete":"ro"}}]}}"#
+        let expectedString = #"{"limit":10,"query":"hello","offset":20,"filter_conditions":{"$and":[{"members":{"$in":["john"]}},{"id":{"$autocomplete":"ro"}}]},"message_filter_conditions":{}}"#
+
+        AssertJSONEqual(Data(expectedString.utf8), try encode(query()))
+    }
+    
+    func testSearchQueryMessageFilterEncoding() {
+        let query = { SearchQuery(filter: self.mediumFilter,
+                                  messageFilter: .exists("attachments", true),
+                                  pagination: self.mediumPagination()) }
+
+        let expectedString = #"{"limit":10,"query":"","offset":20,"filter_conditions":{"$and":[{"members":{"$in":["john"]}},{"id":{"$autocomplete":"ro"}}]},"message_filter_conditions":{"attachments":{"$exists":true}}}"#
 
         AssertJSONEqual(Data(expectedString.utf8), try encode(query()))
     }

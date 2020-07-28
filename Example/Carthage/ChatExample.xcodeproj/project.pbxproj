@@ -164,6 +164,8 @@
 		8AD5EC6D22E88C62005CFAC9 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8AD5EC7C22E88C63005CFAC9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8AD5EC8422E88DBC005CFAC9 /* ChatExample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ChatExample.entitlements; sourceTree = "<group>"; };
+		A57E5C7924C7438800187DC2 /* StreamChatClient_v3.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = StreamChatClient_v3.xctestplan; path = ../../StreamChatClient_v3.xctestplan; sourceTree = "<group>"; };
+		A57E5C8224C743A900187DC2 /* StreamChatClientStress_v3.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = StreamChatClientStress_v3.xctestplan; path = ../../StreamChatClientStress_v3.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -228,6 +230,8 @@
 		8AD5EC6422E88C62005CFAC9 = {
 			isa = PBXGroup;
 			children = (
+				A57E5C7924C7438800187DC2 /* StreamChatClient_v3.xctestplan */,
+				A57E5C8224C743A900187DC2 /* StreamChatClientStress_v3.xctestplan */,
 				8A0A7E6F2301AC1E0033E6D9 /* StreamChat.xcodeproj */,
 				8AD5EC6F22E88C62005CFAC9 /* ChatExample */,
 				8AD5EC6E22E88C62005CFAC9 /* Products */,

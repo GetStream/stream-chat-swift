@@ -59,7 +59,7 @@ extension NSManagedObjectContext {
         dto.isOnline = payload.isOnline
         dto.lastActivityDate = payload.lastActiveDate
         dto.userCreatedDate = payload.created
-        dto.userRoleRaw = payload.roleRawValue
+        dto.userRoleRaw = payload.role.rawValue
         dto.userUpdatedDate = payload.updated
         
         // TODO: TEAMS
@@ -69,7 +69,7 @@ extension NSManagedObjectContext {
         return dto
     }
     
-    func loadUser<ExtraData: UserExtraData>(id: String) -> UserModel<ExtraData>? {
+    func loadUser<ExtraData: UserExtraData>(id: UserId) -> UserModel<ExtraData>? {
         guard let dto = UserDTO.load(id: id, context: self) else { return nil }
         return .create(fromDTO: dto)
     }

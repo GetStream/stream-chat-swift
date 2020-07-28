@@ -26,6 +26,8 @@ class WebSocketClient {
             
             if connectionState.isConnected {
                 pingTimer.resume()
+                reconnectionStrategy.sucessfullyConnected()
+                
             } else {
                 pingTimer.suspend()
             }
@@ -45,15 +47,21 @@ class WebSocketClient {
     /// Event middlewares used to pre-process incoming events before they are published
     var middlewares: [EventMiddleware]
     
+    /// The endpoint used for creating a web socket connection.
+    ///
+    /// Changing this value doesn't automatically update the existing connection. You need to manually call `disconnect`
+    /// and `connect` to make a new connection to the updated endpoint.
+    var connectEndpoint: Endpoint<EmptyResponse> {
+        didSet {
+            engineNeedsToBeRecreated = true
+        }
+    }
+    
     /// The decoder used to decode incoming events
     private let eventDecoder: AnyEventDecoder
     
     /// The web socket engine used to make the actual WS connection
-    private lazy var engine: WebSocketEngine = {
-        let engine = self.environment.engineBuilder(self.urlRequest, self.sessionConfiguration, self.engineQueue)
-        engine.delegate = self
-        return engine
-    }()
+    lazy var engine: WebSocketEngine = createEngine()
     
     /// The timer used for scheduling `ping` calls
     private lazy var pingTimer = environment.timer
@@ -68,8 +76,7 @@ class WebSocketClient {
     /// The queue on which web socket engine methods are called
     private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .default)
     
-    /// The request used to establish web socket connection
-    private let urlRequest: URLRequest
+    private let requestEncoder: RequestEncoder
     
     /// The session config used for the web socket engine
     private let sessionConfiguration: URLSessionConfiguration
@@ -87,22 +94,75 @@ class WebSocketClient {
     /// An object containing external dependencies of `WebSocketClient`
     private let environment: Environment
     
-    init(
-        urlRequest: URLRequest,
-        sessionConfiguration: URLSessionConfiguration,
-        eventDecoder: AnyEventDecoder,
-        eventMiddlewares: [EventMiddleware],
-        reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
-        environment: Environment = .init()
-    ) {
+    private func createEngine() -> WebSocketEngine {
+        do {
+            let request = try requestEncoder.encodeRequest(for: connectEndpoint)
+            let engine = environment.createEngine(request, sessionConfiguration, engineQueue)
+            engine.delegate = self
+            return engine
+            
+        } catch {
+            fatalError("Failed to create WebSocketEngine with error: \(error)")
+        }
+    }
+    
+    @Atomic private var engineNeedsToBeRecreated = false
+    
+    init(connectEndpoint: Endpoint<EmptyResponse>,
+         sessionConfiguration: URLSessionConfiguration,
+         requestEncoder: RequestEncoder,
+         eventDecoder: AnyEventDecoder,
+         eventMiddlewares: [EventMiddleware],
+         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
+         environment: Environment = .init()) {
         self.environment = environment
-        self.urlRequest = urlRequest
+        self.connectEndpoint = connectEndpoint
+        self.requestEncoder = requestEncoder
         self.sessionConfiguration = sessionConfiguration
         middlewares = eventMiddlewares
         self.reconnectionStrategy = reconnectionStrategy
         self.eventDecoder = eventDecoder
         
         startListeningForAppStateUpdates()
+    }
+    
+    /// Connects the web connect.
+    ///
+    /// Calling this method has no effect is the web socket is already connected, or is in the connecting phase.
+    func connect() {
+        switch connectionState {
+        // Calling connect in the following states has no effect
+        case .connecting, .waitingForConnectionId, .connected(connectionId: _):
+            return
+        default: break
+        }
+        
+        // Engine needs to be recreated if the connection endpoint has changed. For example, when a new user is
+        // logged in, or when an auth token is refreshed.
+        if engineNeedsToBeRecreated {
+            engineNeedsToBeRecreated = false
+            engine = createEngine()
+        }
+        
+        // Cancel the reconnection timer if exists
+        reconnectionTimer?.cancel()
+        
+        connectionState = .connecting
+        
+        engineQueue.async {
+            self.engine.connect()
+        }
+    }
+    
+    /// Disconnects the web socket.
+    ///
+    /// Calling this function has no effect, if the connection is in an inactive state.
+    /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
+    func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
+        connectionState = .disconnecting(source: source)
+        engineQueue.async {
+            self.engine.disconnect()
+        }
     }
     
     private func startListeningForAppStateUpdates() {
@@ -153,7 +213,7 @@ extension WebSocketClient {
         
         var notificationCenterBuilder: () -> NotificationCenter = NotificationCenter.init
         
-        var engineBuilder: (_ request: URLRequest, _ sessionConfiguration: URLSessionConfiguration, _ callbackQueue: DispatchQueue)
+        var createEngine: (_ request: URLRequest, _ sessionConfiguration: URLSessionConfiguration, _ callbackQueue: DispatchQueue)
             -> WebSocketEngine = {
                 if #available(iOS 13, *) {
                     return URLSessionWebSocketEngine(request: $0, sessionConfiguration: $1, callbackQueue: $2)
@@ -163,40 +223,6 @@ extension WebSocketClient {
             }
         
         var backgroundTaskScheduler: BackgroundTaskScheduler = UIApplication.shared
-    }
-}
-
-extension WebSocketClient {
-    /// Connects the web connect.
-    ///
-    /// Calling this method has no effect is the web socket is already connected, or is in the connecting phase.
-    func connect() {
-        switch connectionState {
-        // Calling connect in the following states has no effect
-        case .connecting, .waitingForConnectionId, .connected(connectionId: _):
-            return
-        default: break
-        }
-        
-        // Cancel the reconnection timer if exists
-        reconnectionTimer?.cancel()
-        
-        connectionState = .connecting
-        
-        engineQueue.async {
-            self.engine.connect()
-        }
-    }
-    
-    /// Disconnects the web socket.
-    ///
-    /// Calling this function has no effect, if the connection is in an inactive state.
-    /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
-    func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
-        connectionState = .disconnecting(source: source)
-        engineQueue.async {
-            self.engine.disconnect()
-        }
     }
 }
 
@@ -210,19 +236,22 @@ extension WebSocketClient: WebSocketEngineDelegate {
     func websocketDidReceiveMessage(_ message: String) {
         do {
             let messageData = Data(message.utf8)
-            let event = try eventDecoder.decode(data: messageData)
-            
-            if let event = event as? HealthCheck {
-                if connectionState.isConnected == false {
-                    connectionState = .connected(connectionId: event.connectionId)
-                    reconnectionStrategy.sucessfullyConnected()
-                }
-            }
+            let event = try eventDecoder.decode(from: messageData)
             
             middlewares.process(event: event) { [weak self] event in
                 guard let self = self, let event = event else { return }
-                self.notificationCenter.post(Notification(newEventReceived: event, sender: self))
+                
+                if let event = event as? HealthCheckEvent {
+                    if self.connectionState.isConnected == false {
+                        self.connectionState = .connected(connectionId: event.connectionId)
+                    }
+                } else {
+                    self.notificationCenter.post(Notification(newEventReceived: event, sender: self))
+                }
             }
+            
+        } catch is ClientError.UnsupportedEventType {
+            log.info("Skipping unsupported event type with payload: \(message)")
             
         } catch {
             // Check if the message contains an error object from the server

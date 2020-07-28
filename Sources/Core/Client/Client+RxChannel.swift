@@ -120,9 +120,10 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - message: a message.
     ///   - channel: a channel.
-    func send(message: Message, to channel: Channel) -> Observable<MessageResponse> {
+    ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
+    func send(message: Message, to channel: Channel, parseMentionedUsers: Bool = true) -> Observable<MessageResponse> {
         connected(request({ [unowned base] completion in
-            base.send(message: message, to: channel, completion)
+            base.send(message: message, to: channel, parseMentionedUsers: parseMentionedUsers, completion)
         }))
     }
     

@@ -5,9 +5,8 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-final class WebSocketClient_Tests: XCTestCase {
+class WebSocketClient_Tests: XCTestCase {
     struct TestEvent: Event, Equatable {
-        static let eventRawType = "test_event"
         let id = UUID()
     }
     
@@ -17,13 +16,14 @@ final class WebSocketClient_Tests: XCTestCase {
     var webSocketClient: WebSocketClient!
     
     var time: VirtualTime!
-    var reuqest: URLRequest!
+    var endpoint: Endpoint<EmptyResponse>!
     private var decoder: EventDecoderMock!
     private var reconnectionStrategy: MockReconnectionStrategy!
-    var engine: WebSocketEngineMock!
+    var engine: WebSocketEngineMock { webSocketClient.engine as! WebSocketEngineMock }
     var connectionId: String!
     var user: User!
     var backgroundTaskScheduler: MockBackgroundTaskScheduler!
+    var requestEncoder: TestRequestEncoder!
     
     var eventNotificationCenter: NotificationCenter!
     
@@ -33,22 +33,29 @@ final class WebSocketClient_Tests: XCTestCase {
         time = VirtualTime()
         VirtualTimeTimer.time = time
         
-        reuqest = URLRequest(url: URL.unique())
+        endpoint = .init(path: .unique,
+                         method: .get,
+                         queryItems: nil,
+                         requiresConnectionId: false,
+                         body: nil)
+        
         decoder = EventDecoderMock()
-        engine = WebSocketEngineMock()
         backgroundTaskScheduler = MockBackgroundTaskScheduler()
         
         eventNotificationCenter = NotificationCenter()
         reconnectionStrategy = MockReconnectionStrategy()
         
+        requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
+        
         var environment = WebSocketClient.Environment()
-        environment.engineBuilder = { _, _, _ in self.engine }
+        environment.createEngine = WebSocketEngineMock.init
         environment.notificationCenterBuilder = { self.eventNotificationCenter }
         environment.timer = VirtualTimeTimer.self
         environment.backgroundTaskScheduler = backgroundTaskScheduler
         
-        webSocketClient = WebSocketClient(urlRequest: reuqest,
+        webSocketClient = WebSocketClient(connectEndpoint: endpoint,
                                           sessionConfiguration: .default,
+                                          requestEncoder: requestEncoder,
                                           eventDecoder: decoder,
                                           eventMiddlewares: [],
                                           reconnectionStrategy: reconnectionStrategy,
@@ -71,19 +78,26 @@ final class WebSocketClient_Tests: XCTestCase {
     
     func test_connectionFlow() {
         assert(webSocketClient.connectionState == .notConnected())
-        assert(engine.connect_calledCount == 0)
+        
+        // Simulate response from the encoder
+        let request = URLRequest(url: .unique())
+        requestEncoder.encodeRequest = .success(request)
         
         // Call `connect`, it should change connection state and call `connect` on the engine
         webSocketClient.connect()
         XCTAssertEqual(webSocketClient.connectionState, .connecting)
-        AssertAsync.willBeEqual(engine.connect_calledCount, 1)
+        
+        AssertAsync {
+            Assert.willBeEqual(self.engine.request, request)
+            Assert.willBeEqual(self.engine.connect_calledCount, 1)
+        }
         
         // Simulate the engine is connected and check the connection state is updated
         engine.simulateConnectionSuccess()
         AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
         
         // Simulate a health check event is received and the connection state is updated
-        decoder.decodedEvent = HealthCheck(connectionId: connectionId)
+        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
         engine.simulateMessageReceived()
         
         AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
@@ -144,6 +158,10 @@ final class WebSocketClient_Tests: XCTestCase {
     func test_reconnectionStrategy_successfullyConnectedIsCalled() {
         assert(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
         
+        // Simulate response from the encoder
+        let request = URLRequest(url: .unique())
+        requestEncoder.encodeRequest = .success(request)
+        
         // Simulate connection
         webSocketClient.connect()
         engine.simulateConnectionSuccess()
@@ -152,7 +170,7 @@ final class WebSocketClient_Tests: XCTestCase {
         AssertAsync.staysTrue(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
         
         // Simulate a health check event
-        decoder.decodedEvent = HealthCheck(connectionId: connectionId)
+        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
         engine.simulateMessageReceived()
         
         // `sucessfullyConnected` should be called now
@@ -235,6 +253,36 @@ final class WebSocketClient_Tests: XCTestCase {
         // Simulate time 3x longer than pingTimeInterval and assert 3 more pings
         time.run(numberOfSeconds: 3 * pingInterval)
         XCTAssertEqual(engine.sendPing_calledCount, 1 + 3)
+    }
+    
+    func test_changingConnectEndpointAndReconnecting() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        // Simulate connect endpoint is updated (i.e. new user is logged in)
+        let newEndpoint = Endpoint<EmptyResponse>(path: .unique,
+                                                  method: .get,
+                                                  queryItems: nil,
+                                                  requiresConnectionId: false,
+                                                  body: nil)
+        webSocketClient.connectEndpoint = newEndpoint
+        
+        // Simulate request encoder response
+        let newRequest = URLRequest(url: .unique())
+        requestEncoder.encodeRequest = .success(newRequest)
+        
+        // Reconnect and check the engine is recreated
+        assert(engine.disconnect_calledCount == 0)
+        webSocketClient.disconnect()
+        AssertAsync.willBeEqual(engine.disconnect_calledCount, 1)
+        
+        webSocketClient.connect()
+        XCTAssertEqual(requestEncoder.encodeRequest_endpoint, AnyEndpoint(newEndpoint))
+        
+        AssertAsync {
+            Assert.willBeEqual(self.engine.request, newRequest)
+            Assert.willBeEqual(self.engine.connect_calledCount, 1)
+        }
     }
     
     // MARK: - Event handling tests
@@ -422,7 +470,7 @@ private class EventDecoderMock: AnyEventDecoder {
     var decode_calledWithData: Data?
     var decodedEvent: Event!
     
-    func decode(data: Data) throws -> Event {
+    func decode(from data: Data) throws -> Event {
         decode_calledWithData = data
         return decodedEvent
     }

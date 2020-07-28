@@ -155,8 +155,8 @@ extension ChannelsPresenter {
                 return Observable.just(.itemRemoved(index, items))
             }
             
-        case .messageNew:
-            return parseNewMessage(event: event)
+        case .messageNew, .messageUpdated:
+            return parseMessage(event: event)
             
         case .messageDeleted(let message, _, _, _):
             if let index = items.firstIndex(where: cid),
@@ -194,7 +194,7 @@ extension ChannelsPresenter {
         return Observable.just(.none)
     }
     
-    private func parseNewMessage(event: StreamChatClient.Event) -> Observable<ViewChanges> {
+    private func parseMessage(event: StreamChatClient.Event) -> Observable<ViewChanges> {
         guard let cid = event.cid,
             let index = items.firstIndex(where: cid),
             let channelPresenter = items.remove(at: index).channelPresenter else {

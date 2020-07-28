@@ -10,7 +10,7 @@ public class MemberModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     // MARK: - Public
     
     /// The role of the user within the channel.
-    public let channelRole: ChannelRole
+    public let memberRole: MemberRole
     
     /// A created date.
     public let memberCreatedDate: Date
@@ -36,14 +36,14 @@ public class MemberModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
         userUpdatedDate: Date,
         lastActiveDate: Date?,
         extraData: ExtraData?,
-        channelRole: ChannelRole,
+        memberRole: MemberRole,
         memberCreatedDate: Date,
         memberUpdatedDate: Date,
         isInvited: Bool,
         inviteAcceptedDate: Date?,
         inviteRejectedDate: Date?
     ) {
-        self.channelRole = channelRole
+        self.memberRole = memberRole
         self.memberCreatedDate = memberCreatedDate
         self.memberUpdatedDate = memberUpdatedDate
         self.isInvited = isInvited
@@ -62,7 +62,7 @@ public class MemberModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
 }
 
 /// The role of the meber in the channel
-public enum ChannelRole: String, Codable, Hashable {
+public enum MemberRole: String, Codable, Hashable {
     case member
     case moderator
     case admin

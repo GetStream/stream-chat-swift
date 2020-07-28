@@ -79,7 +79,22 @@ Get next PR number from github to be used in CHANGELOG
 ```
 fastlane test_v3
 ```
-Runs tests for v3 scheme
+Runs tests for v3 in Debug config
+### test_v3_release
+```
+fastlane test_v3_release
+```
+Runs tests for v3 in Release config
+### stress_test_v3
+```
+fastlane stress_test_v3
+```
+Runs stress tests for v3
+### stress_test_v3_release
+```
+fastlane stress_test_v3_release
+```
+Runs stress tests for v3 in Release config
 
 ----
 

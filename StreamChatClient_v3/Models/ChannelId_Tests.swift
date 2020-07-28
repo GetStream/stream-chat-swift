@@ -1,12 +1,11 @@
 //
-// ChannelId_Tests.swift
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChatClient_v3
 import XCTest
 
-final class ChannelId_Tests: XCTestCase {
+class ChannelId_Tests: XCTestCase {
     func test_channelId() {
         let channelId = try! ChannelId(cid: "messaging:123")
         XCTAssertEqual(channelId.rawValue, "messaging:123")

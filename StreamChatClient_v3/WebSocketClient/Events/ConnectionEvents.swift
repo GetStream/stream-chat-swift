@@ -8,15 +8,25 @@ public protocol ConnectionEvent: Event {
     var connectionId: String { get }
 }
 
-public struct HealthCheck: ConnectionEvent {
-    public static var eventRawType: String { "health.check" }
+public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
     public let connectionId: String
+    var payload: Any
     
-    init?<ExtraData: ExtraDataTypes>(from eventResponse: EventPayload<ExtraData>) throws {
-        guard eventResponse.eventType == Self.eventRawType else { return nil }
+    init<ExtraData: ExtraDataTypes>(from eventResponse: EventPayload<ExtraData>) throws {
         guard let connectionId = eventResponse.connectionId else {
-            throw ClientError.EventDecoding(missingValue: "connectionId", eventType: "HealthCheck")
+            throw ClientError.EventDecoding(missingValue: "connectionId", for: Self.self)
         }
+        
         self.connectionId = connectionId
+        payload = eventResponse as Any
+    }
+    
+    init(connectionId: String) {
+        self.connectionId = connectionId
+        payload = EventPayload<DefaultDataTypes>(eventType: .healthCheck,
+                                                 connectionId: connectionId,
+                                                 cid: nil,
+                                                 currentUser: nil,
+                                                 channel: nil)
     }
 }

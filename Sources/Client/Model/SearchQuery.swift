@@ -13,11 +13,14 @@ import Foundation
 public struct SearchQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
+        case messageFilter = "message_filter_conditions"
         case query
     }
     
     /// A filter for channels, e.g. `"members".in(["john"])`
     public let filter: Filter
+    /// A fiter for messages, e.g. `.exists("attachments", true)`
+    public let messageFilter: Filter
     /// A search query.
     public let query: String
     /// A pagination. It works via the standard limit and offset parameters.
@@ -25,16 +28,30 @@ public struct SearchQuery: Encodable {
     
     /// A message search query.
     /// - Parameters:
-    ///   - filter: a filter for channels, e.g. `"members", .in(["john"])`
+    ///   - filter: a filter for channels, e.g. `.in("members", ["john"])`
     ///   - query: a search query.
     ///   - pagination: a pagination. It works via the standard limit and offset parameters.
     public init(filter: Filter, query: String, pagination: Pagination = [.channelsPageSize]) {
+        self.init(filter: filter, messageFilter: .none, query: query, pagination: pagination)
+    }
+    
+    /// A message search query.
+    /// - Parameters:
+    ///   - filter: a filter for channels, e.g. `.in("members", ["john"])`
+    ///   - messageFilter: a filter for messages, e.g. `.exists("attachments", true)`
+    ///   - pagination: a pagination. It works via the standard limit and offset parameters.
+    public init(filter: Filter, messageFilter: Filter, pagination: Pagination = [.channelsPageSize]) {
+        self.init(filter: filter, messageFilter: messageFilter, query: "", pagination: pagination)
+    }
+    
+    init(filter: Filter, messageFilter: Filter, query: String, pagination: Pagination = [.channelsPageSize]) {
         ClientLogger.log("⚠️",
                          level: .debug,
                          "search is not guaranteed to return a result when no filter is specified. "
                             + "Please specify a valid filter. "
                             + "Break on \(#file) \(#line) to catch this issue.")
         self.filter = filter
+        self.messageFilter = messageFilter
         self.query = query
         self.pagination = pagination
     }
@@ -42,6 +59,7 @@ public struct SearchQuery: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(filter, forKey: .filter)
+        try container.encode(messageFilter, forKey: .messageFilter)
         try container.encode(query, forKey: .query)
         try pagination.encode(to: encoder)
     }

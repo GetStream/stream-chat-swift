@@ -18,26 +18,21 @@ class MemberModelDTO_Tests: XCTestCase {
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
         let userPayload: UserPayload<NameAndImageExtraData> = .init(id: userId,
+                                                                    role: .admin,
                                                                     created: .init(timeIntervalSince1970: 1000),
                                                                     updated: .init(timeIntervalSince1970: 2000),
                                                                     lastActiveDate: .init(timeIntervalSince1970: 3000),
                                                                     isOnline: true,
                                                                     isInvisible: true,
                                                                     isBanned: true,
-                                                                    roleRawValue: "admin",
                                                                     extraData: .init(name: "Luke",
                                                                                      imageURL: URL(string: UUID()
-                                                                                         .uuidString)),
-                                                                    devices: [],
-                                                                    mutedUsers: [],
-                                                                    unreadChannelsCount: nil,
-                                                                    unreadMessagesCount: nil,
-                                                                    teams: [])
+                                                                                         .uuidString)))
         
-        let payload: MemberPayload<NameAndImageExtraData> = .init(roleRawValue: "moderator",
+        let payload: MemberPayload<NameAndImageExtraData> = .init(user: userPayload,
+                                                                  role: .moderator,
                                                                   created: .init(timeIntervalSince1970: 4000),
-                                                                  updated: .init(timeIntervalSince1970: 5000),
-                                                                  user: userPayload)
+                                                                  updated: .init(timeIntervalSince1970: 5000))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -53,17 +48,14 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.id, loadedMember?.id)
             Assert.willBeEqual(payload.user.isOnline, loadedMember?.isOnline)
             Assert.willBeEqual(payload.user.isBanned, loadedMember?.isBanned)
-            Assert.willBeEqual(payload.user.roleRawValue, loadedMember?.userRole.rawValue)
+            Assert.willBeEqual(payload.user.role, loadedMember?.userRole)
             Assert.willBeEqual(payload.user.created, loadedMember?.userCreatedDate)
             Assert.willBeEqual(payload.user.updated, loadedMember?.userUpdatedDate)
             Assert.willBeEqual(payload.user.lastActiveDate, loadedMember?.lastActiveDate)
             Assert.willBeEqual(payload.user.extraData, loadedMember?.extraData)
-            Assert.willBeEqual(payload.roleRawValue, loadedMember?.channelRole.rawValue)
+            Assert.willBeEqual(payload.role, loadedMember?.memberRole)
             Assert.willBeEqual(payload.created, loadedMember?.memberCreatedDate)
             Assert.willBeEqual(payload.updated, loadedMember?.memberUpdatedDate)
-//      Assert.willBeEqual(payload.user.isInvited, loadedMember?.isInvited)
-//      Assert.willBeEqual(payload.user.inviteAcceptedDate, loadedMember?.inviteAcceptedDate)
-//      Assert.willBeEqual(payload.user.inviteRejectedDate, loadedMember?.inviteRejectedDate)
         }
     }
     
@@ -72,24 +64,19 @@ class MemberModelDTO_Tests: XCTestCase {
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
         let userPayload: UserPayload<NoExtraData> = .init(id: userId,
+                                                          role: .admin,
                                                           created: .init(timeIntervalSince1970: 1000),
                                                           updated: .init(timeIntervalSince1970: 2000),
                                                           lastActiveDate: .init(timeIntervalSince1970: 3000),
                                                           isOnline: true,
                                                           isInvisible: true,
                                                           isBanned: true,
-                                                          roleRawValue: "admin",
-                                                          extraData: .init(),
-                                                          devices: [],
-                                                          mutedUsers: [],
-                                                          unreadChannelsCount: nil,
-                                                          unreadMessagesCount: nil,
-                                                          teams: [])
+                                                          extraData: .init())
         
-        let payload: MemberPayload<NoExtraData> = .init(roleRawValue: "moderator",
+        let payload: MemberPayload<NoExtraData> = .init(user: userPayload,
+                                                        role: .moderator,
                                                         created: .init(timeIntervalSince1970: 4000),
-                                                        updated: .init(timeIntervalSince1970: 5000),
-                                                        user: userPayload)
+                                                        updated: .init(timeIntervalSince1970: 5000))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -105,16 +92,13 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.id, loadedMember?.id)
             Assert.willBeEqual(payload.user.isOnline, loadedMember?.isOnline)
             Assert.willBeEqual(payload.user.isBanned, loadedMember?.isBanned)
-            Assert.willBeEqual(payload.user.roleRawValue, loadedMember?.userRole.rawValue)
+            Assert.willBeEqual(payload.user.role, loadedMember?.userRole)
             Assert.willBeEqual(payload.user.created, loadedMember?.userCreatedDate)
             Assert.willBeEqual(payload.user.updated, loadedMember?.userUpdatedDate)
             Assert.willBeEqual(payload.user.lastActiveDate, loadedMember?.lastActiveDate)
-            Assert.willBeEqual(payload.roleRawValue, loadedMember?.channelRole.rawValue)
+            Assert.willBeEqual(payload.role, loadedMember?.memberRole)
             Assert.willBeEqual(payload.created, loadedMember?.memberCreatedDate)
             Assert.willBeEqual(payload.updated, loadedMember?.memberUpdatedDate)
-            //      Assert.willBeEqual(payload.user.isInvited, loadedMember?.isInvited)
-            //      Assert.willBeEqual(payload.user.inviteAcceptedDate, loadedMember?.inviteAcceptedDate)
-            //      Assert.willBeEqual(payload.user.inviteRejectedDate, loadedMember?.inviteRejectedDate)
         }
     }
 }
