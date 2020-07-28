@@ -22,6 +22,14 @@ extension Client {
     ///     config.logOptions = [.debug]
     /// ```
     public struct Config {
+        /// WebSocket provider type to be used in Client
+        public enum WebSocketProviderType { //swiftlint:disable:this nesting
+            case starscream
+            
+            @available(iOS 13, *)
+            case native
+        }
+        
         /// A Stream Chat API key.
         public let apiKey: String
         /// A base URL (see `BaseURL`).
@@ -34,6 +42,8 @@ extension Client {
         public var database: Database?
         /// Enable logs (see `ClientLogger.Options`), e.g. `.all`.
         public var logOptions: ClientLogger.Options = []
+        /// WebSocket provider type to be used in Client. Defaults to `.starscream`
+        public var webSocketProviderType: WebSocketProviderType = .starscream
 
         /// Creates a new config object.
         ///
@@ -58,11 +68,13 @@ extension Client.Config {
     ///     - database: a database manager.
     ///     - callbackQueue: a request callback queue, default nil (some background thread).
     ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+    ///     - webSocketProviderType: WebSocket provider to be used in Client. Defaults to `.starscream`
     public init(apiKey: String,
                 baseURL: BaseURL = .usEast,
                 stayConnectedInBackground: Bool = true,
                 database: Database? = nil,
                 callbackQueue: DispatchQueue? = nil,
+                webSocketProviderType: WebSocketProviderType = .starscream,
                 logOptions: ClientLogger.Options = []) {
 
         self = .init(apiKey: apiKey)
@@ -71,6 +83,7 @@ extension Client.Config {
         self.database = database
         self.callbackQueue = callbackQueue
         self.logOptions = logOptions
+        self.webSocketProviderType = webSocketProviderType
     }
 
     /// Init a config for the shared `Client`.
@@ -83,17 +96,20 @@ extension Client.Config {
     ///     - database: a database manager.
     ///     - callbackQueue: a request callback queue, default nil (some background thread).
     ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.info`
+    ///     - webSocketProviderType: WebSocket provider to be used in Client. Defaults to `.starscream`
     public init(apiKey: String,
                 baseURL: URL,
                 stayConnectedInBackground: Bool = true,
                 database: Database? = nil,
                 callbackQueue: DispatchQueue? = nil,
+                webSocketProviderType: WebSocketProviderType = .starscream,
                 logOptions: ClientLogger.Options = []) {
         self.init(apiKey: apiKey,
                   baseURL: .init(url: baseURL),
                   stayConnectedInBackground: stayConnectedInBackground,
                   database: database,
                   callbackQueue: callbackQueue,
+                  webSocketProviderType: webSocketProviderType,
                   logOptions: logOptions)
     }
 
@@ -107,11 +123,13 @@ extension Client.Config {
     ///     - database: a database manager.
     ///     - callbackQueue: a request callback queue, default nil (some background thread).
     ///     - logOptions: enable logs (see `ClientLogger.Options`), e.g. `.all`
+    ///     - webSocketProviderType: WebSocket provider to be used in Client. Defaults to `.starscream`
     public init?(apiKey: String,
                  baseURL: String,
                  stayConnectedInBackground: Bool = true,
                  database: Database? = nil,
                  callbackQueue: DispatchQueue? = nil,
+                 webSocketProviderType: WebSocketProviderType = .starscream,
                  logOptions: ClientLogger.Options = []) {
         guard let url = URL(string: baseURL) else { return nil }
 
@@ -120,6 +138,7 @@ extension Client.Config {
                   stayConnectedInBackground: stayConnectedInBackground,
                   database: database,
                   callbackQueue: callbackQueue,
+                  webSocketProviderType: webSocketProviderType,
                   logOptions: logOptions)
     }
 

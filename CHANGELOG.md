@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### ✅ Added
+-  `Client.Config.webSocketProvider` for selecting a websocket provider [#357](https://github.com/GetStream/stream-chat-swift/issues/357)
+
+### 🔄 Changed
+- All iOS versions will use Starscream as default websocket provider until native provider issue is resolved. See [#315](https://github.com/GetStream/stream-chat-swift/issues/315). [#357](https://github.com/GetStream/stream-chat-swift/issues/357)
 - Parameters to allow custom mention parsing logic. If set to `false`, `Message.mentionedUsers` is not overridden on send. [#338](https://github.com/GetStream/stream-chat-swift/issues/338)
   - `parseMentionedUsers: Bool = true` parameter in `Client.send(message: ...)`.
   - `parseMentionedUsers: Bool = true` parameter in `ChannelPresenter.send(text: ...)`.
