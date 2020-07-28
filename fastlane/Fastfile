@@ -305,3 +305,26 @@ lane :stress_test_v3 do
     )      
   }
 end
+
+desc "Runs stress tests for v3 in Release config"
+lane :stress_test_v3_release do
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "StreamChatClient_v3",
+    configuration: "ReleaseTests",
+    clean: true,
+    build_for_testing: true
+  )
+
+  setCIEnvironmentVariable("../StreamChatClientStress_v3.xctestplan")
+
+  stress_tests_cycles.times {
+    scan(
+      project: "StreamChat.xcodeproj", 
+      scheme: "StreamChatClient_v3",
+      configuration: "ReleaseTests",
+      test_without_building: true,
+      testplan: "StreamChatClientStress_v3"
+    )      
+  }
+end
