@@ -95,11 +95,6 @@ public extension Client {
             return Subscription.empty
         }
         
-        if message.user.isCurrent {
-            completion(.success(.init(messageId: message.id, created: Date(), updated: Date())))
-            return Subscription.empty
-        }
-        
         let completion = doAfter(completion) { _ in
             Message.flaggedIds.insert(message.id)
         }
