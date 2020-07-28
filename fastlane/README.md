@@ -90,6 +90,11 @@ Runs tests for v3 in Release config
 fastlane stress_test_v3
 ```
 Runs stress tests for v3
+### stress_test_v3_release
+```
+fastlane stress_test_v3_release
+```
+Runs stress tests for v3 in Release config
 
 ----
 

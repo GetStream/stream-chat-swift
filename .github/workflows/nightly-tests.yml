@@ -6,7 +6,7 @@ on:
 
 jobs:
     v3-stress-tests:
-      name: Run Stress Tests (v3)
+      name: Run Stress Tests (v3 - Debug)
       runs-on: macos-latest
       steps:
       - uses: actions/checkout@v1
@@ -30,3 +30,29 @@ jobs:
         run: bundle exec fastlane carthage_bootstrap
       - name: Run Stress Tests
         run: bundle exec fastlane stress_test_v3
+
+    v3-stress-tests_release:
+      name: Run Stress Tests (v3 - Release)
+      runs-on: macos-latest
+      steps:
+      - uses: actions/checkout@v1
+      - name: Cache Carthage dependencies
+        uses: actions/cache@v2
+        id: carthage-cache
+        with:
+          path: Carthage
+          key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
+      - name: Cache RubyGems
+        uses: actions/cache@v1
+        id: rubygem-cache
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-gem-
+      - name: Install RubyGems
+        if: steps.rubygem-cache.outputs.cache-hit != 'true'
+        run: bundle install
+      - name: Install Carthage dependencies
+        run: bundle exec fastlane carthage_bootstrap
+      - name: Run Stress Tests
+        run: bundle exec fastlane stress_test_v3_release
