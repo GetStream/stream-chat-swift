@@ -8,10 +8,10 @@ import XCTest
 let defaultTimeout: TimeInterval = 1
 
 /// The default timeout value used by the `stays___` family of assertions.
-let defaultTimeoutForInversedExpecations: TimeInterval = 0.1
+let defaultTimeoutForInversedExpecations: TimeInterval = TestRunnerEnvironment.isStressTest ? 0.001 : 0.1
 
 /// How big is the period between expression evaluations.
-let evaluationPeriod: TimeInterval = 0.001
+let evaluationPeriod: TimeInterval = 0.00001
 
 // MARK: - Assertions
 
