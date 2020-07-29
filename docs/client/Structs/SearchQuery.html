@@ -485,6 +485,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:16StreamChatClient11SearchQueryV13messageFilterAA0G0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/messageFilter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient11SearchQueryV13messageFilterAA0G0Ovp">messageFilter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A fiter for messages, e.g. <code>.exists(&quot;attachments&quot;, true)</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">messageFilter</span><span class="p">:</span> <span class="kt"><a href="../Enums/Filter.html">Filter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:16StreamChatClient11SearchQueryV5querySSvp"></a>
                     <a name="//apple_ref/swift/Property/query" class="dashAnchor"></a>
                     <a class="token" href="#/s:16StreamChatClient11SearchQueryV5querySSvp">query</a>
@@ -572,7 +599,7 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a filter for channels, e.g. <code>&quot;members&quot;, .in([&quot;john&quot;])</code></p>
+                                  <p>a filter for channels, e.g. <code>.in(&quot;members&quot;, [&quot;john&quot;])</code></p>
                                 </div>
                               </td>
                             </tr>
@@ -585,6 +612,76 @@
                               <td>
                                 <div>
                                   <p>a search query.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>pagination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a pagination. It works via the standard limit and offset parameters.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient11SearchQueryV6filter13messageFilter10paginationAcA0H0O_AHShyAA16PaginationOptionOGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(filter:messageFilter:pagination:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient11SearchQueryV6filter13messageFilter10paginationAcA0H0O_AHShyAA16PaginationOptionOGtcfc">init(filter:<wbr>messageFilter:<wbr>pagination:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A message search query.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">filter</span><span class="p">:</span> <span class="kt"><a href="../Enums/Filter.html">Filter</a></span><span class="p">,</span> <span class="nv">messageFilter</span><span class="p">:</span> <span class="kt"><a href="../Enums/Filter.html">Filter</a></span><span class="p">,</span> <span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:16StreamChatClient10Paginationa">Pagination</a></span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">channelsPageSize</span><span class="p">])</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>filter</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a filter for channels, e.g. <code>.in(&quot;members&quot;, [&quot;john&quot;])</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>messageFilter</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a filter for messages, e.g. <code>.exists(&quot;attachments&quot;, true)</code></p>
                                 </div>
                               </td>
                             </tr>
@@ -637,7 +734,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-07-07)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-07-29)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

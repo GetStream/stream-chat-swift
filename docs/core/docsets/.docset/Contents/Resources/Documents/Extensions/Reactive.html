@@ -830,9 +830,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4send7messageAA10ObservableCyAE15MessageResponseVGAE0L0V_tF"></a>
-                    <a name="//apple_ref/swift/Method/send(message:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4send7messageAA10ObservableCyAE15MessageResponseVGAE0L0V_tF">send(message:<wbr>)</a>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4send7message19parseMentionedUsersAA10ObservableCyAE15MessageResponseVGAE0O0V_SbtF"></a>
+                    <a name="//apple_ref/swift/Method/send(message:parseMentionedUsers:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4send7message19parseMentionedUsersAA10ObservableCyAE15MessageResponseVGAE0O0V_SbtF">send(message:<wbr>parseMentionedUsers:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -847,7 +847,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">Message</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">Message</span><span class="p">,</span> <span class="nv">parseMentionedUsers</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -864,6 +864,18 @@
                               <td>
                                 <div>
                                   <p>a message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parseMentionedUsers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>whether to automatically parse mentions into the <code>message.mentionedUsers</code> property. Defaults to <code>true</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2582,9 +2594,9 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4send7message2toAA10ObservableCyAE15MessageResponseVGAE0L0V_AE7ChannelCtF"></a>
-                    <a name="//apple_ref/swift/Method/send(message:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4send7message2toAA10ObservableCyAE15MessageResponseVGAE0L0V_AE7ChannelCtF">send(message:<wbr>to:<wbr>)</a>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4send7message2to19parseMentionedUsersAA10ObservableCyAE15MessageResponseVGAE0O0V_AE7ChannelCSbtF"></a>
+                    <a name="//apple_ref/swift/Method/send(message:to:parseMentionedUsers:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4send7message2to19parseMentionedUsersAA10ObservableCyAE15MessageResponseVGAE0O0V_AE7ChannelCSbtF">send(message:<wbr>to:<wbr>parseMentionedUsers:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2599,7 +2611,7 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">Message</span><span class="p">,</span> <span class="n">to</span> <span class="nv">channel</span><span class="p">:</span> <span class="kt">Channel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">Message</span><span class="p">,</span> <span class="n">to</span> <span class="nv">channel</span><span class="p">:</span> <span class="kt">Channel</span><span class="p">,</span> <span class="nv">parseMentionedUsers</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -2628,6 +2640,18 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                               <td>
                                 <div>
                                   <p>a channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parseMentionedUsers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>whether to automatically parse mentions into the <code>message.mentionedUsers</code> property. Defaults to <code>true</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -6312,9 +6336,9 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE4send4text011showReplyInG0AA10ObservableCy0dE6Client15MessageResponseVGSS_SbtF"></a>
-                    <a name="//apple_ref/swift/Method/send(text:showReplyInChannel:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE4send4text011showReplyInG0AA10ObservableCy0dE6Client15MessageResponseVGSS_SbtF">send(text:<wbr>showReplyInChannel:<wbr>)</a>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE4send4text011showReplyInG019parseMentionedUsersAA10ObservableCy0dE6Client15MessageResponseVGSS_S2btF"></a>
+                    <a name="//apple_ref/swift/Method/send(text:showReplyInChannel:parseMentionedUsers:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE4send4text011showReplyInG019parseMentionedUsersAA10ObservableCy0dE6Client15MessageResponseVGSS_S2btF">send(text:<wbr>showReplyInChannel:<wbr>parseMentionedUsers:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -6329,7 +6353,7 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">showReplyInChannel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">showReplyInChannel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">parseMentionedUsers</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -6358,6 +6382,18 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                               <td>
                                 <div>
                                   <p>show a reply in the channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parseMentionedUsers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>whether to automatically parse mentions into the <code>message.mentionedUsers</code> property. Defaults to <code>true</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -6749,7 +6785,7 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-07-07)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-07-29)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

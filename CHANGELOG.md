@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.2.7](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.7)
+_July 29, 2020_
+
 ### ✅ Added
 -  `Client.Config.webSocketProvider` for selecting a websocket provider [#357](https://github.com/GetStream/stream-chat-swift/issues/357)
 

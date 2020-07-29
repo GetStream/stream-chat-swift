@@ -442,6 +442,7 @@
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">Channel</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Channel</span><span class="p">:</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">CustomStringConvertible</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">Channel</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 
                 </div>
               </div>
@@ -1163,9 +1164,37 @@ Refer to <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=swi
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient7ChannelC4type2id7members14invitedMembers9extraData7created7deleted0L2By15lastMessageDate6frozen4team6configAcA0D4TypeO_SSSayAA4UserVGAtA0d5ExtraK7Codable_pSg10Foundation0Q0VAYSgASSgAZSbSSAC6ConfigVtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(type:id:members:invitedMembers:extraData:created:deleted:createdBy:lastMessageDate:frozen:team:config:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient7ChannelC4type2id7members14invitedMembers9extraData7created7deleted0L2By15lastMessageDate6frozen4team6configAcA0D4TypeO_SSSayAA4UserVGAtA0d5ExtraK7Codable_pSg10Foundation0Q0VAYSgASSgAZSbSSAC6ConfigVtcfc">init(type:<wbr>id:<wbr>members:<wbr>invitedMembers:<wbr>extraData:<wbr>created:<wbr>deleted:<wbr>createdBy:<wbr>lastMessageDate:<wbr>frozen:<wbr>team:<wbr>config:<wbr>)</a>
+                    <a name="/s:16StreamChatClient7ChannelC14namingStrategyAA0d6NamingF0_pSgvp"></a>
+                    <a name="//apple_ref/swift/Property/namingStrategy" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7ChannelC14namingStrategyAA0d6NamingF0_pSgvp">namingStrategy</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Naming strategy to generate a name and image for the channel based on members.
+Only takes effect when <code><a href="../Classes/Channel.html#/s:16StreamChatClient7ChannelC9extraDataAA0d5ExtraF7Codable_pSgvp">extraData</a></code> is <code>nil</code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">namingStrategy</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient7ChannelC4type2id7members14invitedMembers9extraData7created7deleted0L2By15lastMessageDate6frozen4team14namingStrategy6configAcA0D4TypeO_SSSayAA4UserVGAuA0d5ExtraK7Codable_pSg10Foundation0Q0VAZSgATSgA_SbSSAA0d6NamingU0_pSgAC6ConfigVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(type:id:members:invitedMembers:extraData:created:deleted:createdBy:lastMessageDate:frozen:team:namingStrategy:config:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient7ChannelC4type2id7members14invitedMembers9extraData7created7deleted0L2By15lastMessageDate6frozen4team14namingStrategy6configAcA0D4TypeO_SSSayAA4UserVGAuA0d5ExtraK7Codable_pSg10Foundation0Q0VAZSgATSgA_SbSSAA0d6NamingU0_pSgAC6ConfigVtcfc">init(type:<wbr>id:<wbr>members:<wbr>invitedMembers:<wbr>extraData:<wbr>created:<wbr>deleted:<wbr>createdBy:<wbr>lastMessageDate:<wbr>frozen:<wbr>team:<wbr>namingStrategy:<wbr>config:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1190,6 +1219,7 @@ Refer to <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=swi
             <span class="nv">lastMessageDate</span><span class="p">:</span> <span class="kt">Date</span><span class="p">?,</span>
             <span class="nv">frozen</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span>
             <span class="nv">team</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">""</span><span class="p">,</span>
+            <span class="nv">namingStrategy</span><span class="p">:</span> <span class="kt"><a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a></span><span class="p">?</span> <span class="o">=</span> <span class="kt"><a href="../Classes/Channel/DefaultNamingStrategy.html">DefaultNamingStrategy</a></span><span class="p">(</span><span class="nv">maxUserNames</span><span class="p">:</span> <span class="mi">1</span><span class="p">),</span>
             <span class="nv">config</span><span class="p">:</span> <span class="kt"><a href="../Classes/Channel/Config.html">Config</a></span><span class="p">)</span></code></pre>
 
                         </div>
@@ -3728,6 +3758,45 @@ Refer to <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=swi
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Hashable"></a>
+                <a name="//apple_ref/swift/Section/Hashable" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Hashable"></a>
+                  <h3 class="section-name"><p>Hashable</p>
+</h3>
+                </div>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SH4hash4intoys6HasherVz_tF"></a>
+                    <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SH4hash4intoys6HasherVz_tF">hash(into:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -3761,7 +3830,7 @@ Refer to <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=swi
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-07-07)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-07-29)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>
