@@ -116,7 +116,7 @@ public extension Client {
         
         let completion = doBefore(completion) { [unowned self] _ in
             self.userAtomic.update { oldUser in
-                var currentUser = oldUser
+                let currentUser = oldUser
                 currentUser.mutedUsers = oldUser.mutedUsers.filter { $0.user.id != user.id }
                 return currentUser
             }
