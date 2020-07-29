@@ -5,7 +5,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class WebSocketClient_Tests: XCTestCase {
+class WebSocketClient_Tests: StressTestCase {
     struct TestEvent: Event, Equatable {
         let id = UUID()
     }

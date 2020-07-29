@@ -5,7 +5,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class ChannelListQueryUpdater_Tests: XCTestCase {
+class ChannelListQueryUpdater_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainer!

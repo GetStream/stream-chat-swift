@@ -6,7 +6,7 @@ import CoreData
 @testable import StreamChatClient_v3
 import XCTest
 
-class ChatClient_Tests: XCTestCase {
+class ChatClient_Tests: StressTestCase {
     var userId: UserId!
     private var testEnv: TestEnvironment<DefaultDataTypes>!
     
