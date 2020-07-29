@@ -98,7 +98,7 @@ class CustomChatViewController: ChatViewController {
         
         alert.addAction(.init(title: "Add", style: .default, handler: { [unowned alert] _ in
             if let id = alert.textFields?[0].text, !id.isBlank, let name = alert.textFields?[1].text {
-                var user = User(id: id)
+                let user = User(id: id)
                 
                 if !name.isBlank {
                     user.name = name

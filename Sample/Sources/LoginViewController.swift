@@ -111,7 +111,7 @@ final class LoginViewController: ViewController {
         store(key: .userName, value: userName)
         store(key: .token, value: token)
         
-        var user = User(id: userId)
+        let user = User(id: userId)
         user.name = userName
         loggedInUser = user
         loggedInToken = token

@@ -61,7 +61,7 @@ public extension Client {
         let completion = doBefore(completion) { [unowned self] devices in
             self.userAtomic.update { oldUser in
                 if let index = oldUser.devices.firstIndex(where: { $0.id == deviceId }) {
-                    var currentUser = oldUser
+                    let currentUser = oldUser
                     let removedDevice = currentUser.devices.remove(at: index)
                     
                     if let currentDevice = currentUser.currentDevice, currentDevice == removedDevice {

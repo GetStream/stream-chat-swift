@@ -9,7 +9,7 @@
 import Foundation
 
 /// A user.
-public struct User: Codable {
+public class User: Codable {
     private enum CodingKeys: String, CodingKey {
         case id
         case role
@@ -149,13 +149,13 @@ public struct User: Codable {
         devices = []
     }
     
-    init(id: String, role: Role = .user, name: String, avatarURL: URL? = nil, extraData: UserExtraDataCodable? = nil) {
+    convenience init(id: String, role: Role = .user, name: String, avatarURL: URL? = nil, extraData: UserExtraDataCodable? = nil) {
         self.init(id: id, role: role, extraData: extraData)
         self.name = name
         self.avatarURL = avatarURL
     }
     
-    public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         role = try container.decode(Role.self, forKey: .role)
