@@ -60,7 +60,7 @@ extension Atomic_Tests {
     }
     
     func test_Atomic_usedWithCollection() {
-        var atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
+        let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
         
         for idx in 0 ..< numberOfStressTestCycles {
             DispatchQueue.random.async {
@@ -72,7 +72,7 @@ extension Atomic_Tests {
     }
     
     func test_Atomic_whenSetAndGetCalledSimultaneously() {
-        var atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
+        let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
         
         let readGroup = DispatchGroup()
         for idx in 0 ..< numberOfStressTestCycles {
@@ -96,7 +96,7 @@ extension Atomic_Tests {
     }
     
     func test_Atomic_whenCalledFromMainThred() {
-        var value = Atomic<[String: Int]>(wrappedValue: [:])
+        let value = Atomic<[String: Int]>(wrappedValue: [:])
         
         for idx in 0 ..< numberOfStressTestCycles {
             value { $0["\(idx)"] = idx }
