@@ -27,6 +27,26 @@ class ChannelListController_Tests: XCTestCase {
         controller = ChannelListController(query: query, client: client, environment: env.environment)
     }
     
+    override func tearDown() {
+        weak var weak_env = env
+        weak var weak_client = client
+        weak var weak_controller = controller
+        
+        env = nil
+        client = nil
+        controller = nil
+        
+        // We need to assert asynchronously, because there can be some delegate callbacks happening
+        // on the background queue, that keeps the controller alive, until they have finished.
+        AssertAsync {
+            Assert.willBeNil(weak_env)
+            Assert.willBeNil(weak_client)
+            Assert.willBeNil(weak_controller)
+        }
+        
+        super.tearDown()
+    }
+    
     func test_clientAndQueryAreCorrect() {
         let controller = client.channelListController(query: query)
         XCTAssert(controller.client === client)
@@ -208,11 +228,11 @@ private class TestEnvironment {
     var channelQueryUpdater: ChannelQueryUpdaterMock<DefaultDataTypes>?
     var changeAggregator: ChangeAggregator<ChannelDTO, Channel>?
     
-    lazy var environment: ChannelListController.Environment = .init(channelQueryUpdaterBuilder: {
+    lazy var environment: ChannelListController.Environment = .init(channelQueryUpdaterBuilder: { [unowned self] in
         self.channelQueryUpdater = ChannelQueryUpdaterMock(database: $0, webSocketClient: $1, apiClient: $2)
         return self.channelQueryUpdater!
     },
-                                                                    changeAggregatorBuilder: {
+                                                                    changeAggregatorBuilder: { [unowned self] in
         self.changeAggregator = ChangeAggregator(itemCreator: $0)
         return self.changeAggregator!
         })
