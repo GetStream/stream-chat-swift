@@ -34,8 +34,13 @@ protocol DelegateCallbable {
 
 extension DelegateCallbable where Self: Controller {
     func delegateCallback(_ callback: @escaping (Delegate) -> Void) {
-        callbackQueue.async {
-            callback(self.anyDelegate)
+        if callbackQueue == DispatchQueue.main, Thread.current.isMainThread {
+            // Call the delegate on the main queue synchronously
+            callback(anyDelegate)
+        } else {
+            callbackQueue.async {
+                callback(self.anyDelegate)
+            }
         }
     }
 }
