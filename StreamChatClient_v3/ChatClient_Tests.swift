@@ -24,6 +24,14 @@ class ChatClient_Tests: XCTestCase {
         testEnv = .init()
     }
     
+    override func tearDown() {
+        weak var weak_testEnv = testEnv
+        testEnv = nil
+        XCTAssertNil(weak_testEnv)
+        
+        super.tearDown()
+    }
+    
     // MARK: - Database stack tests
     
     func test_clientDatabaseStackInitialization_whenLocalStorageEnabled_respectsConfigValues() {
@@ -416,37 +424,39 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     
     var eventDecoder: EventDecoder<ExtraData>?
     
-    lazy var environment = Client<ExtraData>.Environment(apiClientBuilder: {
-        self.apiClient = APIClientMock(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2)
-        return self.apiClient!
-    },
-                                                         webSocketClientBuilder: {
-        self.webSocketClient = WebSocketClientMock(connectEndpoint: $0,
-                                                   sessionConfiguration: $1,
-                                                   requestEncoder: $2,
-                                                   eventDecoder: $3,
-                                                   eventMiddlewares: $4)
-        return self.webSocketClient!
-    },
-                                                         databaseContainerBuilder: {
-        self.databaseContainer = try! DatabaseContainerMock(kind: $0)
-        return self.databaseContainer!
-    },
-                                                         requestEncoderBuilder: {
-        if let encoder = self.requestEncoder {
-            return encoder
-        }
-        self.requestEncoder = TestRequestEncoder(baseURL: $0, apiKey: $1)
-        return self.requestEncoder!
-    },
-                                                         requestDecoderBuilder: {
-        self.requestDecoder = TestRequestDecoder()
-        return self.requestDecoder!
-    },
-                                                         eventDecoderBuilder: {
-        self.eventDecoder = EventDecoder<ExtraData>()
-        return self.eventDecoder!
+    lazy var environment: Client<ExtraData>.Environment = { [unowned self] in
+        .init(apiClientBuilder: {
+            self.apiClient = APIClientMock(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2)
+            return self.apiClient!
+        },
+              webSocketClientBuilder: {
+            self.webSocketClient = WebSocketClientMock(connectEndpoint: $0,
+                                                       sessionConfiguration: $1,
+                                                       requestEncoder: $2,
+                                                       eventDecoder: $3,
+                                                       eventMiddlewares: $4)
+            return self.webSocketClient!
+        },
+              databaseContainerBuilder: {
+            self.databaseContainer = try! DatabaseContainerMock(kind: $0)
+            return self.databaseContainer!
+        },
+              requestEncoderBuilder: {
+            if let encoder = self.requestEncoder {
+                return encoder
+            }
+            self.requestEncoder = TestRequestEncoder(baseURL: $0, apiKey: $1)
+            return self.requestEncoder!
+        },
+              requestDecoderBuilder: {
+            self.requestDecoder = TestRequestDecoder()
+            return self.requestDecoder!
+        },
+              eventDecoderBuilder: {
+            self.eventDecoder = EventDecoder<ExtraData>()
+            return self.eventDecoder!
     })
+    }()
 }
 
 // MARK: - Local helpers
