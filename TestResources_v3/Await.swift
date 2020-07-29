@@ -25,7 +25,7 @@ enum WaiterError: Error {
 /// - Throws: `WaiterError.waitingForResultTimedOut` if `action` doesn't call the completion closure within the `timeout` period.
 ///
 /// - Returns: The result of `action`.
-func await<T>(timeout: TimeInterval = 0.5,
+func await<T>(timeout: TimeInterval = 1,
               file: StaticString = #file,
               line: UInt = #line,
               _ action: (_ done: @escaping (T) -> Void) -> Void) throws -> T {
