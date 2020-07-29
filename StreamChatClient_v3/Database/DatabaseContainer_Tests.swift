@@ -6,7 +6,7 @@ import CoreData
 @testable import StreamChatClient_v3
 import XCTest
 
-class DatabaseContainer_Tests: XCTestCase {
+class DatabaseContainer_Tests: StressTestCase {
     func test_databaseContainer_isInitialized_withInMemoryPreset() {
         XCTAssertNoThrow(try DatabaseContainer(kind: .inMemory))
     }

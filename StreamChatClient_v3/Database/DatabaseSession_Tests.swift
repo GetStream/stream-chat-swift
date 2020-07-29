@@ -5,7 +5,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class DatabaseSession_Tests: XCTestCase {
+class DatabaseSession_Tests: StressTestCase {
     var database: DatabaseContainer!
     
     override func setUp() {

@@ -6,7 +6,7 @@ import CoreData
 @testable import StreamChatClient_v3
 import XCTest
 
-class ChannelListController_Tests: XCTestCase {
+class ChannelListController_Tests: StressTestCase {
     fileprivate var env: TestEnvironment!
     
     var client: ChatClient!

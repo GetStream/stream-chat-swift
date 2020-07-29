@@ -5,7 +5,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class APIClient_Tests: XCTestCase {
+class APIClient_Tests: StressTestCase {
     var apiClient: APIClient!
     
     var apiKey: APIKey!
