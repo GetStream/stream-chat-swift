@@ -157,11 +157,12 @@ class ChannelListController_Tests: XCTestCase {
         
         // Simulate DB update
         let cid: ChannelId = .unique
-        _ = try await {
+        let error = try await {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
             }, completion: $0)
         }
+        XCTAssertNil(error)
         let channel: Channel = client.databaseContainer.viewContext.loadChannel(cid: cid)!
         
         AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
