@@ -3,6 +3,7 @@
 //
 
 import Foundation
+@testable import StreamChatClient_v3
 import XCTest
 
 /// This URLProtocol subclass allows to intercept the network communication
@@ -23,8 +24,8 @@ class RequestRecorderURLProtocol: URLProtocol {
         configuration.httpAdditionalHeaders = existingHeaders
     }
     
-    private static var latestRequestExpectation: XCTestExpectation?
-    private static var latestRequest: URLRequest?
+    @Atomic private static var latestRequestExpectation: XCTestExpectation?
+    @Atomic private static var latestRequest: URLRequest?
     
     /// Returns the latest network request this URLProtocol recorded.
     ///
@@ -47,7 +48,7 @@ class RequestRecorderURLProtocol: URLProtocol {
     
     /// If set, records only requests with `testSessionHeaderKey` header value set to this value. If `nil`,
     /// no requests are recorded.
-    static var currentSessionId: String?
+    @Atomic static var currentSessionId: String?
     
     /// Cleans up existing waiters and recorded requests. We have to explictly reset the state because URLProtocols
     /// work with static variables.

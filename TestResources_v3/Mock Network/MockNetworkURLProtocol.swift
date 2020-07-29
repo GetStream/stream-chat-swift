@@ -34,7 +34,7 @@ class MockNetworkURLProtocol: URLProtocol {
     
     /// If set, the mock protocol responds to requests with `testSessionHeaderKey` header value set to this value. If `nil`,
     /// all requests are ignored.
-    static var currentSessionId: String?
+    @Atomic static var currentSessionId: String?
     
     /// Cleans up all existing mock responses and current test session id.
     static func reset() {
@@ -87,7 +87,9 @@ class MockNetworkURLProtocol: URLProtocol {
         client?.urlProtocolDidFinishLoading(self)
         
         // Clean up
-        Self.responses.removeValue(forKey: .init(url: url, method: method))
+        Self._responses.mutate {
+            $0.removeValue(forKey: .init(url: url, method: method))
+        }
     }
     
     override func stopLoading() {
@@ -104,7 +106,9 @@ extension MockNetworkURLProtocol {
     ///   - response: The JSON body of the response.
     static func mockResponse(request: URLRequest, statusCode: Int = 200, responseBody: Data = Data([])) {
         let key = PathAndMethod(url: request.url!, method: request.httpMethod!)
-        Self.responses[key] = MockResponse(result: .success(responseBody), responseCode: statusCode)
+        Self._responses.mutate {
+            $0[key] = MockResponse(result: .success(responseBody), responseCode: statusCode)
+        }
     }
     
     /// Creates a failing mock response for the given endpoint.
@@ -115,8 +119,9 @@ extension MockNetworkURLProtocol {
     ///   - error: The error object used for the response.
     static func mockResponse(request: URLRequest, statusCode: Int = 400, error: Error) {
         let key = PathAndMethod(url: request.url!, method: request.httpMethod!)
-        
-        Self.responses[key] = MockResponse(result: .failure(error), responseCode: statusCode)
+        Self._responses.mutate {
+            $0[key] = MockResponse(result: .failure(error), responseCode: statusCode)
+        }
     }
 }
 
