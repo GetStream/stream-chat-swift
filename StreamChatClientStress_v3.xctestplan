@@ -9,6 +9,13 @@
     }
   ],
   "defaultOptions" : {
+    "codeCoverage" : false,
+    "environmentVariableEntries" : [
+      {
+        "key" : "STRESS_TESTS",
+        "value" : "TRUE"
+      }
+    ],
     "testExecutionOrdering" : "random"
   },
   "testTargets" : [
