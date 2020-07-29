@@ -44,6 +44,8 @@ lane :release do |options|
   sh("git add -A")
   sh("git commit -m 'Bump #{version_number}'")
   sh("git tag #{version_number}")
+                   
+  push_to_git_remote(tags: true)
   
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
@@ -52,8 +54,6 @@ lane :release do |options|
                      tag_name: version_number,
                      description: changes
                    )
-                   
-  push_to_git_remote(tags: true)
   
   # First pod release will not have any problems
   pod_push(path: "StreamChatClient.podspec", allow_warnings: true)

@@ -13,18 +13,18 @@ _July 29, 2020_
 
 ### ✅ Added
 -  `Client.Config.webSocketProvider` for selecting a websocket provider [#357](https://github.com/GetStream/stream-chat-swift/issues/357)
+- Parameters to allow custom mention parsing logic. If set to `false`, `Message.mentionedUsers` is not overridden on send. [#338](https://github.com/GetStream/stream-chat-swift/issues/338)
+- `parseMentionedUsers: Bool = true` parameter in `Client.send(message: ...)`.
+- `parseMentionedUsers: Bool = true` parameter in `ChannelPresenter.send(text: ...)`.
+- `parseMentionedUsersOnSend: Bool = true` property in `ChatViewController`. 
+- Message search with filter for messages [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- `Client.search(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- `SearchQuery.init(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- `Filter.exists(Key, Bool)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- Channels created without explicit name/image will get default names generated for them, using their members' names [#366](https://github.com/GetStream/stream-chat-swift/issues/366)
 
 ### 🔄 Changed
 - All iOS versions will use Starscream as default websocket provider until native provider issue is resolved. See [#315](https://github.com/GetStream/stream-chat-swift/issues/315). [#357](https://github.com/GetStream/stream-chat-swift/issues/357)
-- Parameters to allow custom mention parsing logic. If set to `false`, `Message.mentionedUsers` is not overridden on send. [#338](https://github.com/GetStream/stream-chat-swift/issues/338)
-  - `parseMentionedUsers: Bool = true` parameter in `Client.send(message: ...)`.
-  - `parseMentionedUsers: Bool = true` parameter in `ChannelPresenter.send(text: ...)`.
-  - `parseMentionedUsersOnSend: Bool = true` property in `ChatViewController`. 
-- Message search with filter for messages [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
-  - `Client.search(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
-  - `SearchQuery.init(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
-- `Filter.exists(Key, Bool)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
-- Channels created without explicit name/image will get default names generated for them, using their members' names [#366](https://github.com/GetStream/stream-chat-swift/issues/366)
 
 ### 🐞 Fixed
 - Reintroduce Hashable conformances removed in 2.2.1 [#368](https://github.com/GetStream/stream-chat-swift/pull/368)
