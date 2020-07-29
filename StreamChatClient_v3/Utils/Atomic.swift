@@ -19,17 +19,17 @@ import Foundation
 ///    _atomicValue { $0 += 1 } // Also possible
 ///  ```
 ///
-/// - Note: Even though the value guarded by `Atomic` is thread-safe, the `Atomic` struct itself is not. Mutating the instance
+/// - Note: Even though the value guarded by `Atomic` is thread-safe, the `Atomic` class itself is not. Mutating the instance
 /// itself from multiple threads can cause a crash.
 
 @propertyWrapper
-public struct Atomic<T> {
+public class Atomic<T> {
     public var wrappedValue: T {
         set {
             mutate { $0 = newValue }
         }
         
-        mutating get {
+        get {
             var currentValue: T!
             mutate { currentValue = $0 }
             return currentValue
@@ -41,7 +41,7 @@ public struct Atomic<T> {
     
     /// Update the value safely.
     /// - Parameter changes: a block with changes. It should return a new value.
-    public mutating func mutate(_ changes: (_ value: inout T) -> Void) {
+    public func mutate(_ changes: (_ value: inout T) -> Void) {
         lock.lock()
         changes(&_wrappedValue)
         lock.unlock()
@@ -49,7 +49,7 @@ public struct Atomic<T> {
     
     /// Update the value safely.
     /// - Parameter changes: a block with changes. It should return a new value.
-    mutating func callAsFunction(_ changes: (_ value: inout T) -> Void) {
+    public func callAsFunction(_ changes: (_ value: inout T) -> Void) {
         mutate(changes)
     }
     
