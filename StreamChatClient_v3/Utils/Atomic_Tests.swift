@@ -5,7 +5,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-class Atomic_Tests: XCTestCase {
+class Atomic_Tests: StressTestCase {
     @Atomic var stringAtomicValue: String?
     @Atomic var intAtomicValue: Int = 0
     
@@ -27,15 +27,15 @@ class Atomic_Tests: XCTestCase {
         intAtomicValue = 0
         
         // Count up to numberOfCycles
-        for _ in 0 ..< numberOfStressTestCycles {
+        for _ in 0 ..< numberOfTestCycles {
             DispatchQueue.random.async {
                 self._intAtomicValue { $0 += 1 }
             }
         }
-        AssertAsync.willBeEqual(intAtomicValue, numberOfStressTestCycles)
+        AssertAsync.willBeEqual(intAtomicValue, numberOfTestCycles)
         
         // Count down to zero
-        for _ in 0 ..< numberOfStressTestCycles {
+        for _ in 0 ..< numberOfTestCycles {
             DispatchQueue.random.async {
                 self._intAtomicValue { $0 -= 1 }
             }
@@ -47,35 +47,26 @@ class Atomic_Tests: XCTestCase {
 // MARK: - Stress tests
 
 extension Atomic_Tests {
-    /// Increase `numberOfStressTestCycles` significantly to properly stress-test `Atomic`.
-    var numberOfStressTestCycles: Int { 50 }
-    
-    func test_Atomic_underHeavyLoad() {
-        for _ in 0 ..< 100 {
-            test_Atomic_usedAsCounter()
-            test_Atomic_usedWithCollection()
-            test_Atomic_whenSetAndGetCalledSimultaneously()
-            test_Atomic_whenCalledFromMainThred()
-        }
-    }
+    /// Increase `numberOfTestCycles` significantly to properly stress-test `Atomic`.
+    var numberOfTestCycles: Int { 50 }
     
     func test_Atomic_usedWithCollection() {
         let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
         
-        for idx in 0 ..< numberOfStressTestCycles {
+        for idx in 0 ..< numberOfTestCycles {
             DispatchQueue.random.async {
                 atomicValue.mutate { $0["\(idx)"] = idx }
             }
         }
         
-        AssertAsync.willBeEqual(atomicValue.wrappedValue.count, numberOfStressTestCycles)
+        AssertAsync.willBeEqual(atomicValue.wrappedValue.count, numberOfTestCycles)
     }
     
     func test_Atomic_whenSetAndGetCalledSimultaneously() {
         let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
         
         let readGroup = DispatchGroup()
-        for idx in 0 ..< numberOfStressTestCycles {
+        for idx in 0 ..< numberOfTestCycles {
             DispatchQueue.random.async {
                 atomicValue { $0["\(idx)"] = idx }
             }
@@ -89,7 +80,7 @@ extension Atomic_Tests {
             }
         }
         
-        AssertAsync.willBeEqual(atomicValue.wrappedValue.count, numberOfStressTestCycles)
+        AssertAsync.willBeEqual(atomicValue.wrappedValue.count, numberOfTestCycles)
         
         // Wait until all reading is done to prevent bad access
         readGroup.wait()
@@ -98,7 +89,7 @@ extension Atomic_Tests {
     func test_Atomic_whenCalledFromMainThred() {
         let value = Atomic<[String: Int]>(wrappedValue: [:])
         
-        for idx in 0 ..< numberOfStressTestCycles {
+        for idx in 0 ..< numberOfTestCycles {
             value { $0["\(idx)"] = idx }
             value.wrappedValue = ["random": 2020]
             _ = value.wrappedValue
