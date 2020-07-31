@@ -5,6 +5,10 @@
 @testable import StreamChatClient_v3
 import XCTest
 
+/// The maximum time `AssertNetworkRequest` waits for the request. When running stress tests, this value
+/// is much higher because the system might be under very heavy load.
+private var assertNetworkRequestTimeout: TimeInterval = TestRunnerEnvironment.isStressTest ? 10 : 1
+
 /// Synchronously waits for a network request to be made and asserts its properties.
 ///
 /// The function always uses the latest request `RequestRecorderURLProtocol` records. If no request has
@@ -27,7 +31,7 @@ func AssertNetworkRequest(method: EndpointMethod,
                           headers: [String: String]?,
                           queryParameters: [String: String]?,
                           body: [String: Any]?,
-                          timeout: TimeInterval = 0.5,
+                          timeout: TimeInterval = assertNetworkRequestTimeout,
                           file: StaticString = #file,
                           line: UInt = #line) {
     guard let request = RequestRecorderURLProtocol.waitForRequest(timeout: timeout) else {
@@ -38,6 +42,9 @@ func AssertNetworkRequest(method: EndpointMethod,
     var errorMessage = ""
     defer {
         if !errorMessage.isEmpty {
+            if TestRunnerEnvironment.isCI {
+                errorMessage = errorMessage.replacingOccurrences(of: "\n", with: "|")
+            }
             XCTFail("AssertNetworkRequest failed:" + errorMessage, file: file, line: line)
         }
     }
