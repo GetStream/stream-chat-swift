@@ -30,6 +30,8 @@ class DatabaseContainer: NSPersistentContainer {
         return context
     }()
     
+    private var loggerNotificationObserver: NSObjectProtocol?
+    
     /// Creates a new `DatabaseContainer` instance.
     ///
     /// The full initialization of the container is asynchronous. Use `completion` to be notified when the container
@@ -71,6 +73,14 @@ class DatabaseContainer: NSPersistentContainer {
         
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
+        
+        setupLoggedForChanges()
+    }
+    
+    deinit {
+        if let observer = loggerNotificationObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     /// Use this method to safely mutate the content of the database.
@@ -95,7 +105,10 @@ class DatabaseContainer: NSPersistentContainer {
                 try actions(self.writableContext)
                 
                 if self.writableContext.hasChanges {
+                    log.debug("Context has changes. Saving.")
                     try self.writableContext.save()
+                } else {
+                    log.debug("Context has no changes. Skipping save.")
                 }
                 
                 log.debug("Database session succesfully saved.")
@@ -132,6 +145,14 @@ class DatabaseContainer: NSPersistentContainer {
             }
             
         }, completion: { completion?($0) })
+    }
+    
+    /// Set up listener to changes in the writable context and logs the changes.
+    private func setupLoggedForChanges() {
+        loggerNotificationObserver = NotificationCenter.default
+            .addObserver(forName: Notification.Name.NSManagedObjectContextDidSave,
+                         object: writableContext,
+                         queue: nil) { log.debug("Data saved to DB: \(String(describing: $0.userInfo))") }
     }
 }
 
