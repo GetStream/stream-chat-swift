@@ -45,9 +45,8 @@ class DetailViewController: UIViewController {
 }
 
 extension DetailViewController: ChannelControllerDelegate {
-    func channelController<ExtraData: ExtraDataTypes>(_ channelController: ChannelController<ExtraData>, didUpdateChannel channel: ChannelModel<ExtraData>) {
-        // TODO is it possible to avoid force casting?
-        self.messages = channel.latestMessages as! [Message]
+    func channelController(_ channelController: ChannelController, didUpdateChannel channel: Channel) {
+        messages = channel.latestMessages
     }
 }
 
