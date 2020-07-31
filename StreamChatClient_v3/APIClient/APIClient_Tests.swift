@@ -220,7 +220,7 @@ class TestRequestDecoder: RequestDecoder {
         decodeRequestResponse_error = error
         
         guard let simulatedResponse = decodeRequestResponse else {
-            print("TestRequestDecoder simulated response not set. Throwing a TestError.")
+            log.warning("TestRequestDecoder simulated response not set. Throwing a TestError.")
             throw TestError()
         }
         
