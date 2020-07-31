@@ -251,10 +251,17 @@ end
 def setCIEnvironmentVariable(testPlanFile)
   file = File.read(testPlanFile)
   data_hash = JSON.parse(file)
-  data_hash['defaultOptions']['environmentVariableEntries'] = [{"key"=>"CI", "value"=>"TRUE"}]
+
+  # Create the `environmentVariableEntries` array if it doesn't exist
+  data_hash['defaultOptions']['environmentVariableEntries'] ||= []
+
+  # Append the `CI` ENV variable
+  data_hash['defaultOptions']['environmentVariableEntries'] << {"key"=>"CI", "value"=>"TRUE"}
   File.write(testPlanFile, JSON.pretty_generate(data_hash))
 
   puts "✅ `CI=TRUE` ENV variable added to " + testPlanFile
+  puts "Current testplan ENV variables:"
+  puts data_hash['defaultOptions']['environmentVariableEntries']
 end
 
 desc "Runs tests for v3 in Debug config"
