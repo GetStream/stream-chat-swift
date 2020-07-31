@@ -138,12 +138,9 @@ class ChannelListController_Tests: StressTestCase {
                 try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
             }, completion: $0)
         }
-        // 2. Simulate callback from ChangeAggregator
-        let channel: Channel = client.databaseContainer.viewContext.loadChannel(cid: cid)!
-        env.changeAggregator?.onChange?([.insert(channel, index: [0, 0])])
         
         // Assert the resulting value is updated
-        XCTAssertEqual(controller.channels.map { $0.cid }, [cid])
+        AssertAsync.willBeEqual(controller.channels.map { $0.cid }, [cid])
     }
     
     // MARK: - Delegate tests
