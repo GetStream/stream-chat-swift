@@ -8,6 +8,10 @@ enum WaiterError: Error {
     case waitingForResultTimedOut
 }
 
+/// The maximum time `await` waits for the wrapped function to complete. When running stress tests, this value
+/// is much higher because the system might be under very heavy load.
+private let awaitTimeout: TimeInterval = TestRunnerEnvironment.isStressTest ? 5 : 1
+
 /// Allows calling an asynchronous function in the synchronous way in tests.
 ///
 /// Example usage:
@@ -25,7 +29,7 @@ enum WaiterError: Error {
 /// - Throws: `WaiterError.waitingForResultTimedOut` if `action` doesn't call the completion closure within the `timeout` period.
 ///
 /// - Returns: The result of `action`.
-func await<T>(timeout: TimeInterval = 1,
+func await<T>(timeout: TimeInterval = awaitTimeout,
               file: StaticString = #file,
               line: UInt = #line,
               _ action: (_ done: @escaping (T) -> Void) -> Void) throws -> T {
