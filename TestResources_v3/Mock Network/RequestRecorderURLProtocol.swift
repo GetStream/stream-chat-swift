@@ -70,7 +70,7 @@ class RequestRecorderURLProtocol: URLProtocol {
     
     private static func record(request: URLRequest) {
         guard latestRequest == nil else {
-            print("Reqeust for \(String(describing: currentSessionId)) already recoded. Skipping.")
+            log.info("Request for \(String(describing: currentSessionId)) already recoded. Skipping.")
             return
         }
         latestRequest = request
