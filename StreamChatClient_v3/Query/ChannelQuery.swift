@@ -15,6 +15,7 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     
     /// A channel.
     public let channel: ChannelModel<ExtraData>?
+    /// ChannelId this query handles.
     public let cid: ChannelId
     /// A pagination for messages (see `Pagination`).
     public let messagesPagination: Pagination
