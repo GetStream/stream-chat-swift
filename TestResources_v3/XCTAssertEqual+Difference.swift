@@ -5,10 +5,10 @@
 import Foundation
 import XCTest
 
-public func XCTAssertEqual<T: Equatable>(_ expected: T, _ received: T, file: StaticString = #file, line: UInt = #line) {
+public func XCTAssertEqual<T: Equatable>(_ received: T, _ expected: T, file: StaticString = #file, line: UInt = #line) {
     if TestRunnerEnvironment.isCI {
         // Use built-in `XCTAssertEqual` when running on the CI to get CI-friendly logs.
-        XCTAssertEqual(expected, received, "", file: file, line: line)
+        XCTAssertEqual(received, expected, "", file: file, line: line)
     } else {
         XCTAssertTrue(expected == received,
                       "Found difference for \n" + diff(expected, received).joined(separator: ", "), file: file, line: line)
