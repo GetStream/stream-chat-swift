@@ -34,11 +34,7 @@ class RequestRecorderURLProtocol: URLProtocol {
     ///
     /// - Parameter timeout: Specifies the time the function waits for a new request to be made.
     static func waitForRequest(timeout: TimeInterval) -> URLRequest? {
-        defer {
-            // Delete the used request
-            latestRequest = nil
-        }
-        
+        defer { reset() }
         guard latestRequest == nil else { return latestRequest }
         
         latestRequestExpectation = .init(description: "Wait for incoming request.")
@@ -73,6 +69,10 @@ class RequestRecorderURLProtocol: URLProtocol {
     }
     
     private static func record(request: URLRequest) {
+        guard latestRequest == nil else {
+            print("Reqeust for \(String(describing: currentSessionId)) already recoded. Skipping.")
+            return
+        }
         latestRequest = request
         latestRequestExpectation?.fulfill()
     }
