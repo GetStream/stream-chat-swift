@@ -12,7 +12,7 @@ class VirtualTime {
     /// Specifies the number of seconds the execution pauses for after the virtual time is advanced.
     ///
     /// This is needed to give the system time to execute async tasks properly. Typically, you don't need to change this value.
-    var timeAdvanceExecutionDelay: TimeInterval = 0.01
+    var timeAdvanceExecutionDelay: TimeInterval = 1 / 1_000_000
     
     var scheduledTimers: [VirtualTime.TimerControl] = []
     var currentTime: Seconds
