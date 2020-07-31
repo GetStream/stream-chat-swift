@@ -27,6 +27,7 @@ class APIClient_Tests: StressTestCase {
         sessionConfiguration = URLSessionConfiguration.default
         RequestRecorderURLProtocol.startTestSession(with: &sessionConfiguration)
         MockNetworkURLProtocol.startTestSession(with: &sessionConfiguration)
+        sessionConfiguration.httpMaximumConnectionsPerHost = Int.max
         
         // Some random value to ensure the headers are respected
         uniqeHeaderValue = .unique
@@ -43,6 +44,9 @@ class APIClient_Tests: StressTestCase {
         weak var weakAPIClient = apiClient
         apiClient = nil
         XCTAssertNil(weakAPIClient)
+        
+        RequestRecorderURLProtocol.reset()
+        MockNetworkURLProtocol.reset()
         
         super.tearDown()
     }
