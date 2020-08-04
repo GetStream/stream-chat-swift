@@ -98,15 +98,3 @@ extension Atomic_Tests {
         XCTAssertEqual(value.wrappedValue, ["random": 2020])
     }
 }
-
-private extension DispatchQueue {
-    /// Returns one of the existing global Dispatch queues.
-    static var random: DispatchQueue {
-        let allQoS: [DispatchQoS.QoSClass] = [
-            .userInteractive,
-            .userInitiated,
-            .default
-        ]
-        return DispatchQueue.global(qos: allQoS.randomElement()!)
-    }
-}
