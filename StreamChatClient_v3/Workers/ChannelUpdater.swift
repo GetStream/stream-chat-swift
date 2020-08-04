@@ -4,7 +4,14 @@
 
 import Foundation
 
+/// Makes a channel query call to the backend and updates the local storage with the results.
 class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
+    /// Makes a channel query call to the backend and updates the local storage with the results.
+    ///
+    /// - Parameters:
+    ///   - channelQuery: The channel query used in the request
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
     func update(channelQuery: ChannelQuery<ExtraData>, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .channel(query: channelQuery)) { (result) in
             do {
