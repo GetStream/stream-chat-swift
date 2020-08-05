@@ -18,6 +18,9 @@ public enum ConnectionState: Equatable {
         
         /// The system initiated web socket disconnecting.
         case systemInitiated
+        
+        /// `WebSocketPingController` didn't get a pong response.
+        case noPongReceived
     }
     
     /// The web socket is not connected. Optionally contains an error, if the connection was disconnected due to an error.

@@ -4,6 +4,15 @@
 
 import Foundation
 
+/// A delegate to control `WebSocketClient` connection by `WebSocketPingController`.
+protocol WebSocketPingControllerDelegate: AnyObject {
+    /// `WebSocketPingController` will call it method periodically to keep a connection alive.
+    func sendPing()
+    
+    /// `WebSocketPingController` will call it to force disconnect `WebSocketClient`.
+    func forceDisconnect()
+}
+
 /// The controller manages ping and pont timers. It send ping periodically to keep a web socket connection alive.
 /// After ping is sent, a pong waiting timer is started and if it does not come, a force disconnect is called.
 class WebSocketPingController {
@@ -21,10 +30,9 @@ class WebSocketPingController {
     
     /// The pong timeout timer.
     private var pongTimeoutTimer: TimerControl?
-    /// An action for `WebSocketClient` to send a ping.
-    private let ping: () -> Void
-    /// An action for `WebSocketClient` to force disconnect and reconnect.
-    private let forceReconnect: () -> Void
+    
+    /// A delegate to control `WebSocketClient` connection by `WebSocketPingController`.
+    weak var delegate: WebSocketPingControllerDelegate?
     
     /// Creates a ping controller.
     /// - Parameters:
@@ -32,17 +40,15 @@ class WebSocketPingController {
     ///   - timerQueue: a timer dispatch queue.
     ///   - ping: an action for `WebSocketClient` to send a ping.
     ///   - forceReconnect: an action for `WebSocketClient` to force disconnect and reconnect.
-    init(timerType: Timer.Type,
-         timerQueue: DispatchQueue,
-         ping: @escaping () -> Void,
-         forceReconnect: @escaping () -> Void) {
+    init(timerType: Timer.Type, timerQueue: DispatchQueue) {
         self.timerType = timerType
         self.timerQueue = timerQueue
-        self.ping = ping
-        self.forceReconnect = forceReconnect
     }
     
+    /// `WebSocketClient` should call this when the connection state did change.
     func connectionStateDidChange(_ connectionState: ConnectionState) {
+        guard delegate != nil else { return }
+        
         cancelPongTimeoutTimer()
         
         if connectionState.isConnected {
@@ -59,11 +65,11 @@ class WebSocketPingController {
         // Start pong timeout timer.
         pongTimeoutTimer = timerType.schedule(timeInterval: Self.pongTimeoutTimeInterval, queue: timerQueue) { [weak self] in
             log.info("WebSocket Pong timeout. Reconnect")
-            self?.forceReconnect()
+            self?.delegate?.forceDisconnect()
         }
         
         log.info("WebSocket Ping")
-        ping()
+        delegate?.sendPing()
     }
     
     func pongRecieved() {
