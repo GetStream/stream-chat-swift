@@ -82,14 +82,11 @@ class WebSocketClient {
     /// An object containing external dependencies of `WebSocketClient`
     private let environment: Environment
     
-    private(set) lazy var pingController: WebSocketPingController =
-        environment.createPingController(environment.timerType,
-                                         engineQueue,
-                                         { [weak self] in self?.engine.sendPing() },
-                                         { [weak self] in
-                                             self?.disconnect()
-                                             self?.reconnectIfNeeded(disconnectionError: ClientError.WebSocket("Pong timeout"))
-        })
+    private(set) lazy var pingController: WebSocketPingController = {
+        let pingController = environment.createPingController(environment.timerType, engineQueue)
+        pingController.delegate = self
+        return pingController
+    }()
     
     private func createEngine() -> WebSocketEngine {
         do {
@@ -206,12 +203,7 @@ protocol ConnectionStateDelegate: AnyObject {
 extension WebSocketClient {
     /// An object encapsulating all dependencies of `WebSocketClient`.
     struct Environment {
-        typealias CreatePingController = (
-            _ timerType: Timer.Type,
-            _ timerQueue: DispatchQueue,
-            _ ping: @escaping () -> Void,
-            _ forceReconnect: @escaping () -> Void
-        ) -> WebSocketPingController
+        typealias CreatePingController = (_ timerType: Timer.Type, _ timerQueue: DispatchQueue) -> WebSocketPingController
         
         typealias CreateEngine = (
             _ request: URLRequest,
@@ -291,36 +283,33 @@ extension WebSocketClient: WebSocketEngineDelegate {
             disconnectionError = engineError
         }
         
-        if shouldReconnect {
-            reconnectIfNeeded(disconnectionError: disconnectionError)
+        if shouldReconnect,
+            let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) {
+            let clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
+            connectionState = .waitingForReconnect(error: clientError)
+            
+            reconnectionTimer = environment.timerType
+                .schedule(timeInterval: reconnectionDelay, queue: engineQueue) { [weak self] in self?.connect() }
+            
         } else {
             connectionState = .notConnected(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
         }
     }
+}
+
+// MARK: - Ping Controller Delegate
+
+extension WebSocketClient: WebSocketPingControllerDelegate {
+    func sendPing() {
+        engine.sendPing()
+    }
     
-    func reconnectIfNeeded(disconnectionError: Error?) {
-        guard let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) else {
-            let clientError: ClientError?
-            
-            if let error = disconnectionError as? ClientError {
-                clientError = error
-            } else {
-                clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
-            }
-            
-            connectionState = .notConnected(error: clientError)
-            return
-        }
-        
-        let clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
-        connectionState = .waitingForReconnect(error: clientError)
-        
-        reconnectionTimer = environment.timerType
-            .schedule(timeInterval: reconnectionDelay, queue: engineQueue) { [weak self] in
-                self?.connect()
-            }
+    func forceDisconnect() {
+        disconnect(source: .noPongReceived)
     }
 }
+
+// MARK: - Notifications
 
 extension Notification.Name {
     /// The name of the notification posted when a new event is published/

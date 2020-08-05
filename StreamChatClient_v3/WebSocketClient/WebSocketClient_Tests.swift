@@ -243,40 +243,21 @@ class WebSocketClient_Tests: StressTestCase {
     
     // MARK: - Ping Controller
     
-    func test_pingIsSentPeriodically() {
-        // Simulate connection
+    func test_webSocketPingController_connectionStateDidChange_calledWhenConnectionChanges() {
         test_connectionFlow()
-        XCTAssertEqual(pingController.connectionStateDidChangeCount, 3)
-        XCTAssertEqual(pingController.pongRecievedCount, 1)
-        assert(engine.sendPing_calledCount == 0)
-        
-        // Simulate time longer than pingTimeInterval and assert `engine.sendPing` was called
-        time.run(numberOfSeconds: WebSocketPingController.pingTimeInterval)
-        engine.simulatePong()
-        XCTAssertEqual(engine.sendPing_calledCount, 1)
-        XCTAssertEqual(pingController.pongRecievedCount, 2)
+        XCTAssertEqual(3, pingController.connectionStateDidChangeCount)
     }
     
-    func test_pongTimeout() {
-        // Simulate connection
+    func test_webSocketPingController_ping_callsEngineWithPing() {
         test_connectionFlow()
-        XCTAssertEqual(engine.connect_calledCount, 1)
-        
-        reconnectionStrategy.reconnectionDelay = 1
-        var timeInterval = WebSocketPingController.pingTimeInterval
-        
-        // Simulate time longer than pingTimeInterval and assert `engine.sendPing` was called
-        assert(engine.sendPing_calledCount == 0)
-        time.run(numberOfSeconds: timeInterval)
+        webSocketClient.sendPing()
         XCTAssertEqual(engine.sendPing_calledCount, 1)
-        timeInterval += WebSocketPingController.pongTimeoutTimeInterval
-        time.run(numberOfSeconds: timeInterval)
-        XCTAssertEqual(engine.disconnect_calledCount, 1)
+    }
+    
+    func test_webSocketPingController_forceReconnect_disconnectsEngine() {
+        test_connectionFlow()
+        webSocketClient.forceDisconnect()
         XCTAssertFalse(webSocketClient.connectionState.isConnected)
-        
-        AssertAsync {
-            Assert.willBeTrue(self.engine.connect_calledCount == 2)
-        }
     }
     
     func test_changingConnectEndpointAndReconnecting() {
