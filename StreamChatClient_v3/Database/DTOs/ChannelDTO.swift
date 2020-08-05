@@ -14,11 +14,11 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var extraData: Data
     @NSManaged var config: Data
     
-    @NSManaged var createdDate: Date
-    @NSManaged var deletedDate: Date?
-    @NSManaged var defaultSortingDate: Date
-    @NSManaged var updatedDate: Date
-    @NSManaged var lastMessageDate: Date?
+    @NSManaged var createdAt: Date
+    @NSManaged var deletedAt: Date?
+    @NSManaged var defaultSortingAt: Date
+    @NSManaged var updatedAt: Date
+    @NSManaged var lastMessageAt: Date?
     
     @NSManaged var isFrozen: Bool
     
@@ -31,7 +31,7 @@ class ChannelDTO: NSManagedObject {
     
     static func fetchRequest(for cid: ChannelId) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedDate, ascending: false)]
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "cid == %@", cid.rawValue)
         return request
     }
@@ -61,11 +61,11 @@ extension NSManagedObjectContext {
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
         dto.config = try JSONEncoder().encode(payload.config)
-        dto.createdDate = payload.created
-        dto.deletedDate = payload.deleted
-        dto.updatedDate = payload.updated
-        dto.defaultSortingDate = payload.lastMessageDate ?? payload.created
-        dto.lastMessageDate = payload.lastMessageDate
+        dto.createdAt = payload.createdAt
+        dto.deletedAt = payload.deletedAt
+        dto.updatedAt = payload.updatedAt
+        dto.defaultSortingAt = payload.lastMessageAt ?? payload.createdAt
+        dto.lastMessageAt = payload.lastMessageAt
         
         dto.isFrozen = payload.isFrozen
         
@@ -139,10 +139,10 @@ extension ChannelModel {
             .map(MessageModel<ExtraData>.init(fromDTO:))
         
         return ChannelModel(cid: cid,
-                            lastMessageDate: dto.lastMessageDate,
-                            created: dto.createdDate,
-                            updated: dto.updatedDate,
-                            deleted: dto.deletedDate,
+                            lastMessageAt: dto.lastMessageAt,
+                            createdAt: dto.createdAt,
+                            updatedAt: dto.updatedAt,
+                            deletedAt: dto.deletedAt,
                             createdBy: UserModel<ExtraData.User>.create(fromDTO: dto.createdBy),
                             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
                             frozen: dto.isFrozen,

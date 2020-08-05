@@ -42,7 +42,7 @@ public struct ChannelDeletedEvent<ExtraData: ExtraDataTypes>: EventWithUserPaylo
     
     init(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.channel?.cid)
-        deletedAt = try response.value(at: \.channel?.deleted)
+        deletedAt = try response.value(at: \.channel?.deletedAt)
         userId = try response.value(at: \.user?.id)
         payload = response
     }

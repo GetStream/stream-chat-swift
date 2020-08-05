@@ -20,8 +20,8 @@ struct MemberPayload<ExtraData: UserExtraData>: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case role
-        case created = "created_at"
-        case updated = "updated_at"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
         case isInvited = "invited"
         case inviteAcceptedAt = "invite_accepted_at"
         case inviteRejectedAt = "invite_rejected_at"
@@ -29,8 +29,8 @@ struct MemberPayload<ExtraData: UserExtraData>: Decodable {
     
     let user: UserPayload<ExtraData>
     let role: MemberRole?
-    let created: Date
-    let updated: Date
+    let createdAt: Date
+    let updatedAt: Date
     /// Checks if he was invited.
     let isInvited: Bool?
     /// A date when an invited was accepted.
@@ -40,15 +40,15 @@ struct MemberPayload<ExtraData: UserExtraData>: Decodable {
     
     init(user: UserPayload<ExtraData>,
          role: MemberRole?,
-         created: Date,
-         updated: Date,
+         createdAt: Date,
+         updatedAt: Date,
          isInvited: Bool? = nil,
          inviteAcceptedAt: Date? = nil,
          inviteRejectedAt: Date? = nil) {
         self.user = user
         self.role = role
-        self.created = created
-        self.updated = updated
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt

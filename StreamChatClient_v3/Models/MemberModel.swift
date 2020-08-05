@@ -13,50 +13,50 @@ public class MemberModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     public let memberRole: MemberRole
     
     /// A created date.
-    public let memberCreatedDate: Date
+    public let memberCreatedAt: Date
     
     /// A updated date.
-    public let memberUpdatedDate: Date
+    public let memberUpdatedAt: Date
     
     /// Checks if he was invited.
     public let isInvited: Bool
     
     /// A date when an invited was accepted.
-    public let inviteAcceptedDate: Date?
+    public let inviteAcceptedAt: Date?
     
     /// A date when an invited was rejected.
-    public let inviteRejectedDate: Date?
+    public let inviteRejectedAt: Date?
     
     public init(
         id: String,
         isOnline: Bool,
         isBanned: Bool,
         userRole: UserRole,
-        userCreatedDate: Date,
-        userUpdatedDate: Date,
-        lastActiveDate: Date?,
+        userCreatedAt: Date,
+        userUpdatedAt: Date,
+        lastActiveAt: Date?,
         extraData: ExtraData?,
         memberRole: MemberRole,
-        memberCreatedDate: Date,
-        memberUpdatedDate: Date,
+        memberCreatedAt: Date,
+        memberUpdatedAt: Date,
         isInvited: Bool,
-        inviteAcceptedDate: Date?,
-        inviteRejectedDate: Date?
+        inviteAcceptedAt: Date?,
+        inviteRejectedAt: Date?
     ) {
         self.memberRole = memberRole
-        self.memberCreatedDate = memberCreatedDate
-        self.memberUpdatedDate = memberUpdatedDate
+        self.memberCreatedAt = memberCreatedAt
+        self.memberUpdatedAt = memberUpdatedAt
         self.isInvited = isInvited
-        self.inviteAcceptedDate = inviteAcceptedDate
-        self.inviteRejectedDate = inviteRejectedDate
+        self.inviteAcceptedAt = inviteAcceptedAt
+        self.inviteRejectedAt = inviteRejectedAt
         
         super.init(id: id,
                    isOnline: isOnline,
                    isBanned: isBanned,
                    userRole: userRole,
-                   createdDate: userCreatedDate,
-                   updatedDate: userUpdatedDate,
-                   lastActiveDate: lastActiveDate,
+                   createdAt: userCreatedAt,
+                   updatedAt: userUpdatedAt,
+                   lastActiveAt: lastActiveAt,
                    extraData: extraData)
     }
 }

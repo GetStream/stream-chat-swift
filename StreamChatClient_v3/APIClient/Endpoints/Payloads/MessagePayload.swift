@@ -15,9 +15,9 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         case id
         case type
         case user
-        case created = "created_at"
-        case updated = "updated_at"
-        case deleted = "deleted_at"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case deletedAt = "deleted_at"
         case text
         case command
         case args
@@ -40,11 +40,11 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     /// A user (see `User`).
     public var user: UserPayload<ExtraData.User>
     /// A created date.
-    public var created: Date
+    public var createdAt: Date
     /// A updated date.
-    public var updated: Date
+    public var updatedAt: Date
     /// A deleted date.
-    public var deleted: Date?
+    public var deletedAt: Date?
     /// A text.
     public var text: String
     /// A used command name.
@@ -77,9 +77,9 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         id = try container.decode(String.self, forKey: .id)
         type = try container.decode(MessageType.self, forKey: .type)
         user = try container.decode(UserPayload<ExtraData.User>.self, forKey: .user)
-        created = try container.decode(Date.self, forKey: .created)
-        updated = try container.decode(Date.self, forKey: .updated)
-        deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         text = try container.decode(String.self, forKey: .text).trimmingCharacters(in: .whitespacesAndNewlines)
         isSilent = try container.decodeIfPresent(Bool.self, forKey: .isSilent) ?? false
         command = try container.decodeIfPresent(String.self, forKey: .command)
@@ -100,9 +100,9 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         id: String,
         type: MessageType,
         user: UserPayload<ExtraData.User>,
-        created: Date,
-        updated: Date,
-        deleted: Date? = nil,
+        createdAt: Date,
+        updatedAt: Date,
+        deletedAt: Date? = nil,
         text: String,
         command: String? = nil,
         args: String? = nil,
@@ -117,9 +117,9 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.id = id
         self.type = type
         self.user = user
-        self.created = created
-        self.updated = updated
-        self.deleted = deleted
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
         self.text = text
         self.command = command
         self.args = args

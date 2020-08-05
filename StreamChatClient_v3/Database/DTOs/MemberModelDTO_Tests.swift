@@ -19,9 +19,9 @@ class MemberModelDTO_Tests: XCTestCase {
         
         let userPayload: UserPayload<NameAndImageExtraData> = .init(id: userId,
                                                                     role: .admin,
-                                                                    created: .init(timeIntervalSince1970: 1000),
-                                                                    updated: .init(timeIntervalSince1970: 2000),
-                                                                    lastActiveDate: .init(timeIntervalSince1970: 3000),
+                                                                    createdAt: .init(timeIntervalSince1970: 1000),
+                                                                    updatedAt: .init(timeIntervalSince1970: 2000),
+                                                                    lastActiveAt: .init(timeIntervalSince1970: 3000),
                                                                     isOnline: true,
                                                                     isInvisible: true,
                                                                     isBanned: true,
@@ -31,8 +31,8 @@ class MemberModelDTO_Tests: XCTestCase {
         
         let payload: MemberPayload<NameAndImageExtraData> = .init(user: userPayload,
                                                                   role: .moderator,
-                                                                  created: .init(timeIntervalSince1970: 4000),
-                                                                  updated: .init(timeIntervalSince1970: 5000))
+                                                                  createdAt: .init(timeIntervalSince1970: 4000),
+                                                                  updatedAt: .init(timeIntervalSince1970: 5000))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -49,13 +49,13 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.isOnline, loadedMember?.isOnline)
             Assert.willBeEqual(payload.user.isBanned, loadedMember?.isBanned)
             Assert.willBeEqual(payload.user.role, loadedMember?.userRole)
-            Assert.willBeEqual(payload.user.created, loadedMember?.userCreatedDate)
-            Assert.willBeEqual(payload.user.updated, loadedMember?.userUpdatedDate)
-            Assert.willBeEqual(payload.user.lastActiveDate, loadedMember?.lastActiveDate)
+            Assert.willBeEqual(payload.user.createdAt, loadedMember?.userCreatedAt)
+            Assert.willBeEqual(payload.user.updatedAt, loadedMember?.userUpdatedAt)
+            Assert.willBeEqual(payload.user.lastActiveAt, loadedMember?.lastActiveAt)
             Assert.willBeEqual(payload.user.extraData, loadedMember?.extraData)
             Assert.willBeEqual(payload.role, loadedMember?.memberRole)
-            Assert.willBeEqual(payload.created, loadedMember?.memberCreatedDate)
-            Assert.willBeEqual(payload.updated, loadedMember?.memberUpdatedDate)
+            Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
+            Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
         }
     }
     
@@ -65,9 +65,9 @@ class MemberModelDTO_Tests: XCTestCase {
         
         let userPayload: UserPayload<NoExtraData> = .init(id: userId,
                                                           role: .admin,
-                                                          created: .init(timeIntervalSince1970: 1000),
-                                                          updated: .init(timeIntervalSince1970: 2000),
-                                                          lastActiveDate: .init(timeIntervalSince1970: 3000),
+                                                          createdAt: .init(timeIntervalSince1970: 1000),
+                                                          updatedAt: .init(timeIntervalSince1970: 2000),
+                                                          lastActiveAt: .init(timeIntervalSince1970: 3000),
                                                           isOnline: true,
                                                           isInvisible: true,
                                                           isBanned: true,
@@ -75,8 +75,8 @@ class MemberModelDTO_Tests: XCTestCase {
         
         let payload: MemberPayload<NoExtraData> = .init(user: userPayload,
                                                         role: .moderator,
-                                                        created: .init(timeIntervalSince1970: 4000),
-                                                        updated: .init(timeIntervalSince1970: 5000))
+                                                        createdAt: .init(timeIntervalSince1970: 4000),
+                                                        updatedAt: .init(timeIntervalSince1970: 5000))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -93,12 +93,12 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.isOnline, loadedMember?.isOnline)
             Assert.willBeEqual(payload.user.isBanned, loadedMember?.isBanned)
             Assert.willBeEqual(payload.user.role, loadedMember?.userRole)
-            Assert.willBeEqual(payload.user.created, loadedMember?.userCreatedDate)
-            Assert.willBeEqual(payload.user.updated, loadedMember?.userUpdatedDate)
-            Assert.willBeEqual(payload.user.lastActiveDate, loadedMember?.lastActiveDate)
+            Assert.willBeEqual(payload.user.createdAt, loadedMember?.userCreatedAt)
+            Assert.willBeEqual(payload.user.updatedAt, loadedMember?.userUpdatedAt)
+            Assert.willBeEqual(payload.user.lastActiveAt, loadedMember?.lastActiveAt)
             Assert.willBeEqual(payload.role, loadedMember?.memberRole)
-            Assert.willBeEqual(payload.created, loadedMember?.memberCreatedDate)
-            Assert.willBeEqual(payload.updated, loadedMember?.memberUpdatedDate)
+            Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
+            Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
         }
     }
 }

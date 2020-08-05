@@ -26,13 +26,13 @@ public class UserModel<ExtraData: UserExtraData> {
     public let userRole: UserRole
     
     /// The date the user was created.
-    public let userCreatedDate: Date
+    public let userCreatedAt: Date
     
     /// The date the user info was last time update
-    public let userUpdatedDate: Date
+    public let userUpdatedAt: Date
     
     /// The date the user was last time active.
-    public let lastActiveDate: Date?
+    public let lastActiveAt: Date?
     
     /// Teams the user belongs to.
     ///
@@ -50,18 +50,18 @@ public class UserModel<ExtraData: UserExtraData> {
          isOnline: Bool = false,
          isBanned: Bool = false,
          userRole: UserRole = .user,
-         createdDate: Date = .init(),
-         updatedDate: Date = .init(),
-         lastActiveDate: Date? = nil,
+         createdAt: Date = .init(),
+         updatedAt: Date = .init(),
+         lastActiveAt: Date? = nil,
          teams: [String] = [],
          extraData: ExtraData? = nil) {
         self.id = id
         self.isOnline = isOnline
         self.isBanned = isBanned
         self.userRole = userRole
-        userCreatedDate = createdDate
-        userUpdatedDate = updatedDate
-        self.lastActiveDate = lastActiveDate
+        userCreatedAt = createdAt
+        userUpdatedAt = updatedAt
+        self.lastActiveAt = lastActiveAt
         self.teams = teams
         self.extraData = extraData
     }

@@ -22,9 +22,9 @@ class MessageDTO_Tests: XCTestCase {
         
         let userPayload: UserPayload<NameAndImageExtraData> = .init(id: userId,
                                                                     role: .admin,
-                                                                    created: .unique,
-                                                                    updated: .unique,
-                                                                    lastActiveDate: .unique,
+                                                                    createdAt: .unique,
+                                                                    updatedAt: .unique,
+                                                                    lastActiveAt: .unique,
                                                                     isOnline: true,
                                                                     isInvisible: true,
                                                                     isBanned: true,
@@ -34,9 +34,9 @@ class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload<DefaultDataTypes> = .init(id: messageId,
                                                                      type: .regular,
                                                                      user: userPayload,
-                                                                     created: .unique,
-                                                                     updated: .unique,
-                                                                     deleted: nil,
+                                                                     createdAt: .unique,
+                                                                     updatedAt: .unique,
+                                                                     deletedAt: nil,
                                                                      text: "No, I am your father 🤯",
                                                                      command: "some command",
                                                                      args: "some args",
@@ -66,9 +66,9 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.id, messagePayload.id)
             Assert.willBeEqual(loadedMessage?.type, messagePayload.type)
             Assert.willBeEqual(loadedMessage?.author.id, messagePayload.user.id)
-            Assert.willBeEqual(loadedMessage?.createdDate, messagePayload.created)
-            Assert.willBeEqual(loadedMessage?.updatedDate, messagePayload.updated)
-            Assert.willBeEqual(loadedMessage?.deletedDate, messagePayload.deleted)
+            Assert.willBeEqual(loadedMessage?.createdAt, messagePayload.createdAt)
+            Assert.willBeEqual(loadedMessage?.updatedAt, messagePayload.updatedAt)
+            Assert.willBeEqual(loadedMessage?.deletedAt, messagePayload.deletedAt)
             Assert.willBeEqual(loadedMessage?.text, messagePayload.text)
             Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
             Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
@@ -99,9 +99,9 @@ class MessageDTO_Tests: XCTestCase {
         
         let userPayload: UserPayload<NameAndImageExtraData> = .init(id: userId,
                                                                     role: .admin,
-                                                                    created: .unique,
-                                                                    updated: .unique,
-                                                                    lastActiveDate: .unique,
+                                                                    createdAt: .unique,
+                                                                    updatedAt: .unique,
+                                                                    lastActiveAt: .unique,
                                                                     isOnline: true,
                                                                     isInvisible: true,
                                                                     isBanned: true,
@@ -111,9 +111,9 @@ class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload<SecretExtraData> = .init(id: messageId,
                                                                     type: .regular,
                                                                     user: userPayload,
-                                                                    created: .unique,
-                                                                    updated: .unique,
-                                                                    deleted: nil,
+                                                                    createdAt: .unique,
+                                                                    updatedAt: .unique,
+                                                                    deletedAt: nil,
                                                                     text: "No, I am your father 🤯",
                                                                     command: "some command",
                                                                     args: "some args",
@@ -143,9 +143,9 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.id, messagePayload.id)
             Assert.willBeEqual(loadedMessage?.type, messagePayload.type)
             Assert.willBeEqual(loadedMessage?.author.id, messagePayload.user.id)
-            Assert.willBeEqual(loadedMessage?.createdDate, messagePayload.created)
-            Assert.willBeEqual(loadedMessage?.updatedDate, messagePayload.updated)
-            Assert.willBeEqual(loadedMessage?.deletedDate, messagePayload.deleted)
+            Assert.willBeEqual(loadedMessage?.createdAt, messagePayload.createdAt)
+            Assert.willBeEqual(loadedMessage?.updatedAt, messagePayload.updatedAt)
+            Assert.willBeEqual(loadedMessage?.deletedAt, messagePayload.deletedAt)
             Assert.willBeEqual(loadedMessage?.text, messagePayload.text)
             Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
             Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
