@@ -87,20 +87,21 @@ public class Client<ExtraData: ExtraDataTypes> {
         
         let connectEndpoint = webSocketConnectEndpoint(userId: currentUserId)
         
-        // TODO: Add more middlewares
-        let eventMiddlewares = [
+        // Create middlewares.
+        let eventMiddlewares: [EventMiddleware] = [
             EventDataProcessorMiddleware<ExtraData>(database: databaseContainer)
         ]
         
-        let wsClient = environment.webSocketClientBuilder(webSocketEndpoint,
-                                                          urlSessionConfiguration,
-                                                          encoder,
-                                                          EventDecoder<ExtraData>(),
-                                                          eventMiddlewares)
+        // Create a WebSocketClient.
+        let webSocketClient = environment.webSocketClientBuilder(webSocketEndpoint,
+                                                                 urlSessionConfiguration,
+                                                                 encoder,
+                                                                 EventDecoder<ExtraData>(),
+                                                                 eventMiddlewares)
         
-        wsClient.connectionStateDelegate = self
+        webSocketClient.connectionStateDelegate = self
         
-        return wsClient
+        return webSocketClient
     }()
     
     /// The `DatabaseContainer` instance `Client` uses to store and cache data.
@@ -379,14 +380,17 @@ extension Client {
             _ requestEncoder: RequestEncoder,
             _ eventDecoder: AnyEventDecoder,
             _ eventMiddlewares: [EventMiddleware]
-        )
-            -> WebSocketClient = {
-                WebSocketClient(connectEndpoint: $0, sessionConfiguration: $1, requestEncoder: $2, eventDecoder: $3,
-                                eventMiddlewares: $4)
-            }
+        ) -> WebSocketClient = {
+            WebSocketClient(connectEndpoint: $0,
+                            sessionConfiguration: $1,
+                            requestEncoder: $2,
+                            eventDecoder: $3,
+                            eventMiddlewares: $4)
+        }
         
-        var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind) throws
-            -> DatabaseContainer = { try DatabaseContainer(kind: $0) }
+        var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind) throws -> DatabaseContainer = {
+            try DatabaseContainer(kind: $0)
+        }
         
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
         var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
