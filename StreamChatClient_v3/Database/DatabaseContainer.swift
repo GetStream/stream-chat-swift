@@ -43,9 +43,10 @@ class DatabaseContainer: NSPersistentContainer {
     ///   - completion: Called when the container finishes its initialization. If the initialization fails, called
     ///   with an error.
     ///
-    init(kind: Kind, modelName: String = "StreamChatModel") throws {
+    init(kind: Kind, modelName: String = "StreamChatModel", bundle: Bundle? = nil) throws {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
-        let modelURL = Bundle(for: DatabaseContainer.self).url(forResource: modelName, withExtension: "momd")!
+        let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
+        let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
         let model = NSManagedObjectModel(contentsOf: modelURL)!
         
         super.init(name: modelName, managedObjectModel: model)
