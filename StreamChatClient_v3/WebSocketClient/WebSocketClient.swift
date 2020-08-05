@@ -5,9 +5,6 @@
 import UIKit
 
 class WebSocketClient {
-    /// The time interval to ping connection to keep it alive.
-    static let pingTimeInterval: TimeInterval = 25
-    
     /// Additional options for configuring web socket behavior.
     struct Options: OptionSet {
         let rawValue: Int
@@ -16,7 +13,7 @@ class WebSocketClient {
     }
     
     /// The notification center `WebSocketClient` uses to send notifications about incoming events.
-    private(set) lazy var notificationCenter: NotificationCenter = environment.notificationCenterBuilder()
+    private(set) lazy var notificationCenter: NotificationCenter = environment.createNotificationCenter()
     
     /// The current state the web socket connection.
     @Atomic private(set) var connectionState: ConnectionState = .notConnected() {
@@ -25,12 +22,10 @@ class WebSocketClient {
             connectionStateDelegate?.webSocketClient(self, didUpdateConectionState: connectionState)
             
             if connectionState.isConnected {
-                pingTimer.resume()
                 reconnectionStrategy.sucessfullyConnected()
-                
-            } else {
-                pingTimer.suspend()
             }
+            
+            pingController.connectionStateDidChange(connectionState)
             
             if case .notConnected = connectionState {
                 // No reconnection attempts are scheduled
@@ -63,13 +58,6 @@ class WebSocketClient {
     /// The web socket engine used to make the actual WS connection
     lazy var engine: WebSocketEngine = createEngine()
     
-    /// The timer used for scheduling `ping` calls
-    private lazy var pingTimer = environment.timer
-        .scheduleRepeating(timeInterval: WebSocketClient.pingTimeInterval,
-                           queue: engine.callbackQueue) { [weak self] in
-            self?.engine.sendPing()
-        }
-    
     /// If in the `waitingForReconnect` state, this variable contains the reconnection timer.
     private var reconnectionTimer: TimerControl?
     
@@ -93,6 +81,15 @@ class WebSocketClient {
     
     /// An object containing external dependencies of `WebSocketClient`
     private let environment: Environment
+    
+    private(set) lazy var pingController: WebSocketPingController =
+        environment.createPingController(environment.timerType,
+                                         engineQueue,
+                                         { [weak self] in self?.engine.sendPing() },
+                                         { [weak self] in
+                                             self?.disconnect()
+                                             self?.reconnectIfNeeded(disconnectionError: ClientError.WebSocket("Pong timeout"))
+        })
     
     private func createEngine() -> WebSocketEngine {
         do {
@@ -209,18 +206,32 @@ protocol ConnectionStateDelegate: AnyObject {
 extension WebSocketClient {
     /// An object encapsulating all dependencies of `WebSocketClient`.
     struct Environment {
-        var timer: Timer.Type = DefaultTimer.self
+        typealias CreatePingController = (
+            _ timerType: Timer.Type,
+            _ timerQueue: DispatchQueue,
+            _ ping: @escaping () -> Void,
+            _ forceReconnect: @escaping () -> Void
+        ) -> WebSocketPingController
         
-        var notificationCenterBuilder: () -> NotificationCenter = NotificationCenter.init
+        typealias CreateEngine = (
+            _ request: URLRequest,
+            _ sessionConfiguration: URLSessionConfiguration,
+            _ callbackQueue: DispatchQueue
+        ) -> WebSocketEngine
         
-        var createEngine: (_ request: URLRequest, _ sessionConfiguration: URLSessionConfiguration, _ callbackQueue: DispatchQueue)
-            -> WebSocketEngine = {
-                if #available(iOS 13, *) {
-                    return URLSessionWebSocketEngine(request: $0, sessionConfiguration: $1, callbackQueue: $2)
-                } else {
-                    return StarscreamWebSocketProvider(request: $0, sessionConfiguration: $1, callbackQueue: $2)
-                }
+        var timerType: Timer.Type = DefaultTimer.self
+        
+        var createPingController: CreatePingController = WebSocketPingController.init
+        
+        var createNotificationCenter: () -> NotificationCenter = NotificationCenter.init
+        
+        var createEngine: CreateEngine = {
+            if #available(iOS 13, *) {
+                return URLSessionWebSocketEngine(request: $0, sessionConfiguration: $1, callbackQueue: $2)
+            } else {
+                return StarscreamWebSocketProvider(request: $0, sessionConfiguration: $1, callbackQueue: $2)
             }
+        }
         
         var backgroundTaskScheduler: BackgroundTaskScheduler = UIApplication.shared
     }
@@ -242,6 +253,8 @@ extension WebSocketClient: WebSocketEngineDelegate {
                 guard let self = self, let event = event else { return }
                 
                 if let event = event as? HealthCheckEvent {
+                    self.pingController.pongRecieved()
+                    
                     if self.connectionState.isConnected == false {
                         self.connectionState = .connected(connectionId: event.connectionId)
                     }
@@ -278,18 +291,34 @@ extension WebSocketClient: WebSocketEngineDelegate {
             disconnectionError = engineError
         }
         
-        if shouldReconnect, let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) {
-            let clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
-            connectionState = .waitingForReconnect(error: clientError)
-            
-            reconnectionTimer = environment.timer
-                .schedule(timeInterval: reconnectionDelay, queue: engineQueue) { [weak self] in
-                    self?.connect()
-                }
-            
+        if shouldReconnect {
+            reconnectIfNeeded(disconnectionError: disconnectionError)
         } else {
             connectionState = .notConnected(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
         }
+    }
+    
+    func reconnectIfNeeded(disconnectionError: Error?) {
+        guard let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) else {
+            let clientError: ClientError?
+            
+            if let error = disconnectionError as? ClientError {
+                clientError = error
+            } else {
+                clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
+            }
+            
+            connectionState = .notConnected(error: clientError)
+            return
+        }
+        
+        let clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
+        connectionState = .waitingForReconnect(error: clientError)
+        
+        reconnectionTimer = environment.timerType
+            .schedule(timeInterval: reconnectionDelay, queue: engineQueue) { [weak self] in
+                self?.connect()
+            }
     }
 }
 
