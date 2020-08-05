@@ -5,7 +5,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-final class Filter_Tests: XCTestCase {
+class Filter_Tests: XCTestCase {
     func testOperators() {
         var filter = Filter.equal("a", to: "b")
         XCTAssertEqual(filter.json, "{\"a\":\"b\"}")
