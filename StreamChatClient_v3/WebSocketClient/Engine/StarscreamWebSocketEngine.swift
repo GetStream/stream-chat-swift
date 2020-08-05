@@ -7,14 +7,14 @@ import Foundation
 #if canImport(Starscream)
     import Starscream
     
-    final class StarscreamWebSocketProvider: WebSocketEngine {
+    class StarscreamWebSocketProvider: WebSocketEngine {
         private let webSocket: Starscream.WebSocket
         var request: URLRequest { webSocket.request }
         var isConnected: Bool { webSocket.isConnected }
         var callbackQueue: DispatchQueue { webSocket.callbackQueue }
         weak var delegate: WebSocketEngineDelegate?
         
-        init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
+        required init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
             // Starscream doesn't support taking session configuration as a parameter se we need to copy
             // the headers manually.
             let requestHeaders = request.allHTTPHeaderFields ?? [:]

@@ -5,7 +5,7 @@
 import Foundation
 
 @available(iOS 13, *)
-final class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelegate, URLSessionWebSocketDelegate {
+class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelegate, URLSessionWebSocketDelegate {
     private var task: URLSessionWebSocketTask?
     let request: URLRequest
     let sessionConfiguration: URLSessionConfiguration
@@ -13,7 +13,7 @@ final class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionData
     let callbackQueue: DispatchQueue
     weak var delegate: WebSocketEngineDelegate?
     
-    init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
+    required init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
         self.request = request
         self.sessionConfiguration = sessionConfiguration
         self.callbackQueue = callbackQueue

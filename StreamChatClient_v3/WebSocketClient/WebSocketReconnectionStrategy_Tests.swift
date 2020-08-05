@@ -5,7 +5,7 @@
 @testable import StreamChatClient_v3
 import XCTest
 
-final class DefaultReconnectionStrategy_Tests: XCTestCase {
+class DefaultReconnectionStrategy_Tests: XCTestCase {
     var strategy: DefaultReconnectionStrategy!
     
     override func setUp() {
