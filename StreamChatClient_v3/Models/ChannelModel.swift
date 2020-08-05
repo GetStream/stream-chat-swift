@@ -27,7 +27,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     public let config: ChannelConfig
     
     /// Checks if the channel is frozen.
-    public let frozen: Bool
+    public let isFrozen: Bool
     
     /// A list of channel members.
     public let members: Set<MemberModel<ExtraData.User>>
@@ -75,7 +75,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
          deletedAt: Date? = nil,
          createdBy: UserModel<ExtraData.User>? = nil,
          config: ChannelConfig = .init(),
-         frozen: Bool = false,
+         isFrozen: Bool = false,
          members: Set<MemberModel<ExtraData.User>> = [],
          watchers: Set<UserModel<ExtraData.User>> = [],
          team: String = "",
@@ -94,7 +94,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         self.deletedAt = deletedAt
         self.createdBy = createdBy
         self.config = config
-        self.frozen = frozen
+        self.isFrozen = isFrozen
         self.members = members
         self.watchers = watchers
         self.team = team
