@@ -13,7 +13,7 @@ public struct MessageRead<ExtraData: UserExtraData>: Hashable {
     /// A user (see `User`).
     public let user: UserModel<ExtraData>
     /// A last read date by the user.
-    public let lastReadDate: Date
+    public let lastReadAt: Date
     /// Unread message count for the user.
     public let unreadMessagesCount: Int
     
@@ -23,9 +23,9 @@ public struct MessageRead<ExtraData: UserExtraData>: Hashable {
     ///   - user: a user.
     ///   - lastReadDate: the last read date.
     ///   - unreadMessages: Unread message count
-    public init(user: UserModel<ExtraData>, lastReadDate: Date, unreadMessagesCount: Int) {
+    public init(user: UserModel<ExtraData>, lastReadAt: Date, unreadMessagesCount: Int) {
         self.user = user
-        self.lastReadDate = lastReadDate
+        self.lastReadAt = lastReadAt
         self.unreadMessagesCount = unreadMessagesCount
     }
     

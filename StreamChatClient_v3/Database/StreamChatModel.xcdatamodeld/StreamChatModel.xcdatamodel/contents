@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E266" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19G73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
         <attribute name="cid" attributeType="String"/>
         <attribute name="config" attributeType="Binary"/>
-        <attribute name="createdDate" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="defaultSortingDate" attributeType="Date" usesScalarValueType="NO" spotlightIndexingEnabled="YES"/>
-        <attribute name="deletedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="defaultSortingAt" attributeType="Date" usesScalarValueType="NO" spotlightIndexingEnabled="YES"/>
+        <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" attributeType="Binary"/>
         <attribute name="isFrozen" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="lastMessageDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="typeRawValue" optional="YES" attributeType="String"/>
-        <attribute name="updatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdChannels" inverseEntity="UserDTO"/>
         <relationship name="members" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="channel" inverseEntity="MemberDTO"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="channel" inverseEntity="MessageDTO"/>
@@ -18,16 +18,16 @@
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TeamDTO" inverseName="channels" inverseEntity="TeamDTO"/>
         <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
         <fetchIndex name="defaultSortingIndex">
-            <fetchIndexElement property="defaultSortingDate" type="Binary" order="ascending"/>
+            <fetchIndexElement property="defaultSortingAt" type="Binary" order="ascending"/>
         </fetchIndex>
         <fetchIndex name="cid">
             <fetchIndexElement property="cid" type="Binary" order="ascending"/>
         </fetchIndex>
-        <fetchIndex name="lastMessageDate">
-            <fetchIndexElement property="lastMessageDate" type="Binary" order="ascending"/>
+        <fetchIndex name="lastMessageAt">
+            <fetchIndexElement property="lastMessageAt" type="Binary" order="ascending"/>
         </fetchIndex>
-        <fetchIndex name="createdDate">
-            <fetchIndexElement property="createdDate" type="Binary" order="ascending"/>
+        <fetchIndex name="createdAt">
+            <fetchIndexElement property="createdAt" type="Binary" order="ascending"/>
         </fetchIndex>
         <uniquenessConstraints>
             <uniquenessConstraint>
@@ -63,11 +63,11 @@
     <entity name="MemberDTO" representedClassName="MemberDTO" syncable="YES">
         <attribute name="channelRoleRaw" optional="YES" attributeType="String"/>
         <attribute name="id" attributeType="String"/>
-        <attribute name="inviteAcceptedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="inviteRejectedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="inviteAcceptedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="inviteRejectedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="isInvited" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="memberCreatedDate" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="memberUpdatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="memberCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="memberUpdatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="members" inverseEntity="ChannelDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="members" inverseEntity="UserDTO"/>
         <fetchIndex name="id">
@@ -83,8 +83,8 @@
         <attribute name="additionalStateRaw" optional="YES" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="args" optional="YES" attributeType="String"/>
         <attribute name="command" optional="YES" attributeType="String"/>
-        <attribute name="createdDate" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="deletedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isSilent" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -94,7 +94,7 @@
         <attribute name="showReplyInChannel" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="text" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
-        <attribute name="updatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="messages" inverseEntity="ChannelDTO"/>
         <relationship name="mentionedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mentionedMessages" inverseEntity="UserDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="messages" inverseEntity="UserDTO"/>
@@ -125,10 +125,10 @@
         <attribute name="id" attributeType="String"/>
         <attribute name="isBanned" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isOnline" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="lastActivityDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="userCreatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastActivityAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="userCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="userRoleRaw" attributeType="String"/>
-        <attribute name="userUpdatedDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="userUpdatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="createdChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="createdBy" inverseEntity="ChannelDTO"/>
         <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="user" inverseEntity="CurrentUserDTO"/>
         <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="user" inverseEntity="MemberDTO"/>
@@ -147,12 +147,12 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="ChannelDTO" positionX="0" positionY="45" width="128" height="253"/>
+        <element name="ChannelDTO" positionX="0" positionY="45" width="128" height="283"/>
         <element name="ChannelListQueryDTO" positionX="160" positionY="192" width="128" height="88"/>
         <element name="CurrentUserDTO" positionX="63" positionY="144" width="128" height="118"/>
         <element name="MemberDTO" positionX="0" positionY="63" width="128" height="178"/>
-        <element name="MessageDTO" positionX="27" positionY="72" width="128" height="88"/>
+        <element name="MessageDTO" positionX="27" positionY="72" width="128" height="313"/>
         <element name="TeamDTO" positionX="9" positionY="126" width="128" height="88"/>
-        <element name="UserDTO" positionX="-36" positionY="9" width="128" height="253"/>
+        <element name="UserDTO" positionX="-36" positionY="9" width="128" height="283"/>
     </elements>
 </model>

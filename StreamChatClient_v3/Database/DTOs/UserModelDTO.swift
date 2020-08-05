@@ -13,11 +13,11 @@ class UserDTO: NSManagedObject {
     @NSManaged var id: String
     @NSManaged var isBanned: Bool
     @NSManaged var isOnline: Bool
-    @NSManaged var lastActivityDate: Date?
+    @NSManaged var lastActivityAt: Date?
     @NSManaged var teams: String
-    @NSManaged var userCreatedDate: Date
+    @NSManaged var userCreatedAt: Date
     @NSManaged var userRoleRaw: String
-    @NSManaged var userUpdatedDate: Date
+    @NSManaged var userUpdatedAt: Date
 }
 
 extension UserDTO {
@@ -57,10 +57,10 @@ extension NSManagedObjectContext {
         
         dto.isBanned = payload.isBanned
         dto.isOnline = payload.isOnline
-        dto.lastActivityDate = payload.lastActiveDate
-        dto.userCreatedDate = payload.created
+        dto.lastActivityAt = payload.lastActiveAt
+        dto.userCreatedAt = payload.createdAt
         dto.userRoleRaw = payload.role.rawValue
-        dto.userUpdatedDate = payload.updated
+        dto.userUpdatedAt = payload.updatedAt
         
         // TODO: TEAMS
         
@@ -89,9 +89,9 @@ extension UserModel {
                          isOnline: dto.isOnline,
                          isBanned: dto.isBanned,
                          userRole: UserRole(rawValue: dto.userRoleRaw)!,
-                         createdDate: dto.userCreatedDate,
-                         updatedDate: dto.userUpdatedDate,
-                         lastActiveDate: dto.lastActivityDate,
+                         createdAt: dto.userCreatedAt,
+                         updatedAt: dto.userUpdatedAt,
+                         lastActiveAt: dto.lastActivityAt,
                          extraData: extraData)
     }
 }

@@ -14,11 +14,11 @@ class MemberDTO: NSManagedObject {
     
     // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
     @NSManaged var channelRoleRaw: String?
-    @NSManaged var memberCreatedDate: Date
-    @NSManaged var memberUpdatedDate: Date
+    @NSManaged var memberCreatedAt: Date
+    @NSManaged var memberUpdatedAt: Date
     
-    //  @NSManaged var invitedAcceptedDate: Date?
-    //  @NSManaged var invitedRejectedDate: Date?
+    //  @NSManaged var invitedAcceptedAt: Date?
+    //  @NSManaged var invitedRejectedAt: Date?
     //  @NSManaged var isInvited: Bool
     
     // MARK: - Relationships
@@ -68,8 +68,8 @@ extension NSManagedObjectContext {
             dto.channelRoleRaw = role.rawValue
         }
         
-        dto.memberCreatedDate = payload.created
-        dto.memberUpdatedDate = payload.updated
+        dto.memberCreatedAt = payload.createdAt
+        dto.memberUpdatedAt = payload.updatedAt
         
         return dto
     }
@@ -96,15 +96,15 @@ extension MemberModel {
                            isOnline: dto.user.isOnline,
                            isBanned: dto.user.isBanned,
                            userRole: UserRole(rawValue: dto.user.userRoleRaw)!,
-                           userCreatedDate: dto.user.userCreatedDate,
-                           userUpdatedDate: dto.user.userUpdatedDate,
-                           lastActiveDate: dto.user.lastActivityDate,
+                           userCreatedAt: dto.user.userCreatedAt,
+                           userUpdatedAt: dto.user.userUpdatedAt,
+                           lastActiveAt: dto.user.lastActivityAt,
                            extraData: extraData,
                            memberRole: role,
-                           memberCreatedDate: dto.memberCreatedDate,
-                           memberUpdatedDate: dto.memberUpdatedDate,
+                           memberCreatedAt: dto.memberCreatedAt,
+                           memberUpdatedAt: dto.memberUpdatedAt,
                            isInvited: false,
-                           inviteAcceptedDate: nil,
-                           inviteRejectedDate: nil)
+                           inviteAcceptedAt: nil,
+                           inviteRejectedAt: nil)
     }
 }

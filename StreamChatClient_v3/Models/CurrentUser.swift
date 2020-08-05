@@ -37,9 +37,9 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
                 isOnline: Bool = false,
                 isBanned: Bool = false,
                 userRole: UserRole = .user,
-                createdDate: Date = .init(),
-                updatedDate: Date = .init(),
-                lastActiveDate: Date? = nil,
+                createdAt: Date = .init(),
+                updatedAt: Date = .init(),
+                lastActiveAt: Date? = nil,
                 extraData: ExtraData? = nil,
                 devices: [Device] = [],
                 currentDevice: Device? = nil,
@@ -54,9 +54,9 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
                    isOnline: isOnline,
                    isBanned: isBanned,
                    userRole: userRole,
-                   createdDate: createdDate,
-                   updatedDate: updatedDate,
-                   lastActiveDate: lastActiveDate,
+                   createdAt: createdAt,
+                   updatedAt: updatedAt,
+                   lastActiveAt: lastActiveAt,
                    extraData: extraData)
     }
 }

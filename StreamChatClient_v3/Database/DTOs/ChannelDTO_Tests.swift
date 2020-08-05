@@ -34,10 +34,10 @@ class ChannelDTO_Tests: XCTestCase {
             
             Assert.willBeEqual(payload.channel.extraData, loadedChannel?.extraData)
             Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel?.type.rawValue)
-            Assert.willBeEqual(payload.channel.lastMessageDate, loadedChannel?.lastMessageDate)
-            Assert.willBeEqual(payload.channel.created, loadedChannel?.created)
-            Assert.willBeEqual(payload.channel.updated, loadedChannel?.updated)
-            Assert.willBeEqual(payload.channel.deleted, loadedChannel?.deleted)
+            Assert.willBeEqual(payload.channel.lastMessageAt, loadedChannel?.lastMessageAt)
+            Assert.willBeEqual(payload.channel.createdAt, loadedChannel?.createdAt)
+            Assert.willBeEqual(payload.channel.updatedAt, loadedChannel?.updatedAt)
+            Assert.willBeEqual(payload.channel.deletedAt, loadedChannel?.deletedAt)
             
             // Config
             Assert.willBeEqual(payload.channel.config.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
@@ -52,14 +52,14 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.config.messageRetention, loadedChannel?.config.messageRetention)
             Assert.willBeEqual(payload.channel.config.maxMessageLength, loadedChannel?.config.maxMessageLength)
             Assert.willBeEqual(payload.channel.config.commands, loadedChannel?.config.commands)
-            Assert.willBeEqual(payload.channel.config.created, loadedChannel?.config.created)
-            Assert.willBeEqual(payload.channel.config.updated, loadedChannel?.config.updated)
+            Assert.willBeEqual(payload.channel.config.createdAt, loadedChannel?.config.createdAt)
+            Assert.willBeEqual(payload.channel.config.updatedAt, loadedChannel?.config.updatedAt)
             
             // Creator
             Assert.willBeEqual(payload.channel.createdBy!.id, loadedChannel?.createdBy?.id)
-            Assert.willBeEqual(payload.channel.createdBy!.created, loadedChannel?.createdBy?.userCreatedDate)
-            Assert.willBeEqual(payload.channel.createdBy!.updated, loadedChannel?.createdBy?.userUpdatedDate)
-            Assert.willBeEqual(payload.channel.createdBy!.lastActiveDate, loadedChannel?.createdBy?.lastActiveDate)
+            Assert.willBeEqual(payload.channel.createdBy!.createdAt, loadedChannel?.createdBy?.userCreatedAt)
+            Assert.willBeEqual(payload.channel.createdBy!.updatedAt, loadedChannel?.createdBy?.userUpdatedAt)
+            Assert.willBeEqual(payload.channel.createdBy!.lastActiveAt, loadedChannel?.createdBy?.lastActiveAt)
             Assert.willBeEqual(payload.channel.createdBy!.isOnline, loadedChannel?.createdBy?.isOnline)
             Assert.willBeEqual(payload.channel.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
             Assert.willBeEqual(payload.channel.createdBy!.role, loadedChannel?.createdBy?.userRole)
@@ -68,13 +68,13 @@ class ChannelDTO_Tests: XCTestCase {
             
             // Members
             Assert.willBeEqual(payload.members[0].role, loadedChannel?.members.first?.memberRole)
-            Assert.willBeEqual(payload.members[0].created, loadedChannel?.members.first?.memberCreatedDate)
-            Assert.willBeEqual(payload.members[0].updated, loadedChannel?.members.first?.memberUpdatedDate)
+            Assert.willBeEqual(payload.members[0].createdAt, loadedChannel?.members.first?.memberCreatedAt)
+            Assert.willBeEqual(payload.members[0].updatedAt, loadedChannel?.members.first?.memberUpdatedAt)
             
             Assert.willBeEqual(payload.members[0].user.id, loadedChannel?.members.first?.id)
-            Assert.willBeEqual(payload.members[0].user.created, loadedChannel?.members.first?.userCreatedDate)
-            Assert.willBeEqual(payload.members[0].user.updated, loadedChannel?.members.first?.userUpdatedDate)
-            Assert.willBeEqual(payload.members[0].user.lastActiveDate, loadedChannel?.members.first?.lastActiveDate)
+            Assert.willBeEqual(payload.members[0].user.createdAt, loadedChannel?.members.first?.userCreatedAt)
+            Assert.willBeEqual(payload.members[0].user.updatedAt, loadedChannel?.members.first?.userUpdatedAt)
+            Assert.willBeEqual(payload.members[0].user.lastActiveAt, loadedChannel?.members.first?.lastActiveAt)
             Assert.willBeEqual(payload.members[0].user.isOnline, loadedChannel?.members.first?.isOnline)
             Assert.willBeEqual(payload.members[0].user.isBanned, loadedChannel?.members.first?.isBanned)
             Assert.willBeEqual(payload.members[0].user.role, loadedChannel?.members.first?.userRole)
@@ -90,9 +90,9 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].id, loadedChannel?.latestMessages.first?.id)
             Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel?.latestMessages.first?.type.rawValue)
             Assert.willBeEqual(payload.messages[0].text, loadedChannel?.latestMessages.first?.text)
-            Assert.willBeEqual(payload.messages[0].updated, loadedChannel?.latestMessages.first?.updatedDate)
-            Assert.willBeEqual(payload.messages[0].created, loadedChannel?.latestMessages.first?.createdDate)
-            Assert.willBeEqual(payload.messages[0].deleted, loadedChannel?.latestMessages.first?.deletedDate)
+            Assert.willBeEqual(payload.messages[0].updatedAt, loadedChannel?.latestMessages.first?.updatedAt)
+            Assert.willBeEqual(payload.messages[0].createdAt, loadedChannel?.latestMessages.first?.createdAt)
+            Assert.willBeEqual(payload.messages[0].deletedAt, loadedChannel?.latestMessages.first?.deletedAt)
             Assert.willBeEqual(payload.messages[0].args, loadedChannel?.latestMessages.first?.args)
             Assert.willBeEqual(payload.messages[0].command, loadedChannel?.latestMessages.first?.command)
             Assert.willBeEqual(payload.messages[0].extraData, loadedChannel?.latestMessages.first?.extraData)
@@ -104,9 +104,9 @@ class ChannelDTO_Tests: XCTestCase {
             
             // Message user
             Assert.willBeEqual(payload.messages[0].user.id, loadedChannel?.latestMessages.first?.author.id)
-            Assert.willBeEqual(payload.messages[0].user.created, loadedChannel?.latestMessages.first?.author.userCreatedDate)
-            Assert.willBeEqual(payload.messages[0].user.updated, loadedChannel?.latestMessages.first?.author.userUpdatedDate)
-            Assert.willBeEqual(payload.messages[0].user.lastActiveDate, loadedChannel?.latestMessages.first?.author.lastActiveDate)
+            Assert.willBeEqual(payload.messages[0].user.createdAt, loadedChannel?.latestMessages.first?.author.userCreatedAt)
+            Assert.willBeEqual(payload.messages[0].user.updatedAt, loadedChannel?.latestMessages.first?.author.userUpdatedAt)
+            Assert.willBeEqual(payload.messages[0].user.lastActiveAt, loadedChannel?.latestMessages.first?.author.lastActiveAt)
             Assert.willBeEqual(payload.messages[0].user.isOnline, loadedChannel?.latestMessages.first?.author.isOnline)
             Assert.willBeEqual(payload.messages[0].user.isBanned, loadedChannel?.latestMessages.first?.author.isBanned)
             Assert.willBeEqual(payload.messages[0].user.role, loadedChannel?.latestMessages.first?.author.userRole)
@@ -156,7 +156,7 @@ class ChannelDTO_Tests: XCTestCase {
         
         // Get `lastMessageDate` and `created` dates from generated dummy channels and sort the for the default sorting.
         let createdAndLastMessageDates = [payload1, payload2, payload3, payload4]
-            .map { $0.channel.lastMessageDate ?? $0.channel.created }
+            .map { $0.channel.lastMessageAt ?? $0.channel.createdAt }
             .sorted(by: { $0 > $1 })
         
         // Save the channels to DB. It doesn't matter which query we use because the filter for both of them is the same.
@@ -178,7 +178,7 @@ class ChannelDTO_Tests: XCTestCase {
         AssertAsync {
             // Check the default sorting.
             Assert.willBeEqual(channelsWithDefaultSorting.count, 4)
-            Assert.willBeEqual(channelsWithDefaultSorting.map { $0.lastMessageDate ?? $0.createdDate }, createdAndLastMessageDates)
+            Assert.willBeEqual(channelsWithDefaultSorting.map { $0.lastMessageAt ?? $0.createdAt }, createdAndLastMessageDates)
             
             // Check the sorting by `cid`.
             Assert.willBeEqual(channelsWithCIDSorting.count, 4)
@@ -191,10 +191,11 @@ class ChannelDTO_Tests: XCTestCase {
         var channelListSortingKey = ChannelListSortingKey.default
         XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "updated_at")
         XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
-                       NSSortDescriptor(key: "defaultSortingDate", ascending: true))
+                       NSSortDescriptor(key: "defaultSortingAt", ascending: true))
         XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: false),
-                       NSSortDescriptor(key: "defaultSortingDate", ascending: false))
-        XCTAssertEqual(ChannelListSortingKey.defaultSortDescriptor, NSSortDescriptor(key: "defaultSortingDate", ascending: false))
+                       NSSortDescriptor(key: "defaultSortingAt", ascending: false))
+        XCTAssertEqual(ChannelListSortingKey.defaultSortDescriptor,
+                       NSSortDescriptor(key: "defaultSortingAt", ascending: false))
         
         channelListSortingKey = .cid
         XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "cid")
@@ -205,20 +206,20 @@ class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
                        NSSortDescriptor(key: "typeRawValue", ascending: true))
         
-        channelListSortingKey = .createdDate
+        channelListSortingKey = .createdAt
         XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "created_at")
         XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
-                       NSSortDescriptor(key: "createdDate", ascending: true))
+                       NSSortDescriptor(key: "createdAt", ascending: true))
         
-        channelListSortingKey = .deletedDate
+        channelListSortingKey = .deletedAt
         XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "deleted_at")
         XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
-                       NSSortDescriptor(key: "deletedDate", ascending: true))
+                       NSSortDescriptor(key: "deletedAt", ascending: true))
         
-        channelListSortingKey = .lastMessageDate
+        channelListSortingKey = .lastMessageAt
         XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "last_message_at")
         XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true),
-                       NSSortDescriptor(key: "lastMessageDate", ascending: true))
+                       NSSortDescriptor(key: "lastMessageAt", ascending: true))
     }
     
     private func encodedChannelListSortingKey(_ sortingKey: ChannelListSortingKey) -> String {
@@ -247,10 +248,10 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(channelId, loadedChannel?.cid)
             
             Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel?.type.rawValue)
-            Assert.willBeEqual(payload.channel.lastMessageDate, loadedChannel?.lastMessageDate)
-            Assert.willBeEqual(payload.channel.created, loadedChannel?.created)
-            Assert.willBeEqual(payload.channel.updated, loadedChannel?.updated)
-            Assert.willBeEqual(payload.channel.deleted, loadedChannel?.deleted)
+            Assert.willBeEqual(payload.channel.lastMessageAt, loadedChannel?.lastMessageAt)
+            Assert.willBeEqual(payload.channel.createdAt, loadedChannel?.createdAt)
+            Assert.willBeEqual(payload.channel.updatedAt, loadedChannel?.updatedAt)
+            Assert.willBeEqual(payload.channel.deletedAt, loadedChannel?.deletedAt)
             
             // Config
             Assert.willBeEqual(payload.channel.config.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
@@ -265,14 +266,14 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.config.messageRetention, loadedChannel?.config.messageRetention)
             Assert.willBeEqual(payload.channel.config.maxMessageLength, loadedChannel?.config.maxMessageLength)
             Assert.willBeEqual(payload.channel.config.commands, loadedChannel?.config.commands)
-            Assert.willBeEqual(payload.channel.config.created, loadedChannel?.config.created)
-            Assert.willBeEqual(payload.channel.config.updated, loadedChannel?.config.updated)
+            Assert.willBeEqual(payload.channel.config.createdAt, loadedChannel?.config.createdAt)
+            Assert.willBeEqual(payload.channel.config.updatedAt, loadedChannel?.config.updatedAt)
             
             // Creator
             Assert.willBeEqual(payload.channel.createdBy!.id, loadedChannel?.createdBy?.id)
-            Assert.willBeEqual(payload.channel.createdBy!.created, loadedChannel?.createdBy?.userCreatedDate)
-            Assert.willBeEqual(payload.channel.createdBy!.updated, loadedChannel?.createdBy?.userUpdatedDate)
-            Assert.willBeEqual(payload.channel.createdBy!.lastActiveDate, loadedChannel?.createdBy?.lastActiveDate)
+            Assert.willBeEqual(payload.channel.createdBy!.createdAt, loadedChannel?.createdBy?.userCreatedAt)
+            Assert.willBeEqual(payload.channel.createdBy!.updatedAt, loadedChannel?.createdBy?.userUpdatedAt)
+            Assert.willBeEqual(payload.channel.createdBy!.lastActiveAt, loadedChannel?.createdBy?.lastActiveAt)
             Assert.willBeEqual(payload.channel.createdBy!.isOnline, loadedChannel?.createdBy?.isOnline)
             Assert.willBeEqual(payload.channel.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
             Assert.willBeEqual(payload.channel.createdBy!.role, loadedChannel?.createdBy?.userRole)
@@ -280,13 +281,13 @@ class ChannelDTO_Tests: XCTestCase {
             
             // Members
             Assert.willBeEqual(payload.members[0].role, loadedChannel?.members.first?.memberRole)
-            Assert.willBeEqual(payload.members[0].created, loadedChannel?.members.first?.memberCreatedDate)
-            Assert.willBeEqual(payload.members[0].updated, loadedChannel?.members.first?.memberUpdatedDate)
+            Assert.willBeEqual(payload.members[0].createdAt, loadedChannel?.members.first?.memberCreatedAt)
+            Assert.willBeEqual(payload.members[0].updatedAt, loadedChannel?.members.first?.memberUpdatedAt)
             
             Assert.willBeEqual(payload.members[0].user.id, loadedChannel?.members.first?.id)
-            Assert.willBeEqual(payload.members[0].user.created, loadedChannel?.members.first?.userCreatedDate)
-            Assert.willBeEqual(payload.members[0].user.updated, loadedChannel?.members.first?.userUpdatedDate)
-            Assert.willBeEqual(payload.members[0].user.lastActiveDate, loadedChannel?.members.first?.lastActiveDate)
+            Assert.willBeEqual(payload.members[0].user.createdAt, loadedChannel?.members.first?.userCreatedAt)
+            Assert.willBeEqual(payload.members[0].user.updatedAt, loadedChannel?.members.first?.userUpdatedAt)
+            Assert.willBeEqual(payload.members[0].user.lastActiveAt, loadedChannel?.members.first?.lastActiveAt)
             Assert.willBeEqual(payload.members[0].user.isOnline, loadedChannel?.members.first?.isOnline)
             Assert.willBeEqual(payload.members[0].user.isBanned, loadedChannel?.members.first?.isBanned)
             Assert.willBeEqual(payload.members[0].user.role, loadedChannel?.members.first?.userRole)
@@ -301,9 +302,9 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].id, loadedChannel?.latestMessages.first?.id)
             Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel?.latestMessages.first?.type.rawValue)
             Assert.willBeEqual(payload.messages[0].text, loadedChannel?.latestMessages.first?.text)
-            Assert.willBeEqual(payload.messages[0].updated, loadedChannel?.latestMessages.first?.updatedDate)
-            Assert.willBeEqual(payload.messages[0].created, loadedChannel?.latestMessages.first?.createdDate)
-            Assert.willBeEqual(payload.messages[0].deleted, loadedChannel?.latestMessages.first?.deletedDate)
+            Assert.willBeEqual(payload.messages[0].updatedAt, loadedChannel?.latestMessages.first?.updatedAt)
+            Assert.willBeEqual(payload.messages[0].createdAt, loadedChannel?.latestMessages.first?.createdAt)
+            Assert.willBeEqual(payload.messages[0].deletedAt, loadedChannel?.latestMessages.first?.deletedAt)
             Assert.willBeEqual(payload.messages[0].args, loadedChannel?.latestMessages.first?.args)
             Assert.willBeEqual(payload.messages[0].command, loadedChannel?.latestMessages.first?.command)
             Assert.willBeEqual(payload.messages[0].extraData, loadedChannel?.latestMessages.first?.extraData)
@@ -315,9 +316,9 @@ class ChannelDTO_Tests: XCTestCase {
             
             // Message user
             Assert.willBeEqual(payload.messages[0].user.id, loadedChannel?.latestMessages.first?.author.id)
-            Assert.willBeEqual(payload.messages[0].user.created, loadedChannel?.latestMessages.first?.author.userCreatedDate)
-            Assert.willBeEqual(payload.messages[0].user.updated, loadedChannel?.latestMessages.first?.author.userUpdatedDate)
-            Assert.willBeEqual(payload.messages[0].user.lastActiveDate, loadedChannel?.latestMessages.first?.author.lastActiveDate)
+            Assert.willBeEqual(payload.messages[0].user.createdAt, loadedChannel?.latestMessages.first?.author.userCreatedAt)
+            Assert.willBeEqual(payload.messages[0].user.updatedAt, loadedChannel?.latestMessages.first?.author.userUpdatedAt)
+            Assert.willBeEqual(payload.messages[0].user.lastActiveAt, loadedChannel?.latestMessages.first?.author.lastActiveAt)
             Assert.willBeEqual(payload.messages[0].user.isOnline, loadedChannel?.latestMessages.first?.author.isOnline)
             Assert.willBeEqual(payload.messages[0].user.isBanned, loadedChannel?.latestMessages.first?.author.isBanned)
             Assert.willBeEqual(payload.messages[0].user.role, loadedChannel?.latestMessages.first?.author.userRole)
@@ -332,9 +333,9 @@ extension XCTestCase {
         
         return .init(id: .unique,
                      role: .user,
-                     created: .unique,
-                     updated: .unique,
-                     lastActiveDate: .unique,
+                     createdAt: .unique,
+                     updatedAt: .unique,
+                     lastActiveAt: .unique,
                      isOnline: true,
                      isInvisible: true,
                      isBanned: true,
@@ -343,9 +344,22 @@ extension XCTestCase {
     }
     
     var dummyMessage: MessagePayload<DefaultDataTypes> {
-        MessagePayload(id: .unique, type: .regular, user: dummyUser, created: .unique, updated: .unique, deleted: nil,
-                       text: .unique, command: nil, args: nil, parentId: nil, showReplyInChannel: false, mentionedUsers: [],
-                       replyCount: 0, extraData: NoExtraData(), reactionScores: ["like": 1], isSilent: false)
+        MessagePayload(id: .unique,
+                       type: .regular,
+                       user: dummyUser,
+                       createdAt: .unique,
+                       updatedAt: .unique,
+                       deletedAt: nil,
+                       text: .unique,
+                       command: nil,
+                       args: nil,
+                       parentId: nil,
+                       showReplyInChannel: false,
+                       mentionedUsers: [],
+                       replyCount: 0,
+                       extraData: NoExtraData(),
+                       reactionScores: ["like": 1],
+                       isSilent: false)
     }
     
     func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
@@ -354,29 +368,29 @@ extension XCTestCase {
         let member: MemberPayload<NameAndImageExtraData> =
             .init(user: .init(id: .unique,
                               role: .admin,
-                              created: .unique,
-                              updated: .unique,
-                              lastActiveDate: .unique,
+                              createdAt: .unique,
+                              updatedAt: .unique,
+                              lastActiveAt: .unique,
                               isOnline: true,
                               isInvisible: true,
                               isBanned: true,
                               teams: [],
                               extraData: lukeExtraData),
                   role: .moderator,
-                  created: .unique,
-                  updated: .unique)
+                  createdAt: .unique,
+                  updatedAt: .unique)
         
         let channelCreatedDate = Date.unique
-        let lastMessageDate: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000 ... 900_000)) : nil
+        let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000 ... 900_000)) : nil
         
         let payload: ChannelPayload<DefaultDataTypes> =
             .init(channel: .init(cid: channelId,
                                  extraData: .init(name: "Luke's channel", imageURL: URL(string: UUID().uuidString)),
                                  typeRawValue: channelId.type.rawValue,
-                                 lastMessageDate: lastMessageDate,
-                                 created: channelCreatedDate,
-                                 deleted: .unique,
-                                 updated: .unique,
+                                 lastMessageAt: lastMessageAt,
+                                 createdAt: channelCreatedDate,
+                                 deletedAt: .unique,
+                                 updatedAt: .unique,
                                  createdBy: dummyUser,
                                  config: .init(reactionsEnabled: true,
                                                typingEventsEnabled: true,
@@ -395,8 +409,8 @@ extension XCTestCase {
                                                          set: "test",
                                                          args: "test")
                                                ],
-                                               created: .unique,
-                                               updated: .unique),
+                                               createdAt: .unique,
+                                               updatedAt: .unique),
                                  isFrozen: true,
                                  memberCount: 100,
                                  team: "",
@@ -417,9 +431,9 @@ extension XCTestCase {
     var dummyUserWithNoExtraData: UserPayload<NoExtraData> {
         .init(id: .unique,
               role: .user,
-              created: .unique,
-              updated: .unique,
-              lastActiveDate: .unique,
+              createdAt: .unique,
+              updatedAt: .unique,
+              lastActiveAt: .unique,
               isOnline: true,
               isInvisible: true,
               isBanned: true,
@@ -428,35 +442,48 @@ extension XCTestCase {
     }
     
     var dummyMessageWithNoExtraData: MessagePayload<NoExtraDataTypes> {
-        MessagePayload(id: .unique, type: .regular, user: dummyUserWithNoExtraData, created: .unique, updated: .unique,
-                       deleted: nil, text: .unique, command: nil, args: nil, parentId: nil, showReplyInChannel: false,
-                       mentionedUsers: [], replyCount: 0, extraData: NoExtraData(), reactionScores: [:], isSilent: false)
+        MessagePayload(id: .unique,
+                       type: .regular,
+                       user: dummyUserWithNoExtraData,
+                       createdAt: .unique,
+                       updatedAt: .unique,
+                       deletedAt: nil,
+                       text: .unique,
+                       command: nil,
+                       args: nil,
+                       parentId: nil,
+                       showReplyInChannel: false,
+                       mentionedUsers: [],
+                       replyCount: 0,
+                       extraData: NoExtraData(),
+                       reactionScores: [:],
+                       isSilent: false)
     }
     
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
         let member: MemberPayload<NoExtraData> =
             .init(user: .init(id: .unique,
                               role: .admin,
-                              created: .unique,
-                              updated: .unique,
-                              lastActiveDate: .unique,
+                              createdAt: .unique,
+                              updatedAt: .unique,
+                              lastActiveAt: .unique,
                               isOnline: true,
                               isInvisible: true,
                               isBanned: true,
                               teams: [],
                               extraData: .init()),
                   role: .member,
-                  created: .unique,
-                  updated: .unique)
+                  createdAt: .unique,
+                  updatedAt: .unique)
         
         let payload: ChannelPayload<NoExtraDataTypes> =
             .init(channel: .init(cid: channelId,
                                  extraData: .init(),
                                  typeRawValue: channelId.type.rawValue,
-                                 lastMessageDate: .unique,
-                                 created: .unique,
-                                 deleted: .unique,
-                                 updated: .unique,
+                                 lastMessageAt: .unique,
+                                 createdAt: .unique,
+                                 deletedAt: .unique,
+                                 updatedAt: .unique,
                                  createdBy: dummyUserWithNoExtraData,
                                  config: .init(reactionsEnabled: true,
                                                typingEventsEnabled: true,
@@ -475,8 +502,8 @@ extension XCTestCase {
                                                          set: "test",
                                                          args: "test")
                                                ],
-                                               created: .unique,
-                                               updated: .unique),
+                                               createdAt: .unique,
+                                               updatedAt: .unique),
                                  isFrozen: true,
                                  memberCount: 100,
                                  team: "",

@@ -43,9 +43,9 @@ public enum ChannelListSortingKey: SortingKey {
     case `default`
     case cid
     case type
-    case createdDate
-    case deletedDate
-    case lastMessageDate
+    case createdAt
+    case deletedAt
+    case lastMessageAt
     case custom(String)
     
     public func encode(to encoder: Encoder) throws {
@@ -56,9 +56,9 @@ public enum ChannelListSortingKey: SortingKey {
         case .default: value = "updated_at"
         case .cid: value = "cid"
         case .type: value = "type"
-        case .createdDate: value = "created_at"
-        case .deletedDate: value = "deleted_at"
-        case .lastMessageDate: value = "last_message_at"
+        case .createdAt: value = "created_at"
+        case .deletedAt: value = "deleted_at"
+        case .lastMessageAt: value = "last_message_at"
         case let .custom(string): value = string
         }
         
@@ -68,7 +68,7 @@ public enum ChannelListSortingKey: SortingKey {
 
 extension ChannelListSortingKey {
     static let defaultSortDescriptor: NSSortDescriptor = {
-        let dateKeyPath: KeyPath<ChannelDTO, Date> = \ChannelDTO.defaultSortingDate
+        let dateKeyPath: KeyPath<ChannelDTO, Date> = \ChannelDTO.defaultSortingAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
     
@@ -78,12 +78,12 @@ extension ChannelListSortingKey {
         var optionalDateKeyPath: KeyPath<ChannelDTO, Date?>?
         
         switch self {
-        case .default: dateKeyPath = \ChannelDTO.defaultSortingDate
+        case .default: dateKeyPath = \ChannelDTO.defaultSortingAt
         case .cid: stringKeyPath = \ChannelDTO.cid
         case .type: stringKeyPath = \ChannelDTO.typeRawValue
-        case .createdDate: dateKeyPath = \ChannelDTO.createdDate
-        case .deletedDate: optionalDateKeyPath = \ChannelDTO.deletedDate
-        case .lastMessageDate: optionalDateKeyPath = \ChannelDTO.lastMessageDate
+        case .createdAt: dateKeyPath = \ChannelDTO.createdAt
+        case .deletedAt: optionalDateKeyPath = \ChannelDTO.deletedAt
+        case .lastMessageAt: optionalDateKeyPath = \ChannelDTO.lastMessageAt
         case .custom: break
         }
         

@@ -12,9 +12,9 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         case avatarURL = "image"
         case isOnline = "online"
         case isBanned = "banned"
-        case created = "created_at"
-        case updated = "updated_at"
-        case lastActiveDate = "last_active"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case lastActiveAt = "last_active"
         case isInvisible = "invisible"
         case teams
         case unreadChannelsCount = "unread_channels"
@@ -26,11 +26,11 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     /// A user role.
     let role: UserRole
     /// A created date.
-    let created: Date
+    let createdAt: Date
     /// An updated date.
-    let updated: Date
+    let updatedAt: Date
     /// A last active date.
-    let lastActiveDate: Date?
+    let lastActiveAt: Date?
     /// An indicator if a user is online.
     let isOnline: Bool
     /// An indicator if a user is invisible.
@@ -44,9 +44,9 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     
     init(id: String,
          role: UserRole,
-         created: Date,
-         updated: Date,
-         lastActiveDate: Date?,
+         createdAt: Date,
+         updatedAt: Date,
+         lastActiveAt: Date?,
          isOnline: Bool,
          isInvisible: Bool,
          isBanned: Bool,
@@ -54,9 +54,9 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
          extraData: ExtraData) {
         self.id = id
         self.role = role
-        self.created = created
-        self.updated = updated
-        self.lastActiveDate = lastActiveDate
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.lastActiveAt = lastActiveAt
         self.isOnline = isOnline
         self.isInvisible = isInvisible
         self.isBanned = isBanned
@@ -68,9 +68,9 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         role = try container.decode(UserRole.self, forKey: .role)
-        created = try container.decode(Date.self, forKey: .created)
-        updated = try container.decode(Date.self, forKey: .updated)
-        lastActiveDate = try container.decodeIfPresent(Date.self, forKey: .lastActiveDate)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        lastActiveAt = try container.decodeIfPresent(Date.self, forKey: .lastActiveAt)
         isOnline = try container.decode(Bool.self, forKey: .isOnline)
         isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
@@ -95,9 +95,9 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     
     init(id: String,
          role: UserRole,
-         created: Date,
-         updated: Date,
-         lastActiveDate: Date?,
+         createdAt: Date,
+         updatedAt: Date,
+         lastActiveAt: Date?,
          isOnline: Bool,
          isInvisible: Bool,
          isBanned: Bool,
@@ -110,9 +110,9 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
         
         super.init(id: id,
                    role: role,
-                   created: created,
-                   updated: updated,
-                   lastActiveDate: lastActiveDate,
+                   createdAt: createdAt,
+                   updatedAt: updatedAt,
+                   lastActiveAt: lastActiveAt,
                    isOnline: isOnline,
                    isInvisible: isInvisible,
                    isBanned: isBanned,

@@ -11,9 +11,9 @@ public struct MessageModel<ExtraData: ExtraDataTypes> {
     public let text: String
     public let type: MessageType
     public let command: String?
-    public let createdDate: Date
-    public let updatedDate: Date
-    public let deletedDate: Date?
+    public let createdAt: Date
+    public let updatedAt: Date
+    public let deletedAt: Date?
     public let args: String?
     public let parentId: String?
     public let showReplyInChannel: Bool

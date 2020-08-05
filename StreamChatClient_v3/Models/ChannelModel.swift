@@ -9,16 +9,16 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     public let cid: ChannelId
     
     /// The date of the last message in the channel.
-    public let lastMessageDate: Date?
+    public let lastMessageAt: Date?
     
     /// The date when the channel was created.
-    public let created: Date
+    public let createdAt: Date
     
     /// The date when the channel was updated.
-    public let updated: Date
+    public let updatedAt: Date
     
     /// If the channel weas deleted, this field contains the date of the deletion.
-    public let deleted: Date?
+    public let deletedAt: Date?
     
     /// The user which created the channel.
     public let createdBy: UserModel<ExtraData.User>?
@@ -69,29 +69,29 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     let invitedMembers: Set<MemberModel<ExtraData.User>> // TODO: Why is this not public?
     
     init(cid: ChannelId,
-        lastMessageDate: Date? = nil,
-        created: Date = .init(),
-        updated: Date = .init(),
-        deleted: Date? = nil,
-        createdBy: UserModel<ExtraData.User>? = nil,
-        config: ChannelConfig = .init(),
-        frozen: Bool = false,
-        members: Set<MemberModel<ExtraData.User>> = [],
-        watchers: Set<UserModel<ExtraData.User>> = [],
-        team: String = "",
-        unreadCount: ChannelUnreadCount = .noUnread,
-        watcherCount: Int = 0,
-        unreadMessageRead: MessageRead<ExtraData.User>? = nil,
-        banEnabling: BanEnabling = .disabled,
-        isWatched: Bool = false,
-        extraData: ExtraData.Channel,
-        invitedMembers: Set<MemberModel<ExtraData.User>> = [],
-        latestMessages: [MessageModel<ExtraData>] = []) {
+         lastMessageAt: Date? = nil,
+         createdAt: Date = .init(),
+         updatedAt: Date = .init(),
+         deletedAt: Date? = nil,
+         createdBy: UserModel<ExtraData.User>? = nil,
+         config: ChannelConfig = .init(),
+         frozen: Bool = false,
+         members: Set<MemberModel<ExtraData.User>> = [],
+         watchers: Set<UserModel<ExtraData.User>> = [],
+         team: String = "",
+         unreadCount: ChannelUnreadCount = .noUnread,
+         watcherCount: Int = 0,
+         unreadMessageRead: MessageRead<ExtraData.User>? = nil,
+         banEnabling: BanEnabling = .disabled,
+         isWatched: Bool = false,
+         extraData: ExtraData.Channel,
+         invitedMembers: Set<MemberModel<ExtraData.User>> = [],
+         latestMessages: [MessageModel<ExtraData>] = []) {
         self.cid = cid
-        self.lastMessageDate = lastMessageDate
-        self.created = created
-        self.updated = updated
-        self.deleted = deleted
+        self.lastMessageAt = lastMessageAt
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
         self.createdBy = createdBy
         self.config = config
         self.frozen = frozen
@@ -114,7 +114,7 @@ extension ChannelModel {
     public var type: ChannelType { cid.type }
     
     /// Check if the channel was deleted.
-    public var isDeleted: Bool { deleted != nil }
+    public var isDeleted: Bool { deletedAt != nil }
     
     /// Checks if read events evalable for the current user.
     public var readEventsEnabled: Bool { /* config.readEventsEnabled && members.contains(Member.current) */ fatalError() }

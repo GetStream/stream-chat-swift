@@ -18,7 +18,7 @@ public struct MessageNewEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)
-        createdAt = try response.value(at: \.message?.created)
+        createdAt = try response.value(at: \.message?.createdAt)
         watcherCount = try response.value(at: \.watcherCount)
         unreadCount = try response.value(at: \.unreadCount)
         payload = response
@@ -37,7 +37,7 @@ public struct MessageUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithUserPaylo
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)
-        updatedAt = try response.value(at: \.message?.updated)
+        updatedAt = try response.value(at: \.message?.updatedAt)
         payload = response
     }
 }
@@ -54,7 +54,7 @@ public struct MessageDeletedEvent<ExtraData: ExtraDataTypes>: EventWithUserPaylo
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)
-        deletedAt = try response.value(at: \.message?.deleted)
+        deletedAt = try response.value(at: \.message?.deletedAt)
         payload = response
     }
 }

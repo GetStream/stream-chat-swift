@@ -18,9 +18,9 @@ class UserModelDTO_Tests: XCTestCase {
         
         let payload: UserPayload<NameAndImageExtraData> = .init(id: userId,
                                                                 role: .admin,
-                                                                created: .unique,
-                                                                updated: .unique,
-                                                                lastActiveDate: .unique,
+                                                                createdAt: .unique,
+                                                                updatedAt: .unique,
+                                                                lastActiveAt: .unique,
                                                                 isOnline: true,
                                                                 isInvisible: true,
                                                                 isBanned: true,
@@ -42,9 +42,9 @@ class UserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.isOnline, loadedUser?.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedUser?.isBanned)
             Assert.willBeEqual(payload.role, loadedUser?.userRole)
-            Assert.willBeEqual(payload.created, loadedUser?.userCreatedDate)
-            Assert.willBeEqual(payload.updated, loadedUser?.userUpdatedDate)
-            Assert.willBeEqual(payload.lastActiveDate, loadedUser?.lastActiveDate)
+            Assert.willBeEqual(payload.createdAt, loadedUser?.userCreatedAt)
+            Assert.willBeEqual(payload.updatedAt, loadedUser?.userUpdatedAt)
+            Assert.willBeEqual(payload.lastActiveAt, loadedUser?.lastActiveAt)
             Assert.willBeEqual(payload.teams, loadedUser?.teams)
             Assert.willBeEqual(payload.extraData, loadedUser?.extraData)
         }
@@ -55,9 +55,9 @@ class UserModelDTO_Tests: XCTestCase {
         
         let payload: UserPayload<NoExtraData> = .init(id: userId,
                                                       role: .admin,
-                                                      created: .unique,
-                                                      updated: .unique,
-                                                      lastActiveDate: .unique,
+                                                      createdAt: .unique,
+                                                      updatedAt: .unique,
+                                                      lastActiveAt: .unique,
                                                       isOnline: true,
                                                       isInvisible: true,
                                                       isBanned: true,
@@ -78,9 +78,9 @@ class UserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.isOnline, loadedUser?.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedUser?.isBanned)
             Assert.willBeEqual(payload.role, loadedUser?.userRole)
-            Assert.willBeEqual(payload.created, loadedUser?.userCreatedDate)
-            Assert.willBeEqual(payload.updated, loadedUser?.userUpdatedDate)
-            Assert.willBeEqual(payload.lastActiveDate, loadedUser?.lastActiveDate)
+            Assert.willBeEqual(payload.createdAt, loadedUser?.userCreatedAt)
+            Assert.willBeEqual(payload.updatedAt, loadedUser?.userUpdatedAt)
+            Assert.willBeEqual(payload.lastActiveAt, loadedUser?.lastActiveAt)
             Assert.willBeEqual(payload.teams, loadedUser?.teams)
         }
     }

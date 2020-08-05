@@ -64,14 +64,13 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     public let typeRawValue: String
     
     /// The last message date.
-    public let lastMessageDate: Date?
+    public let lastMessageAt: Date?
     /// A channel created date.
-    public let created: Date
+    public let createdAt: Date
     /// A channel deleted date.
-    public let deleted: Date?
-    
+    public let deletedAt: Date?
     /// A channel updated date.
-    public let updated: Date
+    public let updatedAt: Date
     
     /// A creator of the channel.
     public let createdBy: UserPayload<ExtraData.User>?
@@ -102,16 +101,15 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         /// An image URL.
         case imageURL = "image"
         /// A last message date.
-        case lastMessageDate = "last_message_at"
+        case lastMessageAt = "last_message_at"
         /// A user created by.
         case createdBy = "created_by"
         /// A created date.
-        case created = "created_at"
+        case createdAt = "created_at"
         /// A created date.
-        case updated = "updated_at"
-        
+        case updatedAt = "updated_at"
         /// A deleted date.
-        case deleted = "deleted_at"
+        case deletedAt = "deleted_at"
         /// A channel config.
         case config
         /// A frozen flag.
@@ -120,7 +118,6 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         case members
         /// The team the channel belongs to.
         case team
-        
         case memberCount = "member_count"
     }
     
@@ -130,14 +127,14 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         cid = try container.decode(ChannelId.self, forKey: .cid)
         let config = try container.decode(ChannelConfig.self, forKey: .config)
         self.config = config
-        created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created
-        deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
+        createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt) ?? config.createdAt
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
-        lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
+        lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
         team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
         memberCount = try container.decode(Int.self, forKey: .memberCount)
-        updated = try container.decode(Date.self, forKey: .updated)
         
         members = try container.decodeIfPresent([MemberPayload<ExtraData.User>].self, forKey: .members)
         
@@ -150,10 +147,10 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         cid: ChannelId,
         extraData: ExtraData.Channel,
         typeRawValue: String,
-        lastMessageDate: Date?,
-        created: Date,
-        deleted: Date?,
-        updated: Date,
+        lastMessageAt: Date?,
+        createdAt: Date,
+        deletedAt: Date?,
+        updatedAt: Date,
         createdBy: UserPayload<ExtraData.User>?,
         config: ChannelConfig,
         isFrozen: Bool,
@@ -164,10 +161,10 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.cid = cid
         self.extraData = extraData
         self.typeRawValue = typeRawValue
-        self.lastMessageDate = lastMessageDate
-        self.created = created
-        self.deleted = deleted
-        self.updated = updated
+        self.lastMessageAt = lastMessageAt
+        self.createdAt = createdAt
+        self.deletedAt = deletedAt
+        self.updatedAt = updatedAt
         self.createdBy = createdBy
         self.config = config
         self.isFrozen = isFrozen
@@ -193,8 +190,8 @@ public struct ChannelConfig: Codable {
         case messageRetention = "message_retention"
         case maxMessageLength = "max_message_length"
         case commands
-        case created = "created_at"
-        case updated = "updated_at"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
     }
     
     /// If users are allowed to add reactions to messages. Enabled by default.
@@ -222,9 +219,9 @@ public struct ChannelConfig: Codable {
     /// An array of commands, e.g. /giphy.
     public let commands: [Command]?
     /// A channel created date.
-    public let created: Date
+    public let createdAt: Date
     /// A channel updated date.
-    public let updated: Date
+    public let updatedAt: Date
     
     /// Determines if users are able to flag messages. Enabled by default.
     public var flagsEnabled: Bool { commands?.map { $0.name }.contains("flag") ?? false }
@@ -262,8 +259,8 @@ public struct ChannelConfig: Codable {
         messageRetention: String = "",
         maxMessageLength: Int = 0,
         commands: [Command] = [],
-        created: Date = .init(),
-        updated: Date = .init()
+        createdAt: Date = .init(),
+        updatedAt: Date = .init()
     ) {
         self.reactionsEnabled = reactionsEnabled
         self.typingEventsEnabled = typingEventsEnabled
@@ -277,7 +274,7 @@ public struct ChannelConfig: Codable {
         self.messageRetention = messageRetention
         self.maxMessageLength = maxMessageLength
         self.commands = commands
-        self.created = created
-        self.updated = updated
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }

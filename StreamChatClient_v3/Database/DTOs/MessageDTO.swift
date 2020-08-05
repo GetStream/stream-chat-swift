@@ -14,9 +14,9 @@ class MessageDTO: NSManagedObject {
     @NSManaged var text: String
     @NSManaged var type: String
     @NSManaged var command: String?
-    @NSManaged var createdDate: Date
-    @NSManaged var updatedDate: Date
-    @NSManaged var deletedDate: Date?
+    @NSManaged var createdAt: Date
+    @NSManaged var updatedAt: Date
+    @NSManaged var deletedAt: Date?
     @NSManaged var args: String?
     @NSManaged var parentId: String?
     @NSManaged var showReplyInChannel: Bool
@@ -32,7 +32,7 @@ class MessageDTO: NSManagedObject {
     static func load(for cid: String, limit: Int, offset: Int = 0, context: NSManagedObjectContext) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = NSPredicate(format: "channel.cid == %@", cid)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdDate, ascending: false)]
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
         request.fetchOffset = offset
         return try! context.fetch(request)
@@ -60,9 +60,9 @@ extension NSManagedObjectContext {
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
         
         dto.text = payload.text
-        dto.createdDate = payload.created
-        dto.updatedDate = payload.updated
-        dto.deletedDate = payload.deleted
+        dto.createdAt = payload.createdAt
+        dto.updatedAt = payload.updatedAt
+        dto.deletedAt = payload.deletedAt
         dto.type = payload.type.rawValue
         dto.command = payload.command
         dto.args = payload.args
@@ -97,9 +97,9 @@ extension MessageModel {
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command
-        createdDate = dto.createdDate
-        updatedDate = dto.updatedDate
-        deletedDate = dto.deletedDate
+        createdAt = dto.createdAt
+        updatedAt = dto.updatedAt
+        deletedAt = dto.deletedAt
         args = dto.args
         parentId = dto.parentId
         showReplyInChannel = dto.showReplyInChannel
