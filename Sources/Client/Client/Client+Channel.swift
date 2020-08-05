@@ -296,11 +296,10 @@ public extension Client {
     /// Mark messages in the channel as read.
     /// - Parameters:
     ///   - channel: a channel.
-    ///   - skipReadEventsEnabledCheck: if true, an API call is made even if the current user is not present in the channel's member list. Default is false.
     ///   - completion: a completion block with `Event`.
     @discardableResult
-    func markRead(channel: Channel, skipReadEventsEnabledCheck: Bool = false, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
-        guard skipReadEventsEnabledCheck || channel.readEventsEnabled else {
+    func markRead(channel: Channel, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
+        guard channel.readEventsEnabled else {
             return Subscription.empty
         }
         
