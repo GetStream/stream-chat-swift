@@ -24,6 +24,7 @@ class WebSocketClient_Tests: StressTestCase {
     var user: User!
     var backgroundTaskScheduler: MockBackgroundTaskScheduler!
     var requestEncoder: TestRequestEncoder!
+    var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
     
     var eventNotificationCenter: NotificationCenter!
     
@@ -48,9 +49,10 @@ class WebSocketClient_Tests: StressTestCase {
         requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
         
         var environment = WebSocketClient.Environment()
+        environment.timerType = VirtualTimeTimer.self
+        environment.createPingController = WebSocketPingControllerMock.init
         environment.createEngine = WebSocketEngineMock.init
-        environment.notificationCenterBuilder = { self.eventNotificationCenter }
-        environment.timer = VirtualTimeTimer.self
+        environment.createNotificationCenter = { self.eventNotificationCenter }
         environment.backgroundTaskScheduler = backgroundTaskScheduler
         
         webSocketClient = WebSocketClient(connectEndpoint: endpoint,
@@ -239,20 +241,42 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.staysTrue(engine.connect_calledCount == 0)
     }
     
+    // MARK: - Ping Controller
+    
     func test_pingIsSentPeriodically() {
         // Simulate connection
         test_connectionFlow()
-        
-        let pingInterval = WebSocketClient.pingTimeInterval
+        XCTAssertEqual(pingController.connectionStateDidChangeCount, 3)
+        XCTAssertEqual(pingController.pongRecievedCount, 1)
         assert(engine.sendPing_calledCount == 0)
         
         // Simulate time longer than pingTimeInterval and assert `engine.sendPing` was called
-        time.run(numberOfSeconds: pingInterval + 1)
+        time.run(numberOfSeconds: WebSocketPingController.pingTimeInterval)
+        engine.simulatePong()
         XCTAssertEqual(engine.sendPing_calledCount, 1)
+        XCTAssertEqual(pingController.pongRecievedCount, 2)
+    }
+    
+    func test_pongTimeout() {
+        // Simulate connection
+        test_connectionFlow()
+        XCTAssertEqual(engine.connect_calledCount, 1)
         
-        // Simulate time 3x longer than pingTimeInterval and assert 3 more pings
-        time.run(numberOfSeconds: 3 * pingInterval)
-        XCTAssertEqual(engine.sendPing_calledCount, 1 + 3)
+        reconnectionStrategy.reconnectionDelay = 1
+        var timeInterval = WebSocketPingController.pingTimeInterval
+        
+        // Simulate time longer than pingTimeInterval and assert `engine.sendPing` was called
+        assert(engine.sendPing_calledCount == 0)
+        time.run(numberOfSeconds: timeInterval)
+        XCTAssertEqual(engine.sendPing_calledCount, 1)
+        timeInterval += WebSocketPingController.pongTimeoutTimeInterval
+        time.run(numberOfSeconds: timeInterval)
+        XCTAssertEqual(engine.disconnect_calledCount, 1)
+        XCTAssertFalse(webSocketClient.connectionState.isConnected)
+        
+        AssertAsync {
+            Assert.willBeTrue(self.engine.connect_calledCount == 2)
+        }
     }
     
     func test_changingConnectEndpointAndReconnecting() {
@@ -535,5 +559,20 @@ class MockBackgroundTaskScheduler: BackgroundTaskScheduler {
     
     func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier) {
         endBackgroundTask_called = identifier
+    }
+}
+
+class WebSocketPingControllerMock: WebSocketPingController {
+    var connectionStateDidChangeCount = 0
+    var pongRecievedCount = 0
+    
+    override func connectionStateDidChange(_ connectionState: ConnectionState) {
+        connectionStateDidChangeCount += 1
+        super.connectionStateDidChange(connectionState)
+    }
+    
+    override func pongRecieved() {
+        pongRecievedCount += 1
+        super.pongRecieved()
     }
 }
