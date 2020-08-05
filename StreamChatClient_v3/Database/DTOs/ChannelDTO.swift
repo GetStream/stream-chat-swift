@@ -145,7 +145,7 @@ extension ChannelModel {
                             deletedAt: dto.deletedAt,
                             createdBy: UserModel<ExtraData.User>.create(fromDTO: dto.createdBy),
                             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
-                            frozen: dto.isFrozen,
+                            isFrozen: dto.isFrozen,
                             members: Set(members),
                             watchers: [],
                             team: "",
