@@ -6,9 +6,84 @@ import CoreData
 @testable import StreamChatClient_v3
 import XCTest
 
-class ChangeAggregator_Tests: XCTestCase {
+class ListDatabaseObserver_Tests: XCTestCase {
+    var observer: ListDatabaseObserver<String, TestManagedObject>!
+    var fetchRequest: NSFetchRequest<TestManagedObject>!
+    var database: DatabaseContainer!
+    
+    var testFRC: TestFetchedResultsController { observer.frc as! TestFetchedResultsController }
+    
+    override func setUp() {
+        super.setUp()
+        
+        fetchRequest = NSFetchRequest(entityName: "TestManagedObject")
+        fetchRequest.sortDescriptors = [.init(key: "id", ascending: true)]
+        database = try! DatabaseContainerMock(kind: .inMemory,
+                                              modelName: "TestDataModel",
+                                              bundle: Bundle(for: ListDatabaseObserver_Tests.self))
+        
+        observer = .init(context: database.viewContext,
+                         fetchRequest: fetchRequest,
+                         itemCreator: { $0.uniqueValue },
+                         fetchedResultsControllerType: TestFetchedResultsController.self)
+    }
+    
+    func test_initialValues() {
+        XCTAssertEqual(observer.frc.fetchRequest, fetchRequest)
+        XCTAssertEqual(observer.frc.managedObjectContext, database.viewContext)
+        XCTAssertTrue(observer.items.isEmpty)
+    }
+    
+    func test_changeAggregatorSetup() throws {
+        // Start observing to ensure everything is set up
+        try observer.startObserving()
+        
+        var onChangeCallbackCalled = false
+        observer.onChange = { _ in onChangeCallbackCalled = true }
+        
+        XCTAssert(observer.frc.delegate === observer.changeAggregator)
+        
+        // Simulate onChange callback from the aggregator
+        observer.changeAggregator.onChange?([])
+        XCTAssertTrue(onChangeCallbackCalled)
+    }
+    
+    func test_itemsArray() throws {
+        // Call startObserving to set everything up
+        try observer.startObserving()
+        
+        // Simulate objects fetched by FRC
+        let reference1 = [
+            TestManagedObject(),
+            TestManagedObject()
+        ]
+        testFRC.test_fetchedObjects = reference1
+        
+        XCTAssertEqual(observer.items, reference1.map { $0.uniqueValue })
+        
+        // Update the simulated fetch objects
+        let reference2 = [TestManagedObject()]
+        testFRC.test_fetchedObjects = reference2
+        
+        // Access items again, the objects should not be updated because the result should be cached until
+        // the callback from the change aggregator happens
+        XCTAssertEqual(observer.items, reference1.map { $0.uniqueValue })
+        
+        // Simulate the change aggregator callback and check the items get updated
+        observer.changeAggregator.onChange?([])
+        XCTAssertEqual(observer.items, reference2.map { $0.uniqueValue })
+    }
+    
+    func test_startObserving_startsFRC() throws {
+        assert(testFRC.test_performFetchCalled == false)
+        try observer.startObserving()
+        XCTAssertTrue(testFRC.test_performFetchCalled)
+    }
+}
+
+class ListChangeAggregator_Tests: XCTestCase {
     var fakeController: NSFetchedResultsController<NSFetchRequestResult>!
-    var aggregator: ChangeAggregator<TestManagedObject, String>!
+    var aggregator: ListChangeAggregator<TestManagedObject, String>!
     
     override func setUp() {
         super.setUp()
@@ -16,12 +91,12 @@ class ChangeAggregator_Tests: XCTestCase {
         fakeController = .init()
         
         // We don't have to provide real creator. Let's just simply use the value that gets in
-        aggregator = ChangeAggregator(itemCreator: { $0.testId })
+        aggregator = ListChangeAggregator(itemCreator: { $0.uniqueValue })
     }
     
     func test_addingItems() {
         // Set up aggregator callback
-        var result: [Change<String>]?
+        var result: [ListChange<String>]?
         aggregator.onChange = { result = $0 }
         
         // Simulate FRC starts updating
@@ -46,12 +121,13 @@ class ChangeAggregator_Tests: XCTestCase {
         // Simulate FRC finishes updating
         aggregator.controllerDidChangeContent(fakeController)
         
-        XCTAssertEqual(result, [.insert(insertedObject1.testId, index: [0, 0]), .insert(insertedObject2.testId, index: [1, 0])])
+        XCTAssertEqual(result,
+                       [.insert(insertedObject1.uniqueValue, index: [0, 0]), .insert(insertedObject2.uniqueValue, index: [1, 0])])
     }
     
     func test_movingItems() {
         // Set up aggregator callback
-        var result: [Change<String>]?
+        var result: [ListChange<String>]?
         aggregator.onChange = { result = $0 }
         
         // Simulate FRC starts updating
@@ -78,16 +154,16 @@ class ChangeAggregator_Tests: XCTestCase {
         
         // Move should also produce "update" change
         XCTAssertEqual(result, [
-            .move(movedObject1.testId, fromIndex: [5, 0], toIndex: [0, 0]),
-            .update(movedObject1.testId, index: [0, 0]),
-            .move(movedObject2.testId, fromIndex: [4, 0], toIndex: [1, 0]),
-            .update(movedObject2.testId, index: [1, 0])
+            .move(movedObject1.uniqueValue, fromIndex: [5, 0], toIndex: [0, 0]),
+            .update(movedObject1.uniqueValue, index: [0, 0]),
+            .move(movedObject2.uniqueValue, fromIndex: [4, 0], toIndex: [1, 0]),
+            .update(movedObject2.uniqueValue, index: [1, 0])
         ])
     }
     
     func test_updatingItems() {
         // Set up aggregator callback
-        var result: [Change<String>]?
+        var result: [ListChange<String>]?
         aggregator.onChange = { result = $0 }
         
         // Simulate FRC starts updating
@@ -113,14 +189,14 @@ class ChangeAggregator_Tests: XCTestCase {
         aggregator.controllerDidChangeContent(fakeController)
         
         XCTAssertEqual(result, [
-            .update(updatedObject1.testId, index: [1, 0]),
-            .update(updatedObject2.testId, index: [4, 0])
+            .update(updatedObject1.uniqueValue, index: [1, 0]),
+            .update(updatedObject2.uniqueValue, index: [4, 0])
         ])
     }
     
     func test_removingItems() {
         // Set up aggregator callback
-        var result: [Change<String>]?
+        var result: [ListChange<String>]?
         aggregator.onChange = { result = $0 }
         
         // Simulate FRC starts updating
@@ -146,13 +222,13 @@ class ChangeAggregator_Tests: XCTestCase {
         aggregator.controllerDidChangeContent(fakeController)
         
         XCTAssertEqual(result, [
-            .remove(removedObject1.testId, index: [1, 0]),
-            .remove(removedObject2.testId, index: [4, 0])
+            .remove(removedObject1.uniqueValue, index: [1, 0]),
+            .remove(removedObject2.uniqueValue, index: [4, 0])
         ])
     }
     
     func test_complexUpdate() {
-        var result: [Change<String>]?
+        var result: [ListChange<String>]?
         aggregator.onChange = { result = $0 }
         
         // Simulate FRC starts updating
@@ -192,15 +268,24 @@ class ChangeAggregator_Tests: XCTestCase {
         aggregator.controllerDidChangeContent(fakeController)
         
         XCTAssertEqual(result, [
-            .insert(addedObject.testId, index: [1, 0]),
-            .move(movedObject.testId, fromIndex: [4, 0], toIndex: [0, 0]),
-            .update(movedObject.testId, index: [0, 0]),
-            .remove(removedObject.testId, index: [4, 0]),
-            .update(updatedObject.testId, index: [2, 0])
+            .insert(addedObject.uniqueValue, index: [1, 0]),
+            .move(movedObject.uniqueValue, fromIndex: [4, 0], toIndex: [0, 0]),
+            .update(movedObject.uniqueValue, index: [0, 0]),
+            .remove(removedObject.uniqueValue, index: [4, 0]),
+            .update(updatedObject.uniqueValue, index: [2, 0])
         ])
     }
 }
 
-class TestManagedObject: NSManagedObject {
-    let testId: String = .unique
+class TestFetchedResultsController: NSFetchedResultsController<TestManagedObject> {
+    var test_performFetchCalled = false
+    var test_fetchedObjects: [TestManagedObject]?
+    
+    override func performFetch() throws {
+        test_performFetchCalled = true
+    }
+    
+    override var fetchedObjects: [TestManagedObject]? {
+        test_fetchedObjects
+    }
 }
