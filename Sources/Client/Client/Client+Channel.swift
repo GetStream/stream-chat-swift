@@ -299,10 +299,6 @@ public extension Client {
     ///   - completion: a completion block with `Event`.
     @discardableResult
     func markRead(channel: Channel, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
-        guard channel.readEventsEnabled else {
-            return Subscription.empty
-        }
-        
         logger?.log("🎫 Mark Read")
         
         return request(endpoint: .markRead(channel)) { (result: Result<EventResponse, ClientError>) in
