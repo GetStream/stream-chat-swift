@@ -6,7 +6,7 @@ import Foundation
 
 /// Formats the given log message with the given prefixes by log level.
 /// Useful for emphasizing different leveled messages on console, when used as:
-/// `prefixes: [.info: "𝒊", .debug: "🛠", .error: "❌", .fault: "🚨"]`
+/// `prefixes: [.info: "ℹ️", .debug: "🛠", .error: "❌", .fault: "🚨"]`
 public class PrefixLogFormatter: LogFormatter {
     private let prefixes: [LogLevel: String]
     

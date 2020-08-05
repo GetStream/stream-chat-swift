@@ -480,6 +480,7 @@
 		8ADA1EED2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADA1EEC2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift */; };
 		8ADA1EEF2473FD7800C4FC82 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADA1EEE2473FD7800C4FC82 /* EventTests.swift */; };
 		8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
+		8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */; };
 		8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -1023,6 +1024,7 @@
 		8ADA1EEE2473FD7800C4FC82 /* EventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
 		8AE6206923CF63F000AB3426 /* ClientTests00.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTests00.swift; sourceTree = "<group>"; };
 		8AE6206C23CF642900AB3426 /* TestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCase.swift; sourceTree = "<group>"; };
+		8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPongEmojiFormatter.swift; sourceTree = "<group>"; };
 		8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientLoggerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1283,8 +1285,9 @@
 		7964F3AF249A314D002A09EC /* Formatter */ = {
 			isa = PBXGroup;
 			children = (
-				7964F3B0249A314D002A09EC /* PrefixLogFormatter.swift */,
 				7964F3B1249A314D002A09EC /* LogFormatter.swift */,
+				7964F3B0249A314D002A09EC /* PrefixLogFormatter.swift */,
+				8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */,
 			);
 			path = Formatter;
 			sourceTree = "<group>";
@@ -2760,6 +2763,7 @@
 				792A4F25247FF01800EAF71D /* AppDelegate.swift in Sources */,
 				792A4F27247FF01800EAF71D /* SceneDelegate.swift in Sources */,
 				792A4F29247FF01800EAF71D /* MasterViewController.swift in Sources */,
+				8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */,
 				792A4F2B247FF01800EAF71D /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
