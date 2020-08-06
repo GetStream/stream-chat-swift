@@ -116,6 +116,82 @@ class ChannelListController_Tests: StressTestCase {
         // Completion should be called with the error
         XCTAssertEqual(completionCalledError as? TestError, testError)
     }
+
+    // MARK: - Channel muting propagation tests
+
+    func test_muteChannel_callsChannelUpdater() {
+        let channelID: ChannelId = .unique
+
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalled = false
+        controller.muteChannel(cid: channelID) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelID)
+        XCTAssertEqual(env.channelUpdater!.muteChannel_mute, true)
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater!.muteChannel_completion?(nil)
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_muteChannel_propagesErrorFromUpdater() {
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.muteChannel(cid: .unique) {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.muteChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_unmuteChannel_callsChannelUpdater() {
+        let channelID: ChannelId = .unique
+
+        // Simulate `unmuteChannel` call and catch the completion
+        var completionCalled = false
+        controller.unmuteChannel(cid: channelID) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelID)
+        XCTAssertEqual(env.channelUpdater!.muteChannel_mute, false)
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater!.muteChannel_completion?(nil)
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_unmuteChannel_propagesErrorFromUpdater() {
+        // Simulate `unmuteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.unmuteChannel(cid: .unique) {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.muteChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
     
     // MARK: - Change propagation tests
     
@@ -256,7 +332,25 @@ private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQue
     }
 }
 
-private class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {}
+private class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
+    var update_channelQuery: ChannelQuery<ExtraData>?
+    var update_completion: ((Error?) -> Void)?
+
+    var muteChannel_cid: ChannelId?
+    var muteChannel_mute: Bool?
+    var muteChannel_completion: ((Error?) -> Void)?
+
+    override func update(channelQuery: ChannelQuery<ExtraData>, completion: ((Error?) -> Void)? = nil) {
+        update_channelQuery = channelQuery
+        update_completion = completion
+    }
+
+    override func muteChannel(cid: ChannelId, mute: Bool, completion: ((Error?) -> Void)? = nil) {
+        muteChannel_cid = cid
+        muteChannel_mute = mute
+        muteChannel_completion = completion
+    }
+}
 
 /// NSFetchedResultsController subclass allowing injecting fetched objects
 private class TestFetchedResultsController: NSFetchedResultsController<ChannelDTO> {
