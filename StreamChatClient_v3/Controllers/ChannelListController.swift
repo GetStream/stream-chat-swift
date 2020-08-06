@@ -23,7 +23,7 @@ public typealias ChannelListController = ChannelListControllerGeneric<DefaultDat
 ///
 ///  ... you can do this and that
 ///
-public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallbable {
+public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable {
     /// The query specifying and filtering the list of channels.
     public let query: ChannelListQuery
     
