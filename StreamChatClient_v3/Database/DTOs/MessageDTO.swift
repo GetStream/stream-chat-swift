@@ -29,6 +29,14 @@ class MessageDTO: NSManagedObject {
     @NSManaged var mentionedUsers: Set<UserDTO>
     @NSManaged var channel: ChannelDTO
     
+    /// Returns a fetch request for messages from the channel with the provided `cid`.
+    static func messagesFetchRequest(for cid: ChannelId) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
+        return request
+    }
+    
     static func load(for cid: String, limit: Int, offset: Int = 0, context: NSManagedObjectContext) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = NSPredicate(format: "channel.cid == %@", cid)
