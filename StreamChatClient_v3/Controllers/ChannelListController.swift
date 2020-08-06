@@ -41,6 +41,11 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
         .channelQueryUpdaterBuilder(client.databaseContainer,
                                     client.webSocketClient,
                                     client.apiClient)
+
+    private lazy var channelUpdater: ChannelUpdater<ExtraData> = environment
+        .channelUpdaterBuilder(client.databaseContainer,
+                               client.webSocketClient,
+                               client.apiClient)
     
     /// A type-erased delegate.
     private(set) var anyDelegate: AnyChannelListControllerDelegate<ExtraData>?
@@ -132,6 +137,36 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
         where Delegate.ExtraData == ExtraData
     {
         anyDelegate = AnyChannelListControllerDelegate(delegate)
+    }
+}
+
+// MARK: - Channel muting
+
+public extension ChannelListControllerGeneric {
+    /// Mutes the channel with provided **cid**.
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - completion: Called when the channel is muted. If the api-call fails, the completion
+    /// is called with an error.
+    func muteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        channelUpdater.muteChannel(cid: cid, mute: true) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Unmutes the channel with provided **cid**.
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - completion: Called when the channel is unmuted. If the api-call fails, the completion
+    /// is called with an error.
+    func unmuteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        channelUpdater.muteChannel(cid: cid, mute: false) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
     }
 }
 
