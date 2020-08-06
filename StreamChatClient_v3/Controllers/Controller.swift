@@ -22,6 +22,20 @@ public class Controller {
     public var callbackQueue: DispatchQueue = .main
 }
 
+extension Controller {
+    /// A helper function to ensure the callback is performed on the callback queue.
+    func callback(_ action: @escaping () -> Void) {
+        if callbackQueue == .main, Thread.current.isMainThread {
+            // Perform the action on the main queue synchronously
+            action()
+        } else {
+            callbackQueue.async {
+                action()
+            }
+        }
+    }
+}
+
 /// A delegate protocol some Controllers use to propane the information about remote data fetching. You can use it to let
 /// users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.
 public protocol ControllerRemoteActivityDelegate: AnyObject {
@@ -38,21 +52,18 @@ public extension ControllerRemoteActivityDelegate {
     func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?) {}
 }
 
-/// A helper protocol allowing calling delegate on a given dispatch queue.
-protocol DelegateCallbable {
+/// A helper protocol allowing calling delegate using existing `callback` method.
+protocol DelegateCallable {
     associatedtype Delegate
+    func callback(_ action: @escaping () -> Void)
     var anyDelegate: Delegate { get }
 }
 
-extension DelegateCallbable where Self: Controller {
+extension DelegateCallable {
+    /// A helper function to ensure the delegate callback is performed using the `callback` method.
     func delegateCallback(_ callback: @escaping (Delegate) -> Void) {
-        if callbackQueue == DispatchQueue.main, Thread.current.isMainThread {
-            // Call the delegate on the main queue synchronously
-            callback(anyDelegate)
-        } else {
-            callbackQueue.async {
-                callback(self.anyDelegate)
-            }
+        self.callback {
+            callback(self.anyDelegate)
         }
     }
 }
