@@ -81,7 +81,7 @@ class ChannelListController_Tests: StressTestCase {
         controller.startUpdating()
         
         // Assert the existing channel is loaded
-        XCTAssertEqual(controller.channels.map { $0.cid }, [cidMatchingQuery])
+        XCTAssertEqual(controller.channels.map(\.cid), [cidMatchingQuery])
     }
     
     func test_startUpdating_callsChannelQueryUpdater() {
@@ -140,7 +140,7 @@ class ChannelListController_Tests: StressTestCase {
         }
         
         // Assert the resulting value is updated
-        AssertAsync.willBeEqual(controller.channels.map { $0.cid }, [cid])
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
     }
     
     // MARK: - Delegate tests
@@ -223,16 +223,27 @@ class ChannelListController_Tests: StressTestCase {
 
 private class TestEnvironment {
     var channelQueryUpdater: ChannelQueryUpdaterMock<DefaultDataTypes>?
+    var channelUpdater: ChannelUpdaterMock<DefaultDataTypes>?
     var changeAggregator: ChangeAggregator<ChannelDTO, Channel>?
     
     lazy var environment: ChannelListController.Environment = .init(channelQueryUpdaterBuilder: { [unowned self] in
-        self.channelQueryUpdater = ChannelQueryUpdaterMock(database: $0, webSocketClient: $1, apiClient: $2)
-        return self.channelQueryUpdater!
-    },
+                                                                        self
+                                                                            .channelQueryUpdater =
+                                                                            ChannelQueryUpdaterMock(database: $0,
+                                                                                                    webSocketClient: $1,
+                                                                                                    apiClient: $2)
+                                                                        return self.channelQueryUpdater!
+                                                                    },
+                                                                    channelUpdaterBuilder: { [unowned self] in
+                                                                        self.channelUpdater = ChannelUpdaterMock(database: $0,
+                                                                                                                 webSocketClient: $1,
+                                                                                                                 apiClient: $2)
+                                                                        return self.channelUpdater!
+                                                                    },
                                                                     changeAggregatorBuilder: { [unowned self] in
-        self.changeAggregator = ChangeAggregator(itemCreator: $0)
-        return self.changeAggregator!
-        })
+                                                                        self.changeAggregator = ChangeAggregator(itemCreator: $0)
+                                                                        return self.changeAggregator!
+                                                                    })
 }
 
 private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQueryUpdater<ExtraData> {
@@ -244,6 +255,8 @@ private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQue
         update_completion = completion
     }
 }
+
+private class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {}
 
 /// NSFetchedResultsController subclass allowing injecting fetched objects
 private class TestFetchedResultsController: NSFetchedResultsController<ChannelDTO> {
