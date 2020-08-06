@@ -245,7 +245,7 @@ class WebSocketClient_Tests: StressTestCase {
     
     func test_webSocketPingController_connectionStateDidChange_calledWhenConnectionChanges() {
         test_connectionFlow()
-        XCTAssertEqual(3, pingController.connectionStateDidChangeCount)
+        XCTAssertEqual(1, pingController.webSocketConnectedCount)
     }
     
     func test_webSocketPingController_ping_callsEngineWithPing() {
@@ -257,7 +257,7 @@ class WebSocketClient_Tests: StressTestCase {
     func test_webSocketPingController_forceReconnect_disconnectsEngine() {
         test_connectionFlow()
         webSocketClient.forceDisconnect()
-        XCTAssertFalse(webSocketClient.connectionState.isConnected)
+        XCTAssertEqual(webSocketClient.connectionState, .disconnecting(source: .noPongReceived))
     }
     
     func test_changingConnectEndpointAndReconnecting() {
@@ -544,11 +544,14 @@ class MockBackgroundTaskScheduler: BackgroundTaskScheduler {
 }
 
 class WebSocketPingControllerMock: WebSocketPingController {
-    var connectionStateDidChangeCount = 0
+    var webSocketConnectedCount = 0
     var pongRecievedCount = 0
     
     override func connectionStateDidChange(_ connectionState: ConnectionState) {
-        connectionStateDidChangeCount += 1
+        if connectionState.isConnected {
+            webSocketConnectedCount += 1
+        }
+        
         super.connectionStateDidChange(connectionState)
     }
     
