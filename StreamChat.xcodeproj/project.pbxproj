@@ -483,6 +483,7 @@
 		8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */; };
 		8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */; };
 		DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */; };
+		DAEAF4B324DAD99E0015FB28 /* HideChannelRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1028,6 +1029,7 @@
 		8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPongEmojiFormatter.swift; sourceTree = "<group>"; };
 		8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientLoggerTests.swift; sourceTree = "<group>"; };
 		DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints_Tests.swift; sourceTree = "<group>"; };
+		DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideChannelRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1343,6 +1345,7 @@
 			isa = PBXGroup;
 			children = (
 				79682C4724BF37550071578E /* Payloads */,
+				DAEAF4B624DADA990015FB28 /* Requests */,
 				79877A172498E4EE00015F8B /* Endpoint.swift */,
 				79877A142498E4EE00015F8B /* UserPayload.swift */,
 				79877A162498E4EE00015F8B /* UserPayload_Tests.swift */,
@@ -2347,6 +2350,14 @@
 			path = "Integration Tests";
 			sourceTree = "<group>";
 		};
+		DAEAF4B624DADA990015FB28 /* Requests */ = {
+			isa = PBXGroup;
+			children = (
+				DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */,
+			);
+			path = Requests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2823,6 +2834,7 @@
 				79877A192498E4EE00015F8B /* UserPayload.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */,
+				DAEAF4B324DAD99E0015FB28 /* HideChannelRequest.swift in Sources */,
 				792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */,
 				79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */,
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,

@@ -29,4 +29,28 @@ extension Endpoint {
               requiresConnectionId: true,
               body: ["channel_cid": cid])
     }
+
+    static func deleteChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(path: "channels/\(cid.type)/\(cid.id)",
+              method: .delete,
+              queryItems: nil,
+              requiresConnectionId: false,
+              body: nil)
+    }
+
+    static func hideChannel(cid: ChannelId, userId: UserId, clearHistory: Bool) -> Endpoint<EmptyResponse> {
+        .init(path: "channels/\(cid.type)/\(cid.id)/hide",
+              method: .post,
+              queryItems: nil,
+              requiresConnectionId: false,
+              body: HideChannelRequest(userId: userId, clearHistory: clearHistory))
+    }
+
+    static func showChannel(cid: ChannelId, userId: UserId) -> Endpoint<EmptyResponse> {
+        .init(path: "channels/\(cid.type)/\(cid.id)/show",
+              method: .post,
+              queryItems: nil,
+              requiresConnectionId: false,
+              body: ["userId": userId])
+    }
 }
