@@ -19,11 +19,8 @@ class ChannelListController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        
         client = Client(config: ChatClientConfig(apiKey: .init(.unique)))
-        
         query = .init(filter: .in("members", ["Luke"]))
-        
         controller = ChannelListController(query: query, client: client, environment: env.environment)
     }
     
@@ -309,14 +306,7 @@ class ChannelListController_Tests: StressTestCase {
 
     // MARK: - Change propagation tests
     
-    func test_changeAggregator_isSetAsDelegateForFRC() {
-        // Simulate `startUpdating` call
-        controller.startUpdating()
-        
-        XCTAssert(controller.fetchedResultsController.delegate === env.changeAggregator)
-    }
-    
-    func test_changesFromChangeAggregatorArePropagated() throws {
+    func test_changesInTheDatabase_arePropagated() throws {
         // Simulate `startUpdating` call
         controller.startUpdating()
         
@@ -414,26 +404,20 @@ class ChannelListController_Tests: StressTestCase {
 private class TestEnvironment {
     var channelQueryUpdater: ChannelQueryUpdaterMock<DefaultDataTypes>?
     var channelUpdater: ChannelUpdaterMock<DefaultDataTypes>?
-    var changeAggregator: ChangeAggregator<ChannelDTO, Channel>?
     
-    lazy var environment: ChannelListController.Environment = .init(channelQueryUpdaterBuilder: { [unowned self] in
-                                                                        self
-                                                                            .channelQueryUpdater =
-                                                                            ChannelQueryUpdaterMock(database: $0,
-                                                                                                    webSocketClient: $1,
-                                                                                                    apiClient: $2)
-                                                                        return self.channelQueryUpdater!
-                                                                    },
-                                                                    channelUpdaterBuilder: { [unowned self] in
-                                                                        self.channelUpdater = ChannelUpdaterMock(database: $0,
-                                                                                                                 webSocketClient: $1,
-                                                                                                                 apiClient: $2)
-                                                                        return self.channelUpdater!
-                                                                    },
-                                                                    changeAggregatorBuilder: { [unowned self] in
-                                                                        self.changeAggregator = ChangeAggregator(itemCreator: $0)
-                                                                        return self.changeAggregator!
-                                                                    })
+    lazy var environment: ChannelListController.Environment =
+        .init(channelQueryUpdaterBuilder: { [unowned self] in
+                self.channelQueryUpdater = ChannelQueryUpdaterMock(database: $0,
+                                                               webSocketClient: $1,
+                                                               apiClient: $2)
+                return self.channelQueryUpdater!
+                },
+              channelUpdaterBuilder: { [unowned self] in
+                self.channelUpdater = ChannelUpdaterMock(database: $0,
+                                                         webSocketClient: $1,
+                                                         apiClient: $2)
+                return self.channelUpdater!
+        })
 }
 
 private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQueryUpdater<ExtraData> {
@@ -496,20 +480,11 @@ private class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<Extr
     }
 }
 
-/// NSFetchedResultsController subclass allowing injecting fetched objects
-private class TestFetchedResultsController: NSFetchedResultsController<ChannelDTO> {
-    var simulatedFetchedObjects: [ChannelDTO]?
-    
-    override var fetchedObjects: [ChannelDTO]? {
-        simulatedFetchedObjects ?? super.fetchedObjects
-    }
-}
-
 // A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
     var willStartFetchingRemoteDataCalledCounter = 0
     var didStopFetchingRemoteDataCalledCounter = 0
-    var didChangeChannels_changes: [Change<Channel>]?
+    var didChangeChannels_changes: [ListChange<Channel>]?
     
     func controllerWillStartFetchingRemoteData(_ controller: Controller) {
         willStartFetchingRemoteDataCalledCounter += 1
@@ -521,7 +496,8 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
         validateQueue()
     }
     
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [Change<Channel>]) {
+    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+                    didChangeChannels changes: [ListChange<Channel>]) {
         didChangeChannels_changes = changes
         validateQueue()
     }
@@ -531,7 +507,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDelegateGeneric {
     var willStartFetchingRemoteDataCalledCounter = 0
     var didStopFetchingRemoteDataCalledCounter = 0
-    var didChangeChannels_changes: [Change<Channel>]?
+    var didChangeChannels_changes: [ListChange<Channel>]?
     
     func controllerWillStartFetchingRemoteData(_ controller: Controller) {
         willStartFetchingRemoteDataCalledCounter += 1
@@ -543,7 +519,8 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDele
         validateQueue()
     }
     
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [Change<Channel>]) {
+    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+                    didChangeChannels changes: [ListChange<Channel>]) {
         didChangeChannels_changes = changes
         validateQueue()
     }

@@ -31,10 +31,14 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     public let client: Client<ExtraData>
     
     /// The channels matching the query. To observe updates in the list, set your class as a delegate of this controller.
-    public private(set) lazy var channels: [ChannelModel<ExtraData>] = {
-        log.warning("Accessing `channels` before calling `startUpdating()` always results in an empty array.")
-        return []
-    }()
+    public var channels: [ChannelModel<ExtraData>] {
+        guard state == .active else {
+            log.warning("Accessing `channels` before calling `startUpdating()` always results in an empty array.")
+            return []
+        }
+        
+        return channelListObserver.items
+    }
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var worker: ChannelListQueryUpdater<ExtraData> = self.environment
@@ -52,29 +56,20 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     private(set) var anyDelegate: AnyChannelListControllerDelegate<ExtraData>?
     
     /// Used for observing the database for changes.
-    private(set) lazy var fetchedResultsController: NSFetchedResultsController<ChannelDTO> = {
+    private(set) lazy var channelListObserver: ListDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
-        let frc = NSFetchedResultsController<ChannelDTO>(fetchRequest: request,
-                                                         managedObjectContext: client.databaseContainer.viewContext,
-                                                         sectionNameKeyPath: nil,
-                                                         cacheName: nil)
-        frc.delegate = self.changeAggregator
-        return frc
-    }()
-    
-    /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
-    private(set) lazy var changeAggregator: ChangeAggregator<ChannelDTO, ChannelModel<ExtraData>> = {
-        let aggregator: ChangeAggregator<ChannelDTO, ChannelModel<ExtraData>>
-            = self.environment.changeAggregatorBuilder(ChannelModel<ExtraData>.create)
         
-        aggregator.onChange = { [unowned self] (changes: [Change<ChannelModel<ExtraData>>]) in
-            self.channels = self.fetchedResultsController.fetchedObjects!.lazy.map(ChannelModel<ExtraData>.create(fromDTO:))
+        let observer = self.environment.createChannelListDabaseObserver(client.databaseContainer.viewContext,
+                                                                        request,
+                                                                        ChannelModel<ExtraData>.create)
+        
+        observer.onChange = { [unowned self] changes in
             self.delegateCallback {
                 $0?.controller(self, didChangeChannels: changes)
             }
         }
         
-        return aggregator
+        return observer
     }()
     
     private let environment: Environment
@@ -104,14 +99,12 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     /// variable contains more details about the problem.
     public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
         do {
-            try fetchedResultsController.performFetch()
+            try channelListObserver.startObserving()
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
             completion?(ClientError.FetchFailed())
             return
         }
-        
-        channels = fetchedResultsController.fetchedObjects!.lazy.map(ChannelModel<ExtraData>.create)
         
         delegateCallback {
             $0?.controllerWillStartFetchingRemoteData(self)
@@ -224,9 +217,11 @@ extension ChannelListControllerGeneric {
             _ apiClient: APIClient
         ) -> ChannelUpdater<ExtraData> = ChannelUpdater.init
         
-        var changeAggregatorBuilder: (_ itemBuilder: @escaping (ChannelDTO) -> ChannelModel<ExtraData>?)
-            -> ChangeAggregator<ChannelDTO, ChannelModel<ExtraData>> = {
-                ChangeAggregator<ChannelDTO, ChannelModel<ExtraData>>(itemCreator: $0)
+        var createChannelListDabaseObserver: (_ context: NSManagedObjectContext,
+                                              _ fetchRequest: NSFetchRequest<ChannelDTO>,
+                                              _ itemCreator: @escaping (ChannelDTO) -> ChannelModel<ExtraData>?)
+            -> ListDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO> = {
+                ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
             }
     }
 }
@@ -248,11 +243,12 @@ extension ChannelListControllerGeneric where ExtraData == DefaultDataTypes {
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
 /// please use `GenericChannelListController` instead.
 public protocol ChannelListControllerDelegate: ControllerRemoteActivityDelegate {
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [Change<Channel>])
+    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [ListChange<Channel>])
 }
 
 public extension ChannelListControllerDelegate {
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [Change<Channel>]) {}
+    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+                    didChangeChannels changes: [ListChange<Channel>]) {}
 }
 
 /// `ChannelListController` uses this protocol to communicate changes to its delegate.
@@ -263,13 +259,13 @@ public protocol ChannelListControllerDelegateGeneric: ControllerRemoteActivityDe
     associatedtype ExtraData: ExtraDataTypes
     func controller(
         _ controller: ChannelListControllerGeneric<ExtraData>,
-        didChangeChannels changes: [Change<ChannelModel<ExtraData>>]
+        didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]
     )
 }
 
 public extension ChannelListControllerDelegateGeneric {
     func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
-                    didChangeChannels changes: [Change<ChannelModel<ExtraData>>]) {}
+                    didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]) {}
 }
 
 extension ClientError {
@@ -281,7 +277,8 @@ extension ClientError {
 // MARK: - Delegate type eraser
 
 class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListControllerDelegateGeneric {
-    private var _controllerDidChangeChannels: (ChannelListControllerGeneric<ExtraData>, [Change<ChannelModel<ExtraData>>]) -> Void
+    private var _controllerDidChangeChannels: (ChannelListControllerGeneric<ExtraData>, [ListChange<ChannelModel<ExtraData>>])
+        -> Void
     private var _controllerWillStartFetchingRemoteData: (Controller) -> Void
     private var _controllerDidStopFetchingRemoteData: (Controller, Error?) -> Void
     
@@ -291,7 +288,8 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListCo
         wrappedDelegate: AnyObject?,
         controllerWillStartFetchingRemoteData: @escaping (Controller) -> Void,
         controllerDidStopFetchingRemoteData: @escaping (Controller, Error?) -> Void,
-        controllerDidChangeChannels: @escaping (ChannelListControllerGeneric<ExtraData>, [Change<ChannelModel<ExtraData>>]) -> Void
+        controllerDidChangeChannels: @escaping (ChannelListControllerGeneric<ExtraData>, [ListChange<ChannelModel<ExtraData>>])
+            -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
         _controllerWillStartFetchingRemoteData = controllerWillStartFetchingRemoteData
@@ -309,7 +307,7 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListCo
     
     func controller(
         _ controller: ChannelListControllerGeneric<ExtraData>,
-        didChangeChannels changes: [Change<ChannelModel<ExtraData>>]
+        didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]
     ) {
         _controllerDidChangeChannels(controller, changes)
     }
