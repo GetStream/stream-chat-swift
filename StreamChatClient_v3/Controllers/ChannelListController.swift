@@ -129,7 +129,8 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     public func setDelegate<Delegate: ChannelListControllerDelegateGeneric>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+        where Delegate.ExtraData == ExtraData
+    {
         anyDelegate = AnyChannelListControllerDelegate(delegate)
     }
 }
@@ -141,6 +142,12 @@ extension ChannelListControllerGeneric {
             _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> ChannelListQueryUpdater<ExtraData> = ChannelListQueryUpdater.init
+
+        var channelUpdaterBuilder: (
+            _ database: DatabaseContainer,
+            _ webSocketClient: WebSocketClient,
+            _ apiClient: APIClient
+        ) -> ChannelUpdater<ExtraData> = ChannelUpdater.init
         
         var changeAggregatorBuilder: (_ itemBuilder: @escaping (ChannelDTO) -> ChannelModel<ExtraData>?)
             -> ChangeAggregator<ChannelDTO, ChannelModel<ExtraData>> = {
