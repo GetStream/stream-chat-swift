@@ -479,6 +479,7 @@
 		8ADA1EEF2473FD7800C4FC82 /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ADA1EEE2473FD7800C4FC82 /* EventTests.swift */; };
 		8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */; };
+		DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1020,6 +1021,7 @@
 		8AE6206923CF63F000AB3426 /* ClientTests00.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTests00.swift; sourceTree = "<group>"; };
 		8AE6206C23CF642900AB3426 /* TestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCase.swift; sourceTree = "<group>"; };
 		8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientLoggerTests.swift; sourceTree = "<group>"; };
+		DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints_Tests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1340,6 +1342,7 @@
 				793728292498FFD300E13FE5 /* MemberPayload.swift */,
 				7937282B249900CB00E13FE5 /* MemberPayload_Tests.swift */,
 				79877A132498E4EE00015F8B /* ChannelEndpoints.swift */,
+				DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */,
 			);
 			path = Endpoints;
 			sourceTree = "<group>";
@@ -2888,6 +2891,7 @@
 				79DDF810249CB92E002F4412 /* RequestDecoder_Tests.swift in Sources */,
 				8A62706A24BF02D80040BFD6 /* XCTAssertEqual+Difference.swift in Sources */,
 				79877A292498E51500015F8B /* ChannelDTO_Tests.swift in Sources */,
+				DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */,
 				792FCB4D24A3D56D000290C7 /* DatabaseSession_Tests.swift in Sources */,
 				8A0CC9EB24C601F600705CF9 /* MemberEvents_Tests.swift in Sources */,
 				8A62705C24BE2BC00040BFD6 /* UserTypingEvent_Tests.swift in Sources */,
