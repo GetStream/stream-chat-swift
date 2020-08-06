@@ -102,7 +102,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
             try channelListObserver.startObserving()
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
-            completion?(ClientError.FetchFailed())
+            callback { completion?(ClientError.FetchFailed()) }
             return
         }
         
@@ -115,10 +115,8 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
         
         worker.update(channelListQuery: query) { [weak self] error in
             guard let self = self else { return }
-            self.delegateCallback {
-                $0?.controllerDidStopFetchingRemoteData(self, withError: error)
-            }
-            completion?(error)
+            self.delegateCallback { $0?.controllerDidStopFetchingRemoteData(self, withError: error) }
+            self.callback { completion?(error) }
         }
     }
     

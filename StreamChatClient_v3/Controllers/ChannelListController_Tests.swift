@@ -88,10 +88,14 @@ class ChannelListController_Tests: StressTestCase {
     }
     
     func test_startUpdating_callsChannelQueryUpdater() {
+        let queueId = UUID()
+        controller.callbackQueue = .testQueue(withId: queueId)
+        
         // Simulate `startUpdating` calls and catch the completion
         var completionCalled = false
         controller.startUpdating { error in
             XCTAssertNil(error)
+            AssertTestQueue(withId: queueId)
             completionCalled = true
         }
         
@@ -104,20 +108,25 @@ class ChannelListController_Tests: StressTestCase {
         env.channelQueryUpdater!.update_completion?(nil)
         
         // Completion should be called
-        XCTAssertTrue(completionCalled)
+        AssertAsync.willBeTrue(completionCalled)
     }
     
     func test_startUpdating_propagesErrorFromUpdater() {
+        let queueId = UUID()
+        controller.callbackQueue = .testQueue(withId: queueId)
         // Simulate `startUpdating` call and catch the completion
         var completionCalledError: Error?
-        controller.startUpdating { completionCalledError = $0 }
+        controller.startUpdating {
+            completionCalledError = $0
+            AssertTestQueue(withId: queueId)
+        }
         
         // Simulate failed udpate
         let testError = TestError()
         env.channelQueryUpdater!.update_completion?(testError)
         
         // Completion should be called with the error
-        XCTAssertEqual(completionCalledError as? TestError, testError)
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
     // MARK: - Channel actions propagation tests
