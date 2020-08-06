@@ -117,7 +117,7 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertEqual(completionCalledError as? TestError, testError)
     }
 
-    // MARK: - Channel muting propagation tests
+    // MARK: - Channel actions propagation tests
 
     func test_muteChannel_callsChannelUpdater() {
         let channelID: ChannelId = .unique
@@ -193,6 +193,120 @@ class ChannelListController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
+    func test_deleteChannel_callsChannelUpdater() {
+        let cid: ChannelId = .unique
+        var completionCalled = false
+
+        // Simulate `deleteChannel` calls and catch the completion
+        controller.deleteChannel(cid: cid) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater?.deleteChannel_completion?(nil)
+
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+
+        XCTAssertEqual(env.channelUpdater?.deleteChannel_cid, cid)
+    }
+
+    func test_deleteChannel_callsChannelUpdaterWithError() {
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.deleteChannel(cid: .unique) {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.deleteChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_hideChannel_callsChannelUpdater() {
+        let cid: ChannelId = .unique
+        var completionCalled = false
+
+        // Simulate `hideChannel` calls and catch the completion
+        controller.hideChannel(cid: cid, clearHistory: false) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater?.hideChannel_completion?(nil)
+
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+
+        XCTAssertEqual(env.channelUpdater?.hideChannel_userId, client.currentUserId)
+        XCTAssertEqual(env.channelUpdater?.hideChannel_cid, cid)
+        XCTAssertEqual(env.channelUpdater?.hideChannel_clearHistory, false)
+    }
+
+    func test_hideChannel_callsChannelUpdaterWithError() {
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.hideChannel(cid: .unique, clearHistory: false) {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.hideChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_showChannel_callsChannelUpdater() {
+        let cid: ChannelId = .unique
+        var completionCalled = false
+
+        // Simulate `showChannel` calls and catch the completion
+        controller.showChannel(cid: cid) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater?.showChannel_completion?(nil)
+
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+
+        XCTAssertEqual(env.channelUpdater?.showChannel_cid, cid)
+        XCTAssertNotNil(env.channelUpdater?.showChannel_userId)
+    }
+
+    func test_showChannel_callsChannelUpdaterWithError() {
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.showChannel(cid: .unique) {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.showChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
     // MARK: - Change propagation tests
     
     func test_changeAggregator_isSetAsDelegateForFRC() {
@@ -340,6 +454,18 @@ private class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<Extr
     var muteChannel_mute: Bool?
     var muteChannel_completion: ((Error?) -> Void)?
 
+    var deleteChannel_cid: ChannelId?
+    var deleteChannel_completion: ((Error?) -> Void)?
+
+    var hideChannel_cid: ChannelId?
+    var hideChannel_userId: UserId?
+    var hideChannel_clearHistory: Bool?
+    var hideChannel_completion: ((Error?) -> Void)?
+
+    var showChannel_cid: ChannelId?
+    var showChannel_userId: UserId?
+    var showChannel_completion: ((Error?) -> Void)?
+
     override func update(channelQuery: ChannelQuery<ExtraData>, completion: ((Error?) -> Void)? = nil) {
         update_channelQuery = channelQuery
         update_completion = completion
@@ -349,6 +475,24 @@ private class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<Extr
         muteChannel_cid = cid
         muteChannel_mute = mute
         muteChannel_completion = completion
+    }
+
+    override func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        deleteChannel_cid = cid
+        deleteChannel_completion = completion
+    }
+
+    override func hideChannel(cid: ChannelId, userId: UserId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
+        hideChannel_cid = cid
+        hideChannel_userId = userId
+        hideChannel_clearHistory = clearHistory
+        hideChannel_completion = completion
+    }
+
+    override func showChannel(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
+        showChannel_cid = cid
+        showChannel_userId = userId
+        showChannel_completion = completion
     }
 }
 
