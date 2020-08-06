@@ -125,7 +125,7 @@ private extension MasterViewController {
 }
 
 extension MasterViewController: ChannelListControllerDelegate {
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [Change<Channel>]) {
+    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [ListChange<Channel>]) {
         // Animate changes
         
         /*

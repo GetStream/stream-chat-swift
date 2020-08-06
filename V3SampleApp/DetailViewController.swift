@@ -13,15 +13,15 @@ class DetailViewController: UIViewController {
     
     private let tableView = UITableView()
     
-    private lazy var controller = chatClient.channelController(for: channelId)
+    private var controller: ChannelController?
     
-    var messages: [Message] = [] {
+    var messages: [Message] { controller?.messages ?? [] }
+    
+    var channelId: ChannelId! {
         didSet {
-            tableView.reloadData()
+             controller = chatClient.channelController(for: channelId)
         }
     }
-    
-    var channelId: ChannelId!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,18 +36,42 @@ class DetailViewController: UIViewController {
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
         ])
         
-        controller.delegate = self
-        controller.startUpdating()
+        controller?.delegate = self
+        controller?.startUpdating()
         
         tableView.reloadData()
     }
-
 }
 
 extension DetailViewController: ChannelControllerDelegate {
-    func channelController<ExtraData: ExtraDataTypes>(_ channelController: ChannelController<ExtraData>, didUpdateChannel channel: ChannelModel<ExtraData>) {
-        // TODO is it possible to avoid force casting?
-        self.messages = channel.latestMessages as! [Message]
+    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<Channel>) {
+        switch channel {
+        case .create(_): break
+    
+        case .update(let channel):
+            self.title = channel.extraData.name
+        case .remove(_):
+            break
+        }
+    }
+    
+    func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<Message>]) {
+        tableView.beginUpdates()
+        
+        for change in changes {
+            switch change {
+            case .insert(_, index: let index):
+                tableView.insertRows(at: [index], with: .automatic)
+            case .move(_, fromIndex: let fromIndex, toIndex: let toIndex):
+                tableView.moveRow(at: fromIndex, to: toIndex)
+            case .update(_, index: let index):
+                tableView.reloadRows(at: [index], with: .automatic)
+            case .remove(_, index: let index):
+                tableView.deleteRows(at: [index], with: .automatic)
+            }
+        }
+        
+        tableView.endUpdates()
     }
 }
 

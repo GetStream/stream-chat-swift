@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
 //
         chatClient.setUser(userId: "broken-waterfall-5", token: token) { (error) in
-            print(chatClient.currentUser?.name)
+            print(chatClient.currentUser?.name as Any)
         }
 
 //        chatClient.setAnonymousUser { (error) in
