@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		7900717F2440850700E5246F /* QueryEncodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900717D244084E200E5246F /* QueryEncodingTests.swift */; };
+		790B9E3024DC21D7005455AA /* MessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B9E2F24DC21D7005455AA /* MessagePayload.swift */; };
+		790B9E3224DC221A005455AA /* UserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B9E3124DC221A005455AA /* UserPayload.swift */; };
 		791664DD245AC78B0020710B /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */; };
 		791664DF245AC89E0020710B /* Client+DevicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664DE245AC89E0020710B /* Client+DevicesTests.swift */; };
 		791664E2245AF8AF0020710B /* AssertNetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791664E1245AF8AF0020710B /* AssertNetworkRequest.swift */; };
@@ -556,6 +558,8 @@
 /* Begin PBXFileReference section */
 		465D64C1231808A2006BAE42 /* AttachmentTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentTypeTests.swift; sourceTree = "<group>"; };
 		7900717D244084E200E5246F /* QueryEncodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryEncodingTests.swift; sourceTree = "<group>"; };
+		790B9E2F24DC21D7005455AA /* MessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayload.swift; sourceTree = "<group>"; };
+		790B9E3124DC221A005455AA /* UserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPayload.swift; sourceTree = "<group>"; };
 		791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestRecorderURLProtocol.swift; sourceTree = "<group>"; };
 		791664DE245AC89E0020710B /* Client+DevicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+DevicesTests.swift"; sourceTree = "<group>"; };
 		791664E1245AF8AF0020710B /* AssertNetworkRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertNetworkRequest.swift; sourceTree = "<group>"; };
@@ -1142,6 +1146,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		790B9E2E24DC21C5005455AA /* Dummy data */ = {
+			isa = PBXGroup;
+			children = (
+				790B9E2F24DC21D7005455AA /* MessagePayload.swift */,
+				790B9E3124DC221A005455AA /* UserPayload.swift */,
+			);
+			path = "Dummy data";
+			sourceTree = "<group>";
+		};
 		791664E0245AF8960020710B /* Custom Assertions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1495,6 +1508,7 @@
 		799C9452247D59B1001F1104 /* TestResources_v3 */ = {
 			isa = PBXGroup;
 			children = (
+				790B9E2E24DC21C5005455AA /* Dummy data */,
 				79DDF815249CE38B002F4412 /* Mock Network */,
 				798779F52498E47700015F8B /* MockEnpointResponses */,
 				79280F7E24891C6A00CDEB89 /* Virtual Time */,
@@ -2933,6 +2947,7 @@
 				799C945C247D59D8001F1104 /* ChatClient_Tests.swift in Sources */,
 				79BA19F324B3386B00E11FC2 /* CurrentUserDTO_Tests.swift in Sources */,
 				79280F7D24891B1300CDEB89 /* WebSocketEngine_Mock.swift in Sources */,
+				790B9E3224DC221A005455AA /* UserPayload.swift in Sources */,
 				792921CD24C07A9000116BBB /* QueueAwareDelegate.swift in Sources */,
 				79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
@@ -2965,6 +2980,7 @@
 				8AC9CBE424C74ECB006E236C /* NotificationEvents_Tests.swift in Sources */,
 				79280F8224891C6A00CDEB89 /* VirtualTimer.swift in Sources */,
 				7988F6B724D15F100004219B /* StressTestCase.swift in Sources */,
+				790B9E3024DC21D7005455AA /* MessagePayload.swift in Sources */,
 				8A0C3BE224C1F74200CAFD19 /* MessageEvents_Tests.swift in Sources */,
 				7990503224CEEAA600689CDC /* MessageDTO_Tests.swift in Sources */,
 			);
