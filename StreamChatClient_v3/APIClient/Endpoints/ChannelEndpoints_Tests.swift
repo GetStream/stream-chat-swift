@@ -59,6 +59,43 @@ final class ChannelEndpoints_Tests: XCTestCase {
         }
     }
 
+    func test_deleteChannel_buildsCorrectly() {
+        let cid = ChannelId.unique
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)",
+                                                       method: .delete,
+                                                       queryItems: nil,
+                                                       requiresConnectionId: false,
+                                                       body: nil)
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .deleteChannel(cid: cid)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+
+    func test_hideChannel_buildsCorrectly() {
+        let testCases = [true, false]
+
+        for clearHistory in testCases {
+            let cid = ChannelId.unique
+            let userId = UserId.unique
+
+            let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)/hide",
+                                                           method: .post,
+                                                           queryItems: nil,
+                                                           requiresConnectionId: false,
+                                                           body: HideChannelRequest(userId: userId, clearHistory: clearHistory))
+
+            // Build endpoint
+            let endpoint: Endpoint<EmptyResponse> = .hideChannel(cid: cid, userId: userId, clearHistory: clearHistory)
+
+            // Assert endpoint is built correctly
+            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        }
+    }
+
     func test_muteChannel_buildsCorrectly() {
         let testCases = [
             (true, "moderation/mute/channel"),
@@ -81,4 +118,22 @@ final class ChannelEndpoints_Tests: XCTestCase {
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         }
     }
+
+    func test_showChannel_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let userId = UserId.unique
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)/show",
+                                                       method: .post,
+                                                       queryItems: nil,
+                                                       requiresConnectionId: false,
+                                                       body: ["userId": userId])
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .showChannel(cid: cid, userId: userId)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
+
