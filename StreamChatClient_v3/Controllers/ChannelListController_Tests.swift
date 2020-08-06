@@ -52,6 +52,12 @@ class ChannelListController_Tests: StressTestCase {
     
     // MARK: - Start updating tests
     
+    func test_startUpdating_changesControllerState() {
+        assert(controller.state == .idle)
+        controller.startUpdating()
+        XCTAssertEqual(controller.state, .active)
+    }
+    
     func test_noChangesAreReported_beforeCallingStartUpdating() throws {
         // Save a new channel to DB
         client.databaseContainer.write { session in

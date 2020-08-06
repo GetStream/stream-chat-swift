@@ -106,6 +106,9 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
             return
         }
         
+        // Update observing state
+        state = .active
+        
         delegateCallback {
             $0?.controllerWillStartFetchingRemoteData(self)
         }
