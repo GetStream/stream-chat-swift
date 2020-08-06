@@ -21,4 +21,12 @@ extension Endpoint {
               requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
               body: query)
     }
+
+    static func muteChannel(cid: ChannelId, mute: Bool) -> Endpoint<EmptyResponse> {
+        .init(path: "moderation/\(mute ? "mute" : "unmute")/channel",
+              method: .post,
+              queryItems: nil,
+              requiresConnectionId: true,
+              body: ["channel_cid": cid])
+    }
 }
