@@ -75,7 +75,7 @@ class DatabaseContainer: NSPersistentContainer {
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
         
-        setupLoggedForChanges()
+        setupLoggerForDatabaseChanges()
     }
     
     deinit {
@@ -149,7 +149,7 @@ class DatabaseContainer: NSPersistentContainer {
     }
     
     /// Set up listener to changes in the writable context and logs the changes.
-    private func setupLoggedForChanges() {
+    private func setupLoggerForDatabaseChanges() {
         loggerNotificationObserver = NotificationCenter.default
             .addObserver(forName: Notification.Name.NSManagedObjectContextDidSave,
                          object: writableContext,
