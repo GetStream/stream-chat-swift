@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### 🔄 Changed
+- Remove the need for querying members in order to mark a channel as read [#280](https://github.com/GetStream/stream-chat-swift/issues/280)
 
 # [2.2.7](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.7)
 _July 29, 2020_
@@ -27,7 +28,6 @@ _July 29, 2020_
 - All iOS versions will use Starscream as default websocket provider until native provider issue is resolved. See [#315](https://github.com/GetStream/stream-chat-swift/issues/315). [#357](https://github.com/GetStream/stream-chat-swift/issues/357)
 
 ### 🐞 Fixed
-- Remove need for member query in order to mark channel as read. [#280](https://github.com/GetStream/stream-chat-swift/issues/280)
 - Reintroduce Hashable conformances removed in 2.2.1 [#368](https://github.com/GetStream/stream-chat-swift/pull/368)
 - `ChannelPresenter.lastMessage` not updated on message edited or deleted [#351](https://github.com/GetStream/stream-chat-swift/issues/351)
 - Link tap in messages sometimes not detected or detected in wrong place [#350](https://github.com/GetStream/stream-chat-swift/issues/350)
