@@ -16,6 +16,7 @@
 		79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */; };
 		7922F30624DACEF100C364BC /* TestDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7922F30424DACEF100C364BC /* TestDataModel.xcdatamodeld */; };
 		7922F30824DACF1F00C364BC /* TestManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7922F30724DACF1F00C364BC /* TestManagedObject.swift */; };
+		7922F30A24DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7922F30924DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift */; };
 		79273EB4246AD1E900B0A574 /* Channel+SilentMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB3246AD1E900B0A574 /* Channel+SilentMessageTests.swift */; };
 		79273EB6246AE1EF00B0A574 /* Client+SilentMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB5246AE1EF00B0A574 /* Client+SilentMessageTests.swift */; };
 		79273EBA246AEC9200B0A574 /* SharedClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79273EB9246AEC9200B0A574 /* SharedClient.swift */; };
@@ -59,6 +60,7 @@
 		792A4F492480107A00EAF71D /* Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F452480107A00EAF71D /* Sorting.swift */; };
 		792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F4A248010A600EAF71D /* QueryOptions.swift */; };
 		792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F4C248011E500EAF71D /* ChannelListQuery.swift */; };
+		792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792AF91524D812440010097B /* EntityDatabaseObserver.swift */; };
 		792B805024D95B5D00C2963E /* Cached.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792B804F24D95B5D00C2963E /* Cached.swift */; };
 		792B805224D95D4300C2963E /* Cached_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792B805124D95D4300C2963E /* Cached_Tests.swift */; };
 		792B805424D95FC700C2963E /* RandomDispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792B805324D95FC700C2963E /* RandomDispatchQueue.swift */; };
@@ -561,6 +563,7 @@
 		7920E84E2449C6EF00CCBFBF /* fastlane */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fastlane; sourceTree = "<group>"; };
 		7922F30524DACEF100C364BC /* TestDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel.xcdatamodel; sourceTree = "<group>"; };
 		7922F30724DACF1F00C364BC /* TestManagedObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestManagedObject.swift; sourceTree = "<group>"; };
+		7922F30924DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityDatabaseObserver_Tests.swift; sourceTree = "<group>"; };
 		79273EB3246AD1E900B0A574 /* Channel+SilentMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+SilentMessageTests.swift"; sourceTree = "<group>"; };
 		79273EB5246AE1EF00B0A574 /* Client+SilentMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+SilentMessageTests.swift"; sourceTree = "<group>"; };
 		79273EB9246AEC9200B0A574 /* SharedClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedClient.swift; sourceTree = "<group>"; };
@@ -605,6 +608,7 @@
 		792A4F452480107A00EAF71D /* Sorting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Sorting.swift; sourceTree = "<group>"; };
 		792A4F4A248010A600EAF71D /* QueryOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QueryOptions.swift; sourceTree = "<group>"; };
 		792A4F4C248011E500EAF71D /* ChannelListQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelListQuery.swift; sourceTree = "<group>"; };
+		792AF91524D812440010097B /* EntityDatabaseObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityDatabaseObserver.swift; sourceTree = "<group>"; };
 		792B804F24D95B5D00C2963E /* Cached.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cached.swift; sourceTree = "<group>"; };
 		792B805124D95D4300C2963E /* Cached_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cached_Tests.swift; sourceTree = "<group>"; };
 		792B805324D95FC700C2963E /* RandomDispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomDispatchQueue.swift; sourceTree = "<group>"; };
@@ -1482,6 +1486,8 @@
 				792921C824C056F400116BBB /* ChannelListController_Tests.swift */,
 				79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */,
 				793C14DB24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift */,
+				792AF91524D812440010097B /* EntityDatabaseObserver.swift */,
+				7922F30924DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -2817,6 +2823,7 @@
 				79E2B84024CAC8D60024752F /* ListDatabaseObserver.swift in Sources */,
 				796610B9248E651800761629 /* EventMiddleware.swift in Sources */,
 				7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */,
+				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
 				8A0CC9E524C5FEA900705CF9 /* MemberEvents.swift in Sources */,
 				792A4F472480107A00EAF71D /* Filter.swift in Sources */,
 				792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */,
@@ -2904,6 +2911,7 @@
 				79A0E9AF2498BFD800E9BD50 /* WebSocketClient_Tests.swift in Sources */,
 				7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */,
 				79DDF819249CE38B002F4412 /* MockNetworkURLProtocol.swift in Sources */,
+				7922F30A24DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift in Sources */,
 				8A62705E24BE2CD70040BFD6 /* XCTestCase+MockJSON.swift in Sources */,
 				79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */,
 				79877A2A2498E51500015F8B /* MemberModelDTO_Tests.swift in Sources */,
