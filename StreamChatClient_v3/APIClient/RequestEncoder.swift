@@ -140,14 +140,15 @@ struct DefaultRequestEncoder: RequestEncoder {
     private func encodeRequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
         switch endpoint.method {
         case .get, .delete:
-            try encodeGETRequestBody(request: &request, endpoint: endpoint)
+            try encodeGETorDELETERequestBody(request: &request, endpoint: endpoint)
         case .post:
             try encodePOSTRequestBody(request: &request, endpoint: endpoint)
         }
     }
     
-    private func encodeGETRequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
-        log.assert(endpoint.method == .get, "Endpoint method is \(endpoint.method) but must be GET.")
+    private func encodeGETorDELETERequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
+        log.assert([EndpointMethod.get, EndpointMethod.delete].contains(endpoint.method),
+                   "Endpoint method is \(endpoint.method) but must be either GET or DELETE.")
         log.assert(request.url != nil, "Request URL must not be `nil`.")
         
         guard let body = endpoint.body else { return }
