@@ -11,6 +11,11 @@ import StreamChatClient_v3
 
 class MasterViewController: UITableViewController {
 
+    private lazy var longPressRecognizer = UILongPressGestureRecognizer(
+        target: self,
+        action: #selector(handleLongPress)
+    )
+
     lazy var channelListController: ChannelListController = chatClient
         .channelListController(query: ChannelListQuery(filter: .in("members", ["broken-waterfall-5"]), options: [.watch]))
     
@@ -31,6 +36,8 @@ class MasterViewController: UITableViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
         }
+
+        tableView.addGestureRecognizer(longPressRecognizer)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -80,6 +87,34 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    }
+
+}
+
+// MARK: - Private
+
+private extension MasterViewController {
+    @objc
+    func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        guard
+            let indexPath = tableView.indexPathForRow(at: gestureRecognizer.location(in: tableView)),
+            gestureRecognizer.state == .began
+            else { return }
+
+        let selectedChannel = channelListController.channels[indexPath.row]
+
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        actionSheet.addAction(
+            UIAlertAction(title: "Mute", style: .default) { _ in
+                self.channelListController.muteChannel(cid: selectedChannel.cid)
+            }
+        )
+        actionSheet.addAction(
+            UIAlertAction(title: "Unmute", style: .default) { _ in
+                self.channelListController.unmuteChannel(cid: selectedChannel.cid)
+            }
+        )
+        present(actionSheet, animated: true)
     }
 }
 
