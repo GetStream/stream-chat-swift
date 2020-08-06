@@ -42,7 +42,8 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
                                     client.webSocketClient,
                                     client.apiClient)
 
-    private lazy var channelUpdater: ChannelUpdater<ExtraData> = environment
+    /// Channel updated used for modifying channel settings
+    private lazy var channelUpdater: ChannelUpdater<ExtraData> = self.environment
         .channelUpdaterBuilder(client.databaseContainer,
                                client.webSocketClient,
                                client.apiClient)
@@ -140,7 +141,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     }
 }
 
-// MARK: - Channel muting
+// MARK: - Channel actions
 
 public extension ChannelListControllerGeneric {
     /// Mutes the channel with provided **cid**.
@@ -163,6 +164,45 @@ public extension ChannelListControllerGeneric {
     /// is called with an error.
     func unmuteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         channelUpdater.muteChannel(cid: cid, mute: false) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Delete the channel.
+    /// - Parameters:
+    ///   - channel: The channel you want to delete.
+    ///   - completion: An empty completion block.
+    func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        channelUpdater.deleteChannel(cid: cid) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Hide the channel from queryChannels for the user until a message is added.
+    /// - Parameters:
+    ///   - channel: The channel you want to hide.
+    ///   - userId: Current user Id.
+    ///   - clearHistory: Flag to remove channel history.
+    ///   - completion: An empty completion block.
+    func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
+        channelUpdater.hideChannel(cid: cid, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Removes hidden status for the specific channel.
+    /// - Parameters:
+    ///   - channel: The channel you want to show.
+    ///   - userId: Current user Id.
+    ///   - completion: An empty completion block.
+    func showChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        channelUpdater.showChannel(cid: cid, userId: client.currentUserId) { [weak self] error in
             self?.callbackQueue.async {
                 completion?(error)
             }
