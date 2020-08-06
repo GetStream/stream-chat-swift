@@ -1,5 +1,4 @@
 //
-// ChannelUpdater.swift
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
@@ -15,6 +14,17 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
                     completion?(nil)
                 }
             } catch {
+                completion?(error)
+            }
+        }
+    }
+
+    func muteChannel(cid: ChannelId, mute: Bool, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .muteChannel(cid: cid, mute: mute)) {
+            switch $0 {
+            case .success:
+                completion?(nil)
+            case let .failure(error):
                 completion?(error)
             }
         }
