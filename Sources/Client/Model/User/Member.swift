@@ -74,7 +74,7 @@ public struct Member: Codable {
         isInvited = try container.decodeIfPresent(Bool.self, forKey: .isInvited) ?? false
         inviteAccepted = try container.decodeIfPresent(Date.self, forKey: .inviteAccepted)
         inviteRejected = try container.decodeIfPresent(Date.self, forKey: .inviteRejected)
-        role = try container.decodeIfPresent(Role.self, forKey: .role) ?? .member
+        role = (try? container.decodeIfPresent(Role.self, forKey: .role)) ?? .member
     }
 }
 
