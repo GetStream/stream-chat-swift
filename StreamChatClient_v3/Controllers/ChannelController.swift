@@ -166,7 +166,7 @@ public extension ChannelControllerGeneric {
     /// will be called with an error.
     func muteChannel(completion: ((Error?) -> Void)? = nil) {
         worker.muteChannel(cid: channelId, mute: true) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
@@ -178,7 +178,7 @@ public extension ChannelControllerGeneric {
     /// will be called with an error.
     func unmuteChannel(completion: ((Error?) -> Void)? = nil) {
         worker.muteChannel(cid: channelId, mute: false) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
@@ -190,7 +190,7 @@ public extension ChannelControllerGeneric {
     /// will be called with an error.
     func deleteChannel(completion: ((Error?) -> Void)? = nil) {
         worker.deleteChannel(cid: channelId) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
@@ -203,7 +203,7 @@ public extension ChannelControllerGeneric {
     /// will be called with an error.
     func hideChannel(clearHistory: Bool = false, completion: ((Error?) -> Void)? = nil) {
         worker.hideChannel(cid: channelId, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
@@ -215,7 +215,7 @@ public extension ChannelControllerGeneric {
     /// will be called with an error.
     func showChannel(completion: ((Error?) -> Void)? = nil) {
         worker.showChannel(cid: channelId, userId: client.currentUserId) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
