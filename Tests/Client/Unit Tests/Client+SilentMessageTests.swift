@@ -24,7 +24,7 @@ class Client_SilentMessageTests: XCTestCase {
         
         let message = Message(text: "test", silent: true, user: User(id: "test-sender"))
         
-        let newMessageEvent = Event.messageNew(message, 0, channel.cid, .messageNew)
+        let newMessageEvent = Event.messageNew(message, .noUnread, 0, channel.cid, .messageNew)
         
         assert(client.unreadCount.messages == 0)
         
@@ -40,7 +40,7 @@ class Client_SilentMessageTests: XCTestCase {
         
         let message = Message(text: "test", silent: true, user: User(id: "test-sender"), mentionedUsers: [client.user])
         
-        let newMessageEvent = Event.messageNew(message, 0, channel.cid, .messageNew)
+        let newMessageEvent = Event.messageNew(message, .noUnread, 0, channel.cid, .messageNew)
         
         assert(client.unreadCount.messages == 0)
         

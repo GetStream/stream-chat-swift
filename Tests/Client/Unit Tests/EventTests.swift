@@ -40,7 +40,7 @@ final class EventTests: XCTestCase {
         XCTAssertTrue(equalityExistsFor(.channelHidden(.init(cid: channel.cid, clearHistory: false, created: .init()),
                                                        nil, .channelHidden)))
         
-        XCTAssertTrue(equalityExistsFor(.messageNew(message, 0, nil, .messageNew)))
+        XCTAssertTrue(equalityExistsFor(.messageNew(message, .noUnread, 0, nil, .messageNew)))
         XCTAssertTrue(equalityExistsFor(.messageUpdated(message, nil, .messageUpdated)))
         XCTAssertTrue(equalityExistsFor(.messageDeleted(message, .user1, nil, .messageDeleted)))
         

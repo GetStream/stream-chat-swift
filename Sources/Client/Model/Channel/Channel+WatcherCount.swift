@@ -17,7 +17,7 @@ extension Channel {
         switch event {
         case .userStartWatching(_, let watcherCount, _, _),
              .userStopWatching(_, let watcherCount, _, _),
-             .messageNew(_, let watcherCount, _, _),
+             .messageNew(_, _, let watcherCount, _, _),
              .notificationMessageNew(_, _, _, let watcherCount, _):
             watcherCountAtomic.set(watcherCount)
         default:

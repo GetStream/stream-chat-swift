@@ -153,7 +153,7 @@ extension Client {
             return Subscription.empty
         }
         
-        let subscription = subscribe(forEvents: [.messageNew, .messageRead, .messageDeleted], cid: channel.cid) { _ in
+        let subscription = subscribe(forEvents: [.messageNew, .messageRead], cid: channel.cid) { _ in
             callback(.success(channel.unreadCount))
         }
         

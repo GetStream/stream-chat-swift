@@ -14,14 +14,11 @@ extension Channel {
     ///   - event: an event.
     func updateUnreadCount(event: Event) {
         switch event {
-        case .messageNew(let message, _, _, _), .notificationMessageNew(let message, _, _, _, _):
+        case .messageNew(let message, _, _, _, _), .notificationMessageNew(let message, _, _, _, _):
             updateUnreadCount(newMessage: message)
-        case .messageDeleted(let message, _, _, _):
-            updateUnreadCount(deletedMessage: message)
-        case .messageRead(let messageRead, _, _):
-            if messageRead.user.isCurrent {
-                resetUnreadCount(messageRead: messageRead)
-            }
+            
+        case .messageRead(let messageRead, _, _) where messageRead.user.isCurrent:
+            resetUnreadCount(messageRead: messageRead)
             
         default:
             break
@@ -43,33 +40,6 @@ extension Channel {
         
         if message.mentionedUsers.contains(User.current) {
             updatedUnreadCount.mentionedMessages += 1
-        }
-        
-        unreadMessageReadAtomic.set(.init(user: User.current,
-                                          lastReadDate: message.created,
-                                          unreadMessagesCount: updatedUnreadCount.messages))
-        unreadCountAtomic.set(updatedUnreadCount)
-    }
-    
-    private func updateUnreadCount(deletedMessage message: Message) {
-        if message.isReply || message.isSilent {
-            return
-        }
-        
-        if message.user.isCurrent {
-            resetUnreadCount(messageRead: .init(user: message.user, lastReadDate: message.created, unreadMessagesCount: 0))
-            return
-        }
-        
-        guard unreadCount.messages > 0 else {
-            return
-        }
-        
-        var updatedUnreadCount = unreadCount
-        updatedUnreadCount.messages -= 1
-        
-        if message.mentionedUsers.contains(User.current), updatedUnreadCount.mentionedMessages > 0 {
-            updatedUnreadCount.mentionedMessages -= 1
         }
         
         unreadMessageReadAtomic.set(.init(user: User.current,
