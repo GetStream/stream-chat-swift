@@ -270,6 +270,186 @@ class ChannelController_Tests: StressTestCase {
             Assert.willBeEqual(delegate.didUpdateMessages_messages, [.insert(message, index: [0, 0])])
         }
     }
+
+    // MARK: - Channel actions propagation tests
+
+    func test_muteChannel_callsChannelUpdater() {
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalled = false
+        controller.muteChannel { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.muteChannel_mute, true)
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater!.muteChannel_completion?(nil)
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_muteChannel_propagesErrorFromUpdater() {
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.muteChannel {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.muteChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_unmuteChannel_callsChannelUpdater() {
+        // Simulate `unmuteChannel` call and catch the completion
+        var completionCalled = false
+        controller.unmuteChannel { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.muteChannel_mute, false)
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater!.muteChannel_completion?(nil)
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_unmuteChannel_propagesErrorFromUpdater() {
+        // Simulate `unmuteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.unmuteChannel {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.muteChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_deleteChannel_callsChannelUpdater() {
+        // Simulate `deleteChannel` calls and catch the completion
+        var completionCalled = false
+        controller.deleteChannel { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater?.deleteChannel_completion?(nil)
+
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+
+        XCTAssertEqual(env.channelUpdater?.deleteChannel_cid, channelId)
+    }
+
+    func test_deleteChannel_callsChannelUpdaterWithError() {
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.deleteChannel {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.deleteChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_hideChannel_callsChannelUpdater() {
+        // Simulate `hideChannel` calls and catch the completion
+        var completionCalled = false
+        controller.hideChannel(clearHistory: false) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater?.hideChannel_completion?(nil)
+
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+
+        XCTAssertEqual(env.channelUpdater?.hideChannel_userId, client.currentUserId)
+        XCTAssertEqual(env.channelUpdater?.hideChannel_cid, channelId)
+        XCTAssertEqual(env.channelUpdater?.hideChannel_clearHistory, false)
+    }
+
+    func test_hideChannel_callsChannelUpdaterWithError() {
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.hideChannel(clearHistory: false) {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.hideChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_showChannel_callsChannelUpdater() {
+        // Simulate `showChannel` calls and catch the completion
+        var completionCalled = false
+        controller.showChannel { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successfull udpate
+        env.channelUpdater?.showChannel_completion?(nil)
+
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+
+        XCTAssertEqual(env.channelUpdater?.showChannel_cid, channelId)
+        XCTAssertNotNil(env.channelUpdater?.showChannel_userId)
+    }
+
+    func test_showChannel_callsChannelUpdaterWithError() {
+        // Simulate `muteChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.showChannel {
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.showChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
 }
 
 private class TestEnvironment {
