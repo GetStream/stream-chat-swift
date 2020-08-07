@@ -228,7 +228,6 @@ class ChannelListController_Tests: StressTestCase {
 
 private class TestEnvironment {
     var channelQueryUpdater: ChannelQueryUpdaterMock<DefaultDataTypes>?
-    var channelUpdater: ChannelUpdaterMock<DefaultDataTypes>?
     
     lazy var environment: ChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
@@ -236,12 +235,6 @@ private class TestEnvironment {
                                                                webSocketClient: $1,
                                                                apiClient: $2)
                 return self.channelQueryUpdater!
-                },
-              channelUpdaterBuilder: { [unowned self] in
-                self.channelUpdater = ChannelUpdaterMock(database: $0,
-                                                         webSocketClient: $1,
-                                                         apiClient: $2)
-                return self.channelUpdater!
         })
 }
 
