@@ -72,9 +72,7 @@ public struct ChannelResponse: Decodable, Hashable {
     }
     
     private func calculateChannelUnreadCount() {
-        if messages.isEmpty || !channel.members.contains(Member.current) {
-            return
-        }
+        guard !messages.isEmpty, channel.readEventsEnabled else { return }
         
         let unreadMessageRead = userUnreadMessageRead()
         channel.unreadMessageReadAtomic.set(unreadMessageRead)

@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- Membership for a channel  [#387](https://github.com/GetStream/stream-chat-swift/pull/387)
+
 ### 🔄 Changed
 - Remove the need for querying members in order to mark a channel as read [#280](https://github.com/GetStream/stream-chat-swift/issues/280)
 
 ### 🐞 Fixed
 - Use total unread count from `message.new` event  [#384](https://github.com/GetStream/stream-chat-swift/pull/384)
+- Unread count calculation for disabled read messages feature  [#387](https://github.com/GetStream/stream-chat-swift/pull/387)
 
 # [2.2.7](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.7)
 _July 29, 2020_
