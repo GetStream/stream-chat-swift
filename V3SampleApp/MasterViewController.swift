@@ -90,7 +90,7 @@ class MasterViewController: UITableViewController {
         switch editingStyle {
         case .delete:
             let channelId = channelListController.channels[indexPath.row].cid
-            channelListController.deleteChannel(cid: channelId)
+            chatClient.channelController(for: channelId).deleteChannel()
         default: return
         }
     }
@@ -107,19 +107,28 @@ private extension MasterViewController {
             gestureRecognizer.state == .began
             else { return }
 
-        let selectedChannel = channelListController.channels[indexPath.row]
+        let channelController = chatClient.channelController(
+            for: channelListController.channels[indexPath.row].cid
+        )
 
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        actionSheet.addAction(
+        let actions = [
             UIAlertAction(title: "Mute", style: .default) { _ in
-                self.channelListController.muteChannel(cid: selectedChannel.cid)
-            }
-        )
-        actionSheet.addAction(
+                channelController.muteChannel()
+            },
             UIAlertAction(title: "Unmute", style: .default) { _ in
-                self.channelListController.unmuteChannel(cid: selectedChannel.cid)
-            }
-        )
+                channelController.unmuteChannel()
+            },
+            UIAlertAction(title: "Show", style: .default) { _ in
+                channelController.showChannel()
+            },
+            UIAlertAction(title: "Hide", style: .default) { _ in
+                channelController.hideChannel()
+            },
+            UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        ]
+        actions.forEach(actionSheet.addAction)
+
         present(actionSheet, animated: true)
     }
 }
