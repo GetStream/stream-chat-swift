@@ -281,16 +281,6 @@ private class TestEnvironment {
     })
 }
 
-private class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
-    var update_channelQuery: ChannelQuery<ExtraData>?
-    var update_completion: ((Error?) -> Void)?
-    
-    override func update(channelQuery: ChannelQuery<ExtraData>, completion: ((Error?) -> Void)? = nil) {
-        update_channelQuery = channelQuery
-        update_completion = completion
-    }
-}
-
 /// A concrete `ChanneControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
     var willStartFetchingRemoteDataCalledCounter = 0
