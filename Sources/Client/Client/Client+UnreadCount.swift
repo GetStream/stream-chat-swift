@@ -31,7 +31,10 @@ extension Client {
              .notificationMessageNew(_, _, let unreadCount, _, _):
             updatedUnreadCount = unreadCount
             
-        case let .messageNew(message, unreadCount, _, _, _) where !message.isReply && !message.user.isCurrent && !message.isSilent:
+        case let .messageNew(message, unreadCount, _, _, _)
+            // Skip updating global unread count when the message is: reply, silent or from the current user.
+            // Skip updating for `unreadCount` with zero values, because it could be from a channel with read disabled.
+            where !message.isReply && !message.isSilent && unreadCount != .noUnread && !message.user.isCurrent:
             updatedUnreadCount = unreadCount
             
         default:
