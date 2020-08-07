@@ -246,7 +246,7 @@ class Channel_SilentMessageTests: XCTestCase {
         "membership": {
             "created_at": "2020-05-12T12:16:01.132467Z",
             "updated_at": "2020-05-12T12:16:01.132467Z",
-            "role": "channel_member",
+            "role": "member",
             "user": {
                 "banned": false,
                 "online": true,

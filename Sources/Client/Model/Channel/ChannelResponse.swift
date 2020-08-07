@@ -14,6 +14,7 @@ public struct ChannelResponse: Decodable, Hashable {
         case channel
         case messages
         case messageReads = "read"
+        case membership
         case members
         case watchers
         case watcherCount = "watcher_count"
@@ -29,6 +30,7 @@ public struct ChannelResponse: Decodable, Hashable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(Channel.self, forKey: .channel)
+        channel.membership = try container.decodeIfPresent(Member.self, forKey: .membership)
         messages = try container.decodeIfPresent([Message].self, forKey: .messages) ?? []
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         

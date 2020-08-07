@@ -71,6 +71,8 @@ public final class Channel: Codable {
     public let config: Config
     /// Checks if the channel is frozen.
     public let frozen: Bool
+    /// The current user is a member of the channel. If not, it will be nil.
+    var membership: Member?
     /// A list of channel members.
     public internal(set) var members = Set<Member>()
     /// A list of channel watchers.
@@ -85,7 +87,7 @@ public final class Channel: Codable {
     /// Check if the channel was deleted.
     public var isDeleted: Bool { deleted != nil }
     /// Checks if read events evalable for the current user.
-    public var readEventsEnabled: Bool { config.readEventsEnabled && members.contains(Member.current) }
+    public var readEventsEnabled: Bool { config.readEventsEnabled && membership != nil }
     /// Returns the current unread count.
     public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get() }
     
