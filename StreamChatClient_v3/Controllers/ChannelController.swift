@@ -61,9 +61,9 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     }
     
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(client.databaseContainer,
-                                                                                                client.webSocketClient,
-                                                                                                client.apiClient)
+    private lazy var channelUpdater: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(client.databaseContainer,
+                                                                                                        client.webSocketClient,
+                                                                                                        client.apiClient)
     
     /// A type-erased delegate.
     private(set) var anyDelegate: AnyChannelControllerDelegate<ExtraData>?
@@ -133,7 +133,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
             $0?.controllerWillStartFetchingRemoteData(self)
         }
         
-        worker.update(channelQuery: channelQuery) { [weak self] error in
+        channelUpdater.update(channelQuery: channelQuery) { [weak self] error in
             guard let self = self else { return }
             self.delegateCallback { $0?.controllerDidStopFetchingRemoteData(self, withError: error) }
             self.callback { completion?(error) }
