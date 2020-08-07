@@ -14,7 +14,8 @@ class ChannelController_Tests: StressTestCase {
     var channelId: ChannelId!
     
     var controller: ChannelController!
-    
+    let controllerCallbackQueueID = UUID()
+
     override func setUp() {
         super.setUp()
         
@@ -22,6 +23,7 @@ class ChannelController_Tests: StressTestCase {
         client = Client(config: ChatClientConfig(apiKey: .init(.unique)))
         channelId = ChannelId.unique
         controller = ChannelController(channelQuery: .init(channelId: channelId), client: client, environment: env.environment)
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
     
     override func tearDown() {
@@ -89,14 +91,11 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_startUpdating_callsChannelUpdater() {
-        let queueId = UUID()
-        controller.callbackQueue = .testQueue(withId: queueId)
-        
         // Simulate `startUpdating` calls and catch the completion
         var completionCalled = false
-        controller.startUpdating { error in
+        controller.startUpdating { [controllerCallbackQueueID] error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: queueId)
+            AssertTestQueue(withId: controllerCallbackQueueID)
             completionCalled = true
         }
         
@@ -113,14 +112,11 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_startUpdating_propagesErrorFromUpdater() {
-        let queueId = UUID()
-        controller.callbackQueue = .testQueue(withId: queueId)
-        
         // Simulate `startUpdating` call and catch the completion
         var completionCalledError: Error?
-        controller.startUpdating {
+        controller.startUpdating { [controllerCallbackQueueID] in
             completionCalledError = $0
-            AssertTestQueue(withId: queueId)
+            AssertTestQueue(withId: controllerCallbackQueueID)
         }
         
         // Simulate failed udpate
@@ -197,10 +193,8 @@ class ChannelController_Tests: StressTestCase {
         XCTAssert(controller.delegate === delegate)
         
         // Set the queue for delegate calls
-        let delegateQueueId = UUID()
-        delegate.expectedQueueId = delegateQueueId
-        controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
-        
+        delegate.expectedQueueId = controllerCallbackQueueID
+
         // Simulate `startUpdating()` call
         controller.startUpdating()
         AssertAsync {
@@ -237,10 +231,8 @@ class ChannelController_Tests: StressTestCase {
         controller.setDelegate(delegate)
         
         // Set the queue for delegate calls
-        let delegateQueueId = UUID()
-        delegate.expectedQueueId = delegateQueueId
-        controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
-        
+        delegate.expectedQueueId = controllerCallbackQueueID
+
         // Simulate `startUpdating()` call
         controller.startUpdating()
         AssertAsync {
@@ -278,7 +270,8 @@ class ChannelController_Tests: StressTestCase {
 
         // Simulate `muteChannel` call and catch the completion
         var completionCalled = false
-        controller.muteChannel(cid: channelID) { error in
+        controller.muteChannel(cid: channelID) { [controllerCallbackQueueID] error in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -298,7 +291,8 @@ class ChannelController_Tests: StressTestCase {
     func test_muteChannel_propagesErrorFromUpdater() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalledError: Error?
-        controller.muteChannel(cid: .unique) {
+        controller.muteChannel(cid: .unique) { [controllerCallbackQueueID] in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             completionCalledError = $0
         }
 
@@ -315,7 +309,8 @@ class ChannelController_Tests: StressTestCase {
 
         // Simulate `unmuteChannel` call and catch the completion
         var completionCalled = false
-        controller.unmuteChannel(cid: channelID) { error in
+        controller.unmuteChannel(cid: channelID) { [controllerCallbackQueueID] error in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -335,7 +330,8 @@ class ChannelController_Tests: StressTestCase {
     func test_unmuteChannel_propagesErrorFromUpdater() {
         // Simulate `unmuteChannel` call and catch the completion
         var completionCalledError: Error?
-        controller.unmuteChannel(cid: .unique) {
+        controller.unmuteChannel(cid: .unique) { [controllerCallbackQueueID] in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             completionCalledError = $0
         }
 
@@ -352,7 +348,8 @@ class ChannelController_Tests: StressTestCase {
         var completionCalled = false
 
         // Simulate `deleteChannel` calls and catch the completion
-        controller.deleteChannel(cid: cid) { error in
+        controller.deleteChannel(cid: cid) { [controllerCallbackQueueID] error in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -372,7 +369,8 @@ class ChannelController_Tests: StressTestCase {
     func test_deleteChannel_callsChannelUpdaterWithError() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalledError: Error?
-        controller.deleteChannel(cid: .unique) {
+        controller.deleteChannel(cid: .unique) { [controllerCallbackQueueID] in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             completionCalledError = $0
         }
 
@@ -389,7 +387,8 @@ class ChannelController_Tests: StressTestCase {
         var completionCalled = false
 
         // Simulate `hideChannel` calls and catch the completion
-        controller.hideChannel(cid: cid, clearHistory: false) { error in
+        controller.hideChannel(cid: cid, clearHistory: false) { [controllerCallbackQueueID] error in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -411,7 +410,8 @@ class ChannelController_Tests: StressTestCase {
     func test_hideChannel_callsChannelUpdaterWithError() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalledError: Error?
-        controller.hideChannel(cid: .unique, clearHistory: false) {
+        controller.hideChannel(cid: .unique, clearHistory: false) { [controllerCallbackQueueID] in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             completionCalledError = $0
         }
 
@@ -428,7 +428,8 @@ class ChannelController_Tests: StressTestCase {
         var completionCalled = false
 
         // Simulate `showChannel` calls and catch the completion
-        controller.showChannel(cid: cid) { error in
+        controller.showChannel(cid: cid) { [controllerCallbackQueueID] error in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -449,7 +450,8 @@ class ChannelController_Tests: StressTestCase {
     func test_showChannel_callsChannelUpdaterWithError() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalledError: Error?
-        controller.showChannel(cid: .unique) {
+        controller.showChannel(cid: .unique) { [controllerCallbackQueueID] in
+            AssertTestQueue(withId: controllerCallbackQueueID)
             completionCalledError = $0
         }
 
