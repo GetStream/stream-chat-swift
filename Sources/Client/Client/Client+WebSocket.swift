@@ -107,7 +107,7 @@ extension Client: WebSocketEventDelegate {
             }
             return true
             
-        case let .messageNew(message, _, _, _) where message.user != user && user.isMuted(user: message.user):
+        case let .messageNew(message, _, _, _, _) where message.user != user && user.isMuted(user: message.user):
             // FIXIT: This shouldn't be by default.
             logger?.log("Skip a message (\(message.id)) from muted user (\(message.user.id)): \(message.textOrArgs)", level: .info)
             return false
