@@ -164,7 +164,7 @@ public extension ChannelControllerGeneric {
     /// is called with an error.
     func muteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         channelUpdater.muteChannel(cid: cid, mute: true) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
@@ -177,7 +177,7 @@ public extension ChannelControllerGeneric {
     /// is called with an error.
     func unmuteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         channelUpdater.muteChannel(cid: cid, mute: false) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
@@ -189,7 +189,7 @@ public extension ChannelControllerGeneric {
     ///   - completion: An empty completion block.
     func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         channelUpdater.deleteChannel(cid: cid) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
@@ -203,7 +203,7 @@ public extension ChannelControllerGeneric {
     ///   - completion: An empty completion block.
     func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
         channelUpdater.hideChannel(cid: cid, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
@@ -216,7 +216,7 @@ public extension ChannelControllerGeneric {
     ///   - completion: An empty completion block.
     func showChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         channelUpdater.showChannel(cid: cid, userId: client.currentUserId) { [weak self] error in
-            self?.callbackQueue.async {
+            self?.callback {
                 completion?(error)
             }
         }
