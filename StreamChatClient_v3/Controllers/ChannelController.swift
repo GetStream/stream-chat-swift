@@ -36,6 +36,9 @@ public typealias ChannelController = ChannelControllerGeneric<DefaultDataTypes>
 public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable {
     /// The ChannelQuery this controller observes.
     public let channelQuery: ChannelQuery<ExtraData>
+
+    /// The identifier of a channel this controller observes.
+    private var channelId: ChannelId { channelQuery.cid }
     
     /// The `ChatClient` instance this controller belongs to.
     public let client: Client<ExtraData>
@@ -151,6 +154,71 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     public func setDelegate<Delegate: ChannelControllerDelegateGeneric>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
         anyDelegate = AnyChannelControllerDelegate(delegate)
+    }
+}
+
+// MARK: - Channel actions
+
+public extension ChannelControllerGeneric {
+    /// Mutes the channel this controller manages.
+    /// - Parameters:
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
+    /// will be called with an error.
+    func muteChannel(completion: ((Error?) -> Void)? = nil) {
+        worker.muteChannel(cid: channelId, mute: true) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Unmutes the channel this controller manages.
+    /// - Parameters:
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
+    /// will be called with an error.
+    func unmuteChannel(completion: ((Error?) -> Void)? = nil) {
+        worker.muteChannel(cid: channelId, mute: false) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Delete the channel this controller manages.
+    /// - Parameters:
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
+    /// will be called with an error.
+    func deleteChannel(completion: ((Error?) -> Void)? = nil) {
+        worker.deleteChannel(cid: channelId) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Hide the channel this controller manages from queryChannels for the user until a message is added.
+    /// - Parameters:
+    ///   - clearHistory: Flag to remove channel history (**false** by default)
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
+    /// will be called with an error.
+    func hideChannel(clearHistory: Bool = false, completion: ((Error?) -> Void)? = nil) {
+        worker.hideChannel(cid: channelId, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Removes hidden status for the channel this controller manages.
+    /// - Parameters:
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
+    /// will be called with an error.
+    func showChannel(completion: ((Error?) -> Void)? = nil) {
+        worker.showChannel(cid: channelId, userId: client.currentUserId) { [weak self] error in
+            self?.callbackQueue.async {
+                completion?(error)
+            }
+        }
     }
 }
 
