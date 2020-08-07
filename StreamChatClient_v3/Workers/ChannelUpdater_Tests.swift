@@ -33,7 +33,7 @@ class ChannelUpdater_Tests: StressTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
-    func test_updateChannelQuery_successfullReponseData_areSavedToDB() {
+    func test_updateChannelQuery_successfulResponseData_areSavedToDB() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery<ExtraData>(channelId: .unique)
         var completionCalled = false
@@ -57,7 +57,7 @@ class ChannelUpdater_Tests: StressTestCase {
         }
     }
     
-    func test_updateChannelQuery_errorReponse_isPropagatedToCompletion() {
+    func test_updateChannelQuery_errorResponse_isPropagatedToCompletion() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery<ExtraData>(channelId: .unique)
         var completionCalledError: Error?
