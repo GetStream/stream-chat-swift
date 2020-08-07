@@ -46,12 +46,6 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
                                     client.webSocketClient,
                                     client.apiClient)
 
-    /// Channel updated used for modifying channel settings
-    private lazy var channelUpdater: ChannelUpdater<ExtraData> = self.environment
-        .channelUpdaterBuilder(client.databaseContainer,
-                               client.webSocketClient,
-                               client.apiClient)
-    
     /// A type-erased delegate.
     private(set) var anyDelegate: AnyChannelListControllerDelegate<ExtraData>?
     
@@ -143,12 +137,6 @@ extension ChannelListControllerGeneric {
             _ apiClient: APIClient
         ) -> ChannelListQueryUpdater<ExtraData> = ChannelListQueryUpdater.init
 
-        var channelUpdaterBuilder: (
-            _ database: DatabaseContainer,
-            _ webSocketClient: WebSocketClient,
-            _ apiClient: APIClient
-        ) -> ChannelUpdater<ExtraData> = ChannelUpdater.init
-        
         var createChannelListDabaseObserver: (_ context: NSManagedObjectContext,
                                               _ fetchRequest: NSFetchRequest<ChannelDTO>,
                                               _ itemCreator: @escaping (ChannelDTO) -> ChannelModel<ExtraData>?)
