@@ -24,7 +24,7 @@ class ChannelController_Tests: StressTestCase {
         env = TestEnvironment()
         client = Client(config: ChatClientConfig(apiKey: .init(.unique)))
         channelId = ChannelId.unique
-        controller = ChannelController(channelQuery: .init(channelId: channelId), client: client, environment: env.environment)
+        controller = ChannelController(channelQuery: .init(cid: channelId), client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
