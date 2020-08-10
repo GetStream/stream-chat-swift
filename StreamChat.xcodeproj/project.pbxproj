@@ -493,6 +493,7 @@
 		8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */; };
 		8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */; };
+		DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */; };
 		DAEAF4B324DAD99E0015FB28 /* HideChannelRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */; };
 		DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */; };
 		F62D143E24DD70190081D241 /* ChannelUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */; };
@@ -1051,6 +1052,7 @@
 		8AE6206C23CF642900AB3426 /* TestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCase.swift; sourceTree = "<group>"; };
 		8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPongEmojiFormatter.swift; sourceTree = "<group>"; };
 		8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientLoggerTests.swift; sourceTree = "<group>"; };
+		DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCodingKeys.swift; sourceTree = "<group>"; };
 		DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideChannelRequest.swift; sourceTree = "<group>"; };
 		DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints_Tests.swift; sourceTree = "<group>"; };
 		F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUpdater_Mock.swift; sourceTree = "<group>"; };
@@ -1358,6 +1360,7 @@
 			isa = PBXGroup;
 			children = (
 				79682C4824BF37650071578E /* MessagePayload.swift */,
+				DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */,
 				79682C4924BF37970071578E /* ChannelListPayload.swift */,
 			);
 			path = Payloads;
@@ -2908,6 +2911,7 @@
 				79280F3F2484E3BA00CDEB89 /* ClientError.swift in Sources */,
 				794927ED249E0BE2009D7EB7 /* ExtraData.swift in Sources */,
 				79682C4B24BF37CB0071578E /* ChannelListPayload.swift in Sources */,
+				DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */,
 				79FC85E724ACCBC500A665ED /* Token.swift in Sources */,
 				79877A0E2498E4BC00015F8B /* ChannelModel.swift in Sources */,
 				79A0E9BB2498C31300E9BD50 /* UserTypingStartCleanupMiddleware.swift in Sources */,

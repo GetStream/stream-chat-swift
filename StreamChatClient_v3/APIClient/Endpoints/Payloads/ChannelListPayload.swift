@@ -90,39 +90,8 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
     public let team: String
     
-    /// Coding keys for the decoding.
-    public enum DecodingKeys: String, CodingKey {
-        /// A combination of channel id and type.
-        case cid
-        /// A type.
-        case typeRawValue = "type"
-        /// A channel name.
-        case name
-        /// An image URL.
-        case imageURL = "image"
-        /// A last message date.
-        case lastMessageAt = "last_message_at"
-        /// A user created by.
-        case createdBy = "created_by"
-        /// A created date.
-        case createdAt = "created_at"
-        /// A created date.
-        case updatedAt = "updated_at"
-        /// A deleted date.
-        case deletedAt = "deleted_at"
-        /// A channel config.
-        case config
-        /// A frozen flag.
-        case frozen
-        /// Members.
-        case members
-        /// The team the channel belongs to.
-        case team
-        case memberCount = "member_count"
-    }
-    
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: DecodingKeys.self)
+        let container = try decoder.container(keyedBy: ChannelCodingKeys.self)
         typeRawValue = try container.decode(String.self, forKey: .typeRawValue)
         cid = try container.decode(ChannelId.self, forKey: .cid)
         let config = try container.decode(ChannelConfig.self, forKey: .config)
