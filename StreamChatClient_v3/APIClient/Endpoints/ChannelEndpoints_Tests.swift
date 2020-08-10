@@ -36,11 +36,11 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let channelID = ChannelId(type: .livestream, id: "qwerty")
 
         let testCases: [(ChannelQuery<DefaultDataTypes>, Bool)] = [
-            (.init(channelId: channelID, options: .state), true),
-            (.init(channelId: channelID, options: .presence), true),
-            (.init(channelId: channelID, options: .watch), true),
-            (.init(channelId: channelID, options: .all), true),
-            (.init(channelId: channelID, options: []), false)
+            (.init(cid: channelID, options: .state), true),
+            (.init(cid: channelID, options: .presence), true),
+            (.init(cid: channelID, options: .watch), true),
+            (.init(cid: channelID, options: .all), true),
+            (.init(cid: channelID, options: []), false)
         ]
 
         for (query, requiresConnectionId) in testCases {
@@ -136,4 +136,3 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
 }
-
