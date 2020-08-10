@@ -61,9 +61,6 @@ class WebSocketClient {
     /// If in the `waitingForReconnect` state, this variable contains the reconnection timer.
     private var reconnectionTimer: TimerControl?
     
-    /// The queue on which web socket engine methods are called
-    private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .default)
-    
     private let requestEncoder: RequestEncoder
     
     /// The session config used for the web socket engine
@@ -83,7 +80,7 @@ class WebSocketClient {
     private let environment: Environment
     
     private(set) lazy var pingController: WebSocketPingController = {
-        let pingController = environment.createPingController(environment.timerType, engineQueue)
+        let pingController = environment.createPingController(environment.timerType, environment.engineQueue)
         pingController.delegate = self
         return pingController
     }()
@@ -91,7 +88,7 @@ class WebSocketClient {
     private func createEngine() -> WebSocketEngine {
         do {
             let request = try requestEncoder.encodeRequest(for: connectEndpoint)
-            let engine = environment.createEngine(request, sessionConfiguration, engineQueue)
+            let engine = environment.createEngine(request, sessionConfiguration, environment.engineQueue)
             engine.delegate = self
             return engine
             
@@ -143,7 +140,7 @@ class WebSocketClient {
         
         connectionState = .connecting
         
-        engineQueue.async {
+        environment.engineQueue.async {
             self.engine.connect()
         }
     }
@@ -154,7 +151,7 @@ class WebSocketClient {
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
     func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
         connectionState = .disconnecting(source: source)
-        engineQueue.async {
+        environment.engineQueue.async {
             self.engine.disconnect()
         }
     }
@@ -211,6 +208,9 @@ extension WebSocketClient {
             _ callbackQueue: DispatchQueue
         ) -> WebSocketEngine
         
+        /// The queue on which web socket engine methods are called
+        var engineQueue: DispatchQueue = .init(label: "io.getstream.chat.core.web_socket_engine_queue", qos: .default)
+        
         var timerType: Timer.Type = DefaultTimer.self
         
         var createPingController: CreatePingController = WebSocketPingController.init
@@ -220,9 +220,9 @@ extension WebSocketClient {
         var createEngine: CreateEngine = {
             if #available(iOS 13, *) {
                 return URLSessionWebSocketEngine(request: $0, sessionConfiguration: $1, callbackQueue: $2)
-            } else {
-                return StarscreamWebSocketProvider(request: $0, sessionConfiguration: $1, callbackQueue: $2)
             }
+            
+            return StarscreamWebSocketProvider(request: $0, sessionConfiguration: $1, callbackQueue: $2)
         }
         
         var backgroundTaskScheduler: BackgroundTaskScheduler = UIApplication.shared
@@ -289,7 +289,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
             connectionState = .waitingForReconnect(error: clientError)
             
             reconnectionTimer = environment.timerType
-                .schedule(timeInterval: reconnectionDelay, queue: engineQueue) { [weak self] in self?.connect() }
+                .schedule(timeInterval: reconnectionDelay, queue: environment.engineQueue) { [weak self] in self?.connect() }
             
         } else {
             connectionState = .notConnected(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
