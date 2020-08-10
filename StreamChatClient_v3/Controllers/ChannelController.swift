@@ -12,17 +12,41 @@ extension Client {
     /// - Parameter options: Query options (See `QueryOptions`)
     /// - Returns: A new instance of `ChannelController`.
     ///
-    public func channelController(for channelId: ChannelId, options: QueryOptions = .all) -> ChannelControllerGeneric<ExtraData> {
-        .init(channelQuery: .init(channelId: channelId, options: options), client: self)
+    public func channelController(for cid: ChannelId, options: QueryOptions = .all) -> ChannelControllerGeneric<ExtraData> {
+        .init(channelQuery: .init(cid: cid, options: options), client: self)
     }
     
-    /// Creates a new `ChannelController` for the channel with the provided id.
+    /// Creates a new `ChannelController` for the channel with the provided channel query.
     ///
     /// - Parameter channelQuery: The ChannelQuery this controller represents
     /// - Returns: A new instance of `ChannelController`.
     ///
     public func channelController(for channelQuery: ChannelQuery<ExtraData>) -> ChannelControllerGeneric<ExtraData> {
         .init(channelQuery: channelQuery, client: self)
+    }
+
+    /// Creates a new `ChannelController` that will create new channel.
+    ///
+    /// - Parameters:
+    ///   - cid: The `ChannelId` for the new channel.
+    ///   - team: Team for new channel.
+    ///   - members: IDs for the new channel members.
+    ///   - invites: IDs for the new channel invitees.
+    ///   - extraData: Extra data for the new channel.
+    /// - Returns: A new instance of `ChannelController`.
+    public func channelController(
+        createChannelWithId cid: ChannelId,
+        team: String? = nil,
+        members: Set<UserId> = [],
+        invites: Set<UserId> = [],
+        extraData: ExtraData.Channel
+    ) -> ChannelControllerGeneric<ExtraData> {
+        let payload = ChannelEditDetailPayload<ExtraData>(cid: cid,
+                                                          team: team,
+                                                          members: members,
+                                                          invites: invites,
+                                                          extraData: extraData)
+        return .init(channelQuery: .init(channelPayload: payload), client: self)
     }
 }
 
