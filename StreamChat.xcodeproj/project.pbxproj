@@ -493,9 +493,11 @@
 		8AE6206E23CF658700AB3426 /* User+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */; };
 		8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */; };
 		8AFA57292418EC1700FD07EC /* StringExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A30D07A237D81C20082B951 /* StringExtensionsTests.swift */; };
+		DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */; };
 		DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */; };
 		DAEAF4B324DAD99E0015FB28 /* HideChannelRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */; };
 		DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */; };
+		DAFAD6A324DD8E1A0043ED06 /* ChannelEditDetailPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFAD6A224DD8E1A0043ED06 /* ChannelEditDetailPayload.swift */; };
 		F62D143E24DD70190081D241 /* ChannelUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */; };
 /* End PBXBuildFile section */
 
@@ -1052,9 +1054,11 @@
 		8AE6206C23CF642900AB3426 /* TestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCase.swift; sourceTree = "<group>"; };
 		8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPongEmojiFormatter.swift; sourceTree = "<group>"; };
 		8AFA57262418EB2500FD07EC /* ClientLoggerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientLoggerTests.swift; sourceTree = "<group>"; };
+		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
 		DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCodingKeys.swift; sourceTree = "<group>"; };
 		DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideChannelRequest.swift; sourceTree = "<group>"; };
 		DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints_Tests.swift; sourceTree = "<group>"; };
+		DAFAD6A224DD8E1A0043ED06 /* ChannelEditDetailPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload.swift; sourceTree = "<group>"; };
 		F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUpdater_Mock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1361,6 +1365,8 @@
 			children = (
 				79682C4824BF37650071578E /* MessagePayload.swift */,
 				DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */,
+				DAFAD6A224DD8E1A0043ED06 /* ChannelEditDetailPayload.swift */,
+				DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */,
 				79682C4924BF37970071578E /* ChannelListPayload.swift */,
 			);
 			path = Payloads;
@@ -2896,6 +2902,7 @@
 				7964F3BA249A314D002A09EC /* LogDestination.swift in Sources */,
 				79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */,
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
+				DAFAD6A324DD8E1A0043ED06 /* ChannelEditDetailPayload.swift in Sources */,
 				79BF83F2248F8F60007611A1 /* Logger.swift in Sources */,
 				799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */,
 				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
@@ -2960,6 +2967,7 @@
 				790B9E3224DC221A005455AA /* UserPayload.swift in Sources */,
 				792921CD24C07A9000116BBB /* QueueAwareDelegate.swift in Sources */,
 				79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */,
+				DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
 				79280F732487CD3100CDEB89 /* Atomic_Tests.swift in Sources */,
 				7964F3BE249A5E6E002A09EC /* RequestEncoder_Tests.swift in Sources */,
