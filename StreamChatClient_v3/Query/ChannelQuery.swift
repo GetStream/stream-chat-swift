@@ -12,9 +12,7 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         case members
         case watchers
     }
-    
-    /// A channel.
-    public let channel: ChannelModel<ExtraData>?
+
     /// ChannelId this query handles.
     public let cid: ChannelId
     /// A pagination for messages (see `Pagination`).
@@ -25,49 +23,52 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     public let watchersPagination: Pagination
     /// A query options.
     public let options: QueryOptions
-    
+    /// ChannelCreatePayload that is needed only when creating channel
+    let channelPayload: ChannelEditDetailPayload<ExtraData>?
+
     /// Init a channel query.
     /// - Parameters:
-    ///   - channel: a channel.
-    ///   - memebers: members of the channel.
+    ///   - cid: a channel cid.
     ///   - messagesPagination: a pagination for messages.
     ///   - membersPagination: a pagination for members. You can use `.limit` and `.offset`.
     ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
     ///   - options: a query options (see `QueryOptions`).
-    public init(channel: ChannelModel<ExtraData>,
+    public init(cid: ChannelId,
                 messagesPagination: Pagination = [],
                 membersPagination: Pagination = [],
                 watchersPagination: Pagination = [],
-                options: QueryOptions = []) {
-        self.channel = channel
-        cid = channel.cid
+                options: QueryOptions = [])
+    {
+        self.cid = cid
+        channelPayload = nil
         self.messagesPagination = messagesPagination
         self.membersPagination = membersPagination
         self.watchersPagination = watchersPagination
         self.options = options
     }
-    
-    public init(channelId: ChannelId,
-                messagesPagination: Pagination = [],
-                membersPagination: Pagination = [],
-                watchersPagination: Pagination = [],
-                options: QueryOptions = []) {
-        channel = nil
-        cid = channelId
-        self.messagesPagination = messagesPagination
-        self.membersPagination = membersPagination
-        self.watchersPagination = watchersPagination
+
+    /// Init a channel query.
+    /// - Parameters:
+    ///   - channelPayload: a payload that has data needed for channel creation.
+    ///   - options: a query options (see `QueryOptions`).
+    init(channelPayload: ChannelEditDetailPayload<ExtraData>,
+         options: QueryOptions = [])
+    {
+        cid = channelPayload.cid
+        self.channelPayload = channelPayload
+        messagesPagination = []
+        membersPagination = []
+        watchersPagination = []
         self.options = options
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+
         try options.encode(to: encoder)
-        
-        // The channel data only needs for creating it.
-//        if !channel.didLoad, !channel.isEmpty {
-//            try container.encode(channel, forKey: .data)
-//        }
+
+        // Only needed for channel creation
+        try container.encodeIfPresent(channelPayload, forKey: .data)
         
         if !messagesPagination.isEmpty {
             try container.encode(messagesPagination, forKey: .messages)
