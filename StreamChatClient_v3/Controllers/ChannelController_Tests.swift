@@ -269,6 +269,41 @@ class ChannelController_Tests: StressTestCase {
 
     // MARK: - Channel actions propagation tests
 
+    func test_updateChannel_callsChannelUpdater() {
+        // Simulate `updateChannel` call and catch the completion
+        var completionCalled = false
+        controller.updateChannel(team: .unique, extraData: .init()) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert payload is passed to `channelUpdater`, completion is not called yet
+        XCTAssertNotNil(env.channelUpdater!.updateChannel_payload)
+
+        // Simulate successfull udpate
+        env.channelUpdater!.updateChannel_completion?(nil)
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_updateChannel_propagesErrorFromUpdater() {
+        // Simulate `updateChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.updateChannel(team: .unique, extraData: .init()) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.updateChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
     func test_muteChannel_callsChannelUpdater() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalled = false
