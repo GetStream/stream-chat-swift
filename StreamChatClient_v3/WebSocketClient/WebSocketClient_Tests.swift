@@ -71,7 +71,7 @@ class WebSocketClient_Tests: StressTestCase {
         // Check there are no memory leaks
         weak var weakReference = webSocketClient
         webSocketClient = nil
-        XCTAssertNil(weakReference)
+        AssertAsync.willBeNil(weakReference)
         
         super.tearDown()
     }
