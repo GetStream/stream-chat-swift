@@ -10,7 +10,7 @@ protocol WebSocketPingControllerDelegate: AnyObject {
     func sendPing()
     
     /// `WebSocketPingController` will call it to force disconnect `WebSocketClient`.
-    func forceDisconnect()
+    func disconnectOnNoPongReceived()
 }
 
 /// The controller manages ping and pont timers. It send ping periodically to keep a web socket connection alive.
@@ -65,7 +65,7 @@ class WebSocketPingController {
         // Start pong timeout timer.
         pongTimeoutTimer = timerType.schedule(timeInterval: Self.pongTimeoutTimeInterval, queue: timerQueue) { [weak self] in
             log.info("WebSocket Pong timeout. Reconnect")
-            self?.delegate?.forceDisconnect()
+            self?.delegate?.disconnectOnNoPongReceived()
         }
         
         log.info("WebSocket Ping")
