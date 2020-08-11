@@ -47,6 +47,11 @@ class MasterViewController: UITableViewController {
 
     @objc
     func insertNewObject(_ sender: Any) {
+        let id = UUID().uuidString
+        let controller = chatClient.channelController(createChannelWithId: .init(type: .messaging, id: id),
+                                                      members: [chatClient.currentUserId],
+                                                      extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil))
+        controller.startUpdating()
     }
 
     // MARK: - Segues
