@@ -304,7 +304,7 @@ extension WebSocketClient: WebSocketPingControllerDelegate {
         engine.sendPing()
     }
     
-    func forceDisconnect() {
+    func disconnectOnNoPongReceived() {
         disconnect(source: .noPongReceived)
     }
 }

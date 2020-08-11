@@ -66,7 +66,7 @@ extension WebSocketPingController_Tests: WebSocketPingControllerDelegate {
         pingCount += 1
     }
     
-    func forceDisconnect() {
+    func disconnectOnNoPongReceived() {
         disconnectCount += 1
     }
 }
