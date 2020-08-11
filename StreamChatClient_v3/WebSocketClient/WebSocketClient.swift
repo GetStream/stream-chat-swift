@@ -56,7 +56,7 @@ class WebSocketClient {
     private let eventDecoder: AnyEventDecoder
     
     /// The web socket engine used to make the actual WS connection
-    lazy var engine: WebSocketEngine = createEngine()
+    private(set) lazy var engine: WebSocketEngine = createEngine()
     
     /// If in the `waitingForReconnect` state, this variable contains the reconnection timer.
     private var reconnectionTimer: TimerControl?
@@ -143,8 +143,8 @@ class WebSocketClient {
         
         connectionState = .connecting
         
-        engineQueue.async {
-            self.engine.connect()
+        engineQueue.async { [engine] in
+            engine.connect()
         }
     }
     
@@ -154,8 +154,8 @@ class WebSocketClient {
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
     func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
         connectionState = .disconnecting(source: source)
-        engineQueue.async {
-            self.engine.disconnect()
+        engineQueue.async { [engine] in
+            engine.disconnect()
         }
     }
     
@@ -301,8 +301,8 @@ extension WebSocketClient: WebSocketEngineDelegate {
 
 extension WebSocketClient: WebSocketPingControllerDelegate {
     func sendPing() {
-        engineQueue.async {
-            self.engine.sendPing()
+        engineQueue.async { [engine] in
+            engine.sendPing()
         }
     }
     
