@@ -59,6 +59,22 @@ final class ChannelEndpoints_Tests: XCTestCase {
         }
     }
 
+    func test_updateChannel_buildsCorrectly() {
+        let channelPayload: ChannelEditDetailPayload<DefaultDataTypes> = .unique
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(channelPayload.cid.type)/\(channelPayload.cid.id)",
+                                                       method: .post,
+                                                       queryItems: nil,
+                                                       requiresConnectionId: false,
+                                                       body: ["data": channelPayload])
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .updateChannel(channelPayload: channelPayload)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+
     func test_deleteChannel_buildsCorrectly() {
         let cid = ChannelId.unique
 
@@ -134,5 +150,15 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+}
+
+extension ChannelEditDetailPayload where ExtraData == DefaultDataTypes {
+    static var unique: Self {
+        Self(cid: .unique,
+             team: .unique,
+             members: [],
+             invites: [],
+             extraData: .init())
     }
 }
