@@ -283,6 +283,9 @@ class WebSocketClient_Tests: StressTestCase {
         // Simulate connection
         test_connectionFlow()
         
+        // Save the original engine reference
+        let oldEngine = engine
+        
         // Simulate connect endpoint is updated (i.e. new user is logged in)
         let newEndpoint = Endpoint<EmptyResponse>(path: .unique,
                                                   method: .get,
@@ -295,13 +298,17 @@ class WebSocketClient_Tests: StressTestCase {
         let newRequest = URLRequest(url: .unique())
         requestEncoder.encodeRequest = .success(newRequest)
         
-        // Reconnect and check the engine is recreated
+        // Disconnect
         assert(engine.disconnect_calledCount == 0)
         webSocketClient.disconnect()
         AssertAsync.willBeEqual(engine.disconnect_calledCount, 1)
         
+        // Reconnect again
         webSocketClient.connect()
         XCTAssertEqual(requestEncoder.encodeRequest_endpoint, AnyEndpoint(newEndpoint))
+        
+        // Check the engige got recreated
+        XCTAssert(engine !== oldEngine)
         
         AssertAsync {
             Assert.willBeEqual(self.engine.request, newRequest)
