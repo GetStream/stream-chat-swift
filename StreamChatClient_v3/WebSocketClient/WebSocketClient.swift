@@ -301,7 +301,9 @@ extension WebSocketClient: WebSocketEngineDelegate {
 
 extension WebSocketClient: WebSocketPingControllerDelegate {
     func sendPing() {
-        engine.sendPing()
+        engineQueue.async {
+            self.engine.sendPing()
+        }
     }
     
     func disconnectOnNoPongReceived() {
