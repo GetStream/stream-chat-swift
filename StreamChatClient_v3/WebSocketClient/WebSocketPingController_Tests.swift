@@ -8,65 +8,83 @@ import XCTest
 class WebSocketPingController_Tests: XCTestCase {
     var time: VirtualTime!
     var pingController: WebSocketPingController!
-    var pingCount = 0
-    var disconnectCount = 0
+    private var delegate: TestWebSocketPingControllerDelegate!
     
     override func setUp() {
         super.setUp()
         time = VirtualTime()
         VirtualTimeTimer.time = time
-        
-        pingCount = 0
-        disconnectCount = 0
-        
         pingController = .init(timerType: VirtualTimeTimer.self, timerQueue: .main)
-        pingController.delegate = self
+        
+        delegate = TestWebSocketPingControllerDelegate()
+        pingController.delegate = delegate
     }
     
-    func test_startStopPingTimer() throws {
-        // Checks ping timer doesn't work until it get the connect state is connected.
+    func test_sendPing_called_whenTheConnectionIsConnected() throws {
+        assert(delegate.sendPing_calledCount == 0)
+        
+        // Check `sendPing` is not called when the connection is not connected
         time.run(numberOfSeconds: WebSocketPingController.pingTimeInterval + 1)
-        XCTAssertEqual(0, pingCount)
+        XCTAssertEqual(delegate.sendPing_calledCount, 0)
         
-        // Send connection state as connected and check if a ping was send after ping timer time interval.
+        // Set the connection state as connected
         pingController.connectionStateDidChange(.connected(connectionId: .unique))
-        time.run(numberOfSeconds: WebSocketPingController.pingTimeInterval)
-        XCTAssertEqual(1, pingCount)
         
-        // Send connection state as not connected and check if a ping was not send after ping timer time interval.
+        // Simulate time passed 3x pingTimeInterval (+1 for margin errors)
+        time.run(numberOfSeconds: 3 * (WebSocketPingController.pingTimeInterval + 1))
+        XCTAssertEqual(delegate.sendPing_calledCount, 3)
+        
+        let oldPingCount = delegate.sendPing_calledCount
+        
+        // Set the connection state to not connected and check `sendPing` is no longer called
         pingController.connectionStateDidChange(.waitingForConnectionId)
-        time.run(numberOfSeconds: WebSocketPingController.pingTimeInterval + 1)
-        XCTAssertEqual(1, pingCount) // The counter should be still the same value.
+        time.run(numberOfSeconds: 3 * (WebSocketPingController.pingTimeInterval + 1))
+        XCTAssertEqual(delegate.sendPing_calledCount, oldPingCount)
     }
     
-    func test_pingPongReconnect() throws {
-        // Send connection state as connected to start the ping timer.
+    func test_disconnectOnNoPongReceived_called_whenNoPongReceived() throws {
+        // Set the connection state as connected
         pingController.connectionStateDidChange(.connected(connectionId: .unique))
         
-        // Send ping.
-        time.run(numberOfSeconds: WebSocketPingController.pingTimeInterval)
-        XCTAssertEqual(1, pingCount)
-        // Send pong.
-        pingController.pongRecieved()
-        // Checks it didn't call disconnect after a pong timeout time interval.
-        time.run(numberOfSeconds: WebSocketPingController.pongTimeoutTimeInterval)
-        XCTAssertEqual(0, disconnectCount)
+        assert(delegate.sendPing_calledCount == 0)
         
-        // Send ping again.
-        time.run(numberOfSeconds: WebSocketPingController.pingTimeInterval)
-        XCTAssertEqual(2, pingCount)
-        // Don't send pong and `disconnectCount` should be increased by 1 after a pong timeout time interval.
-        time.run(numberOfSeconds: WebSocketPingController.pongTimeoutTimeInterval)
-        XCTAssertEqual(1, disconnectCount)
+        // Simulate time passing and wait for `sendPing` call
+        while delegate.sendPing_calledCount != 1 {
+            time.run(numberOfSeconds: 1)
+        }
+        
+        // Simulate pong received
+        pingController.pongRecieved()
+        
+        // Simulate time passed pongTimeoutTimeInterval + 1 and check disconnectOnNoPongReceived wasn't called
+        assert(delegate.disconnectOnNoPongReceived_calledCount == 0)
+        time.run(numberOfSeconds: WebSocketPingController.pongTimeoutTimeInterval + 1)
+        XCTAssertEqual(delegate.disconnectOnNoPongReceived_calledCount, 0)
+        
+        assert(delegate.sendPing_calledCount == 1)
+        
+        // Simulate time passing and wait for another `sendPing` call
+        while delegate.sendPing_calledCount != 2 {
+            time.run(numberOfSeconds: 1)
+        }
+        
+        // Simulate time passed pongTimeoutTimeInterval + 1 without receiving a pong
+        assert(delegate.disconnectOnNoPongReceived_calledCount == 0)
+        time.run(numberOfSeconds: WebSocketPingController.pongTimeoutTimeInterval + 1)
+        
+        // `disconnectOnNoPongReceived` should be called
+        XCTAssertEqual(delegate.disconnectOnNoPongReceived_calledCount, 1)
     }
 }
 
-extension WebSocketPingController_Tests: WebSocketPingControllerDelegate {
+private class TestWebSocketPingControllerDelegate: WebSocketPingControllerDelegate {
+    var sendPing_calledCount = 0
+    var disconnectOnNoPongReceived_calledCount = 0
     func sendPing() {
-        pingCount += 1
+        sendPing_calledCount += 1
     }
     
     func disconnectOnNoPongReceived() {
-        disconnectCount += 1
+        disconnectOnNoPongReceived_calledCount += 1
     }
 }
