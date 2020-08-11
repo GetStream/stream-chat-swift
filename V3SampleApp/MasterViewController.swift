@@ -118,6 +118,16 @@ private extension MasterViewController {
 
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let actions = [
+            UIAlertAction(title: "Change name", style: .default) { _ in
+                let alert = UIAlertController(title: "Change channel name", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { _ in
+                    guard let newName = alert.textFields?.first?.text else { return }
+                    channelController.updateChannel(team: nil, extraData: .init(name: newName, imageURL: nil))
+                }))
+                alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+                alert.addTextField(configurationHandler: nil)
+                self.present(alert, animated: true, completion: nil)
+            },
             UIAlertAction(title: "Mute", style: .default) { _ in
                 channelController.muteChannel()
             },
