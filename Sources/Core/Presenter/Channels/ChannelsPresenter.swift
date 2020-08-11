@@ -88,6 +88,16 @@ public extension ChannelsPresenter {
               _ completion: @escaping Client.Completion<EmptyData> = { _ in }) {
         rx.hide(channelPresenter, clearHistory: clearHistory).asObservable().bindOnce(to: completion)
     }
+    
+    /// Delete a channel and remove the channel presenter from items.
+    ///
+    /// - Parameters:
+    ///   - channelPresenter: a channel presenter.
+    ///   - completion: an empty completion block.
+    func delete(_ channelPresenter: ChannelPresenter,
+                _ completion: @escaping Client.Completion<Channel> = { _ in }) {
+        rx.delete(channelPresenter).asObservable().bindOnce(to: completion)
+    }
 }
 
 // MARK: - Response Parsing

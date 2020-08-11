@@ -43,6 +43,18 @@ public extension Reactive where Base == ChannelsPresenter {
             .do(onNext: { [weak base] _ in base?.rx.removeFromItems(channelPresenter) })
             .asDriver(onErrorJustReturn: .empty)
     }
+    
+    /// Delete a channel and remove a channel presenter from items.
+    ///
+    /// - Parameters:
+    ///   - channelPresenter: a channel presenter.
+    ///   - clearHistory: checks if needs to remove a message history of the channel.
+    func delete(_ channelPresenter: ChannelPresenter) -> Driver<Channel> {
+        channelPresenter.channel.rx
+            .delete()
+            .do(onNext: { [weak base] _ in base?.rx.removeFromItems(channelPresenter) })
+            .asDriver(onErrorJustReturn: .unused)
+    }
 }
 
 private extension Reactive where Base == ChannelsPresenter {
