@@ -5,7 +5,7 @@
 import XCTest
 
 /// The default timeout value used by the `willBe___` family of assertions.
-let defaultTimeout: TimeInterval = 1
+let defaultTimeout: TimeInterval = TestRunnerEnvironment.isCI ? 5 : 1
 
 /// The default timeout value used by the `stays___` family of assertions.
 let defaultTimeoutForInversedExpecations: TimeInterval = TestRunnerEnvironment.isStressTest ? 0.001 : 0.1
