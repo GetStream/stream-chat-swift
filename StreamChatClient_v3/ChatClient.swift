@@ -222,8 +222,36 @@ public class Client<ExtraData: ExtraDataTypes> {
         }
     }
     
-    public func setGuestUser(userId: UserId, extraData: ExtraData.User? = nil, completion: ((Error?) -> Void)? = nil) {
-        fatalError("not implemented")
+    /// Sets a new **guest** user of the `ChatClient` as a current user.
+    ///
+    /// Guest sessions do not require any server-side authentication.
+    /// Guest users have a limited set of permissions.
+    ///
+    /// - Parameters:
+    ///   - userId: The new guest-user identifier.
+    ///   - extraData: The extra data of the new guest-user.
+    ///   - completion: The completion. Will be called when the new guest user is set. If setting up the new user fails the completion
+    /// will be called with an error.
+    public func setGuestUser(userId: UserId, extraData: ExtraData.User, completion: ((Error?) -> Void)? = nil) {
+        disconnect()
+        prepareEnvironmentForNewUser(userId: userId, role: .guest, extraData: extraData) { error in
+            guard error == nil else {
+                completion?(error)
+                return
+            }
+
+            self.apiClient.request(endpoint: .guestUserToken(userId: userId, extraData: extraData)) { [weak self] in
+                guard let self = self else { return }
+
+                switch $0 {
+                case let .success(payload):
+                    self.currentToken = payload.token
+                    self.connect(completion: completion)
+                case let .failure(error):
+                    completion?(error)
+                }
+            }
+        }
     }
     
     /// Sets a new current user of the ChatClient.
