@@ -22,6 +22,16 @@ extension Endpoint {
               body: query)
     }
 
+    static func updateChannel<ExtraData: ExtraDataTypes>(channelPayload: ChannelEditDetailPayload<ExtraData>)
+        -> Endpoint<EmptyResponse>
+    {
+        .init(path: "channels/\(channelPayload.cid.type)/\(channelPayload.cid.id)",
+              method: .post,
+              queryItems: nil,
+              requiresConnectionId: false,
+              body: ["data": channelPayload])
+    }
+
     static func muteChannel(cid: ChannelId, mute: Bool) -> Endpoint<EmptyResponse> {
         .init(path: "moderation/\(mute ? "mute" : "unmute")/channel",
               method: .post,
