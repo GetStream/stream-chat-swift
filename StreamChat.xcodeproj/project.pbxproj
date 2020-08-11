@@ -506,6 +506,8 @@
 		F62E6B6624E1874D00BDD6F4 /* GuestUser+CustomExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = F62E6B6324E1874C00BDD6F4 /* GuestUser+CustomExtraData.json */; };
 		F62E6B5A24E186A700BDD6F4 /* GuestUserTokenRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62E6B5824E186A700BDD6F4 /* GuestUserTokenRequestPayload.swift */; };
 		F62E6B5B24E186B200BDD6F4 /* GuestUserTokenRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62E6B5724E186A700BDD6F4 /* GuestUserTokenRequestPayload_Tests.swift */; };
+		F62E6B6824E1880E00BDD6F4 /* GuestEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62E6B6724E1880D00BDD6F4 /* GuestEndpoints.swift */; };
+		F62E6B6A24E1881400BDD6F4 /* GuestEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62E6B6924E1881400BDD6F4 /* GuestEndpoints_Tests.swift */; };
 		F62E6B7124E1A2D500BDD6F4 /* GuestUserTokenPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62E6B7024E1A2D500BDD6F4 /* GuestUserTokenPayload.swift */; };
 		F62E6B7324E1A2DC00BDD6F4 /* GuestUserTokenPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62E6B7224E1A2DC00BDD6F4 /* GuestUserTokenPayload_Tests.swift */; };
 /* End PBXBuildFile section */
@@ -1076,6 +1078,8 @@
 		F62E6B5724E186A700BDD6F4 /* GuestUserTokenRequestPayload_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestUserTokenRequestPayload_Tests.swift; sourceTree = "<group>"; };
 		F62E6B5824E186A700BDD6F4 /* GuestUserTokenRequestPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestUserTokenRequestPayload.swift; sourceTree = "<group>"; };
 		DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
+		F62E6B6724E1880D00BDD6F4 /* GuestEndpoints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestEndpoints.swift; sourceTree = "<group>"; };
+		F62E6B6924E1881400BDD6F4 /* GuestEndpoints_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestEndpoints_Tests.swift; sourceTree = "<group>"; };
 		F62E6B7024E1A2D500BDD6F4 /* GuestUserTokenPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestUserTokenPayload.swift; sourceTree = "<group>"; };
 		F62E6B7224E1A2DC00BDD6F4 /* GuestUserTokenPayload_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestUserTokenPayload_Tests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1420,6 +1424,8 @@
 				7937282B249900CB00E13FE5 /* MemberPayload_Tests.swift */,
 				79877A132498E4EE00015F8B /* ChannelEndpoints.swift */,
 				DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */,
+				F62E6B6724E1880D00BDD6F4 /* GuestEndpoints.swift */,
+				F62E6B6924E1881400BDD6F4 /* GuestEndpoints_Tests.swift */,
 			);
 			path = Endpoints;
 			sourceTree = "<group>";
@@ -2966,6 +2972,7 @@
 				797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */,
 				79877A0B2498E4BC00015F8B /* MemberModel.swift in Sources */,
 				792FCB4524A33B5B000290C7 /* EventDataProcessorMiddleware.swift in Sources */,
+				F62E6B6824E1880E00BDD6F4 /* GuestEndpoints.swift in Sources */,
 				79A0E9BE2498C33100E9BD50 /* UserTypingEvent.swift in Sources */,
 				8A618E4524D19D510003D83C /* WebSocketPingController.swift in Sources */,
 				8A62704E24B8660A0040BFD6 /* EventType.swift in Sources */,
@@ -3026,6 +3033,7 @@
 				8A0CC9EB24C601F600705CF9 /* MemberEvents_Tests.swift in Sources */,
 				792B805224D95D4300C2963E /* Cached_Tests.swift in Sources */,
 				F62D143E24DD70190081D241 /* ChannelUpdater_Mock.swift in Sources */,
+				F62E6B6A24E1881400BDD6F4 /* GuestEndpoints_Tests.swift in Sources */,
 				8A62705C24BE2BC00040BFD6 /* UserTypingEvent_Tests.swift in Sources */,
 				799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */,
 				8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */,
