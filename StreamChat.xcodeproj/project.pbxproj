@@ -510,6 +510,7 @@
 		F62E6B6A24E1881400BDD6F4 /* GuestEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62E6B6924E1881400BDD6F4 /* GuestEndpoints_Tests.swift */; };
 		F62E6B7124E1A2D500BDD6F4 /* GuestUserTokenPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62E6B7024E1A2D500BDD6F4 /* GuestUserTokenPayload.swift */; };
 		F62E6B7324E1A2DC00BDD6F4 /* GuestUserTokenPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62E6B7224E1A2DC00BDD6F4 /* GuestUserTokenPayload_Tests.swift */; };
+		F684DA2F24E2CA5000DE78DC /* CurrentUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = F684DA2D24E2C98B00DE78DC /* CurrentUserPayload.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1082,6 +1083,7 @@
 		F62E6B6924E1881400BDD6F4 /* GuestEndpoints_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestEndpoints_Tests.swift; sourceTree = "<group>"; };
 		F62E6B7024E1A2D500BDD6F4 /* GuestUserTokenPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestUserTokenPayload.swift; sourceTree = "<group>"; };
 		F62E6B7224E1A2DC00BDD6F4 /* GuestUserTokenPayload_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestUserTokenPayload_Tests.swift; sourceTree = "<group>"; };
+		F684DA2D24E2C98B00DE78DC /* CurrentUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserPayload.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1183,6 +1185,7 @@
 			children = (
 				790B9E2F24DC21D7005455AA /* MessagePayload.swift */,
 				790B9E3124DC221A005455AA /* UserPayload.swift */,
+				F684DA2D24E2C98B00DE78DC /* CurrentUserPayload.swift */,
 			);
 			path = "Dummy data";
 			sourceTree = "<group>";
@@ -3001,6 +3004,7 @@
 				792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */,
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
 				7937282C249900CB00E13FE5 /* MemberPayload_Tests.swift in Sources */,
+				F684DA2F24E2CA5000DE78DC /* CurrentUserPayload.swift in Sources */,
 				8A0C3BC924C0BBAB00CAFD19 /* UserEvents_Tests.swift in Sources */,
 				792FCB4724A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift in Sources */,
 				79877A2B2498E51500015F8B /* UserModelDTO_Tests.swift in Sources */,
