@@ -123,8 +123,8 @@ final class RootViewController: ViewController {
         subscriptionBag.add(channel.watch({ [weak self] _ in
             guard let self = self else { return }
             
-            // Request 100 messages to get the initial value of unread count.
-            let subscription = self.channel.query(messagesPagination: [.limit(100)], options: [.watch, .state], { [weak self] in
+            // Request a message to get the initial value of unread count.
+            let subscription = self.channel.query(messagesPagination: [.limit(1)], options: [.watch, .state], { [weak self] in
                 if let response = $0.value {
                     DispatchQueue.main.async {
                         self?.channel = response.channel
@@ -151,10 +151,10 @@ final class RootViewController: ViewController {
             return
         }
         
-        // Watch the channel and request 100 messages to get the initial value of unread count.
+        // Watch the channel and request a message to get the initial value of unread count.
         channel.rx.watch()
             .flatMapLatest({ [weak self] _ in
-                self?.channel.rx.query(messagesPagination: [.limit(100)], options: [.watch, .state]) ?? .empty()
+                self?.channel.rx.query(messagesPagination: [.limit(1)], options: [.watch, .state]) ?? .empty()
             })
             .observeOn(MainScheduler.instance)
             .flatMapLatest({ [weak self] response -> Observable<ChannelUnreadCount> in
@@ -179,7 +179,7 @@ final class RootViewController: ViewController {
             return
         }
         
-        // Watch the channel and request 100 messages to get the initial value of unread count.
+        // Watch the channel and request 1 messages to get the initial value of unread count.
         channel.rx.query(messagesPagination: [.limit(1)], options: [.watch, .state])
             .observeOn(MainScheduler.instance)
             .flatMapLatest({ [weak self] response -> Observable<Int> in
