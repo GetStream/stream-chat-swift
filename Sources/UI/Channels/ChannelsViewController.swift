@@ -371,7 +371,6 @@ extension ChannelsViewController: UITableViewDataSource, UITableViewDelegate {
         
         channelPresenter.channel.rx.stopWatching().flatMap { _ in
             self.presenter.rx.delete(channelPresenter)
-        }
-        .subscribe().disposed(by: disposeBag)
+        }.subscribe().disposed(by: disposeBag)
     }
 }
