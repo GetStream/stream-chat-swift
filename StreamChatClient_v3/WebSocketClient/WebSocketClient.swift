@@ -62,7 +62,7 @@ class WebSocketClient {
     private var reconnectionTimer: TimerControl?
     
     /// The queue on which web socket engine methods are called
-    private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .default)
+    private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .userInitiated)
     
     private let requestEncoder: RequestEncoder
     
