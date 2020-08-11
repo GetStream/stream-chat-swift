@@ -10,6 +10,9 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     var update_channelQuery: ChannelQuery<ExtraData>?
     var update_completion: ((Error?) -> Void)?
 
+    var updateChannel_payload: ChannelEditDetailPayload<ExtraData>?
+    var updateChannel_completion: ((Error?) -> Void)?
+
     var muteChannel_cid: ChannelId?
     var muteChannel_mute: Bool?
     var muteChannel_completion: ((Error?) -> Void)?
@@ -29,6 +32,11 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     override func update(channelQuery: ChannelQuery<ExtraData>, completion: ((Error?) -> Void)? = nil) {
         update_channelQuery = channelQuery
         update_completion = completion
+    }
+
+    override func updateChannel(channelPayload: ChannelEditDetailPayload<ExtraData>, completion: ((Error?) -> Void)? = nil) {
+        updateChannel_payload = channelPayload
+        updateChannel_completion = completion
     }
 
     override func muteChannel(cid: ChannelId, mute: Bool, completion: ((Error?) -> Void)? = nil) {

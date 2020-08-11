@@ -71,6 +71,50 @@ class ChannelUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
+    // MARK: - Update channel
+
+    func test_updateChannel_makesCorrectAPICall() {
+        let channelPayload: ChannelEditDetailPayload<DefaultDataTypes> = .unique
+
+        // Simulate `updateChannel(channelPayload:, completion:)` call
+        queryUpdater.updateChannel(channelPayload: channelPayload)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .updateChannel(channelPayload: channelPayload)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_updateChannel_successfulResponse_isPropagatedToCompletion() {
+        // Simulate `updateChannel(channelPayload:, completion:)` call
+        var completionCalled = false
+        queryUpdater.updateChannel(channelPayload: .unique) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_updateChannel_errorResponse_isPropagatedToCompletion() {
+        // Simulate `updateChannel(channelPayload:, completion:)` call
+        var completionCalledError: Error?
+        queryUpdater.updateChannel(channelPayload: .unique) { completionCalledError = $0 }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
     // MARK: - Mute channel
 
     func test_muteChannel_makesCorrectAPICall() {
