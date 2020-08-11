@@ -26,6 +26,16 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         }
     }
 
+    /// Updates specific channel with new data.
+    /// - Parameters:
+    ///   - channelPayload: New channel data..
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func updateChannel(channelPayload: ChannelEditDetailPayload<ExtraData>, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .updateChannel(channelPayload: channelPayload)) {
+            completion?($0.error)
+        }
+    }
+
     /// Mutes/unmutes the specific channel.
     /// - Parameters:
     ///   - cid: The channel identifier.
