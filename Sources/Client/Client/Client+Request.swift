@@ -14,21 +14,24 @@ extension Client {
     // MARK: URL Session Setup
     
     func makeURLSession(token: Token = "") -> URLSession {
-        let headers = authHeaders(token: token)
-        logger?.log(headers: headers)
         let config = defaultURLSessionConfiguration
         config.waitsForConnectivity = true
+        config.httpShouldUsePipelining = true
+        
+        let headers = authHeaders(token: token)
         let oldHeaders = config.httpAdditionalHeaders ?? [:]
         config.httpAdditionalHeaders = oldHeaders.merging(headers, uniquingKeysWith: { (_, new) in new })
+        logger?.log(headers: (config.httpAdditionalHeaders as? [String: String]) ?? [:])
+        
         return URLSession(configuration: config, delegate: urlSessionTaskDelegate, delegateQueue: nil)
     }
     
     func authHeaders(token: Token) -> [String: String] {
         var headers = [
-            "X-Stream-Client": "stream-chat-swift-client-\(Environment.version)",
-            "X-Stream-Device": Environment.deviceModelName,
-            "X-Stream-OS": Environment.systemName,
-            "X-Stream-App-Environment": Environment.name]
+            "X-Stream-Client": "stream-chat-swift-client-\(Environment.version)"
+                + "|\(Environment.deviceModelName)" // Device
+                + "|\(Environment.systemName)" // OS version
+                + "|\(Environment.name)"] // Environment name: development X productio
         
         if token.isBlank || user.isAnonymous {
             headers["Stream-Auth-Type"] = "anonymous"
