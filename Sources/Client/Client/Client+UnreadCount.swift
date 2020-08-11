@@ -13,7 +13,8 @@ import Foundation
 // To get global user unread count:
 //   1. Get the latest values from me on connect.
 //   2. Listing notifications for new values:
-//     - `.messageNew` and `.notificationMessageNew`
+//     - `.messageNew`
+//     - `.notificationMessageNew`
 //     - `.notificationMarkRead`
 //     - `.notificationAddedToChannel`
 //     - `.notificationMarkAllRead`: 0 values
@@ -48,10 +49,8 @@ extension Client {
 // MARK: Channel Unread Count
 //
 // The channel should be watched.
-//   1. Make query options to `[.watch, .state]`:
-//     - for the unread count set the pagination to `.limit(100)` and calculate the current value.
-//     - for the watcher count set the pagination to `.limit(1)`.
-//   2. +1 to the unread count for `.messageNew` event.
+//   1. Make query options to `[.watch, .state]` and set the pagination to `.limit(1)`.
+//   2. Use unread count values for `.messageNew` event.
 //   3. Set to 0 for the unread count with `.notificationMarkRead` or `.notificationMarkAllRead`.
 
 extension Client {
