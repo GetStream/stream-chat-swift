@@ -245,20 +245,39 @@ class WebSocketClient_Tests: StressTestCase {
     
     func test_webSocketPingController_connectionStateDidChange_calledWhenConnectionChanges() {
         test_connectionFlow()
-        XCTAssertEqual(3, pingController.connectionStateDidChangeCount)
+        AssertAsync.willBeEqual(pingController.connectionStateDidChange_connectionStates,
+                                [.connecting, .waitingForConnectionId, .connected(connectionId: connectionId)])
     }
     
     func test_webSocketPingController_ping_callsEngineWithPing() {
-        test_connectionFlow()
-        webSocketClient.sendPing()
-        XCTAssertEqual(engine.sendPing_calledCount, 1)
+        assert(engine.sendPing_calledCount == 0)
+        pingController.delegate?.sendPing()
+        AssertAsync.willBeEqual(engine.sendPing_calledCount, 1)
     }
     
-    func test_webSocketPingController_forceReconnect_disconnectsEngine() {
+    func test_pongReceived_callsPingController_pongRecieved() {
         test_connectionFlow()
-        webSocketClient.forceDisconnect()
-        XCTAssertFalse(webSocketClient.connectionState.isConnected)
+        assert(pingController.pongRecievedCount == 1)
+        
+        // Simulate a health check (pong) event is received
+        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
+        engine.simulateMessageReceived()
+        
+        AssertAsync.willBeEqual(pingController.pongRecievedCount, 2)
     }
+    
+    func test_webSocketPingController_disconnectOnNoPongReceived_disconnectsEngine() {
+        assert(engine.disconnect_calledCount == 0)
+        
+        pingController.delegate?.disconnectOnNoPongReceived()
+        
+        AssertAsync {
+            Assert.willBeEqual(self.webSocketClient.connectionState, .disconnecting(source: .noPongReceived))
+            Assert.willBeEqual(self.engine.disconnect_calledCount, 1)
+        }
+    }
+    
+    // MARK: - Setting a new connect endpoint
     
     func test_changingConnectEndpointAndReconnecting() {
         // Simulate connection
@@ -544,11 +563,11 @@ class MockBackgroundTaskScheduler: BackgroundTaskScheduler {
 }
 
 class WebSocketPingControllerMock: WebSocketPingController {
-    var connectionStateDidChangeCount = 0
+    var connectionStateDidChange_connectionStates: [ConnectionState] = []
     var pongRecievedCount = 0
     
     override func connectionStateDidChange(_ connectionState: ConnectionState) {
-        connectionStateDidChangeCount += 1
+        connectionStateDidChange_connectionStates.append(connectionState)
         super.connectionStateDidChange(connectionState)
     }
     
