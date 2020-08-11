@@ -59,6 +59,8 @@ extension CGFloat {
     public static let composerHelperShadowRadius: CGFloat = 20
     /// A composer helper shadow opacity.
     public static let composerHelperShadowOpacity: CGFloat = 0.15
+    /// A reply in the channel button height.
+    public static let composerReplyInChannelHeight: CGFloat = 40
     
     /// A composer file padding.
     public static let composerFilePadding: CGFloat = 10
@@ -82,7 +84,7 @@ extension CGFloat {
     /// A message spacing.
     public static let messageSpacing: CGFloat = 3
     /// A message corner radius.
-    public static let messageCornerRadius: CGFloat = 16
+    public static let messageCornerRadius: CGFloat = 14
     /// A message horizontal inset.
     public static let messageHorizontalInset: CGFloat = 10
     /// A message vertical inset.

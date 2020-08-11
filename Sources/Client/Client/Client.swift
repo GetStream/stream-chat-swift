@@ -24,50 +24,63 @@ public final class Client: Uploader {
     """)
     public static var config: Config = .init(apiKey: "_deprecated") {
         didSet {
-            guard backingSharedClient == nil else {
-                ClientLogger.logAssertionFailure(
-                    "`Client.shared` instance was already used. It's not possible to change its configuration."
-                )
-                return
-            }
-
+            guard shouldSetSharedConfig(for: config) else { return }
+            
             configForSharedClient = config
         }
     }
-
+    
     /// The configuration object used for creating `Client.shared`.
     private static var configForSharedClient: Config?
-
+    
     /// The shared client.
     public static var shared: Client {
         if let client = backingSharedClient {
             // Return the existing instance
             return client
         }
-
+        
         ClientLogger.logAssert(
             configForSharedClient != nil,
             "The shared instance of the Stream chat client wasn't configured. " +
             "Create an instance of the `Client.Config` struct and call `Client.configureShared(_:)` to set it up."
         )
-
+        
         backingSharedClient = Client(config: configForSharedClient ?? .init(apiKey: "__API_KEY_NOT_CONFIGURED__"))
         return backingSharedClient!
     }
-
+    
     /// A backing variable for `Client.shared`. We need this to have finer control over its creation.
     private static var backingSharedClient: Client?
-
+    
+    private static func shouldSetSharedConfig(for config: Config) -> Bool {
+        if backingSharedClient != nil {
+            let errorMessage = "`Client.shared` instance was already used. "
+                + "It's not possible to change its configuration.\n"
+                + "You're either setting `Client.config` or calling `Client.configureShared` multiple times. "
+                + "You should only do this once.\n"
+                + "Break on \(#file):\(#line) to catch this issue."
+            
+            if configForSharedClient != config {
+                // Error
+                ClientLogger.logAssertionFailure(errorMessage)
+            } else {
+                // Warning
+                ClientLogger.log("❌", level: .error, errorMessage)
+            }
+            
+            return false
+        }
+        
+        return true
+    }
+    
     /// Configures the shared instance of `Client`.
     ///
     /// - Parameter configuration: The configuration object with details of how the shared instance should be set up.
     public static func configureShared(_ config: Config) {
-        guard backingSharedClient == nil else {
-            ClientLogger.logAssertionFailure(
-                "`Client.shared` instance was already used. It's not possible to change its configuration."
-            )
-            return
-        }
+        guard shouldSetSharedConfig(for: config) else { return }
+        
         configForSharedClient = config
     }
     
@@ -102,16 +115,28 @@ public final class Client: Uploader {
     // MARK: WebSocket
     
     /// A web socket client.
-    lazy var webSocket = WebSocket()
+    private(set) lazy var webSocket: WebSocket = {
+        let request = (try? makeWebSocketRequest(user: user, token: "")) ?? URLRequest(url: .placeholder)
+        let callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
+        let provider = defaultWebSocketProviderType.init(request: request, callbackQueue: callbackQueue)
+        let options = stayConnectedInBackground ? WebSocketOptions.stayConnectedInBackground : []
+        let logger = logOptions.logger(icon: "🦄", for: [.webSocketError, .webSocket, .webSocketInfo])
+        let webSocket = WebSocket(provider, options: options, logger: logger)
+        webSocket.eventDelegate = self
+        return webSocket
+    }()
+    
+    /// A default WebSocketProvider type.
+    let defaultWebSocketProviderType: WebSocketProvider.Type
     /// The current connection state.
     public var connectionState: ConnectionState { webSocket.connectionState }
     /// Check if API key and token are valid and the web socket is connected.
     public var isConnected: Bool { !apiKey.isEmpty && webSocket.isConnected }
     var needsToRecoverConnection = false
-
+    
     let defaultURLSessionConfiguration: URLSessionConfiguration
-    lazy var urlSession = URLSession(configuration: self.defaultURLSessionConfiguration)
-
+    lazy var urlSession = makeURLSession()
+    
     lazy var urlSessionTaskDelegate = ClientURLSessionTaskDelegate() // swiftlint:disable:this weak_delegate
     let callbackQueue: DispatchQueue?
     
@@ -125,9 +150,14 @@ public final class Client: Uploader {
     
     var onUserUpdateObservers = [String: OnUpdate<User>]()
     
-    private(set) lazy var userAtomic = Atomic<User>(.unknown, callbackQueue: eventsHandlingQueue) { [unowned self] newUser, _ in
+    private(set) lazy var userAtomic = Atomic<User>(.anonymous, callbackQueue: eventsHandlingQueue) { [unowned self] newUser, _ in
         self.onUserUpdateObservers.values.forEach({ $0(newUser) })
     }
+    
+    #if DEBUG
+    /// Called when a new outgoing event is about to be sent. Meant to be used only for testing purposes.
+    var outgoingEventsTestLogger: ((EventType) -> Void)?
+    #endif
     
     // MARK: Unread Count Events
     
@@ -148,30 +178,49 @@ public final class Client: Uploader {
     /// Creates a new instance of the network client.
     ///
     /// - Parameters:
-    ///   - config: The configuration object with details of how the new instance should be set up.
-    ///   - defaultURLSessionConfiguration: The base URLSession configuration `Client` uses for its
-    ///     URL sessions. `Client` is allowed to override the configuration with its own settings.
-    init(config: Client.Config, defaultURLSessionConfiguration: URLSessionConfiguration = .default) {
-        self.apiKey = config.apiKey
-        self.baseURL = config.baseURL
-        self.callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
-        self.stayConnectedInBackground = config.stayConnectedInBackground
-        self.database = config.database
-        self.logOptions = config.logOptions
+    ///   - config: the configuration object with details of how the new instance should be set up.
+    ///   - defaultURLSessionConfiguration: the base URLSession configuration `Client` uses for its URL sessions.
+    ///                                     `Client` is allowed to override the configuration with its own settings.
+    ///   - defaultWebSocketProviderType: the default WebSocket provider type. `Client` will create it on set user. `config.defaultWebSocketProviderType` will override this.
+    init(config: Client.Config,
+         defaultURLSessionConfiguration: URLSessionConfiguration = .default,
+         defaultWebSocketProviderType: WebSocketProvider.Type? = nil) {
+        apiKey = config.apiKey
+        baseURL = config.baseURL
+        callbackQueue = config.callbackQueue ?? .global(qos: .userInitiated)
+        stayConnectedInBackground = config.stayConnectedInBackground
+        database = config.database
+        logOptions = config.logOptions
         logger = logOptions.logger(icon: "🐴", for: [.requestsError, .requests, .requestsInfo])
-
+        
         self.defaultURLSessionConfiguration = defaultURLSessionConfiguration
-
+        
+        if let defaultWebSocketProviderType = defaultWebSocketProviderType {
+            self.defaultWebSocketProviderType = defaultWebSocketProviderType
+        } else if #available(iOS 13, *) {
+            switch config.webSocketProviderType {
+            case .native:
+                self.defaultWebSocketProviderType = URLSessionWebSocketProvider.self
+            case .starscream:
+                self.defaultWebSocketProviderType = StarscreamWebSocketProvider.self
+            }
+        } else {
+            self.defaultWebSocketProviderType = StarscreamWebSocketProvider.self
+        }
+        
+        // Init the WebSocket to register subscriptions when the Client is initiated.
+        _ = webSocket
+        
         if !apiKey.isEmpty, logOptions.isEnabled {
-            ClientLogger.logger("💬", "", "Stream Chat v.\(Environment.version)")
-            ClientLogger.logger("🔑", "", apiKey)
-            ClientLogger.logger("🔗", "", baseURL.description)
+            ClientLogger.log("💬", "", .info, "Stream Chat v.\(Environment.version)")
+            ClientLogger.log("🔑", "", .info, apiKey)
+            ClientLogger.log("🔗", "", .info, baseURL.description)
             
             if let database = database {
-                ClientLogger.logger("💽", "", "\(database.self)")
+                ClientLogger.log("💽", "", .info, "\(database.self)")
             }
         }
-
+        
         #if DEBUG
         checkLatestVersion()
         #endif

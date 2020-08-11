@@ -47,6 +47,9 @@
                 <a href="../Classes/Channel/Command.html">– Command</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Classes/Channel/DefaultNamingStrategy.html">– DefaultNamingStrategy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Classes/Client.html">Client</a>
               </li>
               <li class="nav-group-task">
@@ -121,6 +124,9 @@
                 <a href="../Enums/InviteAnswer.html">InviteAnswer</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Enums/Language.html">Language</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Enums/MessageType.html">MessageType</a>
               </li>
               <li class="nav-group-task">
@@ -148,6 +154,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/DateFormatter/Stream.html">– Stream</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions.html#/s:8Dispatch0A8WorkItemC">DispatchWorkItem</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Extensions/JSONDecoder.html">JSONDecoder</a>
@@ -205,6 +214,9 @@
               <li class="nav-group-task">
                 <a href="../Functions.html#/s:16StreamChatClient8doBeforeyys6ResultOyxq_GcyAEc_yxcts5ErrorR_r0_lF">doBefore(_:_:)</a>
               </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:16StreamChatClient7onErroryys6ResultOyxq_GcyAEc_yq_cts0E0R_r0_lF">onError(_:_:)</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -218,6 +230,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../Protocols/Database.html">Database</a>
@@ -342,6 +357,9 @@
                 <a href="../Structs/MessageResponse.html">MessageResponse</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MessageTranslations.html">MessageTranslations</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs.html#/s:16StreamChatClient16MessagesResponseV">MessagesResponse</a>
               </li>
               <li class="nav-group-task">
@@ -462,9 +480,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient6DeviceV7created10Foundation4DateVvp"></a>
+                    <a name="/s:16StreamChatClient6DeviceV7created10Foundation4DateVSgvp"></a>
                     <a name="//apple_ref/swift/Property/created" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient6DeviceV7created10Foundation4DateVvp">created</a>
+                    <a class="token" href="#/s:16StreamChatClient6DeviceV7created10Foundation4DateVSgvp">created</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -479,7 +497,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">created</span><span class="p">:</span> <span class="kt">Date</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">created</span><span class="p">:</span> <span class="kt">Date</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -489,9 +507,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient6DeviceVyACSScfc"></a>
-                    <a name="//apple_ref/swift/Method/init(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient6DeviceVyACSScfc">init(_:<wbr>)</a>
+                    <a name="/s:16StreamChatClient6DeviceV_7createdACSS_10Foundation4DateVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(_:created:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient6DeviceV_7createdACSS_10Foundation4DateVtcfc">init(_:<wbr>created:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -506,7 +524,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">_</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">_</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">created</span><span class="p">:</span> <span class="kt">Date</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">())</span></code></pre>
 
                         </div>
                       </div>
@@ -522,7 +540,19 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a Push Notifications device identifier.</p>
+                                  <p>The push notifications device identifier.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>created</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The date when the device token was created.</p>
                                 </div>
                               </td>
                             </tr>
@@ -537,7 +567,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-08)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-07)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

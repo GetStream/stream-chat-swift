@@ -12,6 +12,12 @@ import Foundation
 
 public extension Channel {
     
+    /// The number of seconds from the last `typingStart` event until the `typingStop` event is automatically sent.
+    static var startTypingEventTimeout: TimeInterval = 5
+   
+    /// If user is still typing, resend the `typingStart` event after this time interval.
+    static var startTypingResendInterval: TimeInterval = 20
+      
     /// Create a channel.
     /// - Parameter completion: a completion block with `ChannelResponse`.
     @discardableResult
@@ -124,6 +130,8 @@ public extension Channel {
         Client.shared.markRead(channel: self, completion)
     }
     
+    // MARK: - Events
+    
     /// Send an event.
     /// - Parameters:
     ///   - eventType: an event type.
@@ -131,6 +139,61 @@ public extension Channel {
     @discardableResult
     func send(eventType: EventType, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
         Client.shared.send(eventType: eventType, to: self, completion)
+    }
+    
+    /// Send a keystroke event for the current user.
+    /// - Note: This method should be called from the main thread.
+    /// - Parameter completion: a completion block with `Event`.
+    @discardableResult
+    func keystroke(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
+        keystroke(client: .shared, timerType: DefaultTimer.self, completion)
+    }
+    
+    @discardableResult
+    internal func keystroke(client: Client,
+                            timerType: Timer.Type = DefaultTimer.self,
+                            _ completion: @escaping Client.Completion<Event>) -> Cancellable {
+        currentUserTypingTimerControlAtomic.get()?.cancel()
+        
+        let timerControl = timerType
+            .schedule(timeInterval: Self.startTypingEventTimeout, queue: .main) { [weak self, unowned client] in
+                self?.stopTyping(client: client, completion)
+            }
+        
+        currentUserTypingTimerControlAtomic.set(timerControl)
+        
+        // The user is typing too long, we should resend `.typingStart` event.
+        if
+            let lastDate = currentUserTypingLastDateAtomic.get(),
+            currentTime().timeIntervalSince(lastDate) < Self.startTypingResendInterval
+        {
+            completion(.success(.typingStart(client.user, cid, .typingStart)))
+            return Subscription.empty
+        }
+        
+        currentUserTypingLastDateAtomic.set(currentTime())
+        return client.send(eventType: .typingStart, to: self, completion)
+    }
+    
+    /// Send a stop typing event for the current user.
+    /// - Note: This method should be called from the main thread.
+    /// - Parameter completion: a completion block with `Event`.
+    @discardableResult
+    func stopTyping(_ completion: @escaping Client.Completion<Event>) -> Cancellable {
+        stopTyping(client: .shared, completion)
+    }
+    
+    @discardableResult
+    internal func stopTyping(client: Client, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
+        guard currentUserTypingLastDateAtomic.get() != nil else {
+            completion(.success(.typingStop(client.user, cid, .typingStop)))
+            return Subscription.empty
+        }
+        
+        currentUserTypingTimerControlAtomic.get()?.cancel()
+        currentUserTypingLastDateAtomic.set(nil)
+        
+        return client.send(eventType: .typingStop, to: self, completion)
     }
     
     // MARK: - Members
@@ -220,6 +283,15 @@ public extension Channel {
              reason: String? = nil,
              _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         Client.shared.ban(user: user, in: self, timeoutInMinutes: timeoutInMinutes, reason: reason, completion)
+    }
+    
+    /// Unban a user.
+    /// - Parameters:
+    ///   - user: a user.
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func unban(user: User, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+        Client.shared.unban(user: user, in: self, completion)
     }
     
     // MARK: - Invite Requests

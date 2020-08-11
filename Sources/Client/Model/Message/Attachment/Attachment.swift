@@ -102,10 +102,10 @@ public struct Attachment: Codable {
             ?? container.decodeIfPresent(String.self, forKey: .ogURL))
         
         let type: AttachmentType
-
+        
         if let typeString = try? container.decode(String.self, forKey: .type) {
             let existsType = AttachmentType(rawValue: typeString)
-
+            
             if existsType == .video {
                 if author == "GIPHY" {
                     type = .giphy
@@ -177,7 +177,6 @@ public struct Attachment: Codable {
 }
 
 extension Attachment: Hashable {
-    
     public static func == (lhs: Attachment, rhs: Attachment) -> Bool {
         lhs.title == rhs.title
             && lhs.author == rhs.author

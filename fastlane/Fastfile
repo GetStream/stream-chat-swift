@@ -1,6 +1,11 @@
 fastlane_version "2.68.0"
 default_platform :ios
 
+require 'json'
+
+# The number of times the stress test suite is ran
+stress_tests_cycles = 25
+
 before_all do
   if is_ci
     setup_ci()
@@ -39,17 +44,16 @@ lane :release do |options|
   sh("git add -A")
   sh("git commit -m 'Bump #{version_number}'")
   sh("git tag #{version_number}")
+                   
+  push_to_git_remote(tags: true)
   
   github_release = set_github_release(
                      repository_name: "GetStream/stream-chat-swift",
                      api_token: ENV["GITHUB_TOKEN"],
                      name: version_number,
                      tag_name: version_number,
-                     description: changes,
-                     is_draft: true
+                     description: changes
                    )
-                   
-  push_to_git_remote(tags: true)
   
   # First pod release will not have any problems
   pod_push(path: "StreamChatClient.podspec", allow_warnings: true)
@@ -83,6 +87,9 @@ lane :release do |options|
   
   slack(
     message: "#{version_number} successfully released!",
+    payload: {
+      "Changelog" => changes,
+    },
     default_payloads: [:git_author],
   )
   
@@ -160,7 +167,7 @@ end
 desc "Runs all the tests without building"
 lane :test_without_building do
   # Integration Tests (StreamChatClientIntegrationTests) are disabled since they make HTTP/WS connections
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, only_testing: ["StreamChatClientTests"])
+  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, skip_testing: ["StreamChatClientIntegrationTests"])
 end
 
 desc "Runs integrations tests with backend. These tests make network connections so they're sometimes not reliable, hence we run them up to 3 times in case of failure"
@@ -238,4 +245,93 @@ lane :get_next_issue_number do
   UI.success "The next PR / Issue will have number: #{next_issue_number}"
   UI.success "So the next markdown link is: #{next_issue_link}"
   UI.success "Next markdown link is copied to your clipboard! ⬆️"
+end
+
+# Adds "CI=TRUE" environment variable to the provided test plan file
+def setCIEnvironmentVariable(testPlanFile)
+  file = File.read(testPlanFile)
+  data_hash = JSON.parse(file)
+
+  # Create the `environmentVariableEntries` array if it doesn't exist
+  data_hash['defaultOptions']['environmentVariableEntries'] ||= []
+
+  # Append the `CI` ENV variable
+  data_hash['defaultOptions']['environmentVariableEntries'] << {"key"=>"CI", "value"=>"TRUE"}
+  File.write(testPlanFile, JSON.pretty_generate(data_hash))
+
+  puts "✅ `CI=TRUE` ENV variable added to " + testPlanFile
+  puts "Current testplan ENV variables:"
+  puts data_hash['defaultOptions']['environmentVariableEntries']
+end
+
+desc "Runs tests for v3 in Debug config"
+lane :test_v3 do
+
+  setCIEnvironmentVariable("../StreamChatClient_v3.xctestplan")
+
+  scan(
+    project: "StreamChat.xcodeproj", 
+    scheme: "StreamChatClient_v3", 
+    testplan: "StreamChatClient_v3",
+    configuration: "Debug",
+    clean: true, 
+    )
+end
+
+desc "Runs tests for v3 in Release config"
+lane :test_v3_release do
+
+  setCIEnvironmentVariable("../StreamChatClient_v3.xctestplan")
+
+  scan(
+    project: "StreamChat.xcodeproj", 
+    scheme: "StreamChatClient_v3", 
+    testplan: "StreamChatClient_v3",
+    configuration: "ReleaseTests",
+    clean: true,
+  )
+end
+
+desc "Runs stress tests for v3"
+lane :stress_test_v3 do
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "StreamChatClient_v3",
+    clean: true,
+    build_for_testing: true
+  )
+
+  setCIEnvironmentVariable("../StreamChatClientStress_v3.xctestplan")
+
+  stress_tests_cycles.times {
+    scan(
+      project: "StreamChat.xcodeproj", 
+      scheme: "StreamChatClient_v3", 
+      test_without_building: true,
+      testplan: "StreamChatClientStress_v3"
+    )      
+  }
+end
+
+desc "Runs stress tests for v3 in Release config"
+lane :stress_test_v3_release do
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "StreamChatClient_v3",
+    configuration: "ReleaseTests",
+    clean: true,
+    build_for_testing: true
+  )
+
+  setCIEnvironmentVariable("../StreamChatClientStress_v3.xctestplan")
+
+  stress_tests_cycles.times {
+    scan(
+      project: "StreamChat.xcodeproj", 
+      scheme: "StreamChatClient_v3",
+      configuration: "ReleaseTests",
+      test_without_building: true,
+      testplan: "StreamChatClientStress_v3"
+    )      
+  }
 end

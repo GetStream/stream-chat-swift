@@ -104,14 +104,6 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:14StreamChatCore18isTestsEnvironmentSbyF">isTestsEnvironment()</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -475,6 +467,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:14StreamChatCore16ChannelPresenterC8isThreadSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isThread" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC8isThreadSbvp">isThread</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if the presenter is in a thread.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isThread</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:14StreamChatCore16ChannelPresenterC12queryOptions0aB6Client05QueryG0Vvp"></a>
                     <a name="//apple_ref/swift/Property/queryOptions" class="dashAnchor"></a>
                     <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC12queryOptions0aB6Client05QueryG0Vvp">queryOptions</a>
@@ -601,6 +620,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">typingUsers</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/TypingUser.html">TypingUser</a></span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14StreamChatCore16ChannelPresenterC21isTypingEventsEnabledSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isTypingEventsEnabled" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC21isTypingEventsEnabledSbvp">isTypingEventsEnabled</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Checks if user typing events enabled for the channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isTypingEventsEnabled</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1147,9 +1193,9 @@ It&rsquo;s no needed if you will disconnect when the presenter will be deallocat
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StreamChatCore16ChannelPresenterC4send4text_ySS_ys6ResultOy0aB6Client15MessageResponseVAH0I5ErrorOGctF"></a>
-                    <a name="//apple_ref/swift/Method/send(text:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC4send4text_ySS_ys6ResultOy0aB6Client15MessageResponseVAH0I5ErrorOGctF">send(text:<wbr>_:<wbr>)</a>
+                    <a name="/s:14StreamChatCore16ChannelPresenterC4send4text011showReplyInD019parseMentionedUsers_ySS_S2bys6ResultOy0aB6Client15MessageResponseVAJ0O5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/send(text:showReplyInChannel:parseMentionedUsers:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC4send4text011showReplyInD019parseMentionedUsers_ySS_S2bys6ResultOy0aB6Client15MessageResponseVAJ0O5ErrorOGctF">send(text:<wbr>showReplyInChannel:<wbr>parseMentionedUsers:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1164,7 +1210,10 @@ It&rsquo;s no needed if you will disconnect when the presenter will be deallocat
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                 <span class="nv">showReplyInChannel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+                 <span class="nv">parseMentionedUsers</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
+                 <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -1181,6 +1230,30 @@ It&rsquo;s no needed if you will disconnect when the presenter will be deallocat
                               <td>
                                 <div>
                                   <p>a message text</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>showReplyInChannel</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>show a reply in the channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parseMentionedUsers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>whether to automatically parse mentions into the <code>message.mentionedUsers</code> property. Defaults to <code>true</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1204,112 +1277,10 @@ It&rsquo;s no needed if you will disconnect when the presenter will be deallocat
                 </li>
               </ul>
             </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Send%20Event"></a>
-                <a name="//apple_ref/swift/Section/Send Event" class="dashAnchor"></a>
-                <div class="section-name-container">
-                  <a class="section-name-link" href="#/Send%20Event"></a>
-                  <h3 class="section-name"><p>Send Event</p>
-</h3>
-                </div>
-              </div>
-              <ul>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore16ChannelPresenterC9sendEvent8isTyping_ySb_ys6ResultOy0aB6Client0G0OAH0K5ErrorOGctF"></a>
-                    <a name="//apple_ref/swift/Method/sendEvent(isTyping:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC9sendEvent8isTyping_ySb_ys6ResultOy0aB6Client0G0OAH0K5ErrorOGctF">sendEvent(isTyping:<wbr>_:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Send a typing event.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">sendEvent</span><span class="p">(</span><span class="nv">isTyping</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">,</span> <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">StreamChatClient</span><span class="o">.</span><span class="kt">Event</span><span class="o">&gt;</span><span class="p">)</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>isTyping</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a user typing action.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completion</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a completion block with <code>Event</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StreamChatCore16ChannelPresenterC18markReadIfPossibleyyys6ResultOy0aB6Client5EventOAG0K5ErrorOGcF"></a>
-                    <a name="//apple_ref/swift/Method/markReadIfPossible(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StreamChatCore16ChannelPresenterC18markReadIfPossibleyyys6ResultOy0aB6Client5EventOAG0K5ErrorOGcF">markReadIfPossible(_:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Send Read event if the app is active.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">markReadIfPossible</span><span class="p">(</span><span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">StreamChatClient</span><span class="o">.</span><span class="kt">Event</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span> <span class="p">})</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>an observable completion.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-08)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-07)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

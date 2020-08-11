@@ -54,10 +54,6 @@ struct KeyboardNotification: Equatable {
             self.curve = UIView.AnimationOptions(rawValue: curve)
             self.duration = duration
         }
-        
-        static func == (lhs: Animation, rhs: Animation) -> Bool {
-            return lhs.curve == rhs.curve && lhs.duration == rhs.duration
-        }
     }
     
     let frame: CGRect?
@@ -113,9 +109,5 @@ struct KeyboardNotification: Equatable {
         
         self.frame = newFrame
         animation = nil
-    }
-    
-    static func == (lhs: KeyboardNotification, rhs: KeyboardNotification) -> Bool {
-        return lhs.frame == rhs.frame && lhs.animation == rhs.animation
     }
 }

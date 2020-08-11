@@ -32,17 +32,4 @@ public enum ConnectionState: Equatable {
         
         return false
     }
-    
-    public static func == (lhs: ConnectionState, rhs: ConnectionState) -> Bool {
-        switch (lhs, rhs) {
-        case (.notConnected, .notConnected),
-             (.connecting, .connecting),
-             (.connected, .connected):
-            return true
-        case (.disconnected(let error1), .disconnected(let error2)):
-            return error1?.localizedDescription == error2?.localizedDescription
-        default:
-            return false
-        }
-    }
 }

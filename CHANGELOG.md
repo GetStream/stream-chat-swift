@@ -6,7 +6,161 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- Pipelining is enabled for requests to improve them between clients and regions over long distances. 
+
+# [2.2.8](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.8)
+_August 07, 2020_
+
+### ✅ Added
+- Membership for a channel  [#387](https://github.com/GetStream/stream-chat-swift/pull/387)
+
 ### 🔄 Changed
+- Remove the need for querying members in order to mark a channel as read [#280](https://github.com/GetStream/stream-chat-swift/issues/280)
+
+### 🐞 Fixed
+- Use total unread count from `message.new` event  [#384](https://github.com/GetStream/stream-chat-swift/pull/384)
+- Unread count calculation for disabled read messages feature  [#387](https://github.com/GetStream/stream-chat-swift/pull/387)
+
+# [2.2.7](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.7)
+_July 29, 2020_
+
+### ✅ Added
+-  `Client.Config.webSocketProvider` for selecting a websocket provider [#357](https://github.com/GetStream/stream-chat-swift/issues/357)
+- Parameters to allow custom mention parsing logic. If set to `false`, `Message.mentionedUsers` is not overridden on send. [#338](https://github.com/GetStream/stream-chat-swift/issues/338)
+- `parseMentionedUsers: Bool = true` parameter in `Client.send(message: ...)`.
+- `parseMentionedUsers: Bool = true` parameter in `ChannelPresenter.send(text: ...)`.
+- `parseMentionedUsersOnSend: Bool = true` property in `ChatViewController`. 
+- Message search with filter for messages [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- `Client.search(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- `SearchQuery.init(filter: Filter, messageFilter: Filter, ...)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- `Filter.exists(Key, Bool)` [#348](https://github.com/GetStream/stream-chat-swift/pull/348)
+- Channels created without explicit name/image will get default names generated for them, using their members' names [#366](https://github.com/GetStream/stream-chat-swift/issues/366)
+
+### 🔄 Changed
+- All iOS versions will use Starscream as default websocket provider until native provider issue is resolved. See [#315](https://github.com/GetStream/stream-chat-swift/issues/315). [#357](https://github.com/GetStream/stream-chat-swift/issues/357)
+
+### 🐞 Fixed
+- Reintroduce Hashable conformances removed in 2.2.1 [#368](https://github.com/GetStream/stream-chat-swift/pull/368)
+- `ChannelPresenter.lastMessage` not updated on message edited or deleted [#351](https://github.com/GetStream/stream-chat-swift/issues/351)
+- Link tap in messages sometimes not detected or detected in wrong place [#350](https://github.com/GetStream/stream-chat-swift/issues/350)
+- Device object sometimes failing to decode on API calls [#266](https://github.com/GetStream/stream-chat-swift/issues/266)
+- Direct message channel (created without explicit id, using `Client.shared.channel(type:members:)`) are named correctly [#366](https://github.com/GetStream/stream-chat-swift/issues/366)
+- Flagging current user's (own) messages are now allowed [#369](https://github.com/GetStream/stream-chat-swift/issues/369)
+
+# [2.2.6](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.6)
+_July 07, 2020_
+
+### ✅ Added
+- `ChatViewController.preferredEmojiOrder` to specify order of emojis in reaction view [#337](https://github.com/GetStream/stream-chat-swift/pull/337)
+- Unban a user API:
+  - `client.unban(user:User in channel: Channel, _ completion:)` [#344](https://github.com/GetStream/stream-chat-swift/pull/344)
+  - `client.rx.unban(user:User in channel: Channel)` [#344](https://github.com/GetStream/stream-chat-swift/pull/344)
+  - `channel.unban(user:User, _ completion:)` [#344](https://github.com/GetStream/stream-chat-swift/pull/344)
+  - `channel.rx.unban(user:User)` [#344](https://github.com/GetStream/stream-chat-swift/pull/344)
+
+### 🐞 Fixed
+- Increasing username label font size (`MessageViewStyle.nameFont`) in message cell caused cut off [#333](https://github.com/GetStream/stream-chat-swift/issues/333)
+- Emojis in reaction view not displayed consistent order [#332](https://github.com/GetStream/stream-chat-swift/issues/332)
+
+# [2.2.5](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.5)
+_June 24, 2020_
+
+### ⚠️ Deprecated
+- `UsersQuery.sort` property is deprecated, please use `UsersQuery.sorting` [#328](https://github.com/GetStream/stream-chat-swift/issues/328)
+
+### ✅ Added
+- `Message.translate` for message translations. Please see [docs](https://getstream.io/chat/docs/translation/?language=swift) for more info [#319](https://github.com/GetStream/stream-chat-swift/issues/319)
+- `user.unbanned` event added [#319](https://github.com/GetStream/stream-chat-swift/issues/319)
+- `PinStyle` for `ComposerViewStyle` with options [#329](https://github.com/GetStream/stream-chat-swift/issues/329):
+  - `.floating` - shows `ComposerView` over messages (by default).
+  - `.solid` - shows messages above `ComposerView` with a `ComposerViewStyle` top edge inset.
+- `queryUsers` with multiple sorting options support [#328](https://github.com/GetStream/stream-chat-swift/issues/328)
+  Signature: `queryUsers(filter:sorting:pagination:options:completion)`
+
+### 🐞 Fixed
+- `queryUsers`  and `UsersQuery` now respect `sorting` parameter [#328](https://github.com/GetStream/stream-chat-swift/issues/328)
+
+# [2.2.4](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.4)
+_June 12, 2020_
+
+### ✅ Added
+- `ClientLogger.showConnectionErrorAlert` flag to control showing the UI alert for WebSocket errors. It's turned off by default. [#303](https://github.com/GetStream/stream-chat-swift/issues/303)
+
+### 🔄 Changed
+- Calling `Client.configureShared` with the same config more than once does not cause assertion failure. This is still discouraged and should not be done, and will not take affect. Calling it with different configs will still cause assertion failure. [#313](https://github.com/GetStream/stream-chat-swift/issues/313)
+   Note: Changing `apiKey` only is possible via `Client.shared.apiKey`
+
+### 🐞 Fixed
+- `Channel.team` not being correctly encoded for multi-tenant enabled clients [#308](https://github.com/GetStream/stream-chat-swift/issues/308)
+- Channels not loading on ChannelsVC after opening the app from background using `stayConnectedInBackground: false` and no logger [#308](https://github.com/GetStream/stream-chat-swift/issues/308)
+- Fixed an error in ChatViewController: a new message would scroll the messages up even when there's empty space [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fixed the default background color for a placeholder image or when the image wasn't loaded to make the size of it visible [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fixed height rendering for a message for messages with a single line [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fixed rendering of a message bubble curve more precisely [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fixed scrolling to the current message when you go to the last page [#310](https://github.com/GetStream/stream-chat-swift/issues/310).
+- Fix ChannelsPresenter not respecting filter for new created/added channels [#313](https://github.com/GetStream/stream-chat-swift/issues/313)
+
+# [2.2.3](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.3)
+_June 05, 2020_
+
+### ✅ Added
+- Support new regions: Singapore and Sydney. [#293](https://github.com/GetStream/stream-chat-swift/pull/293)
+- `disableLocalNotifications` added to `Notifications` for disabling local notifications [#290](https://github.com/GetStream/stream-chat-swift/pull/290)
+- Send a keystroke event for the current user: `channel.keystroke {}`. The method will automatically send a typing stop event after 15 seconds after the last call of `keystroke()`. [#281](https://github.com/GetStream/stream-chat-swift/pull/281)
+- Send a stop typing event for the current user: `stopTyping {}`. Usually, you don't need to call this method directly. [#281](https://github.com/GetStream/stream-chat-swift/pull/281)
+- Automatically send a `typingStop` event if it's not received in 30 seconds after the latest `typingStart` event [#282](https://github.com/GetStream/stream-chat-swift/issues/282).
+- Add support for multi-tenancy. Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info [#295](https://github.com/GetStream/stream-chat-swift/issues/295)
+
+### 🔄 Changed
+- Unknown user is not used anymore. By default the current user is anonymous (you can check this with `isAnonymous`). Anyway you can't connect without `set(user:token:)` or `setGuestUser(user:)` or `setAnonymousUser()` [#284](https://github.com/GetStream/stream-chat-swift/issues/284).
+- You can subscribe to events as soon as the client is configured. This means that your subscriptions will work until the client disconnect (user login/logout) and until you cancel subscriptions [#284](https://github.com/GetStream/stream-chat-swift/issues/284).
+
+### 🐞 Fixed
+- Fixed `rx.connectionState` observation when a user logged out and login again [#284](https://github.com/GetStream/stream-chat-swift/issues/284).
+- Fixed updates not happening in `ChannelPresenter` initialized with `ChannelResponse` and queryOptions containing `.watch` [#301](https://github.com/GetStream/stream-chat-swift/pull/301)
+
+# [2.2.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.2)
+_May 27, 2020_
+
+### ✅ Added
+- Re-introduced `Filter.none`. It should not be used with queryChannels or search, it's only valid for queryUsers to get all users [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
+- `Filter.contains` operator for all endpoints [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
+- `Filter.custom` to be able to use new operators before our SDK is updated [#285](https://github.com/GetStream/stream-chat-swift/issues/285)
+  Please make sure to provide a valid operator.
+  Example:  `.custom("contains", key: "teams", value: "red")`
+- `queryUsers` now supports `Pagination.limit` and `Pagination.offset` [#288](https://github.com/GetStream/stream-chat-swift/issues/288)
+
+# [2.2.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.1)
+_May 19, 2020_
+
+### ✅ Added
+- Added `ClientLogger.iconEnabled`, `ClientLogger.dateEnabled`, and `ClientLogger.levelEnabled` to control what will be shown in logs.
+  These will only be valid when `ClientLogger.logger` block is not customized (overridden) [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
+- `silent` property added to messages, see docs [here](https://getstream.io/chat/docs/silent_messages/?language=swift) [#264](https://github.com/GetStream/stream-chat-swift/issues/264)
+- Added option to show message replies also in channel, just like Slack [#271](https://github.com/GetStream/stream-chat-swift/issues/271).
+- A new view style for a reply in a channel `ComposerViewStyle.ReplyInChannelViewStyle`. You can set this style to nil for your `composerViewStyle` to disable this feature  [#271](https://github.com/GetStream/stream-chat-swift/issues/271).
+
+### 🔄 Changed
+- `ClientLogger.logger` is deprecated, please use `ClientLogger.log` block to customize your log output [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
+- Logs will now output log level, access it when overriding `ClientLogger.log` block [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
+- By default, logs will not output emoji icons anymore, but all logs will now output date [#263](https://github.com/GetStream/stream-chat-swift/issues/263)
+
+### 🐞 Fixed
+- `set(user:)` is not required for query (channels, users) unless `presence: true` or `state: true` is specified [#269](https://github.com/GetStream/stream-chat-swift/issues/269)
+- Disabled context menu for deleted messages:  [#241](https://github.com/GetStream/stream-chat-swift/issues/271).
+- Fix crash in iOS12 caused by abstract URLSession instance [#272](https://github.com/GetStream/stream-chat-swift/issues/272)
+- Fix infinite loop when the web socket connection fails (iOS13 only) [#273](https://github.com/GetStream/stream-chat-swift/pull/273).
+- Direct message channels (1-by-1 channels) will correctly get their name and avatar image from other user [#275](https://github.com/GetStream/stream-chat-swift/issues/275).
+ ```swift
+ let anotherUser = User(id: "second")
+anotherUser.name = "John"
+anotherUser.avatarURL = URL(string: "http://example.com/john")
+
+let channel = client.channel(members: [client.user, anotherUser])
+print(channel.name) // will print "John"
+print(channel.imageURL) // will print "http://example.com/john"
+```
 
 ### 🐞 Fixed
 - Message cell height will now update after markdown is parsed [#243](https://github.com/GetStream/stream-chat-swift/pull/243)
@@ -17,6 +171,7 @@ _May 08, 2020_
 ### ✅ Added
 - `avatarViewStyle` under `ChatViewStyle` for customizing Navigation Right Bar Button Item avatar [#241](https://github.com/GetStream/stream-chat-swift/issues/241).
 - `logAssert(_:_:)` and `logAssertionFailure(_:)` functions added to `ClientLogger` [#231](https://github.com/GetStream/stream-chat-swift/issues/231).
+- Support built-in WebSockets protocol in iOS 13+ using  `URLSessionWebSocketTask` [#240](https://github.com/GetStream/stream-chat-swift/issues/240).
 - `queryChannels` now returns unread count of each channel, unrestricted by number of messages fetched [#247](https://github.com/GetStream/stream-chat-swift/issues/247):
   Example:
   ```swift

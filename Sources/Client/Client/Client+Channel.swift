@@ -18,12 +18,17 @@ public extension Client {
     ///   - id: a channel id.
     ///   - members: a list of members.
     ///   - invitedMembers: a list of invited members.
+    ///   - team: The team the channel belongs to.
+    ///   - namingStrategy: a naming strategy to generate a name and image for the channel based on members.
+    ///                     Only takes effect if `extraData` is `nil`.
     ///   - extraData: a channel extra data.
     func channel(type: ChannelType,
                  id: String,
                  members: [User] = [],
                  invitedMembers: [User] = [],
-                 extraData: ChannelExtraDataCodable? = nil) -> Channel {
+                 team: String = "",
+                 extraData: ChannelExtraDataCodable? = nil,
+                 namingStrategy: ChannelNamingStrategy? = Channel.DefaultNamingStrategy(maxUserNames: 1)) -> Channel {
         Channel(type: type,
                 id: id,
                 members: members,
@@ -34,6 +39,8 @@ public extension Client {
                 createdBy: nil,
                 lastMessageDate: nil,
                 frozen: false,
+                team: team,
+                namingStrategy: namingStrategy,
                 config: .init())
     }
     
@@ -42,10 +49,15 @@ public extension Client {
     /// - Parameters:
     ///   - type: a channel type.
     ///   - members: a list of members.
+    ///   - team: The team the channel belongs to.
     ///   - extraData: a channel extra data.
+    ///   - namingStrategy: a naming strategy to generate a name and image for the channel based on members.
+    ///                     Only takes effect if `extraData` is `nil`.
     func channel(type: ChannelType = .messaging,
                  members: [User],
-                 extraData: ChannelExtraDataCodable? = nil) -> Channel {
+                 team: String = "",
+                 extraData: ChannelExtraDataCodable? = nil,
+                 namingStrategy: ChannelNamingStrategy? = Channel.DefaultNamingStrategy(maxUserNames: 1)) -> Channel {
         Channel(type: type,
                 id: "",
                 members: members,
@@ -56,6 +68,8 @@ public extension Client {
                 createdBy: nil,
                 lastMessageDate: nil,
                 frozen: false,
+                team: team,
+                namingStrategy: namingStrategy,
                 config: .init())
     }
 }
@@ -223,9 +237,11 @@ public extension Client {
     /// - Parameters:
     ///   - message: a message.
     ///   - channel: a channel.
+    ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
     ///   - completion: a completion block with `MessageResponse`.
     @discardableResult
-    func send(message: Message, to channel: Channel, _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
+    func send(message: Message, to channel: Channel, parseMentionedUsers: Bool = true,
+              _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
         let completion = doAfter(completion) { [unowned self] response in
             if response.message.isBan, !self.user.isBanned {
                 self.userAtomic.isBanned = true
@@ -239,20 +255,28 @@ public extension Client {
         
         // Add mentiond users
         var message = message
-        var mentionedUsers = [User]()
         
-        if !message.text.isEmpty, message.text.contains("@"), !channel.members.isEmpty {
-            let text = message.text.lowercased()
+        if parseMentionedUsers {
+            var mentionedUsers = [User]()
             
-            channel.members.forEach { member in
-                if text.contains("@\(member.user.name.lowercased())") {
-                    mentionedUsers.append(member.user)
+            if !message.text.isEmpty, message.text.contains("@"), !channel.members.isEmpty {
+                let text = message.text.lowercased()
+                
+                channel.members.forEach { member in
+                    if text.contains("@\(member.user.name.lowercased())") {
+                        mentionedUsers.append(member.user)
+                    }
                 }
             }
+            
+            message.mentionedUsers = mentionedUsers
         }
         
-        message.mentionedUsers = mentionedUsers
-        return request(endpoint: .sendMessage(message, channel), completion)
+        let completionWithStopTypingEvent = doBefore(completion) { [weak channel] _ in
+            channel?.stopTyping({ _ in })
+        }
+        
+        return request(endpoint: .sendMessage(message, channel), completionWithStopTypingEvent)
     }
     
     /// Send a message action for a given ephemeral message.
@@ -275,10 +299,6 @@ public extension Client {
     ///   - completion: a completion block with `Event`.
     @discardableResult
     func markRead(channel: Channel, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
-        guard channel.readEventsEnabled else {
-            return Subscription.empty
-        }
-        
         logger?.log("🎫 Mark Read")
         
         return request(endpoint: .markRead(channel)) { (result: Result<EventResponse, ClientError>) in
@@ -293,7 +313,11 @@ public extension Client {
     ///   - completion: a completion block with `Event`.
     @discardableResult
     func send(eventType: EventType, to channel: Channel, _ completion: @escaping Client.Completion<Event>) -> Cancellable {
-        request(endpoint: .sendEvent(eventType, channel)) { [unowned self] (result: Result<EventResponse, ClientError>) in
+        #if DEBUG
+        outgoingEventsTestLogger?(eventType)
+        #endif
+        
+        return request(endpoint: .sendEvent(eventType, channel)) { [unowned self] (result: Result<EventResponse, ClientError>) in
             self.logger?.log("🎫 \(eventType.rawValue)")
             completion(result.map(to: \.event))
         }
@@ -412,12 +436,25 @@ public extension Client {
         let userBan = UserBan(user: user, channel: channel, timeoutInMinutes: timeoutInMinutes, reason: reason)
         
         let completion = doBefore(completion) { [weak channel] _ in
-            if timeoutInMinutes == nil {
-                channel?.bannedUsers.append(user)
-            }
+            channel?.bannedUsers.append(user)
         }
         
         return request(endpoint: .ban(userBan), completion)
+    }
+    
+    @discardableResult
+    func unban(user: User,
+               in channel: Channel,
+               _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+        let userBan = UserBan(user: user, channel: channel)
+        
+        let completion = doBefore(completion) { [weak channel] _ in
+            if let index = channel?.bannedUsers.firstIndex(of: user) {
+                channel?.bannedUsers.remove(at: index)
+            }
+        }
+        
+        return request(endpoint: .unban(userBan), completion)
     }
     
     // MARK: - Invite Requests

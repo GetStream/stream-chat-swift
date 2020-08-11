@@ -90,6 +90,8 @@ public enum Endpoint {
     case flagMessage(Message)
     /// Unflag a message.
     case unflagMessage(Message)
+    /// Translate a message
+    case translate(Message, Language)
     
     // MARK: - User Endpoints
     
@@ -107,6 +109,8 @@ public enum Endpoint {
     case unflagUser(User)
     /// Ban a user.
     case ban(UserBan)
+    /// Unban a user.
+    case unban(UserBan)
 }
 
 extension Endpoint {
@@ -114,7 +118,7 @@ extension Endpoint {
         switch self {
         case .search, .channels, .message, .replies, .users, .devices:
             return .get
-        case .removeDevice, .deleteChannel, .deleteMessage, .deleteReaction, .deleteImage, .deleteFile:
+        case .removeDevice, .deleteChannel, .deleteMessage, .deleteReaction, .deleteImage, .deleteFile, .unban:
             return .delete
         default:
             return .post
@@ -137,6 +141,8 @@ extension Endpoint {
             return "messages/\(messageId)"
         case .markAllRead:
             return "channels/read"
+        case let .translate(message, _):
+            return path(to: message.id, "translate")
         case .deleteChannel(let channel),
              .invite(_, let channel),
              .addMembers(_, let channel),
@@ -194,7 +200,7 @@ extension Endpoint {
         case .unflagUser,
              .unflagMessage:
             return "moderation/unflag"
-        case .ban:
+        case .ban, .unban:
             return "moderation/ban"
         case .inviteAnswer(let answer):
             return path(to: answer.channel)
@@ -209,6 +215,8 @@ extension Endpoint {
             return pagination
         case .deleteImage(let url, _), .deleteFile(let url, _):
             return ["url": url]
+        case .unban(let userBan):
+            return userBan
         default:
             return nil
         }
@@ -245,7 +253,8 @@ extension Endpoint {
              .sendFile,
              .deleteImage,
              .deleteFile,
-             .users:
+             .users,
+             .unban:
             return nil
             
         case .markAllRead,
@@ -318,6 +327,9 @@ extension Endpoint {
             
         case .removeMembers(let members, _):
             return ["remove_members": members]
+            
+        case let .translate(_, language):
+            return ["language": language.languageCode]
         }
     }
     
@@ -333,10 +345,13 @@ extension Endpoint {
     
     var requiresConnectionId: Bool {
         switch self {
-        case .users,
-             .updateUsers,
-             .channels,
-             .channel,
+        case .users(let query):
+            return query.options.contains(.presence) || query.options.contains(.state)
+        case .channels(let query):
+            return query.options.contains(.presence) || query.options.contains(.state)
+        case .channel(let query):
+            return query.options.contains(.presence) || query.options.contains(.state)
+        case .updateUsers,
              .stopWatching:
             return true
         case .guestToken,
@@ -372,7 +387,9 @@ extension Endpoint {
              .unflagUser,
              .flagMessage,
              .unflagMessage,
-             .ban:
+             .ban,
+             .unban,
+             .translate:
             return false
         }
     }

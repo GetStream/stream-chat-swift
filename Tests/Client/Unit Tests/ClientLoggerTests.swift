@@ -10,7 +10,7 @@ import XCTest
 @testable import StreamChatClient
 
 final class ClientLoggerTests: XCTestCase {
-    private let teJstUser = User(id: "test")
+    private let testUser = User(id: "test")
     private let testUrl = "getstream.io".url!
     private let testFilter = Filter.in("members", ["test-member"])
     private let testData = "{\"testKey\":\"testValue\"}".data(using: .utf8)!
@@ -18,29 +18,22 @@ final class ClientLoggerTests: XCTestCase {
     private var logOutput = [String]()
     
     private lazy var infoLogger: ClientLogger = {
-        ClientLogger.logger = { [weak self] _, _, message in self?.logOutput.append(message) }
+        ClientLogger.log = { [weak self] _, _, _, message in self?.logOutput.append(message) }
         let logger = ClientLogger(icon: "🗣", level: .info)
         return logger
     }()
     
     private lazy var debugLogger: ClientLogger = {
-        ClientLogger.logger = { [weak self] _, _, message in self?.logOutput.append(message) }
+        ClientLogger.log = { [weak self] _, _, _, message in self?.logOutput.append(message) }
         let logger = ClientLogger(icon: "🗣", level: .debug)
         return logger
     }()
     
     private lazy var errorLogger: ClientLogger = {
-        ClientLogger.logger = { [weak self] _, _, message in self?.logOutput.append(message) }
+        ClientLogger.log = { [weak self] _, _, _, message in self?.logOutput.append(message) }
         let logger = ClientLogger(icon: "🗣", level: .error)
         return logger
     }()
-    
-    override class func setUp() {
-        super.setUp()
-        
-        // Setup Client since Message initializer accesses User.current
-        Client.configureShared(.init(apiKey: "logger_test_api_key"))
-    }
     
     override func setUp() {
         super.setUp()
@@ -48,9 +41,9 @@ final class ClientLoggerTests: XCTestCase {
         logOutput = [String]()
         
         let testMembers = Set([User.user1.asMember])
-        let testMessage = Message(id: "test", type: .reply, text: "test")
-        let testReaction = Reaction(type: "angry", messageId: testMessage.id)
-        let testChannel = Client.shared.channel(type: .messaging, id: "test")
+        let testMessage = Message(id: "test", type: .reply, text: "test", user: testUser)
+        let testReaction = Reaction(type: "angry", messageId: testMessage.id, user: testUser)
+        let testChannel = sharedClient.channel(type: .messaging, id: "test")
         
         allEndpoints = [.guestToken(User.user1),
                         .addDevice(deviceId: "test", User.user1),

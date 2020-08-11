@@ -41,6 +41,5 @@ extension ChatViewController {
         footerView.isHidden = false
         footerView.textLabel.text = presenter.typingUsersText()
         updateFooterTypingUserAvatarView(footerView: footerView, user: user)
-        footerView.hide(after: TypingUser.timeout)
     }
 }

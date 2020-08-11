@@ -86,9 +86,11 @@ public extension Reactive where Base == Channel {
     // MARK: - Message
     
     /// Send a new message or update with a given `message.id`.
-    /// - Parameter message: a message.
-    func send(message: Message) -> Observable<MessageResponse> {
-        Client.shared.rx.send(message: message, to: base)
+    /// - Parameters:
+    ///   - message: a message.
+    ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
+    func send(message: Message, parseMentionedUsers: Bool = true) -> Observable<MessageResponse> {
+        Client.shared.rx.send(message: message, to: base, parseMentionedUsers: parseMentionedUsers)
     }
     
     /// Send a message action for a given ephemeral message.
@@ -104,10 +106,22 @@ public extension Reactive where Base == Channel {
         Client.shared.rx.markRead(channel: base)
     }
     
+    // MARK: - Events
+    
     /// Send an event.
     /// - Parameter eventType: an event type.
     func send(eventType: EventType) -> Observable<StreamChatClient.Event> {
         Client.shared.rx.send(eventType: eventType, to: base)
+    }
+    
+    /// Send a keystroke event for the current user.
+    func keystroke() -> Observable<StreamChatClient.Event> {
+        request({ [weak base] in base?.keystroke($0) ?? SubscriptionBag() })
+    }
+    
+    /// Send a keystroke event for the current user.
+    func stopTyping() -> Observable<StreamChatClient.Event> {
+        request({ [weak base] in base?.stopTyping($0) ?? SubscriptionBag() })
     }
     
     // MARK: - Members
@@ -168,6 +182,12 @@ public extension Reactive where Base == Channel {
     ///   - timeoutInMinutes: for a timeout in minutes.
     func ban(user: User, timeoutInMinutes: Int? = nil, reason: String? = nil) -> Observable<EmptyData> {
         Client.shared.rx.ban(user: user, in: base, timeoutInMinutes: timeoutInMinutes, reason: reason)
+    }
+    
+    /// Unban a user.
+    /// - Parameter user: a user.
+    func unban(user: User) -> Observable<EmptyData> {
+        Client.shared.rx.unban(user: user, in: base)
     }
     
     // MARK: - Invite Requests

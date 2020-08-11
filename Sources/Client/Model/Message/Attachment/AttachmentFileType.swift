@@ -9,7 +9,7 @@
 import Foundation
 
 /// An attachment file type.
-public enum AttachmentFileType: String, Codable {
+public enum AttachmentFileType: String, Codable, Equatable {
     /// A file attachment type.
     case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
     

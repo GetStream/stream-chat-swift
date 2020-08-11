@@ -202,7 +202,7 @@ final class ImageAttachmentPreview: UIView, AttachmentPreview {
     func setup(attachment: Attachment, style: MessageViewStyle) {
         self.attachment = attachment
         self.style = style
-        backgroundColor = style.backgroundColor
+        backgroundColor = style.textColor.withAlphaComponent(0.05)
         tintColor = style.textColor
         layer.cornerRadius = style.cornerRadius
     }
@@ -239,9 +239,7 @@ final class ImageAttachmentPreview: UIView, AttachmentPreview {
             linkStackView.addArrangedSubview(imageView)
             imageView.backgroundColor = backgroundColor
             titleLabel.text = attachment.title
-            titleLabel.backgroundColor = backgroundColor
             textLabel.text = attachment.text ?? attachment.url?.host
-            textLabel.backgroundColor = backgroundColor
         }
         
         guard let imageURL = attachment.imageURL else {

@@ -28,15 +28,13 @@ extension ChannelPresenter {
         
         switch event {
         case .typingStart(let user, _, _):
-            guard parentMessage == nil else {
+            guard isTypingEventsEnabled else {
                 return .none
             }
             
             let shouldUpdate = filterInvalidatedTypingUsers()
             
-            if channel.config.typingEventsEnabled,
-                !user.isCurrent,
-                (typingUsers.isEmpty || !typingUsers.contains(.init(user: user))) {
+            if !user.isCurrent, (typingUsers.isEmpty || !typingUsers.contains(.init(user: user))) {
                 typingUsers.append(.init(user: user))
                 return .footerUpdated
             }
@@ -46,13 +44,13 @@ extension ChannelPresenter {
             }
             
         case .typingStop(let user, _, _):
-            guard parentMessage == nil else {
+            guard isTypingEventsEnabled else {
                 return .none
             }
             
             let shouldUpdate = filterInvalidatedTypingUsers()
             
-            if channel.config.typingEventsEnabled, !user.isCurrent, let index = typingUsers.firstIndex(of: .init(user: user)) {
+            if !user.isCurrent, let index = typingUsers.firstIndex(of: .init(user: user)) {
                 typingUsers.remove(at: index)
                 return .footerUpdated
             }
@@ -61,7 +59,7 @@ extension ChannelPresenter {
                 return .footerUpdated
             }
             
-        case .messageNew(let message, _, _, _):
+        case .messageNew(let message, _, _, _, _):
             guard shouldMessageEventBeHandled(message) else {
                 return .none
             }
@@ -124,7 +122,8 @@ extension ChannelPresenter {
             var messages: [Message] = []
             
             // Reload old position.
-            if let messageId = messageReadsToMessageId[messageRead], let index = items.lastIndex(whereMessageId: messageId) {
+            if let messageId = messageIdByMessageReadUser[messageRead.user],
+                let index = items.lastIndex(whereMessageId: messageId) {
                 if index == lastOwnMessageIndex {
                     return .none
                 }
@@ -145,7 +144,7 @@ extension ChannelPresenter {
                 items[lastOwnMessageIndex] = .message(lastAddedOwnMessage, readUsers)
                 rows.append(lastOwnMessageIndex)
                 messages.append(lastAddedOwnMessage)
-                messageReadsToMessageId[messageRead] = lastAddedOwnMessage.id
+                messageIdByMessageReadUser[messageRead.user] = lastAddedOwnMessage.id
             }
             
             return .itemsUpdated(rows, messages, items)
@@ -183,7 +182,7 @@ extension ChannelPresenter {
     
     private func shouldMessageEventBeHandled(_ message: Message) -> Bool {
         guard let parentMessage = parentMessage else {
-            return message.parentId == nil
+            return !message.isReply || message.showReplyInChannel
         }
         
         return message.parentId == parentMessage.id || message.id == parentMessage.id

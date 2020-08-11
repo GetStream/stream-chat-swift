@@ -29,8 +29,10 @@ class AtomicTests: XCTestCase {
         atomicValue.set(newValue)
 
         // Assert
-        AssertEqualEventually(callbackNewValue, newValue)
-        AssertEqualEventually(callbackOldValue, initialValue)
+        AssertAsync {
+            Assert.willBeEqual(callbackNewValue, newValue)
+            Assert.willBeEqual(callbackOldValue, initialValue)
+        }
     }
 
     func test_Atomic_keyPathHelpers() {
@@ -142,7 +144,7 @@ extension AtomicTests {
                 atomicValue += 1
             }
         }
-        AssertEqualEventually(atomicValue.get(), numberOfStressTestCycles)
+        AssertAsync.willBeEqual(atomicValue.get(), self.numberOfStressTestCycles)
 
         // Count down to zero
         for _ in 0..<numberOfStressTestCycles {
@@ -150,13 +152,13 @@ extension AtomicTests {
                 atomicValue -= 1
             }
         }
-        AssertEqualEventually(atomicValue.get(), 0)
+        AssertAsync.willBeEqual(atomicValue.get(), 0)
 
         // Check for memory leaks
         weak var weakValue = atomicValue
         atomicValue = nil
 
-        AssertNilEventually(weakValue)
+        AssertAsync.willBeNil(weakValue)
     }
 
     func test_Atomic_usedWithCollection() {
@@ -172,13 +174,13 @@ extension AtomicTests {
             }
         }
 
-        AssertEqualEventually(atomicValue.get().count, numberOfStressTestCycles)
+        AssertAsync.willBeEqual(atomicValue.get().count, self.numberOfStressTestCycles)
 
         // Check for memory leaks
         weak var weakValue = atomicValue
         atomicValue = nil
 
-        AssertNilEventually(weakValue)
+        AssertAsync.willBeNil(weakValue)
     }
 
     func test_Atomic_whenSetAndGetCalledSimultaneously() {
@@ -203,13 +205,13 @@ extension AtomicTests {
             }
         }
 
-        AssertEqualEventually(atomicValue.get().count, numberOfStressTestCycles)
+        AssertAsync.willBeEqual(atomicValue.get().count, self.numberOfStressTestCycles)
 
         // Check for memory leaks
         weak var weakValue = atomicValue
         atomicValue = nil
 
-        AssertNilEventually(weakValue)
+        AssertAsync.willBeNil(weakValue)
     }
 
     func test_Atomic_whenCalledFromMainThred() {
@@ -232,7 +234,8 @@ extension AtomicTests {
         // Check for memory leaks
         weak var weakValue = value
         value = nil
-        AssertNilEventually(weakValue)
+
+        AssertAsync.willBeNil(weakValue)
     }
 }
 

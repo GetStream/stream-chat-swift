@@ -42,7 +42,10 @@ public final class ChannelPresenter: Presenter {
     let channelPublishSubject = PublishSubject<Channel>()
     
     private(set) lazy var channelAtomic = Atomic<Channel>(.unused, callbackQueue: .main) { [weak self] channel, oldChannel in
-        channel.banEnabling = oldChannel.banEnabling
+        if oldChannel.cid != Channel.unused.cid {
+            channel.namingStrategy = oldChannel.namingStrategy
+            channel.banEnabling = oldChannel.banEnabling
+        }
         self?.channelPublishSubject.onNext(channel)
     }
     
@@ -50,6 +53,8 @@ public final class ChannelPresenter: Presenter {
     public var channel: Channel { channelAtomic.get() }
     /// A parent message for replies.
     public let parentMessage: Message?
+    /// Checks if the presenter is in a thread.
+    public var isThread: Bool { parentMessage != nil }
     /// Query options.
     public let queryOptions: QueryOptions
     /// An edited message.
@@ -65,9 +70,11 @@ public final class ChannelPresenter: Presenter {
     
     /// A list of typing users (see `TypingUser`).
     public internal(set) var typingUsers: [TypingUser] = []
-    var startedTyping = false
     
-    var messageReadsToMessageId: [MessageRead: String] = [:]
+    /// Checks if user typing events enabled for the channel.
+    public var isTypingEventsEnabled: Bool { channel.config.typingEventsEnabled && !isThread }
+    
+    var messageIdByMessageReadUser: [User: String] = [:]
     /// Check if the channel has unread messages.
     public var isUnread: Bool { channel.readEventsEnabled && channel.unreadCount.messages > 0 }
     
@@ -78,7 +85,7 @@ public final class ChannelPresenter: Presenter {
     public var ephemeralMessage: Message? { (try? ephemeralSubject.value())?.message }
     
     /// Check if the user can reply (create a thread) to a message.
-    public var canReply: Bool { parentMessage == nil && channel.config.repliesEnabled }
+    public var canReply: Bool { !isThread && channel.config.repliesEnabled }
     
     /// A filter to discard channel events.
     public var eventsFilter: StreamChatClient.Event.Filter?
@@ -157,19 +164,23 @@ extension ChannelPresenter {
     /// Create a message by sending a text.
     /// - Parameters:
     ///     - text: a message text
+    ///     - showReplyInChannel: show a reply in the channel.
+    ///     - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
     ///     - completion: a completion block with `MessageResponse`.
-    public func send(text: String, _ completion: @escaping Client.Completion<MessageResponse>) {
-        rx.send(text: text).bindOnce(to: completion)
+    public func send(text: String,
+                     showReplyInChannel: Bool = false,
+                     parseMentionedUsers: Bool = true,
+                     _ completion: @escaping Client.Completion<MessageResponse>) {
+        rx.send(text: text, showReplyInChannel: showReplyInChannel, parseMentionedUsers: parseMentionedUsers).bindOnce(to: completion)
     }
     
-    func createMessage(with text: String) -> Message {
+    func createMessage(with text: String, showReplyInChannel: Bool) -> Message {
         let messageId = editMessage?.id ?? ""
         
         var attachments = uploadManager.images.isEmpty
             ? uploadManager.files.compactMap({ $0.attachment })
             : uploadManager.images.compactMap({ $0.attachment })
         
-        let parentId = parentMessage?.id
         var extraData: Codable?
         
         if attachments.isEmpty, let editMessage = editMessage, !editMessage.attachments.isEmpty {
@@ -177,7 +188,7 @@ extension ChannelPresenter {
         }
         
         if let messageExtraDataCallback = messageExtraDataCallback {
-            extraData = messageExtraDataCallback(messageId, text, attachments, parentId)
+            extraData = messageExtraDataCallback(messageId, text, attachments, parentMessage?.id)
         }
         
         editMessage = nil
@@ -195,33 +206,14 @@ extension ChannelPresenter {
         }
         
         let message = Message(id: messageId,
-                              parentId: parentId,
+                              parentId: parentMessage?.id,
                               text: text,
                               attachments: attachments,
                               mentionedUsers: mentionedUsers,
                               extraData: extraData,
-                              showReplyInChannel: false)
+                              showReplyInChannel: showReplyInChannel && isThread)
         
         return messagePreparationCallback?(message) ?? message
-    }
-}
-
-// MARK: - Send Event
-
-extension ChannelPresenter {
-    
-    /// Send a typing event.
-    /// - Parameters:
-    ///   - isTyping: a user typing action.
-    ///   - completion: a completion block with `Event`.
-    public func sendEvent(isTyping: Bool, _ completion: @escaping Client.Completion<StreamChatClient.Event>) {
-        rx.sendEvent(isTyping: isTyping).bindOnce(to: completion)
-    }
-    
-    /// Send Read event if the app is active.
-    /// - Returns: an observable completion.
-    public func markReadIfPossible(_ completion: @escaping Client.Completion<StreamChatClient.Event> = { _ in }) {
-        rx.markReadIfPossible().bindOnce(to: completion)
     }
 }
 

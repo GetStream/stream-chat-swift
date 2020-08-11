@@ -38,8 +38,4 @@ public struct MessageRead: Decodable, Hashable {
     public static func == (lhs: MessageRead, rhs: MessageRead) -> Bool {
         lhs.user == rhs.user
     }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(user)
-    }
 }

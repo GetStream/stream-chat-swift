@@ -120,9 +120,10 @@ public extension Reactive where Base == Client {
     /// - Parameters:
     ///   - message: a message.
     ///   - channel: a channel.
-    func send(message: Message, to channel: Channel) -> Observable<MessageResponse> {
+    ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
+    func send(message: Message, to channel: Channel, parseMentionedUsers: Bool = true) -> Observable<MessageResponse> {
         connected(request({ [unowned base] completion in
-            base.send(message: message, to: channel, completion)
+            base.send(message: message, to: channel, parseMentionedUsers: parseMentionedUsers, completion)
         }))
     }
     
@@ -251,6 +252,14 @@ public extension Reactive where Base == Client {
              reason: String? = nil) -> Observable<EmptyData> {
         connected(request({ [unowned base] completion in
             base.ban(user: user, in: channel, timeoutInMinutes: timeoutInMinutes, reason: reason, completion)
+        }))
+    }
+    
+    /// Unban a user.
+    /// - Parameter user: a user.
+    func unban(user: User, in channel: Channel) -> Observable<EmptyData> {
+        connected(request({ [unowned base] completion in
+            base.unban(user: user, in: channel, completion)
         }))
     }
     

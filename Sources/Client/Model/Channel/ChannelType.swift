@@ -63,12 +63,4 @@ public enum ChannelType: Codable, Hashable, ExpressibleByStringLiteral {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)
     }
-    
-    public static func == (lhs: ChannelType, rhs: ChannelType) -> Bool {
-        lhs.rawValue == rhs.rawValue
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(rawValue)
-    }
 }

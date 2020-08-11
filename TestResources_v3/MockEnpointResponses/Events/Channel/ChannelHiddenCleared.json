@@ -1,0 +1,28 @@
+{
+    "user" : {
+        "id" : "broken-waterfall-5",
+        "banned" : false,
+        "unread_channels" : 0,
+        "totalUnreadCount" : 0,
+        "extraData" : {
+            "name" : "Tester"
+        },
+        "last_active" : "2020-07-17T12:07:56.66497Z",
+        "created_at" : "2019-12-12T15:33:46.488935Z",
+        "invisible" : false,
+        "unreadChannels" : 0,
+        "unread_count" : 0,
+        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+        "updated_at" : "2020-07-17T12:07:56.66497Z",
+        "role" : "user",
+        "total_unread_count" : 0,
+        "online" : true,
+        "name" : "Broken waterfall"
+    },
+    "channel_type" : "messaging",
+    "channel_id" : "new_channel_1328",
+    "created_at" : "2020-07-17T12:11:46.680875759Z",
+    "clear_history" : true,
+    "type" : "channel.hidden",
+    "cid" : "messaging:new_channel_1328"
+}

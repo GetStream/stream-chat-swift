@@ -92,17 +92,21 @@ final class ClientTests01_Channels: TestCase {
         }
         
         let subscriptionNotifications = Client.shared.subscribe { event in
-            if case .notificationAddedToChannel = event {
-                StorageHelper.shared.increment(key: .notificationAddedToChannel)
-            }
-            
-            if case .notificationMessageNew = event {
-                StorageHelper.shared.increment(key: .notificationMessageNew)
+            DispatchQueue.main.async {
+                if case .notificationAddedToChannel = event {
+                    StorageHelper.shared.increment(key: .notificationAddedToChannel)
+                }
+                
+                if case .notificationMessageNew = event {
+                    StorageHelper.shared.increment(key: .notificationMessageNew)
+                }
             }
         }
         
         let unreadCountSubscription = Client.shared.subscribeToUnreadCount { unreadCount in
-            StorageHelper.shared.append(unreadCount, key: .user2UnreadCounts)
+            DispatchQueue.main.async {
+                StorageHelper.shared.append(unreadCount, key: .user2UnreadCounts)
+            }
         }
         
         subscriptionBag.add(subscriptionNotifications)

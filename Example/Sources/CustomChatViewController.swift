@@ -84,7 +84,16 @@ class CustomChatViewController: ChatViewController {
     
     func createMember(_ title: String, _ add: @escaping (Member) -> Void) {
         let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
-        alert.addTextField { textField in textField.placeholder = "user id" }
+        
+        alert.addTextField { [unowned self] textField in
+            textField.placeholder = "user id"
+            
+            // Add the current user id as default value if it not a member of the channel.
+            if self.presenter?.channel.members.contains(.current) == false {
+                textField.text = User.current.id
+            }
+        }
+        
         alert.addTextField { textField in textField.placeholder = "user name (optional)" }
         
         alert.addAction(.init(title: "Add", style: .default, handler: { [unowned alert] _ in

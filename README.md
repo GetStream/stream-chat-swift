@@ -1,4 +1,4 @@
-# Official iOS SDK for [Stream Chat](https://getstream.io/chat/)
+# Official iOS/macOS SDK for [Stream Chat](https://getstream.io/chat/)
 
 <p align="center">
   <a href="https://getstream.io/tutorials/ios-chat/"><img src="https://i.imgur.com/B7przBT.png" width="60%" /></a>
@@ -13,7 +13,7 @@
 |:-:|:-:|:-:|
 |![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatClient.svg) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)[![Client Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/client/badge.svg)](https://getstream.github.io/stream-chat-swift/client)|![Cocoapods](https://img.shields.io/cocoapods/v/StreamChatCore.svg) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)[![Core Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/core/badge.svg)](https://getstream.github.io/stream-chat-swift/core)|![Cocoapods](https://img.shields.io/cocoapods/v/StreamChat.svg) [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)[![Swift Package Manager compatible](https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)[![UI Documentation](https://github.com/GetStream/stream-chat-swift/blob/master/docs/ui/badge.svg)](https://getstream.github.io/stream-chat-swift/ui)|
 
-[stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications.
+[stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This SDK also supports macOS via [Mac Catalyst](#mac-catalyst).
 
 <img align="right" src="https://i0.wp.com/apptractor.ru/wp-content/uploads/2019/10/Stream-Chat.jpg" width="50%" />
 
@@ -43,11 +43,17 @@ You'll typically want to start out using the UI components, and implement your c
 
 ## Requirements
 
-- iOS 11+
+- iOS 11+/macOS 10.15+
 - Xcode 11.2+
 - Swift 5.1
 - CocoaPods 1.7+
 - Carthage 0.33.0+
+
+## Mac Catalyst
+
+Our frameworks are compatible with [Mac Catalyst](https://developer.apple.com/mac-catalyst/), meaning you can create a chat application that works on both iOS and macOS. Read about it [here](https://getstream.io/blog/stream-chat-swift-macos-support).
+
+⚠️ Carthage does not support Mac Catalyst yet. ([ref](https://github.com/Carthage/Carthage/issues/2799))
 
 ## Installation
 

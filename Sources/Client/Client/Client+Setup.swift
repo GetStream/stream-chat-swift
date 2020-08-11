@@ -48,7 +48,7 @@ extension Client {
         }
         
         userAtomic.set(user)
-        urlSession = setupURLSession()
+        urlSession = makeURLSession()
         logger?.log("Sending a request for a Guest Token...")
         
         request(endpoint: .guestToken(user)) { [unowned self] (result: Result<TokenResponse, ClientError>) in
@@ -162,10 +162,10 @@ extension Client {
         }
         
         if logOptions.isEnabled {
-            ClientLogger.logger(user.isAnonymous ? "👺" : "👤", "", user.isAnonymous ? "Anonymous" : "\(user.name): \(user.id)")
+            ClientLogger.log(user.isAnonymous ? "👺" : "👤", "", .info, user.isAnonymous ? "Anonymous" : "\(user.name): \(user.id)")
             
             if !user.isAnonymous {
-                ClientLogger.logger("🀄️", "", "Token: \(token)")
+                ClientLogger.log("🀄️", "", .info, "Token: \(token)")
             }
         }
         
@@ -179,10 +179,8 @@ extension Client {
         let completion = completion == nil ? nil : { result in DispatchQueue.main.async { completion?(result) } }
         
         do {
-            let webSocket = try setupWebSocket(user: user, token: token)
-            database?.user = user
-            self.webSocket = webSocket
-            urlSession = setupURLSession(token: token)
+            webSocket.request = try makeWebSocketRequest(user: user, token: token)
+            urlSession = makeURLSession(token: token)
             self.token = token
             
             if let completion = completion {

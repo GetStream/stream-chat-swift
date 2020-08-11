@@ -47,6 +47,9 @@
                 <a href="../../Classes/Channel/Command.html">– Command</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../Classes/Channel/DefaultNamingStrategy.html">– DefaultNamingStrategy</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../Classes/Client.html">Client</a>
               </li>
               <li class="nav-group-task">
@@ -121,6 +124,9 @@
                 <a href="../../Enums/InviteAnswer.html">InviteAnswer</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../Enums/Language.html">Language</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../Enums/MessageType.html">MessageType</a>
               </li>
               <li class="nav-group-task">
@@ -148,6 +154,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../../Extensions/DateFormatter/Stream.html">– Stream</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Extensions.html#/s:8Dispatch0A8WorkItemC">DispatchWorkItem</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../Extensions/JSONDecoder.html">JSONDecoder</a>
@@ -205,6 +214,9 @@
               <li class="nav-group-task">
                 <a href="../../Functions.html#/s:16StreamChatClient8doBeforeyys6ResultOyxq_GcyAEc_yxcts5ErrorR_r0_lF">doBefore(_:_:)</a>
               </li>
+              <li class="nav-group-task">
+                <a href="../../Functions.html#/s:16StreamChatClient7onErroryys6ResultOyxq_GcyAEc_yq_cts0E0R_r0_lF">onError(_:_:)</a>
+              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -218,6 +230,9 @@
               </li>
               <li class="nav-group-task">
                 <a href="../../Protocols/ChannelExtraDataCodable.html">ChannelExtraDataCodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Protocols/ChannelNamingStrategy.html">ChannelNamingStrategy</a>
               </li>
               <li class="nav-group-task">
                 <a href="../../Protocols/Database.html">Database</a>
@@ -342,6 +357,9 @@
                 <a href="../../Structs/MessageResponse.html">MessageResponse</a>
               </li>
               <li class="nav-group-task">
+                <a href="../../Structs/MessageTranslations.html">MessageTranslations</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../../Structs.html#/s:16StreamChatClient16MessagesResponseV">MessagesResponse</a>
               </li>
               <li class="nav-group-task">
@@ -423,6 +441,7 @@
               <div class="declaration">
                 <div class="language">
                   <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">Config</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt"><a href="../../Classes/Client.html">Client</a></span><span class="o">.</span><span class="kt">Config</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
 
                 </div>
               </div>
@@ -439,6 +458,34 @@ it&rsquo;s possible to change additional parameters:</p>
           <section class="section task-group-section">
             <div class="task-group">
               <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C0C6ConfigV21WebSocketProviderTypeO"></a>
+                    <a name="//apple_ref/swift/Enum/WebSocketProviderType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C6ConfigV21WebSocketProviderTypeO">WebSocketProviderType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>WebSocket provider type to be used in Client</p>
+
+                        <a href="../../Classes/Client/Config/WebSocketProviderType.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">WebSocketProviderType</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -604,6 +651,33 @@ it&rsquo;s possible to change additional parameters:</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:16StreamChatClient0C0C6ConfigV21webSocketProviderTypeAE03WebfgH0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/webSocketProviderType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C6ConfigV21webSocketProviderTypeAE03WebfgH0Ovp">webSocketProviderType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>WebSocket provider type to be used in Client. Defaults to <code>.starscream</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">webSocketProviderType</span><span class="p">:</span> <span class="kt"><a href="../../Classes/Client/Config/WebSocketProviderType.html">WebSocketProviderType</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:16StreamChatClient0C0C6ConfigV6apiKeyAESS_tcfc"></a>
                     <a name="//apple_ref/swift/Method/init(apiKey:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:16StreamChatClient0C0C6ConfigV6apiKeyAESS_tcfc">init(apiKey:<wbr>)</a>
@@ -664,9 +738,9 @@ it&rsquo;s possible to change additional parameters:</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue10logOptionsAESS_AA04BaseH0VSbAA8Database_pSgSo17OS_dispatch_queueCSgAA0C6LoggerC0Q0Vtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:stayConnectedInBackground:database:callbackQueue:logOptions:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue10logOptionsAESS_AA04BaseH0VSbAA8Database_pSgSo17OS_dispatch_queueCSgAA0C6LoggerC0Q0Vtcfc">init(apiKey:<wbr>baseURL:<wbr>stayConnectedInBackground:<wbr>database:<wbr>callbackQueue:<wbr>logOptions:<wbr>)</a>
+                    <a name="/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue21webSocketProviderType10logOptionsAESS_AA04BaseH0VSbAA8Database_pSgSo17OS_dispatch_queueCSgAE03WebqrS0OAA0C6LoggerC0U0Vtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:stayConnectedInBackground:database:callbackQueue:webSocketProviderType:logOptions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue21webSocketProviderType10logOptionsAESS_AA04BaseH0VSbAA8Database_pSgSo17OS_dispatch_queueCSgAE03WebqrS0OAA0C6LoggerC0U0Vtcfc">init(apiKey:<wbr>baseURL:<wbr>stayConnectedInBackground:<wbr>database:<wbr>callbackQueue:<wbr>webSocketProviderType:<wbr>logOptions:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -686,6 +760,7 @@ it&rsquo;s possible to change additional parameters:</p>
             <span class="nv">stayConnectedInBackground</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nv">database</span><span class="p">:</span> <span class="kt"><a href="../../Protocols/Database.html">Database</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">callbackQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">webSocketProviderType</span><span class="p">:</span> <span class="kt"><a href="../../Classes/Client/Config/WebSocketProviderType.html">WebSocketProviderType</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">starscream</span><span class="p">,</span>
             <span class="nv">logOptions</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
 
                         </div>
@@ -767,6 +842,18 @@ it&rsquo;s possible to change additional parameters:</p>
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>webSocketProviderType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>WebSocket provider to be used in Client. Defaults to <code>.starscream</code></p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -776,9 +863,9 @@ it&rsquo;s possible to change additional parameters:</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue10logOptionsAESS_10Foundation0H0VSbAA8Database_pSgSo17OS_dispatch_queueCSgAA0C6LoggerC0Q0Vtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:stayConnectedInBackground:database:callbackQueue:logOptions:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue10logOptionsAESS_10Foundation0H0VSbAA8Database_pSgSo17OS_dispatch_queueCSgAA0C6LoggerC0Q0Vtcfc">init(apiKey:<wbr>baseURL:<wbr>stayConnectedInBackground:<wbr>database:<wbr>callbackQueue:<wbr>logOptions:<wbr>)</a>
+                    <a name="/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue21webSocketProviderType10logOptionsAESS_10Foundation0H0VSbAA8Database_pSgSo17OS_dispatch_queueCSgAE03WebqrS0OAA0C6LoggerC0U0Vtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:stayConnectedInBackground:database:callbackQueue:webSocketProviderType:logOptions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue21webSocketProviderType10logOptionsAESS_10Foundation0H0VSbAA8Database_pSgSo17OS_dispatch_queueCSgAE03WebqrS0OAA0C6LoggerC0U0Vtcfc">init(apiKey:<wbr>baseURL:<wbr>stayConnectedInBackground:<wbr>database:<wbr>callbackQueue:<wbr>webSocketProviderType:<wbr>logOptions:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -798,6 +885,7 @@ it&rsquo;s possible to change additional parameters:</p>
             <span class="nv">stayConnectedInBackground</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
             <span class="nv">database</span><span class="p">:</span> <span class="kt"><a href="../../Protocols/Database.html">Database</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">callbackQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+            <span class="nv">webSocketProviderType</span><span class="p">:</span> <span class="kt"><a href="../../Classes/Client/Config/WebSocketProviderType.html">WebSocketProviderType</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">starscream</span><span class="p">,</span>
             <span class="nv">logOptions</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
 
                         </div>
@@ -879,6 +967,18 @@ it&rsquo;s possible to change additional parameters:</p>
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>webSocketProviderType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>WebSocket provider to be used in Client. Defaults to <code>.starscream</code></p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
@@ -888,9 +988,9 @@ it&rsquo;s possible to change additional parameters:</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue10logOptionsAESgSS_SSSbAA8Database_pSgSo17OS_dispatch_queueCSgAA0C6LoggerC0Q0Vtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:stayConnectedInBackground:database:callbackQueue:logOptions:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue10logOptionsAESgSS_SSSbAA8Database_pSgSo17OS_dispatch_queueCSgAA0C6LoggerC0Q0Vtcfc">init(apiKey:<wbr>baseURL:<wbr>stayConnectedInBackground:<wbr>database:<wbr>callbackQueue:<wbr>logOptions:<wbr>)</a>
+                    <a name="/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue21webSocketProviderType10logOptionsAESgSS_SSSbAA8Database_pSgSo17OS_dispatch_queueCSgAE03WebqrS0OAA0C6LoggerC0U0Vtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(apiKey:baseURL:stayConnectedInBackground:database:callbackQueue:webSocketProviderType:logOptions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C6ConfigV6apiKey7baseURL25stayConnectedInBackground8database13callbackQueue21webSocketProviderType10logOptionsAESgSS_SSSbAA8Database_pSgSo17OS_dispatch_queueCSgAE03WebqrS0OAA0C6LoggerC0U0Vtcfc">init(apiKey:<wbr>baseURL:<wbr>stayConnectedInBackground:<wbr>database:<wbr>callbackQueue:<wbr>webSocketProviderType:<wbr>logOptions:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -910,6 +1010,7 @@ it&rsquo;s possible to change additional parameters:</p>
              <span class="nv">stayConnectedInBackground</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">,</span>
              <span class="nv">database</span><span class="p">:</span> <span class="kt"><a href="../../Protocols/Database.html">Database</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
              <span class="nv">callbackQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+             <span class="nv">webSocketProviderType</span><span class="p">:</span> <span class="kt"><a href="../../Classes/Client/Config/WebSocketProviderType.html">WebSocketProviderType</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">starscream</span><span class="p">,</span>
              <span class="nv">logOptions</span><span class="p">:</span> <span class="kt"><a href="../../Classes/ClientLogger.html">ClientLogger</a></span><span class="o">.</span><span class="kt">Options</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
 
                         </div>
@@ -991,8 +1092,46 @@ it&rsquo;s possible to change additional parameters:</p>
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>webSocketProviderType</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>WebSocket provider to be used in Client. Defaults to <code>.starscream</code></p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:SQ2eeoiySbx_xtFZ"></a>
+                    <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:SQ2eeoiySbx_xtFZ">==(_:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="err">`</span><span class="k">Self</span><span class="err">`</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="err">`</span><span class="k">Self</span><span class="err">`</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -1002,7 +1141,7 @@ it&rsquo;s possible to change additional parameters:</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-08)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-07)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

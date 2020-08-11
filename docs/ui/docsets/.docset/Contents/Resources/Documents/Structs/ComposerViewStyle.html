@@ -193,6 +193,12 @@
                 <a href="../Structs/ComposerViewStyle/Style.html">– Style</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/ComposerViewStyle/PinStyle.html">– PinStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/ComposerViewStyle/ReplyInChannelViewStyle.html">– ReplyInChannelViewStyle</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/DataDetectorURLItem.html">DataDetectorURLItem</a>
               </li>
               <li class="nav-group-task">
@@ -222,6 +228,9 @@
             <a href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:10StreamChat13EmojiReactiona">EmojiReaction</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Typealiases.html#/s:10StreamChat18EmojiReactionTypesa">EmojiReactionTypes</a>
               </li>
             </ul>
@@ -234,8 +243,7 @@
             <h1>ComposerViewStyle</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ComposerViewStyle</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ComposerViewStyle</span><span class="p">:</span> <span class="kt">Hashable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ComposerViewStyle</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 
                 </div>
               </div>
@@ -551,6 +559,65 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:10StreamChat17ComposerViewStyleV014replyInChanneldE0AC05ReplyghdE0VSgvp"></a>
+                    <a name="//apple_ref/swift/Property/replyInChannelViewStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV014replyInChanneldE0AC05ReplyghdE0VSgvp">replyInChannelViewStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A reply in the channel view style.</p>
+<div class="aside aside-note">
+    <p class="aside-title">Note</p>
+    Set it to nil to disable this feature.
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">replyInChannelViewStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/ComposerViewStyle/ReplyInChannelViewStyle.html">ReplyInChannelViewStyle</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10StreamChat17ComposerViewStyleV03pinE0AC03PinE0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/pinStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV03pinE0AC03PinE0Ovp">pinStyle</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A pin style to setup <code><a href="../Classes/ComposerView.html">ComposerView</a></code> presentation over messages.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">pinStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/ComposerViewStyle/PinStyle.html">PinStyle</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:10StreamChat17ComposerViewStyleV6statesSDyAC5StateOAC0E0VGvp"></a>
                     <a name="//apple_ref/swift/Property/states" class="dashAnchor"></a>
                     <a class="token" href="#/s:10StreamChat17ComposerViewStyleV6statesSDyAC5StateOAC0E0VGvp">states</a>
@@ -584,9 +651,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10StreamChat17ComposerViewStyleV4font9textColor15placeholderText0ijH0010backgroundH0025helperContainerBackgroundH012cornerRadius6height10edgeInsets20sendButtonVisibility6statesACSo6UIFontC_So7UIColorCSSA3R12CoreGraphics7CGFloatVAUSo06UIEdgeS0VAA0bdeV0OSDyAC5StateOAC0E0VGtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(font:textColor:placeholderText:placeholderTextColor:backgroundColor:helperContainerBackgroundColor:cornerRadius:height:edgeInsets:sendButtonVisibility:states:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV4font9textColor15placeholderText0ijH0010backgroundH0025helperContainerBackgroundH012cornerRadius6height10edgeInsets20sendButtonVisibility6statesACSo6UIFontC_So7UIColorCSSA3R12CoreGraphics7CGFloatVAUSo06UIEdgeS0VAA0bdeV0OSDyAC5StateOAC0E0VGtcfc">init(font:<wbr>textColor:<wbr>placeholderText:<wbr>placeholderTextColor:<wbr>backgroundColor:<wbr>helperContainerBackgroundColor:<wbr>cornerRadius:<wbr>height:<wbr>edgeInsets:<wbr>sendButtonVisibility:<wbr>states:<wbr>)</a>
+                    <a name="/s:10StreamChat17ComposerViewStyleV4font9textColor15placeholderText0ijH0010backgroundH0025helperContainerBackgroundH012cornerRadius6height10edgeInsets20sendButtonVisibility014replyInChanneldE003pinE06statesACSo6UIFontC_So7UIColorCSSA3T12CoreGraphics7CGFloatVAWSo06UIEdgeS0VAA0bdeV0OAC05ReplyxydE0VSgAC03PinE0OSDyAC5StateOAC0E0VGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(font:textColor:placeholderText:placeholderTextColor:backgroundColor:helperContainerBackgroundColor:cornerRadius:height:edgeInsets:sendButtonVisibility:replyInChannelViewStyle:pinStyle:states:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV4font9textColor15placeholderText0ijH0010backgroundH0025helperContainerBackgroundH012cornerRadius6height10edgeInsets20sendButtonVisibility014replyInChanneldE003pinE06statesACSo6UIFontC_So7UIColorCSSA3T12CoreGraphics7CGFloatVAWSo06UIEdgeS0VAA0bdeV0OAC05ReplyxydE0VSgAC03PinE0OSDyAC5StateOAC0E0VGtcfc">init(font:<wbr>textColor:<wbr>placeholderText:<wbr>placeholderTextColor:<wbr>backgroundColor:<wbr>helperContainerBackgroundColor:<wbr>cornerRadius:<wbr>height:<wbr>edgeInsets:<wbr>sendButtonVisibility:<wbr>replyInChannelViewStyle:<wbr>pinStyle:<wbr>states:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -611,6 +678,8 @@
             <span class="nv">height</span><span class="p">:</span> <span class="kt">CGFloat</span> <span class="o">=</span> <span class="o">.</span><span class="n">composerHeight</span><span class="p">,</span>
             <span class="nv">edgeInsets</span><span class="p">:</span> <span class="kt">UIEdgeInsets</span> <span class="o">=</span> <span class="o">.</span><span class="nf">all</span><span class="p">(</span><span class="o">.</span><span class="n">messageEdgePadding</span><span class="p">),</span>
             <span class="nv">sendButtonVisibility</span><span class="p">:</span> <span class="kt"><a href="../Enums/ChatViewStyleVisibility.html">ChatViewStyleVisibility</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">whenActive</span><span class="p">,</span>
+            <span class="nv">replyInChannelViewStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/ComposerViewStyle/ReplyInChannelViewStyle.html">ReplyInChannelViewStyle</a></span><span class="p">?</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">color</span><span class="p">:</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span> <span class="nv">selectedColor</span><span class="p">:</span> <span class="o">.</span><span class="n">black</span><span class="p">),</span>
+            <span class="nv">pinStyle</span><span class="p">:</span> <span class="kt"><a href="../Structs/ComposerViewStyle/PinStyle.html">PinStyle</a></span> <span class="o">=</span> <span class="o">.</span><span class="n">floating</span><span class="p">,</span>
             <span class="nv">states</span><span class="p">:</span> <span class="kt"><a href="../Structs/ComposerViewStyle.html#/s:10StreamChat17ComposerViewStyleV6Statesa">States</a></span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="nv">active</span><span class="p">:</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">tintColor</span><span class="p">:</span> <span class="o">.</span><span class="n">chatLightBlue</span><span class="p">,</span> <span class="nv">borderWidth</span><span class="p">:</span> <span class="mi">2</span><span class="p">),</span>
                               <span class="o">.</span><span class="nv">edit</span><span class="p">:</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">tintColor</span><span class="p">:</span> <span class="o">.</span><span class="n">chatGreen</span><span class="p">,</span> <span class="nv">borderWidth</span><span class="p">:</span> <span class="mi">2</span><span class="p">),</span>
                               <span class="o">.</span><span class="nv">disabled</span><span class="p">:</span> <span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">tintColor</span><span class="p">:</span> <span class="o">.</span><span class="n">chatGray</span><span class="p">,</span> <span class="nv">borderWidth</span><span class="p">:</span> <span class="mi">2</span><span class="p">)])</span></code></pre>
@@ -678,6 +747,18 @@
                               <td>
                                 <div>
                                   <p>a corner radius.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>replyInChannelViewStyle</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a reply in the channel view style. Set it to nil to disable this feature.</p>
                                 </div>
                               </td>
                             </tr>
@@ -808,9 +889,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:SQ2eeoiySbx_xtFZ"></a>
-                    <a name="//apple_ref/swift/Method/==(_:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:SQ2eeoiySbx_xtFZ">==(_:<wbr>_:<wbr>)</a>
+                    <a name="/s:10StreamChat17ComposerViewStyleV03PinE0O"></a>
+                    <a name="//apple_ref/swift/Enum/PinStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV03PinE0O">PinStyle</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -818,13 +899,15 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>A pin style to setup <code><a href="../Classes/ComposerView.html">ComposerView</a></code> presentation over messages.</p>
+
+                        <a href="../Structs/ComposerViewStyle/PinStyle.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kd">func</span> <span class="o">==</span> <span class="p">(</span><span class="nv">lhs</span><span class="p">:</span> <span class="kt">ComposerViewStyle</span><span class="p">,</span> <span class="nv">rhs</span><span class="p">:</span> <span class="kt">ComposerViewStyle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">PinStyle</span></code></pre>
 
                         </div>
                       </div>
@@ -834,9 +917,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:SH4hash4intoys6HasherVz_tF"></a>
-                    <a name="//apple_ref/swift/Method/hash(into:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:SH4hash4intoys6HasherVz_tF">hash(into:<wbr>)</a>
+                    <a name="/s:10StreamChat17ComposerViewStyleV014ReplyInChanneldE0V"></a>
+                    <a name="//apple_ref/swift/Struct/ReplyInChannelViewStyle" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10StreamChat17ComposerViewStyleV014ReplyInChanneldE0V">ReplyInChannelViewStyle</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -845,12 +928,13 @@
                       <div class="pointer"></div>
                       <div class="abstract">
                         
+                        <a href="../Structs/ComposerViewStyle/ReplyInChannelViewStyle.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">hash</span><span class="p">(</span><span class="n">into</span> <span class="nv">hasher</span><span class="p">:</span> <span class="k">inout</span> <span class="kt">Hasher</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ReplyInChannelViewStyle</span> <span class="p">:</span> <span class="kt">Hashable</span></code></pre>
 
                         </div>
                       </div>
@@ -862,7 +946,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-08)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-07)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

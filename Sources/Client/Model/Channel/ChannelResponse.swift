@@ -9,11 +9,12 @@
 import Foundation
 
 /// A channel response.
-public struct ChannelResponse: Decodable {
+public struct ChannelResponse: Decodable, Hashable {
     private enum CodingKeys: String, CodingKey {
         case channel
         case messages
         case messageReads = "read"
+        case membership
         case members
         case watchers
         case watcherCount = "watcher_count"
@@ -29,6 +30,7 @@ public struct ChannelResponse: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(Channel.self, forKey: .channel)
+        channel.membership = try container.decodeIfPresent(Member.self, forKey: .membership)
         messages = try container.decodeIfPresent([Message].self, forKey: .messages) ?? []
         messageReads = try container.decodeIfPresent([MessageRead].self, forKey: .messageReads) ?? []
         
@@ -70,9 +72,7 @@ public struct ChannelResponse: Decodable {
     }
     
     private func calculateChannelUnreadCount() {
-        if messages.isEmpty || !channel.members.contains(Member.current) {
-            return
-        }
+        guard !messages.isEmpty, channel.readEventsEnabled else { return }
         
         let unreadMessageRead = userUnreadMessageRead()
         channel.unreadMessageReadAtomic.set(unreadMessageRead)
@@ -87,7 +87,7 @@ public struct ChannelResponse: Decodable {
             if unreadMessageRead.unreadMessagesCount > 0 {
                 // Calculate mentioned message unread count
                 // This is approximate since it'll be limited for the messages we've fetched
-                for message in messages.reversed() where !message.user.isCurrent {
+                for message in messages.reversed() where !message.user.isCurrent && !message.isSilent {
                    if message.created > unreadMessageRead.lastReadDate {
                        if message.mentionedUsers.contains(currentUser) {
                            unreadCount.mentionedMessages += 1
@@ -105,23 +105,6 @@ public struct ChannelResponse: Decodable {
         }
         
         channel.unreadCountAtomic.set(unreadCount)
-    }
-}
-
-extension ChannelResponse: Hashable {
-    
-    public static func == (lhs: ChannelResponse, rhs: ChannelResponse) -> Bool {
-        lhs.channel.cid == rhs.channel.cid
-            && lhs.channel.members == rhs.channel.members
-            && lhs.messages == rhs.messages
-            && lhs.messageReads == rhs.messageReads
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(channel)
-        hasher.combine(channel.members)
-        hasher.combine(messages)
-        hasher.combine(messageReads)
     }
 }
 

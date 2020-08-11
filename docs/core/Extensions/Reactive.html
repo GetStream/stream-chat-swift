@@ -104,14 +104,6 @@
             </ul>
           </li>
           <li class="nav-group-name">
-            <a href="../Functions.html">Functions</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a href="../Functions.html#/s:14StreamChatCore18isTestsEnvironmentSbyF">isTestsEnvironment()</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
             <a href="../Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -838,9 +830,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4send7messageAA10ObservableCyAE15MessageResponseVGAE0L0V_tF"></a>
-                    <a name="//apple_ref/swift/Method/send(message:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4send7messageAA10ObservableCyAE15MessageResponseVGAE0L0V_tF">send(message:<wbr>)</a>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4send7message19parseMentionedUsersAA10ObservableCyAE15MessageResponseVGAE0O0V_SbtF"></a>
+                    <a name="//apple_ref/swift/Method/send(message:parseMentionedUsers:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4send7message19parseMentionedUsersAA10ObservableCyAE15MessageResponseVGAE0O0V_SbtF">send(message:<wbr>parseMentionedUsers:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -855,7 +847,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">Message</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">Message</span><span class="p">,</span> <span class="nv">parseMentionedUsers</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -872,6 +864,18 @@
                               <td>
                                 <div>
                                   <p>a message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parseMentionedUsers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>whether to automatically parse mentions into the <code>message.mentionedUsers</code> property. Defaults to <code>true</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -966,6 +970,19 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Events"></a>
+                <a name="//apple_ref/swift/Section/Events" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/Events"></a>
+                  <h3 class="section-name"><p>Events</p>
+</h3>
+                </div>
+              </div>
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -1008,6 +1025,60 @@
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE9keystrokeAA10ObservableCyAE5EventOGyF"></a>
+                    <a name="//apple_ref/swift/Method/keystroke()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE9keystrokeAA10ObservableCyAE5EventOGyF">keystroke()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send a keystroke event for the current user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">keystroke</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">StreamChatClient</span><span class="o">.</span><span class="kt">Event</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE10stopTypingAA10ObservableCyAE5EventOGyF"></a>
+                    <a name="//apple_ref/swift/Method/stopTyping()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE10stopTypingAA10ObservableCyAE5EventOGyF">stopTyping()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send a keystroke event for the current user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">stopTyping</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">StreamChatClient</span><span class="o">.</span><span class="kt">Event</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -1455,6 +1526,52 @@
                               <td>
                                 <div>
                                   <p>for a timeout in minutes.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE5unban4userAA10ObservableCyAE9EmptyDataVGAE4UserV_tF"></a>
+                    <a name="//apple_ref/swift/Method/unban(user:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE5unban4userAA10ObservableCyAE9EmptyDataVGAE4UserV_tF">unban(user:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unban a user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">unban</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="kt">User</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">EmptyData</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>user</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a user.</p>
                                 </div>
                               </td>
                             </tr>
@@ -2477,9 +2594,9 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4send7message2toAA10ObservableCyAE15MessageResponseVGAE0L0V_AE7ChannelCtF"></a>
-                    <a name="//apple_ref/swift/Method/send(message:to:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4send7message2toAA10ObservableCyAE15MessageResponseVGAE0L0V_AE7ChannelCtF">send(message:<wbr>to:<wbr>)</a>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4send7message2to19parseMentionedUsersAA10ObservableCyAE15MessageResponseVGAE0O0V_AE7ChannelCSbtF"></a>
+                    <a name="//apple_ref/swift/Method/send(message:to:parseMentionedUsers:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4send7message2to19parseMentionedUsersAA10ObservableCyAE15MessageResponseVGAE0O0V_AE7ChannelCSbtF">send(message:<wbr>to:<wbr>parseMentionedUsers:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2494,7 +2611,7 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">Message</span><span class="p">,</span> <span class="n">to</span> <span class="nv">channel</span><span class="p">:</span> <span class="kt">Channel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">Message</span><span class="p">,</span> <span class="n">to</span> <span class="nv">channel</span><span class="p">:</span> <span class="kt">Channel</span><span class="p">,</span> <span class="nv">parseMentionedUsers</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -2523,6 +2640,18 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                               <td>
                                 <div>
                                   <p>a channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parseMentionedUsers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>whether to automatically parse mentions into the <code>message.mentionedUsers</code> property. Defaults to <code>true</code>.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3260,6 +3389,52 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                               <td>
                                 <div>
                                   <p>for a timeout in minutes.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE5unban4user2inAA10ObservableCyAE9EmptyDataVGAE4UserV_AE7ChannelCtF"></a>
+                    <a name="//apple_ref/swift/Method/unban(user:in:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE5unban4user2inAA10ObservableCyAE9EmptyDataVGAE4UserV_AE7ChannelCtF">unban(user:<wbr>in:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unban a user.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">unban</span><span class="p">(</span><span class="nv">user</span><span class="p">:</span> <span class="kt">User</span><span class="p">,</span> <span class="k">in</span> <span class="nv">channel</span><span class="p">:</span> <span class="kt">Channel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">EmptyData</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>user</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a user.</p>
                                 </div>
                               </td>
                             </tr>
@@ -4950,58 +5125,6 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE7requestyAA10ObservableCyqd__GAE11Cancellable_pys6ResultOyqd__AE0G5ErrorOGccSeRd__lF"></a>
-                    <a name="//apple_ref/swift/Method/request(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE7requestyAA10ObservableCyqd__GAE11Cancellable_pys6ResultOyqd__AE0G5ErrorOGccSeRd__lF">request(_:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">request</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Cancellable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE15progressRequestyAA10ObservableCyAD16ProgressResponseVyqd__GGAE11Cancellable_pySfc_ys6ResultOyqd__AE0G5ErrorOGctcSeRd__lF"></a>
-                    <a name="//apple_ref/swift/Method/progressRequest(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE15progressRequestyAA10ObservableCyAD16ProgressResponseVyqd__GGAE11Cancellable_pySfc_ys6ResultOyqd__AE0G5ErrorOGctcSeRd__lF">progressRequest(_:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="n">progressRequest</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">request</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Typealiases.html#/s:14StreamChatCore15ProgressRequesta">ProgressRequest</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ProgressResponse.html">ProgressResponse</a></span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;&gt;</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Decodable</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE9connectedyAA10ObservableCyqd__GAKSeRd__lF"></a>
                     <a name="//apple_ref/swift/Method/connected(_:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE9connectedyAA10ObservableCyqd__GAKSeRd__lF">connected(_:<wbr>)</a>
@@ -5012,7 +5135,8 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Returns an observable connected event.</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -5055,9 +5179,94 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE10queryUsers6filter4sort7optionsAA10ObservableCySayAE4UserVGGAE6FilterO_AE7SortingVSgAE12QueryOptionsVtF"></a>
-                    <a name="//apple_ref/swift/Method/queryUsers(filter:sort:options:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE10queryUsers6filter4sort7optionsAA10ObservableCySayAE4UserVGGAE6FilterO_AE7SortingVSgAE12QueryOptionsVtF">queryUsers(filter:<wbr>sort:<wbr>options:<wbr>)</a>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE10queryUsers6filter7sorting10pagination7optionsAA10ObservableCySayAE4UserVGGAE6FilterO_SayAE7SortingVGShyAE16PaginationOptionOGAE12QueryOptionsVtF"></a>
+                    <a name="//apple_ref/swift/Method/queryUsers(filter:sorting:pagination:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE10queryUsers6filter7sorting10pagination7optionsAA10ObservableCySayAE4UserVGGAE6FilterO_SayAE7SortingVGShyAE16PaginationOptionOGAE12QueryOptionsVtF">queryUsers(filter:<wbr>sorting:<wbr>pagination:<wbr>options:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Requests users with given parameters. Creates a <code>UsersQuery</code> and call the <code>queryUsers</code> with it.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">queryUsers</span><span class="p">(</span><span class="nv">filter</span><span class="p">:</span> <span class="kt">Filter</span><span class="p">,</span>
+                <span class="nv">sorting</span><span class="p">:</span> <span class="p">[</span><span class="kt">Sorting</span><span class="p">],</span>
+                <span class="nv">pagination</span><span class="p">:</span> <span class="kt">Pagination</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">usersPageSize</span><span class="p">],</span>
+                <span class="nv">options</span><span class="p">:</span> <span class="kt">QueryOptions</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">User</span><span class="p">]</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>filter</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a user filter.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sorting</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>sorting options array.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>pagination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Pagination for query. Only supports <code>.limit</code> and <code>.offset</code></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>options</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a query options.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE10queryUsers6filter4sort10pagination7optionsAA10ObservableCySayAE4UserVGGAE6FilterO_AE7SortingVSgShyAE16PaginationOptionOGAE12QueryOptionsVtF"></a>
+                    <a name="//apple_ref/swift/Method/queryUsers(filter:sort:pagination:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE10queryUsers6filter4sort10pagination7optionsAA10ObservableCySayAE4UserVGGAE6FilterO_AE7SortingVSgShyAE16PaginationOptionOGAE12QueryOptionsVtF">queryUsers(filter:<wbr>sort:<wbr>pagination:<wbr>options:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -5074,6 +5283,7 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">queryUsers</span><span class="p">(</span><span class="nv">filter</span><span class="p">:</span> <span class="kt">Filter</span><span class="p">,</span>
                 <span class="nv">sort</span><span class="p">:</span> <span class="kt">Sorting</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+                <span class="nv">pagination</span><span class="p">:</span> <span class="kt">Pagination</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">usersPageSize</span><span class="p">],</span>
                 <span class="nv">options</span><span class="p">:</span> <span class="kt">QueryOptions</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">User</span><span class="p">]</span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -5103,6 +5313,18 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                               <td>
                                 <div>
                                   <p>a sorting.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>pagination</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Pagination for query. Only supports <code>.limit</code> and <code>.offset</code></p>
                                 </div>
                               </td>
                             </tr>
@@ -6114,9 +6336,9 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE4send4textAA10ObservableCy0dE6Client15MessageResponseVGSS_tF"></a>
-                    <a name="//apple_ref/swift/Method/send(text:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE4send4textAA10ObservableCy0dE6Client15MessageResponseVGSS_tF">send(text:<wbr>)</a>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE4send4text011showReplyInG019parseMentionedUsersAA10ObservableCy0dE6Client15MessageResponseVGSS_S2btF"></a>
+                    <a name="//apple_ref/swift/Method/send(text:showReplyInChannel:parseMentionedUsers:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE4send4text011showReplyInG019parseMentionedUsersAA10ObservableCy0dE6Client15MessageResponseVGSS_S2btF">send(text:<wbr>showReplyInChannel:<wbr>parseMentionedUsers:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -6131,7 +6353,7 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">send</span><span class="p">(</span><span class="nv">text</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">showReplyInChannel</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">parseMentionedUsers</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MessageResponse</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -6151,58 +6373,36 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                                 </div>
                               </td>
                             </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>showReplyInChannel</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>show a reply in the channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>parseMentionedUsers</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>whether to automatically parse mentions into the <code>message.mentionedUsers</code> property. Defaults to <code>true</code>.</p>
+                                </div>
+                              </td>
+                            </tr>
                           </tbody>
                         </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
                         <p>an observable <code>MessageResponse</code>.</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE9sendEvent8isTypingAA10ObservableCy0dE6Client0J0OGSb_tF"></a>
-                    <a name="//apple_ref/swift/Method/sendEvent(isTyping:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCoreAD16ChannelPresenterCRszlE9sendEvent8isTypingAA10ObservableCy0dE6Client0J0OGSb_tF">sendEvent(isTyping:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Send a typing event.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">sendEvent</span><span class="p">(</span><span class="nv">isTyping</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">StreamChatClient</span><span class="o">.</span><span class="kt">Event</span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>isTyping</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a user typing action.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -6585,7 +6785,7 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-05-08)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-07)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

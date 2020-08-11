@@ -34,7 +34,9 @@ extension Reactive where Base == ChannelPresenter {
                         return Void()
                     })
                     .asDriver(onErrorJustReturn: ())
-                : Driver.just(()))
+                : (base.channel.didLoad // If presenter is initialized with a ChannelResponse, query the channel with given options
+                  ? base.channel.rx.query(options: base.queryOptions).map({ _ in return Void() }).asDriver(onErrorJustReturn: ())
+                  : Driver.just(())))
                 // Merge all view changes from all sources.
                 .flatMapLatest({ [weak base] _ -> Driver<ViewChanges> in
                     guard let base = base else {
@@ -43,9 +45,9 @@ extension Reactive where Base == ChannelPresenter {
                     
                     return Driver.merge(
                         // Messages from requests.
-                        base.parentMessage == nil
-                            ? base.rx.parsedMessagesRequest
-                            : base.rx.parsedRepliesResponse(base.rx.repliesRequest),
+                        base.isThread
+                            ? base.rx.parsedRepliesResponse(base.rx.repliesRequest)
+                            : base.rx.parsedMessagesRequest,
                         // Events from a websocket.
                         base.rx.webSocketEvents,
                         base.rx.ephemeralMessageEvents,
@@ -104,32 +106,16 @@ public extension Reactive where Base == ChannelPresenter {
     }
     
     /// Create a message by sending a text.
-    /// - Parameter text: a message text.
+    /// - Parameters:
+    ///   - text: a message text.
+    ///   - showReplyInChannel: show a reply in the channel.
+    ///   - parseMentionedUsers: whether to automatically parse mentions into the `message.mentionedUsers` property. Defaults to `true`.
     /// - Returns: an observable `MessageResponse`.
-    func send(text: String) -> Observable<MessageResponse> {
-        base.channel.rx.send(message: base.createMessage(with: text))
+    func send(text: String, showReplyInChannel: Bool = false, parseMentionedUsers: Bool = true) -> Observable<MessageResponse> {
+        let message = base.createMessage(with: text, showReplyInChannel: showReplyInChannel)
+        return base.channel.rx.send(message: message, parseMentionedUsers: parseMentionedUsers)
             .do(onNext: { [weak base] in base?.updateEphemeralMessage($0.message) })
             .observeOn(MainScheduler.instance)
-    }
-    
-    /// Send a typing event.
-    /// - Parameter isTyping: a user typing action.
-    func sendEvent(isTyping: Bool) -> Observable<StreamChatClient.Event> {
-        guard base.parentMessage == nil else {
-            return .empty()
-        }
-        
-        if isTyping {
-            if !base.startedTyping {
-                base.startedTyping = true
-                return base.channel.rx.send(eventType: .typingStart).observeOn(MainScheduler.instance)
-            }
-        } else if base.startedTyping {
-            base.startedTyping = false
-            return base.channel.rx.send(eventType: .typingStop).observeOn(MainScheduler.instance)
-        }
-        
-        return .empty()
     }
     
     /// Send Read event if the app is active.

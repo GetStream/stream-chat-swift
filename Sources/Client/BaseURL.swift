@@ -9,9 +9,12 @@
 import Foundation
 
 /// A base URL for the `Client`.
-public struct BaseURL: CustomStringConvertible {
+public struct BaseURL: CustomStringConvertible, Equatable {
+    
     public static let usEast = BaseURL(urlString: "https://chat-proxy-us-east.stream-io-api.com/")
     public static let dublin = BaseURL(urlString: "https://chat-proxy-dublin.stream-io-api.com/")
+    public static let singapore = BaseURL(urlString: "https://chat-proxy-singapore.stream-io-api.com/")
+    public static let sydney = BaseURL(urlString: "https://chat-proxy-sydney.stream-io-api.com/")
     
     static let placeholderURL = URL(string: "https://getstream.io")!
     

@@ -7,24 +7,31 @@
 //
 
 import UIKit
-import Starscream
 
 /// A web socket client.
 final class WebSocket {
-    static var pingTimeInterval = 25
+    /// The time interval to ping connection to keep it alive.
+    static let pingTimeInterval: TimeInterval = 25
+
+    /// The maximum time the incoming `typingStart` event is valid before a `typingStop` event is emitted automatically.
+    static let incomingTypingStartEventTimeout: TimeInterval = 30
+
+    weak var eventDelegate: WebSocketEventDelegate?
     
-    /// A WebSocket connection callback.
-    private let onEvent: (Event) -> Void
     private var onEventObservers = [String: Client.OnEvent]()
-    private let webSocket: Starscream.WebSocket
-    private let stayConnectedInBackground: Bool
+    private(set) var provider: WebSocketProvider
+    private let options: WebSocketOptions
     private let logger: ClientLogger?
     private var consecutiveFailures: TimeInterval = 0
     private var shouldReconnect = false
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
-    private let webSocketInitiated: Bool
     private(set) var connectionId: String?
     private(set) var eventError: ClientErrorResponse?
+    
+    var request: URLRequest {
+        get { provider.request }
+        set { provider.request = newValue }
+    }
     
     var connectionState: ConnectionState { connectionStateAtomic.get() }
     
@@ -34,33 +41,29 @@ final class WebSocket {
     }
     
     private lazy var handshakeTimer =
-        RepeatingTimer(timeInterval: .seconds(WebSocket.pingTimeInterval), queue: webSocket.callbackQueue) { [weak self] in
+        Timer.scheduleRepeating(timeInterval: WebSocket.pingTimeInterval,
+                                queue: provider.callbackQueue) { [weak self] in
             self?.logger?.log("🏓➡️", level: .info)
-            self?.webSocket.write(ping: .empty)
-    }
+            self?.provider.sendPing()
+        }
+    
+    private let Timer: Timer.Type
+    
+    private var typingEventTimeoutTimerControls: [User: TimerControl] = [:]
     
     /// Checks if the web socket is connected and `connectionId` is not nil.
-    var isConnected: Bool { connectionId != nil && webSocket.isConnected }
+    var isConnected: Bool { connectionId != nil && provider.isConnected }
     
-    init(_ urlRequest: URLRequest,
-         stayConnectedInBackground: Bool = true,
+    init(_ provider: WebSocketProvider,
+         options: WebSocketOptions,
          logger: ClientLogger? = nil,
-         onEvent: @escaping (Event) -> Void = { _ in }) {
-        self.stayConnectedInBackground = stayConnectedInBackground
+         timerType: Timer.Type = DefaultTimer.self) {
+        
+        self.options = options
         self.logger = logger
-        self.onEvent = onEvent
-        webSocket = Starscream.WebSocket(request: urlRequest)
-        webSocket.callbackQueue = DispatchQueue(label: "io.getstream.Chat.WebSocket", qos: .userInitiated)
-        webSocketInitiated = true
-        webSocket.delegate = self
-    }
-    
-    init() {
-        webSocket = .init(url: BaseURL.placeholderURL)
-        webSocketInitiated = false
-        stayConnectedInBackground = false
-        logger = nil
-        onEvent = { _ in }
+        self.Timer = timerType
+        self.provider = provider
+        self.provider.delegate = self
     }
     
     deinit {
@@ -75,32 +78,37 @@ final class WebSocket {
 
 extension WebSocket {
     
-    /// Connect to websocket.
+    /// Connect to web socket.
     /// - Note:
-    /// - Skip if the Internet is not available.
-    /// - Skip if it's already connected.
-    /// - Skip if it's reconnecting.
+    ///     - Skip if the Internet is not available.
+    ///     - Skip if it's already connected.
+    ///     - Skip if it's reconnecting.
     func connect() {
-        guard webSocketInitiated else {
-            return
-        }
-        
         cancelBackgroundWork()
         
         if isConnected || connectionState == .connecting || connectionState == .reconnecting {
-            logger?.log("Skip connecting: "
-                + "isConnected = \(webSocket.isConnected), "
-                + "isReconnecting = \(connectionState == .reconnecting), "
-                + "isConnecting = \(connectionState == .connecting)")
+            if let logger = logger {
+                let reasons = [(isConnected ? " isConnected with connectionId = \(connectionId ?? "n/a")" : nil),
+                               (connectionState == .reconnecting ? " isReconnecting" : nil),
+                               (connectionState == .connecting ? "isConnecting" : nil),
+                               (provider.isConnected ? "\(provider).isConnected" : nil)]
+                
+                logger.log("SKIP connect: \(reasons.compactMap({ $0 }).joined(separator: ", "))")
+            }
+            
             return
         }
         
+        if provider.isConnected {
+            provider.disconnect()
+        }
+        
         logger?.log("Connecting...")
-        logger?.log(webSocket.request)
+        logger?.log(provider.request)
         connectionStateAtomic.set(.connecting)
         shouldReconnect = true
         
-        DispatchQueue.main.async(execute: webSocket.connect)
+        DispatchQueue.main.async(execute: provider.connect)
     }
     
     private func reconnect() {
@@ -109,24 +117,24 @@ extension WebSocket {
         }
         
         connectionStateAtomic.set(.reconnecting)
-        let maxDelay: TimeInterval = min(500 + consecutiveFailures * 2000, 25000) / 1000
-        let minDelay: TimeInterval = min(max(250, (consecutiveFailures - 1) * 2000), 25000) / 1000
+        let maxDelay: TimeInterval = min(0.5 + consecutiveFailures * 2, 25)
+        let minDelay: TimeInterval = min(max(0.25, (consecutiveFailures - 1) * 2), 25)
         consecutiveFailures += 1
-        let delay = minDelay + TimeInterval.random(in: 0...(maxDelay - minDelay))
+        let delay = TimeInterval.random(in: minDelay...maxDelay)
         logger?.log("⏳ Reconnect in \(delay) sec")
         
-        webSocket.callbackQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
-            self?.connectionStateAtomic.set(.connecting)
+        Timer.schedule(timeInterval: delay, queue: provider.callbackQueue) { [weak self] in
+            self?.connectionStateAtomic.set(.notConnected)
             self?.connect()
         }
     }
     
     func disconnectInBackground() {
-        webSocket.callbackQueue.async(execute: disconnectInBackgroundInWebSocketQueue)
+        provider.callbackQueue.async(execute: disconnectInBackgroundInWebSocketQueue)
     }
     
     private func disconnectInBackgroundInWebSocketQueue() {
-        guard stayConnectedInBackground else {
+        guard options.contains(.stayConnectedInBackground) else {
             disconnect(reason: "Going into background, stayConnectedInBackground is disabled")
             return
         }
@@ -156,18 +164,14 @@ extension WebSocket {
     }
     
     func disconnect(reason: String) {
-        guard webSocketInitiated else {
-            return
-        }
-        
         shouldReconnect = false
         consecutiveFailures = 0
         clearStateAfterDisconnect()
         
-        if webSocket.isConnected {
+        if provider.isConnected {
             logger?.log("Disconnecting: \(reason)")
             connectionStateAtomic.set(.disconnecting)
-            webSocket.disconnect(forceTimeout: 0)
+            provider.disconnect()
         } else {
             logger?.log("Skip disconnecting: WebSocket was not connected")
             connectionStateAtomic.set(.disconnected(nil))
@@ -189,7 +193,7 @@ extension WebSocket {
     func subscribe(forEvents eventTypes: Set<EventType> = Set(EventType.allCases),
                    callback: @escaping Client.OnEvent) -> Cancellable {
         let subscription = Subscription { [weak self] uuid in
-            self?.webSocket.callbackQueue.async {
+            self?.provider.callbackQueue.async {
                 self?.onEventObservers[uuid] = nil
             }
         }
@@ -200,10 +204,10 @@ extension WebSocket {
             }
         }
         
-        webSocket.callbackQueue.async { [weak self] in
+        provider.callbackQueue.async { [weak self] in
             self?.onEventObservers[subscription.uuid] = handler
             
-            // Reply the last connectoin state.
+            // Reply the last connection state.
             if eventTypes.contains(.connectionChanged), let connectionState = self?.connectionState {
                 handler(.connectionChanged(connectionState))
             }
@@ -213,55 +217,56 @@ extension WebSocket {
     }
     
     private func publishEvent(_ event: Event) {
-        webSocket.callbackQueue.async { [weak self] in
-            self?.onEvent(event)
-            self?.onEventObservers.forEach({ $0.value(event) })
+        provider.callbackQueue.async { [weak self] in
+            if self?.eventDelegate?.shouldPublishEvent(event) ?? true {
+                self?.onEventObservers.forEach { $0.value(event) }
+            }
         }
     }
 }
 
+protocol WebSocketEventDelegate: AnyObject {
+    /// Called after a new event is received.
+    /// - Parameter event: The incoming event.
+    /// - Returns: A boolean value indicating whether WebSocket should publish the event to subscribers.
+    func shouldPublishEvent(_ event: Event) -> Bool
+    
+    /// Called when an incoming `typingStart` event is received.
+    /// - Parameter user: The user causing the event.
+    /// - Returns: A boolean value indicating whether a `typingStop` event should be sent for this user automatically
+    ///   after the `incomingTypingStartEventTimeout` timeout.
+    func shouldAutomaticallySendTypingStopEvent(for user: User) -> Bool
+}
+
 // MARK: - Web Socket Delegate
 
-extension WebSocket: WebSocketDelegate {
+extension WebSocket: WebSocketProviderDelegate {
     
-    func websocketDidConnect(socket: Starscream.WebSocketClient) {
+    func websocketDidConnect() {
         logger?.log("❤️ Connected. Waiting for the current user data and connectionId...")
         connectionStateAtomic.set(.connecting)
     }
     
-    func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
-        guard let event = parseEvent(with: text) else {
+    func websocketDidReceiveMessage(_ message: String) {
+        guard let event = parseEvent(with: message) else {
             return
         }
         
-        switch event {
-        case let .healthCheck(user, connectionId):
+        if case let .healthCheck(user, connectionId) = event {
             logger?.log("🥰 Connected")
             self.connectionId = connectionId
             handshakeTimer.resume()
             connectionStateAtomic.set(.connected(UserConnection(user: user, connectionId: connectionId)))
             return
-            
-        case let .messageNew(message, _, _, _) where message.user.isMuted:
-            logger?.log("Skip a message (\(message.id)) from muted user (\(message.user.id)): \(message.textOrArgs)", level: .info)
-            return
-        case let .typingStart(user, _, _), let .typingStop(user, _, _):
-            if user.isMuted {
-                logger?.log("Skip typing events from muted user (\(user.id))", level: .info)
-                return
-            }
-        default:
-            break
         }
         
         if isConnected {
+            handleTypingEvent(event)
             publishEvent(event)
         }
     }
     
-    func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
-    
-    func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
+    func websocketDidDisconnect(error: WebSocketProviderError?) {
         logger?.log("Parsing WebSocket disconnect... (error: \(error?.localizedDescription ?? "<nil>"))")
         clearStateAfterDisconnect()
         
@@ -287,6 +292,7 @@ extension WebSocket: WebSocketDelegate {
         if isStopError(error) {
             logger?.log("💔 Disconnected with Stop code")
             consecutiveFailures = 0
+            connectionStateAtomic.set(.disconnected(.websocketDisconnectError(error)))
             return
         }
         
@@ -300,16 +306,16 @@ extension WebSocket: WebSocketDelegate {
         }
     }
     
-    private func isStopError(_ error: Swift.Error) -> Bool {
+    private func isStopError(_ error: WebSocketProviderError) -> Bool {
         guard InternetConnection.shared.isAvailable else {
             return true
         }
         
-        if let eventError = eventError, eventError.code == 1000 {
+        if let eventError = eventError, eventError.code == WebSocketProviderError.stopErrorCode {
             return true
         }
         
-        if let wsError = error as? WSError, wsError.code == 1000 {
+        if error.code == WebSocketProviderError.stopErrorCode {
             return true
         }
         
@@ -365,10 +371,41 @@ extension WebSocket: WebSocketDelegate {
         
         return nil
     }
+    
+    private func handleTypingEvent(_ event: Event) {
+        switch event {
+        case .typingStop(let user, _, _):
+            typingEventTimeoutTimerControls[user]?.cancel()
+            typingEventTimeoutTimerControls[user] = nil
+            
+        case .typingStart(let user, _, _)
+            where eventDelegate?.shouldAutomaticallySendTypingStopEvent(for: user) ?? false:
+            
+            typingEventTimeoutTimerControls[user]?.cancel()
+            
+            typingEventTimeoutTimerControls[user] = Timer.schedule(
+                timeInterval: Self.incomingTypingStartEventTimeout,
+                queue: provider.callbackQueue
+            ) { [weak self] in
+                self?.publishEvent(.typingStop(user, event.cid, .typingStop))
+            }
+        default: break
+        }
+    }
+}
+
+struct WebSocketOptions: OptionSet {
+    let rawValue: Int
+    
+    static let stayConnectedInBackground = WebSocketOptions(rawValue: 1 << 0)
+    
+    init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
 }
 
 /// WebSocket Error
 private struct ErrorContainer: Decodable {
-    /// A server error was recieved.
+    /// A server error was received.
     let error: ClientErrorResponse
 }

@@ -95,11 +95,6 @@ public extension Client {
             return Subscription.empty
         }
         
-        if message.user.isCurrent {
-            completion(.success(.init(messageId: message.id, created: Date(), updated: Date())))
-            return Subscription.empty
-        }
-        
         let completion = doAfter(completion) { _ in
             Message.flaggedIds.insert(message.id)
         }
@@ -128,6 +123,24 @@ public extension Client {
         }
         
         return toggleFlagMessage(message, endpoint: .unflagMessage(message), completion)
+    }
+    
+    /// Translate a message
+    /// - Parameters:
+    ///   - message: Message to be translated. It's required that message has a valid id.
+    ///   - language: Destination language.
+    ///   - completion: Completion block to be called with translated message.
+    /// - Returns: Cancellable to control the request.
+    @discardableResult
+    func translate(message: Message,
+                   to language: Language,
+                   _ completion: @escaping Client.Completion<MessageResponse>) -> Cancellable {
+        if message.id.isEmpty {
+            completion(.failure(.emptyMessageId))
+            return Subscription.empty
+        }
+        
+        return request(endpoint: .translate(message, language), completion)
     }
     
     private func toggleFlagMessage(_ message: Message,

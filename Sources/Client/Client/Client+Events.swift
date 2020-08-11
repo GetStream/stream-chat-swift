@@ -111,11 +111,8 @@ extension Client {
         
         eventsHandlingQueue.async { [unowned self] in
             self.onUserUpdateObservers[subscription.uuid] = callback
-            
             // Send the current value.
-            if !self.user.isUnknown {
-                callback(self.user)
-            }
+            callback(self.user)
         }
         
         return subscription
@@ -156,7 +153,7 @@ extension Client {
             return Subscription.empty
         }
         
-        let subscription = subscribe(forEvents: [.messageNew, .messageRead, .messageDeleted], cid: channel.cid) { _ in
+        let subscription = subscribe(forEvents: [.messageNew, .messageRead], cid: channel.cid) { _ in
             callback(.success(channel.unreadCount))
         }
         

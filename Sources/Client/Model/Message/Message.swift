@@ -28,6 +28,8 @@ public struct Message: Codable {
         case latestReactions = "latest_reactions"
         case ownReactions = "own_reactions"
         case reactionScores = "reaction_scores"
+        case isSilent = "silent"
+        case i18n
     }
     
     /// A custom extra data type for messages.
@@ -72,6 +74,10 @@ public struct Message: Codable {
     public private(set) var ownReactions: [Reaction]
     /// A reactions count (see `ReactionCounts`).
     public private(set) var reactionScores: [String: Int]
+    /// Flag for silent messages. Silent messages won't increase the unread count. See https://getstream.io/chat/docs/silent_messages/?language=swift
+    public var isSilent: Bool
+    /// Internationalization and localization for the message. Only available for messages returned via `message.translate()`
+    public var i18n: MessageTranslations?
     
     /// Check if the message is ephemeral, e.g. Giphy preview.
     public var isEphemeral: Bool { type == .ephemeral }
@@ -79,6 +85,8 @@ public struct Message: Codable {
     public var isDeleted: Bool { type == .deleted || deleted != nil }
     /// Check if the message is own message of the current user.
     public var isOwn: Bool { user.isCurrent }
+    /// Check if the message is a reply.
+    public var isReply: Bool { parentId != nil }
     /// Check if the message could be edited.
     public var canEdit: Bool { isOwn && (!text.isBlank || !attachments.isEmpty) }
     /// Check if the message could be deleted.
@@ -107,13 +115,25 @@ public struct Message: Codable {
     /// Init a message.
     ///
     /// - Parameters:
-    ///   - id: a message id.
-    ///   - text: a text.
-    ///   - attachments: attachments (see `Attachment`).
-    ///   - extraData: an extra data.
-    ///   - parentId: a parent message id.
-    ///   - mentionedUsers: a list of mentioned users.
-    ///   - showReplyInChannel: a flag to show reply messages in a channel, not in a separate thread.
+    ///   - id: Message id, leave it blank if it's a new message since server generates it
+    ///   - type: Message type. See `MessageType`
+    ///   - parentId: Parent message id if this message is a reply
+    ///   - created: Message created date
+    ///   - updated: Message updated date
+    ///   - deleted: Message deleted date
+    ///   - text: Message body
+    ///   - isSilent: Flag for indicating if this message is silent (does not increase unread count)
+    ///   - user: Owner of the message. Keep in mind that clients can only send messages as logged in user (User.current)
+    ///   - command: Command associated with message
+    ///   - args: Arguments in message
+    ///   - attachments: Attachments for this message
+    ///   - mentionedUsers: Mentioned users in this message
+    ///   - extraData: ExtraData for this message
+    ///   - latestReactions: Reactions to this message
+    ///   - ownReactions: Current user's reactions to this message
+    ///   - reactionScores: Scores of reactions to this message
+    ///   - replyCount: Reply count
+    ///   - showReplyInChannel: Flag for showing this reply message also in channel.
     public init(id: String = "",
                 type: MessageType = .regular,
                 parentId: String? = nil,
@@ -121,6 +141,8 @@ public struct Message: Codable {
                 updated: Date = .init(),
                 deleted: Date? = nil,
                 text: String,
+                silent: Bool = false,
+                user: User = User.current,
                 command: String? = nil,
                 args: String? = nil,
                 attachments: [Attachment] = [],
@@ -131,7 +153,6 @@ public struct Message: Codable {
                 reactionScores: [String: Int] = [:],
                 replyCount: Int = 0,
                 showReplyInChannel: Bool = false) {
-        user = User.current
         self.id = id
         self.type = type
         self.parentId = parentId
@@ -139,6 +160,8 @@ public struct Message: Codable {
         self.updated = updated
         self.deleted = deleted
         self.text = text
+        self.isSilent = silent
+        self.user = user
         self.command = command
         self.args = args
         self.attachments = attachments
@@ -154,13 +177,14 @@ public struct Message: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(text, forKey: .text)
+        try container.encode(isSilent, forKey: .isSilent)
         extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a message extra data")
         
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)
         }
         
-        if parentId != nil {
+        if isReply {
             try container.encode(parentId, forKey: .parentId)
             try container.encode(showReplyInChannel, forKey: .showReplyInChannel)
         }
@@ -179,6 +203,7 @@ public struct Message: Codable {
         updated = try container.decode(Date.self, forKey: .updated)
         deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
         text = try container.decode(String.self, forKey: .text).trimmingCharacters(in: .whitespacesAndNewlines)
+        isSilent = try container.decodeIfPresent(Bool.self, forKey: .isSilent) ?? false
         command = try container.decodeIfPresent(String.self, forKey: .command)
         args = try container.decodeIfPresent(String.self, forKey: .args)
         attachments = try container.decode([Attachment].self, forKey: .attachments)
@@ -189,6 +214,7 @@ public struct Message: Codable {
         latestReactions = (try? container.decode([Reaction].self, forKey: .latestReactions)) ?? []
         ownReactions = (try? container.decode([Reaction].self, forKey: .ownReactions)) ?? []
         reactionScores = try container.decodeIfPresent([String: Int].self, forKey: .reactionScores) ?? [:]
+        i18n = try container.decodeIfPresent(MessageTranslations.self, forKey: .i18n)
         extraData = try? Self.extraDataType?.init(from: decoder) // swiftlint:disable:this explicit_init
     }
     
@@ -198,8 +224,7 @@ public struct Message: Codable {
     }
 }
 
-extension Message: Hashable {
-    
+extension Message: Equatable {
     public static func == (lhs: Message, rhs: Message) -> Bool {
         lhs.id == rhs.id
             && lhs.type == rhs.type
@@ -212,20 +237,6 @@ extension Message: Hashable {
             && lhs.created == rhs.created
             && lhs.updated == rhs.updated
             && lhs.deleted == rhs.deleted
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-        hasher.combine(type)
-        hasher.combine(parentId)
-        hasher.combine(user)
-        hasher.combine(text)
-        hasher.combine(command)
-        hasher.combine(attachments)
-        hasher.combine(showReplyInChannel)
-        hasher.combine(created)
-        hasher.combine(updated)
-        hasher.combine(deleted)
     }
 }
 
@@ -305,4 +316,11 @@ public struct FlagMessageResponse: Decodable {
     public let created: Date
     /// A updated date.
     public let updated: Date
+}
+
+// MARK: - Hashable
+extension Message: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 }

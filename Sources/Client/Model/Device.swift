@@ -17,14 +17,16 @@ public struct Device: Codable, Equatable {
     /// A device identifier.
     public let id: String
     /// A created date.
-    public let created: Date
+    public let created: Date?
     
     /// Init a device for Push Notifications.
     ///
-    /// - Parameter id: a Push Notifications device identifier.
-    public init(_ id: String) {
+    /// - Parameters:
+    ///   - id: The push notifications device identifier.
+    ///   - created: The date when the device token was created.
+    public init(_ id: String, created: Date = .init()) {
         self.id = id
-        created = Date()
+        self.created = created
     }
 }
 
