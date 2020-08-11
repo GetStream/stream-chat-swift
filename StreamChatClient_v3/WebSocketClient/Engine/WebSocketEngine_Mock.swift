@@ -13,13 +13,13 @@ class WebSocketEngineMock: WebSocketEngine {
     weak var delegate: WebSocketEngineDelegate?
     
     /// How many times was `connect()` called
-    var connect_calledCount = 0
+    @Atomic var connect_calledCount = 0
     
     /// How many times was `disconnect()` called
-    var disconnect_calledCount = 0
+    @Atomic var disconnect_calledCount = 0
     
     /// How many times was `sendPing()` called
-    var sendPing_calledCount = 0
+    @Atomic var sendPing_calledCount = 0
     
     convenience init() {
         self.init(request: .init(url: URL(string: "test_url")!), sessionConfiguration: .default, callbackQueue: .main)
