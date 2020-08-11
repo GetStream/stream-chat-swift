@@ -184,6 +184,29 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
 // MARK: - Channel actions
 
 public extension ChannelControllerGeneric {
+    /// Updated channel with new data
+    /// - Parameters:
+    ///   - team: New team.
+    ///   - members: New members.
+    ///   - invites: New invites.
+    ///   - extraData: New `ExtraData`.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
+    /// will be called with an error.
+    func updateChannel(team: String?,
+                       members: Set<UserId> = [],
+                       invites: Set<UserId> = [],
+                       extraData: ExtraData.Channel,
+                       completion: ((Error?) -> Void)? = nil)
+    {
+        let payload: ChannelEditDetailPayload<ExtraData> = .init(cid: channelId, team: team, members: members, invites: invites,
+                                                                 extraData: extraData)
+        worker.updateChannel(channelPayload: payload) { [weak self] error in
+            self?.callback {
+                completion?(error)
+            }
+        }
+    }
+
     /// Mutes the channel this controller manages.
     /// - Parameters:
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
