@@ -4,42 +4,33 @@
 
 import Foundation
 
+private enum UserPayloadsCodingKeys: String, CodingKey {
+    case id
+    case role
+    case name
+    case avatarURL = "image"
+    case isOnline = "online"
+    case isBanned = "banned"
+    case createdAt = "created_at"
+    case updatedAt = "updated_at"
+    case lastActiveAt = "last_active"
+    case isInvisible = "invisible"
+    case teams
+    case unreadChannelsCount = "unread_channels"
+    case unreadMessagesCount = "total_unread_count"
+}
+
+/// An object describing the incoming user JSON payload.
 class UserPayload<ExtraData: UserExtraData>: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case role
-        case name
-        case avatarURL = "image"
-        case isOnline = "online"
-        case isBanned = "banned"
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case lastActiveAt = "last_active"
-        case isInvisible = "invisible"
-        case teams
-        case unreadChannelsCount = "unread_channels"
-        case unreadMessagesCount = "total_unread_count"
-    }
-    
-    /// A user id.
     let id: String
-    /// A user role.
     let role: UserRole
-    /// A created date.
     let createdAt: Date
-    /// An updated date.
     let updatedAt: Date
-    /// A last active date.
     let lastActiveAt: Date?
-    /// An indicator if a user is online.
     let isOnline: Bool
-    /// An indicator if a user is invisible.
     let isInvisible: Bool
-    /// An indicator if a user was banned.
     let isBanned: Bool
-    /// A list of teams of the user.
     let teams: [String]
-    /// An extra data for the user.
     let extraData: ExtraData
     
     init(id: String,
@@ -65,7 +56,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     }
     
     required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         role = try container.decode(UserRole.self, forKey: .role)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
