@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### ✅ Added
+- To improve request latency, we use the time while the WS connection is establishing to open a new TCP connection, which can later be reused by other requests. [#401](https://github.com/GetStream/stream-chat-swift/issues/401)
 - Pipelining is enabled for requests to improve them between clients and regions over long distances. 
 
 # [2.2.8](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.8)
