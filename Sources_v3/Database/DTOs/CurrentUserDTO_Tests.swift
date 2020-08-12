@@ -55,15 +55,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
     func test_currentUserPayload_withNoExtraData_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         
-        let payload: CurrentUserPayload<NoExtraData> = .init(id: userId,
-                                                             role: .admin,
-                                                             createdAt: .unique,
-                                                             updatedAt: .unique,
-                                                             lastActiveAt: .unique,
-                                                             isOnline: true,
-                                                             isInvisible: true,
-                                                             isBanned: true,
-                                                             extraData: .init())
+        let payload: CurrentUserPayload<NoExtraData> = .dummy(userId: userId, role: .user)
         
         // Asynchronously save the payload to the db
         database.write { session in

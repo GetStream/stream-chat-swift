@@ -25,6 +25,8 @@ class UserPayload_Tests: XCTestCase {
     
     func test_currentUserJSON_isSerialized_withCustomExtraData() throws {
         struct TestExtraData: UserExtraData {
+            static var defaultExtraData: TestExtraData = .init(secretNote: "no secrets")
+            
             let secretNote: String
             private enum CodingKeys: String, CodingKey {
                 case secretNote = "secret_note"

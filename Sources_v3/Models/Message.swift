@@ -28,7 +28,8 @@ public struct MessageModel<ExtraData: ExtraDataTypes> {
 
 public typealias Message = MessageModel<DefaultDataTypes>
 
-public protocol MessageExtraData: Codable & Hashable {}
+/// Additional data fields `MessageModel` can be extended with. You can use it to store your custom data related to a message.
+public protocol MessageExtraData: ExtraData {}
 
 extension MessageModel: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {

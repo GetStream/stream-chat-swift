@@ -4,7 +4,8 @@
 
 import Foundation
 
-public protocol UserExtraData: Codable & Hashable {}
+/// Additional data fields `UserModel` can be extended with. You can use it to store your custom data related to a user.
+public protocol UserExtraData: ExtraData {}
 
 public typealias UserId = String
 
@@ -42,7 +43,7 @@ public class UserModel<ExtraData: UserExtraData> {
     
     /// Custom additional data of the user object. You can modify it by setting your custom `ExtraData` type
     /// of `UserModel<ExtraData>.`
-    public let extraData: ExtraData?
+    public let extraData: ExtraData
     
     // MARK: - Internal
     
@@ -54,7 +55,7 @@ public class UserModel<ExtraData: UserExtraData> {
          updatedAt: Date = .init(),
          lastActiveAt: Date? = nil,
          teams: [String] = [],
-         extraData: ExtraData? = nil) {
+         extraData: ExtraData = .defaultValue) {
         self.id = id
         self.isOnline = isOnline
         self.isBanned = isBanned
@@ -78,9 +79,9 @@ extension UserModel: Hashable {
 }
 
 extension UserModel {
-    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData, T>) -> T? {
+    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData, T>) -> T {
         // TODO: Solve double optional
-        extraData?[keyPath: keyPath]
+        extraData[keyPath: keyPath]
     }
 }
 

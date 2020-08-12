@@ -84,6 +84,8 @@ class MessageDTO_Tests: XCTestCase {
     
     func test_messagePayload_withExtraData_isStoredAndLoadedFromDB() {
         struct DeathStarMetadata: MessageExtraData {
+            static var defaultValue: DeathStarMetadata = .init(isSectedDeathStarPlanIncluded: false)
+            
             let isSectedDeathStarPlanIncluded: Bool
         }
         

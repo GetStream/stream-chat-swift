@@ -40,7 +40,7 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
                 createdAt: Date = .init(),
                 updatedAt: Date = .init(),
                 lastActiveAt: Date? = nil,
-                extraData: ExtraData? = nil,
+                extraData: ExtraData = .defaultValue,
                 devices: [Device] = [],
                 currentDevice: Device? = nil,
                 mutedUsers: Set<UserModel<ExtraData>> = [],
