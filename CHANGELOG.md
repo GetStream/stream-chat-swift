@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.2.9](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.9)
+_August 12, 2020_
+
 ### ✅ Added
 - To improve request latency, we use the time while the WS connection is establishing to open a new TCP connection, which can later be reused by other requests. [#401](https://github.com/GetStream/stream-chat-swift/issues/401)
 
