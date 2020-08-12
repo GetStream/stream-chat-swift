@@ -6,16 +6,22 @@ import CoreData
 
 extension NSManagedObjectContext: DatabaseSession {}
 
-protocol DatabaseSession {
+protocol UserDatabaseSession {
+    /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successfull. Throws an error
+    /// if the save fails.
+    @discardableResult
+    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO
+    
+    /// Fetchtes `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
+    func user(id: UserId) -> UserDTO?
+}
+
+protocol DatabaseSession: UserDatabaseSession {
     // MARK: -  User
     
     @discardableResult
     func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO
     func loadCurrentUser<ExtraData: UserExtraData>() -> CurrentUserModel<ExtraData>?
-    
-    @discardableResult
-    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO
-    func loadUser<ExtraData: UserExtraData>(id: UserId) -> UserModel<ExtraData>?
     
     // MARK: -  Member
     
