@@ -37,5 +37,6 @@ final class GuestEndpoints_Tests: XCTestCase {
 }
 
 private struct TestExtraData: UserExtraData {
+    static var defaultValue: TestExtraData = .init(company: "Stream")
     let company: String
 }

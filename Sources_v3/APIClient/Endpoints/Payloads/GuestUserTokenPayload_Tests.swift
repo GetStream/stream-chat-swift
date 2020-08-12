@@ -42,6 +42,7 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
     
     func test_guestUserCustomExtraData_isSerialized() throws {
         struct TestExtraData: UserExtraData {
+            static var defaultValue: TestExtraData = .init(company: "Stream")
             let company: String
         }
         

@@ -35,7 +35,7 @@ public class MemberModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
         userCreatedAt: Date,
         userUpdatedAt: Date,
         lastActiveAt: Date?,
-        extraData: ExtraData?,
+        extraData: ExtraData,
         memberRole: MemberRole,
         memberCreatedAt: Date,
         memberUpdatedAt: Date,
