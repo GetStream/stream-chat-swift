@@ -255,6 +255,12 @@ public final class Client: Uploader {
         
         if appState == .active {
             webSocket.connect()
+            
+            // The improve latency, call the preheat endpoint to set up TCP connection which can be reused.
+            self.request(endpoint: .heatUpTCPConnection) { (_: Result<EmptyData, ClientError>) in
+                self.logger?.log("♨️ TCP connection heated up.")
+            }
+            
         } else if appState == .background, webSocket.isConnected {
             webSocket.disconnectInBackground()
         }
