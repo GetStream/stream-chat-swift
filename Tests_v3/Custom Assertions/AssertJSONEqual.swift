@@ -14,6 +14,31 @@ func error(domain: String, code: Int = -1, message: @autoclosure () -> String) -
 /// Recursively calls itself for nested dictionaries.
 /// - Parameters:
 ///   - expression1: JSON object 1, as Data. From string, you can do `Data(jsonString.utf8)`
+///   - expression2: JSON object 2.
+///   - file: file the assert is being made
+///   - line: line the assert is being made.
+func AssertJSONEqual(
+    _ expression1: @autoclosure () throws -> Data,
+    _ expression2: @autoclosure () throws -> [String: Any],
+    file: StaticString = #file,
+    line: UInt = #line
+) {
+    do {
+        guard let json = try JSONSerialization.jsonObject(with: expression1()) as? [String: Any] else {
+            throw error(domain: "AssertJSONEqual", message: "The first expression is not a valid json object!")
+        }
+        
+        AssertJSONEqual(json, try expression2(), file: file, line: line)
+        
+    } catch {
+        XCTFail("Error: \(error)", file: file, line: line)
+    }
+}
+
+/// Asserts the given 2 JSON Serializations are equal, by creating JSON objects from Data and comparing dictionaries.
+/// Recursively calls itself for nested dictionaries.
+/// - Parameters:
+///   - expression1: JSON object 1, as Data. From string, you can do `Data(jsonString.utf8)`
 ///   - expression2: JSON object 2, as Data.
 ///   - file: file the assert is being made
 ///   - line: line the assert is being made.
