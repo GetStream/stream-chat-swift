@@ -21,9 +21,9 @@ lane :release do |options|
   ensure_git_status_clean
   
   version_number = increment_version_number(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj")
-  increment_version_number(version_number: version_number, xcodeproj: "./Example/Carthage/ChatExample.xcodeproj")
-  increment_version_number(version_number: version_number, xcodeproj: "./Example/Cocoapods/ChatExample.xcodeproj")
-  increment_version_number(version_number: version_number, xcodeproj: "./Example/SPM/ChatExample.xcodeproj")
+  increment_version_number(version_number: version_number, xcodeproj: "./Sample/Carthage/ChatExample.xcodeproj")
+  increment_version_number(version_number: version_number, xcodeproj: "./Sample/Cocoapods/ChatExample.xcodeproj")
+  increment_version_number(version_number: version_number, xcodeproj: "./Sample/SPM/ChatExample.xcodeproj")
   
   if git_tag_exists(tag: version_number)
     UI.user_error!("Tag for version #{version_number} already exists!")
@@ -127,14 +127,14 @@ lane :beta do
   match_me
   
   build_number = increment_build_number(
-                   xcodeproj: "./Example/Carthage/ChatExample.xcodeproj",
+                   xcodeproj: "./Sample/Carthage/ChatExample.xcodeproj",
                    build_number: ENV["GITHUB_SHA"][0...7]
                  )
                  
   carthage_bootstrap
 
   gym(
-    project: "./Example/Carthage/ChatExample.xcodeproj",
+    project: "./Sample/Carthage/ChatExample.xcodeproj",
     scheme: "ChatExample",
     configuration: "Debug",
     export_method: "ad-hoc",
@@ -204,7 +204,7 @@ lane :test_carthage_integration do
   carthage_bootstrap
 
   scan(
-    project: "./Example/Carthage/ChatExample.xcodeproj",
+    project: "./Sample/Carthage/ChatExample.xcodeproj",
     scheme: "ChatExample",
     clean: true,
     build_for_testing: true
@@ -213,10 +213,10 @@ end
 
 desc "Tests integration with Cocoapods by building Cocoapods Example"
 lane :test_cocoapods_integration do
-  cocoapods(use_bundle_exec: true, try_repo_update_on_error: true, clean_install: true, podfile: "./Example/Cocoapods/")
+  cocoapods(use_bundle_exec: true, try_repo_update_on_error: true, clean_install: true, podfile: "./Sample/Cocoapods/")
   
   scan(
-    workspace: "./Example/Cocoapods/ChatExample.xcworkspace",
+    workspace: "./Sample/Cocoapods/ChatExample.xcworkspace",
     scheme: "ChatExample",
     clean: true,
     build_for_testing: true
@@ -226,7 +226,7 @@ end
 desc "Tests integration with SPM by building SPM Example"
 lane :test_spm_integration do
   scan(
-    project: "./Example/SPM/ChatExample.xcodeproj",
+    project: "./Sample/SPM/ChatExample.xcodeproj",
     scheme: "ChatExample",
     clean: true,
     build_for_testing: true
@@ -267,26 +267,26 @@ end
 desc "Runs tests for v3 in Debug config"
 lane :test_v3 do
 
-  setCIEnvironmentVariable("../StreamChatClient_v3.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatClientTestPlan.xctestplan")
 
   scan(
-    project: "StreamChat.xcodeproj", 
-    scheme: "StreamChatClient_v3", 
-    testplan: "StreamChatClient_v3",
+    project: "StreamChat_v3.xcodeproj",
+    scheme: "StreamChatClient",
+    testplan: "StreamChatClientTestPlan",
     configuration: "Debug",
-    clean: true, 
+    clean: true,
     )
 end
 
 desc "Runs tests for v3 in Release config"
 lane :test_v3_release do
 
-  setCIEnvironmentVariable("../StreamChatClient_v3.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatClientTestPlan.xctestplan")
 
   scan(
-    project: "StreamChat.xcodeproj", 
-    scheme: "StreamChatClient_v3", 
-    testplan: "StreamChatClient_v3",
+    project: "StreamChat_v3.xcodeproj",
+    scheme: "StreamChatClient",
+    testplan: "StreamChatClientTestPlan",
     configuration: "ReleaseTests",
     clean: true,
   )
@@ -295,43 +295,43 @@ end
 desc "Runs stress tests for v3"
 lane :stress_test_v3 do
   scan(
-    project: "StreamChat.xcodeproj",
-    scheme: "StreamChatClient_v3",
+    project: "StreamChat_v3.xcodeproj",
+    scheme: "StreamChatClient",
     clean: true,
     build_for_testing: true
   )
 
-  setCIEnvironmentVariable("../StreamChatClientStress_v3.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatClientStressTestPlan.xctestplan")
 
   stress_tests_cycles.times {
     scan(
-      project: "StreamChat.xcodeproj", 
-      scheme: "StreamChatClient_v3", 
+      project: "StreamChat_v3.xcodeproj",
+      scheme: "StreamChatClient",
       test_without_building: true,
-      testplan: "StreamChatClientStress_v3"
-    )      
+      testplan: "StreamChatClientStressTestPlan"
+    )
   }
 end
 
 desc "Runs stress tests for v3 in Release config"
 lane :stress_test_v3_release do
   scan(
-    project: "StreamChat.xcodeproj",
-    scheme: "StreamChatClient_v3",
+    project: "StreamChat_v3.xcodeproj",
+    scheme: "StreamChatClient",
     configuration: "ReleaseTests",
     clean: true,
     build_for_testing: true
   )
 
-  setCIEnvironmentVariable("../StreamChatClientStress_v3.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatClientStressTestPlan.xctestplan")
 
   stress_tests_cycles.times {
     scan(
-      project: "StreamChat.xcodeproj", 
-      scheme: "StreamChatClient_v3",
+      project: "StreamChat_v3.xcodeproj",
+      scheme: "StreamChatClient",
       configuration: "ReleaseTests",
       test_without_building: true,
-      testplan: "StreamChatClientStress_v3"
-    )      
+      testplan: "StreamChatClientStressTestPlan"
+    )
   }
 end
