@@ -73,6 +73,22 @@ class UserPayload_Tests: XCTestCase {
     }
 }
 
+class UserRequestBody_Tests: XCTestCase {
+    func test_isSerialized() throws {
+        let payload: UserRequestBody<NameAndImageExtraData> = .init(id: .unique,
+                                                                    extraData: .init(name: .unique, imageURL: .unique()))
+        
+        let serialized = try JSONEncoder.stream.encode(payload)
+        let expected: [String: Any] = [
+            "id": payload.id,
+            "name": payload.extraData.name!,
+            "image": payload.extraData.imageURL!.absoluteString
+        ]
+        
+        AssertJSONEqual(serialized, expected)
+    }
+}
+
 extension String {
     /// Converst a string to `Date`. Only for testing!
     func toDate() -> Date {
