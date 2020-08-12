@@ -12,6 +12,9 @@ import Foundation
 public enum Endpoint {
     
     // MARK: Auth Endpoints
+
+    /// An endpoint without any side-effects. Used only to set up a TCP connection which can be later reused by other requests.
+    case heatUpTCPConnection
     
     /// Get a guest token.
     case guestToken(User)
@@ -120,6 +123,8 @@ extension Endpoint {
             return .get
         case .removeDevice, .deleteChannel, .deleteMessage, .deleteReaction, .deleteImage, .deleteFile, .unban:
             return .delete
+        case .heatUpTCPConnection:
+            return .options
         default:
             return .post
         }
@@ -127,6 +132,8 @@ extension Endpoint {
     
     var path: String {
         switch self {
+        case .heatUpTCPConnection:
+            return "connect"
         case .guestToken:
             return "guest"
         case .addDevice,
@@ -241,7 +248,8 @@ extension Endpoint {
     
     var body: Encodable? {
         switch self {
-        case .removeDevice,
+        case .heatUpTCPConnection,
+             .removeDevice,
              .search,
              .channels,
              .message,
@@ -354,7 +362,8 @@ extension Endpoint {
         case .updateUsers,
              .stopWatching:
             return true
-        case .guestToken,
+        case .heatUpTCPConnection,
+             .guestToken,
              .message,
              .markAllRead,
              .deleteChannel,
@@ -410,5 +419,6 @@ extension Endpoint {
         case get = "GET"
         case post = "POST"
         case delete = "DELETE"
+        case options = "OPTIONS"
     }
 }
