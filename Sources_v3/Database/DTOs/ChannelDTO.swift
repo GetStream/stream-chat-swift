@@ -143,7 +143,7 @@ extension ChannelModel {
                             createdAt: dto.createdAt,
                             updatedAt: dto.updatedAt,
                             deletedAt: dto.deletedAt,
-                            createdBy: UserModel<ExtraData.User>.create(fromDTO: dto.createdBy),
+                            createdBy: dto.createdBy.asModel(),
                             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
                             isFrozen: dto.isFrozen,
                             members: Set(members),

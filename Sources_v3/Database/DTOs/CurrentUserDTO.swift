@@ -67,7 +67,7 @@ extension CurrentUserModel {
                 + "the extra data must be a valid JSON to be saved.")
         }
         
-        let mutedUsers = dto.mutedUsers.map { UserModel<ExtraData>.create(fromDTO: $0) }
+        let mutedUsers: [UserModel<ExtraData>] = dto.mutedUsers.map { $0.asModel() }
         
         return CurrentUserModel(id: user.id,
                                 isOnline: user.isOnline,
