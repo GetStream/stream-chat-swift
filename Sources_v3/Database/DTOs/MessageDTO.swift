@@ -116,7 +116,7 @@ extension MessageModel {
         isSilent = dto.isSilent
         reactionScores = dto.reactionScores
         
-        author = UserModel.create(fromDTO: dto.user)
-        mentionedUsers = Set(dto.mentionedUsers.map(UserModel<ExtraData.User>.create(fromDTO:)))
+        author = dto.user.asModel()
+        mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })
     }
 }

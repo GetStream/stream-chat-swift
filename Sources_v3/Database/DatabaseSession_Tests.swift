@@ -38,7 +38,7 @@ class DatabaseSession_Tests: StressTestCase {
         // Try to load a saved channel owner from DB
         if let userId = channelPayload.channel.createdBy?.id {
             var loadedUser: UserModel<DefaultDataTypes.User>? {
-                database.viewContext.loadUser(id: userId)
+                database.viewContext.user(id: userId)?.asModel()
             }
             
             AssertAsync.willBeEqual(loadedUser?.id, userId)
