@@ -48,7 +48,6 @@ public extension Reactive where Base == ChannelsPresenter {
     ///
     /// - Parameters:
     ///   - channelPresenter: a channel presenter.
-    ///   - clearHistory: checks if needs to remove a message history of the channel.
     func delete(_ channelPresenter: ChannelPresenter) -> Driver<Channel> {
         channelPresenter.channel.rx
             .delete()
