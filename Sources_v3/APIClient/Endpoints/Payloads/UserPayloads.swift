@@ -70,6 +70,23 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     }
 }
 
+/// An object describing the outgoing user JSON payload.
+class UserRequestBody<ExtraData: UserExtraData>: Encodable {
+    let id: String
+    let extraData: ExtraData
+    
+    init(id: String, extraData: ExtraData) {
+        self.id = id
+        self.extraData = extraData
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try extraData.encode(to: encoder)
+    }
+}
+
 // TODO: Muted user
 
 class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
