@@ -1,4 +1,4 @@
 ignore:
-  - "TestResources_v3/"
+  - "Tests_v3/"
   - "**/*_Tests.swift"
   - "**/*_Mock.swift"
