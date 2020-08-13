@@ -4,7 +4,7 @@
 
 import Foundation
 
-private enum UserPayloadsCodingKeys: String, CodingKey {
+enum UserPayloadsCodingKeys: String, CodingKey {
     case id
     case role
     case name
@@ -18,6 +18,9 @@ private enum UserPayloadsCodingKeys: String, CodingKey {
     case teams
     case unreadChannelsCount = "unread_channels"
     case unreadMessagesCount = "total_unread_count"
+    case mutedUsers = "mutes"
+    case isAnonymous = "anon"
+    case devices
 }
 
 /// An object describing the incoming user JSON payload.
@@ -85,94 +88,4 @@ class UserRequestBody<ExtraData: UserExtraData>: Encodable {
         try container.encode(id, forKey: .id)
         try extraData.encode(to: encoder)
     }
-}
-
-// TODO: Muted user
-
-class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
-    private enum CodingKeys: String, CodingKey {
-        case mutedUsers = "mutes"
-        case isAnonymous = "anon"
-        case devices
-    }
-    
-    /// A list of devices.
-    let devices: [Device]
-    /// Muted users.
-    let mutedUsers: [MutedUser<ExtraData>]
-    
-    init(id: String,
-         role: UserRole,
-         createdAt: Date,
-         updatedAt: Date,
-         lastActiveAt: Date?,
-         isOnline: Bool,
-         isInvisible: Bool,
-         isBanned: Bool,
-         teams: [String] = [],
-         extraData: ExtraData,
-         devices: [Device] = [],
-         mutedUsers: [MutedUser<ExtraData>] = []) {
-        self.devices = devices
-        self.mutedUsers = mutedUsers
-        
-        super.init(id: id,
-                   role: role,
-                   createdAt: createdAt,
-                   updatedAt: updatedAt,
-                   lastActiveAt: lastActiveAt,
-                   isOnline: isOnline,
-                   isInvisible: isInvisible,
-                   isBanned: isBanned,
-                   teams: teams,
-                   extraData: extraData)
-    }
-    
-    required init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
-        mutedUsers = try container.decodeIfPresent([MutedUser<ExtraData>].self, forKey: .mutedUsers) ?? []
-        
-        try super.init(from: decoder)
-    }
-}
-
-/// A muted user.
-struct MutedUser<ExtraData: UserExtraData>: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case user = "target"
-        case created = "created_at"
-        case updated = "updated_at"
-    }
-    
-    /// A muted user.
-    public let user: UserPayload<ExtraData>
-    /// A created date.
-    public let created: Date
-    /// A updated date.
-    public let updated: Date
-    
-    /// Create a muted user for a database.
-    /// - Parameters:
-    ///   - user: a user.
-    ///   - created: a created date.
-    ///   - updated: an updated date.
-    init(user: UserPayload<ExtraData>, created: Date, updated: Date) {
-        self.user = user
-        self.created = created
-        self.updated = updated
-    }
-}
-
-/// A muted users response.
-struct MutedUsersResponse<ExtraData: UserExtraData>: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case mutedUser = "mute"
-        case currentUser = "own_user"
-    }
-    
-    /// A muted user.
-    public let mutedUser: MutedUser<ExtraData>
-    /// The current user.
-    public let currentUser: UserPayload<ExtraData>
 }

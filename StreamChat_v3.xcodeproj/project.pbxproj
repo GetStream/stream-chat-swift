@@ -392,6 +392,8 @@
 		79A0E9BD2498C33100E9BD50 /* UserTypingEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserTypingEvent.swift; sourceTree = "<group>"; };
 		79B5517024E593C200CE9FEC /* UserPayloads_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPayloads_Tests.swift; sourceTree = "<group>"; };
 		79B5517124E593C200CE9FEC /* UserPayloads.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPayloads.swift; sourceTree = "<group>"; };
+		79B5517424E595CC00CE9FEC /* CurrentUserPayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserPayloads.swift; sourceTree = "<group>"; };
+		79B5517624E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserPayloads_Tests.swift; sourceTree = "<group>"; };
 		79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserDTO_Tests.swift; sourceTree = "<group>"; };
 		79BF83F1248F8F60007611A1 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		79C750BA248FC4100023F0B7 /* ErrorPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorPayload.swift; sourceTree = "<group>"; };
@@ -717,6 +719,8 @@
 				79B5517124E593C200CE9FEC /* UserPayloads.swift */,
 				79B5517024E593C200CE9FEC /* UserPayloads_Tests.swift */,
 				79682C4824BF37650071578E /* MessagePayload.swift */,
+				79B5517424E595CC00CE9FEC /* CurrentUserPayloads.swift */,
+				79B5517624E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift */,
 				DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */,
 				DAFAD6A224DD8E1A0043ED06 /* ChannelEditDetailPayload.swift */,
 				DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */,
@@ -1296,6 +1300,7 @@
 				796610B9248E651800761629 /* EventMiddleware.swift in Sources */,
 				7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
+				79B5517524E595CC00CE9FEC /* CurrentUserPayloads.swift in Sources */,
 				8A0CC9E524C5FEA900705CF9 /* MemberEvents.swift in Sources */,
 				792A4F472480107A00EAF71D /* Filter.swift in Sources */,
 				792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */,
@@ -1395,6 +1400,7 @@
 				799C947D247E6114001F1104 /* TestError.swift in Sources */,
 				799C946A247D791A001F1104 /* AssertAsync.swift in Sources */,
 				792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */,
+				79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */,
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
 				7937282C249900CB00E13FE5 /* MemberPayload_Tests.swift in Sources */,
 				8A0D649324E5794C0017A3C0 /* CurrentUserPayload.swift in Sources */,
