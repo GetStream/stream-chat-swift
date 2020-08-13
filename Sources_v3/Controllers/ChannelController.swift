@@ -124,6 +124,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         return observer
     }()
     
+    private var eventObservers: [EventObserver] = []
     private let environment: Environment
     
     /// Creates a new `ChannelController`
@@ -150,6 +151,8 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     /// - Parameter completion: Called when the controller has finished fetching remote data. If the data fetching fails, the `error`
     /// variable contains more details about the problem.
     public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        eventObservers.removeAll()
+
         do {
             try channelObserver.startObserving()
             try messagesObserver.startObserving()
@@ -167,6 +170,19 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
+
+        setupEventObservers()
+    }
+
+    private func setupEventObservers() {
+        let center = client.webSocketClient.notificationCenter
+        eventObservers = [
+            MemberEventObserver(notificationCenter: center, cid: channelId) { [unowned self] event in
+                self.delegateCallback {
+                    $0?.channelController(self, didReceiveMemberEvent: event)
+                }
+            }
+        ]
     }
     
     /// Sets the provided object as a delegate of this controller.
