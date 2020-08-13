@@ -308,6 +308,9 @@ public protocol ChannelControllerDelegate: ControllerStateDelegate {
     /// The controller observed changes in the `Messages` of the observed channel.
     func channelController(_ channelController: ChannelController,
                            didUpdateMessages changes: [ListChange<Message>])
+
+    /// The controller received a `MemberEvent` related to the channel it observes.
+    func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent)
 }
 
 public extension ChannelControllerDelegate {
@@ -316,6 +319,8 @@ public extension ChannelControllerDelegate {
     
     func channelController(_ channelController: ChannelController,
                            didUpdateMessages changes: [ListChange<Message>]) {}
+
+    func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent) {}
 }
 
 // MARK: Generic Delegates
@@ -334,6 +339,9 @@ public protocol ChannelControllerDelegateGeneric: ControllerStateDelegate {
     /// The controller observed changes in the `Messages` of the observed channel.
     func channelController(_ channelController: ChannelControllerGeneric<ExtraData>,
                            didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>])
+
+    /// The controller received a `MemberEvent` related to the channel it observes.
+    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent: MemberEvent)
 }
 
 public extension ChannelControllerDelegateGeneric {
@@ -342,6 +350,8 @@ public extension ChannelControllerDelegateGeneric {
     
     func channelController(_ channelController: ChannelController,
                            didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>]) {}
+
+    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent: MemberEvent) {}
 }
 
 // MARK: Type erased Delegate
@@ -355,6 +365,9 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
 
     private var _controllerDidChangeState: (Controller, Controller.State) -> Void
     
+    private var _controllerDidReceiveMemberEvent: (ChannelControllerGeneric<ExtraData>,
+                                                   MemberEvent) -> Void
+
     weak var wrappedDelegate: AnyObject?
     
     init(
@@ -363,12 +376,15 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
         controllerDidUpdateChannel: @escaping (ChannelControllerGeneric<ExtraData>,
                                                EntityChange<ChannelModel<ExtraData>>) -> Void,
         controllerdidUpdateMessages: @escaping (ChannelControllerGeneric<ExtraData>,
-                                                [ListChange<MessageModel<ExtraData>>]) -> Void
+                                                [ListChange<MessageModel<ExtraData>>]) -> Void,
+        controllerDidReceiveMemberEvent: @escaping (ChannelControllerGeneric<ExtraData>,
+                                                    MemberEvent) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
         _controllerDidChangeState = controllerDidChangeState
         _controllerDidUpdateChannel = controllerDidUpdateChannel
         _controllerdidUpdateMessages = controllerdidUpdateMessages
+        _controllerDidReceiveMemberEvent = controllerDidReceiveMemberEvent
     }
 
     func controller(_ controller: Controller, didChangeState state: Controller.State) {
@@ -388,6 +404,13 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
     ) {
         _controllerdidUpdateMessages(controller, changes)
     }
+
+    func channelController(
+        _ controller: ChannelControllerGeneric<ExtraData>,
+        didReceiveMemberEvent event: MemberEvent
+    ) {
+        _controllerDidReceiveMemberEvent(controller, event)
+    }
 }
 
 extension AnyChannelControllerDelegate {
@@ -395,7 +418,10 @@ extension AnyChannelControllerDelegate {
         self.init(wrappedDelegate: delegate,
                   controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
                   controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
-                  controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) })
+                  controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
+                  controllerDidReceiveMemberEvent: { [weak delegate] in
+                      delegate?.channelController($0, didReceiveMemberEvent: $1)
+                  })
     }
 }
 
@@ -404,6 +430,9 @@ extension AnyChannelControllerDelegate where ExtraData == DefaultDataTypes {
         self.init(wrappedDelegate: delegate,
                   controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
                   controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
-                  controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) })
+                  controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
+                  controllerDidReceiveMemberEvent: { [weak delegate] in
+                      delegate?.channelController($0, didReceiveMemberEvent: $1)
+                  })
     }
 }

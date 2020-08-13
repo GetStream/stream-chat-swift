@@ -515,7 +515,8 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
     var didStopFetchingRemoteDataCalledCounter = 0
     var didUpdateChannel_channel: EntityChange<Channel>?
     var didUpdateMessages_messages: [ListChange<Message>]?
-    
+    var didReceiveMemberEvent_event: MemberEvent?
+
     func controllerWillStartFetchingRemoteData(_ controller: Controller) {
         willStartFetchingRemoteDataCalledCounter += 1
         validateQueue()
@@ -535,13 +536,19 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
         didUpdateChannel_channel = channel
         validateQueue()
     }
+
+    func channelController(_ channelController: ChannelController, didReceiveMemberEvent event: MemberEvent) {
+        didReceiveMemberEvent_event = event
+        validateQueue()
+    }
 }
 
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegateGeneric {
     var didUpdateChannel_channel: EntityChange<Channel>?
     var didUpdateMessages_messages: [ListChange<Message>]?
-    
+    var didReceiveMemberEvent_event: MemberEvent?
+
     func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<Message>]) {
         didUpdateMessages_messages = changes
         validateQueue()
@@ -549,6 +556,11 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
     
     func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<Channel>) {
         didUpdateChannel_channel = channel
+        validateQueue()
+    }
+
+    func channelController(_ channelController: ChannelController, didReceiveMemberEvent event: MemberEvent) {
+        didReceiveMemberEvent_event = event
         validateQueue()
     }
 }
