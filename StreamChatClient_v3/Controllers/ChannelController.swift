@@ -69,7 +69,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     
     /// The channel matching the channelId. To observe updates to the channel, set your class as a delegate of this controller and call `startUpdating`.
     public var channel: ChannelModel<ExtraData>? {
-        guard state == .active else {
+        guard state != .inactive else {
             log.warning("Accessing `channel` before calling `startUpdating()` always results in `nil`.")
             return nil
         }
@@ -79,7 +79,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     
     /// The channel matching the channelId. To observe updates to the channel, set your class as a delegate of this controller and call `startUpdating`.
     public var messages: [MessageModel<ExtraData>] {
-        guard state == .active else {
+        guard state != .inactive else {
             log.warning("Accessing `messages` before calling `startUpdating()` always results in an empty array.")
             return []
         }
@@ -93,7 +93,12 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
                                                                                                 client.apiClient)
     
     /// A type-erased delegate.
-    private(set) var anyDelegate: AnyChannelControllerDelegate<ExtraData>?
+    private(set) var anyDelegate: AnyChannelControllerDelegate<ExtraData>? {
+        didSet {
+            // Set `Controller` `ControllerStateDelegate` delegate
+            stateDelegate = anyDelegate
+        }
+    }
     
     private(set) lazy var channelObserver: EntityDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO> = {
         let observer = EntityDatabaseObserver(context: self.client.databaseContainer.viewContext,
@@ -153,16 +158,13 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
             callback { completion?(ClientError.FetchFailed()) }
             return
         }
-        
-        state = .active
-        
-        delegateCallback {
-            $0?.controllerWillStartFetchingRemoteData(self)
-        }
+
+        // Update observing state
+        state = .localDataFetched
         
         worker.update(channelQuery: channelQuery) { [weak self] error in
             guard let self = self else { return }
-            self.delegateCallback { $0?.controllerDidStopFetchingRemoteData(self, withError: error) }
+            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }
@@ -176,7 +178,8 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     public func setDelegate<Delegate: ChannelControllerDelegateGeneric>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData {
+        where Delegate.ExtraData == ExtraData
+    {
         anyDelegate = AnyChannelControllerDelegate(delegate)
     }
 }
@@ -297,7 +300,7 @@ public extension ChannelControllerGeneric where ExtraData == DefaultDataTypes {
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
 /// please use `ChannelControllerDelegateGeneric` instead.
-public protocol ChannelControllerDelegate: ControllerRemoteActivityDelegate {
+public protocol ChannelControllerDelegate: ControllerStateDelegate {
     /// The controller observed a change in the `Channel` entity.
     func channelController(_ channelController: ChannelController,
                            didUpdateChannel channel: EntityChange<Channel>)
@@ -321,7 +324,7 @@ public extension ChannelControllerDelegate {
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChannelControllerDelegate`, which hides the generic types, and make the usage easier.
-public protocol ChannelControllerDelegateGeneric: ControllerRemoteActivityDelegate {
+public protocol ChannelControllerDelegateGeneric: ControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `Channel` entity.
@@ -349,34 +352,27 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
     
     private var _controllerDidUpdateChannel: (ChannelControllerGeneric<ExtraData>,
                                               EntityChange<ChannelModel<ExtraData>>) -> Void
-    
-    private var _controllerWillStartFetchingRemoteData: (Controller) -> Void
-    private var _controllerDidStopFetchingRemoteData: (Controller, Error?) -> Void
+
+    private var _controllerDidChangeState: (Controller, Controller.State) -> Void
     
     weak var wrappedDelegate: AnyObject?
     
     init(
         wrappedDelegate: AnyObject?,
-        controllerWillStartFetchingRemoteData: @escaping (Controller) -> Void,
-        controllerDidStopFetchingRemoteData: @escaping (Controller, Error?) -> Void,
+        controllerDidChangeState: @escaping (Controller, Controller.State) -> Void,
         controllerDidUpdateChannel: @escaping (ChannelControllerGeneric<ExtraData>,
                                                EntityChange<ChannelModel<ExtraData>>) -> Void,
         controllerdidUpdateMessages: @escaping (ChannelControllerGeneric<ExtraData>,
                                                 [ListChange<MessageModel<ExtraData>>]) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
-        _controllerWillStartFetchingRemoteData = controllerWillStartFetchingRemoteData
-        _controllerDidStopFetchingRemoteData = controllerDidStopFetchingRemoteData
+        _controllerDidChangeState = controllerDidChangeState
         _controllerDidUpdateChannel = controllerDidUpdateChannel
         _controllerdidUpdateMessages = controllerdidUpdateMessages
     }
-    
-    func controllerWillStartFetchingRemoteData(_ controller: Controller) {
-        _controllerWillStartFetchingRemoteData(controller)
-    }
-    
-    func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?) {
-        _controllerDidStopFetchingRemoteData(controller, error)
+
+    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+        _controllerDidChangeState(controller, state)
     }
     
     func channelController(
@@ -397,10 +393,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
 extension AnyChannelControllerDelegate {
     convenience init<Delegate: ChannelControllerDelegateGeneric>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
         self.init(wrappedDelegate: delegate,
-                  controllerWillStartFetchingRemoteData: { [weak delegate] in delegate?.controllerWillStartFetchingRemoteData($0) },
-                  controllerDidStopFetchingRemoteData: { [weak delegate] in
-                      delegate?.controllerDidStopFetchingRemoteData($0, withError: $1)
-                  },
+                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
                   controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
                   controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) })
     }
@@ -409,10 +402,7 @@ extension AnyChannelControllerDelegate {
 extension AnyChannelControllerDelegate where ExtraData == DefaultDataTypes {
     convenience init(_ delegate: ChannelControllerDelegate?) {
         self.init(wrappedDelegate: delegate,
-                  controllerWillStartFetchingRemoteData: { [weak delegate] in delegate?.controllerWillStartFetchingRemoteData($0) },
-                  controllerDidStopFetchingRemoteData: { [weak delegate] in
-                      delegate?.controllerDidStopFetchingRemoteData($0, withError: $1)
-                  },
+                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
                   controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
                   controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) })
     }

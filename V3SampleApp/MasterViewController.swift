@@ -179,4 +179,8 @@ extension MasterViewController: ChannelListControllerDelegate {
         
         tableView.endUpdates()
     }
+
+    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+        log.debug("didChangeState: \(state)")
+    }
 }
