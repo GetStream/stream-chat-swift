@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "1923CA6E-2EB5-4503-A7C5-1D25EF532953",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "environmentVariableEntries" : [
+      {
+        "key" : "STRESS_TESTS",
+        "value" : "TRUE"
+      }
+    ],
+    "testExecutionOrdering" : "random"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:StreamChat_v3.xcodeproj",
+        "identifier" : "799C9450247D59B1001F1104",
+        "name" : "StreamChatClientTests"
+      }
+    }
+  ],
+  "version" : 1
+}
