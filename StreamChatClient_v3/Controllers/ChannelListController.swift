@@ -32,7 +32,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     
     /// The channels matching the query. To observe updates in the list, set your class as a delegate of this controller.
     public var channels: [ChannelModel<ExtraData>] {
-        guard state == .active else {
+        guard state != .inactive else {
             log.warning("Accessing `channels` before calling `startUpdating()` always results in an empty array.")
             return []
         }
@@ -47,8 +47,13 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
                                     client.apiClient)
 
     /// A type-erased delegate.
-    private(set) var anyDelegate: AnyChannelListControllerDelegate<ExtraData>?
-    
+    private(set) var anyDelegate: AnyChannelListControllerDelegate<ExtraData>? {
+        didSet {
+            // Set `Controller` `ControllerStateDelegate` delegate
+            stateDelegate = anyDelegate
+        }
+    }
+
     /// Used for observing the database for changes.
     private(set) lazy var channelListObserver: ListDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
@@ -99,17 +104,13 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
             callback { completion?(ClientError.FetchFailed()) }
             return
         }
-        
+
         // Update observing state
-        state = .active
-        
-        delegateCallback {
-            $0?.controllerWillStartFetchingRemoteData(self)
-        }
+        state = .localDataFetched
         
         worker.update(channelListQuery: query) { [weak self] error in
             guard let self = self else { return }
-            self.delegateCallback { $0?.controllerDidStopFetchingRemoteData(self, withError: error) }
+            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }
@@ -162,7 +163,7 @@ extension ChannelListControllerGeneric where ExtraData == DefaultDataTypes {
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
 /// please use `GenericChannelListController` instead.
-public protocol ChannelListControllerDelegate: ControllerRemoteActivityDelegate {
+public protocol ChannelListControllerDelegate: ControllerStateDelegate {
     func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [ListChange<Channel>])
 }
 
@@ -175,7 +176,7 @@ public extension ChannelListControllerDelegate {
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChannelListControllerDelegate`, which hides the generic types, and make the usage easier.
-public protocol ChannelListControllerDelegateGeneric: ControllerRemoteActivityDelegate {
+public protocol ChannelListControllerDelegateGeneric: ControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     func controller(
         _ controller: ChannelListControllerGeneric<ExtraData>,
@@ -199,32 +200,25 @@ extension ClientError {
 class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListControllerDelegateGeneric {
     private var _controllerDidChangeChannels: (ChannelListControllerGeneric<ExtraData>, [ListChange<ChannelModel<ExtraData>>])
         -> Void
-    private var _controllerWillStartFetchingRemoteData: (Controller) -> Void
-    private var _controllerDidStopFetchingRemoteData: (Controller, Error?) -> Void
+    private var _controllerDidChangeState: (Controller, Controller.State) -> Void
     
     weak var wrappedDelegate: AnyObject?
     
     init(
         wrappedDelegate: AnyObject?,
-        controllerWillStartFetchingRemoteData: @escaping (Controller) -> Void,
-        controllerDidStopFetchingRemoteData: @escaping (Controller, Error?) -> Void,
+        controllerDidChangeState: @escaping (Controller, Controller.State) -> Void,
         controllerDidChangeChannels: @escaping (ChannelListControllerGeneric<ExtraData>, [ListChange<ChannelModel<ExtraData>>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
-        _controllerWillStartFetchingRemoteData = controllerWillStartFetchingRemoteData
-        _controllerDidStopFetchingRemoteData = controllerDidStopFetchingRemoteData
+        _controllerDidChangeState = controllerDidChangeState
         _controllerDidChangeChannels = controllerDidChangeChannels
     }
-    
-    func controllerWillStartFetchingRemoteData(_ controller: Controller) {
-        _controllerWillStartFetchingRemoteData(controller)
+
+    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+        _controllerDidChangeState(controller, state)
     }
-    
-    func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?) {
-        _controllerDidStopFetchingRemoteData(controller, error)
-    }
-    
+
     func controller(
         _ controller: ChannelListControllerGeneric<ExtraData>,
         didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]
@@ -236,10 +230,7 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListCo
 extension AnyChannelListControllerDelegate {
     convenience init<Delegate: ChannelListControllerDelegateGeneric>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
         self.init(wrappedDelegate: delegate,
-                  controllerWillStartFetchingRemoteData: { [weak delegate] in delegate?.controllerWillStartFetchingRemoteData($0) },
-                  controllerDidStopFetchingRemoteData: { [weak delegate] in
-                      delegate?.controllerDidStopFetchingRemoteData($0, withError: $1)
-                  },
+                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
                   controllerDidChangeChannels: { [weak delegate] in delegate?.controller($0, didChangeChannels: $1) })
     }
 }
@@ -247,10 +238,7 @@ extension AnyChannelListControllerDelegate {
 extension AnyChannelListControllerDelegate where ExtraData == DefaultDataTypes {
     convenience init(_ delegate: ChannelListControllerDelegate?) {
         self.init(wrappedDelegate: delegate,
-                  controllerWillStartFetchingRemoteData: { [weak delegate] in delegate?.controllerWillStartFetchingRemoteData($0) },
-                  controllerDidStopFetchingRemoteData: { [weak delegate] in
-                      delegate?.controllerDidStopFetchingRemoteData($0, withError: $1)
-                  },
+                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
                   controllerDidChangeChannels: { [weak delegate] in delegate?.controller($0, didChangeChannels: $1) })
     }
 }

@@ -53,9 +53,38 @@ class ChannelListController_Tests: StressTestCase {
     // MARK: - Start updating tests
     
     func test_startUpdating_changesControllerState() {
-        assert(controller.state == .idle)
+        // Check if controller is inactive initially.
+        assert(controller.state == .inactive)
+
+        // Simulate `startUpdating` call
         controller.startUpdating()
-        XCTAssertEqual(controller.state, .active)
+
+        // Check if state changed after `startUpdating` call
+        XCTAssertEqual(controller.state, .localDataFetched)
+
+        // Simulate successfull network call.
+        env.channelQueryUpdater?.update_completion?(nil)
+
+        // Check if state changed after successful network call.
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+    }
+
+    func test_startUpdating_changesControllerStateOnError() {
+        // Check if controller is inactive initially.
+        assert(controller.state == .inactive)
+
+        // Simulate `startUpdating` call
+        controller.startUpdating()
+
+        // Check if state changed after `startUpdating` call
+        XCTAssertEqual(controller.state, .localDataFetched)
+
+        // Simulate failed network call.
+        let error = TestError()
+        env.channelQueryUpdater?.update_completion?(error)
+
+        // Check if state changed after failed network call.
+        XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
     }
     
     func test_noChangesAreReported_beforeCallingStartUpdating() throws {
@@ -165,17 +194,6 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate `startUpdating()` call
         controller.startUpdating()
-        AssertAsync {
-            Assert.willBeEqual(delegate.willStartFetchingRemoteDataCalledCounter, 1)
-            Assert.staysEqual(delegate.didStopFetchingRemoteDataCalledCounter, 0)
-        }
-        
-        // Simulate server response
-        env.channelQueryUpdater!.update_completion?(nil)
-        AssertAsync {
-            Assert.staysEqual(delegate.willStartFetchingRemoteDataCalledCounter, 1)
-            Assert.willBeEqual(delegate.didStopFetchingRemoteDataCalledCounter, 1)
-        }
         
         // Simulate DB update
         let cid: ChannelId = .unique
@@ -198,21 +216,10 @@ class ChannelListController_Tests: StressTestCase {
         let delegateQueueId = UUID()
         delegate.expectedQueueId = delegateQueueId
         controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
-        
+
         // Simulate `startUpdating()` call
         controller.startUpdating()
-        AssertAsync {
-            Assert.willBeEqual(delegate.willStartFetchingRemoteDataCalledCounter, 1)
-            Assert.staysEqual(delegate.didStopFetchingRemoteDataCalledCounter, 0)
-        }
-        
-        // Simulate server response
-        env.channelQueryUpdater!.update_completion?(nil)
-        AssertAsync {
-            Assert.staysEqual(delegate.willStartFetchingRemoteDataCalledCounter, 1)
-            Assert.willBeEqual(delegate.didStopFetchingRemoteDataCalledCounter, 1)
-        }
-        
+
         // Simulate DB update
         let cid: ChannelId = .unique
         _ = try await {
@@ -231,10 +238,10 @@ private class TestEnvironment {
     
     lazy var environment: ChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
-                self.channelQueryUpdater = ChannelQueryUpdaterMock(database: $0,
+            self.channelQueryUpdater = ChannelQueryUpdaterMock(database: $0,
                                                                webSocketClient: $1,
                                                                apiClient: $2)
-                return self.channelQueryUpdater!
+            return self.channelQueryUpdater!
         })
 }
 
@@ -250,22 +257,11 @@ private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQue
 
 // A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
-    var willStartFetchingRemoteDataCalledCounter = 0
-    var didStopFetchingRemoteDataCalledCounter = 0
     var didChangeChannels_changes: [ListChange<Channel>]?
-    
-    func controllerWillStartFetchingRemoteData(_ controller: Controller) {
-        willStartFetchingRemoteDataCalledCounter += 1
-        validateQueue()
-    }
-    
-    func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?) {
-        didStopFetchingRemoteDataCalledCounter += 1
-        validateQueue()
-    }
-    
+
     func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
-                    didChangeChannels changes: [ListChange<Channel>]) {
+                    didChangeChannels changes: [ListChange<Channel>])
+    {
         didChangeChannels_changes = changes
         validateQueue()
     }
@@ -273,22 +269,11 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
 
 // A concrete `ChannelListControllerDelegateGeneric` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDelegateGeneric {
-    var willStartFetchingRemoteDataCalledCounter = 0
-    var didStopFetchingRemoteDataCalledCounter = 0
     var didChangeChannels_changes: [ListChange<Channel>]?
     
-    func controllerWillStartFetchingRemoteData(_ controller: Controller) {
-        willStartFetchingRemoteDataCalledCounter += 1
-        validateQueue()
-    }
-    
-    func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?) {
-        didStopFetchingRemoteDataCalledCounter += 1
-        validateQueue()
-    }
-    
     func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
-                    didChangeChannels changes: [ListChange<Channel>]) {
+                    didChangeChannels changes: [ListChange<Channel>])
+    {
         didChangeChannels_changes = changes
         validateQueue()
     }

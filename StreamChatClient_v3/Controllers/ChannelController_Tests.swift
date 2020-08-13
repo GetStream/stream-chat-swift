@@ -58,9 +58,38 @@ class ChannelController_Tests: StressTestCase {
     // MARK: - Start updating tests
     
     func test_startUpdating_changesControllerState() {
-        assert(controller.state == .idle)
+        // Check if controller is inactive initially.
+        assert(controller.state == .inactive)
+
+        // Simulate `startUpdating` call
         controller.startUpdating()
-        XCTAssertEqual(controller.state, .active)
+
+        // Check if state changed after `startUpdating` call
+        XCTAssertEqual(controller.state, .localDataFetched)
+
+        // Simulate successfull network call.
+        env.channelUpdater?.update_completion?(nil)
+
+        // Check if state changed after successful network call.
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+    }
+
+    func test_startUpdating_changesControllerStateOnError() {
+        // Check if controller is inactive initially.
+        assert(controller.state == .inactive)
+
+        // Simulate `startUpdating` call
+        controller.startUpdating()
+
+        // Check if state changed after `startUpdating` call
+        XCTAssertEqual(controller.state, .localDataFetched)
+
+        // Simulate failed network call.
+        let error = TestError()
+        env.channelUpdater?.update_completion?(error)
+
+        // Check if state changed after failed network call.
+        XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
     }
     
     func test_noChangesAreReported_beforeCallingStartUpdating() throws {
@@ -201,17 +230,6 @@ class ChannelController_Tests: StressTestCase {
 
         // Simulate `startUpdating()` call
         controller.startUpdating()
-        AssertAsync {
-            Assert.willBeEqual(delegate.willStartFetchingRemoteDataCalledCounter, 1)
-            Assert.staysEqual(delegate.didStopFetchingRemoteDataCalledCounter, 0)
-        }
-        
-        // Simulate server response
-        env.channelUpdater!.update_completion?(nil)
-        AssertAsync {
-            Assert.staysEqual(delegate.willStartFetchingRemoteDataCalledCounter, 1)
-            Assert.willBeEqual(delegate.didStopFetchingRemoteDataCalledCounter, 1)
-        }
         
         // Simulate DB update
         let error = try await {
@@ -239,17 +257,6 @@ class ChannelController_Tests: StressTestCase {
 
         // Simulate `startUpdating()` call
         controller.startUpdating()
-        AssertAsync {
-            Assert.willBeEqual(delegate.willStartFetchingRemoteDataCalledCounter, 1)
-            Assert.staysEqual(delegate.didStopFetchingRemoteDataCalledCounter, 0)
-        }
-        
-        // Simulate server response
-        env.channelUpdater!.update_completion?(nil)
-        AssertAsync {
-            Assert.staysEqual(delegate.willStartFetchingRemoteDataCalledCounter, 1)
-            Assert.willBeEqual(delegate.didStopFetchingRemoteDataCalledCounter, 1)
-        }
         
         // Simulate DB update
         _ = try await {
@@ -532,20 +539,8 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
 
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegateGeneric {
-    var willStartFetchingRemoteDataCalledCounter = 0
-    var didStopFetchingRemoteDataCalledCounter = 0
     var didUpdateChannel_channel: EntityChange<Channel>?
     var didUpdateMessages_messages: [ListChange<Message>]?
-    
-    func controllerWillStartFetchingRemoteData(_ controller: Controller) {
-        willStartFetchingRemoteDataCalledCounter += 1
-        validateQueue()
-    }
-    
-    func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?) {
-        didStopFetchingRemoteDataCalledCounter += 1
-        validateQueue()
-    }
     
     func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<Message>]) {
         didUpdateMessages_messages = changes
