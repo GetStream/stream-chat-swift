@@ -228,6 +228,8 @@
 		F62D143E24DD70190081D241 /* ChannelUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */; };
 		F63CC36F24E591840052844D /* EventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC36E24E591840052844D /* EventObserver.swift */; };
 		F63CC37124E591990052844D /* EventObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37024E591990052844D /* EventObserver_Tests.swift */; };
+		F63CC37324E592D30052844D /* MemberEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37224E592D30052844D /* MemberEventObserver.swift */; };
+		F63CC37524E592DD0052844D /* MemberEventObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -497,6 +499,8 @@
 		F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUpdater_Mock.swift; sourceTree = "<group>"; };
 		F63CC36E24E591840052844D /* EventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventObserver.swift; sourceTree = "<group>"; };
 		F63CC37024E591990052844D /* EventObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventObserver_Tests.swift; sourceTree = "<group>"; };
+		F63CC37224E592D30052844D /* MemberEventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventObserver.swift; sourceTree = "<group>"; };
+		F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventObserver_Tests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1097,6 +1101,8 @@
 			children = (
 				F63CC36E24E591840052844D /* EventObserver.swift */,
 				F63CC37024E591990052844D /* EventObserver_Tests.swift */,
+				F63CC37224E592D30052844D /* MemberEventObserver.swift */,
+				F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */,
 			);
 			path = EventObservers;
 			sourceTree = "<group>";
@@ -1357,6 +1363,7 @@
 				79280F47248515FA00CDEB89 /* ChannelEvents.swift in Sources */,
 				79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */,
 				7964F3BA249A314D002A09EC /* LogDestination.swift in Sources */,
+				F63CC37324E592D30052844D /* MemberEventObserver.swift in Sources */,
 				79877A0C2498E4BC00015F8B /* ChannelType.swift in Sources */,
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
 				DAFAD6A324DD8E1A0043ED06 /* ChannelEditDetailPayload.swift in Sources */,
@@ -1415,6 +1422,7 @@
 				8A0D649324E5794C0017A3C0 /* CurrentUserPayload.swift in Sources */,
 				8A0D64AE24E5853F0017A3C0 /* Controller_Tests.swift in Sources */,
 				8A0C3BC924C0BBAB00CAFD19 /* UserEvents_Tests.swift in Sources */,
+				F63CC37524E592DD0052844D /* MemberEventObserver_Tests.swift in Sources */,
 				792FCB4724A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift in Sources */,
 				79877A2B2498E51500015F8B /* UserModelDTO_Tests.swift in Sources */,
 				792921C524C0479700116BBB /* ChannelListQueryUpdater_Tests.swift in Sources */,
