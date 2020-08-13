@@ -17,17 +17,24 @@ class CurrentUserDTO: NSManagedObject {
 }
 
 extension CurrentUserDTO {
-    /// If a `CurrentUserDTO` entity exists in the context, fetches and returns it. Otherwise create a new `CurrentUserDTO`.
+    /// Returns an existing `CurrentUserDTO`. Returns `nil` of no `CurrentUserDTO` exists in the DB.
     ///
-    /// - Parameter context: The context used to fetch/create `CurrentUserDTO`
-    static func loadOrCreate(context: NSManagedObjectContext) -> CurrentUserDTO {
+    /// - Parameter context: The context used to fetch `CurrentUserDTO`
+    fileprivate static func load(context: NSManagedObjectContext) -> CurrentUserDTO? {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
         let result = (try? context.fetch(request)) ?? []
         
         log.assert(result.count <= 1,
                    "The database is corrupted. There is more than 1 entity of the type `CurrentUserDTO` in the DB.")
         
-        if let existing = result.first {
+        return result.first
+    }
+    
+    /// If the `CurrentUserDTO` entity exists in the context, fetches and returns it. Otherwise create a new `CurrentUserDTO`.
+    ///
+    /// - Parameter context: The context used to fetch/create `CurrentUserDTO`
+    fileprivate static func loadOrCreate(context: NSManagedObjectContext) -> CurrentUserDTO {
+        if let existing = CurrentUserDTO.load(context: context) {
             return existing
         }
         
@@ -36,27 +43,34 @@ extension CurrentUserDTO {
     }
 }
 
-extension NSManagedObjectContext {
+extension NSManagedObjectContext: CurrentUserDatabaseSession {
     func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.mutedUsers = [] // TODO: mutedUsers
         dto.user = try saveUser(payload: payload)
         
+        // TODO: unread counts
+        // TODO: devices
+        
         return dto
     }
     
-    func loadCurrentUser<ExtraData: UserExtraData>() -> CurrentUserModel<ExtraData>? {
-        let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
-        let result = (try? fetch(request)) ?? []
-        log.assert(result.count <= 1,
-                   "The database is corrupted. There is more than 1 entity of the type `CurrentUserDTO` in the DB.")
-        
-        return result.first.map(CurrentUserModel.create(fromDTO:))
+    func currentUser() -> CurrentUserDTO? { .load(context: self) }
+}
+
+extension CurrentUserDTO {
+    /// Snapshots the current state of `CurrentUserDTO` and returns an immutable model object from it.
+    func asModel<ExtraData: UserExtraData>() -> CurrentUserModel<ExtraData> { .create(fromDTO: self) }
+    
+    /// Snapshots the current state of `CurrentUserDTO` and returns its representation for used in API calls.
+    func asRequestBody<ExtraData: UserExtraData>() -> CurrentUserRequestBody<ExtraData> {
+        fatalError()
+        // TODO: CIS-235
     }
 }
 
 extension CurrentUserModel {
-    static func create(fromDTO dto: CurrentUserDTO) -> CurrentUserModel {
+    fileprivate static func create(fromDTO dto: CurrentUserDTO) -> CurrentUserModel {
         let user = dto.user
         
         let extraData: ExtraData
