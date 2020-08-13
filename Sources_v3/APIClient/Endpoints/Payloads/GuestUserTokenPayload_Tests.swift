@@ -2,18 +2,18 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChatClient_v3
+@testable import StreamChatClient
 import XCTest
 
 final class GuestUserTokenPayload_Tests: XCTestCase {
     let guestUserDefaultExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+DefaultExtraData")
     let guestUserNoExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+NoExtraData")
     let guestUserCustomExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+CustomExtraData")
-
+    
     func test_guestUserDefaultExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(GuestUserTokenPayload<NameAndImageExtraData>.self,
                                                      from: guestUserDefaultExtraDataJSON)
-
+        
         XCTAssertEqual(payload.token, "123")
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
@@ -26,10 +26,10 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.user.role, .guest)
         XCTAssertTrue(payload.user.isOnline)
     }
-
+    
     func test_guestUserNoExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(GuestUserTokenPayload<NoExtraData>.self, from: guestUserNoExtraDataJSON)
-
+        
         XCTAssertEqual(payload.token, "123")
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
@@ -39,14 +39,14 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.user.role, .guest)
         XCTAssertTrue(payload.user.isOnline)
     }
-
+    
     func test_guestUserCustomExtraData_isSerialized() throws {
         struct TestExtraData: UserExtraData {
             let company: String
         }
-
+        
         let payload = try JSONDecoder.default.decode(GuestUserTokenPayload<TestExtraData>.self, from: guestUserCustomExtraDataJSON)
-
+        
         XCTAssertEqual(payload.token, "123")
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")

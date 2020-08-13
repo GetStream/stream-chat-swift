@@ -2,7 +2,7 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChatClient_v3
+@testable import StreamChatClient
 import XCTest
 
 class ChannelListPayload_Tests: XCTestCase {
@@ -34,9 +34,9 @@ class ChannelPayload_Tests: XCTestCase {
         
         XCTAssertEqual(firstMessage.type, MessageType.regular)
         XCTAssertEqual(firstMessage.user.id, "broken-waterfall-5")
-        XCTAssertEqual(firstMessage.created, "2020-06-09T08:10:40.800912Z".toDate())
-        XCTAssertEqual(firstMessage.updated, "2020-06-09T08:10:40.800912Z".toDate())
-        XCTAssertNil(firstMessage.deleted)
+        XCTAssertEqual(firstMessage.createdAt, "2020-06-09T08:10:40.800912Z".toDate())
+        XCTAssertEqual(firstMessage.updatedAt, "2020-06-09T08:10:40.800912Z".toDate())
+        XCTAssertNil(firstMessage.deletedAt)
         XCTAssertEqual(firstMessage.text, "sadfadf")
         XCTAssertNil(firstMessage.command)
         XCTAssertNil(firstMessage.args)
@@ -49,12 +49,12 @@ class ChannelPayload_Tests: XCTestCase {
         
         let channel = payload.channel
         XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))
-        XCTAssertEqual(channel.created, "2019-05-10T14:03:49.505006Z".toDate())
+        XCTAssertEqual(channel.createdAt, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertNotNil(channel.createdBy)
         XCTAssertEqual(channel.typeRawValue, "messaging")
         XCTAssertEqual(channel.isFrozen, true)
         XCTAssertEqual(channel.memberCount, 4)
-        XCTAssertEqual(channel.updated, "2019-05-10T14:03:49.505006Z".toDate())
+        XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())
         
         XCTAssertEqual(channel.extraData.name, "The water cooler")
         XCTAssertEqual(channel.extraData.imageURL?.absoluteString,
@@ -75,8 +75,8 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.maxMessageLength, 5000)
         XCTAssertEqual(config.commands,
                        [.init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]")])
-        XCTAssertEqual(config.created, "2019-03-21T15:49:15.40182Z".toDate())
-        XCTAssertEqual(config.updated, "2020-03-17T18:54:09.460881Z".toDate())
+        XCTAssertEqual(config.createdAt, "2019-03-21T15:49:15.40182Z".toDate())
+        XCTAssertEqual(config.updatedAt, "2020-03-17T18:54:09.460881Z".toDate())
     }
     
     func test_channelJSON_isSerialized_withNoExtraData() throws {
@@ -93,12 +93,12 @@ class ChannelPayload_Tests: XCTestCase {
         
         let channel = payload.channel
         XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))
-        XCTAssertEqual(channel.created, "2019-05-10T14:03:49.505006Z".toDate())
+        XCTAssertEqual(channel.createdAt, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertNotNil(channel.createdBy)
         XCTAssertEqual(channel.typeRawValue, "messaging")
         XCTAssertEqual(channel.isFrozen, true)
         XCTAssertEqual(channel.memberCount, 4)
-        XCTAssertEqual(channel.updated, "2019-05-10T14:03:49.505006Z".toDate())
+        XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())
         
         let config = channel.config
         XCTAssertEqual(config.reactionsEnabled, true)
@@ -115,7 +115,7 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.maxMessageLength, 5000)
         XCTAssertEqual(config.commands,
                        [.init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]")])
-        XCTAssertEqual(config.created, "2019-03-21T15:49:15.40182Z".toDate())
-        XCTAssertEqual(config.updated, "2020-03-17T18:54:09.460881Z".toDate())
+        XCTAssertEqual(config.createdAt, "2019-03-21T15:49:15.40182Z".toDate())
+        XCTAssertEqual(config.updatedAt, "2020-03-17T18:54:09.460881Z".toDate())
     }
 }
