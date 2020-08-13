@@ -16,13 +16,17 @@ protocol UserDatabaseSession {
     func user(id: UserId) -> UserDTO?
 }
 
-protocol DatabaseSession: UserDatabaseSession {
-    // MARK: -  User
-    
+protocol CurrentUserDatabaseSession {
+    /// Saves the provided payload to the DB. Return's a `CurrentUserDTO` if the save was successfull. Throws an error
+    /// if the save fails.
     @discardableResult
     func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO
-    func loadCurrentUser<ExtraData: UserExtraData>() -> CurrentUserModel<ExtraData>?
     
+    /// Returns `CurrentUserDTO` from the DB. Returns `nil` if no `CurrentUserDTO` exists.
+    func currentUser() -> CurrentUserDTO?
+}
+
+protocol DatabaseSession: UserDatabaseSession, CurrentUserDatabaseSession {
     // MARK: -  Member
     
     @discardableResult
