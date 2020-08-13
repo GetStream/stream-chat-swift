@@ -216,6 +216,44 @@ class ChannelController_Tests: StressTestCase {
     }
     
     // MARK: - Delegate tests
+
+    func test_channelMemberEvents_areForwaredToDelegate() throws {
+        let delegate = TestDelegate()
+        controller.delegate = delegate
+
+        // Set the queue for delegate calls
+        delegate.expectedQueueId = controllerCallbackQueueID
+
+        // Simulate `startUpdating()` call
+        controller.startUpdating()
+
+        // Send notification with event happened in the observed channel
+        let event = TestMemberEvent(cid: controller.channelQuery.cid, userId: .unique)
+        let notification = Notification(newEventReceived: event, sender: self)
+        client.webSocketClient.notificationCenter.post(notification)
+
+        // Assert the event is received
+        AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
+    }
+
+    func test_channelMemberEvents_areForwaredToGenericDelegate() throws {
+        let delegate = TestDelegateGeneric()
+        controller.setDelegate(delegate)
+
+        // Set the queue for delegate calls
+        delegate.expectedQueueId = controllerCallbackQueueID
+
+        // Simulate `startUpdating()` call
+        controller.startUpdating()
+
+        // Send notification with event happened in the observed channel
+        let event = TestMemberEvent(cid: controller.channelQuery.cid, userId: .unique)
+        let notification = Notification(newEventReceived: event, sender: self)
+        client.webSocketClient.notificationCenter.post(notification)
+
+        // Assert the event is received
+        AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
+    }
     
     func test_delegateMethodsAreCalled() throws {
         let delegate = TestDelegate()
@@ -563,4 +601,9 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
         didReceiveMemberEvent_event = event
         validateQueue()
     }
+}
+
+private struct TestMemberEvent: MemberEvent, Equatable {
+    let cid: ChannelId
+    let userId: UserId
 }
