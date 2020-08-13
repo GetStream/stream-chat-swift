@@ -6,8 +6,8 @@ import Foundation
 @testable import StreamChatClient
 
 extension CurrentUserPayload {
-    /// Returns a dummy user payload with the given userId, role, and extraData
-    static func dummy(userId: UserId, role: UserRole, extraData: ExtraData) -> CurrentUserPayload {
+    /// Returns a dummy current user payload with the given UserId and extra data
+    static func dummy<T: UserExtraData>(userId: UserId, role: UserRole, extraData: T = .defaultValue) -> CurrentUserPayload<T> {
         .init(id: userId,
               role: role,
               createdAt: .unique,
@@ -17,6 +17,8 @@ extension CurrentUserPayload {
               isInvisible: true,
               isBanned: true,
               teams: [],
-              extraData: extraData)
+              extraData: extraData,
+              devices: [.init(.unique)],
+              mutedUsers: [])
     }
 }
