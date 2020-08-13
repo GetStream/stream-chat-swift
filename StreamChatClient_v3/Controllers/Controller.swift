@@ -8,15 +8,27 @@ import Foundation
 public class Controller {
     /// Describes the possible states of Controller
     public enum State: Equatable {
-        /// The controller is idle. Call `startUpdating` to start listening for changes.
-        case idle
-        
-        /// The controller is active and is listening to changes.
-        case active
+        /// The controller is inactive. Call `startUpdating` to start listening for changes.
+        case inactive
+        /// The controllers already fetched local data if any. Remote data fetch is in progress.
+        case localDataFetched
+        /// The controller fetched remote data.
+        case remoteDataFetched
+        /// The controller failed to fetch remote data.
+        case remoteDataFetchFailed(ClientError)
     }
     
     /// The current state of the Controller.
-    public internal(set) var state: State = .idle
+    public internal(set) var state: State = .inactive {
+        didSet {
+            callback {
+                self.stateDelegate?.controller(self, didChangeState: self.state)
+            }
+        }
+    }
+
+    /// Delegate for getting updates on `state` changes.
+    internal weak var stateDelegate: ControllerStateDelegate?
     
     /// The queue which is used to perform callback calls. The default value is `.main`.
     public var callbackQueue: DispatchQueue = .main
@@ -36,20 +48,15 @@ extension Controller {
     }
 }
 
-/// A delegate protocol some Controllers use to propane the information about remote data fetching. You can use it to let
+/// A delegate protocol some Controllers use to propane the information about controller `state` changes. You can use it to let
 /// users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.
-public protocol ControllerRemoteActivityDelegate: AnyObject {
-    func controllerWillStartFetchingRemoteData(_ controller: Controller)
-    func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?)
+public protocol ControllerStateDelegate: AnyObject {
+    func controller(_ controller: Controller, didChangeState state: Controller.State)
 }
 
-/// Default implementation of `ControllerRemoteActivityDelegate` methods.
-public extension ControllerRemoteActivityDelegate {
-    /// The controller will make a network request to update the local data.
-    func controllerWillStartFetchingRemoteData(_ controller: Controller) {}
-    
-    /// The controller did finished fetching the remote data. If the request failed, the error is reported.
-    func controllerDidStopFetchingRemoteData(_ controller: Controller, withError error: Error?) {}
+/// Default implementation of `ControllerStateDelegate` method.
+public extension ControllerStateDelegate {
+    func controller(_ controller: Controller, didChangeState state: Controller.State) {}
 }
 
 /// A helper protocol allowing calling delegate using existing `callback` method.
