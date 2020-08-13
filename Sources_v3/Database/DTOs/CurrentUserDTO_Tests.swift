@@ -27,20 +27,23 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedCurrentUser: CurrentUserModel<NameAndImageExtraData>? {
-            database.viewContext.loadCurrentUser()
+        var loadedCurrentUser: CurrentUserDTO? {
+            database.viewContext.currentUser()
         }
         
         AssertAsync {
-            Assert.willBeEqual(payload.id, loadedCurrentUser?.id)
-            Assert.willBeEqual(payload.isOnline, loadedCurrentUser?.isOnline)
-            Assert.willBeEqual(payload.isBanned, loadedCurrentUser?.isBanned)
-            Assert.willBeEqual(payload.role, loadedCurrentUser?.userRole)
-            Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.userCreatedAt)
-            Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.userUpdatedAt)
-            Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.lastActiveAt)
-            Assert.willBeEqual(payload.teams, loadedCurrentUser?.teams)
-            Assert.willBeEqual(payload.extraData, loadedCurrentUser?.extraData)
+            Assert.willBeEqual(payload.id, loadedCurrentUser?.user.id)
+            Assert.willBeEqual(payload.isOnline, loadedCurrentUser?.user.isOnline)
+            Assert.willBeEqual(payload.isBanned, loadedCurrentUser?.user.isBanned)
+            Assert.willBeEqual(payload.role.rawValue, loadedCurrentUser?.user.userRoleRaw)
+            Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.user.userCreatedAt)
+            Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.user.userUpdatedAt)
+            Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.user.lastActivityAt)
+            Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
+                try? JSONDecoder.default.decode(NameAndImageExtraData.self, from: $0.user.extraData)
+            })
+            
+            // TODO: Teams, Mutes, Unread counts, Devices
         }
     }
     
@@ -55,20 +58,23 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedCurrentUser: CurrentUserModel<NoExtraData>? {
-            database.viewContext.loadCurrentUser()
+        var loadedCurrentUser: CurrentUserDTO? {
+            database.viewContext.currentUser()
         }
         
         AssertAsync {
-            Assert.willBeEqual(payload.id, loadedCurrentUser?.id)
-            Assert.willBeEqual(payload.isOnline, loadedCurrentUser?.isOnline)
-            Assert.willBeEqual(payload.isBanned, loadedCurrentUser?.isBanned)
-            Assert.willBeEqual(payload.role, loadedCurrentUser?.userRole)
-            Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.userCreatedAt)
-            Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.userUpdatedAt)
-            Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.lastActiveAt)
-            Assert.willBeEqual(payload.teams, loadedCurrentUser?.teams)
-            Assert.willBeEqual(payload.extraData, loadedCurrentUser?.extraData)
+            Assert.willBeEqual(payload.id, loadedCurrentUser?.user.id)
+            Assert.willBeEqual(payload.isOnline, loadedCurrentUser?.user.isOnline)
+            Assert.willBeEqual(payload.isBanned, loadedCurrentUser?.user.isBanned)
+            Assert.willBeEqual(payload.role.rawValue, loadedCurrentUser?.user.userRoleRaw)
+            Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.user.userCreatedAt)
+            Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.user.userUpdatedAt)
+            Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.user.lastActivityAt)
+            Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
+                try? JSONDecoder.default.decode(NoExtraData.self, from: $0.user.extraData)
+            })
+            
+            // TODO: Teams, Mutes, Unread counts, Devices
         }
     }
 }

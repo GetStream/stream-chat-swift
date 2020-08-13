@@ -50,7 +50,7 @@ public class Client<ExtraData: ExtraDataTypes> {
     /// Returns `nil` if the user is not fully logged-in yet. Always wait for the `setUser` completion block before
     /// accessing this value.
     public var currentUser: CurrentUserModel<ExtraData.User>? {
-        guard let user: CurrentUserModel<ExtraData.User> = databaseContainer.viewContext.loadCurrentUser() else {
+        guard let user: CurrentUserModel<ExtraData.User> = databaseContainer.viewContext.currentUser()?.asModel() else {
             log.error("You're trying to access the current user but the connection is not fully estabilshed. " +
                 "Wait for the completion block to be called before accessing the current user data.")
             return nil

@@ -11,6 +11,8 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     /// Muted users.
     let mutedUsers: [MutedUser<ExtraData>]
     
+    // TODO: Add unread counts
+    
     init(id: String,
          role: UserRole,
          createdAt: Date,
