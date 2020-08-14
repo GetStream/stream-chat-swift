@@ -46,7 +46,7 @@ extension Client {
                                                           members: members,
                                                           invites: invites,
                                                           extraData: extraData)
-        return .init(channelQuery: .init(channelPayload: payload), client: self)
+        return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
     }
 }
 
@@ -59,7 +59,12 @@ public typealias ChannelController = ChannelControllerGeneric<DefaultDataTypes>
 ///
 public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable {
     /// The ChannelQuery this controller observes.
-    public let channelQuery: ChannelQuery<ExtraData>
+    public private(set) var channelQuery: ChannelQuery<ExtraData> {
+        didSet {
+            guard oldValue.cid != channelQuery.cid else { return }
+            startDBObserving()
+        }
+    }
 
     /// The identifier of a channel this controller observes.
     private var channelId: ChannelId { channelQuery.cid }
@@ -101,43 +106,72 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
             stateDelegate = anyDelegate
         }
     }
-    
-    private(set) lazy var channelObserver: EntityDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO> = {
-        let observer = EntityDatabaseObserver(context: self.client.databaseContainer.viewContext,
-                                              fetchRequest: ChannelDTO.fetchRequest(for: self.channelQuery.cid),
-                                              itemCreator: ChannelModel<ExtraData>.create)
-        observer.onChange = { [unowned self] change in
-            self.delegateCallback { $0?.channelController(self, didUpdateChannel: change) }
-        }
-        
-        return observer
-    }()
-    
-    private(set) lazy var messagesObserver: ListDatabaseObserver<MessageModel<ExtraData>, MessageDTO> = {
-        let observer = ListDatabaseObserver(context: self.client.databaseContainer.viewContext,
-                                            fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelQuery.cid),
-                                            itemCreator: MessageModel<ExtraData>.init)
-        observer.onChange = { [unowned self] changes in
-            self.delegateCallback {
-                $0?.channelController(self, didUpdateMessages: changes)
-            }
-        }
-        
-        return observer
-    }()
+
+    @Cached private var channelObserver: EntityDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO>
+    @Cached private var messagesObserver: ListDatabaseObserver<MessageModel<ExtraData>, MessageDTO>
     
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
-    
+
+    // Flag indicating whether channel is created on backend. We need this flag to restrict channel modification requests
+    // before channel is created on backend.
+    private var isChannelAlreadyCreated: Bool
+    // This callback is called after channel is created on backend but before channel is saved to DB. When channel is created
+    // we receive backend generated cid and setting up current `ChannelController` to observe this channel DB changes.
+    private lazy var channelCreated: (ChannelId) -> Void = { [weak self] cid in
+        guard let self = self else { return }
+        self.isChannelAlreadyCreated = true
+        self.channelQuery = ChannelQuery(cid: cid, channelQuery: self.channelQuery)
+    }
+
     /// Creates a new `ChannelController`
     /// - Parameters:
     ///   - channelQuery: channel query for observing changes
     ///   - client: The `Client` this controller belongs to.
     ///   - environment: Envrionment for this controller.
-    init(channelQuery: ChannelQuery<ExtraData>, client: Client<ExtraData>, environment: Environment = .init()) {
+    ///   - isChannelAlreadyCreated: Flag indicating whether channel is created on backend.
+    init(
+        channelQuery: ChannelQuery<ExtraData>,
+        client: Client<ExtraData>,
+        environment: Environment = .init(),
+        isChannelAlreadyCreated: Bool = true
+    ) {
         self.channelQuery = channelQuery
         self.client = client
         self.environment = environment
+        self.isChannelAlreadyCreated = isChannelAlreadyCreated
+        super.init()
+
+        setChannelObserver()
+        setMessagesObserver()
+    }
+
+    private func setChannelObserver() {
+        _channelObserver.computeValue = { [unowned self] in
+            let observer = EntityDatabaseObserver(context: self.client.databaseContainer.viewContext,
+                                                  fetchRequest: ChannelDTO.fetchRequest(for: self.channelQuery.cid),
+                                                  itemCreator: ChannelModel<ExtraData>.create)
+            observer.onChange = { change in
+                self.delegateCallback { $0?.channelController(self, didUpdateChannel: change) }
+            }
+
+            return observer
+        }
+    }
+
+    private func setMessagesObserver() {
+        _messagesObserver.computeValue = { [unowned self] in
+            let observer = ListDatabaseObserver(context: self.client.databaseContainer.viewContext,
+                                                fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelQuery.cid),
+                                                itemCreator: MessageModel<ExtraData>.init)
+            observer.onChange = { changes in
+                self.delegateCallback {
+                    $0?.channelController(self, didUpdateMessages: changes)
+                }
+            }
+
+            return observer
+        }
     }
     
     /// Starts updating the results.
@@ -154,6 +188,24 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     ///                         If the data fetching fails, the `error` variable contains more details about the problem.
     public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
         eventObservers.removeAll()
+        startDBObserving(completion)
+
+        // Update observing state
+        state = .localDataFetched
+        
+        worker.update(channelQuery: channelQuery,
+                      channelCreatedCallback: isChannelAlreadyCreated ? nil : channelCreated) { [weak self] error in
+            guard let self = self else { return }
+            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
+            self.callback { completion?(error) }
+        }
+
+        setupEventObservers()
+    }
+
+    private func startDBObserving(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        _channelObserver.reset()
+        _messagesObserver.reset()
 
         do {
             try channelObserver.startObserving()
@@ -163,17 +215,6 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
             callback { completion?(ClientError.FetchFailed()) }
             return
         }
-
-        // Update observing state
-        state = .localDataFetched
-        
-        worker.update(channelQuery: channelQuery) { [weak self] error in
-            guard let self = self else { return }
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
-        }
-
-        setupEventObservers()
     }
 
     private func setupEventObservers() {
@@ -219,6 +260,11 @@ public extension ChannelControllerGeneric {
         extraData: ExtraData.Channel,
         completion: ((Error?) -> Void)? = nil
     ) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+
         let payload: ChannelEditDetailPayload<ExtraData> = .init(cid: channelId, team: team, members: members, invites: invites,
                                                                  extraData: extraData)
         worker.updateChannel(channelPayload: payload) { [weak self] error in
@@ -232,6 +278,10 @@ public extension ChannelControllerGeneric {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     func muteChannel(completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
         worker.muteChannel(cid: channelId, mute: true) { [weak self] error in
             self?.callback {
                 completion?(error)
@@ -244,6 +294,10 @@ public extension ChannelControllerGeneric {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     func unmuteChannel(completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
         worker.muteChannel(cid: channelId, mute: false) { [weak self] error in
             self?.callback {
                 completion?(error)
@@ -256,6 +310,10 @@ public extension ChannelControllerGeneric {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     func deleteChannel(completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
         worker.deleteChannel(cid: channelId) { [weak self] error in
             self?.callback {
                 completion?(error)
@@ -269,6 +327,10 @@ public extension ChannelControllerGeneric {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     func hideChannel(clearHistory: Bool = false, completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
         worker.hideChannel(cid: channelId, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
             self?.callback {
                 completion?(error)
@@ -280,10 +342,24 @@ public extension ChannelControllerGeneric {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     func showChannel(completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
         worker.showChannel(cid: channelId, userId: client.currentUserId) { [weak self] error in
             self?.callback {
                 completion?(error)
             }
+        }
+    }
+
+    // It's impossible to perform any channel modification before it's creation on backend.
+    // So before any modification attempt we need to check if channel is already created and call this function if not.
+    private func channelModificationFailed(_ completion: ((Error?) -> Void)?) {
+        let error = ClientError.ChannelDoesNotExist()
+        log.error(error.localizedDescription)
+        callback {
+            completion?(error)
         }
     }
 }
@@ -478,5 +554,14 @@ extension AnyChannelControllerDelegate where ExtraData == DefaultDataTypes {
                   controllerDidReceiveMemberEvent: { [weak delegate] in
                       delegate?.channelController($0, didReceiveMemberEvent: $1)
                   })
+    }
+}
+
+extension ClientError {
+    class ChannelDoesNotExist: ClientError {
+        override public var localizedDescription: String {
+            // swiftlint:disable:next line_length
+            "You can't modify the channel because the channel hasn't been created yet. Call `startUpdating()` to create the channel and wait for the completion block to finish. Alternatively, you can observe the `state` changes of the controller and wait for the `remoteDataFetched` state."
+        }
     }
 }
