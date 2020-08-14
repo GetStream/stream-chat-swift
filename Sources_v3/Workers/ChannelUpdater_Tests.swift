@@ -71,6 +71,34 @@ class ChannelUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
+    func test_updateChannelQuery_completionForCreatedChannelCalled() {
+        // Simulate `update(channelQuery:)` call
+        let query = ChannelQuery(channelPayload: .unique)
+        var cid: ChannelId = .unique
+
+        var channel: Channel? {
+            database.viewContext.loadChannel(cid: cid)
+        }
+
+        let callback: (ChannelId) -> Void = {
+            cid = $0
+            // Assert channel is not saved to DB before callback returns
+            AssertAsync.staysTrue(channel == nil)
+        }
+
+        // Simulate `updateChannel` call
+        queryUpdater.update(channelQuery: query, channelCreatedCallback: callback, completion: nil)
+
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: query.cid)
+        apiClient.test_simulateResponse(.success(payload))
+
+        // Assert `channelCreatedCallback` is called
+        XCTAssertEqual(cid, query.cid)
+        // Assert channel is saved to DB after
+        AssertAsync.willBeTrue(channel != nil)
+    }
+
     // MARK: - Update channel
 
     func test_updateChannel_makesCorrectAPICall() {

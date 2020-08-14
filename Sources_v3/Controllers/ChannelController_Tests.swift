@@ -216,6 +216,62 @@ class ChannelController_Tests: StressTestCase {
     }
     
     // MARK: - Delegate tests
+
+    func test_delegateContinueToReceiveEvents_afterObserversReset() throws {
+        // Assign `ChannelController` that creates new channel
+        controller = ChannelController(channelQuery: ChannelQuery(cid: channelId),
+                                       client: client,
+                                       environment: env.environment,
+                                       isChannelAlreadyCreated: false)
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+
+        // Setup delegate
+        let delegate = TestDelegate()
+        delegate.expectedQueueId = controllerCallbackQueueID
+        controller.delegate = delegate
+
+        // Simulate `startUpdating` call
+        controller.startUpdating()
+
+        // Simulate DB update
+        var error = try await {
+            client.databaseContainer.write({ session in
+                try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
+            }, completion: $0)
+        }
+        XCTAssertNil(error)
+        let channel: Channel = client.databaseContainer.viewContext.loadChannel(cid: channelId)!
+        assert(channel.latestMessages.count == 1)
+        let message: Message = channel.latestMessages.first!
+
+        // Assert DB observers call delegate updates
+        AssertAsync {
+            Assert.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
+            Assert.willBeEqual(delegate.didUpdateMessages_messages, [.insert(message, index: [0, 0])])
+        }
+
+        let newCid: ChannelId = .unique
+
+        // Simulate `channelCreatedCallback` call that will reset DB observers to observing data with new `cid`
+        env.channelUpdater!.update_channelCreatedCallback?(newCid)
+
+        // Simulate DB update
+        error = try await {
+            client.databaseContainer.write({ session in
+                try session.saveChannel(payload: self.dummyPayload(with: newCid), query: nil)
+            }, completion: $0)
+        }
+        XCTAssertNil(error)
+        let newChannel: Channel = client.databaseContainer.viewContext.loadChannel(cid: newCid)!
+        assert(channel.latestMessages.count == 1)
+        let newMessage: Message = newChannel.latestMessages.first!
+
+        // Assert DB observers call delegate updates for new `cid`
+        AssertAsync {
+            Assert.willBeEqual(delegate.didUpdateChannel_channel, .create(newChannel))
+            Assert.willBeEqual(delegate.didUpdateMessages_messages, [.insert(newMessage, index: [0, 0])])
+        }
+    }
     
     func test_channelMemberEvents_areForwaredToDelegate() throws {
         let delegate = TestDelegate()
@@ -313,7 +369,44 @@ class ChannelController_Tests: StressTestCase {
     }
     
     // MARK: - Channel actions propagation tests
+
+    func setupControllerForNewChannel(query: ChannelQuery<DefaultDataTypes>) {
+        controller = ChannelController(channelQuery: query,
+                                       client: client,
+                                       environment: env.environment,
+                                       isChannelAlreadyCreated: false)
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+        controller.startUpdating()
+    }
     
+    func test_updateChannel_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `updateChannel` call and assert the error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.updateChannel(team: nil, extraData: .init()) { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelDoesNotExist)
+
+        // Simulate succsesfull backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+
+        // Simulate `updateChannel` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.updateChannel(team: nil, extraData: .init()) { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.updateChannel_completion?(nil)
+        }
+        XCTAssertNil(error)
+    }
+
     func test_updateChannel_callsChannelUpdater() {
         // Simulate `updateChannel` call and catch the completion
         var completionCalled = false
@@ -348,7 +441,36 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
+    func test_muteChannel_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `muteChannel` call and assert error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.muteChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelDoesNotExist)
+
+        // Simulate succsesfull backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+
+        // Simulate `muteChannel` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.muteChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.muteChannel_completion?(nil)
+        }
+
+        XCTAssertNil(error)
+    }
+
     func test_muteChannel_callsChannelUpdater() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalled = false
@@ -385,7 +507,36 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
+    func test_unmuteChannel_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `unmuteChannel` call and assert error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.muteChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelDoesNotExist)
+
+        // Simulate succsesfull backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+
+        // Simulate `unmuteChannel` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.unmuteChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.muteChannel_completion?(nil)
+        }
+
+        XCTAssertNil(error)
+    }
+
     func test_unmuteChannel_callsChannelUpdater() {
         // Simulate `unmuteChannel` call and catch the completion
         var completionCalled = false
@@ -422,7 +573,36 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
+    func test_deleteChannel_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `deleteChannel` call and assert error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.deleteChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelDoesNotExist)
+
+        // Simulate succsesfull backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+
+        // Simulate `deleteChannel` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.deleteChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.deleteChannel_completion?(nil)
+        }
+
+        XCTAssertNil(error)
+    }
+
     func test_deleteChannel_callsChannelUpdater() {
         // Simulate `deleteChannel` calls and catch the completion
         var completionCalled = false
@@ -459,7 +639,36 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
+    func test_hideChannel_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `hideChannel` call and assert error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.hideChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelDoesNotExist)
+
+        // Simulate succsesfull backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+
+        // Simulate `hideChannel` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.hideChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.hideChannel_completion?(nil)
+        }
+
+        XCTAssertNil(error)
+    }
+
     func test_hideChannel_callsChannelUpdater() {
         // Simulate `hideChannel` calls and catch the completion
         var completionCalled = false
@@ -498,7 +707,36 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-    
+
+    func test_showChannel_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `showChannel` call and assert error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.showChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelDoesNotExist)
+
+        // Simulate succsesfull backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+
+        // Simulate `showChannel` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.showChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.showChannel_completion?(nil)
+        }
+
+        XCTAssertNil(error)
+    }
+
     func test_showChannel_callsChannelUpdater() {
         // Simulate `showChannel` calls and catch the completion
         var completionCalled = false

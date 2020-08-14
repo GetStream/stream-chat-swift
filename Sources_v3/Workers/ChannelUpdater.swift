@@ -10,12 +10,19 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///
     /// - Parameters:
     ///   - channelQuery: The channel query used in the request
+    ///   - channelCreatedCallback: For some type of channels we need to obtain id from backend.
+    ///   This callback is called with the obtained `cid` before the channel payload is saved to the DB.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func update(channelQuery: ChannelQuery<ExtraData>, completion: ((Error?) -> Void)? = nil) {
+    func update(
+        channelQuery: ChannelQuery<ExtraData>,
+        channelCreatedCallback: ((ChannelId) -> Void)? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         apiClient.request(endpoint: .channel(query: channelQuery)) { (result) in
             do {
                 let payload = try result.get()
+                channelCreatedCallback?(payload.channel.cid)
                 self.database.write { (session) in
                     try session.saveChannel(payload: payload)
                     completion?(nil)

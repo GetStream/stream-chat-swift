@@ -63,7 +63,19 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         watchersPagination = []
         self.options = options
     }
-    
+
+    /// Init a channel query.
+    /// - Parameters:
+    ///   - cid: New `ChannelId` for channel query..
+    ///   - channelQuery: ChannelQuery with old cid.
+    init(cid: ChannelId, channelQuery: Self) {
+        self.init(cid: cid,
+                  messagesPagination: channelQuery.messagesPagination,
+                  membersPagination: channelQuery.membersPagination,
+                  watchersPagination: channelQuery.watchersPagination,
+                  options: channelQuery.options)
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
