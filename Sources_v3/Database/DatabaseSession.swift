@@ -26,8 +26,21 @@ protocol CurrentUserDatabaseSession {
     func currentUser() -> CurrentUserDTO?
 }
 
-protocol DatabaseSession: UserDatabaseSession, CurrentUserDatabaseSession {
-    // MARK: - Member
+protocol MessageDatabaseSession {
+    /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successfull.
+    /// Throws an error if the save fails.
+    @discardableResult
+    func saveMessage<ExtraData: ExtraDataTypes>(
+        payload: MessagePayload<ExtraData>,
+        for cid: ChannelId
+    ) throws -> MessageDTO
+    
+    /// Fetchtes `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
+    func message(id: MessageId) -> MessageDTO?
+}
+
+protocol DatabaseSession: UserDatabaseSession, CurrentUserDatabaseSession, MessageDatabaseSession {
+    // MARK: -  Member
     
     @discardableResult
     func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId) throws -> MemberDTO
@@ -46,12 +59,6 @@ protocol DatabaseSession: UserDatabaseSession, CurrentUserDatabaseSession {
     ) throws -> ChannelDTO
     
     func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>?
-    
-    // MARK: - Message
-    
-    @discardableResult
-    func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload<ExtraData>, for cid: ChannelId) throws
-        -> MessageDTO
 }
 
 extension DatabaseSession {
