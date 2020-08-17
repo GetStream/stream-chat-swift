@@ -24,9 +24,11 @@ func AssertJSONEqual(
     line: UInt = #line
 ) {
     do {
-        guard let json = try JSONSerialization.jsonObject(with: expression1()) as? [String: Any] else {
+        guard var json = try JSONSerialization.jsonObject(with: expression1()) as? [String: Any] else {
             throw error(domain: "AssertJSONEqual", message: "The first expression is not a valid json object!")
         }
+        
+        preprocessBoolValues(&json)
         
         AssertJSONEqual(json, try expression2(), file: file, line: line)
         
@@ -104,4 +106,16 @@ func AssertJSONEqual(
     } catch {
         XCTFail("Error: \(error)", file: file, line: line)
     }
+}
+
+/// A helper function that converts Bool values to their string representations "true"/"false". Needed to unify the way
+/// JSON is represented in Objective-C and Swift. Objective-C represents true as `1` while Swift doest it like `true`.
+private func preprocessBoolValues(_ json: inout [String: Any]) {
+    var newKeys: [String: Any] = [:]
+    json.forEach { (key, value) in
+        if let value = value as? Bool {
+            newKeys[key] = value ? "true" : "false"
+        }
+    }
+    json.merge(newKeys, uniquingKeysWith: { _, new in new })
 }
