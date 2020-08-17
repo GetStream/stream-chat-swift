@@ -14,15 +14,16 @@ class Client_DevicesTests: ClientTestCase {
     func test_getDevice_createsRequest() {
         // Action
         client.devices { _ in }
-
-        // Assert
-        Assert.networkRequest(
-            method: .get,
-            path: "/devices",
-            headers: ["Content-Type": "application/json"],
-            queryParameters: ["api_key": "test_api_key"],
-            body: nil
-        )
+        
+        AssertAsync {
+            .networkRequest(
+                method: .get,
+                path: "/devices",
+                headers: ["Content-Type": "application/json"],
+                queryParameters: ["api_key": "test_api_key"],
+                body: nil
+            )
+        }
     }
 
     func test_getDevice_handlesSuccess() throws {
@@ -66,17 +67,19 @@ class Client_DevicesTests: ClientTestCase {
         client.addDevice(deviceId: testDeviceId)
 
         // Assert
-        Assert.networkRequest(
-            method: .post,
-            path: "/devices",
-            headers: ["Content-Type": "application/json", "Content-Encoding": "gzip"],
-            queryParameters: ["api_key": "test_api_key"],
-            body: [
-                "user_id": testUser.id,
-                "id": testDeviceId,
-                "push_provider": "apn",
-            ]
-        )
+        AssertAsync {
+            .networkRequest(
+                method: .post,
+                path: "/devices",
+                headers: ["Content-Type": "application/json", "Content-Encoding": "gzip"],
+                queryParameters: ["api_key": "test_api_key"],
+                body: [
+                    "user_id": testUser.id,
+                    "id": testDeviceId,
+                    "push_provider": "apn",
+                ]
+            )
+        }
     }
 
     func test_addDeviceWithDeviceToken_createsRequest() {
@@ -87,17 +90,19 @@ class Client_DevicesTests: ClientTestCase {
         client.addDevice(deviceToken: deviceToken)
 
         // Assert
-        Assert.networkRequest(
-            method: .post,
-            path: "/devices",
-            headers: ["Content-Type": "application/json", "Content-Encoding": "gzip"],
-            queryParameters: ["api_key": "test_api_key"],
-            body: [
-                "user_id": testUser.id,
-                "id": "01020304", // the hexadecimal representation of the data
-                "push_provider": "apn",
-            ]
-        )
+        AssertAsync {
+            .networkRequest(
+                method: .post,
+                path: "/devices",
+                headers: ["Content-Type": "application/json", "Content-Encoding": "gzip"],
+                queryParameters: ["api_key": "test_api_key"],
+                body: [
+                    "user_id": testUser.id,
+                    "id": "01020304", // the hexadecimal representation of the data
+                    "push_provider": "apn",
+                ]
+            )
+        }
     }
 
     func test_addDeviceWithDeviceID_handlesSuccess() throws {
@@ -149,16 +154,18 @@ class Client_DevicesTests: ClientTestCase {
         client.removeDevice(deviceId: testDeviceId)
 
         // Assert
-        Assert.networkRequest(
-            method: .delete,
-            path: "/devices",
-            headers: ["Content-Type": "application/json"],
-            queryParameters: [
-                "api_key": "test_api_key",
-                "id": testDeviceId,
-            ],
-            body: nil
-        )
+        AssertAsync {
+            .networkRequest(
+                method: .delete,
+                path: "/devices",
+                headers: ["Content-Type": "application/json"],
+                queryParameters: [
+                    "api_key": "test_api_key",
+                    "id": testDeviceId,
+                ],
+                body: nil
+            )
+        }
     }
 
     func test_removeDevice_handlesSuccess() throws {

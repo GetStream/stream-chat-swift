@@ -34,11 +34,11 @@ extension Assert {
                                body: [String: Any]?,
                                timeout: TimeInterval = 0.5,
                                file: StaticString = #file,
-                               line: UInt = #line) {
+                               line: UInt = #line) -> Assertion {
         
-        AssertAsync.willBeTrue(RequestRecorderURLProtocol.recordedRequests.contains {
+        return Assert.willBeTrue(RequestRecorderURLProtocol.recordedRequests.contains {
             $0.matches(method, path, headers, queryParameters, body)
-        }, message: "AssertNetworkRequest failed to find a matching request")
+        }, message: "Failed to find a matching request in the recorded request array")
     }
 }
 
