@@ -156,6 +156,7 @@
 		79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */; };
 		79E2B84024CAC8D60024752F /* ListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */; };
 		79F3ABEA24EAB9CD00AB9505 /* Message.json in Resources */ = {isa = PBXBuildFile; fileRef = 79F3ABE924EAB9CD00AB9505 /* Message.json */; };
+		79F3ABEC24EAE0B900AB9505 /* UserRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F3ABEB24EAE0B900AB9505 /* UserRequestBody.swift */; };
 		79FC85E724ACCBC500A665ED /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FC85E624ACCBC500A665ED /* Token.swift */; };
 		804B126924E6C820002B00EA /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804B126724E6C80B002B00EA /* LoginViewController.swift */; };
 		804B127124E712F1002B00EA /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F28247FF01800EAF71D /* MasterViewController.swift */; };
@@ -418,6 +419,7 @@
 		79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertNetworkRequest.swift; sourceTree = "<group>"; };
 		79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserver.swift; sourceTree = "<group>"; };
 		79F3ABE924EAB9CD00AB9505 /* Message.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Message.json; sourceTree = "<group>"; };
+		79F3ABEB24EAE0B900AB9505 /* UserRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestBody.swift; sourceTree = "<group>"; };
 		79FC85E624ACCBC500A665ED /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		804B126724E6C80B002B00EA /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		804B126B24E712C2002B00EA /* SimpleChat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SimpleChat.storyboard; sourceTree = "<group>"; };
@@ -550,6 +552,7 @@
 			children = (
 				790B9E2F24DC21D7005455AA /* MessagePayload.swift */,
 				790B9E3124DC221A005455AA /* UserPayload.swift */,
+				79F3ABEB24EAE0B900AB9505 /* UserRequestBody.swift */,
 				8A0D649224E5794C0017A3C0 /* CurrentUserPayload.swift */,
 			);
 			path = "Dummy data";
@@ -1481,6 +1484,7 @@
 				792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */,
 				79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */,
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
+				79F3ABEC24EAE0B900AB9505 /* UserRequestBody.swift in Sources */,
 				7937282C249900CB00E13FE5 /* MemberPayload_Tests.swift in Sources */,
 				8A0D649324E5794C0017A3C0 /* CurrentUserPayload.swift in Sources */,
 				8A0D64AE24E5853F0017A3C0 /* Controller_Tests.swift in Sources */,

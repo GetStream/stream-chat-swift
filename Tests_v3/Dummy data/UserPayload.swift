@@ -5,9 +5,9 @@
 import Foundation
 @testable import StreamChatClient
 
-extension UserPayload {
+extension UserPayload where ExtraData == NameAndImageExtraData {
     /// Returns a dummy user payload with the given UserId
-    static func dummy(userId: UserId) -> UserPayload<NameAndImageExtraData> {
+    static func dummy(userId: UserId) -> UserPayload {
         let lukeExtraData = NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString))
         
         return .init(id: userId,
