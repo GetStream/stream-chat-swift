@@ -27,6 +27,18 @@ protocol CurrentUserDatabaseSession {
 }
 
 protocol MessageDatabaseSession {
+    /// Creates a new `MessageDTO` object in the database. Throws an error if the message fails to be created.
+    @discardableResult
+    func createNewMessage<ExtraData: MessageExtraData>(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        showReplyInChannel: Bool,
+        extraData: ExtraData
+    ) throws -> MessageDTO
+    
     /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successfull.
     /// Throws an error if the save fails.
     @discardableResult
@@ -39,8 +51,26 @@ protocol MessageDatabaseSession {
     func message(id: MessageId) -> MessageDTO?
 }
 
+extension MessageDatabaseSession {
+    /// Creates a new `MessageDTO` object in the database. Throws an error if the message fails to be created.
+    @discardableResult
+    func createNewMessage<ExtraData: MessageExtraData>(
+        in cid: ChannelId,
+        text: String,
+        extraData: ExtraData = .defaultValue
+    ) throws -> MessageDTO {
+        try createNewMessage(in: cid,
+                             text: text,
+                             command: nil,
+                             arguments: nil,
+                             parentMessageId: nil,
+                             showReplyInChannel: false,
+                             extraData: extraData)
+    }
+}
+
 protocol DatabaseSession: UserDatabaseSession, CurrentUserDatabaseSession, MessageDatabaseSession {
-    // MARK: -  Member
+    // MARK: - Member
     
     @discardableResult
     func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId) throws -> MemberDTO

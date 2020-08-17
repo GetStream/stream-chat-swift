@@ -67,12 +67,52 @@ class MessageDTO: NSManagedObject {
 extension MessageDTO {
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     var localMessageState: LocalMessageState? {
-        set { localMessageStateRaw = newValue?.rawValue }
         get { localMessageStateRaw.flatMap(LocalMessageState.init(rawValue:)) }
+        set { localMessageStateRaw = newValue?.rawValue }
     }
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {
+    func createNewMessage<ExtraData: MessageExtraData>(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        showReplyInChannel: Bool,
+        extraData: ExtraData
+    ) throws -> MessageDTO {
+        guard let currentUserDTO = currentUser() else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+        
+        guard let channelDTO = ChannelDTO.load(cid: cid, context: self) else {
+            throw ClientError.ChannelDoesNotExist(cid: cid)
+        }
+        
+        let message = MessageDTO.loadOrCreate(id: .newUniqueId, context: self)
+        
+        let createdDate = Date()
+        message.createdAt = createdDate
+        message.locallyCreatedAt = createdDate
+        message.updatedAt = createdDate
+        
+        message.type = parentMessageId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
+        message.text = text
+        message.command = command
+        message.args = arguments
+        message.parentMessageId = parentMessageId
+        message.extraData = try JSONEncoder.default.encode(extraData)
+        message.isSilent = false
+        message.reactionScores = [:]
+        message.showReplyInChannel = showReplyInChannel
+        
+        message.user = currentUserDTO.user
+        message.channel = channelDTO
+        
+        return message
+    }
+    
     func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload<ExtraData>, for cid: ChannelId) throws -> MessageDTO {
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
         
@@ -137,6 +177,7 @@ extension MessageModel {
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command
         createdAt = dto.createdAt
+        locallyCreatedAt = dto.locallyCreatedAt
         updatedAt = dto.updatedAt
         deletedAt = dto.deletedAt
         arguments = dto.args
@@ -151,5 +192,19 @@ extension MessageModel {
         mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })
         
         localState = dto.localMessageState
+    }
+}
+
+extension ClientError {
+    class CurrentUserDoesNotExist: ClientError {
+        override var localizedDescription: String {
+            "There is no `CurrentUserDTO` instance in the DB. Make sure to call `Client.setUser`."
+        }
+    }
+    
+    class ChannelDoesNotExist: ClientError {
+        init(cid: ChannelId) {
+            super.init("There is no `ChannelDTO` instance in the DB matching cid: \(cid).")
+        }
     }
 }
