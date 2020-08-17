@@ -30,10 +30,30 @@ class MessageDTO: NSManagedObject {
     @NSManaged var mentionedUsers: Set<UserDTO>
     @NSManaged var channel: ChannelDTO
     
+    // The timestamp the message was created locally. Applies only for the messages of the current user.
+    @NSManaged var locallyCreatedAt: Date?
+    
+    // We use `Date!` to replicate a required value. The value must be marked as optional in the CoreData model, because we change
+    // it in the `willSave` phase, which happens after the validation.
+    @NSManaged var defaultSortingKey: Date!
+    
+    override func willSave() {
+        super.willSave()
+        prepareDefaultSortKeyIfNeeded()
+    }
+    
+    /// Makes sure the `defaultSortingKey` value is computed and set.
+    fileprivate func prepareDefaultSortKeyIfNeeded() {
+        let newSortingKey = locallyCreatedAt ?? createdAt
+        if defaultSortingKey != newSortingKey {
+            defaultSortingKey = newSortingKey
+        }
+    }
+    
     /// Returns a fetch request for messages from the channel with the provided `cid`.
     static func messagesFetchRequest(for cid: ChannelId) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
         request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
         return request
     }

@@ -83,10 +83,12 @@
         <attribute name="args" optional="YES" attributeType="String"/>
         <attribute name="command" optional="YES" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="defaultSortingKey" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isSilent" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="locallyCreatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="localMessageStateRaw" optional="YES" attributeType="String"/>
         <attribute name="parentMessageId" optional="YES" attributeType="String"/>
         <attribute name="reactionScores" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
@@ -151,7 +153,7 @@
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="118"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="178"/>
-        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="313"/>
+        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="343"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="283"/>
     </elements>
