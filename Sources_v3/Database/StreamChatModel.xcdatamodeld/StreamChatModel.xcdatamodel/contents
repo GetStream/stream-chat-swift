@@ -80,7 +80,6 @@
         </uniquenessConstraints>
     </entity>
     <entity name="MessageDTO" representedClassName="MessageDTO" syncable="YES">
-        <attribute name="additionalStateRaw" optional="YES" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="args" optional="YES" attributeType="String"/>
         <attribute name="command" optional="YES" attributeType="String"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -88,6 +87,7 @@
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isSilent" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="localMessageStateRaw" optional="YES" attributeType="String"/>
         <attribute name="parentMessageId" optional="YES" attributeType="String"/>
         <attribute name="reactionScores" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="replyCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -147,12 +147,12 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="ChannelDTO" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="CurrentUserDTO" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="MemberDTO" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="MessageDTO" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="TeamDTO" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="UserDTO" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="283"/>
+        <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
+        <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="118"/>
+        <element name="MemberDTO" positionX="0" positionY="0" width="128" height="178"/>
+        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="313"/>
+        <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
+        <element name="UserDTO" positionX="0" positionY="0" width="128" height="283"/>
     </elements>
 </model>

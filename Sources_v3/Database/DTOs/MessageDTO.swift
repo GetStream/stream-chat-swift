@@ -9,7 +9,8 @@ import Foundation
 class MessageDTO: NSManagedObject {
     static let entityName = "MessageDTO"
     
-    @NSManaged var additionalStateRaw: Int16
+    @NSManaged fileprivate var localMessageStateRaw: String?
+    
     @NSManaged var id: String
     @NSManaged var text: String
     @NSManaged var type: String
@@ -60,6 +61,14 @@ class MessageDTO: NSManagedObject {
         let new = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as! Self
         new.id = id
         return new
+    }
+}
+
+extension MessageDTO {
+    /// A possible additional local state of the message. Applies only for the messages of the current user.
+    var localMessageState: LocalMessageState? {
+        set { localMessageStateRaw = newValue?.rawValue }
+        get { localMessageStateRaw.flatMap(LocalMessageState.init(rawValue:)) }
     }
 }
 
@@ -140,5 +149,7 @@ extension MessageModel {
         
         author = dto.user.asModel()
         mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })
+        
+        localState = dto.localMessageState
     }
 }
