@@ -386,10 +386,10 @@ public final class ClientLogger {
                                  file: StaticString = #file,
                                  line: UInt = #line) {
 
-        guard condition == false else { return }
-        let evaluatedMessage = message()
-        Swift.assert(condition, evaluatedMessage, file: file, line: line)
-        ClientLogger.log("", dateTime: "", level: .error, "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
+//        guard condition == false else { return }
+//        let evaluatedMessage = message()
+//        Swift.assert(condition, evaluatedMessage, file: file, line: line)
+//        ClientLogger.log("", dateTime: "", level: .error, "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
     }
 
     /// Triggers `Swift.assertionFailure`. In RELEASE builds only logs the failure.
