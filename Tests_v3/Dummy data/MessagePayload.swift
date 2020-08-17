@@ -7,22 +7,26 @@ import Foundation
 
 extension MessagePayload {
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
-    static func dummy(messageId: MessageId, authorUserId: UserId) -> MessagePayload<DefaultDataTypes> {
+    static func dummy<T: ExtraDataTypes>(
+        messageId: MessageId,
+        authorUserId: UserId,
+        extraData: T.Message = .defaultValue
+    ) -> MessagePayload<T> where T.User == NameAndImageExtraData {
         .init(id: messageId,
               type: .regular,
-              user: UserPayload<NameAndImageExtraData>.dummy(userId: authorUserId),
+              user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
               createdAt: .unique,
               updatedAt: .unique,
-              deletedAt: nil,
+              deletedAt: .unique,
               text: .unique,
-              command: nil,
-              args: nil,
-              parentId: nil,
-              showReplyInChannel: false,
-              mentionedUsers: [],
-              replyCount: 0,
-              extraData: NoExtraData(),
+              command: .unique,
+              args: .unique,
+              parentId: .unique,
+              showReplyInChannel: true,
+              mentionedUsers: [UserPayload.dummy(userId: .unique)],
+              replyCount: .random(in: 0 ... 1000),
+              extraData: extraData,
               reactionScores: ["like": 1],
-              isSilent: false)
+              isSilent: true)
     }
 }
