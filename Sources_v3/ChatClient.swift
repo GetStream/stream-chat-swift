@@ -186,9 +186,11 @@ public class Client<ExtraData: ExtraDataTypes> {
     ///   - workerBuilders: An array of worker builders the `Client` instance will instantiate and run in the background
     ///   for the whole duration of its lifetime.
     ///   - environment: An object with all external dependencies the new `Client` instance should use.
-    init(config: ChatClientConfig,
-         workerBuilders: [WorkerBuilder],
-         environment: Environment) {
+    init(
+        config: ChatClientConfig,
+        workerBuilders: [WorkerBuilder],
+        environment: Environment
+    ) {
         self.config = config
         self.environment = environment
         
@@ -268,10 +270,12 @@ public class Client<ExtraData: ExtraDataTypes> {
     ///   providing a token explicitly is required. In case both the `token` and `ChatClientConfig.tokenProvider` is specified,
     ///   the `token` value is used.
     ///   - completion: Called when the new user is successfully set.
-    public func setUser(userId: UserId,
-                        userExtraData: ExtraData.User? = nil,
-                        token: Token? = nil,
-                        completion: ((Error?) -> Void)? = nil) {
+    public func setUser(
+        userId: UserId,
+        userExtraData: ExtraData.User? = nil,
+        token: Token? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         guard token != nil || config.tokenProvider != nil else {
             log.assert(false,
                        "The provided token is `nil` and `ChatClientConfig.tokenProvider` is also `nil`. You must either provide " +
@@ -362,10 +366,12 @@ public class Client<ExtraData: ExtraDataTypes> {
         })
     }
     
-    private func prepareEnvironmentForNewUser(userId: UserId,
-                                              role: UserRole,
-                                              extraData: ExtraData.User? = nil,
-                                              completion: @escaping (Error?) -> Void) {
+    private func prepareEnvironmentForNewUser(
+        userId: UserId,
+        role: UserRole,
+        extraData: ExtraData.User? = nil,
+        completion: @escaping (Error?) -> Void
+    ) {
         // Reset the current token
         currentToken = nil
         
@@ -379,8 +385,11 @@ public class Client<ExtraData: ExtraDataTypes> {
         databaseContainer.removeAllData(force: true) { completion($0) }
     }
     
-    private func webSocketConnectEndpoint(userId: UserId, role: UserRole = .user,
-                                          extraData: ExtraData.User? = nil) -> Endpoint<EmptyResponse> {
+    private func webSocketConnectEndpoint(
+        userId: UserId,
+        role: UserRole = .user,
+        extraData: ExtraData.User? = nil
+    ) -> Endpoint<EmptyResponse> {
         // Create a connection request
         let socketPayload = WebSocketConnectPayload<ExtraData.User>(userId: currentUserId, userRole: role, extraData: extraData)
         let webSocketEndpoint = Endpoint<EmptyResponse>(path: "connect",

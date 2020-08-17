@@ -65,10 +65,12 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
         callDelegateInCallbackQueue { $0?.websocketDidConnect() }
     }
     
-    func urlSession(_ session: URLSession,
-                    webSocketTask: URLSessionWebSocketTask,
-                    didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
-                    reason: Data?) {
+    func urlSession(
+        _ session: URLSession,
+        webSocketTask: URLSessionWebSocketTask,
+        didCloseWith closeCode: URLSessionWebSocketTask.CloseCode,
+        reason: Data?
+    ) {
         var error: WebSocketEngineError?
         
         if let reasonData = reason, let reasonString = String(data: reasonData, encoding: .utf8) {

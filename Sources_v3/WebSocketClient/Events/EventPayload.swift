@@ -61,22 +61,24 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let banReason: String?
     let banExpiredAt: Date?
     
-    init(eventType: EventType,
-         connectionId: String? = nil,
-         cid: ChannelId? = nil,
-         currentUser: CurrentUserPayload<ExtraData.User>? = nil,
-         user: UserPayload<ExtraData.User>? = nil,
-         createdBy: UserPayload<ExtraData.User>? = nil,
-         memberContainer: MemberContainerPayload<ExtraData.User>? = nil,
-         channel: ChannelDetailPayload<ExtraData>? = nil,
-         message: MessagePayload<ExtraData>? = nil,
-         reaction: ReactionPayload? = nil,
-         watcherCount: Int? = nil,
-         unreadCount: UnreadCount? = nil,
-         createdAt: Date? = nil,
-         isChannelHistoryCleared: Bool? = nil,
-         banReason: String? = nil,
-         banExpiredAt: Date? = nil) {
+    init(
+        eventType: EventType,
+        connectionId: String? = nil,
+        cid: ChannelId? = nil,
+        currentUser: CurrentUserPayload<ExtraData.User>? = nil,
+        user: UserPayload<ExtraData.User>? = nil,
+        createdBy: UserPayload<ExtraData.User>? = nil,
+        memberContainer: MemberContainerPayload<ExtraData.User>? = nil,
+        channel: ChannelDetailPayload<ExtraData>? = nil,
+        message: MessagePayload<ExtraData>? = nil,
+        reaction: ReactionPayload? = nil,
+        watcherCount: Int? = nil,
+        unreadCount: UnreadCount? = nil,
+        createdAt: Date? = nil,
+        isChannelHistoryCleared: Bool? = nil,
+        banReason: String? = nil,
+        banExpiredAt: Date? = nil
+    ) {
         self.eventType = eventType
         self.connectionId = connectionId
         self.cid = cid

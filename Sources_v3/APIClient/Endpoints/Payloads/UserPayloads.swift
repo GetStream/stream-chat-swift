@@ -36,16 +36,18 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     let teams: [String]
     let extraData: ExtraData
     
-    init(id: String,
-         role: UserRole,
-         createdAt: Date,
-         updatedAt: Date,
-         lastActiveAt: Date?,
-         isOnline: Bool,
-         isInvisible: Bool,
-         isBanned: Bool,
-         teams: [String] = [],
-         extraData: ExtraData) {
+    init(
+        id: String,
+        role: UserRole,
+        createdAt: Date,
+        updatedAt: Date,
+        lastActiveAt: Date?,
+        isOnline: Bool,
+        isInvisible: Bool,
+        isBanned: Bool,
+        teams: [String] = [],
+        extraData: ExtraData
+    ) {
         self.id = id
         self.role = role
         self.createdAt = createdAt

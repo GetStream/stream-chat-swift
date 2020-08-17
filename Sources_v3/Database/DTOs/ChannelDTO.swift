@@ -55,8 +55,10 @@ class ChannelDTO: NSManagedObject {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelDetailPayload<ExtraData>,
-                                                query: ChannelListQuery?) throws -> ChannelDTO {
+    func saveChannel<ExtraData: ExtraDataTypes>(
+        payload: ChannelDetailPayload<ExtraData>,
+        query: ChannelListQuery?
+    ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
@@ -89,8 +91,10 @@ extension NSManagedObjectContext {
         return dto
     }
     
-    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>,
-                                                query: ChannelListQuery?) throws -> ChannelDTO {
+    func saveChannel<ExtraData: ExtraDataTypes>(
+        payload: ChannelPayload<ExtraData>,
+        query: ChannelListQuery?
+    ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, for: payload.channel.cid) }

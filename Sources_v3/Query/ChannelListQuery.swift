@@ -35,11 +35,13 @@ public struct ChannelListQuery: Encodable {
     ///   - pagination: a channels pagination.
     ///   - messagesLimit: a messages pagination for the each channel.
     ///   - options: a query options (see `QueryOptions`).
-    public init(filter: Filter,
-                sort: [Sorting<ChannelListSortingKey>] = [],
-                pagination: Pagination = [.channelsPageSize],
-                messagesLimit: Pagination = [.messagesPageSize],
-                options: QueryOptions = []) {
+    public init(
+        filter: Filter,
+        sort: [Sorting<ChannelListSortingKey>] = [],
+        pagination: Pagination = [.channelsPageSize],
+        messagesLimit: Pagination = [.messagesPageSize],
+        options: QueryOptions = []
+    ) {
         if case .none = filter {
 //            ClientLogger.log("⚠️",
 //                             level: .debug,

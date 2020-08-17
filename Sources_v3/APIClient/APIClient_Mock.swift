@@ -29,8 +29,10 @@ class APIClientMock: APIClient {
         completion(response)
     }
     
-    override func request<Response>(endpoint: Endpoint<Response>,
-                                    completion: @escaping (Result<Response, Error>) -> Void) where Response: Decodable {
+    override func request<Response>(
+        endpoint: Endpoint<Response>,
+        completion: @escaping (Result<Response, Error>) -> Void
+    ) where Response: Decodable {
         request_endpoint = AnyEndpoint(endpoint)
         request_completion = completion
     }

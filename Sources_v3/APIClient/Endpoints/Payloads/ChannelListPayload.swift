@@ -193,7 +193,7 @@ public struct ChannelConfig: Codable {
     public let updatedAt: Date
     
     /// Determines if users are able to flag messages. Enabled by default.
-    public var flagsEnabled: Bool { commands?.map { $0.name }.contains("flag") ?? false }
+    public var flagsEnabled: Bool { commands?.map(\.name).contains("flag") ?? false }
     
     // TODO: Do we need custom decoding here?
     

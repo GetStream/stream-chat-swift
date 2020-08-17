@@ -27,7 +27,7 @@ class Atomic_Tests: StressTestCase {
         intAtomicValue = 0
         
         // Count up to numberOfCycles
-        for _ in 0 ..< numberOfTestCycles {
+        for _ in 0..<numberOfTestCycles {
             DispatchQueue.random.async {
                 self._intAtomicValue { $0 += 1 }
             }
@@ -35,7 +35,7 @@ class Atomic_Tests: StressTestCase {
         AssertAsync.willBeEqual(intAtomicValue, numberOfTestCycles)
         
         // Count down to zero
-        for _ in 0 ..< numberOfTestCycles {
+        for _ in 0..<numberOfTestCycles {
             DispatchQueue.random.async {
                 self._intAtomicValue { $0 -= 1 }
             }
@@ -53,7 +53,7 @@ extension Atomic_Tests {
     func test_Atomic_usedWithCollection() {
         let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
         
-        for idx in 0 ..< numberOfTestCycles {
+        for idx in 0..<numberOfTestCycles {
             DispatchQueue.random.async {
                 atomicValue.mutate { $0["\(idx)"] = idx }
             }
@@ -66,12 +66,12 @@ extension Atomic_Tests {
         let atomicValue = Atomic<[String: Int]>(wrappedValue: [:])
         
         let readGroup = DispatchGroup()
-        for idx in 0 ..< numberOfTestCycles {
+        for idx in 0..<numberOfTestCycles {
             DispatchQueue.random.async {
                 atomicValue { $0["\(idx)"] = idx }
             }
             
-            for _ in 0 ... 5 {
+            for _ in 0...5 {
                 readGroup.enter()
                 DispatchQueue.random.async {
                     _ = atomicValue.wrappedValue
@@ -89,7 +89,7 @@ extension Atomic_Tests {
     func test_Atomic_whenCalledFromMainThred() {
         let value = Atomic<[String: Int]>(wrappedValue: [:])
         
-        for idx in 0 ..< numberOfTestCycles {
+        for idx in 0..<numberOfTestCycles {
             value { $0["\(idx)"] = idx }
             value.wrappedValue = ["random": 2020]
             _ = value.wrappedValue

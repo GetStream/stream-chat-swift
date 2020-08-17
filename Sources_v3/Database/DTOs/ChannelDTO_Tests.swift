@@ -182,7 +182,7 @@ class ChannelDTO_Tests: XCTestCase {
             
             // Check the sorting by `cid`.
             Assert.willBeEqual(channelsWithCIDSorting.count, 4)
-            Assert.willBeEqual(channelsWithCIDSorting.map { $0.cid }, ["a:a", "a:b", "a:c", "a:d"])
+            Assert.willBeEqual(channelsWithCIDSorting.map(\.cid), ["a:a", "a:b", "a:c", "a:d"])
         }
     }
     
@@ -381,7 +381,7 @@ extension XCTestCase {
                   updatedAt: .unique)
         
         let channelCreatedDate = Date.unique
-        let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000 ... 900_000)) : nil
+        let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
         
         let payload: ChannelPayload<DefaultDataTypes> =
             .init(channel: .init(cid: channelId,

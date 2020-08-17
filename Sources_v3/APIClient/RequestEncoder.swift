@@ -17,8 +17,10 @@ protocol RequestEncoder {
     /// - Parameters:
     ///   - endpoint: The `Endpoint` to be encoded.
     ///   - completion: Called when the encoded `URLRequest` is ready. Called with en `Error` if the encoding fails.
-    func encodeRequest<ResponsePayload: Decodable>(for endpoint: Endpoint<ResponsePayload>,
-                                                   completion: @escaping (Result<URLRequest, Error>) -> Void)
+    func encodeRequest<ResponsePayload: Decodable>(
+        for endpoint: Endpoint<ResponsePayload>,
+        completion: @escaping (Result<URLRequest, Error>) -> Void
+    )
     
     /// Creates a new `RequestEncoder`.
     ///
@@ -56,8 +58,10 @@ struct DefaultRequestEncoder: RequestEncoder {
     
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
     
-    func encodeRequest<ResponsePayload: Decodable>(for endpoint: Endpoint<ResponsePayload>,
-                                                   completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    func encodeRequest<ResponsePayload: Decodable>(
+        for endpoint: Endpoint<ResponsePayload>,
+        completion: @escaping (Result<URLRequest, Error>) -> Void
+    ) {
         var request: URLRequest
         
         do {
