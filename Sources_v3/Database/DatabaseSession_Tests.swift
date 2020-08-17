@@ -109,7 +109,7 @@ class DatabaseSession_Tests: StressTestCase {
         
         // Try to load the saved message from DB
         var loadedMessage: MessageModel<DefaultDataTypes>? {
-            database.viewContext.loadMessage(id: messageId)
+            database.viewContext.message(id: messageId)?.asModel()
         }
         AssertAsync.willBeTrue(loadedMessage != nil)
         

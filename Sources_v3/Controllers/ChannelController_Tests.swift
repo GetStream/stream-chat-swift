@@ -253,7 +253,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate an incoming message
         let newMesageId: MessageId = .unique
-        let newMessagePayload = MessagePayload<DefaultDataTypes>.dummy(messageId: newMesageId, authorUserId: .unique)
+        let newMessagePayload: MessagePayload<DefaultDataTypes> = .dummy(messageId: newMesageId, authorUserId: .unique)
         _ = try await {
             client.databaseContainer.write({ session in
                 try session.saveMessage(payload: newMessagePayload, for: self.channelId)

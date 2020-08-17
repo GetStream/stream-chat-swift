@@ -114,7 +114,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
 /// An object describing the outgoing message JSON payload.
 struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let id: String
-    let user: UserPayload<ExtraData.User>
+    let user: UserRequestBody<ExtraData.User>
     let text: String
     let command: String?
     let args: String?
@@ -124,7 +124,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     
     init(
         id: String,
-        user: UserPayload<ExtraData.User>,
+        user: UserRequestBody<ExtraData.User>,
         text: String,
         command: String? = nil,
         args: String? = nil,
