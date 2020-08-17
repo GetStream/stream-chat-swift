@@ -124,8 +124,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     public func setDelegate<Delegate: ChannelListControllerDelegateGeneric>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData
-    {
+        where Delegate.ExtraData == ExtraData {
         anyDelegate = AnyChannelListControllerDelegate(delegate)
     }
 }
@@ -138,9 +137,11 @@ extension ChannelListControllerGeneric {
             _ apiClient: APIClient
         ) -> ChannelListQueryUpdater<ExtraData> = ChannelListQueryUpdater.init
 
-        var createChannelListDabaseObserver: (_ context: NSManagedObjectContext,
-                                              _ fetchRequest: NSFetchRequest<ChannelDTO>,
-                                              _ itemCreator: @escaping (ChannelDTO) -> ChannelModel<ExtraData>?)
+        var createChannelListDabaseObserver: (
+            _ context: NSManagedObjectContext,
+            _ fetchRequest: NSFetchRequest<ChannelDTO>,
+            _ itemCreator: @escaping (ChannelDTO) -> ChannelModel<ExtraData>?
+        )
             -> ListDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
             }
@@ -168,8 +169,10 @@ public protocol ChannelListControllerDelegate: ControllerStateDelegate {
 }
 
 public extension ChannelListControllerDelegate {
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
-                    didChangeChannels changes: [ListChange<Channel>]) {}
+    func controller(
+        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        didChangeChannels changes: [ListChange<Channel>]
+    ) {}
 }
 
 /// `ChannelListController` uses this protocol to communicate changes to its delegate.
@@ -185,8 +188,10 @@ public protocol ChannelListControllerDelegateGeneric: ControllerStateDelegate {
 }
 
 public extension ChannelListControllerDelegateGeneric {
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
-                    didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]) {}
+    func controller(
+        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]
+    ) {}
 }
 
 extension ClientError {

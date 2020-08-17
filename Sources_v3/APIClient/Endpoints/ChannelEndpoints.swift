@@ -23,8 +23,7 @@ extension Endpoint {
     }
 
     static func updateChannel<ExtraData: ExtraDataTypes>(channelPayload: ChannelEditDetailPayload<ExtraData>)
-        -> Endpoint<EmptyResponse>
-    {
+        -> Endpoint<EmptyResponse> {
         .init(path: "channels/\(channelPayload.cid.type)/\(channelPayload.cid.id)",
               method: .post,
               queryItems: nil,

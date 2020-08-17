@@ -8,7 +8,7 @@ public var log: Logger {
     LogConfig.logger
 }
 
-public struct LogConfig {
+public enum LogConfig {
     /// Identifier for the logger. Defaults to empty.
     public static var identifier = ""
     
@@ -96,11 +96,13 @@ public class Logger {
     ///   - fileName: File of the caller
     ///   - lineNumber: Line number of the caller
     ///   - message: Message to be logged
-    public func callAsFunction(_ level: LogLevel,
-                               functionName: StaticString = #function,
-                               fileName: StaticString = #file,
-                               lineNumber: UInt = #line,
-                               message: @autoclosure () -> Any) {
+    public func callAsFunction(
+        _ level: LogLevel,
+        functionName: StaticString = #function,
+        fileName: StaticString = #file,
+        lineNumber: UInt = #line,
+        message: @autoclosure () -> Any
+    ) {
         log(level, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
     }
     
@@ -113,11 +115,13 @@ public class Logger {
     ///   - fileName: File of the caller
     ///   - lineNumber: Line number of the caller
     ///   - message: Message to be logged
-    public func log(_ level: LogLevel,
-                    functionName: StaticString = #function,
-                    fileName: StaticString = #file,
-                    lineNumber: UInt = #line,
-                    message: @autoclosure () -> Any) {
+    public func log(
+        _ level: LogLevel,
+        functionName: StaticString = #function,
+        fileName: StaticString = #file,
+        lineNumber: UInt = #line,
+        message: @autoclosure () -> Any
+    ) {
         let enabledDestinations = destinations.filter { $0.isEnabled(for: level) }
         guard !enabledDestinations.isEmpty else { return }
         
@@ -140,10 +144,12 @@ public class Logger {
     ///   - functionName: Function of the caller
     ///   - fileName: File of the caller
     ///   - lineNumber: Line number of the caller
-    public func info(_ message: @autoclosure () -> Any,
-                     functionName: StaticString = #function,
-                     fileName: StaticString = #file,
-                     lineNumber: UInt = #line) {
+    public func info(
+        _ message: @autoclosure () -> Any,
+        functionName: StaticString = #function,
+        fileName: StaticString = #file,
+        lineNumber: UInt = #line
+    ) {
         log(.info, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
     }
     
@@ -154,10 +160,12 @@ public class Logger {
     ///   - functionName: Function of the caller
     ///   - fileName: File of the caller
     ///   - lineNumber: Line number of the caller
-    public func debug(_ message: @autoclosure () -> Any,
-                      functionName: StaticString = #function,
-                      fileName: StaticString = #file,
-                      lineNumber: UInt = #line) {
+    public func debug(
+        _ message: @autoclosure () -> Any,
+        functionName: StaticString = #function,
+        fileName: StaticString = #file,
+        lineNumber: UInt = #line
+    ) {
         log(.debug, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
     }
     
@@ -168,10 +176,12 @@ public class Logger {
     ///   - functionName: Function of the caller
     ///   - fileName: File of the caller
     ///   - lineNumber: Line number of the caller
-    public func warning(_ message: @autoclosure () -> Any,
-                        functionName: StaticString = #function,
-                        fileName: StaticString = #file,
-                        lineNumber: UInt = #line) {
+    public func warning(
+        _ message: @autoclosure () -> Any,
+        functionName: StaticString = #function,
+        fileName: StaticString = #file,
+        lineNumber: UInt = #line
+    ) {
         log(.warning, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
     }
     
@@ -182,10 +192,12 @@ public class Logger {
     ///   - functionName: Function of the caller
     ///   - fileName: File of the caller
     ///   - lineNumber: Line number of the caller
-    public func error(_ message: @autoclosure () -> Any,
-                      functionName: StaticString = #function,
-                      fileName: StaticString = #file,
-                      lineNumber: UInt = #line) {
+    public func error(
+        _ message: @autoclosure () -> Any,
+        functionName: StaticString = #function,
+        fileName: StaticString = #file,
+        lineNumber: UInt = #line
+    ) {
         log(.error, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: message())
     }
     
@@ -195,11 +207,13 @@ public class Logger {
     /// - Parameters:
     ///   - condition: The condition to test.
     ///   - message: A custom message to log if `condition` is evaluated to false.
-    public func assert(_ condition: @autoclosure () -> Bool,
-                       _ message: @autoclosure () -> Any,
-                       functionName: StaticString = #function,
-                       fileName: StaticString = #file,
-                       lineNumber: UInt = #line) {
+    public func assert(
+        _ condition: @autoclosure () -> Bool,
+        _ message: @autoclosure () -> Any,
+        functionName: StaticString = #function,
+        fileName: StaticString = #file,
+        lineNumber: UInt = #line
+    ) {
         guard !condition() else { return }
         Swift.assert(condition(), String(describing: message()), file: fileName, line: lineNumber)
         log(.error, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: "Assert failed: \(message())")

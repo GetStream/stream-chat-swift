@@ -35,21 +35,23 @@ open class BaseLogDestination: LogDestination {
     ///   - showFileName: Toggle for showing file name in logs
     ///   - showLineNumber: Toggle for showing line number in logs
     ///   - showFunctionName: Toggle for showing function name in logs
-    public required init(identifier: String = "",
-                         level: LogLevel = .info,
-                         showDate: Bool = true,
-                         dateFormatter: DateFormatter = {
-                             let df = DateFormatter()
-                             df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-                             return df
-                         }(),
-                         formatters: [LogFormatter] = [],
-                         showLevel: Bool = true,
-                         showIdentifier: Bool = true,
-                         showThreadName: Bool = true,
-                         showFileName: Bool = true,
-                         showLineNumber: Bool = true,
-                         showFunctionName: Bool = true) {
+    public required init(
+        identifier: String = "",
+        level: LogLevel = .info,
+        showDate: Bool = true,
+        dateFormatter: DateFormatter = {
+            let df = DateFormatter()
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+            return df
+        }(),
+        formatters: [LogFormatter] = [],
+        showLevel: Bool = true,
+        showIdentifier: Bool = true,
+        showThreadName: Bool = true,
+        showFileName: Bool = true,
+        showLineNumber: Bool = true,
+        showFunctionName: Bool = true
+    ) {
         self.identifier = identifier
         self.level = level
         self.showIdentifier = showIdentifier
@@ -102,8 +104,8 @@ open class BaseLogDestination: LogDestination {
         }
         
         if showFileName {
-            extendedDetails +=
-                "[\((String(describing: logDetails.fileName) as NSString).lastPathComponent)\(showLineNumber ? ":\(logDetails.lineNumber)" : "")] "
+            let fileName = (String(describing: logDetails.fileName) as NSString).lastPathComponent
+            extendedDetails += "[\(fileName)\(showLineNumber ? ":\(logDetails.lineNumber)" : "")] "
         } else if showLineNumber {
             extendedDetails += "[\(logDetails.lineNumber)] "
         }

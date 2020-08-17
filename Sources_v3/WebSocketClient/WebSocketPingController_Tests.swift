@@ -8,7 +8,7 @@ import XCTest
 class WebSocketPingController_Tests: XCTestCase {
     var time: VirtualTime!
     var pingController: WebSocketPingController!
-    private var delegate: TestWebSocketPingControllerDelegate!
+    private var delegate: TestWebSocketPingControllerDelegate! // swiftlint:disable:this weak_delegate
     
     override func setUp() {
         super.setUp()

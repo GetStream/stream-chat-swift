@@ -381,7 +381,8 @@ class ChatClient_Tests: StressTestCase {
 
         // Set up a new guest user
         var setUserCompletionCalled = false
-        client.setGuestUser(userId: newUser.userId, extraData: newUserExtraData,
+        client.setGuestUser(userId: newUser.userId,
+                            extraData: newUserExtraData,
                             completion: { _ in setUserCompletionCalled = true })
 
         AssertAsync {
@@ -497,36 +498,36 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     
     lazy var environment: Client<ExtraData>.Environment = { [unowned self] in
         .init(apiClientBuilder: {
-            self.apiClient = APIClientMock(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2)
-            return self.apiClient!
-        },
+                  self.apiClient = APIClientMock(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2)
+                  return self.apiClient!
+              },
               webSocketClientBuilder: {
-            self.webSocketClient = WebSocketClientMock(connectEndpoint: $0,
-                                                       sessionConfiguration: $1,
-                                                       requestEncoder: $2,
-                                                       eventDecoder: $3,
-                                                       eventMiddlewares: $4)
-            return self.webSocketClient!
-        },
+                  self.webSocketClient = WebSocketClientMock(connectEndpoint: $0,
+                                                             sessionConfiguration: $1,
+                                                             requestEncoder: $2,
+                                                             eventDecoder: $3,
+                                                             eventMiddlewares: $4)
+                  return self.webSocketClient!
+              },
               databaseContainerBuilder: {
-            self.databaseContainer = try! DatabaseContainerMock(kind: $0)
-            return self.databaseContainer!
-        },
+                  self.databaseContainer = try! DatabaseContainerMock(kind: $0)
+                  return self.databaseContainer!
+              },
               requestEncoderBuilder: {
-            if let encoder = self.requestEncoder {
-                return encoder
-            }
-            self.requestEncoder = TestRequestEncoder(baseURL: $0, apiKey: $1)
-            return self.requestEncoder!
-        },
+                  if let encoder = self.requestEncoder {
+                      return encoder
+                  }
+                  self.requestEncoder = TestRequestEncoder(baseURL: $0, apiKey: $1)
+                  return self.requestEncoder!
+              },
               requestDecoderBuilder: {
-            self.requestDecoder = TestRequestDecoder()
-            return self.requestDecoder!
-        },
+                  self.requestDecoder = TestRequestDecoder()
+                  return self.requestDecoder!
+              },
               eventDecoderBuilder: {
-            self.eventDecoder = EventDecoder<ExtraData>()
-            return self.eventDecoder!
-    })
+                  self.eventDecoder = EventDecoder<ExtraData>()
+                  return self.eventDecoder!
+              })
     }()
 }
 
@@ -570,9 +571,11 @@ private func healthCheckEventJSON(userId: UserId) -> String {
 
 extension ChatClient_Tests {
     /// Asserts that URLSessionConfiguration contains all require header fields
-    private func assertMandatoryHeaderFields(_ config: URLSessionConfiguration?,
-                                             file: StaticString = #file,
-                                             line: UInt = #line) {
+    private func assertMandatoryHeaderFields(
+        _ config: URLSessionConfiguration?,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         guard let config = config else {
             XCTFail("Config is `nil`", file: file, line: line)
             return
@@ -659,8 +662,12 @@ class WebSocketClientMock: WebSocketClient {
         init_reconnectionStrategy = reconnectionStrategy
         init_environment = environment
         
-        super.init(connectEndpoint: connectEndpoint, sessionConfiguration: sessionConfiguration, requestEncoder: requestEncoder,
-                   eventDecoder: eventDecoder, eventMiddlewares: eventMiddlewares, reconnectionStrategy: reconnectionStrategy,
+        super.init(connectEndpoint: connectEndpoint,
+                   sessionConfiguration: sessionConfiguration,
+                   requestEncoder: requestEncoder,
+                   eventDecoder: eventDecoder,
+                   eventMiddlewares: eventMiddlewares,
+                   reconnectionStrategy: reconnectionStrategy,
                    environment: environment)
     }
     

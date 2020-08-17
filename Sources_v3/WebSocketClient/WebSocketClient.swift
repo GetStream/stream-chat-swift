@@ -102,13 +102,15 @@ class WebSocketClient {
     
     @Atomic private var engineNeedsToBeRecreated = false
     
-    init(connectEndpoint: Endpoint<EmptyResponse>,
-         sessionConfiguration: URLSessionConfiguration,
-         requestEncoder: RequestEncoder,
-         eventDecoder: AnyEventDecoder,
-         eventMiddlewares: [EventMiddleware],
-         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
-         environment: Environment = .init()) {
+    init(
+        connectEndpoint: Endpoint<EmptyResponse>,
+        sessionConfiguration: URLSessionConfiguration,
+        requestEncoder: RequestEncoder,
+        eventDecoder: AnyEventDecoder,
+        eventMiddlewares: [EventMiddleware],
+        reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
+        environment: Environment = .init()
+    ) {
         self.environment = environment
         self.connectEndpoint = connectEndpoint
         self.requestEncoder = requestEncoder
@@ -160,11 +162,15 @@ class WebSocketClient {
     }
     
     private func startListeningForAppStateUpdates() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidEnterBackground),
-                                               name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleAppDidEnterBackground),
+                                               name: UIApplication.didEnterBackgroundNotification,
+                                               object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidBecomeActive),
-                                               name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleAppDidBecomeActive),
+                                               name: UIApplication.didBecomeActiveNotification,
+                                               object: nil)
     }
     
     @objc

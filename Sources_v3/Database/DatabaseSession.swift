@@ -27,27 +27,30 @@ protocol CurrentUserDatabaseSession {
 }
 
 protocol DatabaseSession: UserDatabaseSession, CurrentUserDatabaseSession {
-    // MARK: -  Member
+    // MARK: - Member
     
     @discardableResult
     func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId) throws -> MemberDTO
     
     func loadMember<ExtraData: UserExtraData>(id: UserId, channelId: ChannelId) -> MemberModel<ExtraData>?
     
-    // MARK: -  Channel
+    // MARK: - Channel
     
     @discardableResult
     func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>, query: ChannelListQuery?) throws -> ChannelDTO
     
     @discardableResult
-    func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelDetailPayload<ExtraData>,
-                                                query: ChannelListQuery?) throws -> ChannelDTO
+    func saveChannel<ExtraData: ExtraDataTypes>(
+        payload: ChannelDetailPayload<ExtraData>,
+        query: ChannelListQuery?
+    ) throws -> ChannelDTO
     
     func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>?
     
     // MARK: - Message
     
-    @discardableResult func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload<ExtraData>, for cid: ChannelId) throws
+    @discardableResult
+    func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload<ExtraData>, for cid: ChannelId) throws
         -> MessageDTO
 }
 
@@ -57,7 +60,7 @@ extension DatabaseSession {
         try saveChannel(payload: payload, query: nil)
     }
     
-    // MARK: -  Event
+    // MARK: - Event
     
     func saveEvent<ExtraData: ExtraDataTypes>(payload: EventPayload<ExtraData>) throws {
         // Save a user data.

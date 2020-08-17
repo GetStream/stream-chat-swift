@@ -21,9 +21,11 @@ class APIClient {
     ///   - sessionConfiguration: The session configuration `APIClient` uses to create its `URLSession`.
     ///   - requestEncoder: `APIClient` uses this object to encode `Endpoint` objects into `URLRequest`s.
     ///   - requestDecoder: `APIClient` uses this object to decode the results of network requests.
-    init(sessionConfiguration: URLSessionConfiguration,
-         requestEncoder: RequestEncoder,
-         requestDecoder: RequestDecoder) {
+    init(
+        sessionConfiguration: URLSessionConfiguration,
+        requestEncoder: RequestEncoder,
+        requestDecoder: RequestDecoder
+    ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
@@ -47,7 +49,8 @@ class APIClient {
             
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
-                    let decodedResponse: Response = try decoder.decodeRequestResponse(data: data, response: response,
+                    let decodedResponse: Response = try decoder.decodeRequestResponse(data: data,
+                                                                                      response: response,
                                                                                       error: error)
                     completion(.success(decodedResponse))
                 } catch {
