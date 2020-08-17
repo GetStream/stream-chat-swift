@@ -26,27 +26,7 @@ class RequestRecorderURLProtocol: URLProtocol {
         configuration.httpAdditionalHeaders = existingHeaders
     }
     
-    private static var latestRequestExpectation: XCTestExpectation?
-    private static var latestRequest: URLRequest?
-    
-    /// Returns the latest network request this URLProtocol recorded.
-    ///
-    /// If no request has been made since the last time this function was invoked, it synchronously
-    /// waits for the next request to be made.
-    ///
-    /// - Parameter timeout: Specifies the time the function waits for a new request to be made.
-    static func waitForRequest(timeout: TimeInterval) -> URLRequest? {
-        defer {
-            // Delete the used request
-            latestRequest = nil
-        }
-        
-        guard latestRequest == nil else { return latestRequest }
-        
-        latestRequestExpectation = .init(description: "Wait for incoming request.")
-        _ = XCTWaiter.wait(for: [latestRequestExpectation!], timeout: timeout)
-        return latestRequest
-    }
+    private(set) static var recordedRequests: [URLRequest] = []
     
     /// If set, records only requests with `testSessionHeaderKey` header value set to this value. If `nil`,
     /// no requests are recorded.
@@ -56,8 +36,7 @@ class RequestRecorderURLProtocol: URLProtocol {
     /// work with static variables.
     static func reset() {
         currentSessionId = nil
-        latestRequest = nil
-        latestRequestExpectation = nil
+        recordedRequests.removeAll()
     }
     
     override class func canInit(with request: URLRequest) -> Bool {
@@ -75,8 +54,7 @@ class RequestRecorderURLProtocol: URLProtocol {
     }
     
     private static func record(request: URLRequest) {
-        latestRequest = request
-        latestRequestExpectation?.fulfill()
+        recordedRequests.append(request)
     }
     
     // MARK: Instance methods

@@ -9,10 +9,10 @@ import XCTest
 @testable import StreamChatClient
 
 
-/// Synchronously waits for a network request to be made and asserts its properties.
+/// Synchronously waits for a network request that matches its properties with the given parameters.
 ///
-/// The function always uses the latest request `RequestRecorderURLProtocol` records. If no request has
-/// been made within the `timeout` period, this assertion fails with the time-out error.
+/// The function periodically checks the `RequestRecorderURLProtocol.recordedRequests` and If no request matches the
+/// given parameters within the `timeout` period, this assertion fails with the time-out error.
 ///
 /// The values specified in the `headers`, `queryParameters` and `body` represents the mandatory subset of
 /// the values the request must have. A request is valid even when it contains additional parameters than
@@ -24,7 +24,7 @@ import XCTest
 ///   - headers: The headers required for the request.
 ///   - queryParameters: The query parameters required for the request.
 ///   - body: The expected body of the request.
-///   - timeout: The maximum time this function waits for a request to be made.
+///   - timeout: The maximum time this function waits for a request to match the given parameters.
 ///
 func AssertNetworkRequest(method: Endpoint.Method,
                           path: String,
@@ -35,86 +35,59 @@ func AssertNetworkRequest(method: Endpoint.Method,
                           file: StaticString = #file,
                           line: UInt = #line) {
     
-    guard let request = RequestRecorderURLProtocol.waitForRequest(timeout: timeout) else {
-        XCTFail("Waiting for request timed out. No request was made.", file: file, line: line)
-        return
-    }
+    AssertAsync.willBeTrue(RequestRecorderURLProtocol.recordedRequests.contains {
+        $0.matches(method, path, headers, queryParameters, body)
+    }, message: "AssertNetworkRequest failed to find a matching request")
     
-    var errorMessage = ""
-    defer {
-        if !errorMessage.isEmpty {
-            XCTFail("AssertNetworkRequest failed:" + errorMessage, file: file, line: line)
+}
+
+private extension URLRequest {
+    /// Returns `true` if the given parameters match the current `URLRequest`. Otherwise returns `false`.
+    func matches(_ method: Endpoint.Method,
+                 _ path: String,
+                 _ headers: [String: String]?,
+                 _ queryParameters: [String: String]?,
+                 _ body: [String: Any]?) -> Bool {
+        
+        // check method
+        guard httpMethod == method.rawValue else { return false }
+        
+        // check path
+        guard let url = self.url,
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            components.path == path else { return false }
+        
+        // check headers
+        let requestHeaders = allHTTPHeaderFields ?? [:]
+        let expectedHeaders = headers ?? [:]
+        guard expectedHeaders.allSatisfy({ key, value in
+            requestHeaders[key] == value
+        }) else { return false }
+        
+        // Check query parameters
+        let items = components.queryItems ?? []
+        let expectedQueryParameters = queryParameters ?? [:]
+        guard expectedQueryParameters.allSatisfy({ key, value in
+            items[key] == value
+        }) else { return false }
+        
+        // Check the request body
+        let requestBodyData = httpBodyStream.map({ Data(reading: $0) }) ?? httpBody
+        guard let bodyData = requestBodyData else {
+            // In case the current request body is not present then
+            // the expected body should also not be present
+            return body == nil
         }
-    }
-    
-    // Check method
-    if method.rawValue != request.httpMethod {
-        errorMessage += "\n  - Incorrect method: expected \"\(method.rawValue)\" got \"\(request.httpMethod ?? "_")\""
-    }
-    
-    guard let url = request.url, let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-        errorMessage += "\n  - Missing URL"
-        return
-    }
-    
-    // Check path
-    if components.path != path {
-        errorMessage += "\n  - Incorrect path: expected \"\(path)\" got \"\(components.path)\""
-    }
-    
-    // Check headers
-    let requestHeaders = request.allHTTPHeaderFields ?? [:]
-    headers?.forEach { (key, value) in
-        if let requestHeaderValue = requestHeaders[key] {
-            if value != requestHeaderValue {
-                errorMessage += "\n  - Incorrect header value for \"\(key)\": expected \"\(value)\" got \"\(requestHeaderValue)\""
-            }
+        guard let assertingBody = body,
+            let assertingBodyData =
+                try? JSONSerialization.data(withJSONObject: assertingBody) else {
             
-        } else {
-            errorMessage += "\n  - Missing header value for \"\(key)\""
-        }
-    }
-    
-    // Check query parameters
-    let items = components.queryItems ?? []
-    queryParameters?.forEach { (key, value) in
-        if let requestValue = items[key] {
-            if value != requestValue {
-                errorMessage += "\n  - Incorrect query value for \"\(key)\": expected \"\(value)\" got \"\(requestValue)\""
-            }
-            
-        } else {
-            errorMessage += "\n  - Missing query value for \"\(key)\""
-        }
-    }
-    
-    // Check the request body
-    var requestBodyData: Data?
-    
-    if let data = request.httpBody {
-        requestBodyData = data
-    }
-    
-    if let stream = request.httpBodyStream {
-        requestBodyData = Data(reading: stream)
-    }
-    
-    guard let bodyData = requestBodyData else {
-        if body != nil {
-            errorMessage += "\n  - Missing request body"
-        }
-        return
-    }
-    
-    guard let assertingBody = body, let assertingBodyData = try? JSONSerialization.data(withJSONObject: assertingBody) else {
-        if body != nil {
-            errorMessage += "\n  - Asserting body is not a valid JSON object"
+            // In case the serialized JSON is nil then the expected body should also be nil
+            return body == nil
         }
         
-        return
+        return isJSONEqual(assertingBodyData, bodyData)
     }
-    
-    AssertJSONEqual(assertingBodyData, bodyData)
 }
 
 private extension Array where Element == URLQueryItem {
