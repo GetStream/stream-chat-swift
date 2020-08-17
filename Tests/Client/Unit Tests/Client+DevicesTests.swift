@@ -16,7 +16,7 @@ class Client_DevicesTests: ClientTestCase {
         client.devices { _ in }
 
         // Assert
-        AssertNetworkRequest(
+        Assert.networkRequest(
             method: .get,
             path: "/devices",
             headers: ["Content-Type": "application/json"],
@@ -66,7 +66,7 @@ class Client_DevicesTests: ClientTestCase {
         client.addDevice(deviceId: testDeviceId)
 
         // Assert
-        AssertNetworkRequest(
+        Assert.networkRequest(
             method: .post,
             path: "/devices",
             headers: ["Content-Type": "application/json", "Content-Encoding": "gzip"],
@@ -87,7 +87,7 @@ class Client_DevicesTests: ClientTestCase {
         client.addDevice(deviceToken: deviceToken)
 
         // Assert
-        AssertNetworkRequest(
+        Assert.networkRequest(
             method: .post,
             path: "/devices",
             headers: ["Content-Type": "application/json", "Content-Encoding": "gzip"],
@@ -149,7 +149,7 @@ class Client_DevicesTests: ClientTestCase {
         client.removeDevice(deviceId: testDeviceId)
 
         // Assert
-        AssertNetworkRequest(
+        Assert.networkRequest(
             method: .delete,
             path: "/devices",
             headers: ["Content-Type": "application/json"],
