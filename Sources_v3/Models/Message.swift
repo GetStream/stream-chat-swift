@@ -31,6 +31,21 @@ public enum MessageType: String, Codable {
     case deleted
 }
 
+/// A possible additional local state of the message. Applies only for the messages of the current user.
+public enum LocalMessageState: String {
+    /// The message is waiting to be sent.
+    case pendingSend
+    /// The message is currently being sent to the servers.
+    case sending
+    /// Sending of the message failed after multiple of tries. The system is not trying to send this message anymore.
+    case sendingFailed
+
+    /// The message is waiting to be deleted.
+    case deleting
+    /// Deleting of the message failed after multiple of tries. The system is not trying to delete this message anymore.
+    case deletingFailed
+}
+
 /// A convenient type alias for `MessageModel` with `DefaultExtraData`.
 public typealias Message = MessageModel<DefaultDataTypes>
 
@@ -55,6 +70,12 @@ public struct MessageModel<ExtraData: ExtraDataTypes> {
     
     public let author: UserModel<ExtraData.User>
     public let mentionedUsers: Set<UserModel<ExtraData.User>>
+    
+    /// A possible additional local state of the message. Applies only for the messages of the current user.
+    ///
+    /// Most of the time this value is `nil`. This value is always `nil` for messages not from the current user. A typical
+    /// use of this value is to check if a message is pending send/delete, and update the UI accordingly.
+    public let localState: LocalMessageState?
 }
 
 extension MessageModel: Hashable {
