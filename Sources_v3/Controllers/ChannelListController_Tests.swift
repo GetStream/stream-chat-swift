@@ -55,34 +55,34 @@ class ChannelListController_Tests: StressTestCase {
     func test_startUpdating_changesControllerState() {
         // Check if controller is inactive initially.
         assert(controller.state == .inactive)
-
+        
         // Simulate `startUpdating` call
         controller.startUpdating()
-
+        
         // Check if state changed after `startUpdating` call
         XCTAssertEqual(controller.state, .localDataFetched)
-
+        
         // Simulate successfull network call.
         env.channelQueryUpdater?.update_completion?(nil)
-
+        
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
     }
-
+    
     func test_startUpdating_changesControllerStateOnError() {
         // Check if controller is inactive initially.
         assert(controller.state == .inactive)
-
+        
         // Simulate `startUpdating` call
         controller.startUpdating()
-
+        
         // Check if state changed after `startUpdating` call
         XCTAssertEqual(controller.state, .localDataFetched)
-
+        
         // Simulate failed network call.
         let error = TestError()
         env.channelQueryUpdater?.update_completion?(error)
-
+        
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
     }
@@ -157,7 +157,7 @@ class ChannelListController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
-
+    
     // MARK: - Change propagation tests
     
     func test_changesInTheDatabase_arePropagated() throws {
@@ -216,10 +216,10 @@ class ChannelListController_Tests: StressTestCase {
         let delegateQueueId = UUID()
         delegate.expectedQueueId = delegateQueueId
         controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
-
+        
         // Simulate `startUpdating()` call
         controller.startUpdating()
-
+        
         // Simulate DB update
         let cid: ChannelId = .unique
         _ = try await {
@@ -257,11 +257,10 @@ private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQue
 
 // A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
-    var didChangeChannels_changes: [ListChange<Channel>]?
-
+    @Atomic var didChangeChannels_changes: [ListChange<Channel>]?
+    
     func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
-                    didChangeChannels changes: [ListChange<Channel>])
-    {
+                    didChangeChannels changes: [ListChange<Channel>]) {
         didChangeChannels_changes = changes
         validateQueue()
     }
@@ -269,11 +268,10 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
 
 // A concrete `ChannelListControllerDelegateGeneric` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDelegateGeneric {
-    var didChangeChannels_changes: [ListChange<Channel>]?
+    @Atomic var didChangeChannels_changes: [ListChange<Channel>]?
     
     func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
-                    didChangeChannels changes: [ListChange<Channel>])
-    {
+                    didChangeChannels changes: [ListChange<Channel>]) {
         didChangeChannels_changes = changes
         validateQueue()
     }
