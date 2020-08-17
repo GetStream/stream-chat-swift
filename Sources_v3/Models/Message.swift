@@ -15,7 +15,7 @@ public struct MessageModel<ExtraData: ExtraDataTypes> {
     public let updatedAt: Date
     public let deletedAt: Date?
     public let args: String?
-    public let parentId: String?
+    public let parentMessageId: MessageId?
     public let showReplyInChannel: Bool
     public let replyCount: Int
     public let extraData: ExtraData.Message

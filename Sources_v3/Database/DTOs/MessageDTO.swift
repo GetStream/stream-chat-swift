@@ -109,7 +109,7 @@ extension MessageModel {
         updatedAt = dto.updatedAt
         deletedAt = dto.deletedAt
         args = dto.args
-        parentId = dto.parentId
+        parentMessageId = dto.parentId
         showReplyInChannel = dto.showReplyInChannel
         replyCount = Int(dto.replyCount)
         extraData = try! JSONDecoder.default.decode(ExtraData.Message.self, from: dto.extraData)

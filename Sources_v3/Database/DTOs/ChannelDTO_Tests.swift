@@ -98,7 +98,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].extraData, loadedChannel?.latestMessages.first?.extraData)
             Assert.willBeEqual(payload.messages[0].isSilent, loadedChannel?.latestMessages.first?.isSilent)
             Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel?.latestMessages.first?.mentionedUsers.count)
-            Assert.willBeEqual(payload.messages[0].parentId, loadedChannel?.latestMessages.first?.parentId)
+            Assert.willBeEqual(payload.messages[0].parentId, loadedChannel?.latestMessages.first?.parentMessageId)
             Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel?.latestMessages.first?.reactionScores)
             Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel?.latestMessages.first?.replyCount)
             
@@ -310,7 +310,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].extraData, loadedChannel?.latestMessages.first?.extraData)
             Assert.willBeEqual(payload.messages[0].isSilent, loadedChannel?.latestMessages.first?.isSilent)
             Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel?.latestMessages.first?.mentionedUsers.count)
-            Assert.willBeEqual(payload.messages[0].parentId, loadedChannel?.latestMessages.first?.parentId)
+            Assert.willBeEqual(payload.messages[0].parentId, loadedChannel?.latestMessages.first?.parentMessageId)
             Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel?.latestMessages.first?.reactionScores)
             Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel?.latestMessages.first?.replyCount)
             
