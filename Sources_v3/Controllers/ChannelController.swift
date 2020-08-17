@@ -24,7 +24,7 @@ extension Client {
     public func channelController(for channelQuery: ChannelQuery<ExtraData>) -> ChannelControllerGeneric<ExtraData> {
         .init(channelQuery: channelQuery, client: self)
     }
-
+    
     /// Creates a new `ChannelController` that will create new channel.
     ///
     /// - Parameters:
@@ -182,7 +182,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         _messagesObserver.computeValue = { [unowned self] in
             let observer = ListDatabaseObserver(context: self.client.databaseContainer.viewContext,
                                                 fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelQuery.cid),
-                                                itemCreator: MessageModel<ExtraData>.init)
+                                                itemCreator: { $0.asModel() as MessageModel<ExtraData> })
             observer.onChange = { changes in
                 self.delegateCallback {
                     $0?.channelController(self, didUpdateMessages: changes)
@@ -219,7 +219,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
-
+        
         setupEventObservers()
     }
 
@@ -301,7 +301,7 @@ public extension ChannelControllerGeneric {
             }
         }
     }
-
+    
     /// Mutes the channel this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
@@ -316,7 +316,7 @@ public extension ChannelControllerGeneric {
             }
         }
     }
-
+    
     /// Unmutes the channel this controller manages.
     /// - Parameters:
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
@@ -332,7 +332,7 @@ public extension ChannelControllerGeneric {
             }
         }
     }
-
+    
     /// Delete the channel this controller manages.
     /// - Parameters:
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
@@ -348,7 +348,7 @@ public extension ChannelControllerGeneric {
             }
         }
     }
-
+    
     /// Hide the channel this controller manages from queryChannels for the user until a message is added.
     /// - Parameters:
     ///   - clearHistory: Flag to remove channel history (**false** by default)
@@ -365,7 +365,7 @@ public extension ChannelControllerGeneric {
             }
         }
     }
-
+    
     /// Removes hidden status for the channel this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
@@ -568,7 +568,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
         _controllerdidUpdateMessages = controllerdidUpdateMessages
         _controllerDidReceiveMemberEvent = controllerDidReceiveMemberEvent
     }
-
+    
     func controller(_ controller: Controller, didChangeState state: Controller.State) {
         _controllerDidChangeState(controller, state)
     }
@@ -586,7 +586,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
     ) {
         _controllerdidUpdateMessages(controller, changes)
     }
-
+    
     func channelController(
         _ controller: ChannelControllerGeneric<ExtraData>,
         didReceiveMemberEvent event: MemberEvent
