@@ -4,8 +4,9 @@
 # You should have homebrew installed.
 # If you get `zsh: permission denied: ./bootstrap.sh` error, please run `chmod +x bootstrap.sh` first
 
-# Install swiftformat
-brew install swiftformat
+# Install swiftformat 0.45.6
+brew unlink swiftformat
+brew install https://raw.githubusercontent.com/nicklockwood/homebrew-core/0269354fff817670543922c73bb522adca3cc46b/Formula/swiftformat.rb
 
 # Set bash to Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
 set -euo pipefail
