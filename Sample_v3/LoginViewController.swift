@@ -55,12 +55,7 @@ extension LoginViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath {
         case .simpleChatIndexPath:
-            logIn(
-                apiKey: apiKey,
-                userId: userId,
-                userName: userName,
-                token: token
-            ) {
+            logIn(apiKey: apiKey, userId: userId, userName: userName, token: token) {
                 DispatchQueue.main.async {
                     let storyboard = UIStoryboard(name: "SimpleChat",   bundle: nil)
                     let initial = storyboard.instantiateInitialViewController()
@@ -95,14 +90,14 @@ extension LoginViewController {
         return userNameTextField.text ?? ""
     }
     
-    var token: Token {
+    var token: Token? {
         switch tokenTypeSegmentedControl.selectedSegmentIndex {
         case 0:
             return jwtTextField.text ?? ""
         case 1:
             return .development
         case 2:
-            return .development
+            return nil
         default:
             return jwtTextField.text ?? ""
         }

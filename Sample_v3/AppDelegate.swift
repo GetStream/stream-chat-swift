@@ -15,13 +15,19 @@ var chatClient: ChatClient = {
     return ChatClient(config: config)
 }()
 
-func logIn(apiKey: String, userId: String, userName: String, token: Token, completion: @escaping () -> Void) {
+func logIn(apiKey: String, userId: String, userName: String, token: Token?, completion: @escaping () -> Void) {
     var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
     config.isLocalStorageEnabled = false
     chatClient = ChatClient(config: config)
     
-    chatClient.setUser(userId: userId, userExtraData: .init(name: userName, imageURL: nil), token: token) { _ in
-        completion()
+    let extraData = NameAndImageExtraData(name: userName, imageURL: nil)
+    
+    if let token = token {
+        chatClient.setUser(userId: userId, userExtraData: extraData, token: token) { _ in
+            completion()
+        }
+    } else {
+        chatClient.setGuestUser(userId: userId, extraData: extraData)
     }
 }
 
