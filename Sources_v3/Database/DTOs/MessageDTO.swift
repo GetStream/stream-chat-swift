@@ -18,7 +18,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var updatedAt: Date
     @NSManaged var deletedAt: Date?
     @NSManaged var args: String?
-    @NSManaged var parentId: String?
+    @NSManaged var parentMessageId: MessageId?
     @NSManaged var showReplyInChannel: Bool
     @NSManaged var replyCount: Int32
     @NSManaged var extraData: Data
@@ -63,7 +63,7 @@ class MessageDTO: NSManagedObject {
     }
 }
 
-extension NSManagedObjectContext {
+extension NSManagedObjectContext: MessageDatabaseSession {
     func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload<ExtraData>, for cid: ChannelId) throws -> MessageDTO {
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
         
@@ -74,7 +74,7 @@ extension NSManagedObjectContext {
         dto.type = payload.type.rawValue
         dto.command = payload.command
         dto.args = payload.args
-        dto.parentId = payload.parentId
+        dto.parentMessageId = payload.parentId
         dto.showReplyInChannel = payload.showReplyInChannel
         dto.replyCount = Int32(payload.replyCount)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
@@ -93,14 +93,36 @@ extension NSManagedObjectContext {
         return dto
     }
     
-    func loadMessage<ExtraData: ExtraDataTypes>(id: MessageId) -> MessageModel<ExtraData>? {
-        guard let dto = MessageDTO.load(id: id, context: self) else { return nil }
-        return .init(fromDTO: dto)
+    func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }
+}
+
+extension MessageDTO {
+    /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
+    func asModel<ExtraData: ExtraDataTypes>() -> MessageModel<ExtraData> { .init(fromDTO: self) }
+    
+    /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
+    func asRequestBody<ExtraData: ExtraDataTypes>() -> MessageRequestBody<ExtraData> {
+        var extraData: ExtraData.Message?
+        do {
+            extraData = try JSONDecoder.default.decode(ExtraData.Message.self, from: self.extraData)
+        } catch {
+            log.assert(false, "Failed decoding saved extra data with error: \(error). This should never happen because"
+                + "the extra data must be a valid JSON to be saved.")
+        }
+        
+        return .init(id: id,
+                     user: user.asRequestBody(),
+                     text: text,
+                     command: command,
+                     args: args,
+                     parentId: parentMessageId,
+                     showReplyInChannel: showReplyInChannel,
+                     extraData: extraData ?? .defaultValue)
     }
 }
 
 extension MessageModel {
-    init(fromDTO dto: MessageDTO) {
+    fileprivate init(fromDTO dto: MessageDTO) {
         id = dto.id
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
@@ -108,8 +130,8 @@ extension MessageModel {
         createdAt = dto.createdAt
         updatedAt = dto.updatedAt
         deletedAt = dto.deletedAt
-        args = dto.args
-        parentMessageId = dto.parentId
+        arguments = dto.args
+        parentMessageId = dto.parentMessageId
         showReplyInChannel = dto.showReplyInChannel
         replyCount = Int(dto.replyCount)
         extraData = try! JSONDecoder.default.decode(ExtraData.Message.self, from: dto.extraData)
