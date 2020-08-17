@@ -27,7 +27,9 @@ func logIn(apiKey: String, userId: String, userName: String, token: Token?, comp
             completion()
         }
     } else {
-        chatClient.setGuestUser(userId: userId, extraData: extraData)
+        chatClient.setGuestUser(userId: userId, extraData: extraData) { _ in
+            completion()
+        }
     }
 }
 
