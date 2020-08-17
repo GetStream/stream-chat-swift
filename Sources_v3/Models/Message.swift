@@ -58,6 +58,9 @@ public struct MessageModel<ExtraData: ExtraDataTypes> {
     public let type: MessageType
     public let command: String?
     public let createdAt: Date
+    
+    /// Date when the message was created locally and scheduled to be send. Applies only for the messages of the current user.
+    public let locallyCreatedAt: Date?
     public let updatedAt: Date
     public let deletedAt: Date?
     public let arguments: String?

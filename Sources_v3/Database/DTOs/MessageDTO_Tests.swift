@@ -346,13 +346,15 @@ class MessageDTO_Tests: XCTestCase {
         let loadedMessage: MessageModel<DefaultDataTypes> = try unwrapAsync(database.viewContext.message(id: newMessageId)?
             .asModel())
         
-        AssertAsync {
-            Assert.willBeEqual(loadedMessage?.text, newMessageText)
-            Assert.willBeEqual(loadedMessage?.command, newMessageCommand)
-            Assert.willBeEqual(loadedMessage?.arguments, newMessageArguments)
-            Assert.willBeEqual(loadedMessage?.parentMessageId, newMessageParentMessageId)
-            Assert.willBeEqual(loadedMessage?.author.id, currentUserId)
-        }
+        XCTAssertEqual(loadedMessage.text, newMessageText)
+        XCTAssertEqual(loadedMessage.command, newMessageCommand)
+        XCTAssertEqual(loadedMessage.arguments, newMessageArguments)
+        XCTAssertEqual(loadedMessage.parentMessageId, newMessageParentMessageId)
+        XCTAssertEqual(loadedMessage.author.id, currentUserId)
+        // Assert the created date of the message is roughly "now"
+        XCTAssertLessThan(loadedMessage.createdAt.timeIntervalSince(Date()), 0.1)
+        XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)
+        XCTAssertEqual(loadedMessage.createdAt, loadedMessage.updatedAt)
     }
     
     func test_creatingNewMessage_withoutExistingCurrentUser_throwsError() throws {
