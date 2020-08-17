@@ -4,76 +4,57 @@
 
 import Foundation
 
-/// A message type, e.g. regular, ephemeral, reply.
-public enum MessageType: String, Codable {
-    /// A message type.
-    case regular, ephemeral, error, reply, system, deleted
+/// Coding keys for message-related JSON payloads
+enum MessagePayloadsCodingKeys: String, CodingKey {
+    case id
+    case type
+    case user
+    case createdAt = "created_at"
+    case updatedAt = "updated_at"
+    case deletedAt = "deleted_at"
+    case text
+    case command
+    case args
+    //        case attachments
+    case parentId = "parent_id"
+    case showReplyInChannel = "show_in_channel"
+    case mentionedUsers = "mentioned_users"
+    case replyCount = "reply_count"
+    //        case latestReactions = "latest_reactions"
+    //        case ownReactions = "own_reactions"
+    case reactionScores = "reaction_scores"
+    case isSilent = "silent"
+    //        case i18n
 }
 
+/// An object describing the incoming message JSON payload.
 struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case id
-        case type
-        case user
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-        case deletedAt = "deleted_at"
-        case text
-        case command
-        case args
-//        case attachments
-        case parentId = "parent_id"
-        case showReplyInChannel = "show_in_channel"
-        case mentionedUsers = "mentioned_users"
-        case replyCount = "reply_count"
-//        case latestReactions = "latest_reactions"
-//        case ownReactions = "own_reactions"
-        case reactionScores = "reaction_scores"
-        case isSilent = "silent"
-//        case i18n
-    }
+    let id: String
+    let type: MessageType
+    let user: UserPayload<ExtraData.User>
+    let createdAt: Date
+    let updatedAt: Date
+    let deletedAt: Date?
+    let text: String
+    let command: String?
+    let args: String?
+    let parentId: String?
+    let showReplyInChannel: Bool
+    let mentionedUsers: [UserPayload<ExtraData.User>]
+    let replyCount: Int
+    let extraData: ExtraData.Message
     
-    /// A message id.
-    public var id: String
-    /// A message type (see `MessageType`).
-    public var type: MessageType
-    /// A user (see `User`).
-    public var user: UserPayload<ExtraData.User>
-    /// A created date.
-    public var createdAt: Date
-    /// A updated date.
-    public var updatedAt: Date
-    /// A deleted date.
-    public var deletedAt: Date?
-    /// A text.
-    public var text: String
-    /// A used command name.
-    public var command: String?
-    /// A used command args.
-    public var args: String?
-    /// Attachments (see `Attachment`).
-//    public var attachments: [Attachment]
-    /// A parent message id.
-    public var parentId: String?
-    /// Check if this reply message needs to show in the channel.
-    public var showReplyInChannel: Bool
-    /// Mentioned users (see `User`).
-    public internal(set) var mentionedUsers: [UserPayload<ExtraData.User>]
-    /// Reply count.
-    public var replyCount: Int
-    /// An extra data for the message.
-    public var extraData: ExtraData.Message
-    /// The latest reactions (see `Reaction`).
-//    public private(set) var latestReactions: [Reaction]
-    /// The current user own reactions (see `Reaction`).
-//    public private(set) var ownReactions: [Reaction]
-    /// A reactions count (see `ReactionCounts`).
-    public private(set) var reactionScores: [String: Int]
-    /// Flag for silent messages. Silent messages won't increase the unread count. See https://getstream.io/chat/docs/silent_messages/?language=swift
-    public var isSilent: Bool
+    // TODO: Reactions
+    // TODO: Attachments
+    // TODO: Translations
     
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+    let latestReactions: [ReactionPayload] = []
+    let ownReactions: [ReactionPayload] = []
+    let reactionScores: [String: Int]
+    let isSilent: Bool
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         type = try container.decode(MessageType.self, forKey: .type)
         user = try container.decode(UserPayload<ExtraData.User>.self, forKey: .user)
@@ -84,15 +65,12 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         isSilent = try container.decodeIfPresent(Bool.self, forKey: .isSilent) ?? false
         command = try container.decodeIfPresent(String.self, forKey: .command)
         args = try container.decodeIfPresent(String.self, forKey: .args)
-//        attachments = try container.decode([Attachment].self, forKey: .attachments)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
         mentionedUsers = try container.decode([UserPayload<ExtraData.User>].self, forKey: .mentionedUsers)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
-//        latestReactions = (try? container.decode([Reaction].self, forKey: .latestReactions)) ?? []
-//        ownReactions = (try? container.decode([Reaction].self, forKey: .ownReactions)) ?? []
+        
         reactionScores = try container.decodeIfPresent([String: Int].self, forKey: .reactionScores) ?? [:]
-//        i18n = try container.decodeIfPresent(MessageTranslations.self, forKey: .i18n)
         extraData = try ExtraData.Message(from: decoder)
     }
     
@@ -132,6 +110,52 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.isSilent = isSilent
     }
 }
+
+/// An object describing the outgoing message JSON payload.
+struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
+    let id: String
+    let user: UserPayload<ExtraData.User>
+    let text: String
+    let command: String?
+    let args: String?
+    let parentId: String?
+    let showReplyInChannel: Bool
+    let extraData: ExtraData.Message
+    
+    init(
+        id: String,
+        user: UserPayload<ExtraData.User>,
+        text: String,
+        command: String? = nil,
+        args: String? = nil,
+        parentId: String? = nil,
+        showReplyInChannel: Bool = false,
+        extraData: ExtraData.Message
+    ) {
+        self.id = id
+        self.user = user
+        self.text = text
+        self.command = command
+        self.args = args
+        self.parentId = parentId
+        self.showReplyInChannel = showReplyInChannel
+        self.extraData = extraData
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: MessagePayloadsCodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(text, forKey: .text)
+        try container.encodeIfPresent(command, forKey: .command)
+        try container.encodeIfPresent(args, forKey: .args)
+        try container.encodeIfPresent(parentId, forKey: .parentId)
+        try container.encodeIfPresent(showReplyInChannel, forKey: .showReplyInChannel)
+        
+        try extraData.encode(to: encoder)
+    }
+}
+
+// TODO: Command???
 
 /// A command in a message, e.g. /giphy.
 public struct Command: Codable, Hashable {
