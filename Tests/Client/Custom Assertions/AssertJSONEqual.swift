@@ -56,3 +56,41 @@ func AssertJSONEqual(_ expression1: @autoclosure () throws -> Data,
         XCTFail("Error: \(error)", file: file, line: line)
     }
 }
+
+/// Compares the given 2 JSON Serializations are equal, by creating JSON objects from Data and comparing dictionaries.
+/// Recursively calls itself for nested dictionaries.
+/// - Parameters:
+///   - expression1: JSON object 1, as Data. From string, you can do `Data(jsonString.utf8)`
+///   - expression2: JSON object 2, as Data.
+func isJSONEqual(_ expression1: @autoclosure () throws -> Data,
+                 _ expression2: @autoclosure () throws -> Data) -> Bool {
+    do {
+        guard let json1 = try JSONSerialization.jsonObject(with: expression1()) as? [String: Any] else {
+            return false
+        }
+        guard let json2 = try JSONSerialization.jsonObject(with: expression2()) as? [String: Any] else {
+            return false
+        }
+        guard json1.keys == json2.keys else {
+            return false
+        }
+        return try json1.allSatisfy { (key, value) in
+            guard let value2 = json2[key] else {
+                return false
+            }
+            if let nestedDict1 = value as? [String: Any] {
+                if let nestedDict2 = value2 as? [String: Any] {
+                    return try isJSONEqual(JSONSerialization.data(withJSONObject: nestedDict1),
+                                           JSONSerialization.data(withJSONObject: nestedDict2))
+                } else {
+                    return false
+                }
+            } else if String(describing: value) != String(describing: value2) {
+                return false
+            }
+            return true
+        }
+    } catch {
+        return false
+    }
+}
