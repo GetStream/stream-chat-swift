@@ -171,7 +171,8 @@ extension ChannelPresenter {
                      showReplyInChannel: Bool = false,
                      parseMentionedUsers: Bool = true,
                      _ completion: @escaping Client.Completion<MessageResponse>) {
-        rx.send(text: text, showReplyInChannel: showReplyInChannel, parseMentionedUsers: parseMentionedUsers).bindOnce(to: completion)
+        rx.send(text: text, showReplyInChannel: showReplyInChannel, parseMentionedUsers: parseMentionedUsers)
+            .bindOnce(to: completion)
     }
     
     func createMessage(with text: String, showReplyInChannel: Bool) -> Message {

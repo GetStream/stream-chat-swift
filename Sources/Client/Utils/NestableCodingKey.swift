@@ -59,9 +59,10 @@ public struct NestedKey<T: Decodable>: Decodable {
         
         // key leaf
         guard let lastKey = nextKeys.last else {
-            throw DecodingError.valueNotFound(NestableCodingKey.self,
-                                              DecodingError.Context(codingPath: decoder.codingPath,
-                                                                    debugDescription: "NestableCodingKey must be composed of a path"))
+            let error = DecodingError.Context(codingPath: decoder.codingPath,
+                                              debugDescription: "NestableCodingKey must be composed of a path")
+            
+            throw DecodingError.valueNotFound(NestableCodingKey.self, error)
         }
         
         do {
