@@ -48,10 +48,12 @@ func AssertResultFailure<T: Equatable, E: Error>(
 /// - Parameters:
 ///   - result: The Result object under tests.
 ///   - referenceError: The reference failure value.
-func AssertResultFailure<T, E: Error & Equatable>(_ result: Result<T, E>,
-                                                  _ referenceError: E,
-                                                  file: StaticString = #file,
-                                                  line: UInt = #line) {
+func AssertResultFailure<T, E: Error & Equatable>(
+    _ result: Result<T, E>,
+    _ referenceError: E,
+    file: StaticString = #file,
+    line: UInt = #line
+) {
     if case let .failure(error) = result {
         XCTAssertEqual(error, referenceError, file: file, line: line)
     } else {

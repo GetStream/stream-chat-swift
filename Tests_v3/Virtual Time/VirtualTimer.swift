@@ -14,9 +14,11 @@ struct VirtualTimeTimer: StreamChatClient.Timer {
                                 callback: { _ in onFire() })
     }
     
-    static func scheduleRepeating(timeInterval: TimeInterval,
-                                  queue: DispatchQueue,
-                                  onFire: @escaping () -> Void) -> RepeatingTimerControl {
+    static func scheduleRepeating(
+        timeInterval: TimeInterval,
+        queue: DispatchQueue,
+        onFire: @escaping () -> Void
+    ) -> RepeatingTimerControl {
         Self.time.scheduleTimer(interval: timeInterval,
                                 repeating: true,
                                 callback: { _ in onFire() })

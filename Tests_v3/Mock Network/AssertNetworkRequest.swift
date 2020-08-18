@@ -26,14 +26,16 @@ private var assertNetworkRequestTimeout: TimeInterval = TestRunnerEnvironment.is
 ///   - body: The expected body of the request.
 ///   - timeout: The maximum time this function waits for a request to be made.
 ///
-func AssertNetworkRequest(method: EndpointMethod,
-                          path: String,
-                          headers: [String: String]?,
-                          queryParameters: [String: String]?,
-                          body: [String: Any]?,
-                          timeout: TimeInterval = assertNetworkRequestTimeout,
-                          file: StaticString = #file,
-                          line: UInt = #line) {
+func AssertNetworkRequest(
+    method: EndpointMethod,
+    path: String,
+    headers: [String: String]?,
+    queryParameters: [String: String]?,
+    body: [String: Any]?,
+    timeout: TimeInterval = assertNetworkRequestTimeout,
+    file: StaticString = #file,
+    line: UInt = #line
+) {
     guard let request = RequestRecorderURLProtocol.waitForRequest(timeout: timeout) else {
         XCTFail("Waiting for request timed out. No request was made.", file: file, line: line)
         return
