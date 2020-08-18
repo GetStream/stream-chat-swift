@@ -37,57 +37,121 @@ extension Assert {
                                line: UInt = #line) -> Assertion {
         
         return Assert.willBeTrue(RequestRecorderURLProtocol.recordedRequests.contains {
-            $0.matches(method, path, headers, queryParameters, body)
-        }, message: "Failed to find a matching request in the recorded request array")
+            $0.matches(method, path, headers, queryParameters, body).isSuccess
+        }, message: "Failed to find a matching request in the recorded request array",
+           file: file,
+           line: line)
+    }
+    
+    private func findMatch(in requests: [URLRequest],
+                           method: Endpoint.Method,
+                           path: String,
+                           headers: [String: String]?,
+                           queryParameters: [String: String]?,
+                           body: [String: Any]?) -> URLRequest.MatchResult {
+        return .success
     }
 }
 
 private extension URLRequest {
+    enum MatchResult {
+        case success
+        case failure(String)
+        
+        static func from(_ message: String) -> MatchResult {
+            message.isEmpty ? .success : .failure(message)
+        }
+        
+        var isSuccess: Bool {
+            switch self {
+            case .success: return true
+            default: return false
+            }
+        }
+    }
+    
     /// Returns `true` if the given parameters match the current `URLRequest`. Otherwise returns `false`.
     func matches(_ method: Endpoint.Method,
                  _ path: String,
                  _ headers: [String: String]?,
                  _ queryParameters: [String: String]?,
-                 _ body: [String: Any]?) -> Bool {
+                 _ body: [String: Any]?) -> MatchResult {
+        
+        var errorMessage = ""
         
         // check method
-        guard httpMethod == method.rawValue else { return false }
+        if httpMethod != method.rawValue {
+            errorMessage += "\n  - Incorrect method: expected \"\(method.rawValue)\""
+            errorMessage +=  " got \"\(httpMethod ?? "_")\""
+        }
         
         // check path
-        guard let url = self.url,
-            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-            components.path == path else { return false }
+        guard let url = self.url, let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            errorMessage += "\n  - Missing URL"
+            return .failure(errorMessage)
+        }
         
-        // check headers
+        // Check path
+        if components.path != path {
+            errorMessage += "\n  - Incorrect path: expected \"\(path)\" got \"\(components.path)\""
+        }
+        
+        // Check headers
         let requestHeaders = allHTTPHeaderFields ?? [:]
-        let expectedHeaders = headers ?? [:]
-        guard expectedHeaders.allSatisfy({ key, value in
-            requestHeaders[key] == value
-        }) else { return false }
+        headers?.forEach { (key, value) in
+            if let requestHeaderValue = requestHeaders[key] {
+                if value != requestHeaderValue {
+                    errorMessage += "\n  - Incorrect header value for \"\(key)\": expected \"\(value)\" got \"\(requestHeaderValue)\""
+                }
+                
+            } else {
+                errorMessage += "\n  - Missing header value for \"\(key)\""
+            }
+        }
         
         // Check query parameters
         let items = components.queryItems ?? []
-        let expectedQueryParameters = queryParameters ?? [:]
-        guard expectedQueryParameters.allSatisfy({ key, value in
-            items[key] == value
-        }) else { return false }
+        queryParameters?.forEach { (key, value) in
+            if let requestValue = items[key] {
+                if value != requestValue {
+                    errorMessage += "\n  - Incorrect query value for \"\(key)\": expected \"\(value)\" got \"\(requestValue)\""
+                }
+                
+            } else {
+                errorMessage += "\n  - Missing query value for \"\(key)\""
+            }
+        }
         
         // Check the request body
-        let requestBodyData = httpBodyStream.map({ Data(reading: $0) }) ?? httpBody
-        guard let bodyData = requestBodyData else {
-            // In case the current request body is not present then
-            // the expected body should also not be present
-            return body == nil
-        }
-        guard let assertingBody = body,
-            let assertingBodyData =
-                try? JSONSerialization.data(withJSONObject: assertingBody) else {
-            
-            // In case the serialized JSON is nil then the expected body should also be nil
-            return body == nil
+        var requestBodyData: Data?
+        
+        if let data = httpBody {
+            requestBodyData = data
         }
         
-        return isJSONEqual(assertingBodyData, bodyData)
+        if let stream = httpBodyStream {
+            requestBodyData = Data(reading: stream)
+        }
+        
+        guard let bodyData = requestBodyData else {
+            if body != nil {
+                errorMessage += "\n  - Missing request body"
+            }
+            return MatchResult.from(errorMessage)
+        }
+        
+        guard let assertingBody = body,
+            let assertingBodyData = try? JSONSerialization.data(withJSONObject: assertingBody) else {
+                if body != nil {
+                    errorMessage += "\n  - Asserting body is not a valid JSON object"
+                }
+            
+                return MatchResult.from(errorMessage)
+        }
+        
+        return CheckJSONEqual(assertingBodyData, bodyData)
+            .map { MatchResult.failure("\(errorMessage)\n  - \($0)") }
+            ?? MatchResult.from(errorMessage)
     }
 }
 
