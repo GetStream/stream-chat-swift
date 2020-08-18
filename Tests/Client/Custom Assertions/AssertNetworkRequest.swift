@@ -38,18 +38,10 @@ extension Assert {
         
         return Assert.willBeTrue(RequestRecorderURLProtocol.recordedRequests.contains {
             $0.matches(method, path, headers, queryParameters, body).isSuccess
-        }, message: "Failed to find a matching request in the recorded request array",
+        }, message: "Failed to find a matching request in the recorded request list:\n" +
+            RequestRecorderURLProtocol.recordedRequests.map { $0.description }.joined(separator: "\n"),
            file: file,
            line: line)
-    }
-    
-    private func findMatch(in requests: [URLRequest],
-                           method: Endpoint.Method,
-                           path: String,
-                           headers: [String: String]?,
-                           queryParameters: [String: String]?,
-                           body: [String: Any]?) -> URLRequest.MatchResult {
-        return .success
     }
 }
 
@@ -68,6 +60,17 @@ private extension URLRequest {
             default: return false
             }
         }
+    }
+    
+    var description: String {
+        guard let url = self.url else { return "" }
+        let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
+        
+        return "URLRequest:\n" +
+            "url=\(url.absoluteString)\n" +
+            "method=\(httpMethod ?? "")\n" +
+            "headers=\(allHTTPHeaderFields ?? [:])\n" +
+            "queryItems=\(String(describing: queryItems))\n\n"
     }
     
     /// Returns `true` if the given parameters match the current `URLRequest`. Otherwise returns `false`.
