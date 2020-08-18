@@ -9,6 +9,45 @@ import XCTest
 @testable import StreamChatClient
 
 
+extension AssertAsync {
+    /// Synchronously waits for a network request that matches its properties with the given parameters.
+    ///
+    /// The function periodically checks the `RequestRecorderURLProtocol.recordedRequests` and If no request matches the
+    /// given parameters within the `timeout` period, this assertion fails with the time-out error.
+    ///
+    /// The values specified in the `headers`, `queryParameters` and `body` represents the mandatory subset of
+    /// the values the request must have. A request is valid even when it contains additional parameters than
+    /// the ones specified in these values.
+    ///
+    /// - Parameters:
+    ///   - method: The HTTP method the request.
+    ///   - path: The `path` part of the request's URL.
+    ///   - headers: The headers required for the request.
+    ///   - queryParameters: The query parameters required for the request.
+    ///   - body: The expected body of the request.
+    ///   - timeout: The maximum time this function waits for a request to match the given parameters.
+    ///
+    static func networkRequest(method: Endpoint.Method,
+                               path: String,
+                               headers: [String: String]?,
+                               queryParameters: [String: String]?,
+                               body: [String: Any]?,
+                               timeout: TimeInterval = 0.5,
+                               file: StaticString = #file,
+                               line: UInt = #line) {
+        AssertAsync {
+            Assert.networkRequest(method: method,
+                                  path: path,
+                                  headers: headers,
+                                  queryParameters: queryParameters,
+                                  body: body,
+                                  timeout: timeout,
+                                  file: file,
+                                  line: line)
+        }
+    }
+}
+
 extension Assert {
     /// Synchronously waits for a network request that matches its properties with the given parameters.
     ///
