@@ -134,7 +134,7 @@ private extension URLRequest {
             }
         }
         
-        /// If the value is a failure it returns its message. Othewise it returns theempty string.
+        /// If the value is a failure it returns its message. Othewise it returns the empty string.
         var failureMessage: String {
             switch self {
             case .failure(let message):
@@ -145,7 +145,7 @@ private extension URLRequest {
         }
     }
     
-    /// String description of request URL, HTTP method, headers and query items
+    /// String description of request: URL, HTTP method, headers and query items
     var description: String {
         guard let url = self.url else { return "" }
         let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
@@ -157,7 +157,8 @@ private extension URLRequest {
             "queryItems=\(String(describing: queryItems))\n\n"
     }
     
-    /// Returns `true` if the given path matches the current `URLRequest`. Otherwise returns `false`.
+    /// Returns `success` if the given path matches the current `URLRequest`.
+    /// Otherwise returns `failure` with a String describing the why it does not match.
     func matches(path: String) -> Bool {
         guard let url = self.url,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
@@ -246,6 +247,9 @@ private extension URLRequest {
                 return MatchResult.from(errorMessage)
         }
         
+        // Check if the body data JSON are equal if they are not then the error is appended
+        // to the previous errors. If they are equal and there are no previous errors then
+        // it returns `success` but if there are pending errors then it returns `failure`.
         return CheckJSONEqual(assertingBodyData, bodyData)
             .map { MatchResult.failure("\(errorMessage)\n  - \($0)") }
             ?? MatchResult.from(errorMessage)
