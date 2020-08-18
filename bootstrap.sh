@@ -12,7 +12,7 @@ brew install https://raw.githubusercontent.com/nicklockwood/homebrew-core/026935
 set -euo pipefail
 
 # Symlink hooks folder to .git/hooks folder
-ln -s ../../hooks/pre-commit.sh .git/hooks/pre-commit
+ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 echo "Symlink for pre-commit created successfully"
 
