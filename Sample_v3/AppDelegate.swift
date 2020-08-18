@@ -9,11 +9,29 @@
 import UIKit
 @testable import StreamChatClient
 
-let chatClient: ChatClient = {
+var chatClient: ChatClient = {
     var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
     config.isLocalStorageEnabled = false
     return ChatClient(config: config)
 }()
+
+func logIn(apiKey: String, userId: String, userName: String, token: Token?, completion: @escaping () -> Void) {
+    var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
+    config.isLocalStorageEnabled = false
+    chatClient = ChatClient(config: config)
+    
+    let extraData = NameAndImageExtraData(name: userName, imageURL: nil)
+    
+    if let token = token {
+        chatClient.setUser(userId: userId, userExtraData: extraData, token: token) { _ in
+            completion()
+        }
+    } else {
+        chatClient.setGuestUser(userId: userId, extraData: extraData) { _ in
+            completion()
+        }
+    }
+}
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -30,17 +48,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         LogConfig.showFunctionName = false
         
         LogConfig.level = .info
-        
-        let token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
-//
-        chatClient.setUser(userId: "broken-waterfall-5", token: token) { (error) in
-            print(chatClient.currentUser?.name as Any)
-        }
-
-//        chatClient.setAnonymousUser { (error) in
-//            print("connected")
-//        }
-        
         return true
     }
 
