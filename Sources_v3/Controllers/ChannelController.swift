@@ -67,7 +67,8 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     /// The `ChatClient` instance this controller belongs to.
     public let client: Client<ExtraData>
     
-    /// The channel matching the channelId. To observe updates to the channel, set your class as a delegate of this controller and call `startUpdating`.
+    /// The channel matching the channelId. To observe updates to the channel,
+    /// set your class as a delegate of this controller and call `startUpdating`.
     public var channel: ChannelModel<ExtraData>? {
         guard state != .inactive else {
             log.warning("Accessing `channel` before calling `startUpdating()` always results in `nil`.")
@@ -77,7 +78,8 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         return channelObserver.item
     }
     
-    /// The channel matching the channelId. To observe updates to the channel, set your class as a delegate of this controller and call `startUpdating`.
+    /// The channel matching the channelId. To observe updates to the channel,
+    /// set your class as a delegate of this controller and call `startUpdating`.
     public var messages: [MessageModel<ExtraData>] {
         guard state != .inactive else {
             log.warning("Accessing `messages` before calling `startUpdating()` always results in an empty array.")
@@ -148,8 +150,8 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     /// the completion block is called. If the updated data differ from the locally cached ones, the controller uses the `delegate`
     /// methods to inform about the changes.
     ///
-    /// - Parameter completion: Called when the controller has finished fetching remote data. If the data fetching fails, the `error`
-    /// variable contains more details about the problem.
+    /// - Parameter completion: Called when the controller has finished fetching remote data.
+    ///                         If the data fetching fails, the `error` variable contains more details about the problem.
     public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
         eventObservers.removeAll()
 
@@ -208,8 +210,8 @@ public extension ChannelControllerGeneric {
     ///   - members: New members.
     ///   - invites: New invites.
     ///   - extraData: New `ExtraData`.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
     func updateChannel(
         team: String?,
         members: Set<UserId> = [],
@@ -227,9 +229,8 @@ public extension ChannelControllerGeneric {
     }
 
     /// Mutes the channel this controller manages.
-    /// - Parameters:
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                         If request fails, the completion will be called with an error.
     func muteChannel(completion: ((Error?) -> Void)? = nil) {
         worker.muteChannel(cid: channelId, mute: true) { [weak self] error in
             self?.callback {
@@ -240,8 +241,8 @@ public extension ChannelControllerGeneric {
 
     /// Unmutes the channel this controller manages.
     /// - Parameters:
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
     func unmuteChannel(completion: ((Error?) -> Void)? = nil) {
         worker.muteChannel(cid: channelId, mute: false) { [weak self] error in
             self?.callback {
@@ -252,8 +253,8 @@ public extension ChannelControllerGeneric {
 
     /// Delete the channel this controller manages.
     /// - Parameters:
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
     func deleteChannel(completion: ((Error?) -> Void)? = nil) {
         worker.deleteChannel(cid: channelId) { [weak self] error in
             self?.callback {
@@ -265,8 +266,8 @@ public extension ChannelControllerGeneric {
     /// Hide the channel this controller manages from queryChannels for the user until a message is added.
     /// - Parameters:
     ///   - clearHistory: Flag to remove channel history (**false** by default)
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
     func hideChannel(clearHistory: Bool = false, completion: ((Error?) -> Void)? = nil) {
         worker.hideChannel(cid: channelId, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
             self?.callback {
@@ -276,9 +277,8 @@ public extension ChannelControllerGeneric {
     }
 
     /// Removes hidden status for the channel this controller manages.
-    /// - Parameters:
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                         If request fails, the completion will be called with an error.
     func showChannel(completion: ((Error?) -> Void)? = nil) {
         worker.showChannel(cid: channelId, userId: client.currentUserId) { [weak self] error in
             self?.callback {

@@ -22,7 +22,8 @@ public enum LogConfig {
         return df
     }()
     
-    /// Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters). Please see `LogFormatter` for more info.
+    /// Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters).
+    /// Please see `LogFormatter` for more info.
     public static var formatters = [LogFormatter]()
     
     /// Toggle for showing date in logs

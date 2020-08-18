@@ -94,8 +94,8 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     /// the completion block is called. If the updated data differ from the locally cached ones, the controller uses the `delegate`
     /// methods to inform about the changes.
     ///
-    /// - Parameter completion: Called when the controller has finished fetching remote data. If the data fetching fails, the `error`
-    /// variable contains more details about the problem.
+    /// - Parameter completion: Called when the controller has finished fetching remote data.
+    ///                         If the data fetching fails, the `error` variable contains more details about the problem.
     public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
         do {
             try channelListObserver.startObserving()

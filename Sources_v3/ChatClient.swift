@@ -232,8 +232,8 @@ public class Client<ExtraData: ExtraDataTypes> {
     /// - Parameters:
     ///   - userId: The new guest-user identifier.
     ///   - extraData: The extra data of the new guest-user.
-    ///   - completion: The completion. Will be called when the new guest user is set. If setting up the new user fails the completion
-    /// will be called with an error.
+    ///   - completion: The completion. Will be called when the new guest user is set.
+    ///                 If setting up the new user fails the completion will be called with an error.
     public func setGuestUser(userId: UserId, extraData: ExtraData.User, completion: ((Error?) -> Void)? = nil) {
         disconnect()
         prepareEnvironmentForNewUser(userId: userId, role: .guest, extraData: extraData) { error in

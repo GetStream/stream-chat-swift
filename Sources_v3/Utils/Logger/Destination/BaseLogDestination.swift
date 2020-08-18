@@ -28,7 +28,8 @@ open class BaseLogDestination: LogDestination {
     ///   - level: Output level for this destination. Messages will only be shown if their output level is higher than this.
     ///   - showDate: Toggle for showing date in logs
     ///   - dateFormatter: DateFormatter instance for formatting the date in logs. Defaults to ISO8601 formatter.
-    ///   - formatters: Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters). Please see `LogFormatter` for more info.
+    ///   - formatters: Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters).
+    ///                 Please see `LogFormatter` for more info.
     ///   - showLevel: Toggle for showing log level in logs
     ///   - showIdentifier: Toggle for showing identifier in logs
     ///   - showThreadName: Toggle for showing thread name in logs
