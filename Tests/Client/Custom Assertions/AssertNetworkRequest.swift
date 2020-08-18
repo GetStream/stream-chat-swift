@@ -36,12 +36,42 @@ extension Assert {
                                file: StaticString = #file,
                                line: UInt = #line) -> Assertion {
         
+        
         return Assert.willBeTrue(RequestRecorderURLProtocol.recordedRequests.contains {
             $0.matches(method, path, headers, queryParameters, body).isSuccess
-        }, message: "Failed to find a matching request in the recorded request list:\n" +
-            RequestRecorderURLProtocol.recordedRequests.map { $0.description }.joined(separator: "\n"),
+        }, message: failureMessage(method, path, headers, queryParameters, body),
            file: file,
            line: line)
+    }
+    
+    
+    /// Failure message displayed in the network request assertion
+    private static func failureMessage(_ method: Endpoint.Method,
+                                       _ path: String,
+                                       _ headers: [String: String]?,
+                                       _ queryParameters: [String: String]?,
+                                       _ body: [String: Any]?) -> String {
+        
+        let requests = RequestRecorderURLProtocol.recordedRequests
+        
+        let requestsDescription = requests
+            .map { $0.description }
+            .joined(separator: "\n")
+        
+        let requestsMatchingByPath = requests.filter { $0.matches(path: path) }
+        
+        let requestsMatchingByPathDescription = requestsMatchingByPath
+            .map { request in
+                request.description +
+                "Match failure: " +
+                request.matches(method, path, headers, queryParameters, body).failureMessage
+            }.joined(separator: "\n")
+
+        return
+            "Failed to find a matching request in the recorded request list (\(requests.count)):\n" +
+            requestsDescription +
+            "\nRecorded requests that at least match by path (\(requestsMatchingByPath.count)):\n" +
+            requestsMatchingByPathDescription
     }
 }
 
@@ -50,18 +80,33 @@ private extension URLRequest {
         case success
         case failure(String)
         
+        /// Returns `success` if the message is empty. Otherwise it returns a failure with the given message.
         static func from(_ message: String) -> MatchResult {
             message.isEmpty ? .success : .failure(message)
         }
         
+        /// Returns true if the value is `success`. Otherwise it returns false.
         var isSuccess: Bool {
             switch self {
-            case .success: return true
-            default: return false
+            case .success:
+                return true
+            default:
+                return false
+            }
+        }
+        
+        /// If the value is a failure it returns its message. Othewise it returns theempty string.
+        var failureMessage: String {
+            switch self {
+            case .failure(let message):
+                return message
+            default:
+                return ""
             }
         }
     }
     
+    /// String description of request URL, HTTP method, headers and query items
     var description: String {
         guard let url = self.url else { return "" }
         let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
@@ -71,6 +116,16 @@ private extension URLRequest {
             "method=\(httpMethod ?? "")\n" +
             "headers=\(allHTTPHeaderFields ?? [:])\n" +
             "queryItems=\(String(describing: queryItems))\n\n"
+    }
+    
+    /// Returns `true` if the given path matches the current `URLRequest`. Otherwise returns `false`.
+    func matches(path: String) -> Bool {
+        guard let url = self.url,
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+            components.path == path else {
+                return false
+        }
+        return true
     }
     
     /// Returns `true` if the given parameters match the current `URLRequest`. Otherwise returns `false`.
