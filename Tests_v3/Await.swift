@@ -29,10 +29,12 @@ private let awaitTimeout: TimeInterval = TestRunnerEnvironment.isStressTest ? 5 
 /// - Throws: `WaiterError.waitingForResultTimedOut` if `action` doesn't call the completion closure within the `timeout` period.
 ///
 /// - Returns: The result of `action`.
-func await<T>(timeout: TimeInterval = awaitTimeout,
-              file: StaticString = #file,
-              line: UInt = #line,
-              _ action: (_ done: @escaping (T) -> Void) -> Void) throws -> T {
+func await<T>(
+    timeout: TimeInterval = awaitTimeout,
+    file: StaticString = #file,
+    line: UInt = #line,
+    _ action: (_ done: @escaping (T) -> Void) -> Void
+) throws -> T {
     let expecation = XCTestExpectation(description: "Action completed")
     var result: T?
     action {

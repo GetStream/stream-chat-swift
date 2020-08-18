@@ -262,7 +262,7 @@ struct AssertAsync {
         self.init(builder: {
             let built = singleBuilder()
             return [built]
-    })
+        })
     }
     
     @discardableResult

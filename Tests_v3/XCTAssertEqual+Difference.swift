@@ -188,7 +188,7 @@ private struct Differ {
         let linesContents = lines.map { line in line.generateContents(indentationType: indentationType) }
         // In the case of this being a top level failure (e.g. both mirrors have no children, like comparing two
         // primitives `diff(2,3)`, we only want to produce one failure to have proper spacing.
-        let isOnlyTopLevelFailure = lines.map { $0.hasChildren }.filter { $0 }.isEmpty
+        let isOnlyTopLevelFailure = lines.map(\.hasChildren).filter { $0 }.isEmpty
         if isOnlyTopLevelFailure {
             return [linesContents.joined()]
         } else {
@@ -256,7 +256,7 @@ private struct Line {
     }
     
     private func indentation(level: Int, indentationType: IndentationType) -> String {
-        (0 ..< level).reduce("") { acc, _ in acc + "\(indentationType.rawValue)" }
+        (0..<level).reduce("") { acc, _ in acc + "\(indentationType.rawValue)" }
     }
 }
 

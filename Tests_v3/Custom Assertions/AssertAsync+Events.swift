@@ -25,8 +25,8 @@ extension Assert {
         file: StaticString = #file,
         line: UInt = #line
     ) -> Assertion {
-        var equatableCollection1: [EquatableEvent] { expression1().map { $0.asEquatable } }
-        var equatableCollection2: [EquatableEvent] { expression2().map { $0.asEquatable } }
+        var equatableCollection1: [EquatableEvent] { expression1().map(\.asEquatable) }
+        var equatableCollection2: [EquatableEvent] { expression2().map(\.asEquatable) }
         
         // We can't use this as the default parameter because of the string interpolation.
         var defaultMessage: String {

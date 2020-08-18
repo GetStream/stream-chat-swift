@@ -61,7 +61,7 @@ class VirtualTime {
                 .prefix { $0.nextFireTime! == currentTime }
             
             timersToRun
-                .map { $0.timer }
+                .map(\.timer)
                 .forEach { $0.callback($0) }
             
             _ = XCTWaiter.wait(for: [.init()], timeout: timeAdvanceExecutionDelay)
