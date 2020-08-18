@@ -74,10 +74,12 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     ///   - itemCreator: A close the observe uses to convert DTO objects into Model objects.
     ///   - fetchedResultsControllerType: The `NSFetchedResultsController` subclass the observe uses to create its FRC. You can
     ///    inject your custom subclass if needed, i.e. when testing.
-    init(context: NSManagedObjectContext,
-         fetchRequest: NSFetchRequest<DTO>,
-         itemCreator: @escaping (DTO) -> Item?,
-         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self) {
+    init(
+        context: NSManagedObjectContext,
+        fetchRequest: NSFetchRequest<DTO>,
+        itemCreator: @escaping (DTO) -> Item?,
+        fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
+    ) {
         self.context = context
         request = fetchRequest
         self.itemCreator = itemCreator
@@ -134,11 +136,13 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         currentChanges = []
     }
     
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>,
-                    didChange anObject: Any,
-                    at indexPath: IndexPath?,
-                    for type: NSFetchedResultsChangeType,
-                    newIndexPath: IndexPath?) {
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
         guard let dto = anObject as? DTO, let item = itemCreator(dto) else {
             log.warning("Skipping the update from DB because the DTO can't be converted to the model object.")
             return

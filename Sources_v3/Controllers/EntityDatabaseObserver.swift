@@ -85,10 +85,12 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     ///   - itemCreator: A close the observe uses to convert DTO objects into Model objects.
     ///   - fetchedResultsControllerType: The `NSFetchedResultsController` subclass the observe uses to create its FRC. You can
     ///    inject your custom subclass if needed, i.e. when testing.
-    init(context: NSManagedObjectContext,
-         fetchRequest: NSFetchRequest<DTO>,
-         itemCreator: @escaping (DTO) -> Item?,
-         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self) {
+    init(
+        context: NSManagedObjectContext,
+        fetchRequest: NSFetchRequest<DTO>,
+        itemCreator: @escaping (DTO) -> Item?,
+        fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
+    ) {
         self.context = context
         request = fetchRequest
         self.itemCreator = itemCreator

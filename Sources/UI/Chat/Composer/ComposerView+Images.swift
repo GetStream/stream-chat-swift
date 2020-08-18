@@ -22,7 +22,11 @@ extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
         collectionViewLayout.itemSize = CGSize(width: .composerAttachmentSize, height: .composerAttachmentSize)
         collectionViewLayout.minimumLineSpacing = .composerCornerRadius / 2
         collectionViewLayout.minimumInteritemSpacing = 0
-        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0, left: .composerCornerRadius, bottom: 0, right: .composerCornerRadius)
+        
+        collectionViewLayout.sectionInset = UIEdgeInsets(top: 0,
+                                                         left: .composerCornerRadius,
+                                                         bottom: 0,
+                                                         right: .composerCornerRadius)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
         collectionView.isHidden = true

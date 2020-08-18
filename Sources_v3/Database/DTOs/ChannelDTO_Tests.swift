@@ -80,11 +80,11 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.members[0].user.role, loadedChannel?.members.first?.userRole)
             Assert.willBeEqual(payload.members[0].user.extraData, loadedChannel?.members.first?.extraData)
             Assert.willBeEqual(payload.members[0].user.teams, loadedChannel?.members.first?.teams)
-            //      Assert.willBeEqual(payload.members[0].user.isInvisible, loadedChannel?.members.first?.isInvisible)
-            //      Assert.willBeEqual(payload.members[0].user.devices, loadedChannel?.members.first?.devices)
-            //      Assert.willBeEqual(payload.members[0].user.mutedUsers, loadedChannel?.members.first?.mutedUsers)
-            //      Assert.willBeEqual(payload.members[0].user.unreadChannelsCount, loadedChannel?.members.first?.unreadChannelsCount)
-            //      Assert.willBeEqual(payload.members[0].user.unreadMessagesCount, loadedChannel?.members.first?.unreadMessagesCount)
+            // Assert.willBeEqual(payload.members[0].user.isInvisible, loadedChannel?.members.first?.isInvisible)
+            // Assert.willBeEqual(payload.members[0].user.devices, loadedChannel?.members.first?.devices)
+            // Assert.willBeEqual(payload.members[0].user.mutedUsers, loadedChannel?.members.first?.mutedUsers)
+            // Assert.willBeEqual(payload.members[0].user.unreadChannelsCount, loadedChannel?.members.first?.unreadChannelsCount)
+            // Assert.willBeEqual(payload.members[0].user.unreadMessagesCount, loadedChannel?.members.first?.unreadMessagesCount)
             
             // Messages
             Assert.willBeEqual(payload.messages[0].id, loadedChannel?.latestMessages.first?.id)
@@ -182,7 +182,7 @@ class ChannelDTO_Tests: XCTestCase {
             
             // Check the sorting by `cid`.
             Assert.willBeEqual(channelsWithCIDSorting.count, 4)
-            Assert.willBeEqual(channelsWithCIDSorting.map { $0.cid }, ["a:a", "a:b", "a:c", "a:d"])
+            Assert.willBeEqual(channelsWithCIDSorting.map(\.cid), ["a:a", "a:b", "a:c", "a:d"])
         }
     }
     
@@ -292,11 +292,11 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.members[0].user.isBanned, loadedChannel?.members.first?.isBanned)
             Assert.willBeEqual(payload.members[0].user.role, loadedChannel?.members.first?.userRole)
             Assert.willBeEqual(payload.members[0].user.teams, loadedChannel?.members.first?.teams)
-            //      Assert.willBeEqual(payload.members[0].user.isInvisible, loadedChannel?.members.first?.isInvisible)
-            //      Assert.willBeEqual(payload.members[0].user.devices, loadedChannel?.members.first?.devices)
-            //      Assert.willBeEqual(payload.members[0].user.mutedUsers, loadedChannel?.members.first?.mutedUsers)
-            //      Assert.willBeEqual(payload.members[0].user.unreadChannelsCount, loadedChannel?.members.first?.unreadChannelsCount)
-            //      Assert.willBeEqual(payload.members[0].user.unreadMessagesCount, loadedChannel?.members.first?.unreadMessagesCount)
+            // Assert.willBeEqual(payload.members[0].user.isInvisible, loadedChannel?.members.first?.isInvisible)
+            // Assert.willBeEqual(payload.members[0].user.devices, loadedChannel?.members.first?.devices)
+            // Assert.willBeEqual(payload.members[0].user.mutedUsers, loadedChannel?.members.first?.mutedUsers)
+            // Assert.willBeEqual(payload.members[0].user.unreadChannelsCount, loadedChannel?.members.first?.unreadChannelsCount)
+            // Assert.willBeEqual(payload.members[0].user.unreadMessagesCount, loadedChannel?.members.first?.unreadMessagesCount)
             
             // Messages
             Assert.willBeEqual(payload.messages[0].id, loadedChannel?.latestMessages.first?.id)
@@ -381,7 +381,7 @@ extension XCTestCase {
                   updatedAt: .unique)
         
         let channelCreatedDate = Date.unique
-        let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000 ... 900_000)) : nil
+        let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
         
         let payload: ChannelPayload<DefaultDataTypes> =
             .init(channel: .init(cid: channelId,

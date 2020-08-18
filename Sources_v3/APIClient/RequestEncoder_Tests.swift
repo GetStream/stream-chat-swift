@@ -202,6 +202,6 @@ private struct TestUser: Codable, Equatable {
 extension Array where Element == URLQueryItem {
     /// Returns the value of the URLQueryItem with the given name. Returns `nil` if the query item doesn't exist.
     subscript(_ name: String) -> String? {
-        first(where: { $0.name == name }).flatMap { $0.value }
+        first(where: { $0.name == name }).flatMap(\.value)
     }
 }

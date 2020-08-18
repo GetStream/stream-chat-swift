@@ -311,7 +311,6 @@
 		791664DC245AC78B0020710B /* RequestRecorderURLProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestRecorderURLProtocol.swift; sourceTree = "<group>"; };
 		791664DE245AC89E0020710B /* Client+DevicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+DevicesTests.swift"; sourceTree = "<group>"; };
 		791664E1245AF8AF0020710B /* AssertNetworkRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertNetworkRequest.swift; sourceTree = "<group>"; };
-		7920E84E2449C6EF00CCBFBF /* fastlane */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fastlane; sourceTree = "<group>"; };
 		79273EB3246AD1E900B0A574 /* Channel+SilentMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+SilentMessageTests.swift"; sourceTree = "<group>"; };
 		79273EB5246AE1EF00B0A574 /* Client+SilentMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+SilentMessageTests.swift"; sourceTree = "<group>"; };
 		79273EB9246AEC9200B0A574 /* SharedClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedClient.swift; sourceTree = "<group>"; };
@@ -364,7 +363,7 @@
 		8A65559C243DF2D00023046C /* UserConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserConnection.swift; sourceTree = "<group>"; };
 		8A6F69D1230ECCD300B8CC1F /* User+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+Tests.swift"; sourceTree = "<group>"; };
 		8A7C58ED243DE9740062487E /* EventType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventType.swift; sourceTree = "<group>"; };
-		8A8BB2A2238456A200C2F9DE /* StreamChatRealm.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatRealm.podspec; sourceTree = "<group>"; };
+		8A893D1124E6E66B00C2A701 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		8A8BB2A32384573400C2F9DE /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		8A8BB2A42384573400C2F9DE /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		8A9BC2E52487D476004C5E69 /* Client+RxEventsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Client+RxEventsTests.swift"; sourceTree = "<group>"; };
@@ -568,11 +567,8 @@
 		8AD5EDD022E9BB0C005CFAC9 /* RxGesture.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxGesture.framework; path = Carthage/Build/iOS/RxGesture.framework; sourceTree = "<group>"; };
 		8AD5EDD122E9BB0C005CFAC9 /* Nuke.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nuke.framework; path = Carthage/Build/iOS/Nuke.framework; sourceTree = "<group>"; };
 		8AD5EDD222E9BB0C005CFAC9 /* SwiftyGif.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftyGif.framework; path = Carthage/Build/iOS/SwiftyGif.framework; sourceTree = "<group>"; };
-		8AD5EDD822E9C7BC005CFAC9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChat.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatCore.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = releasing.md; sourceTree = "<group>"; };
 		8ADA1EEA2472C2E500C4FC82 /* ChannelNamingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNamingStrategy.swift; sourceTree = "<group>"; };
 		8ADA1EEC2472F7CE00C4FC82 /* ChannelNamingStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNamingStrategyTests.swift; sourceTree = "<group>"; };
 		8ADA1EEE2473FD7800C4FC82 /* EventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
@@ -691,6 +687,19 @@
 				7926FB1624696EFE00EBC9C5 /* Virtual Time */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		8A893D1024E6E63800C2A701 /* Releasing */ = {
+			isa = PBXGroup;
+			children = (
+				8A14347823ABBF30002A45BC /* CHANGELOG.md */,
+				8A893D1124E6E66B00C2A701 /* Cartfile */,
+				8A25C9BA2431F9F600A37577 /* StreamChatClient.podspec */,
+				8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */,
+				8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */,
+				795FCD1B23EB155000990F15 /* Package.swift */,
+			);
+			name = Releasing;
 			sourceTree = "<group>";
 		};
 		8A9BC2E32487D40E004C5E69 /* Core */ = {
@@ -1266,16 +1275,7 @@
 				8A559D22230D937C00E66096 /* Tests */,
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
-				8AD5EDD822E9C7BC005CFAC9 /* README.md */,
-				795FCD1B23EB155000990F15 /* Package.swift */,
-				8A14347823ABBF30002A45BC /* CHANGELOG.md */,
-				8AD5EDDC22E9C7BC005CFAC9 /* releasing.md */,
-				8A25C9BA2431F9F600A37577 /* StreamChatClient.podspec */,
-				8AD5EDDB22E9C7BC005CFAC9 /* StreamChatCore.podspec */,
-				8AD5EDD922E9C7BC005CFAC9 /* StreamChat.podspec */,
-				8A8BB2A2238456A200C2F9DE /* StreamChatRealm.podspec */,
-				8AD5EDDA22E9C7BC005CFAC9 /* Cartfile */,
-				7920E84E2449C6EF00CCBFBF /* fastlane */,
+				8A893D1024E6E63800C2A701 /* Releasing */,
 			);
 			indentWidth = 4;
 			sourceTree = "<group>";
@@ -1409,6 +1409,7 @@
 				8A50694B23CDEA31009F127A /* Sources */,
 				8A50694C23CDEA31009F127A /* Frameworks */,
 				8A50694D23CDEA31009F127A /* Resources */,
+				8A893D0C24E6E39B00C2A701 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -1591,6 +1592,27 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8A893D0C24E6E39B00C2A701 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint lint ./Sources/\nelse\n  echo \"warning: SwiftLint not installed, (homebrew install swiftlint)\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		79EE39332453204E0034EBF3 /* Sources */ = {

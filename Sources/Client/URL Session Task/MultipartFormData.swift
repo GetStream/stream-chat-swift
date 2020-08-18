@@ -17,7 +17,7 @@ struct MultipartFormData {
     private let mimeType: String?
     
     init(_ data: Data, fileName: String, mimeType: String? = nil) {
-        boundary = String(format: "chat-%08x%08x", arc4random(), arc4random())
+        boundary = String(format: "chat-%08x%08x", UInt32.random(in: 0...UInt32.max), UInt32.random(in: 0...UInt32.max))
         self.data = data
         self.fileName = fileName
         self.mimeType = mimeType

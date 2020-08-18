@@ -33,12 +33,13 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     ///   - membersPagination: a pagination for members. You can use `.limit` and `.offset`.
     ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
     ///   - options: a query options (see `QueryOptions`).
-    public init(cid: ChannelId,
-                messagesPagination: Pagination = [],
-                membersPagination: Pagination = [],
-                watchersPagination: Pagination = [],
-                options: QueryOptions = [])
-    {
+    public init(
+        cid: ChannelId,
+        messagesPagination: Pagination = [],
+        membersPagination: Pagination = [],
+        watchersPagination: Pagination = [],
+        options: QueryOptions = []
+    ) {
         self.cid = cid
         channelPayload = nil
         self.messagesPagination = messagesPagination
@@ -51,9 +52,10 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     /// - Parameters:
     ///   - channelPayload: a payload that has data needed for channel creation.
     ///   - options: a query options (see `QueryOptions`).
-    init(channelPayload: ChannelEditDetailPayload<ExtraData>,
-         options: QueryOptions = [])
-    {
+    init(
+        channelPayload: ChannelEditDetailPayload<ExtraData>,
+        options: QueryOptions = []
+    ) {
         cid = channelPayload.cid
         self.channelPayload = channelPayload
         messagesPagination = []

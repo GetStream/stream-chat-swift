@@ -259,8 +259,10 @@ private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQue
 private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
     @Atomic var didChangeChannels_changes: [ListChange<Channel>]?
     
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
-                    didChangeChannels changes: [ListChange<Channel>]) {
+    func controller(
+        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        didChangeChannels changes: [ListChange<Channel>]
+    ) {
         didChangeChannels_changes = changes
         validateQueue()
     }
@@ -270,8 +272,10 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDelegateGeneric {
     @Atomic var didChangeChannels_changes: [ListChange<Channel>]?
     
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>,
-                    didChangeChannels changes: [ListChange<Channel>]) {
+    func controller(
+        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        didChangeChannels changes: [ListChange<Channel>]
+    ) {
         didChangeChannels_changes = changes
         validateQueue()
     }

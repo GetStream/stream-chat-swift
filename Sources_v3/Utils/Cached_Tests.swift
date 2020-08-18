@@ -24,7 +24,7 @@ class Cached_Tests: StressTestCase {
     
     func test_valueIsCached() {
         // Assert the value gets cached
-        for _ in 0 ... 10 {
+        for _ in 0...10 {
             XCTAssertEqual(value, 0)
         }
     }
@@ -36,7 +36,7 @@ class Cached_Tests: StressTestCase {
         _value.reset()
         
         // Assert a value gets computed
-        for _ in 0 ... 10 {
+        for _ in 0...10 {
             XCTAssertEqual(value, 1)
         }
     }
@@ -44,7 +44,7 @@ class Cached_Tests: StressTestCase {
     /// This test doesn't really check the results, it just checks the program doesn't crash.
     func test_cachedWorksCorrentlyInMulthithreadedEnvironment() {
         let group = DispatchGroup()
-        for _ in 0 ... 1000 {
+        for _ in 0...1000 {
             group.enter()
             DispatchQueue.random.async {
                 _ = self.value

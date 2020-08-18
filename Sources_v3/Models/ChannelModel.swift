@@ -68,25 +68,27 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     /// A list of users to invite in the channel.
     let invitedMembers: Set<MemberModel<ExtraData.User>> // TODO: Why is this not public?
     
-    init(cid: ChannelId,
-         lastMessageAt: Date? = nil,
-         createdAt: Date = .init(),
-         updatedAt: Date = .init(),
-         deletedAt: Date? = nil,
-         createdBy: UserModel<ExtraData.User>? = nil,
-         config: ChannelConfig = .init(),
-         isFrozen: Bool = false,
-         members: Set<MemberModel<ExtraData.User>> = [],
-         watchers: Set<UserModel<ExtraData.User>> = [],
-         team: String = "",
-         unreadCount: ChannelUnreadCount = .noUnread,
-         watcherCount: Int = 0,
-         unreadMessageRead: MessageRead<ExtraData.User>? = nil,
-         banEnabling: BanEnabling = .disabled,
-         isWatched: Bool = false,
-         extraData: ExtraData.Channel,
-         invitedMembers: Set<MemberModel<ExtraData.User>> = [],
-         latestMessages: [MessageModel<ExtraData>] = []) {
+    init(
+        cid: ChannelId,
+        lastMessageAt: Date? = nil,
+        createdAt: Date = .init(),
+        updatedAt: Date = .init(),
+        deletedAt: Date? = nil,
+        createdBy: UserModel<ExtraData.User>? = nil,
+        config: ChannelConfig = .init(),
+        isFrozen: Bool = false,
+        members: Set<MemberModel<ExtraData.User>> = [],
+        watchers: Set<UserModel<ExtraData.User>> = [],
+        team: String = "",
+        unreadCount: ChannelUnreadCount = .noUnread,
+        watcherCount: Int = 0,
+        unreadMessageRead: MessageRead<ExtraData.User>? = nil,
+        banEnabling: BanEnabling = .disabled,
+        isWatched: Bool = false,
+        extraData: ExtraData.Channel,
+        invitedMembers: Set<MemberModel<ExtraData.User>> = [],
+        latestMessages: [MessageModel<ExtraData>] = []
+    ) {
         self.cid = cid
         self.lastMessageAt = lastMessageAt
         self.createdAt = createdAt

@@ -4,6 +4,13 @@ disabled_rules:
   - todo
   - attributes
   - function_parameter_count
+  - force_cast
+  - force_try
+  - type_name
+  - nesting
+  - identifier_name
+  - file_length
+  - type_body_length
 
 opt_in_rules:
   - empty_count
@@ -35,9 +42,6 @@ attributes:
 trailing_whitespace:
   ignores_empty_lines: true
 
-force_try:
-  severity: warning
-
 function_body_length:
   warning: 120
   error: 200
@@ -49,14 +53,9 @@ identifier_name:
 
 line_length:
   warning: 132
-  ignores_comments: true
   ignores_urls: true
 
 cyclomatic_complexity:
   ignores_case_statements: true
   warning: 25
   error: 30
-
-file_length: 500
-
-type_body_length: 300

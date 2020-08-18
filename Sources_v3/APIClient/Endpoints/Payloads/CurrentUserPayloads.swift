@@ -13,18 +13,20 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     
     // TODO: Add unread counts
     
-    init(id: String,
-         role: UserRole,
-         createdAt: Date,
-         updatedAt: Date,
-         lastActiveAt: Date?,
-         isOnline: Bool,
-         isInvisible: Bool,
-         isBanned: Bool,
-         teams: [String] = [],
-         extraData: ExtraData,
-         devices: [Device] = [],
-         mutedUsers: [MutedUser<ExtraData>] = []) {
+    init(
+        id: String,
+        role: UserRole,
+        createdAt: Date,
+        updatedAt: Date,
+        lastActiveAt: Date?,
+        isOnline: Bool,
+        isInvisible: Bool,
+        isBanned: Bool,
+        teams: [String] = [],
+        extraData: ExtraData,
+        devices: [Device] = [],
+        mutedUsers: [MutedUser<ExtraData>] = []
+    ) {
         self.devices = devices
         self.mutedUsers = mutedUsers
         

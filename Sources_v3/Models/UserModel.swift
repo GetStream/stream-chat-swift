@@ -47,15 +47,17 @@ public class UserModel<ExtraData: UserExtraData> {
     
     // MARK: - Internal
     
-    init(id: UserId,
-         isOnline: Bool = false,
-         isBanned: Bool = false,
-         userRole: UserRole = .user,
-         createdAt: Date = .init(),
-         updatedAt: Date = .init(),
-         lastActiveAt: Date? = nil,
-         teams: [String] = [],
-         extraData: ExtraData = .defaultValue) {
+    init(
+        id: UserId,
+        isOnline: Bool = false,
+        isBanned: Bool = false,
+        userRole: UserRole = .user,
+        createdAt: Date = .init(),
+        updatedAt: Date = .init(),
+        lastActiveAt: Date? = nil,
+        teams: [String] = [],
+        extraData: ExtraData = .defaultValue
+    ) {
         self.id = id
         self.isOnline = isOnline
         self.isBanned = isBanned

@@ -16,7 +16,7 @@ class DefaultReconnectionStrategy_Tests: XCTestCase {
     func test_delaysAreIncreasing() throws {
         // Ask for reconection delay 10 times
         var delays: [TimeInterval] = []
-        for _ in 0 ..< 10 {
+        for _ in 0..<10 {
             let delay = try XCTUnwrap(strategy.reconnectionDelay(forConnectionError: nil))
             delays.append(delay)
         }
@@ -28,7 +28,7 @@ class DefaultReconnectionStrategy_Tests: XCTestCase {
     func test_delaysResetWhenConnectionSucceeds() throws {
         // Ask for reconection delay 10 times
         var delays: [TimeInterval] = []
-        for _ in 0 ..< 10 {
+        for _ in 0..<10 {
             let delay = strategy.reconnectionDelay(forConnectionError: nil)
             XCTAssertNotNil(delay)
             delays.append(delay!)

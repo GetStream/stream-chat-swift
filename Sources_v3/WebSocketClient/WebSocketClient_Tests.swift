@@ -352,7 +352,7 @@ class WebSocketClient_Tests: StressTestCase {
         webSocketClient.middlewares = [ClosureBasedMiddleware { middlewareIncomingEvent, completion in
             XCTAssertEqual(incomingEvent.asEquatable, middlewareIncomingEvent.asEquatable)
             completion(processedEvent)
-    }]
+        }]
         
         // Start logging events
         let eventLogger = EventLogger(eventNotificationCenter)
@@ -372,7 +372,7 @@ class WebSocketClient_Tests: StressTestCase {
         assert(backgroundTaskScheduler.beginBackgroundTask_called == false)
         
         // Set up mock response
-        backgroundTaskScheduler.beginBackgroundTask = UIBackgroundTaskIdentifier(rawValue: .random(in: 1 ... 100))
+        backgroundTaskScheduler.beginBackgroundTask = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
         
         // Simulate app going to the background
         NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -390,7 +390,7 @@ class WebSocketClient_Tests: StressTestCase {
         webSocketClient.options.remove(.staysConnectedInBackground)
         
         // Set up mock response
-        backgroundTaskScheduler.beginBackgroundTask = UIBackgroundTaskIdentifier(rawValue: .random(in: 1 ... 100))
+        backgroundTaskScheduler.beginBackgroundTask = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
         
         // Simulate app going to the background
         NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -442,7 +442,7 @@ class WebSocketClient_Tests: StressTestCase {
     func test_connectionIsTerminated_whenBackgroundTaskFinishesExecution() {
         // Simulate connection and start a background task
         test_connectionFlow()
-        backgroundTaskScheduler.beginBackgroundTask = UIBackgroundTaskIdentifier(rawValue: .random(in: 1 ... 100))
+        backgroundTaskScheduler.beginBackgroundTask = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
         NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
         
         assert(engine.disconnect_calledCount == 0)
@@ -460,7 +460,7 @@ class WebSocketClient_Tests: StressTestCase {
     func test_backgroundTaskIsCancelled_whenAppBecomesActive() {
         // Simulate connection and start a background task
         test_connectionFlow()
-        let task = UIBackgroundTaskIdentifier(rawValue: .random(in: 1 ... 100))
+        let task = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
         backgroundTaskScheduler.beginBackgroundTask = task
         NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
         
@@ -478,7 +478,7 @@ class WebSocketClient_Tests: StressTestCase {
     func test_backgroundTaskIsCancelled_whenDisconnected() {
         // Simulate connection and start a background task
         test_connectionFlow()
-        let task = UIBackgroundTaskIdentifier(rawValue: .random(in: 1 ... 100))
+        let task = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
         backgroundTaskScheduler.beginBackgroundTask = task
         NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
         
@@ -515,7 +515,8 @@ private class EventLogger {
         notificationCenter.addObserver(self, selector: #selector(handleNewEvent), name: .NewEventReceived, object: nil)
     }
     
-    @objc func handleNewEvent(_ notification: Notification) {
+    @objc
+    func handleNewEvent(_ notification: Notification) {
         events.append(notification.event!)
     }
 }

@@ -67,7 +67,8 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     /// The `ChatClient` instance this controller belongs to.
     public let client: Client<ExtraData>
     
-    /// The channel matching the channelId. To observe updates to the channel, set your class as a delegate of this controller and call `startUpdating`.
+    /// The channel matching the channelId. To observe updates to the channel,
+    /// set your class as a delegate of this controller and call `startUpdating`.
     public var channel: ChannelModel<ExtraData>? {
         guard state != .inactive else {
             log.warning("Accessing `channel` before calling `startUpdating()` always results in `nil`.")
@@ -77,7 +78,8 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         return channelObserver.item
     }
     
-    /// The channel matching the channelId. To observe updates to the channel, set your class as a delegate of this controller and call `startUpdating`.
+    /// The channel matching the channelId. To observe updates to the channel,
+    /// set your class as a delegate of this controller and call `startUpdating`.
     public var messages: [MessageModel<ExtraData>] {
         guard state != .inactive else {
             log.warning("Accessing `messages` before calling `startUpdating()` always results in an empty array.")
@@ -148,8 +150,8 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     /// the completion block is called. If the updated data differ from the locally cached ones, the controller uses the `delegate`
     /// methods to inform about the changes.
     ///
-    /// - Parameter completion: Called when the controller has finished fetching remote data. If the data fetching fails, the `error`
-    /// variable contains more details about the problem.
+    /// - Parameter completion: Called when the controller has finished fetching remote data.
+    ///                         If the data fetching fails, the `error` variable contains more details about the problem.
     public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
         eventObservers.removeAll()
 
@@ -194,8 +196,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     public func setDelegate<Delegate: ChannelControllerDelegateGeneric>(_ delegate: Delegate)
-        where Delegate.ExtraData == ExtraData
-    {
+        where Delegate.ExtraData == ExtraData {
         anyDelegate = AnyChannelControllerDelegate(delegate)
     }
 }
@@ -209,14 +210,15 @@ public extension ChannelControllerGeneric {
     ///   - members: New members.
     ///   - invites: New invites.
     ///   - extraData: New `ExtraData`.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
-    func updateChannel(team: String?,
-                       members: Set<UserId> = [],
-                       invites: Set<UserId> = [],
-                       extraData: ExtraData.Channel,
-                       completion: ((Error?) -> Void)? = nil)
-    {
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    func updateChannel(
+        team: String?,
+        members: Set<UserId> = [],
+        invites: Set<UserId> = [],
+        extraData: ExtraData.Channel,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         let payload: ChannelEditDetailPayload<ExtraData> = .init(cid: channelId, team: team, members: members, invites: invites,
                                                                  extraData: extraData)
         worker.updateChannel(channelPayload: payload) { [weak self] error in
@@ -227,9 +229,8 @@ public extension ChannelControllerGeneric {
     }
 
     /// Mutes the channel this controller manages.
-    /// - Parameters:
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                         If request fails, the completion will be called with an error.
     func muteChannel(completion: ((Error?) -> Void)? = nil) {
         worker.muteChannel(cid: channelId, mute: true) { [weak self] error in
             self?.callback {
@@ -240,8 +241,8 @@ public extension ChannelControllerGeneric {
 
     /// Unmutes the channel this controller manages.
     /// - Parameters:
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
     func unmuteChannel(completion: ((Error?) -> Void)? = nil) {
         worker.muteChannel(cid: channelId, mute: false) { [weak self] error in
             self?.callback {
@@ -252,8 +253,8 @@ public extension ChannelControllerGeneric {
 
     /// Delete the channel this controller manages.
     /// - Parameters:
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
     func deleteChannel(completion: ((Error?) -> Void)? = nil) {
         worker.deleteChannel(cid: channelId) { [weak self] error in
             self?.callback {
@@ -265,8 +266,8 @@ public extension ChannelControllerGeneric {
     /// Hide the channel this controller manages from queryChannels for the user until a message is added.
     /// - Parameters:
     ///   - clearHistory: Flag to remove channel history (**false** by default)
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
     func hideChannel(clearHistory: Bool = false, completion: ((Error?) -> Void)? = nil) {
         worker.hideChannel(cid: channelId, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
             self?.callback {
@@ -276,9 +277,8 @@ public extension ChannelControllerGeneric {
     }
 
     /// Removes hidden status for the channel this controller manages.
-    /// - Parameters:
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished. If request fails, the completion
-    /// will be called with an error.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                         If request fails, the completion will be called with an error.
     func showChannel(completion: ((Error?) -> Void)? = nil) {
         worker.showChannel(cid: channelId, userId: client.currentUserId) { [weak self] error in
             self?.callback {
@@ -318,23 +318,31 @@ public extension ChannelControllerGeneric where ExtraData == DefaultDataTypes {
 /// please use `ChannelControllerDelegateGeneric` instead.
 public protocol ChannelControllerDelegate: ControllerStateDelegate {
     /// The controller observed a change in the `Channel` entity.
-    func channelController(_ channelController: ChannelController,
-                           didUpdateChannel channel: EntityChange<Channel>)
+    func channelController(
+        _ channelController: ChannelController,
+        didUpdateChannel channel: EntityChange<Channel>
+    )
     
     /// The controller observed changes in the `Messages` of the observed channel.
-    func channelController(_ channelController: ChannelController,
-                           didUpdateMessages changes: [ListChange<Message>])
+    func channelController(
+        _ channelController: ChannelController,
+        didUpdateMessages changes: [ListChange<Message>]
+    )
 
     /// The controller received a `MemberEvent` related to the channel it observes.
     func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent)
 }
 
 public extension ChannelControllerDelegate {
-    func channelController(_ channelController: ChannelController,
-                           didUpdateChannel channel: EntityChange<Channel>) {}
+    func channelController(
+        _ channelController: ChannelController,
+        didUpdateChannel channel: EntityChange<Channel>
+    ) {}
     
-    func channelController(_ channelController: ChannelController,
-                           didUpdateMessages changes: [ListChange<Message>]) {}
+    func channelController(
+        _ channelController: ChannelController,
+        didUpdateMessages changes: [ListChange<Message>]
+    ) {}
 
     func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent) {}
 }
@@ -349,23 +357,31 @@ public protocol ChannelControllerDelegateGeneric: ControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `Channel` entity.
-    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>,
-                           didUpdateChannel channel: EntityChange<ChannelModel<ExtraData>>)
+    func channelController(
+        _ channelController: ChannelControllerGeneric<ExtraData>,
+        didUpdateChannel channel: EntityChange<ChannelModel<ExtraData>>
+    )
     
     /// The controller observed changes in the `Messages` of the observed channel.
-    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>,
-                           didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>])
+    func channelController(
+        _ channelController: ChannelControllerGeneric<ExtraData>,
+        didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>]
+    )
 
     /// The controller received a `MemberEvent` related to the channel it observes.
     func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent: MemberEvent)
 }
 
 public extension ChannelControllerDelegateGeneric {
-    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>,
-                           didUpdateChannel channel: EntityChange<ChannelModel<ExtraData>>) {}
+    func channelController(
+        _ channelController: ChannelControllerGeneric<ExtraData>,
+        didUpdateChannel channel: EntityChange<ChannelModel<ExtraData>>
+    ) {}
     
-    func channelController(_ channelController: ChannelController,
-                           didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>]) {}
+    func channelController(
+        _ channelController: ChannelController,
+        didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>]
+    ) {}
 
     func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent: MemberEvent) {}
 }
@@ -373,28 +389,40 @@ public extension ChannelControllerDelegateGeneric {
 // MARK: Type erased Delegate
 
 class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListControllerDelegateGeneric {
-    private var _controllerdidUpdateMessages: (ChannelControllerGeneric<ExtraData>,
-                                               [ListChange<MessageModel<ExtraData>>]) -> Void
+    private var _controllerdidUpdateMessages: (
+        ChannelControllerGeneric<ExtraData>,
+        [ListChange<MessageModel<ExtraData>>]
+    ) -> Void
     
-    private var _controllerDidUpdateChannel: (ChannelControllerGeneric<ExtraData>,
-                                              EntityChange<ChannelModel<ExtraData>>) -> Void
+    private var _controllerDidUpdateChannel: (
+        ChannelControllerGeneric<ExtraData>,
+        EntityChange<ChannelModel<ExtraData>>
+    ) -> Void
 
     private var _controllerDidChangeState: (Controller, Controller.State) -> Void
     
-    private var _controllerDidReceiveMemberEvent: (ChannelControllerGeneric<ExtraData>,
-                                                   MemberEvent) -> Void
+    private var _controllerDidReceiveMemberEvent: (
+        ChannelControllerGeneric<ExtraData>,
+        MemberEvent
+    ) -> Void
 
     weak var wrappedDelegate: AnyObject?
     
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (Controller, Controller.State) -> Void,
-        controllerDidUpdateChannel: @escaping (ChannelControllerGeneric<ExtraData>,
-                                               EntityChange<ChannelModel<ExtraData>>) -> Void,
-        controllerdidUpdateMessages: @escaping (ChannelControllerGeneric<ExtraData>,
-                                                [ListChange<MessageModel<ExtraData>>]) -> Void,
-        controllerDidReceiveMemberEvent: @escaping (ChannelControllerGeneric<ExtraData>,
-                                                    MemberEvent) -> Void
+        controllerDidUpdateChannel: @escaping (
+            ChannelControllerGeneric<ExtraData>,
+            EntityChange<ChannelModel<ExtraData>>
+        ) -> Void,
+        controllerdidUpdateMessages: @escaping (
+            ChannelControllerGeneric<ExtraData>,
+            [ListChange<MessageModel<ExtraData>>]
+        ) -> Void,
+        controllerDidReceiveMemberEvent: @escaping (
+            ChannelControllerGeneric<ExtraData>,
+            MemberEvent
+        ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
         _controllerDidChangeState = controllerDidChangeState

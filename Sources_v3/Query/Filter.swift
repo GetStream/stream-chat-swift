@@ -91,11 +91,11 @@ public enum Filter: Encodable, CustomStringConvertible {
         case let .custom(`operator`, key, object):
             return "\(key) \(`operator`.uppercased()) \(object)"
         case let .and(filters):
-            return "(" + filters.map { $0.description }.joined(separator: ") AND (") + ")"
+            return "(" + filters.map(\.description).joined(separator: ") AND (") + ")"
         case let .or(filters):
-            return "(" + filters.map { $0.description }.joined(separator: ") OR (") + ")"
+            return "(" + filters.map(\.description).joined(separator: ") OR (") + ")"
         case let .nor(filters):
-            return "(" + filters.map { $0.description }.joined(separator: ") NOR (") + ")"
+            return "(" + filters.map(\.description).joined(separator: ") NOR (") + ")"
         }
     }
     

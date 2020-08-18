@@ -38,13 +38,15 @@ struct MemberPayload<ExtraData: UserExtraData>: Decodable {
     /// A date when an invited was rejected.
     let inviteRejectedAt: Date?
     
-    init(user: UserPayload<ExtraData>,
-         role: MemberRole?,
-         createdAt: Date,
-         updatedAt: Date,
-         isInvited: Bool? = nil,
-         inviteAcceptedAt: Date? = nil,
-         inviteRejectedAt: Date? = nil) {
+    init(
+        user: UserPayload<ExtraData>,
+        role: MemberRole?,
+        createdAt: Date,
+        updatedAt: Date,
+        isInvited: Bool? = nil,
+        inviteAcceptedAt: Date? = nil,
+        inviteRejectedAt: Date? = nil
+    ) {
         self.user = user
         self.role = role
         self.createdAt = createdAt

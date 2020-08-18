@@ -53,7 +53,9 @@ extension ChatViewController {
         }
     }
     
-    public func defaultActionSheet(from cell: UITableViewCell, for message: Message, locationInView: CGPoint) -> UIAlertController? {
+    public func defaultActionSheet(from cell: UITableViewCell,
+                                   for message: Message,
+                                   locationInView: CGPoint) -> UIAlertController? {
         guard let presenter = presenter else {
             return nil
         }

@@ -22,9 +22,11 @@ protocol Timer {
     ///   - queue: The queue on which the `onFire` callback is called.
     ///   - onFire: Called when the timer fires.
     /// - Returns: `RepeatingTimerControl` where you can suspend and resume the timer.
-    static func scheduleRepeating(timeInterval: TimeInterval,
-                                  queue: DispatchQueue,
-                                  onFire: @escaping () -> Void) -> RepeatingTimerControl
+    static func scheduleRepeating(
+        timeInterval: TimeInterval,
+        queue: DispatchQueue,
+        onFire: @escaping () -> Void
+    ) -> RepeatingTimerControl
 }
 
 /// Allows resuming and suspending of a timer.
@@ -47,17 +49,21 @@ extension DispatchWorkItem: TimerControl {}
 /// Default real-world implementations of timers.
 struct DefaultTimer: Timer {
     @discardableResult
-    static func schedule(timeInterval: TimeInterval,
-                         queue: DispatchQueue,
-                         onFire: @escaping () -> Void) -> TimerControl {
+    static func schedule(
+        timeInterval: TimeInterval,
+        queue: DispatchQueue,
+        onFire: @escaping () -> Void
+    ) -> TimerControl {
         let worker = DispatchWorkItem(block: onFire)
         queue.asyncAfter(deadline: .now() + timeInterval, execute: worker)
         return worker
     }
     
-    static func scheduleRepeating(timeInterval: TimeInterval,
-                                  queue: DispatchQueue,
-                                  onFire: @escaping () -> Void) -> RepeatingTimerControl {
+    static func scheduleRepeating(
+        timeInterval: TimeInterval,
+        queue: DispatchQueue,
+        onFire: @escaping () -> Void
+    ) -> RepeatingTimerControl {
         RepeatingTimer(timeInterval: timeInterval, queue: queue, onFire: onFire)
     }
 }

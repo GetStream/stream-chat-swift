@@ -30,8 +30,10 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     
     // MARK: - Private
     
-    private func verify<ExtraData: UserExtraData>(_ payload: GuestUserTokenRequestPayload<ExtraData>,
-                                                  isEncodedAs expected: [String: Any]) throws {
+    private func verify<ExtraData: UserExtraData>(
+        _ payload: GuestUserTokenRequestPayload<ExtraData>,
+        isEncodedAs expected: [String: Any]
+    ) throws {
         // Encode the user
         let data = try JSONEncoder.default.encode(payload)
         let json = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]

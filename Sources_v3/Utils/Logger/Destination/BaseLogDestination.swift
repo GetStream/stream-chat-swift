@@ -28,28 +28,31 @@ open class BaseLogDestination: LogDestination {
     ///   - level: Output level for this destination. Messages will only be shown if their output level is higher than this.
     ///   - showDate: Toggle for showing date in logs
     ///   - dateFormatter: DateFormatter instance for formatting the date in logs. Defaults to ISO8601 formatter.
-    ///   - formatters: Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters). Please see `LogFormatter` for more info.
+    ///   - formatters: Log formatters to be applied in order before logs are outputted. Defaults to empty (no formatters).
+    ///                 Please see `LogFormatter` for more info.
     ///   - showLevel: Toggle for showing log level in logs
     ///   - showIdentifier: Toggle for showing identifier in logs
     ///   - showThreadName: Toggle for showing thread name in logs
     ///   - showFileName: Toggle for showing file name in logs
     ///   - showLineNumber: Toggle for showing line number in logs
     ///   - showFunctionName: Toggle for showing function name in logs
-    public required init(identifier: String = "",
-                         level: LogLevel = .info,
-                         showDate: Bool = true,
-                         dateFormatter: DateFormatter = {
-                             let df = DateFormatter()
-                             df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
-                             return df
-                         }(),
-                         formatters: [LogFormatter] = [],
-                         showLevel: Bool = true,
-                         showIdentifier: Bool = true,
-                         showThreadName: Bool = true,
-                         showFileName: Bool = true,
-                         showLineNumber: Bool = true,
-                         showFunctionName: Bool = true) {
+    public required init(
+        identifier: String = "",
+        level: LogLevel = .info,
+        showDate: Bool = true,
+        dateFormatter: DateFormatter = {
+            let df = DateFormatter()
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
+            return df
+        }(),
+        formatters: [LogFormatter] = [],
+        showLevel: Bool = true,
+        showIdentifier: Bool = true,
+        showThreadName: Bool = true,
+        showFileName: Bool = true,
+        showLineNumber: Bool = true,
+        showFunctionName: Bool = true
+    ) {
         self.identifier = identifier
         self.level = level
         self.showIdentifier = showIdentifier
@@ -102,8 +105,8 @@ open class BaseLogDestination: LogDestination {
         }
         
         if showFileName {
-            extendedDetails +=
-                "[\((String(describing: logDetails.fileName) as NSString).lastPathComponent)\(showLineNumber ? ":\(logDetails.lineNumber)" : "")] "
+            let fileName = (String(describing: logDetails.fileName) as NSString).lastPathComponent
+            extendedDetails += "[\(fileName)\(showLineNumber ? ":\(logDetails.lineNumber)" : "")] "
         } else if showLineNumber {
             extendedDetails += "[\(logDetails.lineNumber)] "
         }

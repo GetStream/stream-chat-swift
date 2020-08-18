@@ -42,7 +42,7 @@ class DefaultReconnectionStrategy: WebSocketClientReconnectionStrategy {
         let maxDelay: TimeInterval = min(0.5 + Double(consecutiveFailures * 2), Self.maximumReconnectionDelay)
         let minDelay: TimeInterval = min(max(0.25, (Double(consecutiveFailures) - 1) * 2), Self.maximumReconnectionDelay)
         consecutiveFailures += 1
-        let delay = TimeInterval.random(in: minDelay ... maxDelay)
+        let delay = TimeInterval.random(in: minDelay...maxDelay)
         
         return delay
     }

@@ -74,7 +74,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(loadedMessage?.parentId, messagePayload.parentId)
             Assert.willBeEqual(loadedMessage?.showReplyInChannel, messagePayload.showReplyInChannel)
-            Assert.willBeEqual(loadedMessage?.mentionedUsers.map { $0.id }, messagePayload.mentionedUsers.map { $0.id })
+            Assert.willBeEqual(loadedMessage?.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
             Assert.willBeEqual(loadedMessage?.replyCount, messagePayload.replyCount)
             Assert.willBeEqual(loadedMessage?.extraData, messagePayload.extraData)
             Assert.willBeEqual(loadedMessage?.reactionScores, messagePayload.reactionScores)
@@ -153,7 +153,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(loadedMessage?.parentId, messagePayload.parentId)
             Assert.willBeEqual(loadedMessage?.showReplyInChannel, messagePayload.showReplyInChannel)
-            Assert.willBeEqual(loadedMessage?.mentionedUsers.map { $0.id }, messagePayload.mentionedUsers.map { $0.id })
+            Assert.willBeEqual(loadedMessage?.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
             Assert.willBeEqual(loadedMessage?.replyCount, messagePayload.replyCount)
             Assert.willBeEqual(loadedMessage?.extraData.isSectedDeathStarPlanIncluded,
                                messagePayload.extraData.isSectedDeathStarPlanIncluded)

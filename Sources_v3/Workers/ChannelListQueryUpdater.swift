@@ -14,27 +14,26 @@ class ChannelListQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///
     func update(channelListQuery: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
         apiClient
-            .request(endpoint: .channels(query: channelListQuery))
-        { (result: Result<ChannelListPayload<ExtraData>, Error>) in
-            switch result {
-            case let .success(channelListPayload):
-                self.database.write { session in
-                    do {
-                        try channelListPayload.channels.forEach {
-                            try session.saveChannel(payload: $0, query: channelListQuery)
+            .request(endpoint: .channels(query: channelListQuery)) { (result: Result<ChannelListPayload<ExtraData>, Error>) in
+                switch result {
+                case let .success(channelListPayload):
+                    self.database.write { session in
+                        do {
+                            try channelListPayload.channels.forEach {
+                                try session.saveChannel(payload: $0, query: channelListQuery)
+                            }
+                            
+                            completion?(nil)
+                            
+                        } catch {
+                            log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
+                            completion?(error)
                         }
-                        
-                        completion?(nil)
-                        
-                    } catch {
-                        log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
-                        completion?(error)
                     }
+                    
+                case let .failure(error):
+                    completion?(error)
                 }
-                
-            case let .failure(error):
-                completion?(error)
             }
-        }
     }
 }

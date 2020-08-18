@@ -33,18 +33,20 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     /// The counts of unread channels and messages.
     public let unreadCount: UnreadCount
     
-    public init(id: String,
-                isOnline: Bool = false,
-                isBanned: Bool = false,
-                userRole: UserRole = .user,
-                createdAt: Date = .init(),
-                updatedAt: Date = .init(),
-                lastActiveAt: Date? = nil,
-                extraData: ExtraData = .defaultValue,
-                devices: [Device] = [],
-                currentDevice: Device? = nil,
-                mutedUsers: Set<UserModel<ExtraData>> = [],
-                unreadCount: UnreadCount = .noUnread) {
+    public init(
+        id: String,
+        isOnline: Bool = false,
+        isBanned: Bool = false,
+        userRole: UserRole = .user,
+        createdAt: Date = .init(),
+        updatedAt: Date = .init(),
+        lastActiveAt: Date? = nil,
+        extraData: ExtraData = .defaultValue,
+        devices: [Device] = [],
+        currentDevice: Device? = nil,
+        mutedUsers: Set<UserModel<ExtraData>> = [],
+        unreadCount: UnreadCount = .noUnread
+    ) {
         self.devices = devices
         self.currentDevice = currentDevice
         self.mutedUsers = mutedUsers
