@@ -19,18 +19,19 @@ class LoginViewController: UITableViewController {
     @IBOutlet weak var userNameTextField: UITextField!
     @IBOutlet weak var jwtTextField: UITextField!
     
-    var cancellables = Set<AnyCancellable>()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tokenTypeSegmentedControl.publisher(for: \.selectedSegmentIndex).sink { _ in
-            self.tableView.beginUpdates()
-            self.tableView.endUpdates()
-        }.store(in: &cancellables)
+        tokenTypeSegmentedControl.addTarget(self, action: #selector(tokenTypeSegmentedControlDidChangeValue), for: .valueChanged)
+    }
+    
+    @objc func tokenTypeSegmentedControlDidChangeValue() {
+        self.tableView.beginUpdates()
+        self.tableView.endUpdates()
     }
 }
 
+// MARK: - UITableView
 extension LoginViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath {
@@ -57,7 +58,7 @@ extension LoginViewController {
         case .simpleChatIndexPath:
             logIn(apiKey: apiKey, userId: userId, userName: userName, token: token) {
                 DispatchQueue.main.async {
-                    let storyboard = UIStoryboard(name: "SimpleChat",   bundle: nil)
+                    let storyboard = UIStoryboard(name: "SimpleChat", bundle: nil)
                     let initial = storyboard.instantiateInitialViewController()
                     UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
                         self.view.window?.rootViewController = initial
