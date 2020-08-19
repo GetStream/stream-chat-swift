@@ -41,21 +41,17 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`
     /// on its delegate.
-    var onChange: ((EntityChange<Item>) -> Void)? {
-        didSet {
-            changeAggregator.onChange = { [unowned self] listChanges in
-                log.assert(listChanges.count <= 1, "EntityDatabaseObserver predicate shouldn't produce more than one change")
-                if let entityChange = listChanges.first.map(EntityChange.init) {
-                    self._item.reset()
-                    self.onChange?(entityChange)
-                }
-            }
-        }
-    }
+    private var listeners: [(EntityChange<Item>) -> Void] = []
     
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
-    private(set) lazy var changeAggregator: ListChangeAggregator<DTO, Item> =
-        ListChangeAggregator<DTO, Item>(itemCreator: self.itemCreator)
+    private(set) lazy var changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator)
+        .onChange { [unowned self] listChanges in
+            log.assert(listChanges.count <= 1, "EntityDatabaseObserver predicate shouldn't produce more than one change")
+            if let entityChange = listChanges.first.map(EntityChange.init) {
+                self._item.reset()
+                self.listeners.forEach { $0(entityChange) }
+            }
+        }
     
     /// Used for observing the changes in the DB.
     private(set) lazy var frc: NSFetchedResultsController<DTO> = self.fetchedResultsControllerType
@@ -115,11 +111,21 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
         _item.reset()
         
         frc.delegate = changeAggregator
-        
-        // This is a workaround for the situation when someone wants to observe only the `items` array without
-        // listening to changes. We just need to make sure the `didSet` callback of `onChange` is executed at least once.
-        if onChange == nil {
-            onChange = nil
-        }
+    }
+}
+
+extension EntityDatabaseObserver {
+    /// A builder-function that adds new listener to the current instance and returns it
+    @discardableResult
+    func onChange(do listener: @escaping (EntityChange<Item>) -> Void) -> EntityDatabaseObserver {
+        listeners.append(listener)
+        return self
+    }
+}
+
+private extension ListChangeAggregator {
+    func onChange(do action: @escaping ([ListChange<Item>]) -> Void) -> ListChangeAggregator {
+        onChange = action
+        return self
     }
 }
