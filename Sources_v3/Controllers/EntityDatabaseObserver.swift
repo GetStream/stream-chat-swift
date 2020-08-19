@@ -28,6 +28,19 @@ extension EntityChange {
             return item
         }
     }
+    
+    /// Returns `EntityChange` of the same type but for the specific field
+    func fieldChange<Value>(_ path: KeyPath<Item, Value>) -> EntityChange<Value> {
+        let field = item[keyPath: path]
+        switch self {
+        case .create:
+            return .create(field)
+        case .update:
+            return .update(field)
+        case .remove:
+            return .remove(field)
+        }
+    }
 }
 
 extension EntityChange: Equatable where Item: Equatable {}
