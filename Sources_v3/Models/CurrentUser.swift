@@ -18,6 +18,9 @@ extension UserId {
     }
 }
 
+/// A convenience typealias for `CurrentUserModel` with the default data type.
+public typealias CurrentUser = CurrentUserModel<DefaultDataTypes.User>
+
 public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     // MARK: - Public
     
