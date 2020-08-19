@@ -102,7 +102,7 @@ extension Assert {
         let requestsMatchingByPathDescription = requestsMatchingByPath
             .map { request in
                 request.description +
-                "Match failure: " +
+                "⛔️ Match failure: " +
                 request.matches(method, path, headers, queryParameters, body).failureMessage
             }.joined(separator: "\n")
 
@@ -150,11 +150,11 @@ private extension URLRequest {
         guard let url = self.url else { return "" }
         let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
         
-        return "URLRequest:\n" +
-            "url=\(url.absoluteString)\n" +
-            "method=\(httpMethod ?? "")\n" +
-            "headers=\(allHTTPHeaderFields ?? [:])\n" +
-            "queryItems=\(String(describing: queryItems))\n\n"
+        return "☏ URLRequest:\n" +
+            "➔ url=\(url.absoluteString)\n" +
+            "➔ method=\(httpMethod ?? "")\n" +
+            "➔ headers=\(allHTTPHeaderFields ?? [:])\n" +
+            "➔ queryItems=\(String(describing: queryItems))\n\n"
     }
     
     /// Returns `true` if the given parameters match the current `URLRequest`. Otherwise returns `false`.
