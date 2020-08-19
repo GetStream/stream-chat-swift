@@ -159,6 +159,55 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+
+    // MARK: - Creating `ChannelController` tests
+
+    func test_channelControllerForNewChannel_createdCorreclty() {
+        let cid: ChannelId = .unique
+        let team: String = .unique
+        let members: Set<UserId> = [.unique]
+        let invites: Set<UserId> = [.unique]
+        let extraData: NameAndImageExtraData = .init(name: .unique, imageURL: .unique())
+
+        // Create a new `ChannelController`
+        let controller = client.channelController(createChannelWithId: cid,
+                                                  team: team,
+                                                  members: members,
+                                                  invites: invites,
+                                                  extraData: extraData)
+
+        // Assert `ChannelQuery` created correctly
+        XCTAssertEqual(cid, controller.channelQuery.cid)
+        XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
+        XCTAssertEqual(members, controller.channelQuery.channelPayload?.members)
+        XCTAssertEqual(invites, controller.channelQuery.channelPayload?.invites)
+        XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
+    }
+
+    func test_channelControllerForNew1on1Channel_createdCorreclty() throws {
+        let team: String = .unique
+        let members: Set<UserId> = [.unique]
+        let extraData: NameAndImageExtraData = .init(name: .unique, imageURL: .unique())
+
+        // Create a new `ChannelController`
+        let controller = try client.channelController(createDirectMessageChannelWith: members, team: team, extraData: extraData)
+
+        // Assert `ChannelQuery` created correctly
+        XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
+        XCTAssertEqual(members, controller.channelQuery.channelPayload?.members)
+        XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
+    }
+
+    func test_channelControllerForNew1on1Channel_throwsError_OnEmptyMembers() {
+        let members: Set<UserId> = []
+
+        // Create a new `ChannelController`
+        do {
+            _ = try client.channelController(createDirectMessageChannelWith: members, team: .unique, extraData: .init())
+        } catch {
+            XCTAssert(error is ClientError.ChannelEmptyMembers)
+        }
+    }
     
     // MARK: - Channel change propagation tests
     

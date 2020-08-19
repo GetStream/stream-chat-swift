@@ -48,6 +48,27 @@ extension Client {
                                                           extraData: extraData)
         return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
     }
+
+    /// Creates a new `ChannelController` that will create new channel with members without id. It's great for direct message
+    /// channels.
+    /// - Parameters:
+    ///   - members: Members for the new channel. Must not be empty.
+    ///   - team: Team for the new channel.
+    ///   - extraData: Extra data for the new channel.
+    /// - Returns: A new instance of `ChannelController`.
+    public func channelController(
+        createDirectMessageChannelWith members: Set<UserId>,
+        team: String? = nil,
+        extraData: ExtraData.Channel
+    ) throws -> ChannelControllerGeneric<ExtraData> {
+        guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
+        let payload = ChannelEditDetailPayload<ExtraData>(cid: .init(type: .messaging, id: ""),
+                                                          team: team,
+                                                          members: members,
+                                                          invites: [],
+                                                          extraData: extraData)
+        return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
+    }
 }
 
 /// A convenience typealias for `ChannelControllerGeneric` with `DefaultDataTypes`
