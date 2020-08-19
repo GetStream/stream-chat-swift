@@ -14,6 +14,15 @@ class CurrentUserDTO: NSManagedObject {
     
     @NSManaged var mutedUsers: Set<UserDTO>
     @NSManaged var user: UserDTO
+    
+    /// Returns a default fetch request for the current user.
+    static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
+        let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
+        // Sorting doesn't matter here as soon as we have a single current-user in a database.
+        // It's here to make the request safe for FRC
+        request.sortDescriptors = [.init(keyPath: \CurrentUserDTO.unreadMessagesCount, ascending: true)]
+        return request
+    }
 }
 
 extension CurrentUserDTO {
