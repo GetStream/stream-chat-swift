@@ -14,6 +14,13 @@ class CurrentUserDTO: NSManagedObject {
     
     @NSManaged var mutedUsers: Set<UserDTO>
     @NSManaged var user: UserDTO
+    
+    /// Returns a default fetch request for the current user.
+    static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
+        let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
+        request.sortDescriptors = []
+        return request
+    }
 }
 
 extension CurrentUserDTO {
