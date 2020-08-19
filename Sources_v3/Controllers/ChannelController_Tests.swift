@@ -440,7 +440,7 @@ class ChannelController_Tests: StressTestCase {
                 completion(error)
             }
         }
-        XCTAssert(error is ClientError.ChannelDoesNotExist)
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate succsesfull backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid)
@@ -503,7 +503,7 @@ class ChannelController_Tests: StressTestCase {
                 completion(error)
             }
         }
-        XCTAssert(error is ClientError.ChannelDoesNotExist)
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate succsesfull backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid)
@@ -569,7 +569,7 @@ class ChannelController_Tests: StressTestCase {
                 completion(error)
             }
         }
-        XCTAssert(error is ClientError.ChannelDoesNotExist)
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate succsesfull backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid)
@@ -635,7 +635,7 @@ class ChannelController_Tests: StressTestCase {
                 completion(error)
             }
         }
-        XCTAssert(error is ClientError.ChannelDoesNotExist)
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate succsesfull backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid)
@@ -701,7 +701,7 @@ class ChannelController_Tests: StressTestCase {
                 completion(error)
             }
         }
-        XCTAssert(error is ClientError.ChannelDoesNotExist)
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate succsesfull backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid)
@@ -769,7 +769,7 @@ class ChannelController_Tests: StressTestCase {
                 completion(error)
             }
         }
-        XCTAssert(error is ClientError.ChannelDoesNotExist)
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate succsesfull backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid)

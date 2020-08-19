@@ -384,7 +384,7 @@ public extension ChannelControllerGeneric {
     // It's impossible to perform any channel modification before it's creation on backend.
     // So before any modification attempt we need to check if channel is already created and call this function if not.
     private func channelModificationFailed(_ completion: ((Error?) -> Void)?) {
-        let error = ClientError.ChannelDoesNotExist()
+        let error = ClientError.ChannelNotCreatedYet()
         log.error(error.localizedDescription)
         callback {
             completion?(error)
@@ -586,7 +586,7 @@ extension AnyChannelControllerDelegate where ExtraData == DefaultDataTypes {
 }
 
 extension ClientError {
-    class ChannelDoesNotExist: ClientError {
+    class ChannelNotCreatedYet: ClientError {
         override public var localizedDescription: String {
             // swiftlint:disable:next line_length
             "You can't modify the channel because the channel hasn't been created yet. Call `startUpdating()` to create the channel and wait for the completion block to finish. Alternatively, you can observe the `state` changes of the controller and wait for the `remoteDataFetched` state."
