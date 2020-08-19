@@ -145,7 +145,7 @@ private extension URLRequest {
         }
     }
     
-    /// String description of request: URL, HTTP method, headers and query items
+    /// String description of a request: URL, HTTP method, headers and query items
     var description: String {
         guard let url = self.url else { return "" }
         let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
@@ -157,8 +157,7 @@ private extension URLRequest {
             "queryItems=\(String(describing: queryItems))\n\n"
     }
     
-    /// Returns `success` if the given path matches the current `URLRequest`.
-    /// Otherwise returns `failure` with a String describing the why it does not match.
+    /// Returns `true` if the given parameters match the current `URLRequest`. Otherwise returns `false`.
     func matches(path: String) -> Bool {
         guard let url = self.url,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
@@ -168,7 +167,8 @@ private extension URLRequest {
         return true
     }
     
-    /// Returns `true` if the given parameters match the current `URLRequest`. Otherwise returns `false`.
+    /// Returns `success` if the given path matches the current `URLRequest`.
+    /// Otherwise returns `failure` with a String describing the why it does not match.
     func matches(_ method: Endpoint.Method,
                  _ path: String,
                  _ headers: [String: String]?,
