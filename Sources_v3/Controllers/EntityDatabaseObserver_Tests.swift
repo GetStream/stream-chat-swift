@@ -30,9 +30,7 @@ class EntityDatabaseObserver_Tests: XCTestCase {
     func test_observingChanges() throws {
         let testId: String = .unique
         fetchRequest.predicate = NSPredicate(format: "testId == %@", testId)
-        
-        observer.onChange = { print($0) }
-        
+                
         try observer.startObserving()
         XCTAssertNil(observer.item)
         
@@ -75,5 +73,37 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         }
         
         AssertAsync.willBeEqual(observer.item, nil)
+    }
+    
+    func test_onChange_addsNewListenerAndReturnsTheSameInstance() throws {
+        let testId: String = .unique
+        let testValue: String = .unique
+        fetchRequest.predicate = NSPredicate(format: "testId == %@", testId)
+
+        //Add two listeners
+        var listener1Changes: [EntityChange<String>] = []
+        var listener2Changes: [EntityChange<String>] = []
+        
+        let updatedObserver = observer
+            .onChange { listener1Changes.append($0) }
+            .onChange { listener2Changes.append($0) }
+        
+        //Assert the same observer is returned
+        XCTAssertTrue(updatedObserver === observer)
+        
+        //Start observing
+        try observer.startObserving()
+
+        // Insert a new entity matching the predicate
+        database.write {
+            let new = TestManagedObject(context: $0 as! NSManagedObjectContext)
+            new.testValue = testValue
+            new.testId = testId
+        }
+    
+        // Assert both listeners receive expected changes
+        let expectedChanges = [EntityChange.create(testValue)]
+        AssertAsync.willBeEqual(listener1Changes, expectedChanges)
+        AssertAsync.willBeEqual(listener2Changes, expectedChanges)
     }
 }
