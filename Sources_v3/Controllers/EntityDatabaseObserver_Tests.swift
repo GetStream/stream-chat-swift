@@ -129,6 +129,103 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         AssertAsync.willBeEqual(listener1Changes, expectedChanges)
         AssertAsync.willBeEqual(listener2Changes, expectedChanges)
     }
+    
+    func test_onFieldChange_returnsTheSameInstance() throws {
+        // Add new field listener
+        let updatedObserver = observer.onFieldChange(\.value) { _ in }
+        
+        //Assert the same observer is returned
+        XCTAssertTrue(updatedObserver === observer)
+    }
+    
+    func test_onFieldChange_forwardsCreateFieldChange() throws {
+        let testItem: TestItem = .unique
+        fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
+        
+        // Add new field listener
+        var lastChange: EntityChange<String?>?
+        observer.onFieldChange(\.value) { lastChange = $0 }
+        
+        // Start observing
+        try observer.startObserving()
+        
+        // Insert a new entity matching the predicate
+        database.write {
+            let new = TestManagedObject(context: $0 as! NSManagedObjectContext)
+            new.testValue = testItem.value
+            new.testId = testItem.id
+        }
+        
+        // Assert correct change is received
+        AssertAsync.willBeEqual(lastChange, .create(testItem.value))
+    }
+    
+    func test_onFieldChange_forwardsUpdateFieldChange() throws {
+        var testItem: TestItem = .unique
+        fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
+        
+        // Insert a new entity matching the predicate
+        database.write {
+            let new = TestManagedObject(context: $0 as! NSManagedObjectContext)
+            new.testValue = testItem.value
+            new.testId = testItem.id
+        }
+        
+        // Add new field listener
+        var lastChange: EntityChange<String?>?
+        observer.onFieldChange(\.value) {
+            lastChange = $0
+        }
+        
+        // Start observing
+        try observer.startObserving()
+        
+        // Update existed entity
+        testItem.value = .unique
+        database.write { [fetchRequest] in
+            let context = $0 as! NSManagedObjectContext
+            let result = try! context.fetch(fetchRequest!)
+            XCTAssertEqual(result.count, 1)
+            
+            result[0].testValue = testItem.value
+        }
+    
+        // Assert correct change is received
+        AssertAsync.willBeEqual(lastChange, .update(testItem.value))
+    }
+    
+    func test_onFieldChange_forwardsRemoveFieldChange() throws {
+        let testItem: TestItem = .unique
+        fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
+
+        // Insert a new entity matching the predicate
+        database.write {
+            let new = TestManagedObject(context: $0 as! NSManagedObjectContext)
+            new.testValue = testItem.value
+            new.testId = testItem.id
+        }
+        
+        // Add new field listener
+        var lastChange: EntityChange<String?>?
+        observer.onFieldChange(\.value) {
+            lastChange = $0
+        }
+        
+        // Start observing
+        try observer.startObserving()
+
+        // Remove existed entity
+        database.write { [fetchRequest] in
+            let context = $0 as! NSManagedObjectContext
+            let result = try! context.fetch(fetchRequest!)
+            XCTAssertEqual(result.count, 1)
+
+            context.delete(result[0])
+        }
+        
+        // Assert correct change is received
+        AssertAsync.willBeEqual(lastChange, .remove(testItem.value))
+    }
 }
 
 private struct TestItem: Equatable {

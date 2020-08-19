@@ -147,4 +147,30 @@ extension EntityDatabaseObserver {
         listeners.append(listener)
         return self
     }
+    
+    /// A builder-function that adds new listener for the specific `Item` field
+    /// and returns the updated `EntityDatabaseObserver` instance
+    ///
+    /// - Parameters:
+    ///   - keyPath: The key-path of the specific field
+    ///   - listener: The listener that will be called when the new field change comes (from N the same sequential
+    ///   changes only the first will be delivered)
+    /// - Returns: The updated current `EntityDatabaseObserver` instance with the new listener added
+    @discardableResult
+    func onFieldChange<Value: Equatable>(
+        _ keyPath: KeyPath<Item, Value>,
+        do listener: @escaping (EntityChange<Value>) -> Void
+    ) -> EntityDatabaseObserver {
+        //The value that stores the last received `EntityChange<Value>` and is captured by ref by the closure
+        var lastChange: EntityChange<Value>?
+        
+        return onChange {
+            let change = $0.fieldChange(keyPath)
+            
+            if change != lastChange {
+                listener(change)
+                lastChange = change
+            }
+        }
+    }
 }
