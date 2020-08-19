@@ -380,6 +380,47 @@ public extension ChannelControllerGeneric {
             }
         }
     }
+    
+    /// Creates a new message in the local DB.
+    ///
+    /// - Parameters:
+    ///   - text: Text of the message.
+    ///   - command: ????
+    ///   - arguments: ????
+    ///   - parentMessageId: If the message is a reply, the `MessageId` of the message this message replies to.
+    ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
+    ///   in the response thread.
+    ///   - extraData: Additional extra data of the message object.
+    ///   - completion: Called when saving the message to the local DB finishes.
+    ///
+    func createNewMessage(
+        text: String,
+        command: String? = nil,
+        arguments: String? = nil,
+        parentMessageId: MessageId? = nil,
+        showReplyInChannel: Bool = false,
+        extraData: ExtraData.Message = .defaultValue,
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
+    ) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed { error in
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+            return
+        }
+
+        worker.createNewMessage(in: channelId,
+                                text: text,
+                                command: command,
+                                arguments: arguments,
+                                parentMessageId: parentMessageId,
+                                showReplyInChannel: showReplyInChannel,
+                                extraData: extraData) { [weak self] result in
+            self?.callback {
+                completion?(result)
+            }
+        }
+    }
 
     // It's impossible to perform any channel modification before it's creation on backend.
     // So before any modification attempt we need to check if channel is already created and call this function if not.

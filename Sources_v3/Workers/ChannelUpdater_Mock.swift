@@ -38,6 +38,15 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     var removeMembers_userIds: Set<UserId>?
     var removeMembers_completion: ((Error?) -> Void)?
 
+    var createNewMessage_cid: ChannelId?
+    var createNewMessage_text: String?
+    var createNewMessage_command: String?
+    var createNewMessage_arguments: String?
+    var createNewMessage_parentMessageId: MessageId?
+    var createNewMessage_showReplyInChannel: Bool?
+    var createNewMessage_extraData: ExtraData.Message?
+    var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
+    
     override func update(
         channelQuery: ChannelQuery<ExtraData>,
         channelCreatedCallback: ((ChannelId) -> Void)?,
