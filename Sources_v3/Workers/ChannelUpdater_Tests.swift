@@ -12,7 +12,7 @@ class ChannelUpdater_Tests: StressTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainer!
     
-    var queryUpdater: ChannelUpdater<ExtraData>!
+    var channelUpdater: ChannelUpdater<ExtraData>!
     
     override func setUp() {
         super.setUp()
@@ -21,13 +21,13 @@ class ChannelUpdater_Tests: StressTestCase {
         apiClient = APIClientMock()
         database = try! DatabaseContainer(kind: .inMemory)
         
-        queryUpdater = ChannelUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        channelUpdater = ChannelUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
     }
     
     func test_updateChannelQuery_makesCorrectAPICall() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery<ExtraData>(cid: .unique)
-        queryUpdater.update(channelQuery: query)
+        channelUpdater.update(channelQuery: query)
         
         let referenceEndpoint: Endpoint<ChannelPayload<ExtraData>> = .channel(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
@@ -37,7 +37,7 @@ class ChannelUpdater_Tests: StressTestCase {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery<ExtraData>(cid: .unique)
         var completionCalled = false
-        queryUpdater.update(channelQuery: query, completion: { error in
+        channelUpdater.update(channelQuery: query, completion: { error in
             XCTAssertNil(error)
             completionCalled = true
         })
@@ -61,7 +61,7 @@ class ChannelUpdater_Tests: StressTestCase {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery<ExtraData>(cid: .unique)
         var completionCalledError: Error?
-        queryUpdater.update(channelQuery: query, completion: { completionCalledError = $0 })
+        channelUpdater.update(channelQuery: query, completion: { completionCalledError = $0 })
         
         // Simulate API response with failure
         let error = TestError()
@@ -87,7 +87,7 @@ class ChannelUpdater_Tests: StressTestCase {
         }
 
         // Simulate `updateChannel` call
-        queryUpdater.update(channelQuery: query, channelCreatedCallback: callback, completion: nil)
+        channelUpdater.update(channelQuery: query, channelCreatedCallback: callback, completion: nil)
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid)
@@ -105,7 +105,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let channelPayload: ChannelEditDetailPayload<DefaultDataTypes> = .unique
 
         // Simulate `updateChannel(channelPayload:, completion:)` call
-        queryUpdater.updateChannel(channelPayload: channelPayload)
+        channelUpdater.updateChannel(channelPayload: channelPayload)
 
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .updateChannel(channelPayload: channelPayload)
@@ -115,7 +115,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_updateChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `updateChannel(channelPayload:, completion:)` call
         var completionCalled = false
-        queryUpdater.updateChannel(channelPayload: .unique) { error in
+        channelUpdater.updateChannel(channelPayload: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -133,7 +133,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_updateChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `updateChannel(channelPayload:, completion:)` call
         var completionCalledError: Error?
-        queryUpdater.updateChannel(channelPayload: .unique) { completionCalledError = $0 }
+        channelUpdater.updateChannel(channelPayload: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
@@ -150,7 +150,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let mute = true
 
         // Simulate `muteChannel(cid:, mute:, completion:)` call
-        queryUpdater.muteChannel(cid: channelID, mute: mute)
+        channelUpdater.muteChannel(cid: channelID, mute: mute)
 
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .muteChannel(cid: channelID, mute: mute)
@@ -160,7 +160,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_muteChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `muteChannel(cid:, mute:, completion:)` call
         var completionCalled = false
-        queryUpdater.muteChannel(cid: .unique, mute: true) { error in
+        channelUpdater.muteChannel(cid: .unique, mute: true) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -178,7 +178,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_muteChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `muteChannel(cid:, mute:, completion:)` call
         var completionCalledError: Error?
-        queryUpdater.muteChannel(cid: .unique, mute: true) { completionCalledError = $0 }
+        channelUpdater.muteChannel(cid: .unique, mute: true) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
@@ -194,7 +194,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let channelID = ChannelId.unique
 
         // Simulate `deleteChannel(cid:, completion:)` call
-        queryUpdater.deleteChannel(cid: channelID)
+        channelUpdater.deleteChannel(cid: channelID)
 
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .deleteChannel(cid: channelID)
@@ -204,7 +204,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_deleteChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `deleteChannel(cid:, completion:)` call
         var completionCalled = false
-        queryUpdater.deleteChannel(cid: .unique) { error in
+        channelUpdater.deleteChannel(cid: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -222,7 +222,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_deleteChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `deleteChannel(cid:, completion:)` call
         var completionCalledError: Error?
-        queryUpdater.deleteChannel(cid: .unique) { completionCalledError = $0 }
+        channelUpdater.deleteChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
@@ -240,7 +240,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let clearHistory = true
 
         // Simulate `hideChannel(cid:, userId:, clearHistory:, completion:)` call
-        queryUpdater.hideChannel(cid: channelID, userId: userID, clearHistory: clearHistory)
+        channelUpdater.hideChannel(cid: channelID, userId: userID, clearHistory: clearHistory)
 
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .hideChannel(cid: channelID, userId: userID, clearHistory: clearHistory)
@@ -250,7 +250,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_hideChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `hideChannel(cid:, userId:, clearHistory:, completion:)` call
         var completionCalled = false
-        queryUpdater.hideChannel(cid: .unique, userId: .unique, clearHistory: true) { error in
+        channelUpdater.hideChannel(cid: .unique, userId: .unique, clearHistory: true) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -268,7 +268,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_hideChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `hideChannel(cid:, userId:, clearHistory:, completion:)` call
         var completionCalledError: Error?
-        queryUpdater.hideChannel(cid: .unique, userId: .unique, clearHistory: true) { completionCalledError = $0 }
+        channelUpdater.hideChannel(cid: .unique, userId: .unique, clearHistory: true) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
@@ -285,7 +285,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let userID = UserId.unique
 
         // Simulate `showChannel(cid:, userId:)` call
-        queryUpdater.showChannel(cid: channelID, userId: userID)
+        channelUpdater.showChannel(cid: channelID, userId: userID)
 
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .showChannel(cid: channelID, userId: userID)
@@ -295,7 +295,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_showChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `showChannel(cid:, userId:)` call
         var completionCalled = false
-        queryUpdater.showChannel(cid: .unique, userId: .unique) { error in
+        channelUpdater.showChannel(cid: .unique, userId: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -313,7 +313,7 @@ class ChannelUpdater_Tests: StressTestCase {
     func test_showChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `showChannel(cid:, userId:)` call
         var completionCalledError: Error?
-        queryUpdater.showChannel(cid: .unique, userId: .unique) { completionCalledError = $0 }
+        channelUpdater.showChannel(cid: .unique, userId: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
@@ -330,7 +330,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `addMembers(cid:, mute:, userIds:)` call
-        queryUpdater.addMembers(cid: channelID, userIds: userIds)
+        channelUpdater.addMembers(cid: channelID, userIds: userIds)
 
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(cid: channelID, userIds: userIds)
@@ -343,7 +343,7 @@ class ChannelUpdater_Tests: StressTestCase {
         
         // Simulate `addMembers(cid:, mute:, userIds:)` call
         var completionCalled = false
-        queryUpdater.addMembers(cid: channelID, userIds: userIds) { error in
+        channelUpdater.addMembers(cid: channelID, userIds: userIds) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -364,7 +364,7 @@ class ChannelUpdater_Tests: StressTestCase {
         
         // Simulate `muteChannel(cid:, mute:, completion:)` call
         var completionCalledError: Error?
-        queryUpdater.addMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
+        channelUpdater.addMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
@@ -381,7 +381,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `removeMembers(cid:, mute:, userIds:)` call
-        queryUpdater.removeMembers(cid: channelID, userIds: userIds)
+        channelUpdater.removeMembers(cid: channelID, userIds: userIds)
 
         // Assert correct endpoint is called
         let referenceEndpoint: Endpoint<EmptyResponse> = .removeMembers(cid: channelID, userIds: userIds)
@@ -394,7 +394,7 @@ class ChannelUpdater_Tests: StressTestCase {
         
         // Simulate `removeMembers(cid:, mute:, userIds:)` call
         var completionCalled = false
-        queryUpdater.removeMembers(cid: channelID, userIds: userIds) { error in
+        channelUpdater.removeMembers(cid: channelID, userIds: userIds) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -415,7 +415,7 @@ class ChannelUpdater_Tests: StressTestCase {
         
         // Simulate `removeMembers(cid:, mute:, completion:)` call
         var completionCalledError: Error?
-        queryUpdater.removeMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
+        channelUpdater.removeMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
