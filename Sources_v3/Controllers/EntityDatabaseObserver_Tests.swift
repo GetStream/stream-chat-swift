@@ -6,6 +6,18 @@ import CoreData
 @testable import StreamChatClient
 import XCTest
 
+class EntityChange_Tests: XCTestCase {
+    func test_item() {
+        let createdItem: String = .unique
+        let updatedItem: String = .unique
+        let removedItem: String = .unique
+
+        XCTAssertEqual(EntityChange.create(createdItem).item, createdItem)
+        XCTAssertEqual(EntityChange.update(updatedItem).item, updatedItem)
+        XCTAssertEqual(EntityChange.remove(removedItem).item, removedItem)
+    }
+}
+
 class EntityDatabaseObserver_Tests: XCTestCase {
     var observer: EntityDatabaseObserver<String, TestManagedObject>!
     var fetchRequest: NSFetchRequest<TestManagedObject>!
