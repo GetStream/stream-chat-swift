@@ -128,3 +128,16 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         AssertAsync.willBeEqual(listener2Changes, expectedChanges)
     }
 }
+
+private struct TestItem: Equatable {
+    static var unique: Self { .init(id: .unique, value: .unique) }
+    
+    var id: String
+    var value: String?
+}
+
+private extension TestManagedObject {
+    var model: TestItem {
+        .init(id: testId, value: testValue)
+    }
+}
