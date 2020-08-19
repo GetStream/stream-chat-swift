@@ -17,6 +17,20 @@ public enum EntityChange<Item> {
     case remove(_ item: Item)
 }
 
+extension EntityChange {
+    /// Returns the underlaying item that was changed
+    public var item: Item {
+        switch self {
+        case let .create(item):
+            return item
+        case let .update(item):
+            return item
+        case let .remove(item):
+            return item
+        }
+    }
+}
+
 extension EntityChange: Equatable where Item: Equatable {}
 
 extension EntityChange {
