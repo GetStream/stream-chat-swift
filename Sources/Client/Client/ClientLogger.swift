@@ -216,6 +216,8 @@ public final class ClientLogger {
     private var startTime: CFTimeInterval
     private let level: Level
     
+    private var measuredTasksStart: Atomic<[UUID: (start: Date, description: String)]> = .init([:])
+    
     /// Init a client logger.
     /// - Parameters:
     ///   - icon: a string icon.
@@ -227,6 +229,32 @@ public final class ClientLogger {
         lastTime = startTime
     }
     
+    public func logTaskDuration(_ description: String, task: () -> Void) {
+        let id = logTaskStarted(description)
+        task()
+        logTaskFinished(taskId: id)
+    }
+    
+    @discardableResult
+    public func logTaskStarted(_ description: String, taskId: UUID = .init()) -> UUID {
+        measuredTasksStart.update {
+            var tasks = $0
+            tasks[taskId] = (start: Date(), description: description)
+            return tasks
+        }
+        return taskId
+    }
+
+    public func logTaskFinished(taskId id: UUID) {
+        guard let task = measuredTasksStart[id] else {
+            log("Trying to finish a logger measuring task with \(id) but the task wasn't started.", level: .error)
+            return
+        }
+        
+        let duration = Date().timeIntervalSince1970 - task.start.timeIntervalSince1970
+        log("⏱ \(task.description) finished in \(duration) seconds.", level: .debug)
+    }
+
     /// Log a request.
     ///
     /// - Parameter request: an URL request.
