@@ -275,9 +275,8 @@ class ChatClient_Tests: StressTestCase {
     func test_defaultUserIsAnonymous() {
         let client = ChatClient(config: inMemoryStorageConfig)
         
-        // The current userId should be set, but the user is not loaded before the connection is established
+        // The current userId should be set
         XCTAssertTrue(client.currentUserId.isAnonymousUser)
-        XCTAssertNil(client.currentUser)
     }
     
     func test_settingAnonymousUser() {
@@ -361,8 +360,8 @@ class ChatClient_Tests: StressTestCase {
             // Completion is called
             Assert.willBeTrue(setUserCompletionCalled)
             
-            // Current user data are available
-            Assert.willBeEqual(client.currentUser?.id, newUserId)
+            // The correct `currentUserId` is set
+            Assert.willBeEqual(client.currentUserId, newUserId)
             
             // The token is updated
             Assert.willBeEqual(client.provideToken(), newUserToken)
@@ -436,8 +435,8 @@ class ChatClient_Tests: StressTestCase {
             // Completion is called
             Assert.willBeTrue(setUserCompletionCalled)
 
-            // Current user data are available
-            Assert.willBeEqual(client.currentUser?.id, newUser.userId)
+            // The correct `currentUserId` is set
+            Assert.willBeEqual(client.currentUserId, newUser.userId)
         }
     }
     
