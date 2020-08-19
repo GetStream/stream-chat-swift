@@ -48,6 +48,27 @@ extension Client {
                                                           extraData: extraData)
         return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
     }
+
+    /// Creates a new `ChannelController` that will create new channel with members without id. It's great for direct message
+    /// channels.
+    /// - Parameters:
+    ///   - members: Members for the new channel. Must not be empty.
+    ///   - team: Team for the new channel.
+    ///   - extraData: Extra data for the new channel.
+    /// - Returns: A new instance of `ChannelController`.
+    public func channelController(
+        createDirectMessageChannelWith members: Set<UserId>,
+        team: String? = nil,
+        extraData: ExtraData.Channel
+    ) throws -> ChannelControllerGeneric<ExtraData> {
+        guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
+        let payload = ChannelEditDetailPayload<ExtraData>(cid: .init(type: .messaging, id: ""),
+                                                          team: team,
+                                                          members: members,
+                                                          invites: [],
+                                                          extraData: extraData)
+        return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
+    }
 }
 
 /// A convenience typealias for `ChannelControllerGeneric` with `DefaultDataTypes`
@@ -59,12 +80,7 @@ public typealias ChannelController = ChannelControllerGeneric<DefaultDataTypes>
 ///
 public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable {
     /// The ChannelQuery this controller observes.
-    public private(set) var channelQuery: ChannelQuery<ExtraData> {
-        didSet {
-            guard oldValue.cid != channelQuery.cid else { return }
-            startDBObserving()
-        }
-    }
+    @Atomic public private(set) var channelQuery: ChannelQuery<ExtraData>
 
     /// The identifier of a channel this controller observes.
     private var channelId: ChannelId { channelQuery.cid }
@@ -118,10 +134,13 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     private var isChannelAlreadyCreated: Bool
     // This callback is called after channel is created on backend but before channel is saved to DB. When channel is created
     // we receive backend generated cid and setting up current `ChannelController` to observe this channel DB changes.
-    private lazy var channelCreated: (ChannelId) -> Void = { [weak self] cid in
-        guard let self = self else { return }
-        self.isChannelAlreadyCreated = true
-        self.channelQuery = ChannelQuery(cid: cid, channelQuery: self.channelQuery)
+    // Completion will be called if DB fetch will fail after setting new `ChannelQuery`.
+    private func channelCreated(completion: ((_ error: Error?) -> Void)?) -> ((ChannelId) -> Void) {
+        return { [weak self] cid in
+            guard let self = self else { return }
+            self.isChannelAlreadyCreated = true
+            self.set(channelQuery: ChannelQuery(cid: cid, channelQuery: self.channelQuery), completion: completion)
+        }
     }
 
     /// Creates a new `ChannelController`
@@ -188,13 +207,14 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     ///                         If the data fetching fails, the `error` variable contains more details about the problem.
     public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
         eventObservers.removeAll()
-        startDBObserving(completion)
+        startDatabaseObservers(completion)
 
         // Update observing state
         state = .localDataFetched
-        
+
+        let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(completion: completion)
         worker.update(channelQuery: channelQuery,
-                      channelCreatedCallback: isChannelAlreadyCreated ? nil : channelCreated) { [weak self] error in
+                      channelCreatedCallback: channelCreatedCallback) { [weak self] error in
             guard let self = self else { return }
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
@@ -203,7 +223,15 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         setupEventObservers()
     }
 
-    private func startDBObserving(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    // After setting new channelQuery we need to reset current DB observers to observe new channel.
+    // Completion will be called if observers will fail to fetch data for the new channel.
+    private func set(channelQuery: ChannelQuery<ExtraData>, completion: ((_ error: Error?) -> Void)?) {
+        guard self.channelQuery.cid != channelQuery.cid else { return }
+        self.channelQuery = channelQuery
+        startDatabaseObservers(completion)
+    }
+
+    private func startDatabaseObservers(_ completion: ((_ error: Error?) -> Void)? = nil) {
         _channelObserver.reset()
         _messagesObserver.reset()
 
@@ -356,7 +384,7 @@ public extension ChannelControllerGeneric {
     // It's impossible to perform any channel modification before it's creation on backend.
     // So before any modification attempt we need to check if channel is already created and call this function if not.
     private func channelModificationFailed(_ completion: ((Error?) -> Void)?) {
-        let error = ClientError.ChannelDoesNotExist()
+        let error = ClientError.ChannelNotCreatedYet()
         log.error(error.localizedDescription)
         callback {
             completion?(error)
@@ -558,10 +586,16 @@ extension AnyChannelControllerDelegate where ExtraData == DefaultDataTypes {
 }
 
 extension ClientError {
-    class ChannelDoesNotExist: ClientError {
+    class ChannelNotCreatedYet: ClientError {
         override public var localizedDescription: String {
             // swiftlint:disable:next line_length
             "You can't modify the channel because the channel hasn't been created yet. Call `startUpdating()` to create the channel and wait for the completion block to finish. Alternatively, you can observe the `state` changes of the controller and wait for the `remoteDataFetched` state."
+        }
+    }
+
+    class ChannelEmptyMembers: ClientError {
+        override public var localizedDescription: String {
+            "You can't create direct messaging channel with empty members."
         }
     }
 }
