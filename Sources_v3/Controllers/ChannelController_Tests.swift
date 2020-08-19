@@ -428,6 +428,8 @@ class ChannelController_Tests: StressTestCase {
         controller.startUpdating()
     }
     
+    // MARK: - Updating channel
+    
     func test_updateChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -491,6 +493,8 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
+    // MARK: - Muting channel
+    
     func test_muteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -557,6 +561,8 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
+    // MARK: - Unmuting channel
+    
     func test_unmuteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -623,6 +629,8 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
+    // MARK: - Deleting channel
+    
     func test_deleteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)
@@ -688,6 +696,8 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - Hiding channel
 
     func test_hideChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
@@ -756,6 +766,8 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - Showing channel
 
     func test_showChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
@@ -823,6 +835,77 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - Message sending
+    
+    func test_createNewMessage_callsChannelUpdater() {
+        let newMessageId: MessageId = .unique
+        
+        // New message values
+        let text: String = .unique
+        let command: String = .unique
+        let arguments: String = .unique
+        let parentMessageId: MessageId = .unique
+        let showReplyInChannel = true
+        let extraData: DefaultDataTypes.Message = .defaultValue
+        
+        // Simulate `createNewMessage` calls and catch the completion
+        var completionCalled = false
+        controller.createNewMessage(text: text,
+                                    command: command,
+                                    arguments: arguments,
+                                    parentMessageId: parentMessageId,
+                                    showReplyInChannel: showReplyInChannel,
+                                    extraData: extraData) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            AssertResultSuccess(result, newMessageId)
+            completionCalled = true
+        }
+        
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successfull udpate
+        env.channelUpdater?.createNewMessage_completion?(.success(newMessageId))
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_cid, channelId)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_text, text)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_parentMessageId, parentMessageId)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_showReplyInChannel, showReplyInChannel)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
+    }
+    
+    func test_createNewMessage_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+        
+        // Simulate `createNewMessage` call and assert error is returned
+        let result: Result<MessageId, Error> = try await { [callbackQueueID] completion in
+            controller.createNewMessage(text: .unique,
+                                        command: .unique,
+                                        arguments: .unique,
+                                        parentMessageId: .unique,
+                                        showReplyInChannel: true,
+                                        extraData: .defaultValue) { result in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(result)
+            }
+        }
+        
+        if case let .failure(error) = result {
+            XCTAssert(error is ClientError.ChannelNotCreatedYet)
+        } else {
+            XCTFail("Expected .failure but received \(result)")
+        }
+    }
+    
+    // MARK: - Adding members
     
     func test_addMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
@@ -894,6 +977,8 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - Removing members
     
     func test_removeMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel

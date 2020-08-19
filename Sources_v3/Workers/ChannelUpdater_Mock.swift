@@ -77,6 +77,26 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         showChannel_completion = completion
     }
     
+    override func createNewMessage(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        showReplyInChannel: Bool,
+        extraData: ExtraData.Message,
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
+    ) {
+        createNewMessage_cid = cid
+        createNewMessage_text = text
+        createNewMessage_command = command
+        createNewMessage_arguments = arguments
+        createNewMessage_parentMessageId = parentMessageId
+        createNewMessage_showReplyInChannel = showReplyInChannel
+        createNewMessage_extraData = extraData
+        createNewMessage_completion = completion
+    }
+    
     override func addMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
         addMembers_cid = cid
         addMembers_userIds = userIds

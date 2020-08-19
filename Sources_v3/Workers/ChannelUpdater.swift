@@ -32,7 +32,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             }
         }
     }
-
+    
     /// Updates specific channel with new data.
     /// - Parameters:
     ///   - channelPayload: New channel data..
@@ -42,7 +42,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
-
+    
     /// Mutes/unmutes the specific channel.
     /// - Parameters:
     ///   - cid: The channel identifier.
@@ -53,7 +53,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
-
+    
     /// Deletes the specific channel.
     /// - Parameters:
     ///   - cid: The channel identifier.
@@ -63,7 +63,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
-
+    
     /// Hides the channel from queryChannels for the user until a message is added.
     /// - Parameters:
     ///   - cid: The channel identifier.
@@ -75,7 +75,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
-
+    
     /// Removes hidden status for the specific channel.
     /// - Parameters:
     ///   - channel: The channel you want to show.
@@ -84,6 +84,43 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     func showChannel(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .showChannel(cid: cid, userId: userId)) {
             completion?($0.error)
+        }
+    }
+    
+    /// Creates a new message in the local DB and sets its local state to `.pendingSend`.
+    ///
+    /// - Parameters:
+    ///   - cid: The cid of the channel the message is create in.
+    ///   - text: Text of the message.
+    func createNewMessage(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        showReplyInChannel: Bool,
+        extraData: ExtraData.Message,
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
+    ) {
+        var newMessageId: MessageId?
+        database.write({ (session) in
+            let newMessageDTO = try session.createNewMessage(in: cid,
+                                                             text: text,
+                                                             command: command,
+                                                             arguments: arguments,
+                                                             parentMessageId: parentMessageId,
+                                                             showReplyInChannel: showReplyInChannel,
+                                                             extraData: extraData)
+            
+            newMessageDTO.localMessageState = .pendingSend
+            newMessageId = newMessageDTO.id
+            
+        }) { error in
+            if let messageId = newMessageId, error == nil {
+                completion?(.success(messageId))
+            } else {
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
         }
     }
     

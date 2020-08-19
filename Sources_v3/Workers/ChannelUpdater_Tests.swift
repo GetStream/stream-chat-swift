@@ -10,7 +10,7 @@ class ChannelUpdater_Tests: StressTestCase {
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
-    var database: DatabaseContainer!
+    var database: TestDatabaseContainer!
     
     var channelUpdater: ChannelUpdater<ExtraData>!
     
@@ -19,7 +19,7 @@ class ChannelUpdater_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = try! TestDatabaseContainer(kind: .inMemory)
         
         channelUpdater = ChannelUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
     }
@@ -99,6 +99,97 @@ class ChannelUpdater_Tests: StressTestCase {
         AssertAsync.willBeTrue(channel != nil)
     }
 
+    // MARK: - Messages
+    
+    func test_createNewMessage() throws {
+        // Prepare the current user and channel first
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        
+        _ = try await { completion in
+            database.write({ (session) in
+                try session.saveCurrentUser(payload: .dummy(userId: currentUserId,
+                                                            role: .admin,
+                                                            extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+                
+                try session.saveChannel(payload: self.dummyPayload(with: cid))
+                
+            }, completion: completion)
+        }
+        
+        // New message values
+        let text: String = .unique
+        let command: String = .unique
+        let arguments: String = .unique
+        let parentMessageId: MessageId = .unique
+        let showReplyInChannel = true
+        let extraData: DefaultDataTypes.Message = .defaultValue
+        
+        // Create new message
+        let newMesageId: MessageId = try await { completion in
+            channelUpdater.createNewMessage(in: cid,
+                                            text: text,
+                                            command: command,
+                                            arguments: arguments,
+                                            parentMessageId: parentMessageId,
+                                            showReplyInChannel: showReplyInChannel,
+                                            extraData: extraData) { result in
+                if let newMessageId = try? result.get() {
+                    completion(newMessageId)
+                } else {
+                    XCTFail("Saving the message failed.")
+                }
+            }
+        }
+        
+        var message: Message? {
+            database.viewContext.message(id: newMesageId)?.asModel()
+        }
+        
+        AssertAsync {
+            Assert.willBeEqual(message?.text, text)
+            Assert.willBeEqual(message?.command, command)
+            Assert.willBeEqual(message?.arguments, arguments)
+            Assert.willBeEqual(message?.parentMessageId, parentMessageId)
+            Assert.willBeEqual(message?.showReplyInChannel, showReplyInChannel)
+            Assert.willBeEqual(message?.extraData, extraData)
+            Assert.willBeEqual(message?.localState, .pendingSend)
+        }
+    }
+    
+    func test_createNewMessage_propagatesErrorWhenSavingFails() throws {
+        // Prepare the current user and channel first
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        
+        _ = try await { completion in
+            database.write({ (session) in
+                try session.saveCurrentUser(payload: .dummy(userId: currentUserId,
+                                                            role: .admin,
+                                                            extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+                
+                try session.saveChannel(payload: self.dummyPayload(with: cid))
+                
+            }, completion: completion)
+        }
+
+        // Simulate the DB failing with `TestError`
+        let testError = TestError()
+        database.write_errorResponse = testError
+        
+        let result: Result<MessageId, Error> = try await { completion in
+            channelUpdater.createNewMessage(in: .unique,
+                                            text: .unique,
+                                            command: .unique,
+                                            arguments: .unique,
+                                            parentMessageId: .unique,
+                                            showReplyInChannel: true,
+                                            extraData: .defaultValue) { completion($0) }
+        }
+        
+        AssertResultFailure(result, testError)
+    }
+    
     // MARK: - Update channel
 
     func test_updateChannel_makesCorrectAPICall() {
