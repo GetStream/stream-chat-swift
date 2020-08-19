@@ -31,7 +31,7 @@ class EntityChange_Tests: XCTestCase {
 }
 
 class EntityDatabaseObserver_Tests: XCTestCase {
-    var observer: EntityDatabaseObserver<String, TestManagedObject>!
+    private var observer: EntityDatabaseObserver<TestItem, TestManagedObject>!
     var fetchRequest: NSFetchRequest<TestManagedObject>!
     var database: DatabaseContainer!
     
@@ -44,7 +44,7 @@ class EntityDatabaseObserver_Tests: XCTestCase {
                                               modelName: "TestDataModel",
                                               bundle: Bundle(for: EntityDatabaseObserver_Tests.self))
         
-        observer = .init(context: database.viewContext, fetchRequest: fetchRequest, itemCreator: { $0.testValue })
+        observer = .init(context: database.viewContext, fetchRequest: fetchRequest, itemCreator: { $0.model })
     }
     
     func test_initialValues() {
@@ -67,7 +67,7 @@ class EntityDatabaseObserver_Tests: XCTestCase {
             new.testValue = testValue2_atInsert
         }
         
-        AssertAsync.willBeEqual(observer.item, testValue2_atInsert)
+        AssertAsync.willBeEqual(observer.item, .init(id: testId, value: testValue2_atInsert))
         
         // Modify the entity matching the predicate
         let testValue2_modified: String = .unique
@@ -82,8 +82,8 @@ class EntityDatabaseObserver_Tests: XCTestCase {
             result[0].testValue = testValue2_modified
         }
         
-        AssertAsync.willBeEqual(observer.item, testValue2_modified)
-        
+        AssertAsync.willBeEqual(observer.item, .init(id: testId, value: testValue2_modified))
+
         // Modify the entity so it no longer matches the predicate
         database.write {
             let context = $0 as! NSManagedObjectContext
@@ -100,13 +100,12 @@ class EntityDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_onChange_addsNewListenerAndReturnsTheSameInstance() throws {
-        let testId: String = .unique
-        let testValue: String = .unique
-        fetchRequest.predicate = NSPredicate(format: "testId == %@", testId)
+        let testItem = TestItem(id: .unique, value: .unique)
+        fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
 
         //Add two listeners
-        var listener1Changes: [EntityChange<String>] = []
-        var listener2Changes: [EntityChange<String>] = []
+        var listener1Changes: [EntityChange<TestItem>] = []
+        var listener2Changes: [EntityChange<TestItem>] = []
         
         let updatedObserver = observer
             .onChange { listener1Changes.append($0) }
@@ -121,12 +120,12 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         // Insert a new entity matching the predicate
         database.write {
             let new = TestManagedObject(context: $0 as! NSManagedObjectContext)
-            new.testValue = testValue
-            new.testId = testId
+            new.testValue = testItem.value
+            new.testId = testItem.id
         }
     
         // Assert both listeners receive expected changes
-        let expectedChanges = [EntityChange.create(testValue)]
+        let expectedChanges = [EntityChange.create(testItem)]
         AssertAsync.willBeEqual(listener1Changes, expectedChanges)
         AssertAsync.willBeEqual(listener2Changes, expectedChanges)
     }
