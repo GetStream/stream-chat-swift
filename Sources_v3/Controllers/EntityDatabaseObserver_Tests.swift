@@ -16,6 +16,18 @@ class EntityChange_Tests: XCTestCase {
         XCTAssertEqual(EntityChange.update(updatedItem).item, updatedItem)
         XCTAssertEqual(EntityChange.remove(removedItem).item, removedItem)
     }
+    
+    func test_fieldChange() {
+        let createdItem = TestItem.unique
+        let updatedItem = TestItem.unique
+        let removedItem = TestItem.unique
+        
+        let path = \TestItem.value
+
+        XCTAssertEqual(EntityChange.create(createdItem).fieldChange(path), .create(createdItem.value))
+        XCTAssertEqual(EntityChange.update(updatedItem).fieldChange(path), .update(updatedItem.value))
+        XCTAssertEqual(EntityChange.remove(removedItem).fieldChange(path), .remove(removedItem.value))
+    }
 }
 
 class EntityDatabaseObserver_Tests: XCTestCase {
