@@ -15,7 +15,7 @@ func error(domain: String, code: Int = -1, message: @autoclosure () -> String) -
 }
 
 /// Asserts the given 2 JSON Serializations are equal, by creating JSON objects from Data and comparing dictionaries.
-/// Recursively calls itself for nested dictionaries.
+/// Recursively calls itself for nested dictionaries and generates a failure if the expressions are not equal.
 /// - Parameters:
 ///   - expression1: JSON object 1, as Data. From string, you can do `Data(jsonString.utf8)`
 ///   - expression2: JSON object 2, as Data.
@@ -25,34 +25,52 @@ func AssertJSONEqual(_ expression1: @autoclosure () throws -> Data,
                      _ expression2: @autoclosure () throws -> Data,
                      file: StaticString = #file,
                      line: UInt = #line) {
+    
+    guard let error = try CheckJSONEqual(expression1(), expression2()) else { return }
+    XCTFail("Error: \(error)", file: file, line: line)
+}
+
+/// Compares the given 2 JSON Serializations are equal, by creating JSON objects from Data and comparing dictionaries.
+/// Recursively calls itself for nested dictionaries and returns an error if the expressions are not equal.
+/// - Parameters:
+///   - expression1: JSON object 1, as Data. From string, you can do `Data(jsonString.utf8)`
+///   - expression2: JSON object 2, as Data.
+func CheckJSONEqual(_ expression1: @autoclosure () throws -> Data,
+                    _ expression2: @autoclosure () throws -> Data) -> NSError? {
     do {
         guard let json1 = try JSONSerialization.jsonObject(with: expression1()) as? [String: Any] else {
-            throw error(domain: "AssertJSONEqual", message: "First expression is not a valid json object!")
+            return error(domain: "AssertJSONEqual",
+                         message: "First expression is not a valid json object!")
         }
         guard let json2 = try JSONSerialization.jsonObject(with: expression2()) as? [String: Any] else {
-            throw error(domain: "AssertJSONEqual", message: "Second expression is not a valid json object!")
+            return error(domain: "AssertJSONEqual",
+                         message: "Second expression is not a valid json object!")
         }
         guard json1.keys == json2.keys else {
-            throw error(domain: "AssertJSONEqual", message: "JSON keys do not match")
+            return error(domain: "AssertJSONEqual",
+                         message: "JSON keys do not match")
         }
-        try json1.forEach { (key, value) in
+        
+        for (key, value) in json1 {
             guard let value2 = json2[key] else {
-                throw error(domain: "AssertJSONEqual", message: "Expression 2 does not have value for \(key)")
+                return error(domain: "AssertJSONEqual",
+                             message: "Expression 2 does not have value for \(key)")
             }
             if let nestedDict1 = value as? [String: Any] {
                 if let nestedDict2 = value2 as? [String: Any] {
-                    try AssertJSONEqual(JSONSerialization.data(withJSONObject: nestedDict1),
-                                        JSONSerialization.data(withJSONObject: nestedDict2),
-                                        file: file,
-                                        line: line)
+                    return try CheckJSONEqual(JSONSerialization.data(withJSONObject: nestedDict1),
+                                              JSONSerialization.data(withJSONObject: nestedDict2))
                 } else {
-                    throw error(domain: "AssertJSONEqual", message:  "Values for key \(key) do not match")
+                    return error(domain: "AssertJSONEqual",
+                                 message: "Values for key \(key) do not match")
                 }
             } else if String(describing: value) != String(describing: value2) {
-                throw error(domain: "AssertJSONEqual", message: "Values for key \(key) do not match")
+                return error(domain: "AssertJSONEqual",
+                             message: "Values for key \(key) do not match")
             }
         }
+        return nil
     } catch {
-        XCTFail("Error: \(error)", file: file, line: line)
+        return error as NSError
     }
 }
