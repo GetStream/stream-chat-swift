@@ -71,3 +71,18 @@ class DatabaseContainer_Tests: StressTestCase {
         }
     }
 }
+
+/// A testable subclass of DatabaseContainer allowing response simulation.
+class TestDatabaseContainer: DatabaseContainer {
+    /// If set, the `write` completion block is called with this value.
+    var write_errorResponse: Error?
+    
+    override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
+        if let error = write_errorResponse {
+            super.write(actions, completion: { _ in })
+            completion(error)
+        } else {
+            super.write(actions, completion: completion)
+        }
+    }
+}
