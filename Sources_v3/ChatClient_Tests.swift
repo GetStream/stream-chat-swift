@@ -279,7 +279,7 @@ class ChatClient_Tests: StressTestCase {
         
         // The current userId should be set, but the user is not loaded before the connection is established
         XCTAssertTrue(client.currentUserId.isAnonymousUser)
-        XCTAssertNil(client.currentUser)
+        XCTAssertNil(testEnv.databaseContainer?.viewContext.currentUser())
     }
     
     func test_settingAnonymousUser() {
@@ -363,13 +363,17 @@ class ChatClient_Tests: StressTestCase {
             .webSocketClient(testEnv.webSocketClient!,
                              didUpdateConectionState: .connected(connectionId: .unique))
         
+        var currentUser: CurrentUserDTO? {
+            testEnv.databaseContainer?.viewContext.currentUser()
+        }
+        
         // Check the completion is called and the current user model is available
         AssertAsync {
             // Completion is called
             Assert.willBeTrue(setUserCompletionCalled)
             
-            // Current user data are available
-            Assert.willBeEqual(client.currentUser?.id, newUserId)
+            // Current user is available
+            Assert.willBeEqual(currentUser?.user.id, newUserId)
             
             // The token is updated
             Assert.willBeEqual(client.provideToken(), newUserToken)
@@ -441,13 +445,16 @@ class ChatClient_Tests: StressTestCase {
             .webSocketClient(testEnv.webSocketClient!,
                              didUpdateConectionState: .connected(connectionId: .unique))
         
+        var currentUser: CurrentUserDTO? {
+            testEnv.databaseContainer?.viewContext.currentUser()
+        }
+        
         // Check the completion is called and the current user model is available
         AssertAsync {
             // Completion is called
             Assert.willBeTrue(setUserCompletionCalled)
-            
-            // Current user data are available
-            Assert.willBeEqual(client.currentUser?.id, newUser.userId)
+            // Current user is available
+            Assert.willBeEqual(currentUser?.user.id, newUser.userId)
         }
     }
     
