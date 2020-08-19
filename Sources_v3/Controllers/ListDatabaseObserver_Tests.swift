@@ -94,6 +94,15 @@ class ListChangeAggregator_Tests: XCTestCase {
         aggregator = ListChangeAggregator(itemCreator: { $0.uniqueValue })
     }
     
+    func test_onChange_setsCallbackAndReturnsTheSameInstance() {
+        // Set up aggregator callback via `onChange` builder-method
+        let updatedAggregator = aggregator.onChange { _ in }
+        
+        // Assert the same aggregator is returned
+        XCTAssertTrue(updatedAggregator === aggregator)
+        XCTAssertNotNil(updatedAggregator.onChange)
+    }
+    
     func test_addingItems() {
         // Set up aggregator callback
         var result: [ListChange<String>]?

@@ -187,3 +187,12 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         onChange?(currentChanges)
     }
 }
+
+extension ListChangeAggregator {
+    /// A builder-function that updates the current instance with the new `onChange` property and returns it
+    @discardableResult
+    func onChange(do action: @escaping ([ListChange<Item>]) -> Void) -> ListChangeAggregator {
+        onChange = action
+        return self
+    }
+}
