@@ -168,7 +168,7 @@ private extension URLRequest {
     }
     
     /// Returns `success` if the given path matches the current `URLRequest`.
-    /// Otherwise returns `failure` with a String describing the why it does not match.
+    /// Otherwise returns `failure` with a String describing the reason it does not match.
     func matches(_ method: Endpoint.Method,
                  _ path: String,
                  _ headers: [String: String]?,
