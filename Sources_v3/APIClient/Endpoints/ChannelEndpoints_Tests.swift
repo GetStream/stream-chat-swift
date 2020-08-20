@@ -151,6 +151,40 @@ final class ChannelEndpoints_Tests: XCTestCase {
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+    
+    func test_addMembers_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)",
+                                                       method: .post,
+                                                       queryItems: nil,
+                                                       requiresConnectionId: false,
+                                                       body: ["add_members": userIds])
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .addMembers(cid: cid, userIds: userIds)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+    
+    func test_removeMembers_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)",
+                                                       method: .post,
+                                                       queryItems: nil,
+                                                       requiresConnectionId: false,
+                                                       body: ["remove_members": userIds])
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .removeMembers(cid: cid, userIds: userIds)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
 
 extension ChannelEditDetailPayload where ExtraData == DefaultDataTypes {

@@ -62,4 +62,20 @@ extension Endpoint {
               requiresConnectionId: false,
               body: ["userId": userId])
     }
+    
+    static func addMembers(cid: ChannelId, userIds: Set<UserId>) -> Endpoint<EmptyResponse> {
+        .init(path: "channels/\(cid.type)/\(cid.id)",
+              method: .post,
+              queryItems: nil,
+              requiresConnectionId: false,
+              body: ["add_members": userIds])
+    }
+    
+    static func removeMembers(cid: ChannelId, userIds: Set<UserId>) -> Endpoint<EmptyResponse> {
+        .init(path: "channels/\(cid.type)/\(cid.id)",
+              method: .post,
+              queryItems: nil,
+              requiresConnectionId: false,
+              body: ["remove_members": userIds])
+    }
 }
