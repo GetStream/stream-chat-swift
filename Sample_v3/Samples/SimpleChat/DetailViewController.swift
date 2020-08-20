@@ -40,6 +40,41 @@ class DetailViewController: UIViewController {
         controller?.startUpdating()
         
         tableView.reloadData()
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Members",
+                                                            style: .plain,
+                                                            target: self,
+                                                            action: #selector(showMembersActionsAlert))
+        
+    }
+    
+    @objc private func showMembersActionsAlert() {
+        
+        let alert = UIAlertController(title: "Member Actions", message: "", preferredStyle: .actionSheet)
+        
+        let userIds = Set(["steep-moon-9"])
+        
+        alert.addAction(.init(title: "Add a member", style: .default, handler: { [unowned self] _ in
+            self.controller?.addMembers(userIds: userIds) {
+                guard let error = $0 else {
+                    return print("Members \(userIds) added successfully")
+                }
+                print("Error adding members \(userIds): \(error)")
+            }
+        }))
+        
+        alert.addAction(.init(title: "Remove a member", style: .default, handler: { [unowned self] _ in
+            self.controller?.removeMembers(userIds: userIds) {
+                guard let error = $0 else {
+                    return print("Members \(userIds) removed successfully")
+                }
+                print("Error removing members \(userIds): \(error)")
+            }
+        }))
+        
+        alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
+        
+        present(alert, animated: true)
     }
 }
 
