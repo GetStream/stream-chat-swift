@@ -16,6 +16,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
     func test_currentUserPayload_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         let extraData = NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString))
+        let unreadCount = UnreadCount(channels: 12, messages: 354)
         
         let payload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: userId,
                                                                         role: .admin,
@@ -23,7 +24,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         
         // Asynchronously save the payload to the db
         database.write { session in
-            try! session.saveCurrentUser(payload: payload)
+            try! session.saveCurrentUser(payload: payload, unreadCount: unreadCount)
         }
         
         // Load the user from the db and check the fields are correct
@@ -39,22 +40,24 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.user.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.user.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.user.lastActivityAt)
+            Assert.willBeEqual(Int16(unreadCount.messages), loadedCurrentUser?.unreadMessagesCount)
+            Assert.willBeEqual(Int16(unreadCount.channels), loadedCurrentUser?.unreadChannelsCount)
             Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
                 try? JSONDecoder.default.decode(NameAndImageExtraData.self, from: $0.user.extraData)
             })
-            
-            // TODO: Teams, Mutes, Unread counts, Devices
+            // TODO: Teams, Mutes, Devices
         }
     }
     
     func test_currentUserPayload_withNoExtraData_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
-        
+        let unreadCount = UnreadCount(channels: 12, messages: 354)
+
         let payload: CurrentUserPayload<NoExtraData> = .dummy(userId: userId, role: .user)
         
         // Asynchronously save the payload to the db
         database.write { session in
-            try! session.saveCurrentUser(payload: payload)
+            try! session.saveCurrentUser(payload: payload, unreadCount: unreadCount)
         }
         
         // Load the user from the db and check the fields are correct
@@ -70,11 +73,13 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.user.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.user.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.user.lastActivityAt)
+            Assert.willBeEqual(Int16(unreadCount.messages), loadedCurrentUser?.unreadMessagesCount)
+            Assert.willBeEqual(Int16(unreadCount.channels), loadedCurrentUser?.unreadChannelsCount)
             Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
                 try? JSONDecoder.default.decode(NoExtraData.self, from: $0.user.extraData)
             })
             
-            // TODO: Teams, Mutes, Unread counts, Devices
+            // TODO: Teams, Mutes, Devices
         }
     }
 }

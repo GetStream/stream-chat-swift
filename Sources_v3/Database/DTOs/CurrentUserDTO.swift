@@ -51,12 +51,16 @@ extension CurrentUserDTO {
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
-    func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO {
+    func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>, unreadCount: UnreadCount?) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.mutedUsers = [] // TODO: mutedUsers
         dto.user = try saveUser(payload: payload)
+                
+        if let unreadCount = unreadCount {
+            dto.unreadChannelsCount = Int16(unreadCount.channels)
+            dto.unreadMessagesCount = Int16(unreadCount.messages)
+        }
         
-        // TODO: unread counts
         // TODO: devices
         
         return dto
