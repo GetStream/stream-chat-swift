@@ -86,4 +86,26 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
+    
+    /// Add users to the channel as members.
+    /// - Parameters:
+    ///   - cid: The Id of the channel where you want to add the users.
+    ///   - users: User Ids to add to the channel.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func addMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .addMembers(cid: cid, userIds: userIds)) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Remove users to the channel as members.
+    /// - Parameters:
+    ///   - cid: The Id of the channel where you want to remove the users.
+    ///   - users: User Ids to remove from the channel.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func removeMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .removeMembers(cid: cid, userIds: userIds)) {
+            completion?($0.error)
+        }
+    }
 }

@@ -322,4 +322,106 @@ class ChannelUpdater_Tests: StressTestCase {
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    // MARK: - Add members
+
+    func test_addMembers_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+
+        // Simulate `addMembers(cid:, mute:, userIds:)` call
+        queryUpdater.addMembers(cid: channelID, userIds: userIds)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(cid: channelID, userIds: userIds)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_addMembers_successfulResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        
+        // Simulate `addMembers(cid:, mute:, userIds:)` call
+        var completionCalled = false
+        queryUpdater.addMembers(cid: channelID, userIds: userIds) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_addMembers_errorResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        
+        // Simulate `muteChannel(cid:, mute:, completion:)` call
+        var completionCalledError: Error?
+        queryUpdater.addMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Remove members
+
+    func test_removeMembers_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+
+        // Simulate `removeMembers(cid:, mute:, userIds:)` call
+        queryUpdater.removeMembers(cid: channelID, userIds: userIds)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .removeMembers(cid: channelID, userIds: userIds)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_removeMembers_successfulResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        
+        // Simulate `removeMembers(cid:, mute:, userIds:)` call
+        var completionCalled = false
+        queryUpdater.removeMembers(cid: channelID, userIds: userIds) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_removeMembers_errorResponse_isPropagatedToCompletion() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        
+        // Simulate `removeMembers(cid:, mute:, completion:)` call
+        var completionCalledError: Error?
+        queryUpdater.removeMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
 }
