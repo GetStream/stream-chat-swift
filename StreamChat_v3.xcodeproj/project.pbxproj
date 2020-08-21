@@ -247,6 +247,7 @@
 		F63CC37124E591990052844D /* EventObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37024E591990052844D /* EventObserver_Tests.swift */; };
 		F63CC37324E592D30052844D /* MemberEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37224E592D30052844D /* MemberEventObserver.swift */; };
 		F63CC37524E592DD0052844D /* MemberEventObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */; };
+		F67415C024F0129800C3222F /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = F67415BF24F0129800C3222F /* UnreadCount.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -535,6 +536,7 @@
 		F63CC37024E591990052844D /* EventObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventObserver_Tests.swift; sourceTree = "<group>"; };
 		F63CC37224E592D30052844D /* MemberEventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventObserver.swift; sourceTree = "<group>"; };
 		F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventObserver_Tests.swift; sourceTree = "<group>"; };
+		F67415BF24F0129800C3222F /* UnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCount.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -572,6 +574,7 @@
 				790B9E3124DC221A005455AA /* UserPayload.swift */,
 				79F3ABEB24EAE0B900AB9505 /* UserRequestBody.swift */,
 				8A0D649224E5794C0017A3C0 /* CurrentUserPayload.swift */,
+				F67415BF24F0129800C3222F /* UnreadCount.swift */,
 			);
 			path = "Dummy data";
 			sourceTree = "<group>";
@@ -1515,6 +1518,7 @@
 				793C14DC24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift in Sources */,
 				79A0E9AF2498BFD800E9BD50 /* WebSocketClient_Tests.swift in Sources */,
 				7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */,
+				F67415C024F0129800C3222F /* UnreadCount.swift in Sources */,
 				79DDF819249CE38B002F4412 /* MockNetworkURLProtocol.swift in Sources */,
 				7922F30A24DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift in Sources */,
 				8A62705E24BE2CD70040BFD6 /* XCTestCase+MockJSON.swift in Sources */,
