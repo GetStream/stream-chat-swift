@@ -29,6 +29,14 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     var showChannel_cid: ChannelId?
     var showChannel_userId: UserId?
     var showChannel_completion: ((Error?) -> Void)?
+    
+    var addMembers_cid: ChannelId?
+    var addMembers_userIds: Set<UserId>?
+    var addMembers_completion: ((Error?) -> Void)?
+    
+    var removeMembers_cid: ChannelId?
+    var removeMembers_userIds: Set<UserId>?
+    var removeMembers_completion: ((Error?) -> Void)?
 
     override func update(
         channelQuery: ChannelQuery<ExtraData>,
@@ -67,5 +75,17 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         showChannel_cid = cid
         showChannel_userId = userId
         showChannel_completion = completion
+    }
+    
+    override func addMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+        addMembers_cid = cid
+        addMembers_userIds = userIds
+        addMembers_completion = completion
+    }
+    
+    override func removeMembers(cid: ChannelId, userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+        removeMembers_cid = cid
+        removeMembers_userIds = userIds
+        removeMembers_completion = completion
     }
 }

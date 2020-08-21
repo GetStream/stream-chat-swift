@@ -390,6 +390,40 @@ public extension ChannelControllerGeneric {
             completion?(error)
         }
     }
+    
+    /// Add users to the channel as members.
+    /// - Parameters:
+    ///   - users: Users Id to add to a channel.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    func addMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        worker.addMembers(cid: channelId, userIds: userIds) { [weak self] error in
+            self?.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Remove users to the channel as members.
+    /// - Parameters:
+    ///   - users: Users Id to add to a channel.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    func removeMembers(userIds: Set<UserId>, completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        worker.removeMembers(cid: channelId, userIds: userIds) { [weak self] error in
+            self?.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 extension ChannelControllerGeneric {
