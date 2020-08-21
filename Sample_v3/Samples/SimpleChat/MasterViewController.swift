@@ -28,7 +28,7 @@ class MasterViewController: UITableViewController {
         channelListController.startUpdating()
         
         // Do any additional setup after loading the view.
-        navigationItem.leftBarButtonItem = editButtonItem
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(handleSettingsButton))
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
         navigationItem.rightBarButtonItem = addButton
@@ -43,6 +43,14 @@ class MasterViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
         super.viewWillAppear(animated)
+    }
+    
+    @objc func handleSettingsButton(_ sender: Any) {
+        guard let settingsViewController = UIStoryboard.settings.instantiateInitialViewController() else {
+            return
+        }
+        
+        present(settingsViewController, animated: true)
     }
 
     @objc

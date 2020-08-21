@@ -48,6 +48,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         LogConfig.showFunctionName = false
         
         LogConfig.level = .info
+        
+        LogStore.registerShared()
         return true
     }
 
