@@ -86,3 +86,28 @@ class TestDatabaseContainer: DatabaseContainer {
         }
     }
 }
+
+extension TestDatabaseContainer {
+    /// Writes changes to the DB synchronously. Only for test purposes!
+    func writeSynchronously(_ actions: @escaping (DatabaseSession) throws -> Void) throws {
+        _ = try await { completion in
+            self.write(actions, completion: completion)
+        }
+    }
+    
+    /// Synchrnously creates a new CurrentUserDTO in the DB with the given id.
+    func createCurrentUser(id: UserId = .unique) throws {
+        try writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: id,
+                                                        role: .admin,
+                                                        extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+        }
+    }
+    
+    /// Synchrnously creates a new ChannelDTO in the DB with the given cid.
+    func createChannel(cid: ChannelId = .unique) throws {
+        try writeSynchronously { session in
+            try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+        }
+    }
+}
