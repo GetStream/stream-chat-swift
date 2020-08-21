@@ -10,8 +10,8 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     let devices: [Device]
     /// Muted users.
     let mutedUsers: [MutedUser<ExtraData>]
-    
-    // TODO: Add unread counts
+    /// Unread channel and message counts
+    let unreadCount: UnreadCount?
     
     init(
         id: String,
@@ -25,10 +25,12 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
         teams: [String] = [],
         extraData: ExtraData,
         devices: [Device] = [],
-        mutedUsers: [MutedUser<ExtraData>] = []
+        mutedUsers: [MutedUser<ExtraData>] = [],
+        unreadCount: UnreadCount? = nil
     ) {
         self.devices = devices
         self.mutedUsers = mutedUsers
+        self.unreadCount = unreadCount
         
         super.init(id: id,
                    role: role,
@@ -46,6 +48,7 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser<ExtraData>].self, forKey: .mutedUsers) ?? []
+        unreadCount = try? UnreadCount(from: decoder)
         
         try super.init(from: decoder)
     }
