@@ -10,6 +10,7 @@
 		790B9E3024DC21D7005455AA /* MessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B9E2F24DC21D7005455AA /* MessagePayload.swift */; };
 		790B9E3224DC221A005455AA /* UserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B9E3124DC221A005455AA /* UserPayload.swift */; };
 		79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */; };
+		791C0B6324EEBDF40013CA2F /* MessageSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */; };
 		791C0B6524EFBD260013CA2F /* UnwrapAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */; };
 		7922F30624DACEF100C364BC /* TestDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7922F30424DACEF100C364BC /* TestDataModel.xcdatamodeld */; };
 		7922F30824DACF1F00C364BC /* TestManagedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7922F30724DACF1F00C364BC /* TestManagedObject.swift */; };
@@ -269,6 +270,7 @@
 		790B9E2F24DC21D7005455AA /* MessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayload.swift; sourceTree = "<group>"; };
 		790B9E3124DC221A005455AA /* UserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPayload.swift; sourceTree = "<group>"; };
 		79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AssertAsync+Events.swift"; sourceTree = "<group>"; };
+		791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSender_Tests.swift; sourceTree = "<group>"; };
 		791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnwrapAsync.swift; sourceTree = "<group>"; };
 		7922F30524DACEF100C364BC /* TestDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel.xcdatamodel; sourceTree = "<group>"; };
 		7922F30724DACF1F00C364BC /* TestManagedObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestManagedObject.swift; sourceTree = "<group>"; };
@@ -600,6 +602,7 @@
 			isa = PBXGroup;
 			children = (
 				799C9448247D5211001F1104 /* MessageSender.swift */,
+				791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */,
 			);
 			path = Background;
 			sourceTree = "<group>";
@@ -1482,6 +1485,7 @@
 				8A62705E24BE2CD70040BFD6 /* XCTestCase+MockJSON.swift in Sources */,
 				F63CC37124E591990052844D /* EventObserver_Tests.swift in Sources */,
 				79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */,
+				791C0B6324EEBDF40013CA2F /* MessageSender_Tests.swift in Sources */,
 				79877A2A2498E51500015F8B /* MemberModelDTO_Tests.swift in Sources */,
 				799C947D247E6114001F1104 /* TestError.swift in Sources */,
 				799C946A247D791A001F1104 /* AssertAsync.swift in Sources */,

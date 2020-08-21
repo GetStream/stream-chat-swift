@@ -50,6 +50,14 @@ class MessageDTO: NSManagedObject {
         }
     }
     
+    /// Returns a fetch request for messages pending send.
+    static func messagesPendingSendFetchRequest() -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: true)]
+        request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSend.rawValue)
+        return request
+    }
+    
     /// Returns a fetch request for messages from the channel with the provided `cid`.
     static func messagesFetchRequest(for cid: ChannelId) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
