@@ -41,11 +41,19 @@ class DetailViewController: UIViewController {
         
         tableView.reloadData()
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Members",
-                                                            style: .plain,
-                                                            target: self,
-                                                            action: #selector(showMembersActionsAlert))
-        
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(
+                barButtonSystemItem: .add,
+                target: self,
+                action: #selector(newMessageButtonTapped)
+            ),
+            UIBarButtonItem(
+                title: "Members",
+                style: .plain,
+                target: self,
+                action: #selector(showMembersActionsAlert)
+            )
+        ]
     }
     
     @objc private func showMembersActionsAlert() {
@@ -75,6 +83,21 @@ class DetailViewController: UIViewController {
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
         
         present(alert, animated: true)
+    }
+    
+    
+    @IBAction func newMessageButtonTapped(_ sender: Any) {
+        let alertController = UIAlertController(title: "New message", message: "", preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Send", style: .default, handler: { alert -> Void in
+            if let text = (alertController.textFields![0] as UITextField).text {
+                self.controller?.createNewMessage(text: text, completion: { print($0) })
+            }
+        }))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alertController.addTextField(configurationHandler: {(textField : UITextField!) -> Void in
+            textField.placeholder = "Message text"
+        })
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 
