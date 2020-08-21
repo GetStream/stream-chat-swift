@@ -171,7 +171,7 @@ public class Client<ExtraData: ExtraDataTypes> {
     public convenience init(config: ChatClientConfig) {
         // All production workers
         let workerBuilders: [WorkerBuilder] = [
-            MessageSender.init
+            MessageSender<ExtraData>.init
         ]
         
         self.init(config: config,
@@ -241,10 +241,10 @@ public class Client<ExtraData: ExtraDataTypes> {
                 completion?(error)
                 return
             }
-
+            
             self.apiClient.request(endpoint: .guestUserToken(userId: userId, extraData: extraData)) { [weak self] in
                 guard let self = self else { return }
-
+                
                 switch $0 {
                 case let .success(payload):
                     self.currentToken = payload.token
