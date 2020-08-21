@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### ✅ Added
+- `ChannelsPresenter.delete` & `ChannelsPresenter.rx.delete` methods to delete a channel and remove it from items list [#394](https://github.com/GetStream/stream-chat-swift/pull/394)
+
+### 🐞 Fixed
+- Channels list (ChannelsViewController) not updated when recreating a channel after deleting it [#392](https://github.com/GetStream/stream-chat-swift/issues/392)
 
 # [2.2.9](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.9)
 _August 12, 2020_
