@@ -39,11 +39,12 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.user.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.user.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.user.lastActivityAt)
+            Assert.willBeEqual(Int16(payload.unreadCount!.messages), loadedCurrentUser?.unreadMessagesCount)
+            Assert.willBeEqual(Int16(payload.unreadCount!.channels), loadedCurrentUser?.unreadChannelsCount)
             Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
                 try? JSONDecoder.default.decode(NameAndImageExtraData.self, from: $0.user.extraData)
             })
-            
-            // TODO: Teams, Mutes, Unread counts, Devices
+            // TODO: Teams, Mutes, Devices
         }
     }
     
@@ -70,11 +71,13 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.user.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.user.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.user.lastActivityAt)
+            Assert.willBeEqual(Int16(payload.unreadCount!.messages), loadedCurrentUser?.unreadMessagesCount)
+            Assert.willBeEqual(Int16(payload.unreadCount!.channels), loadedCurrentUser?.unreadChannelsCount)
             Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
                 try? JSONDecoder.default.decode(NoExtraData.self, from: $0.user.extraData)
             })
             
-            // TODO: Teams, Mutes, Unread counts, Devices
+            // TODO: Teams, Mutes, Devices
         }
     }
 }
