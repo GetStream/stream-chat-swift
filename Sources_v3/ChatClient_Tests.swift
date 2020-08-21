@@ -281,7 +281,8 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_settingAnonymousUser() {
-        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender<DefaultDataTypes>.init],
+        let client = Client(config: inMemoryStorageConfig,
+                            workerBuilders: [MessageSender<DefaultDataTypes>.init],
                             environment: testEnv.environment)
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
         
@@ -319,8 +320,10 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_settingUser() {
-        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender<DefaultDataTypes>.init],
+        let client = Client(config: inMemoryStorageConfig,
+                            workerBuilders: [MessageSender<DefaultDataTypes>.init],
                             environment: testEnv.environment)
+        
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
         
         let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
@@ -372,8 +375,10 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_settingGuestUser() {
-        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender<DefaultDataTypes>.init],
+        let client = Client(config: inMemoryStorageConfig,
+                            workerBuilders: [MessageSender<DefaultDataTypes>.init],
                             environment: testEnv.environment)
+        
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
         
         let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
@@ -446,7 +451,8 @@ class ChatClient_Tests: StressTestCase {
     
     func test_disconnectAndConnect() {
         // Set up a new anonymous user
-        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender<DefaultDataTypes>.init],
+        let client = Client(config: inMemoryStorageConfig,
+                            workerBuilders: [MessageSender<DefaultDataTypes>.init],
                             environment: testEnv.environment)
         
         // Set up a new anonymous user and wait for completion
