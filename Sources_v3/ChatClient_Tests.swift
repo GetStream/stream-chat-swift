@@ -117,7 +117,7 @@ class ChatClient_Tests: StressTestCase {
         // Use in-memory store
         // Create a new chat client
         let client = ChatClient(config: inMemoryStorageConfig,
-                                workerBuilders: [MessageSender.init],
+                                workerBuilders: [MessageSender<DefaultDataTypes>.init],
                                 environment: testEnv.environment)
         
         // Assert the init parameters are correct
@@ -138,7 +138,7 @@ class ChatClient_Tests: StressTestCase {
     func test_clientProvidesConnectionId() throws {
         // Create a new chat client
         let client = ChatClient(config: inMemoryStorageConfig,
-                                workerBuilders: [MessageSender.init],
+                                workerBuilders: [MessageSender<DefaultDataTypes>.init],
                                 environment: testEnv.environment)
         
         // Set a connection Id waiter and assert it's `nil`
@@ -178,7 +178,7 @@ class ChatClient_Tests: StressTestCase {
     func test_clientProvidesToken() throws {
         // Create a new chat client
         let client = ChatClient(config: inMemoryStorageConfig,
-                                workerBuilders: [MessageSender.init],
+                                workerBuilders: [MessageSender<DefaultDataTypes>.init],
                                 environment: testEnv.environment)
         
         // Assert the token of anonymous user is `nil`
@@ -204,7 +204,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Create a new chat client
         let client = ChatClient(config: config,
-                                workerBuilders: [MessageSender.init],
+                                workerBuilders: [MessageSender<DefaultDataTypes>.init],
                                 environment: testEnv.environment)
         
         // Assert the token of anonymous user is `nil`
@@ -221,7 +221,7 @@ class ChatClient_Tests: StressTestCase {
     func test_apiClientIsInitialized() throws {
         // Create a new chat client
         _ = ChatClient(config: inMemoryStorageConfig,
-                       workerBuilders: [MessageSender.init],
+                       workerBuilders: [MessageSender<DefaultDataTypes>.init],
                        environment: testEnv.environment)
         
         assertMandatoryHeaderFields(testEnv.apiClient?.init_sessionConfiguration)
@@ -237,7 +237,7 @@ class ChatClient_Tests: StressTestCase {
         let client = Client<DefaultDataTypes>(config: config)
         
         // Check all the mandatory background workers are initialized
-        XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender })
+        XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender<DefaultDataTypes> })
     }
     
     func test_backgroundWorkersAreInitialized() {
@@ -281,7 +281,8 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_settingAnonymousUser() {
-        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender.init], environment: testEnv.environment)
+        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                            environment: testEnv.environment)
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
         
         let oldUserId = client.currentUserId
@@ -318,7 +319,8 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_settingUser() {
-        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender.init], environment: testEnv.environment)
+        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                            environment: testEnv.environment)
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
         
         let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
@@ -368,74 +370,75 @@ class ChatClient_Tests: StressTestCase {
             Assert.willBeEqual(client.provideToken(), newUserToken)
         }
     }
-
+    
     func test_settingGuestUser() {
-        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender.init], environment: testEnv.environment)
+        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                            environment: testEnv.environment)
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
-
+        
         let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
-
+        
         let newUserToken: Token = .unique
         let newUserExtraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
         let newUser = GuestUserTokenRequestPayload(userId: .unique, extraData: newUserExtraData)
-
+        
         // Set up a new guest user
         var setUserCompletionCalled = false
         client.setGuestUser(userId: newUser.userId,
                             extraData: newUserExtraData,
                             completion: { _ in setUserCompletionCalled = true })
-
+        
         AssertAsync {
             // `WebSocketClient.disconnect(source:)` should be called once
             Assert.willBeEqual(self.testEnv.webSocketClient?.disconnect_calledCounter, 1)
-
+            
             // Token should be flushed
             Assert.willBeNil(client.provideToken())
-
+            
             // Database should be flushed
             Assert.willBeTrue(self.testEnv.databaseContainer?.flush_called == true)
-
+            
             // New user id is set
             Assert.willBeEqual(client.currentUserId, newUser.userId)
-
+            
             // Make sure `guest` endpoint is called
             Assert.willBeEqual(self.testEnv.apiClient!.request_endpoint,
                                AnyEndpoint(.guestUserToken(userId: newUser.userId, extraData: newUserExtraData)))
         }
-
+        
         // Make sure the completion is not called yet
         XCTAssertFalse(setUserCompletionCalled)
-
+        
         // Simulate a successful response from `guest` endpoint with a token
         let payload = GuestUserTokenPayload(user: .dummy(userId: newUser.userId, role: .guest, extraData: newUserExtraData),
                                             token: newUserToken)
         testEnv.apiClient!.test_simulateResponse(.success(payload))
-
+        
         AssertAsync {
             // The token from `guest` endpoint payload is set
             Assert.willBeEqual(client.provideToken(), newUserToken)
-
+            
             // WebSocketClient connect endpoint is updated
             Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(client.webSocketClient.connectEndpoint))
-
+            
             // WebSocketClient connect is called
             Assert.willBeEqual(self.testEnv.webSocketClient?.connect_calledCounter, 1)
         }
-
+        
         // Simulate a health check event with the current user data
         // This should trigger the middlewares and save the current user data to DB
         testEnv.webSocketClient?.websocketDidReceiveMessage(healthCheckEventJSON(userId: newUser.userId))
-
+        
         // Simulate successful connection
         testEnv.webSocketClient!.connectionStateDelegate?
             .webSocketClient(testEnv.webSocketClient!,
                              didUpdateConectionState: .connected(connectionId: .unique))
-
+        
         // Check the completion is called and the current user model is available
         AssertAsync {
             // Completion is called
             Assert.willBeTrue(setUserCompletionCalled)
-
+            
             // Current user data are available
             Assert.willBeEqual(client.currentUser?.id, newUser.userId)
         }
@@ -443,7 +446,8 @@ class ChatClient_Tests: StressTestCase {
     
     func test_disconnectAndConnect() {
         // Set up a new anonymous user
-        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender.init], environment: testEnv.environment)
+        let client = Client(config: inMemoryStorageConfig, workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                            environment: testEnv.environment)
         
         // Set up a new anonymous user and wait for completion
         var setUserCompletionCalled = false
