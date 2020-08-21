@@ -7,7 +7,12 @@ import Foundation
 
 extension CurrentUserPayload {
     /// Returns a dummy current user payload with the given UserId and extra data
-    static func dummy<T: UserExtraData>(userId: UserId, role: UserRole, extraData: T = .defaultValue) -> CurrentUserPayload<T> {
+    static func dummy<T: UserExtraData>(
+        userId: UserId,
+        role: UserRole,
+        unreadCount: UnreadCount? = .dummy,
+        extraData: T = .defaultValue
+    ) -> CurrentUserPayload<T> {
         .init(id: userId,
               role: role,
               createdAt: .unique,
@@ -19,6 +24,7 @@ extension CurrentUserPayload {
               teams: [],
               extraData: extraData,
               devices: [.init(.unique)],
-              mutedUsers: [])
+              mutedUsers: [],
+              unreadCount: unreadCount)
     }
 }
