@@ -12,6 +12,7 @@ import UserNotifications
 
 class SettingsViewController: UITableViewController {
     @IBOutlet weak var logoutCell: UITableViewCell!
+    @IBOutlet weak var clearLocalDatabaseCell: UITableViewCell!
     @IBOutlet weak var enablePushNotificationsSwitch: UISwitch!
     @IBOutlet weak var webSocketsConnectionSwitch: UISwitch!
     
@@ -20,15 +21,7 @@ class SettingsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let user = chatClient.currentUser {
-            userNameLabel.text = user.name ?? ""
-            userNameLabel.text! += " (\(user.id))"
-            
-            let unreadCount = user.unreadCount
-            userSecondaryLabel.text = "Unread messages: \(unreadCount.messages)\n"
-            userSecondaryLabel.text! += "Unread channels: \(unreadCount.channels)"
-        }
+        updateUserCell()
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -37,10 +30,34 @@ class SettingsViewController: UITableViewController {
         switch tableView.cellForRow(at: indexPath) {
         case logoutCell:
             logout()
+        case clearLocalDatabaseCell:
+            clearLocalDatabase()
         default:
             break
         }
     }
+}
+
+// MARK: - Current User
+extension SettingsViewController {
+    func updateUserCell() {
+        if let user = chatClient.currentUser {
+            userNameLabel.text = user.name ?? ""
+            userNameLabel.text! += " (\(user.id))"
+            
+            let unreadCount = user.unreadCount
+            userSecondaryLabel.text = "Unread messages: \(unreadCount.messages) - Unread channels: \(unreadCount.channels)"
+        }
+    }
+    
+    func logout() {
+        chatClient.disconnect()
+        moveToStoryboard(.main, options: .transitionFlipFromRight)
+    }
+}
+
+// MARK: - Switches
+extension SettingsViewController {
     @IBAction func pushNotificationsSwitchValueChanged(_ sender: Any) {
         // TODO: Enable/Disable push notifications
     }
@@ -50,7 +67,7 @@ class SettingsViewController: UITableViewController {
             webSocketsConnectionSwitch.isEnabled = false
             chatClient.connect { [weak self] error in
                 DispatchQueue.main.async {
-                    self?.webSocketsConnectionSwitch.isEnabled = true   
+                    self?.webSocketsConnectionSwitch.isEnabled = true
                     self?.webSocketsConnectionSwitch.setOn(error == nil, animated: true)
                 }
             }
@@ -60,10 +77,9 @@ class SettingsViewController: UITableViewController {
     }
 }
 
-// MARK: - Actions
+// MARK: - Tools
 extension SettingsViewController {
-    func logout() {
-        chatClient.disconnect()
-        moveToStoryboard(.main, options: .transitionFlipFromRight)
+    func clearLocalDatabase() {
+        // TODO: Clear local database
     }
 }
