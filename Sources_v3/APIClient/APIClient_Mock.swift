@@ -7,6 +7,8 @@ import Foundation
 
 /// Mock implementation of APIClient allowing easy control and simulation of responses.
 class APIClientMock: APIClient {
+    var request_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
+    
     /// The last endpoint `request` function was called with.
     var request_endpoint: AnyEndpoint?
     var request_completion: Any?
@@ -35,6 +37,7 @@ class APIClientMock: APIClient {
     ) where Response: Decodable {
         request_endpoint = AnyEndpoint(endpoint)
         request_completion = completion
+        request_allRecordedCalls.append((request_endpoint!, request_completion!))
     }
 }
 
