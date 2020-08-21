@@ -21,6 +21,10 @@ protocol CurrentUserDatabaseSession {
     /// if the save fails.
     @discardableResult
     func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO
+
+    /// Updates the `CurrentUserDTO` with the provided unread.
+    /// If there is no current user, the error will be thown
+    func saveCurrentUserUnreadCount(count: UnreadCount) throws
     
     /// Returns `CurrentUserDTO` from the DB. Returns `nil` if no `CurrentUserDTO` exists.
     func currentUser() -> CurrentUserDTO?
@@ -116,12 +120,11 @@ extension DatabaseSession {
         }
         
         if let currentUserPayload = payload.currentUser {
-            let currentUserDTO = try saveCurrentUser(payload: currentUserPayload)
-            
-            if let unreadCount = payload.unreadCount {
-                currentUserDTO.unreadChannelsCount = Int16(unreadCount.channels)
-                currentUserDTO.unreadMessagesCount = Int16(unreadCount.messages)
-            }
+            try saveCurrentUser(payload: currentUserPayload)
+        }
+        
+        if let unreadCount = payload.unreadCount {
+            try saveCurrentUserUnreadCount(count: unreadCount)
         }
         
         // Save message data (must be always done after the channel data!)

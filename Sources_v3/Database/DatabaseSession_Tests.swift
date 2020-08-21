@@ -6,11 +6,11 @@
 import XCTest
 
 class DatabaseSession_Tests: StressTestCase {
-    var database: DatabaseContainer!
+    var database: DatabaseContainerMock!
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = try! DatabaseContainerMock(kind: .inMemory)
     }
     
     func test_eventPayloadChannelData_isSavedToDatabase() {
@@ -117,5 +117,38 @@ class DatabaseSession_Tests: StressTestCase {
         let loadedChannel: ChannelModel<DefaultDataTypes> = try XCTUnwrap(database.viewContext.loadChannel(cid: channelId))
         let message = try XCTUnwrap(loadedMessage)
         XCTAssert(loadedChannel.latestMessages.contains(message))
+    }
+    
+    func test_saveEvent_unreadCountFromEventPayloadIsApplied() throws {
+        let eventPayload = EventPayload<DefaultDataTypes>(eventType: .messageNew,
+                                                          connectionId: .unique,
+                                                          cid: .unique,
+                                                          currentUser: .dummy(userId: .unique,
+                                                                              role: .user,
+                                                                              unreadCount: nil),
+                                                          unreadCount: .dummy)
+        
+        try database.writeSynchronously { session in
+            try session.saveEvent(payload: eventPayload)
+        }
+        
+        // Load current user
+        let currentUser = database.viewContext.currentUser()
+        
+        // Assert unread count is taken from event payload
+        XCTAssertEqual(Int16(eventPayload.unreadCount!.messages), currentUser?.unreadMessagesCount)
+        XCTAssertEqual(Int16(eventPayload.unreadCount!.channels), currentUser?.unreadChannelsCount)
+    }
+    
+    func test_saveCurrentUserUnreadCount_failsIfThereIsNoCurrentUser() throws {
+        func saveUnreadCountWithoutUser() throws {
+            try database.writeSynchronously {
+                try $0.saveCurrentUserUnreadCount(count: .dummy)
+            }
+        }
+        
+        XCTAssertThrowsError(try saveUnreadCountWithoutUser()) { error in
+            XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
+        }
     }
 }
