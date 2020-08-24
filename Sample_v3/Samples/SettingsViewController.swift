@@ -19,9 +19,19 @@ class SettingsViewController: UITableViewController {
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var userSecondaryLabel: UILabel!
     
+    private lazy var currentUserController: CurrentUserController = {
+        let controller = chatClient.currentUserController()
+        controller.delegate = self
+        return controller
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        updateUserCell()
+        
+        currentUserController.startUpdating { [weak self] _ in
+            guard let self = self else { return }
+            self.updateUserCell(with: self.currentUserController.currentUser)
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -40,8 +50,8 @@ class SettingsViewController: UITableViewController {
 
 // MARK: - Current User
 extension SettingsViewController {
-    func updateUserCell() {
-        if let user = chatClient.currentUser {
+    func updateUserCell(with user: CurrentUser?) {
+        if let user = user {
             userNameLabel.text = user.name ?? ""
             userNameLabel.text! += " (\(user.id))"
             
@@ -81,5 +91,12 @@ extension SettingsViewController {
 extension SettingsViewController {
     func clearLocalDatabase() {
         // TODO: Clear local database
+    }
+}
+
+// MARK: - CurrentUserControllerDelegate
+extension SettingsViewController: CurrentUserControllerDelegate {
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentUser>) {
+        updateUserCell(with: change.item)
     }
 }
