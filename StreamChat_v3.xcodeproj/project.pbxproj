@@ -240,10 +240,12 @@
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */; };
 		DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */; };
+		DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */; };
 		DAEAF4B324DAD99E0015FB28 /* HideChannelRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */; };
 		DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */; };
 		DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */; };
 		DAFAD6A324DD8E1A0043ED06 /* ChannelEditDetailPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFAD6A224DD8E1A0043ED06 /* ChannelEditDetailPayload.swift */; };
+		DAFC1D4724F50C5C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFC1D4524F50C2C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift */; };
 		F61ED5A124F3F58400874777 /* DatabaseContainerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61ED5A024F3F58400874777 /* DatabaseContainerMock.swift */; };
 		F62D143E24DD70190081D241 /* ChannelUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */; };
 		F63CC36F24E591840052844D /* EventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC36E24E591840052844D /* EventObserver.swift */; };
@@ -534,10 +536,12 @@
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
 		DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCodingKeys.swift; sourceTree = "<group>"; };
+		DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChannelQueryUpdater.swift; sourceTree = "<group>"; };
 		DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideChannelRequest.swift; sourceTree = "<group>"; };
 		DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints_Tests.swift; sourceTree = "<group>"; };
 		DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
 		DAFAD6A224DD8E1A0043ED06 /* ChannelEditDetailPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload.swift; sourceTree = "<group>"; };
+		DAFC1D4524F50C2C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChannelQueryUpdater_Tests.swift; sourceTree = "<group>"; };
 		F61ED5A024F3F58400874777 /* DatabaseContainerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseContainerMock.swift; sourceTree = "<group>"; };
 		F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUpdater_Mock.swift; sourceTree = "<group>"; };
 		F63CC36E24E591840052844D /* EventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventObserver.swift; sourceTree = "<group>"; };
@@ -630,6 +634,8 @@
 			children = (
 				799C9448247D5211001F1104 /* MessageSender.swift */,
 				791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */,
+				DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */,
+				DAFC1D4524F50C2C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift */,
 			);
 			path = Background;
 			sourceTree = "<group>";
@@ -1534,6 +1540,7 @@
 				799C945E247D7283001F1104 /* DatabaseContainer.swift in Sources */,
 				79877A092498E4BC00015F8B /* UserModel.swift in Sources */,
 				79B5517324E593C200CE9FEC /* UserPayloads.swift in Sources */,
+				DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */,
 				799C943E247D2FB9001F1104 /* Message.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1544,6 +1551,7 @@
 			files = (
 				793C14DC24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift in Sources */,
 				79A0E9AF2498BFD800E9BD50 /* WebSocketClient_Tests.swift in Sources */,
+				DAFC1D4724F50C5C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift in Sources */,
 				7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */,
 				F67415C024F0129800C3222F /* UnreadCount.swift in Sources */,
 				79DDF819249CE38B002F4412 /* MockNetworkURLProtocol.swift in Sources */,

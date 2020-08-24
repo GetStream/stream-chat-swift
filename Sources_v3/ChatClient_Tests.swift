@@ -34,6 +34,11 @@ class ChatClient_Tests: StressTestCase {
         super.tearDown()
     }
     
+    var workerBuilders: [WorkerBuilder] = [
+        MessageSender<DefaultDataTypes>.init,
+        NewChannelQueryUpdater<DefaultDataTypes>.init
+    ]
+    
     // MARK: - Database stack tests
     
     func test_clientDatabaseStackInitialization_whenLocalStorageEnabled_respectsConfigValues() {
@@ -119,7 +124,7 @@ class ChatClient_Tests: StressTestCase {
         // Use in-memory store
         // Create a new chat client
         let client = ChatClient(config: inMemoryStorageConfig,
-                                workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                                workerBuilders: workerBuilders,
                                 environment: testEnv.environment)
         
         // Assert the init parameters are correct
@@ -140,7 +145,7 @@ class ChatClient_Tests: StressTestCase {
     func test_clientProvidesConnectionId() throws {
         // Create a new chat client
         let client = ChatClient(config: inMemoryStorageConfig,
-                                workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                                workerBuilders: workerBuilders,
                                 environment: testEnv.environment)
         
         // Set a connection Id waiter and assert it's `nil`
@@ -180,7 +185,7 @@ class ChatClient_Tests: StressTestCase {
     func test_clientProvidesToken() throws {
         // Create a new chat client
         let client = ChatClient(config: inMemoryStorageConfig,
-                                workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                                workerBuilders: workerBuilders,
                                 environment: testEnv.environment)
         
         // Assert the token of anonymous user is `nil`
@@ -206,7 +211,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Create a new chat client
         let client = ChatClient(config: config,
-                                workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                                workerBuilders: workerBuilders,
                                 environment: testEnv.environment)
         
         // Assert the token of anonymous user is `nil`
@@ -223,7 +228,7 @@ class ChatClient_Tests: StressTestCase {
     func test_apiClientIsInitialized() throws {
         // Create a new chat client
         _ = ChatClient(config: inMemoryStorageConfig,
-                       workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                       workerBuilders: workerBuilders,
                        environment: testEnv.environment)
         
         assertMandatoryHeaderFields(testEnv.apiClient?.init_sessionConfiguration)
@@ -240,6 +245,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Check all the mandatory background workers are initialized
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender<DefaultDataTypes> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is NewChannelQueryUpdater<DefaultDataTypes> })
     }
     
     func test_backgroundWorkersAreInitialized() {
@@ -284,7 +290,7 @@ class ChatClient_Tests: StressTestCase {
     
     func test_settingAnonymousUser() {
         let client = Client(config: inMemoryStorageConfig,
-                            workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                            workerBuilders: workerBuilders,
                             environment: testEnv.environment)
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
         
@@ -323,7 +329,7 @@ class ChatClient_Tests: StressTestCase {
     
     func test_settingUser() {
         let client = Client(config: inMemoryStorageConfig,
-                            workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                            workerBuilders: workerBuilders,
                             environment: testEnv.environment)
         
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
@@ -382,7 +388,7 @@ class ChatClient_Tests: StressTestCase {
     
     func test_settingGuestUser() {
         let client = Client(config: inMemoryStorageConfig,
-                            workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                            workerBuilders: workerBuilders,
                             environment: testEnv.environment)
         
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
@@ -461,7 +467,7 @@ class ChatClient_Tests: StressTestCase {
     func test_disconnectAndConnect() {
         // Set up a new anonymous user
         let client = Client(config: inMemoryStorageConfig,
-                            workerBuilders: [MessageSender<DefaultDataTypes>.init],
+                            workerBuilders: workerBuilders,
                             environment: testEnv.environment)
         
         // Set up a new anonymous user and wait for completion

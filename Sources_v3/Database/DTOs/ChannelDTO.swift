@@ -117,13 +117,20 @@ extension NSManagedObjectContext {
 
 extension ChannelDTO {
     static func channelListFetchRequest(query: ChannelListQuery) -> NSFetchRequest<ChannelDTO> {
-        let request = NSFetchRequest<ChannelDTO>(entityName: "ChannelDTO")
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
         
         // Fetch results controller requires at least one sorting descriptor.
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
         
         request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        return request
+    }
+
+    static var channelWithoutQueryFetchRequest: NSFetchRequest<ChannelDTO> {
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.sortDescriptors = [ChannelListSortingKey.defaultSortDescriptor]
+        request.predicate = NSPredicate(format: "queries.@count == 0")
         return request
     }
 }

@@ -158,7 +158,8 @@ public class Client<ExtraData: ExtraDataTypes> {
     public convenience init(config: ChatClientConfig) {
         // All production workers
         let workerBuilders: [WorkerBuilder] = [
-            MessageSender<ExtraData>.init
+            MessageSender<ExtraData>.init,
+            NewChannelQueryUpdater<ExtraData>.init
         ]
         
         self.init(config: config,
