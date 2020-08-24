@@ -10,7 +10,7 @@ class MessageSender_Tests: StressTestCase {
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
-    var database: TestDatabaseContainer!
+    var database: DatabaseContainerMock!
     
     var sender: MessageSender<ExtraData>!
     
@@ -21,7 +21,7 @@ class MessageSender_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! TestDatabaseContainer(kind: .inMemory)
+        database = try! DatabaseContainerMock(kind: .inMemory)
         
         sender = MessageSender(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
         

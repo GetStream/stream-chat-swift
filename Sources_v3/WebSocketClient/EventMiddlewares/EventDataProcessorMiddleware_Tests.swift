@@ -7,11 +7,11 @@ import XCTest
 
 class EventDataProcessorMiddlewaree_Tests: XCTestCase {
     var middleware: EventDataProcessorMiddleware<DefaultDataTypes>!
-    fileprivate var database: TestDatabaseContainer!
+    fileprivate var database: DatabaseContainerMock!
     
     override func setUp() {
         super.setUp()
-        database = try! TestDatabaseContainer(kind: .inMemory)
+        database = try! DatabaseContainerMock(kind: .inMemory)
         middleware = EventDataProcessorMiddleware(database: database)
     }
     
