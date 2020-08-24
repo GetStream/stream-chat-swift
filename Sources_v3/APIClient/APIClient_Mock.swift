@@ -16,6 +16,13 @@ class APIClientMock: APIClient {
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
     @Atomic var init_requestEncoder: RequestEncoder
     @Atomic var init_requestDecoder: RequestDecoder
+
+    // Cleans up all recorded values
+    func cleanUp() {
+        request_allRecordedCalls = []
+        request_endpoint = nil
+        request_completion = nil
+    }
     
     override init(sessionConfiguration: URLSessionConfiguration, requestEncoder: RequestEncoder, requestDecoder: RequestDecoder) {
         init_sessionConfiguration = sessionConfiguration
