@@ -24,6 +24,12 @@ class ChannelUpdater_Tests: StressTestCase {
         channelUpdater = ChannelUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
     }
     
+    override func tearDown() {
+        apiClient.cleanUp()
+        
+        super.tearDown()
+    }
+    
     func test_updateChannelQuery_makesCorrectAPICall() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery<ExtraData>(cid: .unique)
