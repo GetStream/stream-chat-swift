@@ -7,6 +7,8 @@
 # Install swiftformat 0.45.6
 brew unlink swiftformat
 brew install https://raw.githubusercontent.com/nicklockwood/homebrew-core/0269354fff817670543922c73bb522adca3cc46b/Formula/swiftformat.rb
+brew link swiftformat
+brew switch swiftformat 0.45.6
 
 # Set bash to Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
 set -euo pipefail
