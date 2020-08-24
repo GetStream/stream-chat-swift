@@ -41,7 +41,6 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
             self?.observer.onChange = { self?.handleChanges(changes: $0) }
             do {
                 try self?.observer.startObserving()
-                try self?.observer.startObserving()
                 
                 // Send the existing unsent message first. We can simulate callback from the observer and ignore
                 // the index path completely.
