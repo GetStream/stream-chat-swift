@@ -36,19 +36,20 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
     override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
         super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
 
-        // The observe can be set up on the background queue
-        DispatchQueue.global().async {
-            self.observer.onChange = { [unowned self] in self.handleChanges(changes: $0) }
+        // The observer can be set up on the background queue
+        sendingDispatchQueue.async { [weak self] in
+            self?.observer.onChange = { self?.handleChanges(changes: $0) }
             do {
-                try self.observer.startObserving()
+                try self?.observer.startObserving()
+                try self?.observer.startObserving()
                 
                 // Send the existing unsent message first. We can simulate callback from the observer and ignore
                 // the index path completely.
-                let changes = self.observer.items.map { ListChange.insert($0, index: .init(row: 0, section: 0)) }
-                self.handleChanges(changes: changes)
-                
+                if let changes = self?.observer.items.map({ ListChange.insert($0, index: .init(row: 0, section: 0)) }) {
+                    self?.handleChanges(changes: changes)
+                }
             } catch {
-                log.error("Error starting MessageSender observer: \(error)")
+                log.error("Failed to start MessageSender worker. \(error)")
             }
         }
     }
