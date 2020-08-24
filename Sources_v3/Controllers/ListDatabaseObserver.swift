@@ -187,3 +187,16 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         onChange?(currentChanges)
     }
 }
+
+extension ListDatabaseObserver where DTO == Item {
+    convenience init(
+        context: NSManagedObjectContext,
+        fetchRequest: NSFetchRequest<DTO>
+    ) {
+        self.init(
+            context: context,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0 }
+        )
+    }
+}
