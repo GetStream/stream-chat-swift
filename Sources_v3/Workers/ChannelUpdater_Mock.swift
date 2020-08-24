@@ -7,45 +7,45 @@ import XCTest
 
 /// Mock implementation of ChannelUpdater
 class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
-    var update_channelQuery: ChannelQuery<ExtraData>?
-    var update_channelCreatedCallback: ((ChannelId) -> Void)?
-    var update_completion: ((Error?) -> Void)?
+    @Atomic var update_channelQuery: ChannelQuery<ExtraData>?
+    @Atomic var update_channelCreatedCallback: ((ChannelId) -> Void)?
+    @Atomic var update_completion: ((Error?) -> Void)?
 
-    var updateChannel_payload: ChannelEditDetailPayload<ExtraData>?
-    var updateChannel_completion: ((Error?) -> Void)?
+    @Atomic var updateChannel_payload: ChannelEditDetailPayload<ExtraData>?
+    @Atomic var updateChannel_completion: ((Error?) -> Void)?
 
-    var muteChannel_cid: ChannelId?
-    var muteChannel_mute: Bool?
-    var muteChannel_completion: ((Error?) -> Void)?
+    @Atomic var muteChannel_cid: ChannelId?
+    @Atomic var muteChannel_mute: Bool?
+    @Atomic var muteChannel_completion: ((Error?) -> Void)?
 
-    var deleteChannel_cid: ChannelId?
-    var deleteChannel_completion: ((Error?) -> Void)?
+    @Atomic var deleteChannel_cid: ChannelId?
+    @Atomic var deleteChannel_completion: ((Error?) -> Void)?
 
-    var hideChannel_cid: ChannelId?
-    var hideChannel_userId: UserId?
-    var hideChannel_clearHistory: Bool?
-    var hideChannel_completion: ((Error?) -> Void)?
+    @Atomic var hideChannel_cid: ChannelId?
+    @Atomic var hideChannel_userId: UserId?
+    @Atomic var hideChannel_clearHistory: Bool?
+    @Atomic var hideChannel_completion: ((Error?) -> Void)?
 
-    var showChannel_cid: ChannelId?
-    var showChannel_userId: UserId?
-    var showChannel_completion: ((Error?) -> Void)?
+    @Atomic var showChannel_cid: ChannelId?
+    @Atomic var showChannel_userId: UserId?
+    @Atomic var showChannel_completion: ((Error?) -> Void)?
     
-    var addMembers_cid: ChannelId?
-    var addMembers_userIds: Set<UserId>?
-    var addMembers_completion: ((Error?) -> Void)?
+    @Atomic var addMembers_cid: ChannelId?
+    @Atomic var addMembers_userIds: Set<UserId>?
+    @Atomic var addMembers_completion: ((Error?) -> Void)?
     
-    var removeMembers_cid: ChannelId?
-    var removeMembers_userIds: Set<UserId>?
-    var removeMembers_completion: ((Error?) -> Void)?
+    @Atomic var removeMembers_cid: ChannelId?
+    @Atomic var removeMembers_userIds: Set<UserId>?
+    @Atomic var removeMembers_completion: ((Error?) -> Void)?
 
-    var createNewMessage_cid: ChannelId?
-    var createNewMessage_text: String?
-    var createNewMessage_command: String?
-    var createNewMessage_arguments: String?
-    var createNewMessage_parentMessageId: MessageId?
-    var createNewMessage_showReplyInChannel: Bool?
-    var createNewMessage_extraData: ExtraData.Message?
-    var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
+    @Atomic var createNewMessage_cid: ChannelId?
+    @Atomic var createNewMessage_text: String?
+    @Atomic var createNewMessage_command: String?
+    @Atomic var createNewMessage_arguments: String?
+    @Atomic var createNewMessage_parentMessageId: MessageId?
+    @Atomic var createNewMessage_showReplyInChannel: Bool?
+    @Atomic var createNewMessage_extraData: ExtraData.Message?
+    @Atomic var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
     
     override func update(
         channelQuery: ChannelQuery<ExtraData>,

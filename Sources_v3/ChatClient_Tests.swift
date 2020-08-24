@@ -497,14 +497,14 @@ class ChatClient_Tests: StressTestCase {
 
 /// A helper class which provides mock environment for Client.
 private class TestEnvironment<ExtraData: ExtraDataTypes> {
-    var apiClient: APIClientMock?
-    var webSocketClient: WebSocketClientMock?
-    var databaseContainer: DatabaseContainerMock?
+    @Atomic var apiClient: APIClientMock?
+    @Atomic var webSocketClient: WebSocketClientMock?
+    @Atomic var databaseContainer: DatabaseContainerMock?
     
-    var requestEncoder: TestRequestEncoder?
-    var requestDecoder: TestRequestDecoder?
+    @Atomic var requestEncoder: TestRequestEncoder?
+    @Atomic var requestDecoder: TestRequestDecoder?
     
-    var eventDecoder: EventDecoder<ExtraData>?
+    @Atomic var eventDecoder: EventDecoder<ExtraData>?
     
     lazy var environment: Client<ExtraData>.Environment = { [unowned self] in
         .init(apiClientBuilder: {
@@ -604,7 +604,7 @@ private struct Queue<Element> {
         storage = elements
     }
     
-    private var storage = [Element]()
+    @Atomic private var storage = [Element]()
     mutating func push(_ element: Element) {
         storage.append(element)
     }
@@ -633,8 +633,8 @@ class WebSocketClientMock: WebSocketClient {
     let init_reconnectionStrategy: WebSocketClientReconnectionStrategy
     let init_environment: WebSocketClient.Environment
     
-    var connect_calledCounter = 0
-    var disconnect_calledCounter = 0
+    @Atomic var connect_calledCounter = 0
+    @Atomic var disconnect_calledCounter = 0
     
     override init(
         connectEndpoint: Endpoint<EmptyResponse>,
@@ -663,11 +663,11 @@ class WebSocketClientMock: WebSocketClient {
     }
     
     override func connect() {
-        connect_calledCounter += 1
+        _connect_calledCounter { $0 += 1 }
     }
     
     override func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
-        disconnect_calledCounter += 1
+        _disconnect_calledCounter { $0 += 1 }
     }
 }
 
