@@ -23,21 +23,17 @@ class ChannelListQueryDTO: NSManagedObject {
         request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
         return try? context.fetch(request).first
     }
-    
-    static func loadOrCreate(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO {
-        if let existing = Self.load(filterHash: filterHash, context: context) {
-            return existing
-        }
-        
-        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelListQueryDTO
-        new.filterHash = filterHash
-        return new
-    }
 }
 
 extension NSManagedObjectContext {
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        let dto = ChannelListQueryDTO.loadOrCreate(filterHash: query.filter.filterHash, context: self)
+        if let existingDTO = ChannelListQueryDTO.load(filterHash: query.filter.filterHash, context: self) {
+            return existingDTO
+        }
+        
+        let newDTO = NSEntityDescription
+            .insertNewObject(forEntityName: ChannelListQueryDTO.entityName, into: self) as! ChannelListQueryDTO
+        newDTO.filterHash = query.filter.filterHash
         
         let jsonData: Data
         do {
@@ -47,8 +43,8 @@ extension NSManagedObjectContext {
             jsonData = try! JSONEncoder().encode(Filter.none)
         }
         
-        dto.filterJSONData = jsonData
+        newDTO.filterJSONData = jsonData
         
-        return dto
+        return newDTO
     }
 }
