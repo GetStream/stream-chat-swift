@@ -22,6 +22,12 @@ class ChannelListQueryUpdater_Tests: StressTestCase {
         queryUpdater = ChannelListQueryUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
     }
     
+    override func tearDown() {
+        apiClient.cleanUp()
+        
+        super.tearDown()
+    }
+    
     func test_makesCorrectAPICall() {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in("member", ["Luke"]))
