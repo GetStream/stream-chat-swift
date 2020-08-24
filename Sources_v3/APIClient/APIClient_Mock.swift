@@ -7,15 +7,15 @@ import Foundation
 
 /// Mock implementation of APIClient allowing easy control and simulation of responses.
 class APIClientMock: APIClient {
-    var request_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
+    @Atomic var request_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
     
     /// The last endpoint `request` function was called with.
-    var request_endpoint: AnyEndpoint?
-    var request_completion: Any?
+    @Atomic var request_endpoint: AnyEndpoint?
+    @Atomic var request_completion: Any?
     
-    var init_sessionConfiguration: URLSessionConfiguration
-    var init_requestEncoder: RequestEncoder
-    var init_requestDecoder: RequestDecoder
+    @Atomic var init_sessionConfiguration: URLSessionConfiguration
+    @Atomic var init_requestEncoder: RequestEncoder
+    @Atomic var init_requestDecoder: RequestDecoder
     
     override init(sessionConfiguration: URLSessionConfiguration, requestEncoder: RequestEncoder, requestDecoder: RequestDecoder) {
         init_sessionConfiguration = sessionConfiguration
