@@ -10,7 +10,7 @@ class ChannelUpdater_Tests: StressTestCase {
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
-    var database: TestDatabaseContainer!
+    var database: DatabaseContainerMock!
     
     var channelUpdater: ChannelUpdater<ExtraData>!
     
@@ -19,7 +19,7 @@ class ChannelUpdater_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! TestDatabaseContainer(kind: .inMemory)
+        database = try! DatabaseContainerMock(kind: .inMemory)
         
         channelUpdater = ChannelUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
     }
