@@ -599,25 +599,6 @@ extension ChatClient_Tests {
     }
 }
 
-class DatabaseContainerMock: DatabaseContainer {
-    var init_kind: DatabaseContainer.Kind
-    var flush_called = false
-    
-    convenience init() {
-        try! self.init(kind: .inMemory)
-    }
-    
-    override init(kind: DatabaseContainer.Kind, modelName: String = "StreamChatModel", bundle: Bundle? = nil) throws {
-        init_kind = kind
-        try super.init(kind: kind, modelName: modelName, bundle: bundle)
-    }
-    
-    override func removeAllData(force: Bool, completion: ((Error?) -> Void)? = nil) {
-        flush_called = true
-        super.removeAllData(force: force, completion: completion)
-    }
-}
-
 private struct Queue<Element> {
     init(_ elements: Element...) {
         storage = elements
