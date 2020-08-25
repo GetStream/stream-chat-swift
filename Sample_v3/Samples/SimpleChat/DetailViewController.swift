@@ -22,6 +22,21 @@ class DetailViewController: UIViewController {
              controller = chatClient.channelController(for: channelId)
         }
     }
+    
+    var composerView = ComposerView.instantiateFromNib()!
+    override var inputAccessoryView: UIView? {
+        guard presentedViewController?.isBeingDismissed != false else {
+            return nil
+        }
+        
+        composerView.layoutMargins = view.layoutMargins
+        composerView.directionalLayoutMargins = systemMinimumLayoutMargins
+        return composerView
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,12 +56,9 @@ class DetailViewController: UIViewController {
         
         tableView.reloadData()
         
+        composerView.sendButton.addTarget(self, action: #selector(newMessageButtonTapped), for: .touchUpInside)
+        
         navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(
-                barButtonSystemItem: .add,
-                target: self,
-                action: #selector(newMessageButtonTapped)
-            ),
             UIBarButtonItem(
                 title: "Members",
                 style: .plain,
@@ -87,17 +99,12 @@ class DetailViewController: UIViewController {
     
     
     @IBAction func newMessageButtonTapped(_ sender: Any) {
-        let alertController = UIAlertController(title: "New message", message: "", preferredStyle: .alert)
-        alertController.addAction(UIAlertAction(title: "Send", style: .default, handler: { alert -> Void in
-            if let text = (alertController.textFields![0] as UITextField).text {
-                self.controller?.createNewMessage(text: text, completion: { print($0) })
-            }
-        }))
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alertController.addTextField(configurationHandler: {(textField : UITextField!) -> Void in
-            textField.placeholder = "Message text"
-        })
-        self.present(alertController, animated: true, completion: nil)
+        guard let text = composerView.textView.text else {
+            return
+        }
+
+        composerView.textView.text = ""
+        self.controller?.createNewMessage(text: text, completion: { print($0) })
     }
 }
 
