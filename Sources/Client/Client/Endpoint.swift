@@ -54,6 +54,10 @@ public enum Endpoint {
     case hideChannel(Channel, User, _ clearHistory: Bool)
     /// Show a channel if it was hidden.
     case showChannel(Channel, User)
+    /// Mute a channel.
+    case muteChannel(Channel)
+    /// Unmute a channel.
+    case unmuteChannel(Channel)
     /// Send a message to a channel.
     case sendMessage(Message, Channel)
     /// Upload an image to a channel.
@@ -102,7 +106,7 @@ public enum Endpoint {
     case users(UsersQuery)
     /// Update a user.
     case updateUsers([User])
-    /// Mute a use.
+    /// Mute a user.
     case muteUser(User)
     /// Unmute a user.
     case unmuteUser(User)
@@ -165,6 +169,10 @@ extension Endpoint {
             return path(to: channel, "show")
         case .hideChannel(let channel, _, _):
             return path(to: channel, "hide")
+        case .muteChannel:
+            return "moderation/mute/channel"
+        case .unmuteChannel:
+            return "moderation/unmute/channel"
         case .replies(let message, _):
             return path(to: message.id, "replies")
             
@@ -285,11 +293,14 @@ extension Endpoint {
         case .channel(let query):
             return query
             
+        case .hideChannel(_, let user, let clearHistory):
+            return HiddenChannelRequest(userId: user.id, clearHistory: clearHistory)
+            
         case .showChannel(_, let user):
             return ["user_id": user.id]
             
-        case .hideChannel(_, let user, let clearHistory):
-            return HiddenChannelRequest(userId: user.id, clearHistory: clearHistory)
+        case .muteChannel(let channel), .unmuteChannel(let channel):
+            return ["channel_cid": channel.cid]
             
         case .sendMessage(let message, _):
             return ["message": message]
@@ -360,7 +371,9 @@ extension Endpoint {
         case .channel(let query):
             return query.options.contains(.presence) || query.options.contains(.state)
         case .updateUsers,
-             .stopWatching:
+             .stopWatching,
+             .muteChannel,
+             .unmuteChannel:
             return true
         case .heatUpTCPConnection,
              .guestToken,

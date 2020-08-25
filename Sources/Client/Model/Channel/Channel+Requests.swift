@@ -79,6 +79,20 @@ public extension Channel {
         Client.shared.show(channel: self, completion)
     }
     
+    /// Mutes a channel.
+    /// - Parameter completion: an empty completion block.
+    @discardableResult
+    func mute(_ completion: @escaping Client.Completion<MutedChannelResponse> = { _ in }) -> Cancellable {
+        Client.shared.mute(channel: self, completion)
+    }
+    
+    /// Unmutes a channel.
+    /// - Parameter completion: an empty completion block.
+    @discardableResult
+    func unmute(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+        Client.shared.unmute(channel: self, completion)
+    }
+    
     /// Update channel data.
     /// - Parameters:
     ///   - name: a channel name.

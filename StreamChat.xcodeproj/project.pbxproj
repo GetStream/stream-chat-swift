@@ -79,6 +79,7 @@
 		8A9ECEF6242A573700206E7D /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4E241924B5000750E4 /* Application.swift */; };
 		8A9ECEF7242A57B900206E7D /* AssociatedValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7C4F241924B5000750E4 /* AssociatedValue.swift */; };
 		8A9ECEF9242A5C3A00206E7D /* UIApplication+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */; };
+		8AA0884824F413400002F8D6 /* MutedChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA0884724F413400002F8D6 /* MutedChannel.swift */; };
 		8AA8F13D241FD2BD008FD89C /* Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BD0241924AD000750E4 /* Reaction.swift */; };
 		8AA8F13E2420FFE0008FD89C /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7BBB241924AD000750E4 /* Int+Extensions.swift */; };
 		8AAE2337245B00480080EB00 /* WebSocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAE2336245B00480080EB00 /* WebSocketProvider.swift */; };
@@ -370,6 +371,7 @@
 		8A9BC2EB2487D9F5004C5E69 /* WebSocketEventsMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketEventsMock.swift; sourceTree = "<group>"; };
 		8A9D2C7224487E0E007BD497 /* ChatViewStyle+Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatViewStyle+Presets.swift"; sourceTree = "<group>"; };
 		8A9ECEF8242A5C3A00206E7D /* UIApplication+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Rx.swift"; sourceTree = "<group>"; };
+		8AA0884724F413400002F8D6 /* MutedChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedChannel.swift; sourceTree = "<group>"; };
 		8AAE2336245B00480080EB00 /* WebSocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketProvider.swift; sourceTree = "<group>"; };
 		8AAE2338245B00B20080EB00 /* URLSessionWebSocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionWebSocketProvider.swift; sourceTree = "<group>"; };
 		8AAE233A245B00CF0080EB00 /* StarscreamWebSocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarscreamWebSocketProvider.swift; sourceTree = "<group>"; };
@@ -883,6 +885,7 @@
 				8ACC7BE2241924AD000750E4 /* ChannelResponse.swift */,
 				8ACC7BE3241924AD000750E4 /* Channel+WatcherCount.swift */,
 				8ADA1EEA2472C2E500C4FC82 /* ChannelNamingStrategy.swift */,
+				8AA0884724F413400002F8D6 /* MutedChannel.swift */,
 			);
 			path = Channel;
 			sourceTree = "<group>";
@@ -1666,6 +1669,7 @@
 				8ACC7C0A241924AD000750E4 /* UnreadCount.swift in Sources */,
 				8ACC7C10241924AD000750E4 /* AttachmentFile.swift in Sources */,
 				8ACC7BFB241924AD000750E4 /* ConnectionState.swift in Sources */,
+				8AA0884824F413400002F8D6 /* MutedChannel.swift in Sources */,
 				8ACC7C2B241924AD000750E4 /* Token.swift in Sources */,
 				8ACC7C25241924AD000750E4 /* Channel+WatcherCount.swift in Sources */,
 				8A9ECEF7242A57B900206E7D /* AssociatedValue.swift in Sources */,
