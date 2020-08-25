@@ -17,7 +17,6 @@ extension Channel: ReactiveCompatible {}
 public extension Reactive where Base == Channel {
     
     /// Create a channel.
-    /// - Parameter completion: a completion block with `ChannelResponse`.
     @discardableResult
     func create() -> Observable<ChannelResponse> {
         Client.shared.rx.create(channel: base)
@@ -63,7 +62,7 @@ public extension Reactive where Base == Channel {
     /// Removes the hidden status for a channel.
     /// - Parameters:
     ///   - user: the current user.
-    func show(_ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Observable<EmptyData> {
+    func show() -> Observable<EmptyData> {
         Client.shared.rx.show(channel: base)
     }
     
