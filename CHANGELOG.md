@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ✅ Added
 - `ChannelsPresenter.delete` & `ChannelsPresenter.rx.delete` methods to delete a channel and remove it from items list [#394](https://github.com/GetStream/stream-chat-swift/pull/394)
+- Mute/unmute a channel [#428](https://github.com/GetStream/stream-chat-swift/issues/428)
+  - `Client.shared.mute(channel: channel) {}` or `channel.mute {}`
+  - `Client.shared.rx.mute(channel: channel)` or `channel.rx.mute()`
+- `.notificationChannelMutesUpdated` event type to get the current user updated when a channel was muted or unmuted [#428](https://github.com/GetStream/stream-chat-swift/issues/428) 
 
 ### 🐞 Fixed
 - Channels list (ChannelsViewController) not updated when recreating a channel after deleting it [#392](https://github.com/GetStream/stream-chat-swift/issues/392)
