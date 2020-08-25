@@ -89,6 +89,20 @@ public extension ChannelsPresenter {
         rx.hide(channelPresenter, clearHistory: clearHistory).asObservable().bindOnce(to: completion)
     }
     
+    /// Mutes a channel from a given `ChannelPresenter`.
+    /// - Parameter channelPresenter: a channel presenter.
+    func mute(_ channelPresenter: ChannelPresenter,
+              _ completion: @escaping Client.Completion<MutedChannelResponse> = { _ in }) {
+        rx.mute(channelPresenter).bindOnce(to: completion)
+    }
+    
+    /// Unmutes a channel from a given `ChannelPresenter`.
+    /// - Parameter channelPresenter: a channel presenter.
+    func unmute(_ channelPresenter: ChannelPresenter,
+                _ completion: @escaping Client.Completion<EmptyData> = { _ in }) {
+        rx.unmute(channelPresenter).bindOnce(to: completion)
+    }
+    
     /// Delete a channel and remove the channel presenter from items.
     ///
     /// - Parameters:

@@ -67,6 +67,16 @@ public extension Reactive where Base == Channel {
         Client.shared.rx.show(channel: base)
     }
     
+    /// Mutes a channel.
+    func mute() -> Observable<MutedChannelResponse> {
+        Client.shared.rx.mute(channel: base)
+    }
+    
+    /// Unmutes a channel.
+    func unmute() -> Observable<EmptyData> {
+        Client.shared.rx.unmute(channel: base)
+    }
+    
     /// Update channel data.
     /// - Parameters:
     ///   - name: a channel name.

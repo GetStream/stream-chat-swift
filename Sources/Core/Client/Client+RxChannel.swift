@@ -90,6 +90,24 @@ public extension Reactive where Base == Client {
         }))
     }
     
+    /// Mutes a channel.
+    /// - Parameter channel: a channel.
+    @discardableResult
+    func mute(channel: Channel) -> Observable<MutedChannelResponse> {
+        connected(request({ [unowned base] completion in
+            base.mute(channel: channel, completion)
+        }))
+    }
+    
+    /// Unmutes a channel.
+    /// - Parameter channel: a channel.
+    @discardableResult
+    func unmute(channel: Channel) -> Observable<EmptyData> {
+        connected(request({ [unowned base] completion in
+            base.unmute(channel: channel, completion)
+        }))
+    }
+    
     /// Update channel data.
     /// - Parameters:
     ///   - channel: a channel.
