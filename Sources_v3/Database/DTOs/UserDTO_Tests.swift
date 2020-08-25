@@ -6,11 +6,11 @@
 import XCTest
 
 class UserDTO_Tests: XCTestCase {
-    var database: DatabaseContainer!
+    var database: DatabaseContainerMock!
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = try! DatabaseContainerMock(kind: .inMemory)
     }
     
     func test_userPayload_isStoredAndLoadedFromDB() {
@@ -127,5 +127,22 @@ class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.id, loadedUserPayload?.id)
             Assert.willBeEqual(payload.extraData, loadedUserPayload?.extraData)
         }
+    }
+    
+    func test_DTO_resetsItsEmpemeralValues() throws {
+        // Create a new user and set it's online status to `true`
+        let userId: UserId = .unique
+        try database.writeSynchronously {
+            let dto = try $0.saveUser(payload: UserPayload.dummy(userId: userId))
+            dto.isOnline = true
+        }
+        
+        // Reset ephemeral values
+        try database.writeSynchronously {
+            $0.user(id: userId)?.resetEphemeralValues()
+        }
+        
+        // Check the online status is `false`
+        XCTAssertEqual(database.viewContext.user(id: userId)?.isOnline, false)
     }
 }
