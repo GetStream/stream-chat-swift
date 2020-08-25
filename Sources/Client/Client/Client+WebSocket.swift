@@ -90,7 +90,8 @@ extension Client: WebSocketEventDelegate {
             
             return true
             
-        case .notificationMutesUpdated(let user, _, _):
+        case .notificationChannelMutesUpdated(let user, _),
+             .notificationMutesUpdated(let user, _, _):
             userAtomic.set(user)
             return true
             
