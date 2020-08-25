@@ -1,24 +1,19 @@
 //
-//  LoginViewController.swift
-//  StreamChatClient
-//
-//  Created by Matheus Cardoso on 14/08/20.
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 import SwiftUI
-import Combine
 
 import StreamChatClient
 
 class LoginViewController: UITableViewController {
-    @IBOutlet weak var tokenTypeSegmentedControl: UISegmentedControl!
-    @IBOutlet weak var jwtCell: UITableViewCell!
-    @IBOutlet weak var apiKeyTextField: UITextField!
-    @IBOutlet weak var userIdTextField: UITextField!
-    @IBOutlet weak var userNameTextField: UITextField!
-    @IBOutlet weak var jwtTextField: UITextField!
+    @IBOutlet var tokenTypeSegmentedControl: UISegmentedControl!
+    @IBOutlet var jwtCell: UITableViewCell!
+    @IBOutlet var apiKeyTextField: UITextField!
+    @IBOutlet var userIdTextField: UITextField!
+    @IBOutlet var userNameTextField: UITextField!
+    @IBOutlet var jwtTextField: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,13 +21,15 @@ class LoginViewController: UITableViewController {
         tokenTypeSegmentedControl.addTarget(self, action: #selector(tokenTypeSegmentedControlDidChangeValue), for: .valueChanged)
     }
     
-    @objc func tokenTypeSegmentedControlDidChangeValue() {
-        self.tableView.beginUpdates()
-        self.tableView.endUpdates()
+    @objc
+    func tokenTypeSegmentedControlDidChangeValue() {
+        tableView.beginUpdates()
+        tableView.endUpdates()
     }
 }
 
 // MARK: - UITableView
+
 extension LoginViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath {
@@ -53,6 +50,7 @@ extension LoginViewController {
 }
 
 // MARK: - Sample Navigation
+
 extension LoginViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath {
@@ -87,6 +85,7 @@ extension LoginViewController {
 }
 
 // MARK: - IndexPath
+
 private extension IndexPath {
     static let jwtIndexPath = IndexPath(row: 4, section: 0)
     static let simpleChatIndexPath = IndexPath(row: 0, section: 1)
@@ -94,17 +93,18 @@ private extension IndexPath {
 }
 
 // MARK: - Inputs
+
 extension LoginViewController {
     var apiKey: String {
-        return apiKeyTextField.text ?? ""
+        apiKeyTextField.text ?? ""
     }
     
     var userId: String {
-        return userIdTextField.text ?? ""
+        userIdTextField.text ?? ""
     }
     
     var userName: String {
-        return userNameTextField.text ?? ""
+        userNameTextField.text ?? ""
     }
     
     var token: Token? {

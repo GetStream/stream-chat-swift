@@ -1,23 +1,19 @@
 //
-//  SettingsViewController.swift
-//  Sample
-//
-//  Created by Matheus Cardoso on 19/08/20.
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import StreamChatClient
+import UIKit
 import UserNotifications
 
 class SettingsViewController: UITableViewController {
-    @IBOutlet weak var logoutCell: UITableViewCell!
-    @IBOutlet weak var clearLocalDatabaseCell: UITableViewCell!
-    @IBOutlet weak var enablePushNotificationsSwitch: UISwitch!
-    @IBOutlet weak var webSocketsConnectionSwitch: UISwitch!
+    @IBOutlet var logoutCell: UITableViewCell!
+    @IBOutlet var clearLocalDatabaseCell: UITableViewCell!
+    @IBOutlet var enablePushNotificationsSwitch: UISwitch!
+    @IBOutlet var webSocketsConnectionSwitch: UISwitch!
     
-    @IBOutlet weak var userNameLabel: UILabel!
-    @IBOutlet weak var userSecondaryLabel: UILabel!
+    @IBOutlet var userNameLabel: UILabel!
+    @IBOutlet var userSecondaryLabel: UILabel!
     
     private lazy var currentUserController: CurrentUserController = {
         let controller = chatClient.currentUserController()
@@ -49,6 +45,7 @@ class SettingsViewController: UITableViewController {
 }
 
 // MARK: - Current User
+
 extension SettingsViewController {
     func updateUserCell(with user: CurrentUser?) {
         if let user = user {
@@ -67,12 +64,15 @@ extension SettingsViewController {
 }
 
 // MARK: - Switches
+
 extension SettingsViewController {
-    @IBAction func pushNotificationsSwitchValueChanged(_ sender: Any) {
+    @IBAction
+    func pushNotificationsSwitchValueChanged(_ sender: Any) {
         // TODO: Enable/Disable push notifications
     }
     
-    @IBAction func webSocketsConnectionSwitchValueChanged(_ sender: Any) {
+    @IBAction
+    func webSocketsConnectionSwitchValueChanged(_ sender: Any) {
         if webSocketsConnectionSwitch.isOn {
             webSocketsConnectionSwitch.isEnabled = false
             chatClient.connect { [weak self] error in
@@ -88,6 +88,7 @@ extension SettingsViewController {
 }
 
 // MARK: - Tools
+
 extension SettingsViewController {
     func clearLocalDatabase() {
         // TODO: Clear local database
@@ -95,6 +96,7 @@ extension SettingsViewController {
 }
 
 // MARK: - CurrentUserControllerDelegate
+
 extension SettingsViewController: CurrentUserControllerDelegate {
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentUser>) {
         updateUserCell(with: change.item)
