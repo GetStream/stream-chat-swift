@@ -17,8 +17,10 @@ class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.extraData.name, "Broken Waterfall")
-        XCTAssertEqual(payload.extraData.imageURL,
-                       URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!)
+        XCTAssertEqual(
+            payload.extraData.imageURL,
+            URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
+        )
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
     }
@@ -54,8 +56,10 @@ class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.createdAt, "2020-06-09T18:33:04.070518Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-09T18:33:04.075114Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-09T18:33:04.078929Z".toDate())
-        XCTAssertEqual(payload.extraData.imageURL,
-                       URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!)
+        XCTAssertEqual(
+            payload.extraData.imageURL,
+            URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!
+        )
         XCTAssertEqual(payload.role, .guest)
         XCTAssertEqual(payload.isOnline, true)
     }
@@ -75,8 +79,10 @@ class UserPayload_Tests: XCTestCase {
 
 class UserRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
-        let payload: UserRequestBody<NameAndImageExtraData> = .init(id: .unique,
-                                                                    extraData: .init(name: .unique, imageURL: .unique()))
+        let payload: UserRequestBody<NameAndImageExtraData> = .init(
+            id: .unique,
+            extraData: .init(name: .unique, imageURL: .unique())
+        )
         
         let serialized = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [

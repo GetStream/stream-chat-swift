@@ -114,9 +114,11 @@ class ChannelUpdater_Tests: StressTestCase {
         
         _ = try await { completion in
             database.write({ (session) in
-                try session.saveCurrentUser(payload: .dummy(userId: currentUserId,
-                                                            role: .admin,
-                                                            extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+                try session.saveCurrentUser(payload: .dummy(
+                    userId: currentUserId,
+                    role: .admin,
+                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
                 
@@ -133,13 +135,15 @@ class ChannelUpdater_Tests: StressTestCase {
         
         // Create new message
         let newMesageId: MessageId = try await { completion in
-            channelUpdater.createNewMessage(in: cid,
-                                            text: text,
-                                            command: command,
-                                            arguments: arguments,
-                                            parentMessageId: parentMessageId,
-                                            showReplyInChannel: showReplyInChannel,
-                                            extraData: extraData) { result in
+            channelUpdater.createNewMessage(
+                in: cid,
+                text: text,
+                command: command,
+                arguments: arguments,
+                parentMessageId: parentMessageId,
+                showReplyInChannel: showReplyInChannel,
+                extraData: extraData
+            ) { result in
                 if let newMessageId = try? result.get() {
                     completion(newMessageId)
                 } else {
@@ -170,9 +174,11 @@ class ChannelUpdater_Tests: StressTestCase {
         
         _ = try await { completion in
             database.write({ (session) in
-                try session.saveCurrentUser(payload: .dummy(userId: currentUserId,
-                                                            role: .admin,
-                                                            extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+                try session.saveCurrentUser(payload: .dummy(
+                    userId: currentUserId,
+                    role: .admin,
+                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
                 
@@ -184,13 +190,15 @@ class ChannelUpdater_Tests: StressTestCase {
         database.write_errorResponse = testError
         
         let result: Result<MessageId, Error> = try await { completion in
-            channelUpdater.createNewMessage(in: .unique,
-                                            text: .unique,
-                                            command: .unique,
-                                            arguments: .unique,
-                                            parentMessageId: .unique,
-                                            showReplyInChannel: true,
-                                            extraData: .defaultValue) { completion($0) }
+            channelUpdater.createNewMessage(
+                in: .unique,
+                text: .unique,
+                command: .unique,
+                arguments: .unique,
+                parentMessageId: .unique,
+                showReplyInChannel: true,
+                extraData: .defaultValue
+            ) { completion($0) }
         }
         
         AssertResultFailure(result, testError)

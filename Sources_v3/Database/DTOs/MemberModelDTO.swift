@@ -86,25 +86,29 @@ extension MemberModel {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.user.extraData)
         } catch {
-            fatalError("Failed decoding saved extra data with error: \(error). This should never happen because"
-                + "the extra data must be a valid JSON to be saved.")
+            fatalError(
+                "Failed decoding saved extra data with error: \(error). This should never happen because"
+                    + "the extra data must be a valid JSON to be saved."
+            )
         }
         
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         
-        return MemberModel(id: dto.user.id,
-                           isOnline: dto.user.isOnline,
-                           isBanned: dto.user.isBanned,
-                           userRole: UserRole(rawValue: dto.user.userRoleRaw)!,
-                           userCreatedAt: dto.user.userCreatedAt,
-                           userUpdatedAt: dto.user.userUpdatedAt,
-                           lastActiveAt: dto.user.lastActivityAt,
-                           extraData: extraData,
-                           memberRole: role,
-                           memberCreatedAt: dto.memberCreatedAt,
-                           memberUpdatedAt: dto.memberUpdatedAt,
-                           isInvited: false,
-                           inviteAcceptedAt: nil,
-                           inviteRejectedAt: nil)
+        return MemberModel(
+            id: dto.user.id,
+            isOnline: dto.user.isOnline,
+            isBanned: dto.user.isBanned,
+            userRole: UserRole(rawValue: dto.user.userRoleRaw)!,
+            userCreatedAt: dto.user.userCreatedAt,
+            userUpdatedAt: dto.user.userUpdatedAt,
+            lastActiveAt: dto.user.lastActivityAt,
+            extraData: extraData,
+            memberRole: role,
+            memberCreatedAt: dto.memberCreatedAt,
+            memberUpdatedAt: dto.memberUpdatedAt,
+            isInvited: false,
+            inviteAcceptedAt: nil,
+            inviteRejectedAt: nil
+        )
     }
 }

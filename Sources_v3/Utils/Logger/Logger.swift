@@ -52,16 +52,18 @@ public enum LogConfig {
     ///
     /// - Important: Other options in `ChatClientConfig.Logging` will not take affect if this is changed.
     public static var destinations: [LogDestination] = {
-        let consoleLogDestination = ConsoleLogDestination(level: level,
-                                                          showDate: showDate,
-                                                          dateFormatter: dateFormatter,
-                                                          formatters: formatters,
-                                                          showLevel: showLevel,
-                                                          showIdentifier: showIdentifier,
-                                                          showThreadName: showThreadName,
-                                                          showFileName: showFileName,
-                                                          showLineNumber: showLineNumber,
-                                                          showFunctionName: showFunctionName)
+        let consoleLogDestination = ConsoleLogDestination(
+            level: level,
+            showDate: showDate,
+            dateFormatter: dateFormatter,
+            formatters: formatters,
+            showLevel: showLevel,
+            showIdentifier: showIdentifier,
+            showThreadName: showThreadName,
+            showFileName: showFileName,
+            showLineNumber: showLineNumber,
+            showFunctionName: showFunctionName
+        )
         return [consoleLogDestination]
     }()
     
@@ -126,13 +128,15 @@ public class Logger {
         let enabledDestinations = destinations.filter { $0.isEnabled(for: level) }
         guard !enabledDestinations.isEmpty else { return }
         
-        let logDetails = LogDetails(loggerIdentifier: identifier,
-                                    level: level,
-                                    date: Date(),
-                                    message: String(describing: message()),
-                                    functionName: functionName,
-                                    fileName: fileName,
-                                    lineNumber: lineNumber)
+        let logDetails = LogDetails(
+            loggerIdentifier: identifier,
+            level: level,
+            date: Date(),
+            message: String(describing: message()),
+            functionName: functionName,
+            fileName: fileName,
+            lineNumber: lineNumber
+        )
         for destination in enabledDestinations {
             destination.process(logDetails: logDetails)
         }

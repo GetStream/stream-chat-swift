@@ -161,11 +161,13 @@ class ChannelController_Tests: StressTestCase {
         let extraData: NameAndImageExtraData = .init(name: .unique, imageURL: .unique())
 
         // Create a new `ChannelController`
-        let controller = client.channelController(createChannelWithId: cid,
-                                                  team: team,
-                                                  members: members,
-                                                  invites: invites,
-                                                  extraData: extraData)
+        let controller = client.channelController(
+            createChannelWithId: cid,
+            team: team,
+            members: members,
+            invites: invites,
+            extraData: extraData
+        )
 
         // Assert `ChannelQuery` created correctly
         XCTAssertEqual(cid, controller.channelQuery.cid)
@@ -259,10 +261,12 @@ class ChannelController_Tests: StressTestCase {
 
     func test_delegateContinueToReceiveEvents_afterObserversReset() throws {
         // Assign `ChannelController` that creates new channel
-        controller = ChannelController(channelQuery: ChannelQuery(cid: channelId),
-                                       client: client,
-                                       environment: env.environment,
-                                       isChannelAlreadyCreated: false)
+        controller = ChannelController(
+            channelQuery: ChannelQuery(cid: channelId),
+            client: client,
+            environment: env.environment,
+            isChannelAlreadyCreated: false
+        )
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
 
         // Setup delegate
@@ -411,10 +415,12 @@ class ChannelController_Tests: StressTestCase {
     // MARK: - Channel actions propagation tests
 
     func setupControllerForNewChannel(query: ChannelQuery<DefaultDataTypes>) {
-        controller = ChannelController(channelQuery: query,
-                                       client: client,
-                                       environment: env.environment,
-                                       isChannelAlreadyCreated: false)
+        controller = ChannelController(
+            channelQuery: query,
+            client: client,
+            environment: env.environment,
+            isChannelAlreadyCreated: false
+        )
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
         controller.startUpdating()
     }
@@ -999,12 +1005,14 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate `createNewMessage` calls and catch the completion
         var completionCalled = false
-        controller.createNewMessage(text: text,
-                                    command: command,
-                                    arguments: arguments,
-                                    parentMessageId: parentMessageId,
-                                    showReplyInChannel: showReplyInChannel,
-                                    extraData: extraData) { [callbackQueueID] result in
+        controller.createNewMessage(
+            text: text,
+            command: command,
+            arguments: arguments,
+            parentMessageId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            extraData: extraData
+        ) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
             AssertResultSuccess(result, newMessageId)
             completionCalled = true
@@ -1035,12 +1043,14 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate `createNewMessage` call and assert error is returned
         let result: Result<MessageId, Error> = try await { [callbackQueueID] completion in
-            controller.createNewMessage(text: .unique,
-                                        command: .unique,
-                                        arguments: .unique,
-                                        parentMessageId: .unique,
-                                        showReplyInChannel: true,
-                                        extraData: .defaultValue) { result in
+            controller.createNewMessage(
+                text: .unique,
+                command: .unique,
+                arguments: .unique,
+                parentMessageId: .unique,
+                showReplyInChannel: true,
+                extraData: .defaultValue
+            ) { result in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(result)
             }

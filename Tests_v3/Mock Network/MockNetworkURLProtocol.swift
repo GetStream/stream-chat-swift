@@ -69,10 +69,12 @@ class MockNetworkURLProtocol: URLProtocol {
             fatalError("This should never happen. Check if the implementation of the `canInit` method is correct.")
         }
         
-        let httpResponse = HTTPURLResponse(url: request.url!,
-                                           statusCode: mockResponse.responseCode,
-                                           httpVersion: "HTTP/1.1",
-                                           headerFields: nil)!
+        let httpResponse = HTTPURLResponse(
+            url: request.url!,
+            statusCode: mockResponse.responseCode,
+            httpVersion: "HTTP/1.1",
+            headerFields: nil
+        )!
         
         client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .allowed)
         

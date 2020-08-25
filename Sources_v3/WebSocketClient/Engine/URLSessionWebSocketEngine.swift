@@ -49,9 +49,11 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
                 self.doRead()
                 
             case let .failure(error):
-                self.disconnect(with: WebSocketEngineError(reason: error.localizedDescription,
-                                                           code: (error as NSError).code,
-                                                           engineError: error))
+                self.disconnect(with: WebSocketEngineError(
+                    reason: error.localizedDescription,
+                    code: (error as NSError).code,
+                    engineError: error
+                ))
             }
         }
     }
@@ -74,9 +76,11 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
         var error: WebSocketEngineError?
         
         if let reasonData = reason, let reasonString = String(data: reasonData, encoding: .utf8) {
-            error = WebSocketEngineError(reason: reasonString,
-                                         code: closeCode.rawValue,
-                                         engineError: nil)
+            error = WebSocketEngineError(
+                reason: reasonString,
+                code: closeCode.rawValue,
+                engineError: nil
+            )
         }
         
         disconnect(with: error)

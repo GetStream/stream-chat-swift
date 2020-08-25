@@ -75,9 +75,11 @@ class VirtualTime {
     }
     
     func scheduleTimer(interval: TimeInterval, repeating: Bool, callback: @escaping (TimerControl) -> Void) -> TimerControl {
-        let timer = TimerControl(scheduledFireTime: currentTime + interval,
-                                 repeatingPeriod: repeating ? interval : 0,
-                                 callback: callback)
+        let timer = TimerControl(
+            scheduledFireTime: currentTime + interval,
+            repeatingPeriod: repeating ? interval : 0,
+            callback: callback
+        )
         scheduledTimers.append(timer)
         
         if state == .waiting {

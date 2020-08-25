@@ -10,15 +10,17 @@ extension UserPayload where ExtraData == NameAndImageExtraData {
     static func dummy(userId: UserId) -> UserPayload {
         let lukeExtraData = NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString))
         
-        return .init(id: userId,
-                     role: .admin,
-                     createdAt: .unique,
-                     updatedAt: .unique,
-                     lastActiveAt: .unique,
-                     isOnline: true,
-                     isInvisible: true,
-                     isBanned: true,
-                     teams: [],
-                     extraData: lukeExtraData)
+        return .init(
+            id: userId,
+            role: .admin,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
+            isOnline: true,
+            isInvisible: true,
+            isBanned: true,
+            teams: [],
+            extraData: lukeExtraData
+        )
     }
 }

@@ -62,10 +62,14 @@ class Filter_Tests: XCTestCase {
         XCTAssertEqual(filter.json, "{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
         
         // Combination of Or + And
-        XCTAssertEqual(((filter1 | filter2) & filter3).json,
-                       "{\"$and\":[{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]},{\"e\":\"f\"}]}")
-        XCTAssertEqual((filter1 | (filter2 & filter3)).json,
-                       "{\"$or\":[{\"a\":\"b\"},{\"$and\":[{\"c\":\"d\"},{\"e\":\"f\"}]}]}")
+        XCTAssertEqual(
+            ((filter1 | filter2) & filter3).json,
+            "{\"$and\":[{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]},{\"e\":\"f\"}]}"
+        )
+        XCTAssertEqual(
+            (filter1 | (filter2 & filter3)).json,
+            "{\"$or\":[{\"a\":\"b\"},{\"$and\":[{\"c\":\"d\"},{\"e\":\"f\"}]}]}"
+        )
         
         // Nor
         XCTAssertEqual(Filter.nor([filter1, filter2]).json, "{\"$nor\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")

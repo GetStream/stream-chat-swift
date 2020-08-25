@@ -24,14 +24,18 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
     /// every cid. These queues can send messages in parelel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue<ExtraData>] = [:]
 
-    private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(context: self.database.backgroundReadOnlyContext,
-                                                                             fetchRequest: MessageDTO
-                                                                                 .messagesPendingSendFetchRequest(),
-                                                                             itemCreator: { $0 })
+    private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(
+        context: self.database.backgroundReadOnlyContext,
+        fetchRequest: MessageDTO
+            .messagesPendingSendFetchRequest(),
+        itemCreator: { $0 }
+    )
     
-    private let sendingDispatchQueue: DispatchQueue = .init(label: "co.getStream.ChatClient.MessageSenderQueue",
-                                                            qos: .userInitiated,
-                                                            attributes: [.concurrent])
+    private let sendingDispatchQueue: DispatchQueue = .init(
+        label: "co.getStream.ChatClient.MessageSenderQueue",
+        qos: .userInitiated,
+        attributes: [.concurrent]
+    )
     
     override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
         super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
@@ -78,9 +82,11 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
         _sendingQueueByCid.mutate { sendingQueueByCid in
             newRequests.forEach { cid, requests in
                 if sendingQueueByCid[cid] == nil {
-                    sendingQueueByCid[cid] = MessageSendingQueue(apiClient: self.apiClient,
-                                                                 database: self.database,
-                                                                 dispatchQueue: sendingDispatchQueue)
+                    sendingQueueByCid[cid] = MessageSendingQueue(
+                        apiClient: self.apiClient,
+                        database: self.database,
+                        dispatchQueue: sendingDispatchQueue
+                    )
                 }
                 
                 sendingQueueByCid[cid]?.scheduleSend(requests: requests)

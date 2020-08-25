@@ -17,8 +17,10 @@ class CurrentUserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.extraData.name, "Broken Waterfall")
-        XCTAssertEqual(payload.extraData.imageURL,
-                       URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!)
+        XCTAssertEqual(
+            payload.extraData.imageURL,
+            URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
+        )
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.devices.map(\.id), [

@@ -13,18 +13,20 @@ extension CurrentUserPayload {
         unreadCount: UnreadCount? = .dummy,
         extraData: T = .defaultValue
     ) -> CurrentUserPayload<T> {
-        .init(id: userId,
-              role: role,
-              createdAt: .unique,
-              updatedAt: .unique,
-              lastActiveAt: .unique,
-              isOnline: true,
-              isInvisible: true,
-              isBanned: true,
-              teams: [],
-              extraData: extraData,
-              devices: [.init(.unique)],
-              mutedUsers: [],
-              unreadCount: unreadCount)
+        .init(
+            id: userId,
+            role: role,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
+            isOnline: true,
+            isInvisible: true,
+            isBanned: true,
+            teams: [],
+            extraData: extraData,
+            devices: [.init(.unique)],
+            mutedUsers: [],
+            unreadCount: unreadCount
+        )
     }
 }

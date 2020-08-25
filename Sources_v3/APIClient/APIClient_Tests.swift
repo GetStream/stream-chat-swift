@@ -101,12 +101,14 @@ class APIClient_Tests: StressTestCase {
         apiClient.request(endpoint: testEndpoint) { _ in }
         
         // Check a network request is made with the values from `testRequest`
-        AssertNetworkRequest(method: .post,
-                             path: "/" + uniquePath,
-                             // the "name" header value comes from the request, "unique_value" from the session config
-                             headers: ["surname": "Organa", "unique_value": uniqeHeaderValue],
-                             queryParameters: ["item": uniqueQueryItem],
-                             body: ["name": "Leia"])
+        AssertNetworkRequest(
+            method: .post,
+            path: "/" + uniquePath,
+            // the "name" header value comes from the request, "unique_value" from the session config
+            headers: ["surname": "Organa", "unique_value": uniqeHeaderValue],
+            queryParameters: ["item": uniqueQueryItem],
+            body: ["name": "Leia"]
+        )
     }
     
     func test_requestSuccess() throws {

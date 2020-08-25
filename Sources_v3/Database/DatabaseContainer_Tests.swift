@@ -51,12 +51,14 @@ class DatabaseContainer_Tests: StressTestCase {
         
         // Add some random objects and for completion block
         let error = try await {
-            container.write({ session in
-                                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
-                                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
-                                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
-                            },
-                            completion: $0)
+            container.write(
+                { session in
+                    try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+                    try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+                    try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+                },
+                completion: $0
+            )
         }
         XCTAssertNil(error)
         

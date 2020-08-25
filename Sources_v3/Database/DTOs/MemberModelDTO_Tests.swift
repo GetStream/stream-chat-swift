@@ -17,22 +17,30 @@ class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
-        let userPayload: UserPayload<NameAndImageExtraData> = .init(id: userId,
-                                                                    role: .admin,
-                                                                    createdAt: .init(timeIntervalSince1970: 1000),
-                                                                    updatedAt: .init(timeIntervalSince1970: 2000),
-                                                                    lastActiveAt: .init(timeIntervalSince1970: 3000),
-                                                                    isOnline: true,
-                                                                    isInvisible: true,
-                                                                    isBanned: true,
-                                                                    extraData: .init(name: "Luke",
-                                                                                     imageURL: URL(string: UUID()
-                                                                                         .uuidString)))
+        let userPayload: UserPayload<NameAndImageExtraData> = .init(
+            id: userId,
+            role: .admin,
+            createdAt: .init(timeIntervalSince1970: 1000),
+            updatedAt: .init(timeIntervalSince1970: 2000),
+            lastActiveAt: .init(timeIntervalSince1970: 3000),
+            isOnline: true,
+            isInvisible: true,
+            isBanned: true,
+            extraData: .init(
+                name: "Luke",
+                imageURL: URL(
+                    string: UUID()
+                        .uuidString
+                )
+            )
+        )
         
-        let payload: MemberPayload<NameAndImageExtraData> = .init(user: userPayload,
-                                                                  role: .moderator,
-                                                                  createdAt: .init(timeIntervalSince1970: 4000),
-                                                                  updatedAt: .init(timeIntervalSince1970: 5000))
+        let payload: MemberPayload<NameAndImageExtraData> = .init(
+            user: userPayload,
+            role: .moderator,
+            createdAt: .init(timeIntervalSince1970: 4000),
+            updatedAt: .init(timeIntervalSince1970: 5000)
+        )
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -63,20 +71,24 @@ class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
-        let userPayload: UserPayload<NoExtraData> = .init(id: userId,
-                                                          role: .admin,
-                                                          createdAt: .init(timeIntervalSince1970: 1000),
-                                                          updatedAt: .init(timeIntervalSince1970: 2000),
-                                                          lastActiveAt: .init(timeIntervalSince1970: 3000),
-                                                          isOnline: true,
-                                                          isInvisible: true,
-                                                          isBanned: true,
-                                                          extraData: .init())
+        let userPayload: UserPayload<NoExtraData> = .init(
+            id: userId,
+            role: .admin,
+            createdAt: .init(timeIntervalSince1970: 1000),
+            updatedAt: .init(timeIntervalSince1970: 2000),
+            lastActiveAt: .init(timeIntervalSince1970: 3000),
+            isOnline: true,
+            isInvisible: true,
+            isBanned: true,
+            extraData: .init()
+        )
         
-        let payload: MemberPayload<NoExtraData> = .init(user: userPayload,
-                                                        role: .moderator,
-                                                        createdAt: .init(timeIntervalSince1970: 4000),
-                                                        updatedAt: .init(timeIntervalSince1970: 5000))
+        let payload: MemberPayload<NoExtraData> = .init(
+            user: userPayload,
+            role: .moderator,
+            createdAt: .init(timeIntervalSince1970: 4000),
+            updatedAt: .init(timeIntervalSince1970: 5000)
+        )
         
         // Asynchronously save the payload to the db
         database.write { session in

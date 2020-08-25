@@ -63,13 +63,15 @@ extension MessageDatabaseSession {
         text: String,
         extraData: ExtraData = .defaultValue
     ) throws -> MessageDTO {
-        try createNewMessage(in: cid,
-                             text: text,
-                             command: nil,
-                             arguments: nil,
-                             parentMessageId: nil,
-                             showReplyInChannel: false,
-                             extraData: extraData)
+        try createNewMessage(
+            in: cid,
+            text: text,
+            command: nil,
+            arguments: nil,
+            parentMessageId: nil,
+            showReplyInChannel: false,
+            extraData: extraData
+        )
     }
 }
 

@@ -22,7 +22,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.args, nil)
         XCTAssertEqual(payload.parentId, "3294-4c0c-9a62-c9d0928bf733")
         XCTAssertEqual(payload.showReplyInChannel, true)
-        XCTAssertEqual(payload.mentionedUsers.map { $0.id }, [])
+        XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
         XCTAssertEqual(payload.replyCount, 0)
         XCTAssertEqual(payload.extraData, .defaultValue)
 //        XCTAssertEqual(payload.latestReactions, [])
@@ -45,7 +45,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.args, nil)
         XCTAssertEqual(payload.parentId, "3294-4c0c-9a62-c9d0928bf733")
         XCTAssertEqual(payload.showReplyInChannel, true)
-        XCTAssertEqual(payload.mentionedUsers.map { $0.id }, [])
+        XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
         XCTAssertEqual(payload.replyCount, 0)
         XCTAssertEqual(payload.extraData, TestExtraMessageData(secretNote: "Anakin is Vader!"))
         //        XCTAssertEqual(payload.latestReactions, [])
@@ -57,14 +57,16 @@ class MessagePayload_Tests: XCTestCase {
 
 class MessageRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
-        let payload: MessageRequestBody<CustomData> = .init(id: .unique,
-                                                            user: .dummy(userId: .unique),
-                                                            text: .unique,
-                                                            command: .unique,
-                                                            args: .unique,
-                                                            parentId: .unique,
-                                                            showReplyInChannel: true,
-                                                            extraData: .init(secretNote: "Anakin is Vader ;-)"))
+        let payload: MessageRequestBody<CustomData> = .init(
+            id: .unique,
+            user: .dummy(userId: .unique),
+            text: .unique,
+            command: .unique,
+            args: .unique,
+            parentId: .unique,
+            showReplyInChannel: true,
+            extraData: .init(secretNote: "Anakin is Vader ;-)")
+        )
         
         let serialized = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [

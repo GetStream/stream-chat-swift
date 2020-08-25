@@ -50,22 +50,30 @@ class MessageSender_Tests: StressTestCase {
         
         // Create 2 messages in the DB, only message 1 has `.pendingSend` local state
         try database.writeSynchronously { session in
-            let message1 = try session.createNewMessage(in: self.cid,
-                                                        text: "Message pending send",
-                                                        extraData: ExtraData.Message.defaultValue)
+            let message1 = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send",
+                extraData: ExtraData.Message.defaultValue
+            )
             message1.localMessageState = .pendingSend
             message1Id = message1.id
             
-            let message2 = try session.createNewMessage(in: self.cid,
-                                                        text: "Message without local state",
-                                                        extraData: ExtraData.Message.defaultValue)
+            let message2 = try session.createNewMessage(
+                in: self.cid,
+                text: "Message without local state",
+                extraData: ExtraData.Message.defaultValue
+            )
             message2Id = message2.id
         }
         
-        let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(database.viewContext.message(id: message1Id)?
-            .asRequestBody())
-        let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(database.viewContext.message(id: message2Id)?
-            .asRequestBody())
+        let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: message1Id)?
+                .asRequestBody()
+        )
+        let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: message2Id)?
+                .asRequestBody()
+        )
 
         // Check only the message1 was sent
         AssertAsync {
@@ -84,9 +92,11 @@ class MessageSender_Tests: StressTestCase {
         
         // Create a message with pendin state
         try database.writeSynchronously { session in
-            let message1 = try session.createNewMessage(in: self.cid,
-                                                        text: "Message pending send",
-                                                        extraData: ExtraData.Message.defaultValue)
+            let message1 = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send",
+                extraData: ExtraData.Message.defaultValue
+            )
             message1.localMessageState = .pendingSend
             message1Id = message1.id
         }
@@ -110,9 +120,11 @@ class MessageSender_Tests: StressTestCase {
         
         // Create a message with pendin state
         try database.writeSynchronously { session in
-            let message1 = try session.createNewMessage(in: self.cid,
-                                                        text: "Message pending send",
-                                                        extraData: ExtraData.Message.defaultValue)
+            let message1 = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send",
+                extraData: ExtraData.Message.defaultValue
+            )
             message1.localMessageState = .pendingSend
             message1Id = message1.id
         }
@@ -135,30 +147,40 @@ class MessageSender_Tests: StressTestCase {
         
         // Create 3 messages in the DB, all with `.pendingSend` local state
         try database.writeSynchronously { session in
-            let message1 = try session.createNewMessage(in: self.cid,
-                                                        text: "Message pending send 1",
-                                                        extraData: ExtraData.Message.defaultValue)
+            let message1 = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send 1",
+                extraData: ExtraData.Message.defaultValue
+            )
             message1.localMessageState = .pendingSend
             message1Id = message1.id
 
-            let message2 = try session.createNewMessage(in: self.cid,
-                                                        text: "Message pending send 2",
-                                                        extraData: ExtraData.Message.defaultValue)
+            let message2 = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send 2",
+                extraData: ExtraData.Message.defaultValue
+            )
             message2.localMessageState = .pendingSend
             message2Id = message2.id
 
-            let message3 = try session.createNewMessage(in: self.cid,
-                                                        text: "Message pending send 3",
-                                                        extraData: ExtraData.Message.defaultValue)
+            let message3 = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send 3",
+                extraData: ExtraData.Message.defaultValue
+            )
             message3.localMessageState = .pendingSend
             message3Id = message3.id
         }
         
         // Check the 1st API call
-        let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(database.viewContext.message(id: message1Id)?
-            .asRequestBody())
-        AssertAsync.willBeEqual(apiClient.request_endpoint,
-                                AnyEndpoint(.sendMessage(cid: cid, messagePayload: message1Payload)))
+        let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: message1Id)?
+                .asRequestBody()
+        )
+        AssertAsync.willBeEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(.sendMessage(cid: cid, messagePayload: message1Payload))
+        )
         
         // Simulate the first call response
         var callback: ((Result<EmptyResponse, Error>) -> Void) {
@@ -167,19 +189,27 @@ class MessageSender_Tests: StressTestCase {
         callback(.success(.init()))
         
         // Check the 2nd API call
-        let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(database.viewContext.message(id: message2Id)?
-            .asRequestBody())
-        AssertAsync.willBeEqual(apiClient.request_endpoint,
-                                AnyEndpoint(.sendMessage(cid: cid, messagePayload: message2Payload)))
+        let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: message2Id)?
+                .asRequestBody()
+        )
+        AssertAsync.willBeEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(.sendMessage(cid: cid, messagePayload: message2Payload))
+        )
         
         // Simulate the second call response
         callback(.success(.init()))
 
         // Check the 3rd API call
-        let message3Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(database.viewContext.message(id: message3Id)?
-            .asRequestBody())
-        AssertAsync.willBeEqual(apiClient.request_endpoint,
-                                AnyEndpoint(.sendMessage(cid: cid, messagePayload: message3Payload)))
+        let message3Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: message3Id)?
+                .asRequestBody()
+        )
+        AssertAsync.willBeEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(.sendMessage(cid: cid, messagePayload: message3Payload))
+        )
         
         // Simulate the second call response
         callback(.success(.init()))
@@ -198,27 +228,35 @@ class MessageSender_Tests: StressTestCase {
 
         // Create 2 new messages in two channel the DB
         try database.writeSynchronously { session in
-            let messageA1 = try session.createNewMessage(in: cidA,
-                                                         text: "Channel A message 1",
-                                                         extraData: ExtraData.Message.defaultValue)
+            let messageA1 = try session.createNewMessage(
+                in: cidA,
+                text: "Channel A message 1",
+                extraData: ExtraData.Message.defaultValue
+            )
             messageA1.localMessageState = .pendingSend
             channelA_message1 = messageA1.id
             
-            let messageA2 = try session.createNewMessage(in: cidA,
-                                                         text: "Channel A message 2",
-                                                         extraData: ExtraData.Message.defaultValue)
+            let messageA2 = try session.createNewMessage(
+                in: cidA,
+                text: "Channel A message 2",
+                extraData: ExtraData.Message.defaultValue
+            )
             messageA2.localMessageState = .pendingSend
             channelA_message2 = messageA2.id
 
-            let messageB1 = try session.createNewMessage(in: cidB,
-                                                         text: "Channel B message 1",
-                                                         extraData: ExtraData.Message.defaultValue)
+            let messageB1 = try session.createNewMessage(
+                in: cidB,
+                text: "Channel B message 1",
+                extraData: ExtraData.Message.defaultValue
+            )
             messageB1.localMessageState = .pendingSend
             channelB_message1 = messageB1.id
             
-            let messageB2 = try session.createNewMessage(in: cidB,
-                                                         text: "Channel B message 2",
-                                                         extraData: ExtraData.Message.defaultValue)
+            let messageB2 = try session.createNewMessage(
+                in: cidB,
+                text: "Channel B message 2",
+                extraData: ExtraData.Message.defaultValue
+            )
             messageB2.localMessageState = .pendingSend
             channelB_message2 = messageB2.id
         }
@@ -227,10 +265,14 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2)
         
         // Check the API calls are for the first messages from both channels
-        let channelA_message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(database.viewContext
-            .message(id: channelA_message1)?.asRequestBody())
-        let channelB_message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(database.viewContext
-            .message(id: channelB_message1)?.asRequestBody())
+        let channelA_message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext
+                .message(id: channelA_message1)?.asRequestBody()
+        )
+        let channelB_message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext
+                .message(id: channelB_message1)?.asRequestBody()
+        )
 
         XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
             $0.endpoint == AnyEndpoint(.sendMessage(cid: cidA, messagePayload: channelA_message1Payload))
@@ -249,10 +291,14 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 2 + 2)
         
         // Check the API calls are for the second messages from both channels
-        let channelA_message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(database.viewContext
-            .message(id: channelA_message2)?.asRequestBody())
-        let channelB_message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(database.viewContext
-            .message(id: channelB_message2)?.asRequestBody())
+        let channelA_message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext
+                .message(id: channelA_message2)?.asRequestBody()
+        )
+        let channelB_message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext
+                .message(id: channelB_message2)?.asRequestBody()
+        )
         
         XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
             $0.endpoint == AnyEndpoint(.sendMessage(cid: cidA, messagePayload: channelA_message2Payload))

@@ -160,15 +160,19 @@ class WebSocketClient {
     }
     
     private func startListeningForAppStateUpdates() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleAppDidEnterBackground),
-                                               name: UIApplication.didEnterBackgroundNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleAppDidBecomeActive),
-                                               name: UIApplication.didBecomeActiveNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
     
     @objc

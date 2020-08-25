@@ -19,14 +19,18 @@ final class MemberEventObserver: EventObserver {
 
 extension MemberEventObserver {
     convenience init(notificationCenter: NotificationCenter, callback: @escaping (MemberEvent) -> Void) {
-        self.init(notificationCenter: notificationCenter,
-                  filter: { _ in true },
-                  callback: callback)
+        self.init(
+            notificationCenter: notificationCenter,
+            filter: { _ in true },
+            callback: callback
+        )
     }
 
     convenience init(notificationCenter: NotificationCenter, cid: ChannelId, callback: @escaping (MemberEvent) -> Void) {
-        self.init(notificationCenter: notificationCenter,
-                  filter: { $0.cid == cid },
-                  callback: callback)
+        self.init(
+            notificationCenter: notificationCenter,
+            filter: { $0.cid == cid },
+            callback: callback
+        )
     }
 }

@@ -50,14 +50,16 @@ public class MemberModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
         
-        super.init(id: id,
-                   isOnline: isOnline,
-                   isBanned: isBanned,
-                   userRole: userRole,
-                   createdAt: userCreatedAt,
-                   updatedAt: userUpdatedAt,
-                   lastActiveAt: lastActiveAt,
-                   extraData: extraData)
+        super.init(
+            id: id,
+            isOnline: isOnline,
+            isBanned: isBanned,
+            userRole: userRole,
+            createdAt: userCreatedAt,
+            updatedAt: userUpdatedAt,
+            lastActiveAt: lastActiveAt,
+            extraData: extraData
+        )
     }
 }
 

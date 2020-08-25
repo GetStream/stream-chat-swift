@@ -183,18 +183,23 @@ extension MessageDTO {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.Message.self, from: self.extraData)
         } catch {
-            log.assert(false, "Failed decoding saved extra data with error: \(error). This should never happen because"
-                + "the extra data must be a valid JSON to be saved.")
+            log.assert(
+                false,
+                "Failed decoding saved extra data with error: \(error). This should never happen because"
+                    + "the extra data must be a valid JSON to be saved."
+            )
         }
         
-        return .init(id: id,
-                     user: user.asRequestBody(),
-                     text: text,
-                     command: command,
-                     args: args,
-                     parentId: parentMessageId,
-                     showReplyInChannel: showReplyInChannel,
-                     extraData: extraData ?? .defaultValue)
+        return .init(
+            id: id,
+            user: user.asRequestBody(),
+            text: text,
+            command: command,
+            args: args,
+            parentId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            extraData: extraData ?? .defaultValue
+        )
     }
 }
 

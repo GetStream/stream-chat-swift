@@ -92,10 +92,12 @@ func AssertJSONEqual(
             }
             if let nestedDict1 = value as? [String: Any] {
                 if let nestedDict2 = value2 as? [String: Any] {
-                    try AssertJSONEqual(JSONSerialization.data(withJSONObject: nestedDict1),
-                                        JSONSerialization.data(withJSONObject: nestedDict2),
-                                        file: file,
-                                        line: line)
+                    try AssertJSONEqual(
+                        JSONSerialization.data(withJSONObject: nestedDict1),
+                        JSONSerialization.data(withJSONObject: nestedDict2),
+                        file: file,
+                        line: line
+                    )
                 } else {
                     throw error(domain: "AssertJSONEqual", message: "Values for key \(key) do not match")
                 }

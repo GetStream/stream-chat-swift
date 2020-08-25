@@ -14,10 +14,12 @@ extension Endpoint {
         userId: UserId,
         extraData: ExtraData
     ) -> Endpoint<GuestUserTokenPayload<ExtraData>> {
-        .init(path: "guest",
-              method: .post,
-              queryItems: nil,
-              requiresConnectionId: false,
-              body: ["user": GuestUserTokenRequestPayload(userId: userId, extraData: extraData)])
+        .init(
+            path: "guest",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["user": GuestUserTokenRequestPayload(userId: userId, extraData: extraData)]
+        )
     }
 }

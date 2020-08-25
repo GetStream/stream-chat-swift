@@ -40,9 +40,11 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         
         fetchRequest = NSFetchRequest(entityName: "TestManagedObject")
         fetchRequest.sortDescriptors = [.init(keyPath: \TestManagedObject.testId, ascending: true)]
-        database = try! DatabaseContainerMock(kind: .inMemory,
-                                              modelName: "TestDataModel",
-                                              bundle: Bundle(for: EntityDatabaseObserver_Tests.self))
+        database = try! DatabaseContainerMock(
+            kind: .inMemory,
+            modelName: "TestDataModel",
+            bundle: Bundle(for: EntityDatabaseObserver_Tests.self)
+        )
         
         observer = .init(context: database.viewContext, fetchRequest: fetchRequest, itemCreator: { $0.model })
     }

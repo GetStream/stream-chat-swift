@@ -55,9 +55,11 @@ import Foundation
             var engineError: WebSocketEngineError?
             
             if let error = error {
-                engineError = .init(reason: error.localizedDescription,
-                                    code: (error as? WSError)?.code ?? 0,
-                                    engineError: error)
+                engineError = .init(
+                    reason: error.localizedDescription,
+                    code: (error as? WSError)?.code ?? 0,
+                    engineError: error
+                )
             }
             
             delegate?.websocketDidDisconnect(error: engineError)

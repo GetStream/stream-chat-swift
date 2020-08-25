@@ -150,24 +150,26 @@ extension ChannelModel {
             .load(for: dto.cid, limit: 25, context: dto.managedObjectContext!)
             .map { $0.asModel() }
         
-        return ChannelModel(cid: cid,
-                            lastMessageAt: dto.lastMessageAt,
-                            createdAt: dto.createdAt,
-                            updatedAt: dto.updatedAt,
-                            deletedAt: dto.deletedAt,
-                            createdBy: dto.createdBy.asModel(),
-                            config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
-                            isFrozen: dto.isFrozen,
-                            members: Set(members),
-                            watchers: [],
-                            team: "",
-                            unreadCount: .noUnread,
-                            watcherCount: 0,
-                            unreadMessageRead: nil,
-                            banEnabling: .disabled,
-                            isWatched: true,
-                            extraData: extraData,
-                            invitedMembers: [],
-                            latestMessages: latestMessages)
+        return ChannelModel(
+            cid: cid,
+            lastMessageAt: dto.lastMessageAt,
+            createdAt: dto.createdAt,
+            updatedAt: dto.updatedAt,
+            deletedAt: dto.deletedAt,
+            createdBy: dto.createdBy.asModel(),
+            config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
+            isFrozen: dto.isFrozen,
+            members: Set(members),
+            watchers: [],
+            team: "",
+            unreadCount: .noUnread,
+            watcherCount: 0,
+            unreadMessageRead: nil,
+            banEnabling: .disabled,
+            isWatched: true,
+            extraData: extraData,
+            invitedMembers: [],
+            latestMessages: latestMessages
+        )
     }
 }

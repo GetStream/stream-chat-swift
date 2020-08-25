@@ -17,9 +17,11 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let extraData = NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString))
         
-        let payload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: userId,
-                                                                        role: .admin,
-                                                                        extraData: extraData)
+        let payload: CurrentUserPayload<NameAndImageExtraData> = .dummy(
+            userId: userId,
+            role: .admin,
+            extraData: extraData
+        )
         
         // Asynchronously save the payload to the db
         database.write { session in

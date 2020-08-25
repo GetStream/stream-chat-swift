@@ -22,7 +22,7 @@
 --hexliteralcase lowercase
 --exponentcase lowercase
 
---wraparguments after-first
+--wraparguments before-first
 --wrapparameters before-first
 --wrapcollections before-first
 

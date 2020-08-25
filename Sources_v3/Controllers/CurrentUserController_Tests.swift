@@ -19,9 +19,11 @@ final class CurrentUserController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = Client(config: ChatClientConfig(apiKey: .init(.unique)),
-                        workerBuilders: [Worker.init],
-                        environment: env.clientEnvironment)
+        client = Client(
+            config: ChatClientConfig(apiKey: .init(.unique)),
+            workerBuilders: [Worker.init],
+            environment: env.clientEnvironment
+        )
         controller = CurrentUserController(client: client, environment: env.currentUserControllerEnvironment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
@@ -154,9 +156,11 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_delegate_isNotifiedAboutCreatedUser() throws {
         let extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
-        let currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(userId: .unique,
-                                                                                   role: .user,
-                                                                                   extraData: extraData)
+        let currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(
+            userId: .unique,
+            role: .user,
+            extraData: extraData
+        )
         
         // Set the delegate
         let delegate = TestDelegate()
@@ -183,9 +187,11 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_delegate_isNotifiedAboutUpdatedUser() throws {
         var extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
-        var currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(userId: .unique,
-                                                                                   role: .user,
-                                                                                   extraData: extraData)
+        var currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(
+            userId: .unique,
+            role: .user,
+            extraData: extraData
+        )
         
         // Set the delegate
         let delegate = TestDelegate()
@@ -205,9 +211,11 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Update current user data
         extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
-        currentUserPayload = .dummy(userId: currentUserPayload.id,
-                                    role: currentUserPayload.role,
-                                    extraData: extraData)
+        currentUserPayload = .dummy(
+            userId: currentUserPayload.id,
+            role: currentUserPayload.role,
+            extraData: extraData
+        )
         
         // Simulate updating current user in a database
         try env.databaseContainer.writeSynchronously {
@@ -237,9 +245,11 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Simulate saving current user to a database
         try env.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(userId: .unique,
-                                                                                       role: .user,
-                                                                                       unreadCount: unreadCount)
+            let currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(
+                userId: .unique,
+                role: .user,
+                unreadCount: unreadCount
+            )
             try $0.saveCurrentUser(payload: currentUserPayload)
         }
 

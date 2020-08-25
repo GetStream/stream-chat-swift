@@ -51,9 +51,11 @@ extension DatabaseContainer {
     /// Synchrnously creates a new CurrentUserDTO in the DB with the given id.
     func createCurrentUser(id: UserId = .unique) throws {
         try writeSynchronously { session in
-            try session.saveCurrentUser(payload: .dummy(userId: id,
-                                                        role: .admin,
-                                                        extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+            try session.saveCurrentUser(payload: .dummy(
+                userId: id,
+                role: .admin,
+                extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+            ))
         }
     }
     

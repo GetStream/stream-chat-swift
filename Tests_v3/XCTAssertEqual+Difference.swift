@@ -10,8 +10,12 @@ public func XCTAssertEqual<T: Equatable>(_ received: T, _ expected: T, file: Sta
         // Use built-in `XCTAssertEqual` when running on the CI to get CI-friendly logs.
         XCTAssertEqual(received, expected, "", file: file, line: line)
     } else {
-        XCTAssertTrue(expected == received,
-                      "Found difference for \n" + diff(expected, received).joined(separator: ", "), file: file, line: line)
+        XCTAssertTrue(
+            expected == received,
+            "Found difference for \n" + diff(expected, received).joined(separator: ", "),
+            file: file,
+            line: line
+        )
     }
 }
 
@@ -66,8 +70,12 @@ private struct Differ {
                     let results = diffLines(expectedDict[key], receivedDict[key], level: level + 1)
                     if !results.isEmpty {
                         resultLines
-                            .append(Line(contents: "Key \(key.description):", indentationLevel: level, canBeOrdered: true,
-                                         children: results))
+                            .append(Line(
+                                contents: "Key \(key.description):",
+                                indentationLevel: level,
+                                canBeOrdered: true,
+                                children: results
+                            ))
                     }
                 }
                 return resultLines
@@ -105,17 +113,21 @@ private struct Differ {
                 if Mirror(reflecting: lhs.value).displayStyle != nil {
                     let results = diffLines(lhs.value, rhs.value, level: level + 1)
                     if !results.isEmpty {
-                        let line = Line(contents: "\(expectedMirror.displayStyleDescriptor(index: index))\(lhs.label ?? ""):",
-                                        indentationLevel: level,
-                                        canBeOrdered: true,
-                                        children: results)
+                        let line = Line(
+                            contents: "\(expectedMirror.displayStyleDescriptor(index: index))\(lhs.label ?? ""):",
+                            indentationLevel: level,
+                            canBeOrdered: true,
+                            children: results
+                        )
                         resultLines.append(line)
                     }
                 } else {
                     let childName = "\(expectedMirror.displayStyleDescriptor(index: index))\(lhs.label ?? ""):"
-                    let children = generateExpectedReceiveLines(String(describing: lhs.value),
-                                                                String(describing: rhs.value),
-                                                                level + 1)
+                    let children = generateExpectedReceiveLines(
+                        String(describing: lhs.value),
+                        String(describing: rhs.value),
+                        level + 1
+                    )
                     resultLines.append(Line(contents: childName, indentationLevel: level, canBeOrdered: true, children: children))
                 }
             }
@@ -167,10 +179,12 @@ private struct Differ {
             expectedPrintable.append(" \(expected)")
             receivedPrintable.append(" \(received)")
         }
-        return Line(contents: "Different count:",
-                    indentationLevel: indentationLevel,
-                    canBeOrdered: false,
-                    children: generateExpectedReceiveLines(expectedPrintable, receivedPrintable, indentationLevel + 1))
+        return Line(
+            contents: "Different count:",
+            indentationLevel: indentationLevel,
+            canBeOrdered: false,
+            children: generateExpectedReceiveLines(expectedPrintable, receivedPrintable, indentationLevel + 1)
+        )
     }
     
     private func generateExpectedReceiveLines(
@@ -343,10 +357,12 @@ public func dumpDiff<T: Equatable>(
         return
     }
     
-    diff(expected,
-         received,
-         indentationType: indentationType,
-         skipPrintingOnDiffCount: skipPrintingOnDiffCount).forEach { print($0) }
+    diff(
+        expected,
+        received,
+        indentationType: indentationType,
+        skipPrintingOnDiffCount: skipPrintingOnDiffCount
+    ).forEach { print($0) }
 }
 
 /// Prints list of differences between 2 objects
@@ -362,8 +378,10 @@ public func dumpDiff<T>(
     indentationType: Difference.IndentationType = .pipe,
     skipPrintingOnDiffCount: Bool = false
 ) {
-    diff(expected,
-         received,
-         indentationType: indentationType,
-         skipPrintingOnDiffCount: skipPrintingOnDiffCount).forEach { print($0) }
+    diff(
+        expected,
+        received,
+        indentationType: indentationType,
+        skipPrintingOnDiffCount: skipPrintingOnDiffCount
+    ).forEach { print($0) }
 }
