@@ -20,6 +20,12 @@ class UserDTO: NSManagedObject {
     @NSManaged var userUpdatedAt: Date
 }
 
+extension UserDTO: EphemeralValuesContainer {
+    func resetEphemeralValues() {
+        isOnline = false
+    }
+}
+
 extension UserDTO {
     /// Fetches and returns `UserDTO` with the given id. Returns `nil` if the entity doesn't exist.
     ///
