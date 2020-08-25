@@ -236,6 +236,10 @@ protocol WebSocketEventDelegate: AnyObject {
     /// - Returns: A boolean value indicating whether a `typingStop` event should be sent for this user automatically
     ///   after the `incomingTypingStartEventTimeout` timeout.
     func shouldAutomaticallySendTypingStopEvent(for user: User) -> Bool
+    
+    /// Called after websocket disconnects due to invalid token.
+    /// The delegate should renew the token and call `connect()` on Websocket with a valid token.
+    func disconnectedDueToExpiredToken()
 }
 
 // MARK: - Web Socket Delegate
@@ -273,6 +277,7 @@ extension WebSocket: WebSocketProviderDelegate {
         if let eventError = eventError, eventError.code == ClientErrorResponse.tokenExpiredErrorCode {
             logger?.log("Disconnected. 🀄️ Token is expired")
             connectionStateAtomic.set(.disconnected(ClientError.expiredToken))
+            eventDelegate?.disconnectedDueToExpiredToken()
             return
         }
         

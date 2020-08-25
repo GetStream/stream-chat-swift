@@ -131,6 +131,10 @@ extension Client: WebSocketEventDelegate {
         // Don't clean up current user's typing events
         self.user != user
     }
+    
+    func disconnectedDueToExpiredToken() {
+        touchTokenProvider(isExpiredTokenInProgress: true, nil)
+    }
 }
 
 private struct WebSocketPayload: Encodable {

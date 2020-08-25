@@ -162,4 +162,5 @@ private class MockDelegate: WebSocketEventDelegate {
     
     func shouldPublishEvent(_ event: Event) -> Bool { shouldPublishEvent }
     func shouldAutomaticallySendTypingStopEvent(for user: User) -> Bool { shouldAutomaticallySendTypingStopEvent }
+    func disconnectedDueToExpiredToken() { }
 }
