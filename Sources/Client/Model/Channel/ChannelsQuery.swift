@@ -19,6 +19,7 @@ public struct ChannelsQuery: Encodable {
         case presence
         case pagination
         case messagesLimit = "message_limit"
+        case memberLimit = "member_limit"
     }
     
     /// A filter for the query (see `Filter`).
@@ -29,6 +30,11 @@ public struct ChannelsQuery: Encodable {
     public let pagination: Pagination
     /// A number of messages inside each channel.
     public let messagesLimit: Pagination
+    
+    /// The maximum number of Member detail object included in the response. This value doesn't affect to total number
+    /// of members reported in the channel.
+    public let memberLimit: Int
+    
     /// Query options.
     public let options: QueryOptions
     /// An hash id for filter and sorting properties.
@@ -45,6 +51,7 @@ public struct ChannelsQuery: Encodable {
                 sort: [Sorting] = [],
                 pagination: Pagination = [.channelsPageSize],
                 messagesLimit: Pagination = [.messagesPageSize],
+                memberLimit: Int = 100,
                 options: QueryOptions = []) {
         if case .none = filter {
             ClientLogger.log("⚠️",
@@ -58,6 +65,9 @@ public struct ChannelsQuery: Encodable {
         self.pagination = pagination
         self.messagesLimit = messagesLimit
         self.options = options
+        
+        ClientLogger.logAssert(memberLimit >= 0 && memberLimit <= 100, "Member limit must be between 0-100.")
+        self.memberLimit = min(100, max(memberLimit, 0))
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -71,6 +81,8 @@ public struct ChannelsQuery: Encodable {
         try container.encode(messagesLimit.limit ?? 0, forKey: .messagesLimit)
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
+        
+        try container.encode(memberLimit, forKey: .memberLimit)
     }
 }
 
