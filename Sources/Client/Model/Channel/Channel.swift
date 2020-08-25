@@ -38,6 +38,8 @@ public final class Channel: Codable {
         case members
         /// The team the channel belongs to.
         case team
+        /// The total number of members in the channel
+        case memberCount = "member_count"
     }
     
     /// Coding keys for the encoding.
@@ -75,6 +77,10 @@ public final class Channel: Codable {
     var membership: Member?
     /// A list of channel members.
     public internal(set) var members = Set<Member>()
+    
+    // TODO: Implement updates
+    public let memberCount: Int
+    
     /// A list of channel watchers.
     public internal(set) var watchers = Set<User>()
     /// A list of users to invite in the channel.
@@ -165,6 +171,8 @@ public final class Channel: Codable {
         self.team = team
         self.namingStrategy = namingStrategy
         self.config = config
+        // TODO: properly?
+        self.memberCount = members.count
         didLoad = false
     }
     
@@ -176,6 +184,10 @@ public final class Channel: Codable {
         cid = try container.decode(ChannelId.self, forKey: .cid)
         let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         self.members = Set<Member>(members)
+        
+        // TODO: properly?
+        self.memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0
+        
         invitedMembers = Set<Member>()
         let config = try container.decode(Config.self, forKey: .config)
         self.config = config
