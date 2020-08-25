@@ -175,8 +175,7 @@ class WebSocketClient {
         )
     }
     
-    @objc
-    private func handleAppDidEnterBackground() {
+    @objc private func handleAppDidEnterBackground() {
         guard options.contains(.staysConnectedInBackground), connectionState.isActive else { return }
         
         let backgroundTask = backgroundTaskScheduler.beginBackgroundTask { [weak self] in
@@ -191,8 +190,7 @@ class WebSocketClient {
         }
     }
     
-    @objc
-    private func handleAppDidBecomeActive() {
+    @objc private func handleAppDidBecomeActive() {
         cancelBackgroundTaskIfNeeded()
     }
     
