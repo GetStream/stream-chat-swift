@@ -19,7 +19,7 @@ class ChannelListController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = Client(config: ChatClientConfig(apiKey: .init(.unique)))
+        client = Client(config: ChatClientConfig(apiKey: .init(.unique)), workerBuilders: [], environment: .init())
         query = .init(filter: .in("members", ["Luke"]))
         controller = ChannelListController(query: query, client: client, environment: env.environment)
     }
