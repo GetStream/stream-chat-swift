@@ -17,7 +17,10 @@ class MasterViewController: UITableViewController {
     )
 
     lazy var channelListController: ChannelListController = chatClient
-        .channelListController(query: ChannelListQuery(filter: .in("members", ["broken-waterfall-5"]), options: [.watch]))
+        .channelListController(query: ChannelListQuery(
+            filter: .in("members", ["broken-waterfall-5"]),
+            pagination: [.limit(25)],
+            options: [.watch]))
     
     var detailViewController: DetailViewController? = nil
 
@@ -108,6 +111,12 @@ class MasterViewController: UITableViewController {
         }
     }
 
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.section == tableView.numberOfSections - 1 &&
+            indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+            channelListController.loadNextChannels()
+        }
+    }
 }
 
 // MARK: - Private
