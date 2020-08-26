@@ -129,6 +129,26 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     }
 }
 
+// MARK: - Actions
+
+public extension ChannelListControllerGeneric {
+    /// Loads next channels from backend.
+    /// - Parameters:
+    ///   - limit: Limit for page size.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    func loadNextChannels(
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        var updatedQuery = query
+        updatedQuery.pagination = [.limit(limit), .offset(channels.count)]
+        worker.update(channelListQuery: updatedQuery) { [weak self] error in
+            self?.callback { completion?(error) }
+        }
+    }
+}
+
 extension ChannelListControllerGeneric {
     struct Environment {
         var channelQueryUpdaterBuilder: (

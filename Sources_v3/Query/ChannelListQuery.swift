@@ -22,7 +22,7 @@ public struct ChannelListQuery: Encodable {
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<ChannelListSortingKey>]
     /// A pagination.
-    public let pagination: Pagination
+    public var pagination: Pagination
     /// A number of messages inside each channel.
     public let messagesLimit: Pagination
     /// Query options.
