@@ -34,11 +34,11 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         apiClient.cleanUp()
         
         AssertAsync {
-            Assert.canBeReleased(&env)
+            Assert.canBeReleased(&newChannelQueryUpdater)
             Assert.canBeReleased(&database)
             Assert.canBeReleased(&webSocketClient)
             Assert.canBeReleased(&apiClient)
-            Assert.canBeReleased(&newChannelQueryUpdater)
+            Assert.canBeReleased(&env)
         }
         
         super.tearDown()

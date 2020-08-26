@@ -35,10 +35,10 @@ class MessageSender_Tests: StressTestCase {
         apiClient.cleanUp()
         
         AssertAsync {
+            Assert.canBeReleased(&sender)
             Assert.canBeReleased(&webSocketClient)
             Assert.canBeReleased(&apiClient)
             Assert.canBeReleased(&database)
-            Assert.canBeReleased(&sender)
         }
 
         super.tearDown()
