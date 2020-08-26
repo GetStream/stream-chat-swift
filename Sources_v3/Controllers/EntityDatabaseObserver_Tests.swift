@@ -210,6 +210,10 @@ class EntityDatabaseObserver_Tests: XCTestCase {
             new.testId = testItem.id
         }
         
+        // Confirm the entity exists in the DB
+        let writtenEntity = try database.viewContext.fetch(fetchRequest).first
+        AssertAsync.willBeTrue(writtenEntity != nil)
+        
         // Remove existed entity
         try database.writeSynchronously { [fetchRequest] in
             let context = $0 as! NSManagedObjectContext
