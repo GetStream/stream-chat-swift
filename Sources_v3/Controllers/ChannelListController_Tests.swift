@@ -224,7 +224,7 @@ class ChannelListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    var channelQueryUpdater: ChannelQueryUpdaterMock<DefaultDataTypes>?
+    @Atomic var channelQueryUpdater: ChannelQueryUpdaterMock<DefaultDataTypes>?
     
     lazy var environment: ChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
@@ -236,8 +236,8 @@ private class TestEnvironment {
 }
 
 private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQueryUpdater<ExtraData> {
-    var update_query: ChannelListQuery?
-    var update_completion: ((Error?) -> Void)?
+    @Atomic var update_query: ChannelListQuery?
+    @Atomic var update_completion: ((Error?) -> Void)?
     
     override func update(channelListQuery: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
         update_query = channelListQuery
