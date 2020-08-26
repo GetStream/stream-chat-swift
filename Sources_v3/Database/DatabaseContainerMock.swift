@@ -37,7 +37,7 @@ class DatabaseContainerMock: DatabaseContainer {
     }
 }
 
-extension DatabaseContainerMock {
+extension DatabaseContainer {
     /// Writes changes to the DB synchronously. Only for test purposes!
     func writeSynchronously(_ actions: @escaping (DatabaseSession) throws -> Void) throws {
         let error = try await { completion in
