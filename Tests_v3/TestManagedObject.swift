@@ -10,4 +10,5 @@ class TestManagedObject: NSManagedObject {
     
     @NSManaged var testId: String
     @NSManaged var testValue: String?
+    @NSManaged var resetEphemeralValuesCalled: Bool
 }

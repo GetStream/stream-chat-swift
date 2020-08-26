@@ -76,6 +76,8 @@ class DatabaseContainer: NSPersistentContainer {
         viewContext.automaticallyMergesChangesFromParent = true
         
         setupLoggerForDatabaseChanges()
+        
+        resetEphemeralValues()
     }
     
     deinit {
@@ -157,10 +159,25 @@ class DatabaseContainer: NSPersistentContainer {
     }
 }
 
-// WIP
-
-class ReadOnlyContext: NSManagedObjectContext {
-    override func save() throws {
-        fatalError("This context is read only!")
+extension DatabaseContainer {
+    /// Iterates over all items and if the DTO conforms to `EphemeralValueContainers` calls `resetEphemeralValues()` on
+    /// every object.
+    func resetEphemeralValues() {
+        write({ session in
+            let session = session as! NSManagedObjectContext
+            
+            try self.managedObjectModel.entities.forEach { entityDescription in
+                guard let entityName = entityDescription.name else { return }
+                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
+                let entities = try session.fetch(fetchRequest) as? [EphemeralValuesContainer]
+                entities?.forEach { $0.resetEphemeralValues() }
+            }
+        }, completion: { error in
+            if let error = error {
+                log.error("Error resetting ephemeral values: \(error)")
+            } else {
+                log.debug("Ephemeral values reset.")
+            }
+        })
     }
 }
