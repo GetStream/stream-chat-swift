@@ -70,4 +70,41 @@ class DatabaseContainer_Tests: StressTestCase {
             XCTAssertTrue(fetchedObjects.isEmpty)
         }
     }
+    
+    func test_databaseContainer_callsResetEphemeralValues_onAllEphemeralValuesContainerEntities() throws {
+        // Create a new on-disc database with the test data model
+        let dbURL = URL.newTemporaryFileURL()
+        var database: DatabaseContainerMock? = try DatabaseContainerMock(kind: .onDisk(databaseFileURL: dbURL),
+                                                                         modelName: "TestDataModel",
+                                                                         bundle: Bundle(for: DatabaseContainer_Tests.self))
+        
+        // Insert a new object
+        try database!.writeSynchronously {
+            _ = TestManagedObject(context: $0 as! NSManagedObjectContext)
+        }
+        
+        // Assert `resetEphemeralValuesCalled` of the object is `false`
+        let testObject = try database!.viewContext.fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")).first
+        XCTAssertEqual(testObject?.resetEphemeralValuesCalled, false)
+        
+        // Get rid of the original database
+        database = nil
+        
+        // Create a new database with the same underlying SQLite store
+        let newDatabase = try DatabaseContainerMock(kind: .onDisk(databaseFileURL: dbURL),
+                                                    modelName: "TestDataModel",
+                                                    bundle: Bundle(for: DatabaseContainer_Tests.self))
+
+        let testObject2 = try newDatabase.viewContext
+            .fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject"))
+            .first
+        
+        AssertAsync.willBeEqual(testObject2?.resetEphemeralValuesCalled, true)
+    }
+}
+
+extension TestManagedObject: EphemeralValuesContainer {
+    func resetEphemeralValues() {
+        resetEphemeralValuesCalled = true
+    }
 }
