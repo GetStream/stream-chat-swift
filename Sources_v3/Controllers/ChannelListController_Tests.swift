@@ -14,6 +14,9 @@ class ChannelListController_Tests: StressTestCase {
     var query: ChannelListQuery!
     
     var controller: ChannelListController!
+    var controllerCallbackQueueID: UUID!
+    /// Workaround for uwrapping **controllerCallbackQueueID!** in each closure that captures it
+    private var callbackQueueID: UUID { controllerCallbackQueueID }
     
     override func setUp() {
         super.setUp()
@@ -22,6 +25,8 @@ class ChannelListController_Tests: StressTestCase {
         client = Client(config: ChatClientConfig(apiKey: .init(.unique)), workerBuilders: [], environment: .init())
         query = .init(filter: .in("members", ["Luke"]))
         controller = ChannelListController(query: query, client: client, environment: env.environment)
+        controllerCallbackQueueID = UUID()
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
     
     override func tearDown() {
@@ -220,6 +225,46 @@ class ChannelListController_Tests: StressTestCase {
         let channel: Channel = client.databaseContainer.viewContext.loadChannel(cid: cid)!
         
         AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
+    }
+    
+    // MARK: - Channels pagination
+    
+    func test_loadNextChannels_callsChannelListQueryUpdater() {
+        var completionCalled = false
+        let limit = 42
+        controller.loadNextChannels(limit: limit) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successfull udpate
+        env!.channelQueryUpdater?.update_completion?(nil)
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert correct `Pagination` is created
+        XCTAssertEqual(env!.channelQueryUpdater?.update_query?.pagination, [.limit(limit), .offset(controller.channels.count)])
+    }
+    
+    func test_loadNextChannels_callsChannelUpdaterWithError() {
+        // Simulate `loadNextChannels` call and catch the completion
+        var completionCalledError: Error?
+        controller.loadNextChannels { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelQueryUpdater!.update_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 }
 
