@@ -26,11 +26,7 @@ class ChatClient_Tests: StressTestCase {
     
     override func tearDown() {
         testEnv.apiClient?.cleanUp()
-        
-        weak var weak_testEnv = testEnv
-        testEnv = nil
-        XCTAssertNil(weak_testEnv)
-        
+        AssertAsync.canBeReleased(&testEnv)
         super.tearDown()
     }
     

@@ -33,26 +33,12 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
     override func tearDown() {
         apiClient.cleanUp()
         
-        weak var weak_env = env
-        weak var weak_database = database
-        weak var weak_webSocketClient = webSocketClient
-        weak var weak_apiClient = apiClient
-        weak var weak_newChannelQueryUpdater = newChannelQueryUpdater
-        
-        env = nil
-        database = nil
-        webSocketClient = nil
-        apiClient = nil
-        newChannelQueryUpdater = nil
-        
-        // We need to assert asynchronously, because there can be some callbacks happening
-        // on the background queue, that keeps the worker alive, until they have finished.
         AssertAsync {
-            Assert.willBeNil(weak_env)
-            Assert.willBeNil(weak_database)
-            Assert.willBeNil(weak_webSocketClient)
-            Assert.willBeNil(weak_apiClient)
-            Assert.willBeNil(weak_newChannelQueryUpdater)
+            Assert.canBeReleased(&env)
+            Assert.canBeReleased(&database)
+            Assert.canBeReleased(&webSocketClient)
+            Assert.canBeReleased(&apiClient)
+            Assert.canBeReleased(&newChannelQueryUpdater)
         }
         
         super.tearDown()
