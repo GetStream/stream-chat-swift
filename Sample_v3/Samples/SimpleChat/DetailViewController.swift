@@ -19,7 +19,7 @@ class DetailViewController: UIViewController {
     
     var channelId: ChannelId! {
         didSet {
-             controller = chatClient.channelController(for: channelId)
+            controller = chatClient.channelController(for: .init(cid: channelId, messagesPagination: [.limit(25)], options: .all))
         }
     }
     
@@ -42,6 +42,7 @@ class DetailViewController: UIViewController {
         super.viewDidLoad()
         
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
@@ -140,7 +141,7 @@ extension DetailViewController: ChannelControllerDelegate {
     }
 }
 
-extension DetailViewController: UITableViewDataSource {
+extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         messages.count
     }
@@ -161,6 +162,13 @@ extension DetailViewController: UITableViewDataSource {
         cell.backgroundColor = message.localState == nil ? .white : .lightGray
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.section == tableView.numberOfSections - 1 &&
+            indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+            controller?.loadNextMessages()
+        }
     }
 }
 
