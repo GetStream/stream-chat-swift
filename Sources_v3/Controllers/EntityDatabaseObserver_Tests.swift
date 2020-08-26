@@ -47,6 +47,11 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         observer = .init(context: database.viewContext, fetchRequest: fetchRequest, itemCreator: { $0.model })
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_initialValues() {
         XCTAssertNil(observer.item)
     }
@@ -103,7 +108,7 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         let testItem = TestItem(id: .unique, value: .unique)
         fetchRequest.predicate = NSPredicate(format: "testId == %@", testItem.id)
 
-        //Add two listeners
+        // Add two listeners
         var listener1Changes: [EntityChange<TestItem>] = []
         var listener2Changes: [EntityChange<TestItem>] = []
         
@@ -111,7 +116,7 @@ class EntityDatabaseObserver_Tests: XCTestCase {
             .onChange { listener1Changes.append($0) }
             .onChange { listener2Changes.append($0) }
         
-        //Start observing
+        // Start observing
         try observer.startObserving()
 
         // Insert a new entity matching the predicate
