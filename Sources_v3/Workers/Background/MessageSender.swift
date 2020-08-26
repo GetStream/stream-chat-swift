@@ -36,7 +36,10 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
     override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
         super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
 
-        // The observer can be set up on the background queue
+        // We need to initialize the observer synchronously
+        _ = observer
+        
+        // The rest can be done on a background queue
         sendingDispatchQueue.async { [weak self] in
             self?.observer.onChange = { self?.handleChanges(changes: $0) }
             do {
