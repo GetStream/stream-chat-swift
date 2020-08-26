@@ -26,9 +26,9 @@ class ChannelListController_Tests: StressTestCase {
     
     override func tearDown() {
         AssertAsync {
-            Assert.canBeReleased(&env)
-            Assert.canBeReleased(&client)
             Assert.canBeReleased(&controller)
+            Assert.canBeReleased(&client)
+            Assert.canBeReleased(&env)
         }
         
         super.tearDown()

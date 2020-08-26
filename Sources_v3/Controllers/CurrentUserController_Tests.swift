@@ -31,9 +31,9 @@ final class CurrentUserController_Tests: StressTestCase {
         controllerCallbackQueueID = nil
         
         AssertAsync {
-            Assert.canBeReleased(&env)
-            Assert.canBeReleased(&client)
             Assert.canBeReleased(&controller)
+            Assert.canBeReleased(&client)
+            Assert.canBeReleased(&env)
         }
 
         super.tearDown()
