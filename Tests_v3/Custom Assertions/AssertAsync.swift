@@ -229,6 +229,29 @@ extension Assert {
                          file: file,
                          line: line)
     }
+    
+    /// Blocks the current test execution and asynchronously checks if the provided object can be released from the memobry
+    /// by assigning it to `nil`.
+    ///
+    /// - Warning: ⚠️ The object is destroyed during the proccess and the provided inout variable is set to `nil`, so you
+    /// can't use it after this assertions has finished.
+    ///
+    /// - Parameters:
+    ///   - object: The object to check for retain cycles.
+    ///   - timeout: The maximum time the function waits for the object to be released.
+    ///   - message: The message to print when the assertion fails.
+    static func canBeReleased<T: AnyObject>(
+        _ object: inout T!,
+        timeout: TimeInterval = defaultTimeout,
+        message: @autoclosure @escaping () -> String? = nil,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> Assertion {
+        weak var weakObject: T? = object
+        object = nil
+        
+        return willBeNil(weakObject, message: "Failed to be released from the memory.", file: file, line: line)
+    }
 }
 
 // MARK: - Async runner
@@ -449,6 +472,28 @@ extension AssertAsync {
                     }
                 }
             }
+        }
+    }
+    
+    /// Blocks the current test execution and asynchronously checks if the provided object can be released from the memobry
+    /// by assigning it to `nil`.
+    ///
+    /// - Warning: ⚠️ The object is destroyed during the proccess and the provided inout variable is set to `nil`, so you
+    /// can't use it after this assertions has finished.
+    ///
+    /// - Parameters:
+    ///   - object: The object to check for retain cycles.
+    ///   - timeout: The maximum time the function waits for the object to be released.
+    ///   - message: The message to print when the assertion fails.
+    static func canBeReleased<T: AnyObject>(
+        _ object: inout T!,
+        timeout: TimeInterval = defaultTimeout,
+        message: @autoclosure @escaping () -> String? = nil,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        AssertAsync {
+            Assert.canBeReleased(&object, timeout: timeout, message: message())
         }
     }
 }
