@@ -68,11 +68,7 @@ class WebSocketClient_Tests: StressTestCase {
     }
     
     override func tearDown() {
-        // Check there are no memory leaks
-        weak var weakReference = webSocketClient
-        webSocketClient = nil
-        AssertAsync.willBeNil(weakReference)
-        
+        AssertAsync.canBeReleased(&webSocketClient)
         super.tearDown()
     }
     

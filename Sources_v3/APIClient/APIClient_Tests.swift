@@ -40,10 +40,7 @@ class APIClient_Tests: StressTestCase {
     }
     
     override func tearDown() {
-        // Test APIClient has no retain cycles after every test
-        weak var weakAPIClient = apiClient
-        apiClient = nil
-        XCTAssertNil(weakAPIClient)
+        AssertAsync.canBeReleased(&apiClient)
         
         RequestRecorderURLProtocol.reset()
         MockNetworkURLProtocol.reset()
