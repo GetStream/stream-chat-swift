@@ -16,7 +16,7 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     /// ChannelId this query handles.
     public let cid: ChannelId
     /// A pagination for messages (see `Pagination`).
-    public let messagesPagination: Pagination
+    public var messagesPagination: Pagination
     /// A pagination for members (see `Pagination`). You can use `.limit` and `.offset`.
     public let membersPagination: Pagination
     /// A pagination for watchers (see `Pagination`). You can use `.limit` and `.offset`.

@@ -752,7 +752,7 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_hideChannel_callsChannelUpdaterWithError() {
-        // Simulate `muteChannel` call and catch the completion
+        // Simulate `hideChannel` call and catch the completion
         var completionCalledError: Error?
         controller.hideChannel(clearHistory: false) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
@@ -821,7 +821,7 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_showChannel_callsChannelUpdaterWithError() {
-        // Simulate `muteChannel` call and catch the completion
+        // Simulate `showChannel` call and catch the completion
         var completionCalledError: Error?
         controller.showChannel { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
@@ -831,6 +831,163 @@ class ChannelController_Tests: StressTestCase {
         // Simulate failed udpate
         let testError = TestError()
         env.channelUpdater!.showChannel_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    // MARK: - Message loading
+    
+    // Helper function that creates channel with message
+    func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
+        let dummyUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(userId: .unique, role: .user)
+        try session.saveCurrentUser(payload: dummyUserPayload)
+        try session.saveChannel(payload: dummyPayload(with: channelId))
+        let message = try session.createNewMessage(in: channelId,
+                                                   text: "Message",
+                                                   extraData: DefaultDataTypes.Message.defaultValue)
+        return message.id
+    }
+    
+    func test_loadNextMessages_callsChannelUpdater() throws {
+        var error: Error?
+        var messageId: MessageId?
+        
+        // Create new channel with message in DB
+        error = try await {
+            client.databaseContainer.write({ session in
+                messageId = try self.setupChannelWithMessage(session)
+            }, completion: $0)
+        }
+        
+        XCTAssertNil(error)
+        
+        var completionCalled = false
+        controller.loadNextMessages(after: messageId, limit: 25) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successfull udpate
+        env.channelUpdater?.update_completion?(nil)
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert correct `Pagination` is created
+        XCTAssertEqual(env!.channelUpdater?.update_channelQuery?.messagesPagination, [.limit(25), .lessThan(messageId!)])
+    }
+    
+    func test_loadNextMessages_throwsError_on_emptyMessages() throws {
+        // Simulate `loadNextMessages` call and assert error is returned
+        let error: Error? = try await { [callbackQueueID] completion in
+            controller.loadNextMessages { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelEmptyMessages)
+    }
+    
+    func test_loadNextMessages_callsChannelUpdaterWithError() throws {
+        var error: Error?
+        var messageId: MessageId?
+        
+        // Create new channel with message in DB
+        error = try await {
+            client.databaseContainer.write({ session in
+                messageId = try self.setupChannelWithMessage(session)
+            }, completion: $0)
+        }
+        
+        XCTAssertNil(error)
+        
+        // Simulate `loadNextMessages` call and catch the completion
+        var completionCalledError: Error?
+        controller.loadNextMessages(after: messageId) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.update_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_loadPreviousMessages_callsChannelUdpdate() throws {
+        var error: Error?
+        var messageId: MessageId?
+        
+        // Create new channel with message in DB
+        error = try await {
+            client.databaseContainer.write({ session in
+                messageId = try self.setupChannelWithMessage(session)
+            }, completion: $0)
+        }
+        
+        XCTAssertNil(error)
+        
+        var completionCalled = false
+        controller.loadPreviousMessages(before: messageId, limit: 25) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successfull udpate
+        env.channelUpdater?.update_completion?(nil)
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert correct `Pagination` is created
+        XCTAssertEqual(env!.channelUpdater?.update_channelQuery?.messagesPagination, [.limit(25), .greaterThan(messageId!)])
+    }
+    
+    func test_loadPreviousMessages_throwsError_on_emptyMessages() throws {
+        // Simulate `loadPreviousMessages` call and assert error is returned
+        let error: Error? = try await { [callbackQueueID] completion in
+            controller.loadPreviousMessages { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelEmptyMessages)
+    }
+    
+    func test_loadPreviousMessages_callsChannelUpdaterWithError() throws {
+        var error: Error?
+        var messageId: MessageId?
+        
+        // Create new channel with message in DB
+        error = try await {
+            client.databaseContainer.write({ session in
+                messageId = try self.setupChannelWithMessage(session)
+            }, completion: $0)
+        }
+        
+        XCTAssertNil(error)
+        
+        // Simulate `loadPreviousMessages` call and catch the completion
+        var completionCalledError: Error?
+        controller.loadPreviousMessages(before: messageId) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.update_completion?(testError)
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)

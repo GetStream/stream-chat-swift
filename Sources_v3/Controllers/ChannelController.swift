@@ -381,6 +381,64 @@ public extension ChannelControllerGeneric {
         }
     }
     
+    /// Loads new messages from backend.
+    /// - Parameters:
+    ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
+    ///   - limit: Limit for page size.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    func loadNextMessages(
+        after messageId: MessageId? = nil,
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        guard let messageId = messageId ?? messages.last?.id else {
+            log.error(ClientError.ChannelEmptyMessages().localizedDescription)
+            callback { completion?(ClientError.ChannelEmptyMessages()) }
+            return
+        }
+        
+        channelQuery.messagesPagination = [.limit(limit), .lessThan(messageId)]
+    
+        worker.update(channelQuery: channelQuery) { [weak self] error in
+            self?.callback { completion?(error) }
+        }
+    }
+    
+    /// Loads previous messages from backend.
+    /// - Parameters:
+    ///   - messageId: ID of the current first message. You will get messages `newer` than the provided ID.
+    ///   - limit: Limit for page size.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    func loadPreviousMessages(
+        before messageId: MessageId? = nil,
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        
+        guard let messageId = messageId ?? messages.first?.id else {
+            log.error(ClientError.ChannelEmptyMessages().localizedDescription)
+            callback { completion?(ClientError.ChannelEmptyMessages()) }
+            return
+        }
+        
+        channelQuery.messagesPagination = [.limit(limit), .greaterThan(messageId)]
+        
+        worker.update(channelQuery: channelQuery) { [weak self] error in
+            self?.callback { completion?(error) }
+        }
+    }
+    
     /// Creates a new message in the local DB.
     ///
     /// - Parameters:
@@ -671,6 +729,12 @@ extension ClientError {
     class ChannelEmptyMembers: ClientError {
         override public var localizedDescription: String {
             "You can't create direct messaging channel with empty members."
+        }
+    }
+    
+    class ChannelEmptyMessages: ClientError {
+        override public var localizedDescription: String {
+            "You can't load new messages when there is no messages in the channel."
         }
     }
 }
