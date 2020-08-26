@@ -46,7 +46,11 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     }
     
     private func startObserving() {
-        // The observer can be set up on the background queue
+        // We have to initialize the lazy variables synchronously
+        _ = channelListQueryUpdater
+        _ = channelsObserver
+        
+        // But the observing can be started on a background queue
         DispatchQueue.global().async { [weak self] in
             do {
                 self?.channelsObserver.onChange = { changes in
