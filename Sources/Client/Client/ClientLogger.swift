@@ -216,7 +216,7 @@ public final class ClientLogger {
     private var startTime: CFTimeInterval
     private let level: Level
     
-    private var measuredTasksStart: Atomic<[UUID: (start: Date, description: String)]> = .init([:])
+    private var measuredTasksStart: Atomic<[UUID: (start: CFTimeInterval, description: String)]> = .init([:])
     
     /// Init a client logger.
     /// - Parameters:
@@ -239,7 +239,7 @@ public final class ClientLogger {
     public func logTaskStarted(_ description: String, taskId: UUID = .init()) -> UUID {
         measuredTasksStart.update {
             var tasks = $0
-            tasks[taskId] = (start: Date(), description: description)
+            tasks[taskId] = (start: CACurrentMediaTime(), description: description)
             return tasks
         }
         return taskId
@@ -251,8 +251,8 @@ public final class ClientLogger {
             return
         }
         
-        let duration = Date().timeIntervalSince1970 - task.start.timeIntervalSince1970
-        log("⏱ \(task.description) finished in \(duration) seconds.", level: .debug)
+        let duration = CACurrentMediaTime() - task.start
+        log("⏱ \(task.description) finished in \(String(format: "%.3f", duration)) seconds.", level: .debug)
     }
 
     /// Log a request.
@@ -273,11 +273,11 @@ public final class ClientLogger {
             log("Request Body Stream \(bodyStream.description)", level: .info)
         }
         
-        if level.isEnabled(with: .info), let body = request.httpBody {
+        if level.isEnabled(with: .debug), let body = request.httpBody {
             if isUploading {
                 log("📦 Uploading \(body.count / 1024) KB data...")
             } else {
-                log(body, message: "Request Body")
+                log(body, message: "Request Body", forceToShowData: true)
             }
         }
     }

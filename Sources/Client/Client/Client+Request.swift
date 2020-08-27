@@ -76,11 +76,12 @@ extension Client {
                                progress: @escaping Progress,
                                completion: @escaping Completion<T>) -> Cancellable {
         let loggerTaskId = UUID()
-        
         let task = prepareRequest(endpoint: endpoint, loggerTaskId: loggerTaskId, completion)
+        
         if let taskIdentifier = task?.taskIdentifier {
             urlSessionTaskDelegate.addProgessHandler(id: taskIdentifier, progress)
         }
+        
         task?.resume()
         logger?.logTaskStarted("URL request to /\(endpoint.path)", taskId: loggerTaskId)
         
@@ -104,10 +105,11 @@ extension Client {
                                               loggerTaskId: UUID? = nil,
                                               _ completion: @escaping Completion<T>) -> URLSessionTask? {
         if let logger = logger {
-            logger.log("Request: \(endpoint.path.prefix(100))...", level: .debug)
+            logger.log("Preparing a \(endpoint.method.rawValue.uppercased()) request to /\(endpoint.path)...", level: .debug)
         }
         
         if isExpiredTokenInProgress {
+            logger?.log("The token was expired. Add the request to a waiting list", level: .debug)
             addWaitingRequest(endpoint: endpoint, completion)
             return nil
         }
@@ -122,7 +124,7 @@ extension Client {
                 }
                 
                 if let logger = self.logger {
-                    logger.logTaskDuration("Parsing the JSON reponse from /\(endpoint.path)") {
+                    logger.logTaskDuration("Parsing the JSON response from /\(endpoint.path)") {
                         // Parse the response.
                         self.parse(data: data, response: response, error: error, completion: completion)
                     }
