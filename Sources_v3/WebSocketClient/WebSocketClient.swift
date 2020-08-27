@@ -16,7 +16,7 @@ class WebSocketClient {
     private(set) lazy var notificationCenter: NotificationCenter = environment.createNotificationCenter()
     
     /// The current state the web socket connection.
-    @Atomic private(set) var connectionState: ConnectionState = .notConnected() {
+    @Atomic fileprivate(set) var connectionState: ConnectionState = .notConnected() {
         didSet {
             log.info("Web socket connection state changed: \(connectionState)")
             connectionStateDelegate?.webSocketClient(self, didUpdateConectionState: connectionState)
@@ -353,3 +353,25 @@ protocol BackgroundTaskScheduler {
 }
 
 extension UIApplication: BackgroundTaskScheduler {}
+
+struct HealthCheckMiddleware: EventMiddleware {
+    private(set) weak var webSocketClient: WebSocketClient?
+
+    func handle(event: Event, completion: @escaping (Event?) -> Void) {
+        guard let healthCheckEvent = event as? HealthCheckEvent else {
+            // Do nothing and forward the event
+            completion(event)
+            return
+        }
+        
+        if let webSocketClient = webSocketClient {
+            webSocketClient.pingController.pongRecieved()
+            if webSocketClient.connectionState.isConnected == false {
+                webSocketClient.connectionState = .connected(connectionId: healthCheckEvent.connectionId)
+            }
+        }
+        
+        // Don't forward the event
+        completion(nil)
+    }
+}
