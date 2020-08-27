@@ -76,9 +76,11 @@ class DatabaseContainer_Tests: StressTestCase {
     func test_databaseContainer_callsResetEphemeralValues_onAllEphemeralValuesContainerEntities() throws {
         // Create a new on-disc database with the test data model
         let dbURL = URL.newTemporaryFileURL()
-        var database: DatabaseContainerMock? = try DatabaseContainerMock(kind: .onDisk(databaseFileURL: dbURL),
-                                                                         modelName: "TestDataModel",
-                                                                         bundle: Bundle(for: DatabaseContainer_Tests.self))
+        var database: DatabaseContainerMock? = try DatabaseContainerMock(
+            kind: .onDisk(databaseFileURL: dbURL),
+            modelName: "TestDataModel",
+            bundle: Bundle(for: DatabaseContainer_Tests.self)
+        )
         
         // Insert a new object
         try database!.writeSynchronously {
@@ -93,9 +95,11 @@ class DatabaseContainer_Tests: StressTestCase {
         database = nil
         
         // Create a new database with the same underlying SQLite store
-        let newDatabase = try DatabaseContainerMock(kind: .onDisk(databaseFileURL: dbURL),
-                                                    modelName: "TestDataModel",
-                                                    bundle: Bundle(for: DatabaseContainer_Tests.self))
+        let newDatabase = try DatabaseContainerMock(
+            kind: .onDisk(databaseFileURL: dbURL),
+            modelName: "TestDataModel",
+            bundle: Bundle(for: DatabaseContainer_Tests.self)
+        )
 
         let testObject2 = try newDatabase.viewContext
             .fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject"))

@@ -35,7 +35,7 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
-            Assert.canBeReleased(&env)            
+            Assert.canBeReleased(&env)
         }
 
         super.tearDown()
