@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐞 Fixed
 - Channels list (ChannelsViewController) not updated when recreating a channel after deleting it [#392](https://github.com/GetStream/stream-chat-swift/issues/392)
 - If the user (JWT) token expires and websocket disconnects due to it, Client will renew the expiring JWT token and reconnect websocket automatically [#429](https://github.com/GetStream/stream-chat-swift/issues/429)
+- Date separators in a chat appear after a new message [#440](https://github.com/GetStream/stream-chat-swift/issues/440)
 
 # [2.2.9](https://github.com/GetStream/stream-chat-swift/releases/tag/2.2.9)
 _August 12, 2020_
