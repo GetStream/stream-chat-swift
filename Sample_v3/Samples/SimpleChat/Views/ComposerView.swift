@@ -44,15 +44,19 @@ class ComposerView: UIView {
         super.awakeFromNib()
         translatesAutoresizingMaskIntoConstraints = false
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handle(keyboardShowNotification:)),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handle(keyboardShowNotification:)),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handle(keyboardHideNotification:)),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handle(keyboardHideNotification:)),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
     }
     
     @objc

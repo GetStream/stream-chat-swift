@@ -6,14 +6,17 @@ import StreamChatClient
 import UIKit
 
 class MasterViewController: UITableViewController {
-    private lazy var longPressRecognizer = UILongPressGestureRecognizer(target: self,
-                                                                        action: #selector(handleLongPress))
+    private lazy var longPressRecognizer = UILongPressGestureRecognizer(
+        target: self,
+        action: #selector(handleLongPress)
+    )
 
     lazy var channelListController: ChannelListController = chatClient
         .channelListController(query: ChannelListQuery(
             filter: .in("members", ["broken-waterfall-5"]),
             pagination: [.limit(25)],
-            options: [.watch]))
+            options: [.watch]
+        ))
     
     var detailViewController: DetailViewController?
 
@@ -24,8 +27,12 @@ class MasterViewController: UITableViewController {
         channelListController.startUpdating()
         
         // Do any additional setup after loading the view.
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self,
-                                                           action: #selector(handleSettingsButton))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "Settings",
+            style: .plain,
+            target: self,
+            action: #selector(handleSettingsButton)
+        )
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
         navigationItem.rightBarButtonItem = addButton
@@ -55,9 +62,11 @@ class MasterViewController: UITableViewController {
     @objc
     func insertNewObject(_ sender: Any) {
         let id = UUID().uuidString
-        let controller = chatClient.channelController(createChannelWithId: .init(type: .messaging, id: id),
-                                                      members: [chatClient.currentUserId],
-                                                      extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil))
+        let controller = chatClient.channelController(
+            createChannelWithId: .init(type: .messaging, id: id),
+            members: [chatClient.currentUserId],
+            extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
+        )
         controller.startUpdating()
     }
 
@@ -112,7 +121,7 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.section == tableView.numberOfSections - 1 &&
+        if indexPath.section == tableView.numberOfSections - 1,
             indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             channelListController.loadNextChannels()
         }

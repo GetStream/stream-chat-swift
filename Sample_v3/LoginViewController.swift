@@ -2,8 +2,8 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import SwiftUI
+import UIKit
 
 import StreamChatClient
 
@@ -69,7 +69,8 @@ extension LoginViewController {
                 logIn(apiKey: apiKey, userId: userId, userName: userName, token: token) {
                     DispatchQueue.main.async {
                         UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
-                            self.view.window?.rootViewController = UIHostingController(rootView:
+                            self.view.window?.rootViewController = UIHostingController(
+                                rootView:
                                 NavigationView {
                                     ChannelListView()
                                 }

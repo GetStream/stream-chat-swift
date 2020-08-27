@@ -55,10 +55,12 @@ class DetailViewController: UIViewController {
         composerView.sendButton.addTarget(self, action: #selector(newMessageButtonTapped), for: .touchUpInside)
         
         navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(title: "Members",
-                            style: .plain,
-                            target: self,
-                            action: #selector(showMembersActionsAlert))
+            UIBarButtonItem(
+                title: "Members",
+                style: .plain,
+                target: self,
+                action: #selector(showMembersActionsAlert)
+            )
         ]
     }
     
@@ -158,7 +160,7 @@ extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.section == tableView.numberOfSections - 1 &&
+        if indexPath.section == tableView.numberOfSections - 1,
             indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             controller?.loadNextMessages()
         }
