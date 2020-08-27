@@ -26,7 +26,8 @@ class WebSocketClient_Tests: StressTestCase {
     var requestEncoder: TestRequestEncoder!
     var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
     
-    var eventNotificationCenter: NotificationCenter!
+    var eventNotificationCenter: EventNotificationCenter!
+    private var eventNotificationCenterMiddleware: EventMiddlewareMock!
     
     override func setUp() {
         super.setUp()
@@ -43,23 +44,24 @@ class WebSocketClient_Tests: StressTestCase {
         decoder = EventDecoderMock()
         backgroundTaskScheduler = MockBackgroundTaskScheduler()
         
-        eventNotificationCenter = NotificationCenter()
         reconnectionStrategy = MockReconnectionStrategy()
         
         requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
+        eventNotificationCenter = EventNotificationCenter()
+        eventNotificationCenterMiddleware = EventMiddlewareMock()
+        eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
         
         var environment = WebSocketClient.Environment()
         environment.timerType = VirtualTimeTimer.self
         environment.createPingController = WebSocketPingControllerMock.init
         environment.createEngine = WebSocketEngineMock.init
-        environment.createNotificationCenter = { self.eventNotificationCenter }
         environment.backgroundTaskScheduler = backgroundTaskScheduler
         
         webSocketClient = WebSocketClient(connectEndpoint: endpoint,
                                           sessionConfiguration: .default,
                                           requestEncoder: requestEncoder,
                                           eventDecoder: decoder,
-                                          eventMiddlewares: [],
+                                          notificationCenter: eventNotificationCenter,
                                           reconnectionStrategy: reconnectionStrategy,
                                           environment: environment)
         
@@ -69,10 +71,23 @@ class WebSocketClient_Tests: StressTestCase {
     
     override func tearDown() {
         AssertAsync.canBeReleased(&webSocketClient)
+        AssertAsync.canBeReleased(&eventNotificationCenter)
+        AssertAsync.canBeReleased(&eventNotificationCenterMiddleware)
+        
         super.tearDown()
     }
     
     // MARK: - Connection tests
+    
+    func test_healthCheckMiddlewareIsThere() {
+        let healthCheckMiddlewares = webSocketClient.notificationCenter.middlewares.compactMap { $0 as? HealthCheckMiddleware }
+       
+        // Assert there is only one `HealthCheckMiddleware`
+        XCTAssertEqual(healthCheckMiddlewares.count, 1)
+        
+        // Assert the middlewares works with the correct client
+        XCTAssertTrue(healthCheckMiddlewares[0].webSocketClient === webSocketClient)
+    }
     
     func test_connectionFlow() {
         assert(webSocketClient.connectionState == .notConnected())
@@ -345,10 +360,10 @@ class WebSocketClient_Tests: StressTestCase {
         decoder.decodedEvent = incomingEvent
         
         let processedEvent = TestEvent()
-        webSocketClient.middlewares = [EventMiddlewareMock { middlewareIncomingEvent, completion in
+        eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, completion in
             XCTAssertEqual(incomingEvent.asEquatable, middlewareIncomingEvent.asEquatable)
             completion(processedEvent)
-        }]
+        }
         
         // Start logging events
         let eventLogger = EventLogger(eventNotificationCenter)

@@ -13,7 +13,7 @@ class WebSocketClient {
     }
     
     /// The notification center `WebSocketClient` uses to send notifications about incoming events.
-    private(set) lazy var notificationCenter: NotificationCenter = environment.createNotificationCenter()
+    let notificationCenter: EventNotificationCenter
     
     /// The current state the web socket connection.
     @Atomic fileprivate(set) var connectionState: ConnectionState = .notConnected() {
@@ -38,9 +38,6 @@ class WebSocketClient {
     
     /// Web socket connection options
     var options: Options = [.staysConnectedInBackground]
-    
-    /// Event middlewares used to pre-process incoming events before they are published
-    var middlewares: [EventMiddleware]
     
     /// The endpoint used for creating a web socket connection.
     ///
@@ -107,7 +104,7 @@ class WebSocketClient {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
-        eventMiddlewares: [EventMiddleware],
+        notificationCenter: EventNotificationCenter,
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: Environment = .init()
     ) {
@@ -115,9 +112,10 @@ class WebSocketClient {
         self.connectEndpoint = connectEndpoint
         self.requestEncoder = requestEncoder
         self.sessionConfiguration = sessionConfiguration
-        middlewares = eventMiddlewares
         self.reconnectionStrategy = reconnectionStrategy
         self.eventDecoder = eventDecoder
+        self.notificationCenter = notificationCenter
+        self.notificationCenter.add(middleware: HealthCheckMiddleware(webSocketClient: self))
         
         startListeningForAppStateUpdates()
     }
@@ -221,8 +219,6 @@ extension WebSocketClient {
         
         var createPingController: CreatePingController = WebSocketPingController.init
         
-        var createNotificationCenter: () -> NotificationCenter = NotificationCenter.init
-        
         var createEngine: CreateEngine = {
             if #available(iOS 13, *) {
                 return URLSessionWebSocketEngine(request: $0, sessionConfiguration: $1, callbackQueue: $2)
@@ -246,21 +242,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
         do {
             let messageData = Data(message.utf8)
             let event = try eventDecoder.decode(from: messageData)
-            
-            middlewares.process(event: event) { [weak self] event in
-                guard let self = self, let event = event else { return }
-                
-                if let event = event as? HealthCheckEvent {
-                    self.pingController.pongRecieved()
-                    
-                    if self.connectionState.isConnected == false {
-                        self.connectionState = .connected(connectionId: event.connectionId)
-                    }
-                } else {
-                    self.notificationCenter.post(Notification(newEventReceived: event, sender: self))
-                }
-            }
-            
+            notificationCenter.process(event)
         } catch is ClientError.UnsupportedEventType {
             log.info("Skipping unsupported event type with payload: \(message)")
             
