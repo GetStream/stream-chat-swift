@@ -6,7 +6,7 @@ import SwiftUI
 
 @available(iOS 13, *)
 struct ChannelListView: View {
-    @State  var channels = [String]()
+    @State var channels = [String]()
 
     var body: some View {
         VStack {

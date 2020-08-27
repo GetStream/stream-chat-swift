@@ -7,9 +7,9 @@ import SwiftUI
 
 @available(iOS 13, *)
 struct ChatView: View {
-    @State  var channelId: String
-    @State  var text: String = ""
-    @State  var messages: [String] = []
+    @State var channelId: String
+    @State var text: String = ""
+    @State var messages: [String] = []
     
     var body: some View {
         VStack {
