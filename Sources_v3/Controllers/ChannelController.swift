@@ -246,7 +246,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     }
 
     private func setupEventObservers() {
-        let center = client.webSocketClient.notificationCenter
+        let center = client.webSocketClient.eventNotificationCenter
         eventObservers = [
             MemberEventObserver(notificationCenter: center, cid: channelId) { [unowned self] event in
                 self.delegateCallback {

@@ -326,7 +326,7 @@ class ChannelController_Tests: StressTestCase {
         // Send notification with event happened in the observed channel
         let event = TestMemberEvent(cid: controller.channelQuery.cid, userId: .unique)
         let notification = Notification(newEventReceived: event, sender: self)
-        client.webSocketClient.notificationCenter.post(notification)
+        client.webSocketClient.eventNotificationCenter.post(notification)
         
         // Assert the event is received
         AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
@@ -345,7 +345,7 @@ class ChannelController_Tests: StressTestCase {
         // Send notification with event happened in the observed channel
         let event = TestMemberEvent(cid: controller.channelQuery.cid, userId: .unique)
         let notification = Notification(newEventReceived: event, sender: self)
-        client.webSocketClient.notificationCenter.post(notification)
+        client.webSocketClient.eventNotificationCenter.post(notification)
         
         // Assert the event is received
         AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)

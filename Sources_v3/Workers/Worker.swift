@@ -31,7 +31,7 @@ class EventHandlerWorker<ExtraData: ExtraDataTypes>: Worker {
     override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
         super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
         
-        webSocketClient.notificationCenter
+        webSocketClient.eventNotificationCenter
             .addObserver(self, selector: #selector(handleNewEventNotification), name: .NewEventReceived, object: nil)
     }
     

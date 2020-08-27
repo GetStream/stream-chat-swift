@@ -263,7 +263,7 @@ private class TestWebSocketClient: WebSocketClient {
                    sessionConfiguration: .default,
                    requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
                    eventDecoder: EventDecoder<DefaultDataTypes>(),
-                   notificationCenter: EventNotificationCenter(),
+                   eventNotificationCenter: EventNotificationCenter(),
                    reconnectionStrategy: DefaultReconnectionStrategy())
     }
 }

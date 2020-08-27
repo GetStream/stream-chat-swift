@@ -54,7 +54,7 @@ public class Client<ExtraData: ExtraDataTypes> {
     private(set) var backgroundWorkers: [Worker]!
             
     /// The notification center used to send and receive notifications about incoming events.
-    private(set) lazy var notificationCenter = environment.notificationCenterBuilder([
+    private(set) lazy var eventNotificationCenter = environment.notificationCenterBuilder([
         EventDataProcessorMiddleware<ExtraData>(database: databaseContainer)
     ])
     
@@ -84,7 +84,7 @@ public class Client<ExtraData: ExtraDataTypes> {
                                                                  urlSessionConfiguration,
                                                                  encoder,
                                                                  EventDecoder<ExtraData>(),
-                                                                 notificationCenter)
+                                                                 eventNotificationCenter)
         
         webSocketClient.connectionStateDelegate = self
         
@@ -410,7 +410,7 @@ extension Client {
                             sessionConfiguration: $1,
                             requestEncoder: $2,
                             eventDecoder: $3,
-                            notificationCenter: $4)
+                            eventNotificationCenter: $4)
         }
         
         var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind) throws -> DatabaseContainer = {

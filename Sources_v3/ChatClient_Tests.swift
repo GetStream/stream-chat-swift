@@ -130,7 +130,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNotNil(webSocket?.init_eventDecoder)
         
         // EventDataProcessorMiddleware must be always first
-        XCTAssert(webSocket?.init_notificationCenter.middlewares[0] is EventDataProcessorMiddleware<DefaultDataTypes>)
+        XCTAssert(webSocket?.init_eventNotificationCenter.middlewares[0] is EventDataProcessorMiddleware<DefaultDataTypes>)
         
         // Assert Client sets itself as delegate for the request encoder
         XCTAssert(webSocket?.init_requestEncoder.connectionDetailsProviderDelegate === client)
@@ -527,7 +527,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                                                              sessionConfiguration: $1,
                                                              requestEncoder: $2,
                                                              eventDecoder: $3,
-                                                             notificationCenter: $4)
+                                                             eventNotificationCenter: $4)
                   return self.webSocketClient!
               },
               databaseContainerBuilder: {
@@ -640,7 +640,7 @@ class WebSocketClientMock: WebSocketClient {
     let init_sessionConfiguration: URLSessionConfiguration
     let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
-    let init_notificationCenter: EventNotificationCenter
+    let init_eventNotificationCenter: EventNotificationCenter
     let init_reconnectionStrategy: WebSocketClientReconnectionStrategy
     let init_environment: WebSocketClient.Environment
     
@@ -652,7 +652,7 @@ class WebSocketClientMock: WebSocketClient {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
-        notificationCenter: EventNotificationCenter,
+        eventNotificationCenter: EventNotificationCenter,
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: WebSocketClient.Environment = .init()
     ) {
@@ -660,7 +660,7 @@ class WebSocketClientMock: WebSocketClient {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_eventDecoder = eventDecoder
-        init_notificationCenter = notificationCenter
+        init_eventNotificationCenter = eventNotificationCenter
         init_reconnectionStrategy = reconnectionStrategy
         init_environment = environment
         
@@ -668,7 +668,7 @@ class WebSocketClientMock: WebSocketClient {
                    sessionConfiguration: sessionConfiguration,
                    requestEncoder: requestEncoder,
                    eventDecoder: eventDecoder,
-                   notificationCenter: notificationCenter,
+                   eventNotificationCenter: eventNotificationCenter,
                    reconnectionStrategy: reconnectionStrategy,
                    environment: environment)
     }
@@ -688,6 +688,6 @@ extension WebSocketClientMock {
                   sessionConfiguration: .default,
                   requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
                   eventDecoder: EventDecoder<DefaultDataTypes>(),
-                  notificationCenter: .init())
+                  eventNotificationCenter: .init())
     }
 }
