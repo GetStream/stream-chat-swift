@@ -503,20 +503,6 @@ private class EventDecoderMock: AnyEventDecoder {
     }
 }
 
-private class EventLogger {
-    var events: [Event] = []
-    var equatableEvents: [EquatableEvent] { events.map(EquatableEvent.init) }
-    
-    init(_ notificationCenter: NotificationCenter) {
-        notificationCenter.addObserver(self, selector: #selector(handleNewEvent), name: .NewEventReceived, object: nil)
-    }
-    
-    @objc
-    func handleNewEvent(_ notification: Notification) {
-        events.append(notification.event!)
-    }
-}
-
 private class MockReconnectionStrategy: WebSocketClientReconnectionStrategy {
     var sucessfullyConnected_calledCount: Int = 0
     var reconnectionDelay_calledWithError: Error?
