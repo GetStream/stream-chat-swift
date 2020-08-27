@@ -43,7 +43,7 @@ extension ChatClientConfig {
         // example ...
         public var isReplyInChannelAllowed = true
         
-        /// When `KeystrokeEvent` is sent, the time interval before the `UserTypingStop` event is automatically sent.
+        /// When `KeystrokeEvent` is sent, the time interval before the `TypingStop` event is automatically sent.
         public var keystrokeEventTimeout: TimeInterval = 5
     }
     

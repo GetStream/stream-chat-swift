@@ -4,9 +4,8 @@
 
 import Foundation
 
-public struct UserTypingEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
+public struct TypingEvent: EventWithUserPayload, EventWithChannelId {
     public let isTyping: Bool
-    public var isNotTyping: Bool { !isTyping }
     public let cid: ChannelId
     public let userId: UserId
     
@@ -19,7 +18,7 @@ public struct UserTypingEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
         self.payload = payload
     }
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         isTyping = response.eventType == .userStartTyping

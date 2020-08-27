@@ -5,8 +5,8 @@
 @testable import StreamChatClient
 import XCTest
 
-class UserTypingStartCleanupMiddleware_Tests: XCTestCase {
-    var middleware: UserTypingStartCleanupMiddleware<DefaultDataTypes>!
+class TypingStartCleanupMiddleware_Tests: XCTestCase {
+    var middleware: TypingStartCleanupMiddleware<DefaultDataTypes>!
     var currentUser: User!
     
     var time: VirtualTime!
@@ -16,7 +16,7 @@ class UserTypingStartCleanupMiddleware_Tests: XCTestCase {
         super.setUp()
         
         currentUser = User(id: "Luke")
-        middleware = UserTypingStartCleanupMiddleware(excludedUserIds: [currentUser.id])
+        middleware = TypingStartCleanupMiddleware(excludedUserIds: [currentUser.id])
         
         time = VirtualTime()
         VirtualTimeTimer.time = time
@@ -25,7 +25,7 @@ class UserTypingStartCleanupMiddleware_Tests: XCTestCase {
     
     func test_stopTypingEvent_notSentForExcludedUsers() {
         var result: [EquatableEvent?] = []
-        let typingStartEvent = UserTypingEvent<DefaultDataTypes>(isTyping: true, cid: .unique, userId: currentUser.id)
+        let typingStartEvent = TypingEvent(isTyping: true, cid: .unique, userId: currentUser.id)
         // Handle a new TypingStart event for the current user and collect resulting events
         middleware.handle(event: typingStartEvent) {
             result.append($0.map(EquatableEvent.init))
@@ -43,7 +43,7 @@ class UserTypingStartCleanupMiddleware_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         var result: [EquatableEvent?] = []
-        let startTyping = UserTypingEvent<DefaultDataTypes>(isTyping: true, cid: cid, userId: otherUser.id)
+        let startTyping = TypingEvent(isTyping: true, cid: cid, userId: otherUser.id)
         // Handle a new TypingStart event for the current user and collect resulting events
         middleware.handle(event: startTyping) {
             result.append($0.map(EquatableEvent.init))
@@ -55,7 +55,7 @@ class UserTypingStartCleanupMiddleware_Tests: XCTestCase {
         
         // Wait for more time and expect a `typingStop` event.
         time.run(numberOfSeconds: 2)
-        let stopTyping = UserTypingEvent<DefaultDataTypes>(isTyping: false, cid: cid, userId: otherUser.id)
+        let stopTyping = TypingEvent(isTyping: false, cid: cid, userId: otherUser.id)
         XCTAssertEqual(result, [startTyping.asEquatable, stopTyping.asEquatable])
         
         // Wait much longer and assert no more `typingStop` events.

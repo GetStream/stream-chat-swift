@@ -87,7 +87,7 @@ enum EventType: String, Decodable {
         case .userPresenceChanged: return try UserPresenceChangedEvent(from: response)
         case .userUpdated: return try UserUpdatedEvent(from: response)
         case .userStartWatching, .userStopWatching: return try UserWatchingEvent(from: response)
-        case .userStartTyping, .userStopTyping: return try UserTypingEvent(from: response)
+        case .userStartTyping, .userStopTyping: return try TypingEvent(from: response)
         case .userBanned: return try UserBannedEvent(from: response)
         case .userUnbanned: return try UserUnbannedEvent(from: response)
             
