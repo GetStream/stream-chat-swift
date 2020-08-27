@@ -10,11 +10,7 @@ import SwiftUI
 struct ChannelListView: View {
     @State
     var channels = [String]()
-    @State
-    var createTrigger = false
-    @State
-    var searchTerm = ""
-    
+
     var body: some View {
         VStack {
             List(channels, id: \.self) { channelId in
