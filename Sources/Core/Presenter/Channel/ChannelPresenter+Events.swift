@@ -64,10 +64,17 @@ extension ChannelPresenter {
                 return .none
             }
             
+            let viewChanges: ViewChanges
             let nextRow = items.count
-            let reloadRow: Int? = items.last?.message?.user == message.user ? nextRow - 1 : nil
-            appendOrUpdateMessageItem(message)
-            let viewChanges = ViewChanges.itemsAdded([nextRow], reloadRow, message.user.isCurrent, items)
+            if addTodayStatusIfNeeded(for: message) {
+                appendOrUpdateMessageItem(message)
+                viewChanges = ViewChanges.itemsAdded([nextRow, nextRow + 1], nil, message.user.isCurrent, items)
+            } else {
+                let reloadRow: Int? = items.last?.message?.user == message.user ? nextRow - 1 : nil
+                appendOrUpdateMessageItem(message)
+                viewChanges = ViewChanges.itemsAdded([nextRow], reloadRow, message.user.isCurrent, items)
+            }
+            
             lastWebSocketEventViewChanges = viewChanges
             Notifications.shared.showIfNeeded(newMessage: message, in: channel)
             
@@ -157,6 +164,19 @@ extension ChannelPresenter {
         }
         
         return .none
+    }
+    
+    private func addTodayStatusIfNeeded(for message: Message) -> Bool {
+        guard showStatuses,
+            let lastMessage = lastMessage,
+            !lastMessage.created.isLessThan(timeInterval: 60*60*24, with: message.created),
+            message.created.isToday else {
+                return false
+        }
+        
+        items.append(.status(PresenterItem.statusTodayTitle,
+                             "at \(DateFormatter.time.string(from: message.created))", false))
+        return true
     }
     
     private func appendOrUpdateMessageItem(_ message: Message, at index: Int = -1) {
