@@ -28,6 +28,12 @@ public struct Device: Codable, Equatable {
         self.id = id
         self.created = created
     }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        created = try container.decodeIfPresent(Date.self, forKey: .created)
+    }
 }
 
 extension Data {
