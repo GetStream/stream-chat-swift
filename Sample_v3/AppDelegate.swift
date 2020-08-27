@@ -1,13 +1,9 @@
 //
-//  AppDelegate.swift
-//  V3SampleApp
-//
-//  Created by Vojta on 28/05/2020.
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 @testable import StreamChatClient
+import UIKit
 
 var chatClient: ChatClient = {
     var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
@@ -35,13 +31,16 @@ func logIn(apiKey: String, userId: String, userName: String, token: Token?, comp
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
     var window: UIWindow?
     
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        LogConfig.formatters = [PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"]),
-                                PingPongEmojiFormatter()]
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        LogConfig.formatters = [
+            PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"]),
+            PingPongEmojiFormatter()
+        ]
         
         LogConfig.showThreadName = false
         LogConfig.showDate = false
@@ -56,10 +55,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: UISceneSession Lifecycle
 
     @available(iOS 13.0, *)
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
 
     @available(iOS 13.0, *)

@@ -1,16 +1,11 @@
 //
-//  DetailViewController.swift
-//  V3SampleApp
-//
-//  Created by Vojta on 28/05/2020.
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import StreamChatClient
+import UIKit
 
 class DetailViewController: UIViewController {
-    
     private let tableView = UITableView()
     
     private var controller: ChannelController?
@@ -35,7 +30,7 @@ class DetailViewController: UIViewController {
     }
     
     override var canBecomeFirstResponder: Bool {
-        return true
+        true
     }
 
     override func viewDidLoad() {
@@ -49,7 +44,7 @@ class DetailViewController: UIViewController {
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
         
         controller?.delegate = self
@@ -69,8 +64,8 @@ class DetailViewController: UIViewController {
         ]
     }
     
-    @objc private func showMembersActionsAlert() {
-        
+    @objc
+    private func showMembersActionsAlert() {
         let alert = UIAlertController(title: "Member Actions", message: "", preferredStyle: .actionSheet)
         
         let userIds = Set(["steep-moon-9"])
@@ -98,25 +93,25 @@ class DetailViewController: UIViewController {
         present(alert, animated: true)
     }
     
-    
-    @IBAction func newMessageButtonTapped(_ sender: Any) {
+    @IBAction
+    func newMessageButtonTapped(_ sender: Any) {
         guard let text = composerView.textView.text else {
             return
         }
 
         composerView.textView.text = ""
-        self.controller?.createNewMessage(text: text, completion: { print($0) })
+        controller?.createNewMessage(text: text, completion: { print($0) })
     }
 }
 
 extension DetailViewController: ChannelControllerDelegate {
     func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<Channel>) {
         switch channel {
-        case .create(_): break
+        case .create: break
     
-        case .update(let channel):
-            self.title = channel.extraData.name
-        case .remove(_):
+        case let .update(channel):
+            title = channel.extraData.name
+        case .remove:
             break
         }
     }
@@ -126,13 +121,13 @@ extension DetailViewController: ChannelControllerDelegate {
         
         for change in changes {
             switch change {
-            case .insert(_, index: let index):
+            case let .insert(_, index: index):
                 tableView.insertRows(at: [index], with: .automatic)
-            case .move(_, fromIndex: let fromIndex, toIndex: let toIndex):
+            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
                 tableView.moveRow(at: fromIndex, to: toIndex)
-            case .update(_, index: let index):
+            case let .update(_, index: index):
                 tableView.reloadRows(at: [index], with: .automatic)
-            case .remove(_, index: let index):
+            case let .remove(_, index: index):
                 tableView.deleteRows(at: [index], with: .automatic)
             }
         }
@@ -165,10 +160,9 @@ extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.section == tableView.numberOfSections - 1 &&
+        if indexPath.section == tableView.numberOfSections - 1,
             indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             controller?.loadNextMessages()
         }
     }
 }
-

@@ -1,16 +1,11 @@
 //
-//  MasterViewController.swift
-//  V3SampleApp
-//
-//  Created by Vojta on 28/05/2020.
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import StreamChatClient
+import UIKit
 
 class MasterViewController: UITableViewController {
-
     private lazy var longPressRecognizer = UILongPressGestureRecognizer(
         target: self,
         action: #selector(handleLongPress)
@@ -20,9 +15,10 @@ class MasterViewController: UITableViewController {
         .channelListController(query: ChannelListQuery(
             filter: .in("members", ["broken-waterfall-5"]),
             pagination: [.limit(25)],
-            options: [.watch]))
+            options: [.watch]
+        ))
     
-    var detailViewController: DetailViewController? = nil
+    var detailViewController: DetailViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,13 +27,19 @@ class MasterViewController: UITableViewController {
         channelListController.startUpdating()
         
         // Do any additional setup after loading the view.
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(handleSettingsButton))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "Settings",
+            style: .plain,
+            target: self,
+            action: #selector(handleSettingsButton)
+        )
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(insertNewObject(_:)))
         navigationItem.rightBarButtonItem = addButton
         if let split = splitViewController {
             let controllers = split.viewControllers
-            detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+            detailViewController = (controllers[controllers.count - 1] as! UINavigationController)
+                .topViewController as? DetailViewController
         }
 
         tableView.addGestureRecognizer(longPressRecognizer)
@@ -48,7 +50,8 @@ class MasterViewController: UITableViewController {
         super.viewWillAppear(animated)
     }
     
-    @objc func handleSettingsButton(_ sender: Any) {
+    @objc
+    func handleSettingsButton(_ sender: Any) {
         guard let settingsViewController = UIStoryboard.settings.instantiateInitialViewController() else {
             return
         }
@@ -59,9 +62,11 @@ class MasterViewController: UITableViewController {
     @objc
     func insertNewObject(_ sender: Any) {
         let id = UUID().uuidString
-        let controller = chatClient.channelController(createChannelWithId: .init(type: .messaging, id: id),
-                                                      members: [chatClient.currentUserId],
-                                                      extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil))
+        let controller = chatClient.channelController(
+            createChannelWithId: .init(type: .messaging, id: id),
+            members: [chatClient.currentUserId],
+            extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
+        )
         controller.startUpdating()
     }
 
@@ -83,11 +88,11 @@ class MasterViewController: UITableViewController {
     // MARK: - Table View
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return channelListController.channels.count
+        channelListController.channels.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -99,10 +104,14 @@ class MasterViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
-        return true
+        true
     }
 
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
         switch editingStyle {
         case .delete:
             let channelId = channelListController.channels[indexPath.row].cid
@@ -112,7 +121,7 @@ class MasterViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.section == tableView.numberOfSections - 1 &&
+        if indexPath.section == tableView.numberOfSections - 1,
             indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             channelListController.loadNextChannels()
         }
@@ -127,11 +136,9 @@ private extension MasterViewController {
         guard
             let indexPath = tableView.indexPathForRow(at: gestureRecognizer.location(in: tableView)),
             gestureRecognizer.state == .began
-            else { return }
+        else { return }
 
-        let channelController = chatClient.channelController(
-            for: channelListController.channels[indexPath.row].cid
-        )
+        let channelController = chatClient.channelController(for: channelListController.channels[indexPath.row].cid)
 
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let actions = [
@@ -166,7 +173,10 @@ private extension MasterViewController {
 }
 
 extension MasterViewController: ChannelListControllerDelegate {
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [ListChange<Channel>]) {
+    func controller(
+        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        didChangeChannels changes: [ListChange<Channel>]
+    ) {
         // Animate changes
         
         /*
@@ -183,13 +193,13 @@ extension MasterViewController: ChannelListControllerDelegate {
         
         for change in changes {
             switch change {
-            case .insert(_, index: let index):
+            case let .insert(_, index: index):
                 tableView.insertRows(at: [index], with: .automatic)
-            case .move(_, fromIndex: let fromIndex, toIndex: let toIndex):
+            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
                 tableView.moveRow(at: fromIndex, to: toIndex)
-            case .update(_, index: let index):
+            case let .update(_, index: index):
                 tableView.reloadRows(at: [index], with: .automatic)
-            case .remove(_, index: let index):
+            case let .remove(_, index: index):
                 tableView.deleteRows(at: [index], with: .automatic)
             }
         }

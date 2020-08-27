@@ -1,18 +1,12 @@
 //
-//  SceneDelegate.swift
-//  V3SampleApp
-//
-//  Created by Vojta on 28/05/2020.
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 
 @available(iOS 13, *)
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDelegate {
-
     var window: UIWindow?
-
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -56,7 +50,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
 
     // MARK: - Split view
 
-    func splitViewController(_ splitViewController: UISplitViewController, collapseSecondary secondaryViewController:UIViewController, onto primaryViewController:UIViewController) -> Bool {
+    func splitViewController(
+        _ splitViewController: UISplitViewController,
+        collapseSecondary secondaryViewController: UIViewController,
+        onto primaryViewController: UIViewController
+    ) -> Bool {
         guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
         guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else { return false }
         if topAsDetailController.messages.isEmpty {
@@ -65,6 +63,4 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDe
         }
         return false
     }
-
 }
-

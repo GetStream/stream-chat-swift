@@ -1,16 +1,12 @@
 //
-//  ComposerView.swift
-//  StreamChatClient
-//
-//  Created by Matheus Cardoso on 24/08/20.
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 
 class ComposerView: UIView {
-    @IBOutlet weak var sendButton: UIButton!
-    @IBOutlet weak var textView: UITextView! {
+    @IBOutlet var sendButton: UIButton!
+    @IBOutlet var textView: UITextView! {
         didSet {
             if #available(iOS 13.0, *) {
                 textView.layer.borderColor = UIColor.opaqueSeparator.cgColor
@@ -31,16 +27,17 @@ class ComposerView: UIView {
             }
         }
     }
+
     var calculatedHeight: CGFloat {
         if isKeyboardShown {
-             return textView.contentSize.height + 20
+            return textView.contentSize.height + 20
         } else {
             return textView.contentSize.height + 20 + (window?.safeAreaInsets.bottom ?? 0)
         }
     }
     
     override var intrinsicContentSize: CGSize {
-        return CGSize(width: super.intrinsicContentSize.width, height: calculatedHeight)
+        CGSize(width: super.intrinsicContentSize.width, height: calculatedHeight)
     }
     
     override func awakeFromNib() {
@@ -62,7 +59,8 @@ class ComposerView: UIView {
         )
     }
     
-    @objc func handle(keyboardShowNotification notification: Notification) {
+    @objc
+    func handle(keyboardShowNotification notification: Notification) {
         guard
             let userInfo = notification.userInfo,
             let beginFrame = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect,
@@ -76,7 +74,8 @@ class ComposerView: UIView {
         }
     }
     
-    @objc func handle(keyboardHideNotification notification: Notification) {
+    @objc
+    func handle(keyboardHideNotification notification: Notification) {
         guard
             let userInfo = notification.userInfo,
             let beginFrame = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect,
@@ -90,8 +89,13 @@ class ComposerView: UIView {
         }
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if object as AnyObject? === textView && keyPath == "contentSize" {
+    override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey: Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
+        if object as AnyObject? === textView, keyPath == "contentSize" {
             invalidateIntrinsicContentSize()
         }
     }
