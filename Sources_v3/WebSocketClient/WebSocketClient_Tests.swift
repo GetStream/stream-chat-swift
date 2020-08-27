@@ -345,7 +345,7 @@ class WebSocketClient_Tests: StressTestCase {
         decoder.decodedEvent = incomingEvent
         
         let processedEvent = TestEvent()
-        webSocketClient.middlewares = [ClosureBasedMiddleware { middlewareIncomingEvent, completion in
+        webSocketClient.middlewares = [EventMiddlewareMock { middlewareIncomingEvent, completion in
             XCTAssertEqual(incomingEvent.asEquatable, middlewareIncomingEvent.asEquatable)
             completion(processedEvent)
         }]
@@ -526,8 +526,12 @@ extension WebSocketEngineError: Equatable {
 }
 
 /// A test middleware that can be initiated with a closure/
-private struct ClosureBasedMiddleware: EventMiddleware {
-    let closure: (_ event: Event, _ completion: @escaping (Event?) -> Void) -> Void
+final class EventMiddlewareMock: EventMiddleware {
+    var closure: (Event, @escaping (Event?) -> Void) -> Void
+    
+    init(closure: @escaping (Event, @escaping (Event?) -> Void) -> Void = { $1($0) }) {
+        self.closure = closure
+    }
     
     func handle(event: Event, completion: @escaping (Event?) -> Void) {
         closure(event, completion)
