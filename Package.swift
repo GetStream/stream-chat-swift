@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -37,7 +37,7 @@ let package = Package(
             path: "Sources/UI"),
         .target(
             name: "StreamChatCore",
-            dependencies: ["StreamChatClient", "RxSwift", "RxCocoa"],
+            dependencies: ["StreamChatClient", "RxSwift", .product(name: "RxCocoa", package: "RxSwift")],
             path: "Sources/Core"),
         .target(
             name: "StreamChatClient",

@@ -72,3 +72,4 @@ vendor/bundle/
 .swiftpm
 Example/Carthage/.env
 Example/Carthage/fastlane/report.xml
+Sample/Cocoapods/Podfile.lock

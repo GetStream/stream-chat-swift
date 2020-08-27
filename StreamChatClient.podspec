@@ -8,7 +8,7 @@ Pod::Spec.new do |spec|
   spec.license = { :type => "BSD-3", :file => "LICENSE" }
   spec.author = { "Alexey Bukhtin" => "alexey@getstream.io" }
   spec.social_media_url = "https://getstream.io"
-  spec.swift_version = "5.1"
+  spec.swift_version = "5.2"
   spec.platform = :ios, "11.0"
   spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
   spec.requires_arc = true
