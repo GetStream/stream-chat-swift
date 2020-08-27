@@ -355,6 +355,44 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
     }
     
+    func test_channelTypingEvents_areForwaredToDelegate() throws {
+        let delegate = TestDelegate()
+        controller.delegate = delegate
+        
+        // Set the queue for delegate calls
+        delegate.expectedQueueId = controllerCallbackQueueID
+        
+        // Simulate `startUpdating()` call
+        controller.startUpdating()
+        
+        // Send notification with event happened in the observed channel
+        let event = TypingEvent(isTyping: true, cid: channelId, userId: .unique)
+        let notification = Notification(newEventReceived: event, sender: self)
+        client.webSocketClient.eventNotificationCenter.post(notification)
+        
+        // Assert the event is received
+        AssertAsync.willBeEqual(delegate.didReceiveTypingEvent_event, event)
+    }
+    
+    func test_channelTypingEvents_areForwaredToGenericDelegate() throws {
+        let delegate = TestDelegateGeneric()
+        controller.setDelegate(delegate)
+        
+        // Set the queue for delegate calls
+        delegate.expectedQueueId = controllerCallbackQueueID
+        
+        // Simulate `startUpdating()` call
+        controller.startUpdating()
+        
+        // Send notification with event happened in the observed channel
+        let event = TypingEvent(isTyping: true, cid: channelId, userId: .unique)
+        let notification = Notification(newEventReceived: event, sender: self)
+        client.webSocketClient.eventNotificationCenter.post(notification)
+        
+        // Assert the event is received
+        AssertAsync.willBeEqual(delegate.didReceiveTypingEvent_event, event)
+    }
+    
     func test_delegateMethodsAreCalled() throws {
         let delegate = TestDelegate()
         controller.delegate = delegate
@@ -1228,6 +1266,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
     @Atomic var didUpdateChannel_channel: EntityChange<Channel>?
     @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
+    @Atomic var didReceiveTypingEvent_event: TypingEvent?
     
     func controllerWillStartFetchingRemoteData(_ controller: Controller) {
         willStartFetchingRemoteDataCalledCounter += 1
@@ -1253,6 +1292,11 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
         didReceiveMemberEvent_event = event
         validateQueue()
     }
+    
+    func channelController(_ channelController: ChannelController, didReceiveTypingEvent event: TypingEvent) {
+        didReceiveTypingEvent_event = event
+        validateQueue()
+    }
 }
 
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
@@ -1260,6 +1304,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
     @Atomic var didUpdateChannel_channel: EntityChange<Channel>?
     @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
+    @Atomic var didReceiveTypingEvent_event: TypingEvent?
     
     func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<Message>]) {
         didUpdateMessages_messages = changes
@@ -1273,6 +1318,11 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
     
     func channelController(_ channelController: ChannelController, didReceiveMemberEvent event: MemberEvent) {
         didReceiveMemberEvent_event = event
+        validateQueue()
+    }
+    
+    func channelController(_ channelController: ChannelController, didReceiveTypingEvent event: TypingEvent) {
+        didReceiveTypingEvent_event = event
         validateQueue()
     }
 }
