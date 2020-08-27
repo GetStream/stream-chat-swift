@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ✅ Added
 - `ChannelsPresenter.delete` & `ChannelsPresenter.rx.delete` methods to delete a channel and remove it from items list [#394](https://github.com/GetStream/stream-chat-swift/pull/394)
 
+### 🔄 Changed
+- Podspec and Package Swift versions bumped to 5.2 [#438](https://github.com/GetStream/stream-chat-swift/issues/438)
+
 ### 🐞 Fixed
 - Channels list (ChannelsViewController) not updated when recreating a channel after deleting it [#392](https://github.com/GetStream/stream-chat-swift/issues/392)
 - If the user (JWT) token expires and websocket disconnects due to it, Client will renew the expiring JWT token and reconnect websocket automatically [#429](https://github.com/GetStream/stream-chat-swift/issues/429)
