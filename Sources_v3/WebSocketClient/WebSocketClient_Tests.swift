@@ -61,7 +61,7 @@ class WebSocketClient_Tests: StressTestCase {
                                           sessionConfiguration: .default,
                                           requestEncoder: requestEncoder,
                                           eventDecoder: decoder,
-                                          notificationCenter: eventNotificationCenter,
+                                          eventNotificationCenter: eventNotificationCenter,
                                           reconnectionStrategy: reconnectionStrategy,
                                           environment: environment)
         
@@ -80,7 +80,7 @@ class WebSocketClient_Tests: StressTestCase {
     // MARK: - Connection tests
     
     func test_healthCheckMiddlewareIsThere() {
-        let healthCheckMiddlewares = webSocketClient.notificationCenter.middlewares.compactMap { $0 as? HealthCheckMiddleware }
+        let healthCheckMiddlewares = webSocketClient.eventNotificationCenter.middlewares.compactMap { $0 as? HealthCheckMiddleware }
        
         // Assert there is only one `HealthCheckMiddleware`
         XCTAssertEqual(healthCheckMiddlewares.count, 1)

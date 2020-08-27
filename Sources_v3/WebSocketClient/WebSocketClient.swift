@@ -13,7 +13,7 @@ class WebSocketClient {
     }
     
     /// The notification center `WebSocketClient` uses to send notifications about incoming events.
-    let notificationCenter: EventNotificationCenter
+    let eventNotificationCenter: EventNotificationCenter
     
     /// The current state the web socket connection.
     @Atomic fileprivate(set) var connectionState: ConnectionState = .notConnected() {
@@ -104,7 +104,7 @@ class WebSocketClient {
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
-        notificationCenter: EventNotificationCenter,
+        eventNotificationCenter: EventNotificationCenter,
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: Environment = .init()
     ) {
@@ -114,8 +114,8 @@ class WebSocketClient {
         self.sessionConfiguration = sessionConfiguration
         self.reconnectionStrategy = reconnectionStrategy
         self.eventDecoder = eventDecoder
-        self.notificationCenter = notificationCenter
-        self.notificationCenter.add(middleware: HealthCheckMiddleware(webSocketClient: self))
+        self.eventNotificationCenter = eventNotificationCenter
+        self.eventNotificationCenter.add(middleware: HealthCheckMiddleware(webSocketClient: self))
         
         startListeningForAppStateUpdates()
     }
@@ -242,7 +242,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
         do {
             let messageData = Data(message.utf8)
             let event = try eventDecoder.decode(from: messageData)
-            notificationCenter.process(event)
+            eventNotificationCenter.process(event)
         } catch is ClientError.UnsupportedEventType {
             log.info("Skipping unsupported event type with payload: \(message)")
             
