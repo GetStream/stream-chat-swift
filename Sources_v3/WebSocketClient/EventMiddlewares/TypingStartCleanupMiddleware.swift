@@ -5,7 +5,7 @@
 import Foundation
 
 /// Automatically sends a `TypingStop` event if it hasn't come in a specified time after `TypingStart`.
-class UserTypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+class TypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
     /// The maximum time the incoming `typingStart` event is valid before a `typingStop` event is emitted automatically.
     static var incomingTypingStartEventTimeout: TimeInterval { 30 }
     
@@ -22,17 +22,17 @@ class UserTypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddlewa
     
     func handle(event: Event, completion: @escaping (Event?) -> Void) {
         switch event {
-        case let event as UserTypingEvent<ExtraData> where event.isNotTyping && excludedUserIds.contains(event.userId) == false:
+        case let event as TypingEvent where !event.isTyping && excludedUserIds.contains(event.userId) == false:
             typingEventTimeoutTimerControls[event.userId]?.cancel()
             typingEventTimeoutTimerControls[event.userId] = nil
             
-        case let event as UserTypingEvent<ExtraData> where event.isTyping && excludedUserIds.contains(event.userId) == false:
+        case let event as TypingEvent where event.isTyping && excludedUserIds.contains(event.userId) == false:
             let userId = event.userId
             typingEventTimeoutTimerControls[userId]?.cancel()
             
             let stopTypingEventTimerControl =
                 timer.schedule(timeInterval: Self.incomingTypingStartEventTimeout, queue: .global()) {
-                    let typingStopEvent = UserTypingEvent<ExtraData>(isTyping: false, cid: event.cid, userId: userId)
+                    let typingStopEvent = TypingEvent(isTyping: false, cid: event.cid, userId: userId)
                     completion(typingStopEvent)
                 }
             
