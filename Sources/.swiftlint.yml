@@ -4,6 +4,7 @@ disabled_rules:
   - todo
   - attributes
   - function_parameter_count
+  - file_length
 
 opt_in_rules:
   - empty_count
@@ -56,7 +57,5 @@ cyclomatic_complexity:
   ignores_case_statements: true
   warning: 25
   error: 30
-
-file_length: 500
 
 type_body_length: 300

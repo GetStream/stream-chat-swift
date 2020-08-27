@@ -840,9 +840,11 @@ class ChannelController_Tests: StressTestCase {
         let dummyUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(userId: .unique, role: .user)
         try session.saveCurrentUser(payload: dummyUserPayload)
         try session.saveChannel(payload: dummyPayload(with: channelId))
-        let message = try session.createNewMessage(in: channelId,
-                                                   text: "Message",
-                                                   extraData: DefaultDataTypes.Message.defaultValue)
+        let message = try session.createNewMessage(
+            in: channelId,
+            text: "Message",
+            extraData: DefaultDataTypes.Message.defaultValue
+        )
         return message.id
     }
     

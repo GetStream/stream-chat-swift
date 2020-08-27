@@ -69,8 +69,10 @@ extension DatabaseContainer {
     func createChannelListQuery(filter: Filter = .contains(.unique, String.unique)) throws {
         try writeSynchronously { session in
             let dto = NSEntityDescription
-                .insertNewObject(forEntityName: ChannelListQueryDTO.entityName,
-                                 into: session as! NSManagedObjectContext) as! ChannelListQueryDTO
+                .insertNewObject(
+                    forEntityName: ChannelListQueryDTO.entityName,
+                    into: session as! NSManagedObjectContext
+                ) as! ChannelListQueryDTO
             dto.filterHash = filter.filterHash
             dto.filterJSONData = try JSONEncoder.default.encode(filter)
         }

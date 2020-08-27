@@ -119,9 +119,11 @@ class ChatClient_Tests: StressTestCase {
     func test_webSocketClientIsInitialized() throws {
         // Use in-memory store
         // Create a new chat client
-        let client = ChatClient(config: inMemoryStorageConfig,
-                                workerBuilders: workerBuilders,
-                                environment: testEnv.environment)
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
         
         // Assert the init parameters are correct
         let webSocket = testEnv.webSocketClient
@@ -140,9 +142,11 @@ class ChatClient_Tests: StressTestCase {
     
     func test_clientProvidesConnectionId() throws {
         // Create a new chat client
-        let client = ChatClient(config: inMemoryStorageConfig,
-                                workerBuilders: workerBuilders,
-                                environment: testEnv.environment)
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
         
         // Set a connection Id waiter and assert it's `nil`
         var providedConnectionId: ConnectionId?
@@ -180,9 +184,11 @@ class ChatClient_Tests: StressTestCase {
     
     func test_clientProvidesToken() throws {
         // Create a new chat client
-        let client = ChatClient(config: inMemoryStorageConfig,
-                                workerBuilders: workerBuilders,
-                                environment: testEnv.environment)
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
         
         // Assert the token of anonymous user is `nil`
         XCTAssertNil(client.provideToken())
@@ -206,9 +212,11 @@ class ChatClient_Tests: StressTestCase {
         }
         
         // Create a new chat client
-        let client = ChatClient(config: config,
-                                workerBuilders: workerBuilders,
-                                environment: testEnv.environment)
+        let client = ChatClient(
+            config: config,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
         
         // Assert the token of anonymous user is `nil`
         XCTAssertNil(client.provideToken())
@@ -223,9 +231,11 @@ class ChatClient_Tests: StressTestCase {
     
     func test_apiClientIsInitialized() throws {
         // Create a new chat client
-        _ = ChatClient(config: inMemoryStorageConfig,
-                       workerBuilders: workerBuilders,
-                       environment: testEnv.environment)
+        _ = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
         
         assertMandatoryHeaderFields(testEnv.apiClient?.init_sessionConfiguration)
         XCTAssert(testEnv.apiClient?.init_requestDecoder is TestRequestDecoder)
@@ -285,9 +295,11 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_settingAnonymousUser() {
-        let client = Client(config: inMemoryStorageConfig,
-                            workerBuilders: workerBuilders,
-                            environment: testEnv.environment)
+        let client = Client(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
         
         let oldUserId = client.currentUserId
@@ -324,9 +336,11 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_settingUser() {
-        let client = Client(config: inMemoryStorageConfig,
-                            workerBuilders: workerBuilders,
-                            environment: testEnv.environment)
+        let client = Client(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
         
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
         
@@ -383,9 +397,11 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_settingGuestUser() {
-        let client = Client(config: inMemoryStorageConfig,
-                            workerBuilders: workerBuilders,
-                            environment: testEnv.environment)
+        let client = Client(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
         
         assert(testEnv.webSocketClient!.connect_calledCounter == 0)
         
@@ -462,9 +478,11 @@ class ChatClient_Tests: StressTestCase {
     
     func test_disconnectAndConnect() {
         // Set up a new anonymous user
-        let client = Client(config: inMemoryStorageConfig,
-                            workerBuilders: workerBuilders,
-                            environment: testEnv.environment)
+        let client = Client(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
         
         // Set up a new anonymous user and wait for completion
         var setUserCompletionCalled = false

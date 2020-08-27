@@ -24,10 +24,12 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         
-        newChannelQueryUpdater = NewChannelQueryUpdater(database: database,
-                                                        webSocketClient: webSocketClient,
-                                                        apiClient: apiClient,
-                                                        env: env.environment)
+        newChannelQueryUpdater = NewChannelQueryUpdater(
+            database: database,
+            webSocketClient: webSocketClient,
+            apiClient: apiClient,
+            env: env.environment
+        )
     }
     
     override func tearDown() {
@@ -69,10 +71,12 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         AssertAsync.willBeNil(env!.channelQueryUpdater?.update_query)
         
         // Create `newChannelQueryUpdater`
-        newChannelQueryUpdater = NewChannelQueryUpdater(database: database,
-                                                        webSocketClient: webSocketClient,
-                                                        apiClient: apiClient,
-                                                        env: env.environment)
+        newChannelQueryUpdater = NewChannelQueryUpdater(
+            database: database,
+            webSocketClient: webSocketClient,
+            apiClient: apiClient,
+            env: env.environment
+        )
         
         // Assert `update(channelListQuery` called for channel that was in DB before observing started
         AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_query?.filter.filterHash, filter.filterHash)
@@ -99,9 +103,11 @@ private class TestEnvironment {
     var channelQueryUpdater: ChannelQueryUpdaterMock<DefaultDataTypes>?
     
     lazy var environment = NewChannelQueryUpdater<DefaultDataTypes>.Environment(createChannelListQueryUpdater: { [unowned self] in
-        self.channelQueryUpdater = ChannelQueryUpdaterMock(database: $0,
-                                                           webSocketClient: $1,
-                                                           apiClient: $2)
+        self.channelQueryUpdater = ChannelQueryUpdaterMock(
+            database: $0,
+            webSocketClient: $1,
+            apiClient: $2
+        )
         return self.channelQueryUpdater!
     })
 }
