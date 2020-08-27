@@ -41,11 +41,13 @@ extension Client {
         invites: Set<UserId> = [],
         extraData: ExtraData.Channel
     ) -> ChannelControllerGeneric<ExtraData> {
-        let payload = ChannelEditDetailPayload<ExtraData>(cid: cid,
-                                                          team: team,
-                                                          members: members,
-                                                          invites: invites,
-                                                          extraData: extraData)
+        let payload = ChannelEditDetailPayload<ExtraData>(
+            cid: cid,
+            team: team,
+            members: members,
+            invites: invites,
+            extraData: extraData
+        )
         return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
     }
 
@@ -62,11 +64,13 @@ extension Client {
         extraData: ExtraData.Channel
     ) throws -> ChannelControllerGeneric<ExtraData> {
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
-        let payload = ChannelEditDetailPayload<ExtraData>(cid: .init(type: .messaging, id: ""),
-                                                          team: team,
-                                                          members: members,
-                                                          invites: [],
-                                                          extraData: extraData)
+        let payload = ChannelEditDetailPayload<ExtraData>(
+            cid: .init(type: .messaging, id: ""),
+            team: team,
+            members: members,
+            invites: [],
+            extraData: extraData
+        )
         return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
     }
 }
@@ -111,9 +115,11 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     }
     
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(client.databaseContainer,
-                                                                                                client.webSocketClient,
-                                                                                                client.apiClient)
+    private lazy var worker: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(
+        client.databaseContainer,
+        client.webSocketClient,
+        client.apiClient
+    )
     
     /// A type-erased delegate.
     private(set) var anyDelegate: AnyChannelControllerDelegate<ExtraData>? {
@@ -167,9 +173,11 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
 
     private func setChannelObserver() {
         _channelObserver.computeValue = { [unowned self] in
-            let observer = EntityDatabaseObserver(context: self.client.databaseContainer.viewContext,
-                                                  fetchRequest: ChannelDTO.fetchRequest(for: self.channelQuery.cid),
-                                                  itemCreator: ChannelModel<ExtraData>.create)
+            let observer = EntityDatabaseObserver(
+                context: self.client.databaseContainer.viewContext,
+                fetchRequest: ChannelDTO.fetchRequest(for: self.channelQuery.cid),
+                itemCreator: ChannelModel<ExtraData>.create
+            )
             observer.onChange { change in
                 self.delegateCallback { $0?.channelController(self, didUpdateChannel: change) }
             }
@@ -180,9 +188,11 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
 
     private func setMessagesObserver() {
         _messagesObserver.computeValue = { [unowned self] in
-            let observer = ListDatabaseObserver(context: self.client.databaseContainer.viewContext,
-                                                fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelQuery.cid),
-                                                itemCreator: { $0.asModel() as MessageModel<ExtraData> })
+            let observer = ListDatabaseObserver(
+                context: self.client.databaseContainer.viewContext,
+                fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelQuery.cid),
+                itemCreator: { $0.asModel() as MessageModel<ExtraData> }
+            )
             observer.onChange = { changes in
                 self.delegateCallback {
                     $0?.channelController(self, didUpdateMessages: changes)
@@ -213,8 +223,10 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         state = .localDataFetched
 
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(completion: completion)
-        worker.update(channelQuery: channelQuery,
-                      channelCreatedCallback: channelCreatedCallback) { [weak self] error in
+        worker.update(
+            channelQuery: channelQuery,
+            channelCreatedCallback: channelCreatedCallback
+        ) { [weak self] error in
             guard let self = self else { return }
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
@@ -293,8 +305,13 @@ public extension ChannelControllerGeneric {
             return
         }
 
-        let payload: ChannelEditDetailPayload<ExtraData> = .init(cid: channelId, team: team, members: members, invites: invites,
-                                                                 extraData: extraData)
+        let payload: ChannelEditDetailPayload<ExtraData> = .init(
+            cid: channelId,
+            team: team,
+            members: members,
+            invites: invites,
+            extraData: extraData
+        )
         worker.updateChannel(channelPayload: payload) { [weak self] error in
             self?.callback {
                 completion?(error)
@@ -467,13 +484,15 @@ public extension ChannelControllerGeneric {
             return
         }
 
-        worker.createNewMessage(in: channelId,
-                                text: text,
-                                command: command,
-                                arguments: arguments,
-                                parentMessageId: parentMessageId,
-                                showReplyInChannel: showReplyInChannel,
-                                extraData: extraData) { [weak self] result in
+        worker.createNewMessage(
+            in: channelId,
+            text: text,
+            command: command,
+            arguments: arguments,
+            parentMessageId: parentMessageId,
+            showReplyInChannel: showReplyInChannel,
+            extraData: extraData
+        ) { [weak self] result in
             self?.callback {
                 completion?(result)
             }
@@ -696,25 +715,29 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
 
 extension AnyChannelControllerDelegate {
     convenience init<Delegate: ChannelControllerDelegateGeneric>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
-        self.init(wrappedDelegate: delegate,
-                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-                  controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
-                  controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
-                  controllerDidReceiveMemberEvent: { [weak delegate] in
-                      delegate?.channelController($0, didReceiveMemberEvent: $1)
-                  })
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
+            controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
+            controllerDidReceiveMemberEvent: { [weak delegate] in
+                delegate?.channelController($0, didReceiveMemberEvent: $1)
+            }
+        )
     }
 }
 
 extension AnyChannelControllerDelegate where ExtraData == DefaultDataTypes {
     convenience init(_ delegate: ChannelControllerDelegate?) {
-        self.init(wrappedDelegate: delegate,
-                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-                  controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
-                  controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
-                  controllerDidReceiveMemberEvent: { [weak delegate] in
-                      delegate?.channelController($0, didReceiveMemberEvent: $1)
-                  })
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidUpdateChannel: { [weak delegate] in delegate?.channelController($0, didUpdateChannel: $1) },
+            controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
+            controllerDidReceiveMemberEvent: { [weak delegate] in
+                delegate?.channelController($0, didReceiveMemberEvent: $1)
+            }
+        )
     }
 }
 

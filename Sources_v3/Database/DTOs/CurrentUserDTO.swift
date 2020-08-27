@@ -33,8 +33,10 @@ extension CurrentUserDTO {
         let request = NSFetchRequest<CurrentUserDTO>(entityName: CurrentUserDTO.entityName)
         let result = (try? context.fetch(request)) ?? []
         
-        log.assert(result.count <= 1,
-                   "The database is corrupted. There is more than 1 entity of the type `CurrentUserDTO` in the DB.")
+        log.assert(
+            result.count <= 1,
+            "The database is corrupted. There is more than 1 entity of the type `CurrentUserDTO` in the DB."
+        )
         
         return result.first
     }
@@ -98,24 +100,30 @@ extension CurrentUserModel {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: user.extraData)
         } catch {
-            fatalError("Failed decoding saved extra data with error: \(error). This should never happen because"
-                + "the extra data must be a valid JSON to be saved.")
+            fatalError(
+                "Failed decoding saved extra data with error: \(error). This should never happen because"
+                    + "the extra data must be a valid JSON to be saved."
+            )
         }
         
         let mutedUsers: [UserModel<ExtraData>] = dto.mutedUsers.map { $0.asModel() }
         
-        return CurrentUserModel(id: user.id,
-                                isOnline: user.isOnline,
-                                isBanned: user.isBanned,
-                                userRole: UserRole(rawValue: user.userRoleRaw)!,
-                                createdAt: user.userCreatedAt,
-                                updatedAt: user.userUpdatedAt,
-                                lastActiveAt: user.lastActivityAt,
-                                extraData: extraData,
-                                devices: [],
-                                currentDevice: nil,
-                                mutedUsers: Set(mutedUsers),
-                                unreadCount: UnreadCount(channels: Int(dto.unreadChannelsCount),
-                                                         messages: Int(dto.unreadMessagesCount)))
+        return CurrentUserModel(
+            id: user.id,
+            isOnline: user.isOnline,
+            isBanned: user.isBanned,
+            userRole: UserRole(rawValue: user.userRoleRaw)!,
+            createdAt: user.userCreatedAt,
+            updatedAt: user.userUpdatedAt,
+            lastActiveAt: user.lastActivityAt,
+            extraData: extraData,
+            devices: [],
+            currentDevice: nil,
+            mutedUsers: Set(mutedUsers),
+            unreadCount: UnreadCount(
+                channels: Int(dto.unreadChannelsCount),
+                messages: Int(dto.unreadMessagesCount)
+            )
+        )
     }
 }

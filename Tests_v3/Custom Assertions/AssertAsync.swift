@@ -59,11 +59,13 @@ extension Assert {
             "\"\(String(describing: expression1()))\" not equal to \"\(String(describing: expression2()))\""
         }
         
-        return willBeTrue(expression1() == expression2(),
-                          timeout: timeout,
-                          message: message() ?? defaultMessage,
-                          file: file,
-                          line: line)
+        return willBeTrue(
+            expression1() == expression2(),
+            timeout: timeout,
+            message: message() ?? defaultMessage,
+            file: file,
+            line: line
+        )
     }
     
     /// Periodically checks if the expression evaluates to `nil`. Fails if the expression result is not `nil` within
@@ -83,11 +85,13 @@ extension Assert {
         file: StaticString = #file,
         line: UInt = #line
     ) -> Assertion {
-        willBeTrue(expression1() == nil,
-                   timeout: timeout,
-                   message: "Failed to become `nil`",
-                   file: file,
-                   line: line)
+        willBeTrue(
+            expression1() == nil,
+            timeout: timeout,
+            message: "Failed to become `nil`",
+            file: file,
+            line: line
+        )
     }
     
     /// Periodically checks if the expression evaluates to `TRUE`. Fails if the expression result is not `TRUE` within
@@ -140,11 +144,13 @@ extension Assert {
         file: StaticString = #file,
         line: UInt = #line
     ) -> Assertion {
-        willBeTrue(!expression(),
-                   timeout: timeout,
-                   message: "Failed to become `FALSE`",
-                   file: file,
-                   line: line)
+        willBeTrue(
+            !expression(),
+            timeout: timeout,
+            message: "Failed to become `FALSE`",
+            file: file,
+            line: line
+        )
     }
     
     /// Periodically checks that the expression evaluates stays `FALSE` for the whole `timeout` period.. Fails if the expression
@@ -223,11 +229,13 @@ extension Assert {
             "\"\(String(describing: expression1()))\" failed to stay equal to \"\(String(describing: expression2()))\""
         }
         
-        return staysTrue(expression1() == expression2(),
-                         timeout: timeout,
-                         message: message() ?? defaultMessage,
-                         file: file,
-                         line: line)
+        return staysTrue(
+            expression1() == expression2(),
+            timeout: timeout,
+            message: message() ?? defaultMessage,
+            file: file,
+            line: line
+        )
     }
     
     /// Blocks the current test execution and asynchronously checks if the provided object can be released from the memobry
@@ -335,12 +343,14 @@ extension AssertAsync {
             withoutActuallyEscaping(message) { message in
                 
                 AssertAsync {
-                    Assert.willBeEqual(expression1(),
-                                       true,
-                                       timeout: timeout,
-                                       message: message(),
-                                       file: file,
-                                       line: line)
+                    Assert.willBeEqual(
+                        expression1(),
+                        true,
+                        timeout: timeout,
+                        message: message(),
+                        file: file,
+                        line: line
+                    )
                 }
             }
         }
@@ -370,12 +380,14 @@ extension AssertAsync {
                 withoutActuallyEscaping(message) { message in
                     
                     AssertAsync {
-                        Assert.willBeEqual(expression1(),
-                                           expression2(),
-                                           timeout: timeout,
-                                           message: message(),
-                                           file: file,
-                                           line: line)
+                        Assert.willBeEqual(
+                            expression1(),
+                            expression2(),
+                            timeout: timeout,
+                            message: message(),
+                            file: file,
+                            line: line
+                        )
                     }
                 }
             }
@@ -403,11 +415,13 @@ extension AssertAsync {
             withoutActuallyEscaping(message) { message in
                 
                 AssertAsync {
-                    Assert.willBeTrue(expression1() == nil,
-                                      timeout: timeout,
-                                      message: message(),
-                                      file: file,
-                                      line: line)
+                    Assert.willBeTrue(
+                        expression1() == nil,
+                        timeout: timeout,
+                        message: message(),
+                        file: file,
+                        line: line
+                    )
                 }
             }
         }
@@ -463,12 +477,14 @@ extension AssertAsync {
                 withoutActuallyEscaping(message) { message in
                     
                     AssertAsync {
-                        Assert.staysEqual(expression1(),
-                                          expression2(),
-                                          timeout: timeout,
-                                          message: message(),
-                                          file: file,
-                                          line: line)
+                        Assert.staysEqual(
+                            expression1(),
+                            expression2(),
+                            timeout: timeout,
+                            message: message(),
+                            file: file,
+                            line: line
+                        )
                     }
                 }
             }

@@ -82,10 +82,12 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     
     /// Used for observing the changes in the DB.
     private(set) lazy var frc: NSFetchedResultsController<DTO> = self.fetchedResultsControllerType
-        .init(fetchRequest: self.request,
-              managedObjectContext: self.context,
-              sectionNameKeyPath: nil,
-              cacheName: nil)
+        .init(
+            fetchRequest: self.request,
+            managedObjectContext: self.context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
     
     /// The `NSFetchedResultsController` subclass the observe uses to create its FRC. You can inject your custom subclass
     /// in the initializer if needed, i.e. when testing.
@@ -121,8 +123,10 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
         
         _item.computeValue = { [unowned self] in
             guard let fetchedObjects = self.frc.fetchedObjects else { return nil }
-            log.assert(fetchedObjects.count <= 1,
-                       "EntityDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(fetchedObjects)")
+            log.assert(
+                fetchedObjects.count <= 1,
+                "EntityDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(fetchedObjects)"
+            )
             
             return fetchedObjects.first.flatMap(itemCreator)
         }
@@ -162,7 +166,7 @@ extension EntityDatabaseObserver {
         _ keyPath: KeyPath<Item, Value>,
         do listener: @escaping (EntityChange<Value>) -> Void
     ) -> EntityDatabaseObserver {
-        //The value that stores the last received `EntityChange<Value>` and is captured by ref by the closure
+        // The value that stores the last received `EntityChange<Value>` and is captured by ref by the closure
         var lastChange: EntityChange<Value>?
         
         return onChange {

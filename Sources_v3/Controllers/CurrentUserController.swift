@@ -121,10 +121,12 @@ private extension EntityChange where Item == UnreadCount {
 
 private extension CurrentUserControllerGeneric {
     func createUserObserver() -> EntityDatabaseObserver<CurrentUserModel<ExtraData.User>, CurrentUserDTO> {
-        environment.currentUserObserverBuilder(client.databaseContainer.viewContext,
-                                               CurrentUserDTO.defaultFetchRequest,
-                                               { $0.asModel() }, // swiftlint:disable:this opening_brace
-                                               NSFetchedResultsController<CurrentUserDTO>.self)
+        environment.currentUserObserverBuilder(
+            client.databaseContainer.viewContext,
+            CurrentUserDTO.defaultFetchRequest,
+            { $0.asModel() }, // swiftlint:disable:this opening_brace
+            NSFetchedResultsController<CurrentUserDTO>.self
+        )
     }
 }
 
@@ -237,26 +239,31 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
 
 extension AnyCurrentUserControllerDelegate {
     convenience init<Delegate: CurrentUserControllerDelegateGeneric>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
-        self.init(wrappedDelegate: delegate,
-                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-                  controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
-                      delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
-                  },
-                  controllerDidChangeCurrentUser: { [weak delegate] in
-                      delegate?.currentUserController($0, didChangeCurrentUser: $1)
-                  })
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
+                delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
+            },
+            controllerDidChangeCurrentUser: { [weak delegate] in
+                delegate?.currentUserController($0, didChangeCurrentUser: $1)
+            }
+        )
     }
 }
 
 extension AnyCurrentUserControllerDelegate where ExtraData == DefaultDataTypes {
     convenience init(_ delegate: CurrentUserControllerDelegate?) {
-        self.init(wrappedDelegate: delegate,
-                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-                  controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
-                      delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
-                  }, controllerDidChangeCurrentUser: { [weak delegate] in
-                      delegate?.currentUserController($0, didChangeCurrentUser: $1)
-                  })
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
+                delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
+            },
+            controllerDidChangeCurrentUser: { [weak delegate] in
+                delegate?.currentUserController($0, didChangeCurrentUser: $1)
+            }
+        )
     }
 }
  

@@ -32,16 +32,18 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
         self.mutedUsers = mutedUsers
         self.unreadCount = unreadCount
         
-        super.init(id: id,
-                   role: role,
-                   createdAt: createdAt,
-                   updatedAt: updatedAt,
-                   lastActiveAt: lastActiveAt,
-                   isOnline: isOnline,
-                   isInvisible: isInvisible,
-                   isBanned: isBanned,
-                   teams: teams,
-                   extraData: extraData)
+        super.init(
+            id: id,
+            role: role,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            lastActiveAt: lastActiveAt,
+            isOnline: isOnline,
+            isInvisible: isInvisible,
+            isBanned: isBanned,
+            teams: teams,
+            extraData: extraData
+        )
     }
     
     required init(from decoder: Decoder) throws {

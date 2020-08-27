@@ -51,9 +51,11 @@ extension DatabaseContainer {
     /// Synchrnously creates a new CurrentUserDTO in the DB with the given id.
     func createCurrentUser(id: UserId = .unique) throws {
         try writeSynchronously { session in
-            try session.saveCurrentUser(payload: .dummy(userId: id,
-                                                        role: .admin,
-                                                        extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+            try session.saveCurrentUser(payload: .dummy(
+                userId: id,
+                role: .admin,
+                extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+            ))
         }
     }
     
@@ -67,8 +69,10 @@ extension DatabaseContainer {
     func createChannelListQuery(filter: Filter = .contains(.unique, String.unique)) throws {
         try writeSynchronously { session in
             let dto = NSEntityDescription
-                .insertNewObject(forEntityName: ChannelListQueryDTO.entityName,
-                                 into: session as! NSManagedObjectContext) as! ChannelListQueryDTO
+                .insertNewObject(
+                    forEntityName: ChannelListQueryDTO.entityName,
+                    into: session as! NSManagedObjectContext
+                ) as! ChannelListQueryDTO
             dto.filterHash = filter.filterHash
             dto.filterJSONData = try JSONEncoder.default.encode(filter)
         }

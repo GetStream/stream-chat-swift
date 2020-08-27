@@ -24,11 +24,13 @@ class RequestEncoder_Tests: XCTestCase {
     
     func test_requiredQueryItems() throws {
         // Prepare a new endpoint
-        let endpoint = Endpoint<Data>(path: .unique,
-                                      method: .get,
-                                      queryItems: nil,
-                                      requiresConnectionId: false,
-                                      body: nil)
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
         
         // Encode the request and wait for the result
         let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -40,11 +42,13 @@ class RequestEncoder_Tests: XCTestCase {
     
     func test_requiredAuthHeaders() throws {
         // Prepare a new endpoint
-        let endpoint = Endpoint<Data>(path: .unique,
-                                      method: .get,
-                                      queryItems: nil,
-                                      requiresConnectionId: false,
-                                      body: nil)
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
         
         // Simulate provided token
         let token = Token.unique
@@ -69,11 +73,13 @@ class RequestEncoder_Tests: XCTestCase {
     
     func test_endpointRequiringConectionId() throws {
         // Prepare an endpoint that requires connection id
-        let endpoint = Endpoint<Data>(path: .unique,
-                                      method: .get,
-                                      queryItems: nil,
-                                      requiresConnectionId: true,
-                                      body: nil)
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: nil
+        )
         
         // Set a new connection id
         let connectionId = String.unique
@@ -91,11 +97,13 @@ class RequestEncoder_Tests: XCTestCase {
         let testStringValue = String.unique
         
         // Prepare a request with query items
-        let endpoint = Endpoint<Data>(path: .unique,
-                                      method: .post,
-                                      queryItems: ["stringValue": testStringValue],
-                                      requiresConnectionId: false,
-                                      body: nil)
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .post,
+            queryItems: ["stringValue": testStringValue],
+            requiresConnectionId: false,
+            body: nil
+        )
         
         // Encode the request and wait for the result
         let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -113,11 +121,13 @@ class RequestEncoder_Tests: XCTestCase {
     
     func test_encodingRequestBody_POST() throws {
         // Prepare a POST endpoint with JSON body
-        let endpoint = Endpoint<Data>(path: .unique,
-                                      method: .post,
-                                      queryItems: nil,
-                                      requiresConnectionId: false,
-                                      body: TestUser(name: "Luke", age: 22))
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: TestUser(name: "Luke", age: 22)
+        )
         
         // Encode the request and wait for the result
         let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -131,14 +141,16 @@ class RequestEncoder_Tests: XCTestCase {
     
     func test_encodingRequestBody_GET() throws {
         // Prepare a GET endpoint with JSON body
-        let endpoint = Endpoint<Data>(path: .unique,
-                                      method: .get,
-                                      queryItems: nil,
-                                      requiresConnectionId: false,
-                                      body: [
-                                          "user1": TestUser(name: "Luke", age: 22),
-                                          "user2": TestUser(name: "Leia", age: 22)
-                                      ])
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "user1": TestUser(name: "Luke", age: 22),
+                "user2": TestUser(name: "Leia", age: 22)
+            ]
+        )
         
         // Encode the request and wait for the result
         let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
@@ -157,11 +169,13 @@ class RequestEncoder_Tests: XCTestCase {
     
     func test_encodingGETRequestBody_withQueryItems() throws {
         // Prepare a GET endpoint with both, the query items and JSON body
-        let endpoint = Endpoint<Data>(path: .unique,
-                                      method: .get,
-                                      queryItems: ["father": "Anakin"],
-                                      requiresConnectionId: false,
-                                      body: ["user": TestUser(name: "Luke", age: 22)])
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .get,
+            queryItems: ["father": "Anakin"],
+            requiresConnectionId: false,
+            body: ["user": TestUser(name: "Luke", age: 22)]
+        )
         
         // Encode the request and wait for the result
         let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()

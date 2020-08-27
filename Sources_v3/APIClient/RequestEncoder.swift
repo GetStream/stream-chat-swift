@@ -39,8 +39,10 @@ extension RequestEncoder {
     ///
     /// - Parameter endpoint: The `Endpoint` to be encoded.
     func encodeRequest<ResponsePayload: Decodable>(for endpoint: Endpoint<ResponsePayload>) throws -> URLRequest {
-        log.assert(!endpoint.requiresConnectionId,
-                   "Use the asynchronous version of `encodeRequest` for endpoints with `requiresConnectionId` set to `true.`")
+        log.assert(
+            !endpoint.requiresConnectionId,
+            "Use the asynchronous version of `encodeRequest` for endpoints with `requiresConnectionId` set to `true.`"
+        )
         
         var result: Result<URLRequest, Error>?
         encodeRequest(for: endpoint) { result = $0 }
@@ -96,8 +98,10 @@ struct DefaultRequestEncoder: RequestEncoder {
         }
         
         if endpoint.requiresConnectionId {
-            log.assert(connectionDetailsProviderDelegate != nil,
-                       "The endpoind requiers `connectionId` but `connectionDetailsProviderDelegate` is not set.")
+            log.assert(
+                connectionDetailsProviderDelegate != nil,
+                "The endpoind requiers `connectionId` but `connectionDetailsProviderDelegate` is not set."
+            )
             
             connectionDetailsProviderDelegate?.provideConnectionId { (connectionId) in
                 guard let connectionId = connectionId else {
@@ -151,8 +155,10 @@ struct DefaultRequestEncoder: RequestEncoder {
     }
     
     private func encodeGETorDELETERequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
-        log.assert([EndpointMethod.get, EndpointMethod.delete].contains(endpoint.method),
-                   "Endpoint method is \(endpoint.method) but must be either GET or DELETE.")
+        log.assert(
+            [EndpointMethod.get, EndpointMethod.delete].contains(endpoint.method),
+            "Endpoint method is \(endpoint.method) but must be either GET or DELETE."
+        )
         log.assert(request.url != nil, "Request URL must not be `nil`.")
         
         guard let body = endpoint.body else { return }
@@ -179,8 +185,10 @@ struct DefaultRequestEncoder: RequestEncoder {
                     let jsonStringValue = try JSONSerialization.data(withJSONObject: jsonValue)
                     return URLQueryItem(name: key, value: String(data: jsonStringValue, encoding: .utf8))
                 } catch {
-                    log.error("Skipping encoding data for key:`\(key)` because it's not a valid JSON: "
-                        + "\(String(data: data, encoding: .utf8) ?? "nil")")
+                    log.error(
+                        "Skipping encoding data for key:`\(key)` because it's not a valid JSON: "
+                            + "\(String(data: data, encoding: .utf8) ?? "nil")"
+                    )
                 }
             }
             

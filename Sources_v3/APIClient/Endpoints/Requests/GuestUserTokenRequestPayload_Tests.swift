@@ -9,8 +9,10 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     func test_guestUserTokenRequestPayload_isEncodedCorrectly_withDefaultExtraData() throws {
         let name = String.unique
         let imageURL = URL.unique()
-        let payload = GuestUserTokenRequestPayload(userId: .unique,
-                                                   extraData: NameAndImageExtraData(name: name, imageURL: imageURL))
+        let payload = GuestUserTokenRequestPayload(
+            userId: .unique,
+            extraData: NameAndImageExtraData(name: name, imageURL: imageURL)
+        )
         
         try verify(payload, isEncodedAs: ["id": payload.userId, "name": name, "image": imageURL])
     }

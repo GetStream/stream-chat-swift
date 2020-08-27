@@ -18,10 +18,12 @@ class DatabaseSession_Tests: StressTestCase {
         let channelId: ChannelId = .unique
         let channelPayload = dummyPayload(with: channelId)
         
-        let eventPayload = EventPayload(eventType: .notificationAddedToChannel,
-                                        connectionId: .unique,
-                                        cid: channelPayload.channel.cid,
-                                        channel: channelPayload.channel)
+        let eventPayload = EventPayload(
+            eventType: .notificationAddedToChannel,
+            connectionId: .unique,
+            cid: channelPayload.channel.cid,
+            channel: channelPayload.channel
+        )
         
         // Save the event payload to DB
         database.write { session in
@@ -61,46 +63,54 @@ class DatabaseSession_Tests: StressTestCase {
         
         let channelPayload: ChannelDetailPayload<DefaultDataTypes> = dummyPayload(with: channelId).channel
         
-        let userPayload: UserPayload<NameAndImageExtraData> = .init(id: .unique,
-                                                                    role: .admin,
-                                                                    createdAt: .unique,
-                                                                    updatedAt: .unique,
-                                                                    lastActiveAt: .unique,
-                                                                    isOnline: true,
-                                                                    isInvisible: true,
-                                                                    isBanned: true,
-                                                                    extraData: .init(name: "Anakin",
-                                                                                     imageURL: URL(string: UUID().uuidString)))
+        let userPayload: UserPayload<NameAndImageExtraData> = .init(
+            id: .unique,
+            role: .admin,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
+            isOnline: true,
+            isInvisible: true,
+            isBanned: true,
+            extraData: .init(
+                name: "Anakin",
+                imageURL: URL(string: UUID().uuidString)
+            )
+        )
         
-        let messagePayload = MessagePayload<DefaultDataTypes>(id: messageId,
-                                                              type: .regular,
-                                                              user: userPayload,
-                                                              createdAt: .unique,
-                                                              updatedAt: .unique,
-                                                              text: "No, I am your father 🤯",
-                                                              showReplyInChannel: false,
-                                                              mentionedUsers: [],
-                                                              replyCount: 0,
-                                                              extraData: .init(),
-                                                              reactionScores: [:],
-                                                              isSilent: false)
+        let messagePayload = MessagePayload<DefaultDataTypes>(
+            id: messageId,
+            type: .regular,
+            user: userPayload,
+            createdAt: .unique,
+            updatedAt: .unique,
+            text: "No, I am your father 🤯",
+            showReplyInChannel: false,
+            mentionedUsers: [],
+            replyCount: 0,
+            extraData: .init(),
+            reactionScores: [:],
+            isSilent: false
+        )
         
-        let eventPayload: EventPayload<DefaultDataTypes> = .init(eventType: .messageNew,
-                                                                 connectionId: .unique,
-                                                                 cid: channelId,
-                                                                 currentUser: nil,
-                                                                 user: nil,
-                                                                 createdBy: nil,
-                                                                 memberContainer: nil,
-                                                                 channel: channelPayload,
-                                                                 message: messagePayload,
-                                                                 reaction: nil,
-                                                                 watcherCount: nil,
-                                                                 unreadCount: nil,
-                                                                 createdAt: nil,
-                                                                 isChannelHistoryCleared: false,
-                                                                 banReason: nil,
-                                                                 banExpiredAt: nil)
+        let eventPayload: EventPayload<DefaultDataTypes> = .init(
+            eventType: .messageNew,
+            connectionId: .unique,
+            cid: channelId,
+            currentUser: nil,
+            user: nil,
+            createdBy: nil,
+            memberContainer: nil,
+            channel: channelPayload,
+            message: messagePayload,
+            reaction: nil,
+            watcherCount: nil,
+            unreadCount: nil,
+            createdAt: nil,
+            isChannelHistoryCleared: false,
+            banReason: nil,
+            banExpiredAt: nil
+        )
         
         // Save the event payload to DB
         database.write { session in
@@ -120,13 +130,17 @@ class DatabaseSession_Tests: StressTestCase {
     }
     
     func test_saveEvent_unreadCountFromEventPayloadIsApplied() throws {
-        let eventPayload = EventPayload<DefaultDataTypes>(eventType: .messageNew,
-                                                          connectionId: .unique,
-                                                          cid: .unique,
-                                                          currentUser: .dummy(userId: .unique,
-                                                                              role: .user,
-                                                                              unreadCount: nil),
-                                                          unreadCount: .dummy)
+        let eventPayload = EventPayload<DefaultDataTypes>(
+            eventType: .messageNew,
+            connectionId: .unique,
+            cid: .unique,
+            currentUser: .dummy(
+                userId: .unique,
+                role: .user,
+                unreadCount: nil
+            ),
+            unreadCount: .dummy
+        )
         
         try database.writeSynchronously { session in
             try session.saveEvent(payload: eventPayload)

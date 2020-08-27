@@ -12,21 +12,23 @@ extension MessagePayload {
         authorUserId: UserId,
         extraData: T.Message = .defaultValue
     ) -> MessagePayload<T> where T.User == NameAndImageExtraData {
-        .init(id: messageId,
-              type: .regular,
-              user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
-              createdAt: .unique,
-              updatedAt: .unique,
-              deletedAt: .unique,
-              text: .unique,
-              command: .unique,
-              args: .unique,
-              parentId: .unique,
-              showReplyInChannel: true,
-              mentionedUsers: [UserPayload.dummy(userId: .unique)],
-              replyCount: .random(in: 0 ... 1000),
-              extraData: extraData,
-              reactionScores: ["like": 1],
-              isSilent: true)
+        .init(
+            id: messageId,
+            type: .regular,
+            user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
+            createdAt: .unique,
+            updatedAt: .unique,
+            deletedAt: .unique,
+            text: .unique,
+            command: .unique,
+            args: .unique,
+            parentId: .unique,
+            showReplyInChannel: true,
+            mentionedUsers: [UserPayload.dummy(userId: .unique)],
+            replyCount: .random(in: 0...1000),
+            extraData: extraData,
+            reactionScores: ["like": 1],
+            isSilent: true
+        )
     }
 }

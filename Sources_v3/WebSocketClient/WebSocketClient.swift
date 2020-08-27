@@ -160,19 +160,22 @@ class WebSocketClient {
     }
     
     private func startListeningForAppStateUpdates() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleAppDidEnterBackground),
-                                               name: UIApplication.didEnterBackgroundNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
         
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(handleAppDidBecomeActive),
-                                               name: UIApplication.didBecomeActiveNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleAppDidBecomeActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
     }
     
-    @objc
-    private func handleAppDidEnterBackground() {
+    @objc private func handleAppDidEnterBackground() {
         guard options.contains(.staysConnectedInBackground), connectionState.isActive else { return }
         
         let backgroundTask = backgroundTaskScheduler.beginBackgroundTask { [weak self] in
@@ -187,8 +190,7 @@ class WebSocketClient {
         }
     }
     
-    @objc
-    private func handleAppDidBecomeActive() {
+    @objc private func handleAppDidBecomeActive() {
         cancelBackgroundTaskIfNeeded()
     }
     

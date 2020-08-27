@@ -57,8 +57,10 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())
         
         XCTAssertEqual(channel.extraData.name, "The water cooler")
-        XCTAssertEqual(channel.extraData.imageURL?.absoluteString,
-                       "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80")
+        XCTAssertEqual(
+            channel.extraData.imageURL?.absoluteString,
+            "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80"
+        )
         
         let config = channel.config
         XCTAssertEqual(config.reactionsEnabled, true)
@@ -73,8 +75,10 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.flagsEnabled, false)
         XCTAssertEqual(config.messageRetention, "infinite")
         XCTAssertEqual(config.maxMessageLength, 5000)
-        XCTAssertEqual(config.commands,
-                       [.init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]")])
+        XCTAssertEqual(
+            config.commands,
+            [.init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]")]
+        )
         XCTAssertEqual(config.createdAt, "2019-03-21T15:49:15.40182Z".toDate())
         XCTAssertEqual(config.updatedAt, "2020-03-17T18:54:09.460881Z".toDate())
     }
@@ -113,8 +117,10 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.flagsEnabled, false)
         XCTAssertEqual(config.messageRetention, "infinite")
         XCTAssertEqual(config.maxMessageLength, 5000)
-        XCTAssertEqual(config.commands,
-                       [.init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]")])
+        XCTAssertEqual(
+            config.commands,
+            [.init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]")]
+        )
         XCTAssertEqual(config.createdAt, "2019-03-21T15:49:15.40182Z".toDate())
         XCTAssertEqual(config.updatedAt, "2020-03-17T18:54:09.460881Z".toDate())
     }

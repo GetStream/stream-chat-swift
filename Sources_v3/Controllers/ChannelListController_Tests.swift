@@ -273,9 +273,11 @@ private class TestEnvironment {
     
     lazy var environment: ChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
-            self.channelQueryUpdater = ChannelQueryUpdaterMock(database: $0,
-                                                               webSocketClient: $1,
-                                                               apiClient: $2)
+            self.channelQueryUpdater = ChannelQueryUpdaterMock(
+                database: $0,
+                webSocketClient: $1,
+                apiClient: $2
+            )
             return self.channelQueryUpdater!
         })
 }

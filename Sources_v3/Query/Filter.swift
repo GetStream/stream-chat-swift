@@ -311,15 +311,19 @@ extension Filter: Decodable {
                     return
                 case .in:
                     guard !rest.array.isEmpty else {
-                        throw DecodingError.typeMismatch([Encodable].self,
-                                                         .init(codingPath: decoder.codingPath, debugDescription: ""))
+                        throw DecodingError.typeMismatch(
+                            [Encodable].self,
+                            .init(codingPath: decoder.codingPath, debugDescription: "")
+                        )
                     }
                     self = .in(key.stringValue, rest.array)
                     return
                 case .notIn:
                     guard !rest.array.isEmpty else {
-                        throw DecodingError.typeMismatch([Encodable].self,
-                                                         .init(codingPath: decoder.codingPath, debugDescription: ""))
+                        throw DecodingError.typeMismatch(
+                            [Encodable].self,
+                            .init(codingPath: decoder.codingPath, debugDescription: "")
+                        )
                     }
                     self = .notIn(key.stringValue, rest.array)
                     return

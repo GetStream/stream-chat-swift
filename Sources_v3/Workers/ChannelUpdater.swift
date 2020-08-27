@@ -104,13 +104,15 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ) {
         var newMessageId: MessageId?
         database.write({ (session) in
-            let newMessageDTO = try session.createNewMessage(in: cid,
-                                                             text: text,
-                                                             command: command,
-                                                             arguments: arguments,
-                                                             parentMessageId: parentMessageId,
-                                                             showReplyInChannel: showReplyInChannel,
-                                                             extraData: extraData)
+            let newMessageDTO = try session.createNewMessage(
+                in: cid,
+                text: text,
+                command: command,
+                arguments: arguments,
+                parentMessageId: parentMessageId,
+                showReplyInChannel: showReplyInChannel,
+                extraData: extraData
+            )
             
             newMessageDTO.localMessageState = .pendingSend
             newMessageId = newMessageDTO.id

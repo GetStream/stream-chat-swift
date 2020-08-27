@@ -570,4 +570,4 @@ extension ChatViewController {
     open func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         false
     }
-} // swiftlint:disable:this file_length
+}

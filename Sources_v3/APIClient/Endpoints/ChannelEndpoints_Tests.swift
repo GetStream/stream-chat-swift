@@ -18,11 +18,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
         ]
         
         for (query, requiresConnectionId) in testCases {
-            let expectedEndpoint = Endpoint<ChannelListPayload<DefaultDataTypes>>(path: "channels",
-                                                                                  method: .get,
-                                                                                  queryItems: nil,
-                                                                                  requiresConnectionId: requiresConnectionId,
-                                                                                  body: ["payload": query])
+            let expectedEndpoint = Endpoint<ChannelListPayload<DefaultDataTypes>>(
+                path: "channels",
+                method: .get,
+                queryItems: nil,
+                requiresConnectionId: requiresConnectionId,
+                body: ["payload": query]
+            )
             
             // Build endpoint
             let endpoint: Endpoint<ChannelListPayload<DefaultDataTypes>> = .channels(query: query)
@@ -45,11 +47,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         for (query, requiresConnectionId) in testCases {
             let expectedEndpoint =
-                Endpoint<ChannelPayload<DefaultDataTypes>>(path: "channels/\(query.cid.type.rawValue)/\(query.cid.id)/query",
-                                                           method: .post,
-                                                           queryItems: nil,
-                                                           requiresConnectionId: requiresConnectionId,
-                                                           body: query)
+                Endpoint<ChannelPayload<DefaultDataTypes>>(
+                    path: "channels/\(query.cid.type.rawValue)/\(query.cid.id)/query",
+                    method: .post,
+                    queryItems: nil,
+                    requiresConnectionId: requiresConnectionId,
+                    body: query
+                )
             
             // Build endpoint
             let endpoint: Endpoint<ChannelPayload<DefaultDataTypes>> = .channel(query: query)
@@ -62,11 +66,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_updateChannel_buildsCorrectly() {
         let channelPayload: ChannelEditDetailPayload<DefaultDataTypes> = .unique
         
-        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(channelPayload.cid.type)/\(channelPayload.cid.id)",
-                                                       method: .post,
-                                                       queryItems: nil,
-                                                       requiresConnectionId: false,
-                                                       body: ["data": channelPayload])
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(channelPayload.cid.type)/\(channelPayload.cid.id)",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["data": channelPayload]
+        )
         
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .updateChannel(channelPayload: channelPayload)
@@ -78,11 +84,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_deleteChannel_buildsCorrectly() {
         let cid = ChannelId.unique
         
-        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)",
-                                                       method: .delete,
-                                                       queryItems: nil,
-                                                       requiresConnectionId: false,
-                                                       body: nil)
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type)/\(cid.id)",
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
         
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .deleteChannel(cid: cid)
@@ -98,11 +106,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
             let cid = ChannelId.unique
             let userId = UserId.unique
             
-            let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)/hide",
-                                                           method: .post,
-                                                           queryItems: nil,
-                                                           requiresConnectionId: false,
-                                                           body: HideChannelRequest(userId: userId, clearHistory: clearHistory))
+            let expectedEndpoint = Endpoint<EmptyResponse>(
+                path: "channels/\(cid.type)/\(cid.id)/hide",
+                method: .post,
+                queryItems: nil,
+                requiresConnectionId: false,
+                body: HideChannelRequest(userId: userId, clearHistory: clearHistory)
+            )
             
             // Build endpoint
             let endpoint: Endpoint<EmptyResponse> = .hideChannel(cid: cid, userId: userId, clearHistory: clearHistory)
@@ -121,11 +131,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
         for (mute, path) in testCases {
             let channelID = ChannelId.unique
             
-            let expectedEndpoint = Endpoint<EmptyResponse>(path: path,
-                                                           method: .post,
-                                                           queryItems: nil,
-                                                           requiresConnectionId: true,
-                                                           body: ["channel_cid": channelID])
+            let expectedEndpoint = Endpoint<EmptyResponse>(
+                path: path,
+                method: .post,
+                queryItems: nil,
+                requiresConnectionId: true,
+                body: ["channel_cid": channelID]
+            )
             
             // Build endpoint
             let endpoint: Endpoint<EmptyResponse> = .muteChannel(cid: channelID, mute: mute)
@@ -139,11 +151,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
         let userId = UserId.unique
         
-        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)/show",
-                                                       method: .post,
-                                                       queryItems: nil,
-                                                       requiresConnectionId: false,
-                                                       body: ["userId": userId])
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type)/\(cid.id)/show",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["userId": userId]
+        )
         
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .showChannel(cid: cid, userId: userId)
@@ -155,20 +169,24 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_sendMessage_buildsCorrectly() {
         let cid = ChannelId.unique
         
-        let messageBody = MessageRequestBody<DefaultDataTypes>(id: .unique,
-                                                               user: .dummy(userId: .unique),
-                                                               text: .unique,
-                                                               command: .unique,
-                                                               args: .unique,
-                                                               parentId: .unique,
-                                                               showReplyInChannel: true,
-                                                               extraData: .defaultValue)
+        let messageBody = MessageRequestBody<DefaultDataTypes>(
+            id: .unique,
+            user: .dummy(userId: .unique),
+            text: .unique,
+            command: .unique,
+            args: .unique,
+            parentId: .unique,
+            showReplyInChannel: true,
+            extraData: .defaultValue
+        )
         
-        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)/message",
-                                                       method: .post,
-                                                       queryItems: nil,
-                                                       requiresConnectionId: false,
-                                                       body: ["message": messageBody])
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type)/\(cid.id)/message",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["message": messageBody]
+        )
         
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .sendMessage(cid: cid, messagePayload: messageBody)
@@ -181,11 +199,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])
 
-        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)",
-                                                       method: .post,
-                                                       queryItems: nil,
-                                                       requiresConnectionId: false,
-                                                       body: ["add_members": userIds])
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type)/\(cid.id)",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["add_members": userIds]
+        )
 
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .addMembers(cid: cid, userIds: userIds)
@@ -198,11 +218,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])
 
-        let expectedEndpoint = Endpoint<EmptyResponse>(path: "channels/\(cid.type)/\(cid.id)",
-                                                       method: .post,
-                                                       queryItems: nil,
-                                                       requiresConnectionId: false,
-                                                       body: ["remove_members": userIds])
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type)/\(cid.id)",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["remove_members": userIds]
+        )
 
         // Build endpoint
         let endpoint: Endpoint<EmptyResponse> = .removeMembers(cid: cid, userIds: userIds)
@@ -214,10 +236,12 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
 extension ChannelEditDetailPayload where ExtraData == DefaultDataTypes {
     static var unique: Self {
-        Self(cid: .unique,
-             team: .unique,
-             members: [],
-             invites: [],
-             extraData: .init())
+        Self(
+            cid: .unique,
+            team: .unique,
+            members: [],
+            invites: [],
+            extraData: .init()
+        )
     }
 }

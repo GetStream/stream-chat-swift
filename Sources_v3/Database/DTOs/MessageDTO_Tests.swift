@@ -48,8 +48,10 @@ class MessageDTO_Tests: XCTestCase {
 //            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
-            Assert.willBeEqual(messagePayload.mentionedUsers.map(\.id),
-                               loadedMessage?.mentionedUsers.map(\.id))
+            Assert.willBeEqual(
+                messagePayload.mentionedUsers.map(\.id),
+                loadedMessage?.mentionedUsers.map(\.id)
+            )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
                 try? JSONDecoder.default.decode(NoExtraData.self, from: $0.extraData)
@@ -76,9 +78,11 @@ class MessageDTO_Tests: XCTestCase {
         
         let channelPayload: ChannelPayload<DefaultDataTypes> = dummyPayload(with: channelId)
         
-        let messagePayload: MessagePayload<SecretExtraData> = .dummy(messageId: messageId,
-                                                                     authorUserId: userId,
-                                                                     extraData: DeathStarMetadata(isSectedDeathStarPlanIncluded: true))
+        let messagePayload: MessagePayload<SecretExtraData> = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            extraData: DeathStarMetadata(isSectedDeathStarPlanIncluded: true)
+        )
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -106,8 +110,10 @@ class MessageDTO_Tests: XCTestCase {
             //            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
-            Assert.willBeEqual(messagePayload.mentionedUsers.map(\.id),
-                               loadedMessage?.mentionedUsers.map(\.id))
+            Assert.willBeEqual(
+                messagePayload.mentionedUsers.map(\.id),
+                loadedMessage?.mentionedUsers.map(\.id)
+            )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
                 try? JSONDecoder.default.decode(DeathStarMetadata.self, from: $0.extraData)
@@ -246,9 +252,11 @@ class MessageDTO_Tests: XCTestCase {
         
         _ = try await { completion in
             database.write({ (session) in
-                try session.saveCurrentUser(payload: .dummy(userId: currentUserId,
-                                                            role: .admin,
-                                                            extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+                try session.saveCurrentUser(payload: .dummy(
+                    userId: currentUserId,
+                    role: .admin,
+                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
                 
@@ -262,24 +270,28 @@ class MessageDTO_Tests: XCTestCase {
         
         _ = try await { completion in
             database.write({ session in
-                let message1DTO = try session.createNewMessage(in: cid,
-                                                               text: .unique,
-                                                               command: nil,
-                                                               arguments: nil,
-                                                               parentMessageId: nil,
-                                                               showReplyInChannel: false,
-                                                               extraData: NoExtraData.defaultValue)
+                let message1DTO = try session.createNewMessage(
+                    in: cid,
+                    text: .unique,
+                    command: nil,
+                    arguments: nil,
+                    parentMessageId: nil,
+                    showReplyInChannel: false,
+                    extraData: NoExtraData.defaultValue
+                )
                 message1Id = message1DTO.id
                 // Assign locallyCreatedAt data do message 1
                 message1DTO.locallyCreatedAt = .unique
                 
-                let message2DTO = try session.createNewMessage(in: cid,
-                                                               text: .unique,
-                                                               command: nil,
-                                                               arguments: nil,
-                                                               parentMessageId: nil,
-                                                               showReplyInChannel: false,
-                                                               extraData: NoExtraData.defaultValue)
+                let message2DTO = try session.createNewMessage(
+                    in: cid,
+                    text: .unique,
+                    command: nil,
+                    arguments: nil,
+                    parentMessageId: nil,
+                    showReplyInChannel: false,
+                    extraData: NoExtraData.defaultValue
+                )
                 message2Id = message2DTO.id
             }, completion: completion)
         }
@@ -313,9 +325,11 @@ class MessageDTO_Tests: XCTestCase {
         
         _ = try await { completion in
             database.write({ (session) in
-                try session.saveCurrentUser(payload: .dummy(userId: currentUserId,
-                                                            role: .admin,
-                                                            extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+                try session.saveCurrentUser(payload: .dummy(
+                    userId: currentUserId,
+                    role: .admin,
+                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
                 
@@ -332,19 +346,23 @@ class MessageDTO_Tests: XCTestCase {
         
         _ = try await { completion in
             database.write({
-                let messageDTO = try $0.createNewMessage(in: cid,
-                                                         text: newMessageText,
-                                                         command: newMessageCommand,
-                                                         arguments: newMessageArguments,
-                                                         parentMessageId: newMessageParentMessageId,
-                                                         showReplyInChannel: true,
-                                                         extraData: NoExtraData.defaultValue)
+                let messageDTO = try $0.createNewMessage(
+                    in: cid,
+                    text: newMessageText,
+                    command: newMessageCommand,
+                    arguments: newMessageArguments,
+                    parentMessageId: newMessageParentMessageId,
+                    showReplyInChannel: true,
+                    extraData: NoExtraData.defaultValue
+                )
                 newMessageId = messageDTO.id
             }, completion: completion)
         }
         
-        let loadedMessage: MessageModel<DefaultDataTypes> = try unwrapAsync(database.viewContext.message(id: newMessageId)?
-            .asModel())
+        let loadedMessage: MessageModel<DefaultDataTypes> = try unwrapAsync(
+            database.viewContext.message(id: newMessageId)?
+                .asModel()
+        )
         
         XCTAssertEqual(loadedMessage.text, newMessageText)
         XCTAssertEqual(loadedMessage.command, newMessageCommand)
@@ -360,13 +378,15 @@ class MessageDTO_Tests: XCTestCase {
     func test_creatingNewMessage_withoutExistingCurrentUser_throwsError() throws {
         let result = try await { completion in
             database.write({ (session) in
-                try session.createNewMessage(in: .unique,
-                                             text: .unique,
-                                             command: .unique,
-                                             arguments: .unique,
-                                             parentMessageId: .unique,
-                                             showReplyInChannel: true,
-                                             extraData: NoExtraData.defaultValue)
+                try session.createNewMessage(
+                    in: .unique,
+                    text: .unique,
+                    command: .unique,
+                    arguments: .unique,
+                    parentMessageId: .unique,
+                    showReplyInChannel: true,
+                    extraData: NoExtraData.defaultValue
+                )
             }, completion: completion)
         }
         
@@ -377,22 +397,26 @@ class MessageDTO_Tests: XCTestCase {
         // Save current user first
         _ = try await {
             database.write({
-                try $0.saveCurrentUser(payload: .dummy(userId: .unique,
-                                                       role: .admin,
-                                                       extraData: NameAndImageExtraData(name: nil, imageURL: nil)))
+                try $0.saveCurrentUser(payload: .dummy(
+                    userId: .unique,
+                    role: .admin,
+                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                ))
             }, completion: $0)
         }
         
         // Try to create a new message
         let result = try await { completion in
             database.write({ (session) in
-                try session.createNewMessage(in: .unique,
-                                             text: .unique,
-                                             command: .unique,
-                                             arguments: .unique,
-                                             parentMessageId: .unique,
-                                             showReplyInChannel: true,
-                                             extraData: NoExtraData.defaultValue)
+                try session.createNewMessage(
+                    in: .unique,
+                    text: .unique,
+                    command: .unique,
+                    arguments: .unique,
+                    parentMessageId: .unique,
+                    showReplyInChannel: true,
+                    extraData: NoExtraData.defaultValue
+                )
             }, completion: completion)
         }
         

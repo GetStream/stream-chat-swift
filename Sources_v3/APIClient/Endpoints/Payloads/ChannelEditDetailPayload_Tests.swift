@@ -16,11 +16,13 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         let extraData: NameAndImageExtraData = .init(name: name, imageURL: imageURL)
 
         // Create ChannelEditDetailPayload
-        let payload = ChannelEditDetailPayload<DefaultDataTypes>(cid: cid,
-                                                                 team: team,
-                                                                 members: [invite],
-                                                                 invites: [invite],
-                                                                 extraData: extraData)
+        let payload = ChannelEditDetailPayload<DefaultDataTypes>(
+            cid: cid,
+            team: team,
+            members: [invite],
+            invites: [invite],
+            extraData: extraData
+        )
 
         let expectedData: [String: Any] = [
             "name": name,

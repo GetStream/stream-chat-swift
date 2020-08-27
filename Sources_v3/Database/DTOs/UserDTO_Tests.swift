@@ -45,16 +45,18 @@ class UserDTO_Tests: XCTestCase {
     func test_userPayload_withNoExtraData_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<NoExtraData> = .init(id: userId,
-                                                      role: .admin,
-                                                      createdAt: .unique,
-                                                      updatedAt: .unique,
-                                                      lastActiveAt: .unique,
-                                                      isOnline: true,
-                                                      isInvisible: true,
-                                                      isBanned: true,
-                                                      teams: [],
-                                                      extraData: .defaultValue)
+        let payload: UserPayload<NoExtraData> = .init(
+            id: userId,
+            role: .admin,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
+            isOnline: true,
+            isInvisible: true,
+            isBanned: true,
+            teams: [],
+            extraData: .defaultValue
+        )
         
         // Asynchronously save the payload to the db
         database.write { session in

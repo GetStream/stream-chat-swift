@@ -42,9 +42,11 @@ class DefaultReconnectionStrategy_Tests: XCTestCase {
     }
     
     func test_returnsNilForStopError() {
-        let stopError = WebSocketEngineError(reason: "Testing stop error",
-                                             code: WebSocketEngineError.stopErrorCode,
-                                             engineError: nil)
+        let stopError = WebSocketEngineError(
+            reason: "Testing stop error",
+            code: WebSocketEngineError.stopErrorCode,
+            engineError: nil
+        )
         
         let delay = strategy.reconnectionDelay(forConnectionError: stopError)
         XCTAssertNil(delay)

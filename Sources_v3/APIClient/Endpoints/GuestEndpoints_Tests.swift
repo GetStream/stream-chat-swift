@@ -25,11 +25,13 @@ final class GuestEndpoints_Tests: XCTestCase {
     
     private func verifyEndpointBuildsCorrectly<ExtraData: UserExtraData>(with extraData: ExtraData) {
         let payload = GuestUserTokenRequestPayload(userId: .unique, extraData: extraData)
-        let expectedEndpoint = Endpoint<GuestUserTokenPayload<ExtraData>>(path: "guest",
-                                                                          method: .post,
-                                                                          queryItems: nil,
-                                                                          requiresConnectionId: false,
-                                                                          body: ["user": payload])
+        let expectedEndpoint = Endpoint<GuestUserTokenPayload<ExtraData>>(
+            path: "guest",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["user": payload]
+        )
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(.guestUserToken(userId: payload.userId, extraData: extraData)))

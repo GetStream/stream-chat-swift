@@ -24,10 +24,12 @@ class EventDataProcessorMiddlewaree_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let channelPayload = dummyPayload(with: channelId)
         
-        let eventPayload = EventPayload(eventType: .notificationAddedToChannel,
-                                        connectionId: .unique,
-                                        cid: channelPayload.channel.cid,
-                                        channel: channelPayload.channel)
+        let eventPayload = EventPayload(
+            eventType: .notificationAddedToChannel,
+            connectionId: .unique,
+            cid: channelPayload.channel.cid,
+            channel: channelPayload.channel
+        )
         
         let testEvent = TestEvent(payload: eventPayload)
         

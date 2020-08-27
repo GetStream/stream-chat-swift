@@ -16,12 +16,16 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     private let environment: Environment
         
     private lazy var channelListQueryUpdater: ChannelListQueryUpdater<ExtraData> = self.environment
-        .createChannelListQueryUpdater(database,
-                                       webSocketClient,
-                                       apiClient)
+        .createChannelListQueryUpdater(
+            database,
+            webSocketClient,
+            apiClient
+        )
     
-    private lazy var channelsObserver: ListDatabaseObserver = .init(context: self.database.backgroundReadOnlyContext,
-                                                                    fetchRequest: ChannelDTO.channelWithoutQueryFetchRequest)
+    private lazy var channelsObserver: ListDatabaseObserver = .init(
+        context: self.database.backgroundReadOnlyContext,
+        fetchRequest: ChannelDTO.channelWithoutQueryFetchRequest
+    )
     
     private var queries: [ChannelListQueryDTO] {
         do {

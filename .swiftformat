@@ -22,10 +22,6 @@
 --hexliteralcase lowercase
 --exponentcase lowercase
 
---wraparguments after-first
+--wraparguments before-first
 --wrapparameters before-first
 --wrapcollections before-first
-
---funcattributes prev-line
---typeattributes prev-line
---varattributes same-line

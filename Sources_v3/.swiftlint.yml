@@ -11,6 +11,7 @@ disabled_rules:
   - identifier_name
   - file_length
   - type_body_length
+  - opening_brace
 
 opt_in_rules:
   - empty_count

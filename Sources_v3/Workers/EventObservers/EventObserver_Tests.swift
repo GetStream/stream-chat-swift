@@ -36,9 +36,11 @@ final class EventObserver_Tests: XCTestCase {
         var callbackExecutionCount = 0
 
         // Create observer and count callback executions
-        observer = .init(notificationCenter: notificationCenter,
-                         tranform: { $0 as? HealthCheckEvent },
-                         callback: { _ in callbackExecutionCount += 1 })
+        observer = .init(
+            notificationCenter: notificationCenter,
+            tranform: { $0 as? HealthCheckEvent },
+            callback: { _ in callbackExecutionCount += 1 }
+        )
 
         // Send event notification
         notificationCenter.post(eventNotification)
@@ -58,9 +60,11 @@ final class EventObserver_Tests: XCTestCase {
         var receivedEvent: HealthCheckEvent?
 
         // Create observer and catch event coming to callback
-        observer = EventObserver(notificationCenter: notificationCenter,
-                                 tranform: { $0 as? HealthCheckEvent },
-                                 callback: { receivedEvent = $0 })
+        observer = EventObserver(
+            notificationCenter: notificationCenter,
+            tranform: { $0 as? HealthCheckEvent },
+            callback: { receivedEvent = $0 }
+        )
 
         // Send event notification
         notificationCenter.post(eventNotification)
@@ -73,9 +77,11 @@ final class EventObserver_Tests: XCTestCase {
         var receivedEvent: Event?
 
         // Create observer and catch event coming to callback
-        observer = EventObserver(notificationCenter: notificationCenter,
-                                 tranform: { $0 as? MemberAddedEvent },
-                                 callback: { receivedEvent = $0 })
+        observer = EventObserver(
+            notificationCenter: notificationCenter,
+            tranform: { $0 as? MemberAddedEvent },
+            callback: { receivedEvent = $0 }
+        )
 
         // Send event notification
         notificationCenter.post(eventNotification)

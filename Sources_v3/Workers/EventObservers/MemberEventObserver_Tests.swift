@@ -29,8 +29,10 @@ final class MemberEventObserver_Tests: XCTestCase {
         let otherEvent = OtherEvent()
         
         var receivedEvents: [MemberEvent] = []
-        observer = MemberEventObserver(notificationCenter: eventNotificationCenter,
-                                       callback: { receivedEvents.append($0) })
+        observer = MemberEventObserver(
+            notificationCenter: eventNotificationCenter,
+            callback: { receivedEvents.append($0) }
+        )
         
         // Post a member event and verify it's received
         eventNotificationCenter.post(.init(newEventReceived: memberEvent, sender: self))
@@ -47,9 +49,11 @@ final class MemberEventObserver_Tests: XCTestCase {
         let otherMemberEvent = TestMemberEvent.unique
         
         var receivedEvents: [MemberEvent] = []
-        observer = MemberEventObserver(notificationCenter: eventNotificationCenter,
-                                       cid: channelId,
-                                       callback: { receivedEvents.append($0) })
+        observer = MemberEventObserver(
+            notificationCenter: eventNotificationCenter,
+            cid: channelId,
+            callback: { receivedEvents.append($0) }
+        )
         
         // Post a member event matching the filter and verify it's received
         eventNotificationCenter.post(.init(newEventReceived: matchingMemberEvent, sender: self))

@@ -48,10 +48,12 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     
     /// Used for observing the changes in the DB.
     private(set) lazy var frc: NSFetchedResultsController<DTO> = self.fetchedResultsControllerType
-        .init(fetchRequest: self.request,
-              managedObjectContext: self.context,
-              sectionNameKeyPath: nil,
-              cacheName: nil)
+        .init(
+            fetchRequest: self.request,
+            managedObjectContext: self.context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
     
     /// The `NSFetchedResultsController` subclass the observe uses to create its FRC. You can inject your custom subclass
     /// in the initializer if needed, i.e. when testing.

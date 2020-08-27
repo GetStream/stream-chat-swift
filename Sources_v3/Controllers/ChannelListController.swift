@@ -42,9 +42,11 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var worker: ChannelListQueryUpdater<ExtraData> = self.environment
-        .channelQueryUpdaterBuilder(client.databaseContainer,
-                                    client.webSocketClient,
-                                    client.apiClient)
+        .channelQueryUpdaterBuilder(
+            client.databaseContainer,
+            client.webSocketClient,
+            client.apiClient
+        )
 
     /// A type-erased delegate.
     private(set) var anyDelegate: AnyChannelListControllerDelegate<ExtraData>? {
@@ -58,9 +60,11 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     private(set) lazy var channelListObserver: ListDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
         
-        let observer = self.environment.createChannelListDabaseObserver(client.databaseContainer.viewContext,
-                                                                        request,
-                                                                        ChannelModel<ExtraData>.create)
+        let observer = self.environment.createChannelListDabaseObserver(
+            client.databaseContainer.viewContext,
+            request,
+            ChannelModel<ExtraData>.create
+        )
         
         observer.onChange = { [unowned self] changes in
             self.delegateCallback {
@@ -254,16 +258,20 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListCo
 
 extension AnyChannelListControllerDelegate {
     convenience init<Delegate: ChannelListControllerDelegateGeneric>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
-        self.init(wrappedDelegate: delegate,
-                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-                  controllerDidChangeChannels: { [weak delegate] in delegate?.controller($0, didChangeChannels: $1) })
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidChangeChannels: { [weak delegate] in delegate?.controller($0, didChangeChannels: $1) }
+        )
     }
 }
 
 extension AnyChannelListControllerDelegate where ExtraData == DefaultDataTypes {
     convenience init(_ delegate: ChannelListControllerDelegate?) {
-        self.init(wrappedDelegate: delegate,
-                  controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-                  controllerDidChangeChannels: { [weak delegate] in delegate?.controller($0, didChangeChannels: $1) })
+        self.init(
+            wrappedDelegate: delegate,
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerDidChangeChannels: { [weak delegate] in delegate?.controller($0, didChangeChannels: $1) }
+        )
     }
 }

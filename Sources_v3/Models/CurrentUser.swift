@@ -55,13 +55,15 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
         self.mutedUsers = mutedUsers
         self.unreadCount = unreadCount
         
-        super.init(id: id,
-                   isOnline: isOnline,
-                   isBanned: isBanned,
-                   userRole: userRole,
-                   createdAt: createdAt,
-                   updatedAt: updatedAt,
-                   lastActiveAt: lastActiveAt,
-                   extraData: extraData)
+        super.init(
+            id: id,
+            isOnline: isOnline,
+            isBanned: isBanned,
+            userRole: userRole,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            lastActiveAt: lastActiveAt,
+            extraData: extraData
+        )
     }
 }

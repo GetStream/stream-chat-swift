@@ -33,11 +33,13 @@ extension Assert {
             "\"\(equatableCollection1)\" not equal to \"\(equatableCollection2)\""
         }
         
-        return willBeTrue(equatableCollection1 == equatableCollection2,
-                          timeout: timeout,
-                          message: message() ?? defaultMessage,
-                          file: file,
-                          line: line)
+        return willBeTrue(
+            equatableCollection1 == equatableCollection2,
+            timeout: timeout,
+            message: message() ?? defaultMessage,
+            file: file,
+            line: line
+        )
     }
 }
 

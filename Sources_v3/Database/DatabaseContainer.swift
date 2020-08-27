@@ -153,9 +153,11 @@ class DatabaseContainer: NSPersistentContainer {
     /// Set up listener to changes in the writable context and logs the changes.
     private func setupLoggerForDatabaseChanges() {
         loggerNotificationObserver = NotificationCenter.default
-            .addObserver(forName: Notification.Name.NSManagedObjectContextDidSave,
-                         object: writableContext,
-                         queue: nil) { log.debug("Data saved to DB: \(String(describing: $0.userInfo))") }
+            .addObserver(
+                forName: Notification.Name.NSManagedObjectContextDidSave,
+                object: writableContext,
+                queue: nil
+            ) { log.debug("Data saved to DB: \(String(describing: $0.userInfo))") }
     }
 }
 

@@ -43,14 +43,16 @@ extension Data {
         var stream = z_stream()
         var status: Int32
         
-        status = deflateInit2_(&stream,
-                               Z_DEFAULT_COMPRESSION,
-                               Z_DEFLATED,
-                               MAX_WBITS + 16,
-                               MAX_MEM_LEVEL,
-                               Z_DEFAULT_STRATEGY,
-                               ZLIB_VERSION,
-                               Int32(DataSize.stream))
+        status = deflateInit2_(
+            &stream,
+            Z_DEFAULT_COMPRESSION,
+            Z_DEFLATED,
+            MAX_WBITS + 16,
+            MAX_MEM_LEVEL,
+            Z_DEFAULT_STRATEGY,
+            ZLIB_VERSION,
+            Int32(DataSize.stream)
+        )
         
         guard status == Z_OK else {
             // deflateInit2 returns:
@@ -71,9 +73,11 @@ extension Data {
             let outputCount = data.count
             
             withUnsafeBytes { (inputPointer: UnsafeRawBufferPointer) in
-                stream.next_in = UnsafeMutablePointer<Bytef>(mutating: inputPointer
-                    .bindMemory(to: Bytef.self).baseAddress!)
-                    .advanced(by: Int(stream.total_in))
+                stream.next_in = UnsafeMutablePointer<Bytef>(
+                    mutating: inputPointer
+                        .bindMemory(to: Bytef.self).baseAddress!
+                )
+                .advanced(by: Int(stream.total_in))
                 
                 stream.avail_in = uint(inputCount) - uInt(stream.total_in)
                 

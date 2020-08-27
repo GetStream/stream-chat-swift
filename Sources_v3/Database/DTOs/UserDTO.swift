@@ -90,8 +90,11 @@ extension UserDTO {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: self.extraData)
         } catch {
-            log.assert(false, "Failed decoding saved extra data with error: \(error). This should never happen because"
-                + "the extra data must be a valid JSON to be saved.")
+            log.assert(
+                false,
+                "Failed decoding saved extra data with error: \(error). This should never happen because"
+                    + "the extra data must be a valid JSON to be saved."
+            )
         }
         
         return .init(id: id, extraData: extraData ?? .defaultValue)
@@ -104,17 +107,21 @@ extension UserModel {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.extraData)
         } catch {
-            fatalError("Failed decoding saved extra data with error: \(error). This should never happen because"
-                + "the extra data must be a valid JSON to be saved.")
+            fatalError(
+                "Failed decoding saved extra data with error: \(error). This should never happen because"
+                    + "the extra data must be a valid JSON to be saved."
+            )
         }
         
-        return UserModel(id: dto.id,
-                         isOnline: dto.isOnline,
-                         isBanned: dto.isBanned,
-                         userRole: UserRole(rawValue: dto.userRoleRaw)!,
-                         createdAt: dto.userCreatedAt,
-                         updatedAt: dto.userUpdatedAt,
-                         lastActiveAt: dto.lastActivityAt,
-                         extraData: extraData)
+        return UserModel(
+            id: dto.id,
+            isOnline: dto.isOnline,
+            isBanned: dto.isBanned,
+            userRole: UserRole(rawValue: dto.userRoleRaw)!,
+            createdAt: dto.userCreatedAt,
+            updatedAt: dto.userUpdatedAt,
+            lastActiveAt: dto.lastActivityAt,
+            extraData: extraData
+        )
     }
 }

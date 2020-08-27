@@ -15,11 +15,13 @@ class ChannelQuery_Tests: XCTestCase {
         let options: QueryOptions = .all
 
         // Create ChannelQuery
-        let query = ChannelQuery<DefaultDataTypes>(cid: cid,
-                                                   messagesPagination: messagesPagination,
-                                                   membersPagination: membersPagination,
-                                                   watchersPagination: watchersPagination,
-                                                   options: options)
+        let query = ChannelQuery<DefaultDataTypes>(
+            cid: cid,
+            messagesPagination: messagesPagination,
+            membersPagination: membersPagination,
+            watchersPagination: watchersPagination,
+            options: options
+        )
 
         let expectedData: [String: Any] = [
             "presence": true,

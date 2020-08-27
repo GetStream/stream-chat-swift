@@ -28,10 +28,12 @@ class QueueAwareDelegate {
     
     func validateQueue(function: StaticString = #function) {
         if let queueId = expectedQueueId {
-            XCTAssertTrue(DispatchQueue.isTestQueue(withId: queueId),
-                          "Delegate method \(function) called on an incorrect queue",
-                          file: file,
-                          line: line)
+            XCTAssertTrue(
+                DispatchQueue.isTestQueue(withId: queueId),
+                "Delegate method \(function) called on an incorrect queue",
+                file: file,
+                line: line
+            )
         }
     }
 }
