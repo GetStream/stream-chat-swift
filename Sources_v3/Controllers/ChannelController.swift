@@ -264,6 +264,11 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
                 self.delegateCallback {
                     $0?.channelController(self, didReceiveMemberEvent: event)
                 }
+            },
+            TypingEventObserver(notificationCenter: center, cid: channelId) { [unowned self] event in
+                self.delegateCallback {
+                    $0?.channelController(self, didReceiveTypingEvent: event)
+                }
             }
         ]
     }
@@ -587,6 +592,9 @@ public protocol ChannelControllerDelegate: ControllerStateDelegate {
 
     /// The controller received a `MemberEvent` related to the channel it observes.
     func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent)
+    
+    /// The controller received a `TypingEvent` related to the channel it observes.
+    func channelController(_ channelController: ChannelController, didReceiveTypingEvent: TypingEvent)
 }
 
 public extension ChannelControllerDelegate {
@@ -601,6 +609,8 @@ public extension ChannelControllerDelegate {
     ) {}
 
     func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent) {}
+    
+    func channelController(_ channelController: ChannelController, didReceiveTypingEvent: TypingEvent) {}
 }
 
 // MARK: Generic Delegates
@@ -626,6 +636,9 @@ public protocol ChannelControllerDelegateGeneric: ControllerStateDelegate {
 
     /// The controller received a `MemberEvent` related to the channel it observes.
     func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent: MemberEvent)
+    
+    /// The controller received a `TypingEvent` related to the channel it observes.
+    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveTypingEvent: TypingEvent)
 }
 
 public extension ChannelControllerDelegateGeneric {
@@ -640,6 +653,8 @@ public extension ChannelControllerDelegateGeneric {
     ) {}
 
     func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent: MemberEvent) {}
+    
+    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveTypingEvent: TypingEvent) {}
 }
 
 // MARK: Type erased Delegate
@@ -661,6 +676,11 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
         ChannelControllerGeneric<ExtraData>,
         MemberEvent
     ) -> Void
+    
+    private var _controllerDidReceiveTypingEvent: (
+        ChannelControllerGeneric<ExtraData>,
+        TypingEvent
+    ) -> Void
 
     weak var wrappedDelegate: AnyObject?
     
@@ -678,6 +698,10 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
         controllerDidReceiveMemberEvent: @escaping (
             ChannelControllerGeneric<ExtraData>,
             MemberEvent
+        ) -> Void,
+        controllerDidReceiveTypingEvent: @escaping (
+            ChannelControllerGeneric<ExtraData>,
+            TypingEvent
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -685,6 +709,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
         _controllerDidUpdateChannel = controllerDidUpdateChannel
         _controllerdidUpdateMessages = controllerdidUpdateMessages
         _controllerDidReceiveMemberEvent = controllerDidReceiveMemberEvent
+        _controllerDidReceiveTypingEvent = controllerDidReceiveTypingEvent
     }
     
     func controller(_ controller: Controller, didChangeState state: Controller.State) {
@@ -711,6 +736,13 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListContro
     ) {
         _controllerDidReceiveMemberEvent(controller, event)
     }
+    
+    func channelController(
+        _ controller: ChannelControllerGeneric<ExtraData>,
+        didReceiveTypingEvent event: TypingEvent
+    ) {
+        _controllerDidReceiveTypingEvent(controller, event)
+    }
 }
 
 extension AnyChannelControllerDelegate {
@@ -722,6 +754,9 @@ extension AnyChannelControllerDelegate {
             controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
             controllerDidReceiveMemberEvent: { [weak delegate] in
                 delegate?.channelController($0, didReceiveMemberEvent: $1)
+            },
+            controllerDidReceiveTypingEvent: { [weak delegate] in
+                delegate?.channelController($0, didReceiveTypingEvent: $1)
             }
         )
     }
@@ -736,6 +771,9 @@ extension AnyChannelControllerDelegate where ExtraData == DefaultDataTypes {
             controllerdidUpdateMessages: { [weak delegate] in delegate?.channelController($0, didUpdateMessages: $1) },
             controllerDidReceiveMemberEvent: { [weak delegate] in
                 delegate?.channelController($0, didReceiveMemberEvent: $1)
+            },
+            controllerDidReceiveTypingEvent: { [weak delegate] in
+                delegate?.channelController($0, didReceiveTypingEvent: $1)
             }
         )
     }
