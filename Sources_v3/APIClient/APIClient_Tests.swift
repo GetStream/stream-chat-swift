@@ -261,11 +261,13 @@ struct AnyEndpoint: Equatable {
 
 private class TestWebSocketClient: WebSocketClient {
     init() {
-        super.init(connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
-                   sessionConfiguration: .default,
-                   requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
-                   eventDecoder: EventDecoder<DefaultDataTypes>(),
-                   eventNotificationCenter: EventNotificationCenter(),
-                   reconnectionStrategy: DefaultReconnectionStrategy())
+        super.init(
+            connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
+            sessionConfiguration: .default,
+            requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
+            eventDecoder: EventDecoder<DefaultDataTypes>(),
+            eventNotificationCenter: EventNotificationCenter(),
+            reconnectionStrategy: DefaultReconnectionStrategy()
+        )
     }
 }

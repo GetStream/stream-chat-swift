@@ -55,8 +55,10 @@ class ChatClient_Tests: StressTestCase {
         
         // Create a `Client` and assert that a DB file is created on the provided URL + APIKey path
         _ = ChatClient(config: config, workerBuilders: [Worker.init], environment: env)
-        XCTAssertEqual(usedDatabaseKind,
-                       .onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString)))
+        XCTAssertEqual(
+            usedDatabaseKind,
+            .onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString))
+        )
     }
     
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -110,8 +112,10 @@ class ChatClient_Tests: StressTestCase {
         // to the in-memory option.
         _ = ChatClient(config: config, workerBuilders: [Worker.init], environment: env)
         
-        XCTAssertEqual(usedDatabaseKinds,
-                       [.onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString)), .inMemory])
+        XCTAssertEqual(
+            usedDatabaseKinds,
+            [.onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString)), .inMemory]
+        )
     }
     
     // MARK: - WebSocketClient tests
@@ -274,9 +278,11 @@ class ChatClient_Tests: StressTestCase {
         }
         
         // Create a Client instance and check the TestWorker is initialized properly
-        let client = Client(config: config,
-                            workerBuilders: [TestWorker.init],
-                            environment: testEnv.environment)
+        let client = Client(
+            config: config,
+            workerBuilders: [TestWorker.init],
+            environment: testEnv.environment
+        )
         
         let testWorker = client.backgroundWorkers.first as? TestWorker
         XCTAssert(testWorker?.init_database is DatabaseContainerMock)
@@ -328,8 +334,10 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate successful connection
         testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!,
-                             didUpdateConectionState: .connected(connectionId: .unique))
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConectionState: .connected(connectionId: .unique)
+            )
         
         // Check the completion is called
         AssertAsync.willBeTrue(setUserCompletionCalled)
@@ -376,8 +384,10 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate successful connection
         testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!,
-                             didUpdateConectionState: .connected(connectionId: .unique))
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConectionState: .connected(connectionId: .unique)
+            )
         
         var currentUser: CurrentUserDTO? {
             testEnv.databaseContainer?.viewContext.currentUser()
@@ -413,9 +423,11 @@ class ChatClient_Tests: StressTestCase {
         
         // Set up a new guest user
         var setUserCompletionCalled = false
-        client.setGuestUser(userId: newUser.userId,
-                            extraData: newUserExtraData,
-                            completion: { _ in setUserCompletionCalled = true })
+        client.setGuestUser(
+            userId: newUser.userId,
+            extraData: newUserExtraData,
+            completion: { _ in setUserCompletionCalled = true }
+        )
         
         AssertAsync {
             // `WebSocketClient.disconnect(source:)` should be called once
@@ -431,16 +443,20 @@ class ChatClient_Tests: StressTestCase {
             Assert.willBeEqual(client.currentUserId, newUser.userId)
             
             // Make sure `guest` endpoint is called
-            Assert.willBeEqual(self.testEnv.apiClient!.request_endpoint,
-                               AnyEndpoint(.guestUserToken(userId: newUser.userId, extraData: newUserExtraData)))
+            Assert.willBeEqual(
+                self.testEnv.apiClient!.request_endpoint,
+                AnyEndpoint(.guestUserToken(userId: newUser.userId, extraData: newUserExtraData))
+            )
         }
         
         // Make sure the completion is not called yet
         XCTAssertFalse(setUserCompletionCalled)
         
         // Simulate a successful response from `guest` endpoint with a token
-        let payload = GuestUserTokenPayload(user: .dummy(userId: newUser.userId, role: .guest, extraData: newUserExtraData),
-                                            token: newUserToken)
+        let payload = GuestUserTokenPayload(
+            user: .dummy(userId: newUser.userId, role: .guest, extraData: newUserExtraData),
+            token: newUserToken
+        )
         testEnv.apiClient!.test_simulateResponse(.success(payload))
         
         AssertAsync {
@@ -460,8 +476,10 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate successful connection
         testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!,
-                             didUpdateConectionState: .connected(connectionId: .unique))
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConectionState: .connected(connectionId: .unique)
+            )
         
         var currentUser: CurrentUserDTO? {
             testEnv.databaseContainer?.viewContext.currentUser()
@@ -490,8 +508,10 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate successful connection
         testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!,
-                             didUpdateConectionState: .connected(connectionId: .unique))
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConectionState: .connected(connectionId: .unique)
+            )
         
         // Wait for the connection to succeed
         AssertAsync.willBeTrue(setUserCompletionCalled)
@@ -515,8 +535,10 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate successful connection
         testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!,
-                             didUpdateConectionState: .connected(connectionId: .unique))
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConectionState: .connected(connectionId: .unique)
+            )
         
         AssertAsync {
             Assert.willBeTrue(connectCompletionCalled)
@@ -536,37 +558,41 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     @Atomic var eventDecoder: EventDecoder<ExtraData>?
     
     lazy var environment: Client<ExtraData>.Environment = { [unowned self] in
-        .init(apiClientBuilder: {
-                  self.apiClient = APIClientMock(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2)
-                  return self.apiClient!
-              },
-              webSocketClientBuilder: {
-                  self.webSocketClient = WebSocketClientMock(connectEndpoint: $0,
-                                                             sessionConfiguration: $1,
-                                                             requestEncoder: $2,
-                                                             eventDecoder: $3,
-                                                             eventNotificationCenter: $4)
-                  return self.webSocketClient!
-              },
-              databaseContainerBuilder: {
-                  self.databaseContainer = try! DatabaseContainerMock(kind: $0)
-                  return self.databaseContainer!
-              },
-              requestEncoderBuilder: {
-                  if let encoder = self.requestEncoder {
-                      return encoder
-                  }
-                  self.requestEncoder = TestRequestEncoder(baseURL: $0, apiKey: $1)
-                  return self.requestEncoder!
-              },
-              requestDecoderBuilder: {
-                  self.requestDecoder = TestRequestDecoder()
-                  return self.requestDecoder!
-              },
-              eventDecoderBuilder: {
-                  self.eventDecoder = EventDecoder<ExtraData>()
-                  return self.eventDecoder!
-              })
+        .init(
+            apiClientBuilder: {
+                self.apiClient = APIClientMock(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2)
+                return self.apiClient!
+            },
+            webSocketClientBuilder: {
+                self.webSocketClient = WebSocketClientMock(
+                    connectEndpoint: $0,
+                    sessionConfiguration: $1,
+                    requestEncoder: $2,
+                    eventDecoder: $3,
+                    eventNotificationCenter: $4
+                )
+                return self.webSocketClient!
+            },
+            databaseContainerBuilder: {
+                self.databaseContainer = try! DatabaseContainerMock(kind: $0)
+                return self.databaseContainer!
+            },
+            requestEncoderBuilder: {
+                if let encoder = self.requestEncoder {
+                    return encoder
+                }
+                self.requestEncoder = TestRequestEncoder(baseURL: $0, apiKey: $1)
+                return self.requestEncoder!
+            },
+            requestDecoderBuilder: {
+                self.requestDecoder = TestRequestDecoder()
+                return self.requestDecoder!
+            },
+            eventDecoderBuilder: {
+                self.eventDecoder = EventDecoder<ExtraData>()
+                return self.eventDecoder!
+            }
+        )
     }()
 }
 
@@ -621,10 +647,13 @@ extension ChatClient_Tests {
         }
         
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
-        XCTAssertEqual(headers["X-Stream-Client"], "stream-chat-swift-client-\(SystemEnvironment.version)"
-            + "|\(SystemEnvironment.deviceModelName)"
-            + "|\(SystemEnvironment.systemName)"
-            + "|\(SystemEnvironment.name)")
+        XCTAssertEqual(
+            headers["X-Stream-Client"],
+            "stream-chat-swift-client-\(SystemEnvironment.version)"
+                + "|\(SystemEnvironment.deviceModelName)"
+                + "|\(SystemEnvironment.systemName)"
+                + "|\(SystemEnvironment.name)"
+        )
     }
 }
 
@@ -682,13 +711,15 @@ class WebSocketClientMock: WebSocketClient {
         init_reconnectionStrategy = reconnectionStrategy
         init_environment = environment
         
-        super.init(connectEndpoint: connectEndpoint,
-                   sessionConfiguration: sessionConfiguration,
-                   requestEncoder: requestEncoder,
-                   eventDecoder: eventDecoder,
-                   eventNotificationCenter: eventNotificationCenter,
-                   reconnectionStrategy: reconnectionStrategy,
-                   environment: environment)
+        super.init(
+            connectEndpoint: connectEndpoint,
+            sessionConfiguration: sessionConfiguration,
+            requestEncoder: requestEncoder,
+            eventDecoder: eventDecoder,
+            eventNotificationCenter: eventNotificationCenter,
+            reconnectionStrategy: reconnectionStrategy,
+            environment: environment
+        )
     }
     
     override func connect() {
@@ -702,10 +733,12 @@ class WebSocketClientMock: WebSocketClient {
 
 extension WebSocketClientMock {
     convenience init() {
-        self.init(connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
-                  sessionConfiguration: .default,
-                  requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
-                  eventDecoder: EventDecoder<DefaultDataTypes>(),
-                  eventNotificationCenter: .init())
+        self.init(
+            connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
+            sessionConfiguration: .default,
+            requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
+            eventDecoder: EventDecoder<DefaultDataTypes>(),
+            eventNotificationCenter: .init()
+        )
     }
 }

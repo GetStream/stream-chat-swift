@@ -80,11 +80,13 @@ public class Client<ExtraData: ExtraDataTypes> {
         let connectEndpoint = webSocketConnectEndpoint(userId: currentUserId)
         
         // Create a WebSocketClient.
-        let webSocketClient = environment.webSocketClientBuilder(webSocketEndpoint,
-                                                                 urlSessionConfiguration,
-                                                                 encoder,
-                                                                 EventDecoder<ExtraData>(),
-                                                                 eventNotificationCenter)
+        let webSocketClient = environment.webSocketClientBuilder(
+            webSocketEndpoint,
+            urlSessionConfiguration,
+            encoder,
+            EventDecoder<ExtraData>(),
+            eventNotificationCenter
+        )
         
         webSocketClient.connectionStateDelegate = self
         
@@ -100,9 +102,11 @@ public class Client<ExtraData: ExtraDataTypes> {
                 }
                 
                 // Create the folder if needed
-                try? FileManager.default.createDirectory(at: storeURL,
-                                                         withIntermediateDirectories: true,
-                                                         attributes: nil)
+                try? FileManager.default.createDirectory(
+                    at: storeURL,
+                    withIntermediateDirectories: true,
+                    attributes: nil
+                )
                 
                 let dbFileURL = config.localStorageFolderURL!.appendingPathComponent(config.apiKey.apiKeyString)
                 return try environment.databaseContainerBuilder(.onDisk(databaseFileURL: dbFileURL))
@@ -162,9 +166,11 @@ public class Client<ExtraData: ExtraDataTypes> {
             NewChannelQueryUpdater<ExtraData>.init
         ]
         
-        self.init(config: config,
-                  workerBuilders: workerBuilders,
-                  environment: .init())
+        self.init(
+            config: config,
+            workerBuilders: workerBuilders,
+            environment: .init()
+        )
     }
     
     /// Creates a new instance of Stream Chat `Client`.
@@ -265,9 +271,11 @@ public class Client<ExtraData: ExtraDataTypes> {
         completion: ((Error?) -> Void)? = nil
     ) {
         guard token != nil || config.tokenProvider != nil else {
-            log.assert(false,
-                       "The provided token is `nil` and `ChatClientConfig.tokenProvider` is also `nil`. You must either provide " +
-                           "a token explicitly or set `TokenProvider` in `ChatClientConfig`.")
+            log.assert(
+                false,
+                "The provided token is `nil` and `ChatClientConfig.tokenProvider` is also `nil`. You must either provide " +
+                    "a token explicitly or set `TokenProvider` in `ChatClientConfig`."
+            )
             completion?(ClientError.MissingToken())
             return
         }
@@ -380,11 +388,13 @@ public class Client<ExtraData: ExtraDataTypes> {
     ) -> Endpoint<EmptyResponse> {
         // Create a connection request
         let socketPayload = WebSocketConnectPayload<ExtraData.User>(userId: currentUserId, userRole: role, extraData: extraData)
-        let webSocketEndpoint = Endpoint<EmptyResponse>(path: "connect",
-                                                        method: .get,
-                                                        queryItems: nil,
-                                                        requiresConnectionId: false,
-                                                        body: ["json": socketPayload])
+        let webSocketEndpoint = Endpoint<EmptyResponse>(
+            path: "connect",
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["json": socketPayload]
+        )
         
         return webSocketEndpoint
     }
@@ -406,11 +416,13 @@ extension Client {
             _ eventDecoder: AnyEventDecoder,
             _ notificationCenter: EventNotificationCenter
         ) -> WebSocketClient = {
-            WebSocketClient(connectEndpoint: $0,
-                            sessionConfiguration: $1,
-                            requestEncoder: $2,
-                            eventDecoder: $3,
-                            eventNotificationCenter: $4)
+            WebSocketClient(
+                connectEndpoint: $0,
+                sessionConfiguration: $1,
+                requestEncoder: $2,
+                eventDecoder: $3,
+                eventNotificationCenter: $4
+            )
         }
         
         var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind) throws -> DatabaseContainer = {

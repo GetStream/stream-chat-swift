@@ -35,11 +35,13 @@ class WebSocketClient_Tests: StressTestCase {
         time = VirtualTime()
         VirtualTimeTimer.time = time
         
-        endpoint = .init(path: .unique,
-                         method: .get,
-                         queryItems: nil,
-                         requiresConnectionId: false,
-                         body: nil)
+        endpoint = .init(
+            path: .unique,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
         
         decoder = EventDecoderMock()
         backgroundTaskScheduler = MockBackgroundTaskScheduler()
@@ -57,13 +59,15 @@ class WebSocketClient_Tests: StressTestCase {
         environment.createEngine = WebSocketEngineMock.init
         environment.backgroundTaskScheduler = backgroundTaskScheduler
         
-        webSocketClient = WebSocketClient(connectEndpoint: endpoint,
-                                          sessionConfiguration: .default,
-                                          requestEncoder: requestEncoder,
-                                          eventDecoder: decoder,
-                                          eventNotificationCenter: eventNotificationCenter,
-                                          reconnectionStrategy: reconnectionStrategy,
-                                          environment: environment)
+        webSocketClient = WebSocketClient(
+            connectEndpoint: endpoint,
+            sessionConfiguration: .default,
+            requestEncoder: requestEncoder,
+            eventDecoder: decoder,
+            eventNotificationCenter: eventNotificationCenter,
+            reconnectionStrategy: reconnectionStrategy,
+            environment: environment
+        )
         
         connectionId = UUID().uuidString
         user = User(id: "test_user_\(UUID().uuidString)")
@@ -205,8 +209,10 @@ class WebSocketClient_Tests: StressTestCase {
         
         AssertAsync {
             Assert.willBeEqual(self.reconnectionStrategy.reconnectionDelay_calledWithError as? WebSocketEngineError, testError)
-            Assert.willBeEqual(self.webSocketClient.connectionState,
-                               .waitingForReconnect(error: ClientError.WebSocket(with: testError)))
+            Assert.willBeEqual(
+                self.webSocketClient.connectionState,
+                .waitingForReconnect(error: ClientError.WebSocket(with: testError))
+            )
         }
         
         // Simulate 10 seconds passed and check `connect` is not called yet
@@ -256,8 +262,10 @@ class WebSocketClient_Tests: StressTestCase {
     
     func test_webSocketPingController_connectionStateDidChange_calledWhenConnectionChanges() {
         test_connectionFlow()
-        AssertAsync.willBeEqual(pingController.connectionStateDidChange_connectionStates,
-                                [.connecting, .waitingForConnectionId, .connected(connectionId: connectionId)])
+        AssertAsync.willBeEqual(
+            pingController.connectionStateDidChange_connectionStates,
+            [.connecting, .waitingForConnectionId, .connected(connectionId: connectionId)]
+        )
     }
     
     func test_webSocketPingController_ping_callsEngineWithPing() {
@@ -298,11 +306,13 @@ class WebSocketClient_Tests: StressTestCase {
         let oldEngine = engine
         
         // Simulate connect endpoint is updated (i.e. new user is logged in)
-        let newEndpoint = Endpoint<EmptyResponse>(path: .unique,
-                                                  method: .get,
-                                                  queryItems: nil,
-                                                  requiresConnectionId: false,
-                                                  body: nil)
+        let newEndpoint = Endpoint<EmptyResponse>(
+            path: .unique,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
         webSocketClient.connectEndpoint = newEndpoint
         
         // Simulate request encoder response
