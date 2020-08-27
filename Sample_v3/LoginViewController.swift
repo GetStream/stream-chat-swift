@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 import Combine
 
 import StreamChatClient
@@ -65,6 +66,20 @@ extension LoginViewController {
                     })
                 }
             }
+        case .swiftUISimpleChatIndexPath:
+            if #available(iOS 13, *) {
+                logIn(apiKey: apiKey, userId: userId, userName: userName, token: token) {
+                    DispatchQueue.main.async {
+                        UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
+                            self.view.window?.rootViewController = UIHostingController(rootView:
+                                NavigationView {
+                                    ChannelListView()
+                                }
+                            )
+                        })
+                    }
+                }
+            }
         default:
             return
         }
@@ -75,6 +90,7 @@ extension LoginViewController {
 private extension IndexPath {
     static let jwtIndexPath = IndexPath(row: 4, section: 0)
     static let simpleChatIndexPath = IndexPath(row: 0, section: 1)
+    static let swiftUISimpleChatIndexPath = IndexPath(row: 1, section: 1)
 }
 
 // MARK: - Inputs
