@@ -254,7 +254,9 @@
 		F63CC37324E592D30052844D /* MemberEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37224E592D30052844D /* MemberEventObserver.swift */; };
 		F63CC37524E592DD0052844D /* MemberEventObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */; };
 		F67415C024F0129800C3222F /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = F67415BF24F0129800C3222F /* UnreadCount.swift */; };
+		F6778F9A24F5144F005E7D22 /* EventNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6778F9924F5144F005E7D22 /* EventNotificationCenter.swift */; };
 		F688643624E6DA8700A71361 /* CurrentUserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F688643524E6DA8700A71361 /* CurrentUserController.swift */; };
+		F69C4BC424F664A700A3D740 /* EventNotificationCenter_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69C4BC324F664A700A3D740 /* EventNotificationCenter_Tests.swift */; };
 		F69C4BC624F66CC200A3D740 /* EventLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69C4BC524F66CC200A3D740 /* EventLogger.swift */; };
 		F69E7F7D24ED7562000F5252 /* CurrentUserController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69E7F7C24ED7562000F5252 /* CurrentUserController_Tests.swift */; };
 		F6C56D1424F7B89D0012BB1F /* EventMiddleware_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C56D1324F7B89D0012BB1F /* EventMiddleware_Mock.swift */; };
@@ -553,7 +555,9 @@
 		F63CC37224E592D30052844D /* MemberEventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventObserver.swift; sourceTree = "<group>"; };
 		F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventObserver_Tests.swift; sourceTree = "<group>"; };
 		F67415BF24F0129800C3222F /* UnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCount.swift; sourceTree = "<group>"; };
+		F6778F9924F5144F005E7D22 /* EventNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventNotificationCenter.swift; sourceTree = "<group>"; };
 		F688643524E6DA8700A71361 /* CurrentUserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserController.swift; sourceTree = "<group>"; };
+		F69C4BC324F664A700A3D740 /* EventNotificationCenter_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventNotificationCenter_Tests.swift; sourceTree = "<group>"; };
 		F69C4BC524F66CC200A3D740 /* EventLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLogger.swift; sourceTree = "<group>"; };
 		F69E7F7C24ED7562000F5252 /* CurrentUserController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserController_Tests.swift; sourceTree = "<group>"; };
 		F6C56D1324F7B89D0012BB1F /* EventMiddleware_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMiddleware_Mock.swift; sourceTree = "<group>"; };
@@ -884,6 +888,8 @@
 				79682C4524BC9DAF0071578E /* ChannelUpdater.swift */,
 				F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */,
 				7952B3B424D45D9400AC53D4 /* ChannelUpdater_Tests.swift */,
+				F6778F9924F5144F005E7D22 /* EventNotificationCenter.swift */,
+				F69C4BC324F664A700A3D740 /* EventNotificationCenter_Tests.swift */,
 				F63CC36D24E591690052844D /* EventObservers */,
 				79280F4524850ECC00CDEB89 /* Background */,
 			);
@@ -1460,6 +1466,7 @@
 				F63CC36F24E591840052844D /* EventObserver.swift in Sources */,
 				8A0D649724E579A50017A3C0 /* GuestEndpoints.swift in Sources */,
 				8A62705024B867190040BFD6 /* EventPayload.swift in Sources */,
+				F6778F9A24F5144F005E7D22 /* EventNotificationCenter.swift in Sources */,
 				792A4F40247FFDE700EAF71D /* Data+Gzip.swift in Sources */,
 				79E2B84024CAC8D60024752F /* ListDatabaseObserver.swift in Sources */,
 				796610B9248E651800761629 /* EventMiddleware.swift in Sources */,
@@ -1632,6 +1639,7 @@
 				7988F6B124D010890004219B /* TestRunnerEnvironment.swift in Sources */,
 				799C9469247D791A001F1104 /* AssertResult.swift in Sources */,
 				7952B3B524D45DA300AC53D4 /* ChannelUpdater_Tests.swift in Sources */,
+				F69C4BC424F664A700A3D740 /* EventNotificationCenter_Tests.swift in Sources */,
 				8AC9CBD424C7351D006E236C /* ReactionEvents_Tests.swift in Sources */,
 				79DDF81A249CE38B002F4412 /* RequestRecorderURLProtocol.swift in Sources */,
 				8AC9CBE424C74ECB006E236C /* NotificationEvents_Tests.swift in Sources */,
