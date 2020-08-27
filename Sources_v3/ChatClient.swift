@@ -52,6 +52,11 @@ public class Client<ExtraData: ExtraDataTypes> {
     /// observing the current state of the system and perform work if needed (i.e. when a new message pending sent appears in the
     /// database, a worker tries to send it.)
     private(set) var backgroundWorkers: [Worker]!
+            
+    /// The notification center used to send and receive notifications about incoming events.
+    private(set) lazy var notificationCenter = environment.notificationCenterBuilder([
+        EventDataProcessorMiddleware<ExtraData>(database: databaseContainer)
+    ])
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
@@ -74,17 +79,12 @@ public class Client<ExtraData: ExtraDataTypes> {
         
         let connectEndpoint = webSocketConnectEndpoint(userId: currentUserId)
         
-        // Create middlewares.
-        let eventMiddlewares: [EventMiddleware] = [
-            EventDataProcessorMiddleware<ExtraData>(database: databaseContainer)
-        ]
-        
         // Create a WebSocketClient.
         let webSocketClient = environment.webSocketClientBuilder(webSocketEndpoint,
                                                                  urlSessionConfiguration,
                                                                  encoder,
                                                                  EventDecoder<ExtraData>(),
-                                                                 eventMiddlewares)
+                                                                 notificationCenter)
         
         webSocketClient.connectionStateDelegate = self
         
@@ -404,13 +404,13 @@ extension Client {
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ eventDecoder: AnyEventDecoder,
-            _ eventMiddlewares: [EventMiddleware]
+            _ notificationCenter: EventNotificationCenter
         ) -> WebSocketClient = {
             WebSocketClient(connectEndpoint: $0,
                             sessionConfiguration: $1,
                             requestEncoder: $2,
                             eventDecoder: $3,
-                            eventMiddlewares: $4)
+                            notificationCenter: $4)
         }
         
         var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind) throws -> DatabaseContainer = {
@@ -421,6 +421,8 @@ extension Client {
         var requestDecoderBuilder: () -> RequestDecoder = DefaultRequestDecoder.init
         
         var eventDecoderBuilder: () -> EventDecoder<ExtraData> = EventDecoder<ExtraData>.init
+        
+        var notificationCenterBuilder: ([EventMiddleware]) -> EventNotificationCenter = EventNotificationCenter.init
     }
 }
 
