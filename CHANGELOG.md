@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Client.shared.mute(channel: channel) {}` or `channel.mute {}`
   - `Client.shared.rx.mute(channel: channel)` or `channel.rx.mute()`
 - `.notificationChannelMutesUpdated` event type to get the current user updated when a channel was muted or unmuted [#428](https://github.com/GetStream/stream-chat-swift/issues/428) 
+- The `memberCount` variable added to `Channel` with the total number of members in the channel. It's no longer needed to query all members and count them [#442](https://github.com/GetStream/stream-chat-swift/issues/442)
+- `ChannelsQuery.membersLimit` field added to `ChannelsQuery`. It's possible to limit the number of `Member` objects returned in the channel payload. When you query the channels and you don't need the members objects to be presented, setting this value to a lower number should significantly improve the overall performance. [#442](https://github.com/GetStream/stream-chat-swift/issues/442) 
+- `ClientLogger` measures the durations of API requests and JSON parsing. It's enabled by default on the `.debug` level [#442](https://github.com/GetStream/stream-chat-swift/issues/442)
+- `ClientLogger.logTaskStarted()` and `ClientLogger.logTaskFinished()` API added for performance measurements [#442](https://github.com/GetStream/stream-chat-swift/issues/442)
 
 ### 🔄 Changed
 - Podspec and Package Swift versions bumped to 5.2 [#438](https://github.com/GetStream/stream-chat-swift/issues/438)
