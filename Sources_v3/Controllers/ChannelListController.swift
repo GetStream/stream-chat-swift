@@ -75,10 +75,6 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
         return observer
     }()
     
-    /// An wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
-    @available(iOS 13, *)
-    public private(set) lazy var observableObject: ObservableObject = ObservableObject(controller: self)
-    
     private let environment: Environment
     
     /// Creates a new `ChannelListController`.
