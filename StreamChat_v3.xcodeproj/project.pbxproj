@@ -261,6 +261,7 @@
 		F69C4BC424F664A700A3D740 /* EventNotificationCenter_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69C4BC324F664A700A3D740 /* EventNotificationCenter_Tests.swift */; };
 		F69C4BC624F66CC200A3D740 /* EventLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69C4BC524F66CC200A3D740 /* EventLogger.swift */; };
 		F69E7F7D24ED7562000F5252 /* CurrentUserController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F69E7F7C24ED7562000F5252 /* CurrentUserController_Tests.swift */; };
+		F6E9B48A24F9166800AB5B86 /* TypeErasure.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6E9B48924F9166800AB5B86 /* TypeErasure.generated.swift */; };
 		F6C56D1424F7B89D0012BB1F /* EventMiddleware_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C56D1324F7B89D0012BB1F /* EventMiddleware_Mock.swift */; };
 		F6C56D1624F7BCFF0012BB1F /* HealthCheckMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C56D1524F7BCFF0012BB1F /* HealthCheckMiddleware_Tests.swift */; };
 /* End PBXBuildFile section */
@@ -565,6 +566,7 @@
 		F69C4BC324F664A700A3D740 /* EventNotificationCenter_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventNotificationCenter_Tests.swift; sourceTree = "<group>"; };
 		F69C4BC524F66CC200A3D740 /* EventLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLogger.swift; sourceTree = "<group>"; };
 		F69E7F7C24ED7562000F5252 /* CurrentUserController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserController_Tests.swift; sourceTree = "<group>"; };
+		F6E9B48924F9166800AB5B86 /* TypeErasure.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypeErasure.generated.swift; sourceTree = "<group>"; };
 		F6C56D1324F7B89D0012BB1F /* EventMiddleware_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMiddleware_Mock.swift; sourceTree = "<group>"; };
 		F6C56D1524F7BCFF0012BB1F /* HealthCheckMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCheckMiddleware_Tests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -859,6 +861,7 @@
 				792A4F412480103A00EAF71D /* Query */,
 				79280F3D2484E33C00CDEB89 /* Errors */,
 				792A4F3A247FFB7600EAF71D /* Utils */,
+				F61ED59B24F3E98D00874777 /* Generated */,
 				799C941D247D2F80001F1104 /* Sources_v3.h */,
 				799C941E247D2F80001F1104 /* Info.plist */,
 			);
@@ -1235,6 +1238,14 @@
 			path = Requests;
 			sourceTree = "<group>";
 		};
+		F61ED59B24F3E98D00874777 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				F6E9B48924F9166800AB5B86 /* TypeErasure.generated.swift */,
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
 		F63CC36D24E591690052844D /* EventObservers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1282,6 +1293,7 @@
 			buildConfigurationList = 799C9420247D2F80001F1104 /* Build configuration list for PBXNativeTarget "StreamChatClient" */;
 			buildPhases = (
 				799C9416247D2F80001F1104 /* Headers */,
+				F61ED59824F3DE0800874777 /* Sourcery */,
 				799C9417247D2F80001F1104 /* Sources */,
 				799C9418247D2F80001F1104 /* Frameworks */,
 				799C9419247D2F80001F1104 /* Resources */,
@@ -1445,6 +1457,24 @@
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint lint ./Sources_v3/\nelse\n  echo \"warning: SwiftLint not installed, (homebrew install swiftlint)\"\nfi\n";
 		};
+		F61ED59824F3DE0800874777 /* Sourcery */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Sourcery;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which sourcery >/dev/null; then\n  sourcery --sources ./Sources_v3 --templates ./Sources_v3/Templates --output ./Sources_v3/Generated\nelse\n  echo \"warning: Sourcery not installed, (homebrew install sourcery)\"\nfi\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1505,6 +1535,7 @@
 				7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */,
 				799C9445247D3DD2001F1104 /* WebSocketClient.swift in Sources */,
 				797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */,
+				F6E9B48A24F9166800AB5B86 /* TypeErasure.generated.swift in Sources */,
 				799C9438247D2FB9001F1104 /* ChatClientConfig.swift in Sources */,
 				7964F3B6249A314D002A09EC /* PrefixLogFormatter.swift in Sources */,
 				79A0E9B02498C09900E9BD50 /* ConnectionState.swift in Sources */,

@@ -1,4 +1,5 @@
 ignore:
+  - "Sources_v3/Generated"
   - "Tests_v3/"
   - "**/*_Tests.swift"
   - "**/*_Mock.swift"

@@ -138,131 +138,63 @@ private extension CurrentUserControllerGeneric {
 /// If you're using custom extra data types, please use `CurrentUserControllerDelegateGeneric` instead.
 public protocol CurrentUserControllerDelegate: ControllerStateDelegate {
     /// The controller observed a change in the `UnreadCount`.
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount: UnreadCount)
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount count: UnreadCount)
     
     /// The controller observed a change in the `CurrentUser` entity.
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser: EntityChange<CurrentUser>)
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentUser>)
 }
 
 public extension CurrentUserControllerDelegate {
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount: UnreadCount) {}
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {}
     
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser: EntityChange<CurrentUser>) {}
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentUser>) {}
 }
 
 /// `CurrentUserControllerGeneric` uses this protocol to communicate changes to its delegate.
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `CurrentUserControllerDelegate`, which hides the generic types, and make the usage easier.
+///
+/// sourcery: TypeErase
 public protocol CurrentUserControllerDelegateGeneric: ControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `UnreadCount`.
-    func currentUserController(_ controller: CurrentUserControllerGeneric<ExtraData>, didChangeCurrentUserUnreadCount: UnreadCount)
+    func currentUserController(
+        _ controller: CurrentUserControllerGeneric<ExtraData>,
+        didChangeCurrentUserUnreadCount count: UnreadCount
+    )
     
     /// The controller observed a change in the `CurrentUser` entity.
     func currentUserController(
         _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUser: EntityChange<CurrentUserModel<ExtraData.User>>
+        didChangeCurrentUser change: EntityChange<CurrentUserModel<ExtraData.User>>
     )
 }
 
 public extension CurrentUserControllerDelegateGeneric {
     func currentUserController(
         _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUserUnreadCount: UnreadCount
+        didChangeCurrentUserUnreadCount count: UnreadCount
     ) {}
     
     func currentUserController(
         _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUser: EntityChange<CurrentUserModel<ExtraData.User>>
+        didChangeCurrentUser change: EntityChange<CurrentUserModel<ExtraData.User>>
     ) {}
-}
-
-final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: CurrentUserControllerDelegateGeneric {
-    weak var wrappedDelegate: AnyObject?
-    
-    private var _controllerDidChangeState: (
-        Controller,
-        Controller.State
-    ) -> Void
-    
-    private var _controllerDidChangeCurrentUserUnreadCount: (
-        CurrentUserControllerGeneric<ExtraData>,
-        UnreadCount
-    ) -> Void
-    
-    private var _controllerDidChangeCurrentUser: (
-        CurrentUserControllerGeneric<ExtraData>,
-        EntityChange<CurrentUserModel<ExtraData.User>>
-    ) -> Void
-
-    init(
-        wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (
-            Controller,
-            Controller.State
-        ) -> Void,
-        controllerDidChangeCurrentUserUnreadCount: @escaping (
-            CurrentUserControllerGeneric<ExtraData>,
-            UnreadCount
-        ) -> Void,
-        controllerDidChangeCurrentUser: @escaping (
-            CurrentUserControllerGeneric<ExtraData>,
-            EntityChange<CurrentUserModel<ExtraData.User>>
-        ) -> Void
-    ) {
-        self.wrappedDelegate = wrappedDelegate
-        _controllerDidChangeCurrentUserUnreadCount = controllerDidChangeCurrentUserUnreadCount
-        _controllerDidChangeState = controllerDidChangeState
-        _controllerDidChangeCurrentUser = controllerDidChangeCurrentUser
-    }
-
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
-        _controllerDidChangeState(controller, state)
-    }
-
-    func currentUserController(
-        _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUserUnreadCount unreadCount: UnreadCount
-    ) {
-        _controllerDidChangeCurrentUserUnreadCount(controller, unreadCount)
-    }
-    
-    func currentUserController(
-        _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUser user: EntityChange<CurrentUserModel<ExtraData.User>>
-    ) {
-        _controllerDidChangeCurrentUser(controller, user)
-    }
-}
-
-extension AnyCurrentUserControllerDelegate {
-    convenience init<Delegate: CurrentUserControllerDelegateGeneric>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
-        self.init(
-            wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
-                delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
-            },
-            controllerDidChangeCurrentUser: { [weak delegate] in
-                delegate?.currentUserController($0, didChangeCurrentUser: $1)
-            }
-        )
-    }
 }
 
 extension AnyCurrentUserControllerDelegate where ExtraData == DefaultDataTypes {
     convenience init(_ delegate: CurrentUserControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
+            currentUserControllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
                 delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
             },
-            controllerDidChangeCurrentUser: { [weak delegate] in
+            currentUserControllerDidChangeCurrentUser: { [weak delegate] in
                 delegate?.currentUserController($0, didChangeCurrentUser: $1)
-            }
+            },
+            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) }
         )
     }
 }

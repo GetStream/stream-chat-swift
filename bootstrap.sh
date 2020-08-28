@@ -10,6 +10,9 @@ brew install https://raw.githubusercontent.com/nicklockwood/homebrew-core/026935
 brew link swiftformat
 brew switch swiftformat 0.45.6
 
+# Install the latest released sourcery
+brew reinstall sourcery
+
 # Set bash to Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
 set -euo pipefail
 

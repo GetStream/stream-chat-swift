@@ -60,3 +60,6 @@ cyclomatic_complexity:
   ignores_case_statements: true
   warning: 25
   error: 30
+
+excluded:
+  - Generated

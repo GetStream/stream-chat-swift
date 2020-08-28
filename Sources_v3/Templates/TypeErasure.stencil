@@ -1,0 +1,55 @@
+import Foundation
+{% macro swiftifyMethodName method %}{{ method.selectorName | replace:"(","_" | replace:")","" | replace:":","_" | replace:"`","" | snakeToCamelCase | lowerFirstWord }}{% endmacro %}
+{% macro methodClosure method %}({% for param in method.parameters %}{{ param.typeName }}{{ ', ' if not forloop.last }}{% endfor %}){{ ' throws' if method.throws }} -> {{ method.returnTypeName }}{% endmacro %}
+{% macro getAssosiatedTypes p %}{% for key in p.associatedTypes %}{{ p.associatedTypes[key].name }}: {{ p.associatedTypes[key].typeName }}{{ ', ' if not forloop.last }}{% endfor %}{% endmacro %}
+{% macro typeErasureName type %}Any{{ type.name|replace:"Generic","" }}{% endmacro %}
+
+{% for type in types.protocols|annotated:"TypeErase" %}
+// MARK: - {{type.name}}
+
+final class {% call typeErasureName type %}<{% call getAssosiatedTypes type %}>: {{ type.name }} {
+    weak var wrappedDelegate: AnyObject?
+    {% for method in type.allMethods|!definedInExtension %}
+    private let _{% call swiftifyMethodName method %}: {% call methodClosure method %}
+    {% endfor %}
+
+    init(
+        wrappedDelegate: AnyObject?,
+        {% for method in type.allMethods|!definedInExtension %}
+        {% call swiftifyMethodName method %}: @escaping {% call methodClosure method %}{{ ',' if not forloop.last }}
+        {% endfor %}
+    ) {
+        self.wrappedDelegate = wrappedDelegate
+        {% for method in type.allMethods|!definedInExtension %}
+        _{% call swiftifyMethodName method %} = {% call swiftifyMethodName method %}
+        {% endfor %}
+    }
+
+    {% for method in type.allMethods|!definedInExtension %}
+    func {{ method.name }}{{ ' throws' if method.throws }}{% if not method.returnTypeName.isVoid %} -> {{ method.returnTypeName }}{% endif %} {
+        {{ 'try ' if method.throws }}_{% call swiftifyMethodName method %}({% for param in method.parameters %}{{ param.name }}{{ ', ' if not forloop.last }}{% endfor %})
+    }
+    {% endfor %}
+}
+
+extension {% call typeErasureName type %} {
+    convenience init<Delegate: {{ type.name }}>(_ delegate: Delegate) where {% for key in type.associatedTypes %}Delegate.{{ type.associatedTypes[key].name }} == {{ type.associatedTypes[key].name }}{{ ', ' if not forloop.last }}{% endfor %} {
+        self.init(
+            wrappedDelegate: delegate,
+            {% for method in type.allMethods|!definedInExtension %}
+            {% call swiftifyMethodName method %}: { [weak delegate] ({% for p in method.parameters %}{{ p.name }}{{ ', ' if not forloop.last }}{% endfor %}) in
+                guard let delegate = delegate else { return }
+
+                let function = delegate.{{method.selectorName}}
+                let args = ({% for p in method.parameters %}{{ p.name }}{{ ', ' if not forloop.last }}{% endfor %})
+                call(function, with: args)
+            }{{ ',' if not forloop.last }}
+            {% endfor %}
+        )
+    }
+}
+
+{% endfor %}
+private func call<T, U>(_ closure: (T) -> U, with args: T) -> U {
+    closure(args)
+}
