@@ -45,7 +45,8 @@ public struct ChannelsQuery: Encodable {
     ///   - filter: a channels filter.
     ///   - sort: a sorting list for channels.
     ///   - pagination: a channels pagination.
-    ///   - messagesLimit: a messages pagination for the each channel.
+    ///   - messagesLimit: a messages pagination for each channel.
+    ///   - membersLimit: a members limit for each channel.
     ///   - options: a query options (see `QueryOptions`).
     public init(filter: Filter,
                 sort: [Sorting] = [],
